@@ -6,9 +6,7 @@ import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.JsonKeyFrameUtils;
-import software.bernie.geckolib.animation.keyframe.PositionKeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-
 import java.util.*;
 
 /**
@@ -62,8 +60,8 @@ public class JSONAnimationUtils
 	/**
 	 * Gets scale key frames.
 	 *
-	 * @param json the json
-	 * @return the scale key frames
+	 * @param json The "bones" json object
+	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the scale keyframes.
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getScaleKeyFrames(JsonObject json)
 	{
@@ -73,8 +71,8 @@ public class JSONAnimationUtils
 	/**
 	 * Gets sound effect frames.
 	 *
-	 * @param json the json
-	 * @return the sound effect frames
+	 * @param json The animation json
+	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the sound effect keyframes.
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getSoundEffectFrames(JsonObject json)
 	{
@@ -84,8 +82,8 @@ public class JSONAnimationUtils
 	/**
 	 * Gets particle effect frames.
 	 *
-	 * @param json the json
-	 * @return the particle effect frames
+	 * @param json The animation json
+	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the particle effect keyframes.
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getParticleEffectFrames(JsonObject json)
 	{
@@ -95,13 +93,14 @@ public class JSONAnimationUtils
 	/**
 	 * Gets custom instruction key frames.
 	 *
-	 * @param json the json
-	 * @return the custom instruction key frames
+	 * @param json The animation json
+	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the custom instruction keyframes.
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getCustomInstructionKeyFrames(JsonObject json)
 	{
 		return getObjectListAsArray(json.getAsJsonObject("timeline"));
 	}
+
 
 	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key) throws JSONException
 	{
@@ -124,13 +123,10 @@ public class JSONAnimationUtils
 	}
 
 	/**
-	 * Gets object list as array.
+	 * The animation format bedrock/blockbench uses is bizzare, and exports arrays of objects as plain parameters in a parent object, so this method undos it
 	 *
-	 * @param json the json
-	 * @return the object list as array
-	 */
-	/*
-	Minecraft is dumb and exports json files using objects with keys instead of actual arrays, so this method does some shenanigans to turn it into an array
+	 * @param json The json to convert (pass in the parent object or the list of objects)
+	 * @return The set of map entries where the string is the object key and the JsonElement is the actual object
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getObjectListAsArray(JsonObject json)
 	{
@@ -138,21 +134,24 @@ public class JSONAnimationUtils
 	}
 
 	/**
-	 * Deserialize json to animation animation.
+	 * This is the central method that parses an animation and converts it to an Animation object with all the correct keyframe times and extra metadata.
 	 *
-	 * @param element the element
-	 * @return the animation
-	 * @throws ClassCastException    the class cast exception
-	 * @throws IllegalStateException the illegal state exception
+	 * @param element The animation json
+	 * @return The newly constructed Animation object
+	 * @throws ClassCastException    Throws this exception if the JSON is formatted incorrectly
+	 * @throws IllegalStateException Throws this exception if the JSON is formatted incorrectly
 	 */
 	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element) throws ClassCastException, IllegalStateException
 	{
 		Animation animation = new Animation();
 		JsonObject animationJsonObject = element.getValue().getAsJsonObject();
 
+		// Set some metadata about the animation
 		animation.animationName = element.getKey();
 		animation.animationLength = animationJsonObject.get("animation_length").getAsFloat();
 		animation.boneAnimations = new ArrayList();
+
+		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the
 		Set<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
 		for (Map.Entry<String, JsonElement> bone : bones)
 		{
@@ -168,6 +167,7 @@ public class JSONAnimationUtils
 			}
 			catch(Exception e)
 			{
+				// No scale key frames found
 				boneAnimation.scaleKeyFrames = new VectorKeyFrameList<>();
 			}
 
@@ -179,6 +179,7 @@ public class JSONAnimationUtils
 			}
 			catch(Exception e)
 			{
+				// No position key frames found
 				boneAnimation.positionKeyFrames = new VectorKeyFrameList<>();
 			}
 
@@ -190,6 +191,7 @@ public class JSONAnimationUtils
 			}
 			catch(Exception e)
 			{
+				// No rotation key frames found
 				boneAnimation.rotationKeyFrames = new VectorKeyFrameList<>();
 			}
 

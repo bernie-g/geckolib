@@ -157,11 +157,6 @@ public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 		return new ResourceLocation("geckolib:animations/stingrayanimation.json");
 	}
 
-	@Override
-	public String getDefaultAnimation()
-	{
-		return "animation.stingray.swim";
-	}
 
 
 	@Override

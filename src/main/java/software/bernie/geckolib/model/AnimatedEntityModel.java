@@ -9,6 +9,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Rotations;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationCategory;
 import software.bernie.geckolib.animation.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.file.AnimationFileManager;
@@ -16,19 +17,14 @@ import software.bernie.geckolib.json.JSONAnimationUtils;
 
 import java.util.*;
 
-
 public abstract class AnimatedEntityModel<T extends Entity> extends EntityModel<T>
 {
 	private JsonObject animationFile;
 	private AnimationFileManager animationFileManager;
-	private List<Animation> currentlyPlayingAnimations = new ArrayList();
+	private List<AnimationCategory> activeAnimationCategories = new ArrayList();
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 
-
 	public abstract ResourceLocation getAnimationFileLocation();
-
-	public abstract String getDefaultAnimation();
-
 
 	public AnimatedEntityModel()
 	{
@@ -37,11 +33,10 @@ public abstract class AnimatedEntityModel<T extends Entity> extends EntityModel<
 		{
 			animationFileManager = new AnimationFileManager(getAnimationFileLocation());
 			setAnimationFile(animationFileManager.loadAnimationFile());
-			updateCurrentAnimations(Arrays.asList(getAnimationByName(getDefaultAnimation())));
 		}
 		catch (Exception e)
 		{
-			GeckoLib.LOGGER.error(e);
+			GeckoLib.LOGGER.error("Encountered error while loading animation file", e);
 		}
 	}
 
@@ -60,31 +55,24 @@ public abstract class AnimatedEntityModel<T extends Entity> extends EntityModel<
 		return animationFileManager;
 	}
 
-	private void updateCurrentAnimations(List<Map.Entry<String, JsonElement>> animations)
+	public void resetAllAnimations()
 	{
-		for (Map.Entry<String, JsonElement> animation : animations)
-		{
-			currentlyPlayingAnimations.add(JSONAnimationUtils.deserializeJsonToAnimation(animation));
-		}
+		activeAnimationCategories.clear();
 	}
 
-	public void resetAnimations()
+	public List<AnimationCategory> getActiveAnimationCategories()
 	{
-		currentlyPlayingAnimations.clear();
-	}
-
-	public List<Animation> getPlayingAnimations()
-	{
-		return currentlyPlayingAnimations;
+		return activeAnimationCategories;
 	}
 
 	public AnimatedModelRenderer getBone(String boneName)
 	{
-		return modelRendererList.stream().filter(x -> x.modelRendererName.equals(boneName)).findFirst().orElse(null);
+		return modelRendererList.stream().filter(x -> x.getModelRendererName().equals(boneName)).findFirst().orElse(null);
 	}
 
 	public void registerModelRenderer(AnimatedModelRenderer modelRenderer)
 	{
+		modelRenderer.saveInitialSnapshot();
 		modelRendererList.add(modelRenderer);
 	}
 
@@ -98,49 +86,87 @@ public abstract class AnimatedEntityModel<T extends Entity> extends EntityModel<
 		modelRenderer.rotateAngleX = x;
 		modelRenderer.rotateAngleY = y;
 		modelRenderer.rotateAngleZ = z;
-		modelRenderer.setInitialRotation(new Rotations(x, y, z));
 	}
 
 	@Override
 	public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		float tick = entityIn.ticksExisted + partialTick;
-		for (Animation animation : currentlyPlayingAnimations)
+		for (AnimationCategory animationCategory : activeAnimationCategories)
 		{
+			VectorKeyFrameList<RotationKeyFrame> rotationKeyFrames = new VectorKeyFrameList<>();
+			VectorKeyFrameList<ScaleKeyFrame> scaleKeyFrames = new VectorKeyFrameList<>();
+			VectorKeyFrameList<PositionKeyFrame> positionKeyFrames = new VectorKeyFrameList<>();
+
+
+			Animation animation = animationCategory.getAnimation();
+			float animationLength = animation.animationLength;
+
 			for (BoneAnimation boneAnimation : animation.boneAnimations)
 			{
 				AnimatedModelRenderer bone = getBone(boneAnimation.boneName);
-				VectorKeyFrameList<RotationKeyFrame> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-				VectorKeyFrameList<ScaleKeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
-				VectorKeyFrameList<PositionKeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
 
-				Rotations defaultRotation = bone.getInitialRotation();
-				if (rotationKeyFrames.getXKeyFrames().size() > 1)
+
+				if (animationCategory.transitionState == TransitionState.Transitioning)
 				{
-					bone.rotateAngleX = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.getXKeyFrames(), tick,
-							true, animation.animationLength);
-					bone.rotateAngleY = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.getYKeyFrames(), tick,
-							true, animation.animationLength);
-					bone.rotateAngleZ = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.getZKeyFrames(), tick,
-							true, animation.animationLength);
+					Animation transitioningAnimation = animationCategory.getTransitioningAnimation();
+					float transitionSpeed = animationCategory.transitionSpeed;
+					BoneSnapshot boneSnapshot;
+
+					boolean isBonePartOfNewAnimation = AnimationUtils.isBonePartOfAnimation(bone,
+							transitioningAnimation);
+					if(bone.transitionState == TransitionState.NotTransitioning)
+					{
+						bone.transitionState = TransitionState.Transitioning;
+						animationCategory.transitionStartTick = tick;
+						if (isBonePartOfNewAnimation)
+						{
+							// This means the bone is part of the new animation, and it will try to transition to the first rotation value of the animation
+							bone.saveSnapshot();
+						}
+					}
+					if (isBonePartOfNewAnimation){
+						// This means the bone is part of the new animation, and it will try to transition to the first rotation value of the animation
+						boneSnapshot = bone.getRecentSnapshot();
+					}
+					else {
+						// Set the snapshot to the initial values of that bone (aka the condition when no animations are applied)
+						boneSnapshot = bone.getInitialSnapshot();
+					}
+					rotationKeyFrames.xKeyFrames = Arrays.asList(new RotationKeyFrame(transitionSpeed, boneSnapshot.rotationValueX, 0));
+
 				}
-				if (scaleKeyFrames.getXKeyFrames().size() > 1)
-				{
-					bone.scaleValueX = AnimationUtils.LerpKeyFrames(scaleKeyFrames.getXKeyFrames(), tick, true,
-							animation.animationLength);
-					bone.scaleValueY = AnimationUtils.LerpKeyFrames(scaleKeyFrames.getYKeyFrames(), tick, true,
-							animation.animationLength);
-					bone.scaleValueZ = AnimationUtils.LerpKeyFrames(scaleKeyFrames.getZKeyFrames(), tick, true,
-							animation.animationLength);
+				else {
+					rotationKeyFrames = boneAnimation.rotationKeyFrames;
+					scaleKeyFrames = boneAnimation.scaleKeyFrames;
+					positionKeyFrames = boneAnimation.positionKeyFrames;
 				}
-				if (positionKeyFrames.getXKeyFrames().size() > 1)
+				if (rotationKeyFrames.xKeyFrames.size() > 1)
 				{
-					/*bone.positionOffsetX = AnimationUtils.LerpKeyFrames(positionKeyFrames.getXKeyFrames(), tick, true,
-							animation.animationLength);
-					bone.positionOffsetY = AnimationUtils.LerpKeyFrames(positionKeyFrames.getYKeyFrames(), tick, true,
-							animation.animationLength);
-					bone.positionOffsetZ = AnimationUtils.LerpKeyFrames(positionKeyFrames.getZKeyFrames(), tick, true,
-							animation.animationLength);*/
+					bone.rotateAngleX = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.xKeyFrames, tick,
+							true, animationLength);
+					bone.rotateAngleY = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.yKeyFrames, tick,
+							true, animationLength);
+					bone.rotateAngleZ = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.zKeyFrames, tick,
+							true, animationLength);
+				}
+				if (scaleKeyFrames.xKeyFrames.size() > 1)
+				{
+					bone.scaleValueX = AnimationUtils.LerpKeyFrames(scaleKeyFrames.xKeyFrames, tick, true,
+							animationLength);
+					bone.scaleValueY = AnimationUtils.LerpKeyFrames(scaleKeyFrames.yKeyFrames, tick, true,
+							animationLength);
+					bone.scaleValueZ = AnimationUtils.LerpKeyFrames(scaleKeyFrames.zKeyFrames, tick, true,
+							animationLength);
+				}
+				if (positionKeyFrames.xKeyFrames.size() > 1)
+				{
+					bone.positionOffsetX = AnimationUtils.LerpKeyFrames(positionKeyFrames.xKeyFrames, tick, true,
+							animationLength);
+					bone.positionOffsetY = AnimationUtils.LerpKeyFrames(positionKeyFrames.yKeyFrames, tick, true,
+							animationLength);
+					bone.positionOffsetZ = AnimationUtils.LerpKeyFrames(positionKeyFrames.zKeyFrames, tick, true,
+							animationLength);
 				}
 			}
 		}

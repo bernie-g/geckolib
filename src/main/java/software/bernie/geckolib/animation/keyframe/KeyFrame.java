@@ -5,7 +5,7 @@ public class KeyFrame<T>
 	private float KeyFrameLength;
 	private T StartValue;
 	private T EndValue;
-
+	public boolean isIntermediaryKeyFrame = false;
 	public KeyFrame(float keyFrameLength, T startValue, T endValue)
 	{
 		KeyFrameLength = keyFrameLength;

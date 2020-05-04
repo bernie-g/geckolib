@@ -10,6 +10,7 @@ import software.bernie.geckolib.entity.TurretEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
 
+
 public class TurretModel extends AnimatedEntityModel<TurretEntity>
 {
 	private final AnimatedModelRenderer body;
@@ -31,11 +32,6 @@ public class TurretModel extends AnimatedEntityModel<TurretEntity>
 		return null;
 	}
 
-	@Override
-	public String getDefaultAnimation()
-	{
-		return null;
-	}
 
 	public TurretModel() {
 		textureWidth = 64;

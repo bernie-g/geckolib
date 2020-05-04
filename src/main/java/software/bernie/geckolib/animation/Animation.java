@@ -1,8 +1,6 @@
 package software.bernie.geckolib.animation;
 
-import org.antlr.v4.runtime.misc.NotNull;
 import software.bernie.geckolib.animation.keyframe.*;
-
 import java.util.List;
 
 public class Animation

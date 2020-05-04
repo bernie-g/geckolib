@@ -10,9 +10,9 @@ import net.minecraft.util.math.Vec3d;
 
 public class AnimatedModelRenderer extends ModelRenderer
 {
-	public String modelRendererName;
-	private Rotations initialRotation = new Rotations(0, 0, 0);
-	private Vec3d initialRotationPoint = new Vec3d(0, 0, 0);
+	public TransitionState transitionState = TransitionState.NotTransitioning;
+	private BoneSnapshot boneSnapshot;
+	public String currentAnimationName;
 
 	public float scaleValueX = 1;
 	public float scaleValueY = 1;
@@ -21,6 +21,9 @@ public class AnimatedModelRenderer extends ModelRenderer
 	public float positionOffsetX = 0;
 	public float positionOffsetY = 0;
 	public float positionOffsetZ = 0;
+
+	private String modelRendererName;
+	public BoneSnapshot initialSnapshot;
 
 	public AnimatedModelRenderer(Model model)
 	{
@@ -37,15 +40,7 @@ public class AnimatedModelRenderer extends ModelRenderer
 		this.modelRendererName = modelRendererName;
 	}
 
-	public void setInitialRotation(Rotations initialRotation)
-	{
-		this.initialRotation = initialRotation;
-	}
 
-	public Rotations getInitialRotation()
-	{
-		return initialRotation;
-	}
 
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (this.showModel) {
@@ -53,7 +48,6 @@ public class AnimatedModelRenderer extends ModelRenderer
 				matrixStackIn.push();
 				this.translateRotate(matrixStackIn);
 				this.scale(matrixStackIn);
-				//this.translate(matrixStackIn);
 				this.doRender(matrixStackIn.getLast(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
 				for(ModelRenderer modelrenderer : this.childModels) {
@@ -69,26 +63,12 @@ public class AnimatedModelRenderer extends ModelRenderer
 	{
 		matrixStack.scale(scaleValueX, scaleValueY, scaleValueZ);
 	}
-	public void translate(MatrixStack matrixStack)
-	{
-		matrixStack.translate(positionOffsetX / 16, positionOffsetY / 16, positionOffsetZ / 16);
-	}
 
-	public Vec3d getInitialRotationPoint()
-	{
-		return initialRotationPoint;
-	}
-
-	public void setInitialRotationPoint(Vec3d initialRotationPoint)
-	{
-		this.initialRotationPoint = initialRotationPoint;
-	}
 
 	@Override
 	public void setRotationPoint(float rotationPointXIn, float rotationPointYIn, float rotationPointZIn)
 	{
 		super.setRotationPoint(rotationPointXIn, rotationPointYIn, rotationPointZIn);
-		this.setInitialRotationPoint(new Vec3d(rotationPointXIn, rotationPointYIn, rotationPointZIn));
 	}
 
 	@Override
@@ -106,5 +86,25 @@ public class AnimatedModelRenderer extends ModelRenderer
 		if (this.rotateAngleX != 0.0F) {
 			matrixStackIn.rotate(Vector3f.XP.rotation(this.rotateAngleX));
 		}
+	}
+
+	public void saveInitialSnapshot()
+	{
+		this.initialSnapshot = new BoneSnapshot(this);
+	}
+
+	public BoneSnapshot getInitialSnapshot()
+	{
+		return this.initialSnapshot;
+	}
+
+	public void saveSnapshot()
+	{
+		this.boneSnapshot = new BoneSnapshot(this);
+	}
+
+	public BoneSnapshot getRecentSnapshot()
+	{
+		return this.boneSnapshot;
 	}
 }

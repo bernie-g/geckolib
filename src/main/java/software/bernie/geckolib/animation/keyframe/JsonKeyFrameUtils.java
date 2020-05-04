@@ -11,7 +11,6 @@ public class JsonKeyFrameUtils
 {
 	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
-
 		Float previousXValue = null;
 		Float previousYValue = null;
 		Float previousZValue = null;
@@ -42,6 +41,11 @@ public class JsonKeyFrameUtils
 			previousYValue = currentYValue;
 			previousZValue = currentZValue;
 
+			if(currentKeyFrameLocation == 0 && i == 0)
+			{
+				//Skip the very first keyframe if it's at time 0 as it's pointless
+				continue;
+			}
 			xKeyFrames.add(xKeyFrame);
 			yKeyFrames.add(yKeyFrame);
 			zKeyFrames.add(zKeyFrame);
@@ -53,19 +57,19 @@ public class JsonKeyFrameUtils
 	public static VectorKeyFrameList<RotationKeyFrame> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
-		return new VectorKeyFrameList(frameList.getXKeyFrames(), frameList.getYKeyFrames(),
-				frameList.getZKeyFrames());
+		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
+				frameList.zKeyFrames);
 	}
 	public static VectorKeyFrameList<ScaleKeyFrame> convertJsonToScaleKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
-		return new VectorKeyFrameList(frameList.getXKeyFrames(), frameList.getYKeyFrames(),
-				frameList.getZKeyFrames());
+		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
+				frameList.zKeyFrames);
 	}
 	public static VectorKeyFrameList<PositionKeyFrame> convertJsonToPositionKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
-		return new VectorKeyFrameList(frameList.getXKeyFrames(), frameList.getYKeyFrames(),
-				frameList.getZKeyFrames());
+		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
+				frameList.zKeyFrames);
 	}
 }
