@@ -1,4 +1,4 @@
-package software.bernie.geckolib.client.renderer.entity;
+package software.bernie.geckolib.testentities.client.renderer.entity;
 
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.client.renderer.model.TurretModel;
-import software.bernie.geckolib.entity.TurretEntity;
+import software.bernie.geckolib.testentities.client.renderer.model.TurretModel;
+import software.bernie.geckolib.testentities.entity.TurretEntity;
 
 import javax.annotation.Nullable;
 

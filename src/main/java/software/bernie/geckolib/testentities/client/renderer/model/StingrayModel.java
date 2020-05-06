@@ -1,18 +1,18 @@
 // Made with Blockbench 3.5.0
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
-package software.bernie.geckolib.client.renderer.model;
+package software.bernie.geckolib.testentities.client.renderer.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.AnimationUtils;
-import software.bernie.geckolib.animation.keyframe.RotationKeyFrame;
-import software.bernie.geckolib.entity.StingrayTestEntity;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.testentities.entity.StingrayTestEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
-import java.util.Arrays;
-import java.util.List;
+import software.bernie.geckolib.model.TransitionState;
 
 public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 {
@@ -157,11 +157,10 @@ public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 		return new ResourceLocation("geckolib:animations/stingrayanimation.json");
 	}
 
-
-
 	@Override
 	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
 	{
 		Stingray.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
+
 }

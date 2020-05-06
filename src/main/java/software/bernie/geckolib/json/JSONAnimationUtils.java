@@ -1,5 +1,6 @@
 package software.bernie.geckolib.json;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
@@ -44,7 +45,13 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getRotationKeyFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("rotation"));
+		JsonObject rotationObject = json.getAsJsonObject("rotation");
+		if(rotationObject.isJsonArray())
+		{
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
+					rotationObject.getAsJsonArray()));
+		}
+		return getObjectListAsArray(rotationObject);
 	}
 
 	/**
@@ -54,8 +61,13 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getPositionKeyFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("position"));
-	}
+		JsonObject positionObject = json.getAsJsonObject("position");
+		if(positionObject.isJsonArray())
+		{
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
+					positionObject.getAsJsonArray()));
+		}
+		return getObjectListAsArray(positionObject);	}
 
 	/**
 	 * Gets scale key frames.
@@ -65,8 +77,13 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getScaleKeyFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("scale"));
-	}
+		JsonObject scaleObject = json.getAsJsonObject("scale");
+		if(scaleObject.isJsonArray())
+		{
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
+					scaleObject.getAsJsonArray()));
+		}
+		return getObjectListAsArray(scaleObject);	}
 
 	/**
 	 * Gets sound effect frames.

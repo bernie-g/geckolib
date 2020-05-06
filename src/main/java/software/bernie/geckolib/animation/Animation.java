@@ -9,7 +9,7 @@ public class Animation
 	public float animationLength;
 
 	public List<BoneAnimation> boneAnimations;
-	public List<SoundEffectKeyFrame> rotationKeyFrames;
+	public List<SoundEffectKeyFrame> soundEffectKeyFrames;
 	public List<ParticleEffectKeyFrame> particleEffectKeyFrames;
 	public List<CustomInstructionKeyFrame> customInstructionKeyFrames;
 }

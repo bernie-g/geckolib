@@ -4,7 +4,6 @@ import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.KeyFrameLocation;
-import software.bernie.geckolib.animation.keyframe.RotationKeyFrame;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
 
 import java.util.List;
@@ -55,6 +54,7 @@ public class AnimationUtils
 	 */
 	public static float lerpAnimationDegrees(float currentTick, float animationLengthSeconds, float animationStartRotation, float animationEndRotation)
 	{
+		//GeckoLib.LOGGER.info(currentTick);
 		return lerpAnimationFloat(currentTick, animationLengthSeconds, (float) Math.toRadians(animationStartRotation),
 				(float) Math.toRadians(animationEndRotation));
 	}
@@ -68,38 +68,59 @@ public class AnimationUtils
 	 * @param animationLength The animation length
 	 * @return the float
 	 */
-	public static float LerpRotationKeyFrames(List<RotationKeyFrame> frames, float ageInTicks, boolean loop, float animationLength)
+	public static float LerpRotationKeyFrames(List<KeyFrame<Float>> frames, float ageInTicks, boolean loop, float animationLength)
 	{
 		float animationLengthTicks = convertSecondsToTicks(animationLength);
-		KeyFrameLocation<RotationKeyFrame> frameLocation = getCurrentKeyFrameLocation(frames,
+		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(frames,
 				loop ? ageInTicks % animationLengthTicks : ageInTicks);
 		KeyFrame<Float> frame = frameLocation.CurrentFrame;
-		return lerpAnimationDegrees(frameLocation.CurrentAnimationTick, frame.getKeyFrameLength(), frame.getStartValue(), frame.getEndValue());
+		if(Float.isNaN(animationLength))
+		{
+			return frame.getEndValue();
+		}
+		if(frameLocation.CurrentAnimationTick == -1)
+		{
+			return frame.getEndValue();
+		}
+		float value = lerpAnimationDegrees(frameLocation.CurrentAnimationTick, frame.getKeyFrameLength(),
+				frame.getStartValue(), frame.getEndValue());
+		if(Float.isNaN(value))
+		{
+			GeckoLib.LOGGER.error("Somehow got a NaN during lerpKeyframes. Blame gecko and cry. Ageinticks: " + ageInTicks + ". Loop:" + loop + ". Animationlength: " + animationLength);
+		}
+		return value;
 	}
 
 	/**
 	 * Lerp key frames float.
 	 *
-	 * @param <T>             The type parameter
 	 * @param frames          The frames
 	 * @param ageInTicks      The age in ticks
 	 * @param loop            The loop
 	 * @param animationLength The animation length
 	 * @return the float
 	 */
-	public static <T extends KeyFrame<Float>> float LerpKeyFrames(List<T> frames, float ageInTicks, boolean loop, float animationLength)
+	public static float LerpKeyFrames(List<KeyFrame<Float>> frames, float ageInTicks, boolean loop, float animationLength)
 	{
 		float animationLengthTicks = convertSecondsToTicks(animationLength);
-		KeyFrameLocation<T> frameLocation = getCurrentKeyFrameLocation(frames,
+		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(frames,
 				loop ? ageInTicks % animationLengthTicks : ageInTicks);
-		T frame = frameLocation.CurrentFrame;
+		KeyFrame<Float> frame = frameLocation.CurrentFrame;
+		if(Float.isNaN(animationLength))
+		{
+			return frame.getEndValue();
+		}
+		if(frameLocation.CurrentAnimationTick == -1)
+		{
+			return frame.getEndValue();
+		}
 		return lerpAnimationFloat(frameLocation.CurrentAnimationTick, frame.getKeyFrameLength(), frame.getStartValue(), frame.getEndValue());
 	}
 
 	/*
 	Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
 	 */
-	private static <T extends KeyFrame<?>> KeyFrameLocation<T> getCurrentKeyFrameLocation(List<T> frames, float ageInTicks)
+	private static KeyFrameLocation<KeyFrame<Float>> getCurrentKeyFrameLocation(List<KeyFrame<Float>> frames, float ageInTicks)
 	{
 		float seconds = convertTicksToSeconds(ageInTicks);
 		float totalTimeTracker = 0;
@@ -107,13 +128,13 @@ public class AnimationUtils
 		{
 			KeyFrame frame = frames.get(i);
 			totalTimeTracker += frame.getKeyFrameLength();
-			if (totalTimeTracker > seconds)
+			if (totalTimeTracker >= seconds)
 			{
 				float tick = ageInTicks - convertSecondsToTicks(totalTimeTracker - frame.getKeyFrameLength());
 				return new KeyFrameLocation(frame, tick);
 			}
 		}
-		return new KeyFrameLocation(frames.get(frames.size() - 1), ageInTicks - totalTimeTracker);
+		return new KeyFrameLocation(frames.get(frames.size() - 1), -1);
 	}
 
 	/**
@@ -130,7 +151,7 @@ public class AnimationUtils
 
 	public static boolean isBonePartOfAnimation(AnimatedModelRenderer modelRenderer, Animation animation)
 	{
-		return animation.boneAnimations.stream().anyMatch(x -> x.boneName == modelRenderer.getModelRendererName());
+		return animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(modelRenderer.getModelRendererName()));
 	}
 
 }

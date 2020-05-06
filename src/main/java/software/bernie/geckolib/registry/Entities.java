@@ -7,7 +7,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.entity.StingrayTestEntity;
+import software.bernie.geckolib.testentities.entity.StingrayTestEntity;
 
 public class Entities
 {

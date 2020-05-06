@@ -1,4 +1,4 @@
-package software.bernie.geckolib.client.renderer.model;// Made with Blockbench 3.5.2
+package software.bernie.geckolib.testentities.client.renderer.model;// Made with Blockbench 3.5.2
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
 
@@ -6,7 +6,7 @@ package software.bernie.geckolib.client.renderer.model;// Made with Blockbench 3
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.entity.TurretEntity;
+import software.bernie.geckolib.testentities.entity.TurretEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
 

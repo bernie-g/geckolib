@@ -3,6 +3,7 @@ package software.bernie.geckolib.file;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleResource;
 import net.minecraft.util.JSONUtils;
@@ -23,7 +24,7 @@ public class AnimationFileManager
 	private JsonObject loadAnimationFile(ResourceLocation location) throws Exception
 	{
 		Gson GSON = new Gson();
-		IResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		SimpleResource resource = (SimpleResource) resourceManager.getResource(location);
 		Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
 		JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);

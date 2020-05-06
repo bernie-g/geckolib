@@ -33,19 +33,15 @@ public class JsonKeyFrameUtils
 			float currentYValue = vectorJsonArray.get(1).getAsFloat();
 			float currentZValue = vectorJsonArray.get(2).getAsFloat();
 
-			KeyFrame<Float> xKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? null : previousXValue, currentXValue);
-			KeyFrame<Float> yKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? null : previousYValue, currentYValue);
-			KeyFrame<Float> zKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? null : previousZValue, currentZValue);
+			KeyFrame<Float> xKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? currentXValue : previousXValue, currentXValue);
+			KeyFrame<Float> yKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? currentYValue : previousYValue, currentYValue);
+			KeyFrame<Float> zKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? currentZValue : previousZValue, currentZValue);
 
 			previousXValue = currentXValue;
 			previousYValue = currentYValue;
 			previousZValue = currentZValue;
 
-			if(currentKeyFrameLocation == 0 && i == 0)
-			{
-				//Skip the very first keyframe if it's at time 0 as it's pointless
-				continue;
-			}
+
 			xKeyFrames.add(xKeyFrame);
 			yKeyFrames.add(yKeyFrame);
 			zKeyFrames.add(zKeyFrame);
@@ -54,22 +50,23 @@ public class JsonKeyFrameUtils
 		return new VectorKeyFrameList<>(xKeyFrames, yKeyFrames, zKeyFrames);
 	}
 
-	public static VectorKeyFrameList<RotationKeyFrame> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
 				frameList.zKeyFrames);
 	}
-	public static VectorKeyFrameList<ScaleKeyFrame> convertJsonToScaleKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToScaleKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
 				frameList.zKeyFrames);
 	}
-	public static VectorKeyFrameList<PositionKeyFrame> convertJsonToPositionKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToPositionKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
 		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
 				frameList.zKeyFrames);
 	}
+
 }
