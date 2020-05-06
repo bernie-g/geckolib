@@ -45,13 +45,13 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getRotationKeyFrames(JsonObject json)
 	{
-		JsonObject rotationObject = json.getAsJsonObject("rotation");
+		JsonElement rotationObject = json.get("rotation");
 		if(rotationObject.isJsonArray())
 		{
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					rotationObject.getAsJsonArray()));
 		}
-		return getObjectListAsArray(rotationObject);
+		return getObjectListAsArray(rotationObject.getAsJsonObject());
 	}
 
 	/**
@@ -61,13 +61,14 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getPositionKeyFrames(JsonObject json)
 	{
-		JsonObject positionObject = json.getAsJsonObject("position");
+		JsonElement positionObject = json.get("position");
 		if(positionObject.isJsonArray())
 		{
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					positionObject.getAsJsonArray()));
 		}
-		return getObjectListAsArray(positionObject);	}
+		return getObjectListAsArray(positionObject.getAsJsonObject());
+	}
 
 	/**
 	 * Gets scale key frames.
@@ -77,13 +78,13 @@ public class JSONAnimationUtils
 	 */
 	public static Set<Map.Entry<String, JsonElement>> getScaleKeyFrames(JsonObject json)
 	{
-		JsonObject scaleObject = json.getAsJsonObject("scale");
+		JsonElement scaleObject = json.get("scale");
 		if(scaleObject.isJsonArray())
 		{
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					scaleObject.getAsJsonArray()));
 		}
-		return getObjectListAsArray(scaleObject);	}
+		return getObjectListAsArray(scaleObject.getAsJsonObject());	}
 
 	/**
 	 * Gets sound effect frames.

@@ -156,37 +156,27 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				AnimatedModelRenderer bone = getBone(boneAnimation.boneName);
 				transitionAnimation = animationController.getTransitioningAnimation();
 
-				BoneSnapshot boneSnapshot = null;
+				BoneSnapshot recentSnapshot = null;
+				BoneSnapshot initialSnapshot = null;
+
 				if (bone.transitionState == TransitionState.JustStarted)
 				{
-
-					if (AnimationUtils.isBonePartOfAnimation(bone, transitionAnimation))
-					{
-						bone.saveSnapshot();
-						boneSnapshot = bone.getRecentSnapshot();
-					}
-					else
-					{
-						boneSnapshot = bone.getInitialSnapshot();
-					}
+					bone.saveSnapshot();
+					recentSnapshot = bone.getRecentSnapshot();
+					initialSnapshot = bone.getInitialSnapshot();
 					bone.transitionState = TransitionState.Transitioning;
 				}
 
 				if (bone.transitionState == TransitionState.Transitioning || animationController.transitionState == TransitionState.Transitioning)
 				{
-					if (AnimationUtils.isBonePartOfAnimation(bone, transitionAnimation))
-					{
-						boneSnapshot = bone.getRecentSnapshot();
-					}
-					else
-					{
-						boneSnapshot = bone.getInitialSnapshot();
-					}
+					recentSnapshot = bone.getRecentSnapshot();
+					initialSnapshot = bone.getInitialSnapshot();
 				}
 				boolean loop = true;
 
-				if (boneSnapshot != null)
+				if (initialSnapshot != null)
 				{
+
 					loop = false;
 					BoneAnimation newBoneAnimation = transitionAnimation.boneAnimations.stream().filter(
 							x -> x.boneName.equals(boneAnimation.boneName)).findFirst().orElse(null);
@@ -201,12 +191,20 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						Float rY = newBoneAnimation.rotationKeyFrames.yKeyFrames.get(0).getStartValue();
 						Float rZ = newBoneAnimation.rotationKeyFrames.zKeyFrames.get(0).getStartValue();
 						tempRotationKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.rotationValueX, rX));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueX, rX));
 						tempRotationKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.rotationValueY, rY));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueY, rY));
 						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.rotationValueZ, rZ));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ, rZ));
 
+					}
+					else {
+						tempRotationKeyFrames.xKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueX, initialSnapshot.rotationValueX));
+						tempRotationKeyFrames.yKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueY, initialSnapshot.rotationValueY));
+						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ, initialSnapshot.rotationValueZ));
 					}
 
 					if (newBoneAnimation.positionKeyFrames.xKeyFrames.size() >= 1)
@@ -215,11 +213,19 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						Float pY = newBoneAnimation.positionKeyFrames.yKeyFrames.get(0).getStartValue();
 						Float pZ = newBoneAnimation.positionKeyFrames.zKeyFrames.get(0).getStartValue();
 						tempPositionKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.positionOffsetX, pX));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX, pX));
 						tempPositionKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.positionOffsetY, pY));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY, pY));
 						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.positionOffsetZ, pZ));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ, pZ));
+					}
+					else {
+						tempPositionKeyFrames.xKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
+						tempPositionKeyFrames.yKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY, initialSnapshot.positionOffsetY));
+						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ));
 					}
 					if (newBoneAnimation.scaleKeyFrames.xKeyFrames.size() >= 1)
 					{
@@ -228,12 +234,21 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						Float sZ = newBoneAnimation.scaleKeyFrames.zKeyFrames.get(0).getStartValue();
 
 						tempScaleKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.scaleValueX, sX));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueX, sX));
 						tempScaleKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.scaleValueY, sY));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueY, sY));
 						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, boneSnapshot.scaleValueZ, sZ));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ, sZ));
 
+					}
+					else
+					{
+						tempScaleKeyFrames.xKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueX, initialSnapshot.scaleValueX));
+						tempScaleKeyFrames.yKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueY, initialSnapshot.scaleValueY));
+						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
 					}
 					rotationKeyFrames = tempRotationKeyFrames;
 					positionKeyFrames = tempPositionKeyFrames;
