@@ -98,13 +98,9 @@ public class AnimatedModelRenderer extends ModelRenderer
 		return this.initialSnapshot;
 	}
 
-	public void saveSnapshot()
+	public BoneSnapshot saveSnapshot()
 	{
-		this.boneSnapshot = new BoneSnapshot(this);
+		return new BoneSnapshot(this);
 	}
 
-	public BoneSnapshot getRecentSnapshot()
-	{
-		return this.boneSnapshot;
-	}
 }

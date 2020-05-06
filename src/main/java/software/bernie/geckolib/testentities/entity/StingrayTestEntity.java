@@ -29,8 +29,11 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 
 	public void registerAnimationControllers()
 	{
-		wingController.setAnimation("swimmingAnimation");
-		this.animationControllers.addAnimationController(wingController);
+		if(world.isRemote)
+		{
+			wingController.setAnimation("swimmingAnimation");
+			this.animationControllers.addAnimationController(wingController);
+		}
 	}
 
 	public boolean wingAnimationPredicate(Entity entity, float limbSwing, float limbSwingAmount, float partialTick, TransitionState state, AnimationController controller)

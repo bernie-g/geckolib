@@ -161,15 +161,15 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 				if (bone.transitionState == TransitionState.JustStarted)
 				{
-					bone.saveSnapshot();
-					recentSnapshot = bone.getRecentSnapshot();
+					animationController.recentSnapshot = bone.saveSnapshot();
+					recentSnapshot = animationController.recentSnapshot;
 					initialSnapshot = bone.getInitialSnapshot();
 					bone.transitionState = TransitionState.Transitioning;
 				}
 
 				if (bone.transitionState == TransitionState.Transitioning || animationController.transitionState == TransitionState.Transitioning)
 				{
-					recentSnapshot = bone.getRecentSnapshot();
+					recentSnapshot = animationController.recentSnapshot;
 					initialSnapshot = bone.getInitialSnapshot();
 				}
 				boolean loop = true;

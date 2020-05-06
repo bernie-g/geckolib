@@ -1,5 +1,7 @@
 package software.bernie.geckolib.animation;
 
+import software.bernie.geckolib.model.BoneSnapshot;
+
 import java.util.HashMap;
 
 public class AnimationControllerCollection extends HashMap<String, AnimationController>
@@ -19,7 +21,4 @@ public class AnimationControllerCollection extends HashMap<String, AnimationCont
 	{
 		return this.put(value.name, value);
 	}
-
-	public boolean hasRegisteredControllers = false;
-
 }

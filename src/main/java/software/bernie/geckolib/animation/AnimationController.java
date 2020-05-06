@@ -18,6 +18,7 @@ import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.json.JSONAnimationUtils;
 import software.bernie.geckolib.model.AnimatedEntityModel;
+import software.bernie.geckolib.model.BoneSnapshot;
 import software.bernie.geckolib.model.TransitionState;
 
 import java.util.Random;
@@ -25,14 +26,13 @@ import java.util.function.Predicate;
 
 public class AnimationController<T extends Entity>
 {
-
+	public BoneSnapshot recentSnapshot = null;
 	private T entity;
 	public String name;
 	private Animation animation;
 	private Animation transitioningAnimation;
 	public float transitionLength;
 	public TransitionState transitionState = TransitionState.NotTransitioning;
-//	public float transitionStartTick;
 	private IAnimationPredicate animationPredicate;
 	public float tickOffset = 0;
 
@@ -65,20 +65,20 @@ public class AnimationController<T extends Entity>
 			EntityModel entityModel = renderer.getEntityModel();
 			if(entityModel instanceof AnimatedEntityModel)
 			{
-				Animation animation = null;
+				Animation loadingAnimation = null;
 				AnimatedEntityModel model = (AnimatedEntityModel) entityModel;
-				animation = model.getAnimation(animationName);
+				loadingAnimation = model.getAnimation(animationName);
 				if (this.animation == null)
 				{
-					this.animation = animation;
+					this.animation = loadingAnimation;
 				}
-				else if (transitioningAnimation == null)
+				else if(this.animation.animationName.equals(animationName))
 				{
-					replaceAnimation(model, animation);
+					return;
 				}
-				else if (animation.animationName != transitioningAnimation.animationName)
+				else if (transitioningAnimation == null || loadingAnimation.animationName != transitioningAnimation.animationName)
 				{
-					replaceAnimation(model, animation);
+					replaceAnimation(model, loadingAnimation);
 				}
 			}
 		}
