@@ -130,7 +130,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			if (animationController.transitionState == TransitionState.JustStarted)
 			{
 				animationController.tickOffset = tick;
-				animationController.transitionState = TransitionState.Transitioning;
 				transitionLength = animationController.transitionLength;
 
 				transitionAnimation = animationController.getTransitioningAnimation();
@@ -141,10 +140,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				animationController.transitionState = TransitionState.NotTransitioning;
 				animationController.manuallyReplaceAnimation();
 				animation = animationController.getTransitioningAnimation();
-				for (BoneAnimation boneAnimation : animation.boneAnimations)
-				{
-					getBone(boneAnimation.boneName).transitionState = TransitionState.NotTransitioning;
-				}
 				transitionAnimation = animationController.getTransitioningAnimation();
 				animationLength = animationController.getAnimation().animationLength;
 				animationController.tickOffset = tick + 0.001F;
@@ -153,25 +148,29 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 			for (BoneAnimation boneAnimation : animation.boneAnimations)
 			{
+/*				if(!boneAnimation.boneName.equals("Righthand"))
+				{
+					continue;
+				}*/
 				AnimatedModelRenderer bone = getBone(boneAnimation.boneName);
 				transitionAnimation = animationController.getTransitioningAnimation();
 
 				BoneSnapshot recentSnapshot = null;
 				BoneSnapshot initialSnapshot = null;
-
-				if (bone.transitionState == TransitionState.JustStarted)
+				if ( animationController.transitionState == TransitionState.Transitioning)
+				{
+					recentSnapshot = animationController.recentSnapshot;
+					initialSnapshot = bone.getInitialSnapshot();
+				}
+				if (animationController.transitionState == TransitionState.JustStarted)
 				{
 					animationController.recentSnapshot = bone.saveSnapshot();
 					recentSnapshot = animationController.recentSnapshot;
 					initialSnapshot = bone.getInitialSnapshot();
-					bone.transitionState = TransitionState.Transitioning;
+					animationController.transitionState = TransitionState.Transitioning;
 				}
 
-				if (bone.transitionState == TransitionState.Transitioning || animationController.transitionState == TransitionState.Transitioning)
-				{
-					recentSnapshot = animationController.recentSnapshot;
-					initialSnapshot = bone.getInitialSnapshot();
-				}
+
 				boolean loop = true;
 
 				if (initialSnapshot != null)

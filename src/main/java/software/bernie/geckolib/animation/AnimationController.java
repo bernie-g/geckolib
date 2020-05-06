@@ -94,10 +94,6 @@ public class AnimationController<T extends Entity>
 	{
 		this.transitioningAnimation = animation;
 		this.transitionState = TransitionState.JustStarted;
-		for(BoneAnimation boneAnimation : animation.boneAnimations)
-		{
-			entityModel.getBone(boneAnimation.boneName).transitionState = TransitionState.JustStarted;
-		}
 	}
 
 

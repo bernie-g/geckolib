@@ -10,7 +10,6 @@ import net.minecraft.util.math.Vec3d;
 
 public class AnimatedModelRenderer extends ModelRenderer
 {
-	public TransitionState transitionState = TransitionState.NotTransitioning;
 	private BoneSnapshot boneSnapshot;
 	public String currentAnimationName;
 
