@@ -1,6 +1,7 @@
 package software.bernie.geckolib.json;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
@@ -32,9 +33,10 @@ public class JSONAnimationUtils
 	 * @param json The animation json
 	 * @return The set of map entries where the string is the name of the group name in blockbench and the JsonElement is the object, which has all the position/rotation/scale keyframes
 	 */
-	public static Set<Map.Entry<String, JsonElement>> getBones(JsonObject json)
+	public static List<Map.Entry<String, JsonElement>> getBones(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("bones"));
+		JsonObject bones = json.getAsJsonObject("bones");
+		return bones == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(bones));
 	}
 
 	/**
@@ -50,6 +52,13 @@ public class JSONAnimationUtils
 		{
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					rotationObject.getAsJsonArray()));
+		}
+		if(rotationObject.isJsonPrimitive())
+		{
+			float value = rotationObject.getAsFloat();
+			Gson gson = new Gson();
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
 		}
 		return getObjectListAsArray(rotationObject.getAsJsonObject());
 	}
@@ -67,6 +76,13 @@ public class JSONAnimationUtils
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					positionObject.getAsJsonArray()));
 		}
+		if(positionObject.isJsonPrimitive())
+		{
+			float value = positionObject.getAsFloat();
+			Gson gson = new Gson();
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
+		}
 		return getObjectListAsArray(positionObject.getAsJsonObject());
 	}
 
@@ -83,6 +99,13 @@ public class JSONAnimationUtils
 		{
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001",
 					scaleObject.getAsJsonArray()));
+		}
+		if(scaleObject.isJsonPrimitive())
+		{
+			float value = scaleObject.getAsFloat();
+			Gson gson = new Gson();
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
 		}
 		return getObjectListAsArray(scaleObject.getAsJsonObject());	}
 
@@ -165,12 +188,15 @@ public class JSONAnimationUtils
 		JsonObject animationJsonObject = element.getValue().getAsJsonObject();
 
 		// Set some metadata about the animation
-		animation.animationName = element.getKey();
-		animation.animationLength = animationJsonObject.get("animation_length").getAsFloat();
+ 		animation.animationName = element.getKey();
+		JsonElement animation_length = animationJsonObject.get("animation_length");
+		animation.animationLength = animation_length == null ? 0.01F : animation_length.getAsFloat();
 		animation.boneAnimations = new ArrayList();
+		JsonElement loop = animationJsonObject.get("loop");
+		animation.loop = loop == null ? false : loop.getAsBoolean();
 
 		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the
-		Set<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
+		List<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
 		for (Map.Entry<String, JsonElement> bone : bones)
 		{
 			BoneAnimation boneAnimation = new BoneAnimation();

@@ -1,18 +1,14 @@
 // Made with Blockbench 3.5.0
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
-package software.bernie.geckolib.testentities.client.renderer.model;
+package software.bernie.geckolib.test.client.renderer.model;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.testentities.entity.StingrayTestEntity;
+import software.bernie.geckolib.test.entity.StingrayTestEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
-import software.bernie.geckolib.model.TransitionState;
 
 public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 {

@@ -52,7 +52,6 @@ public class AnimatedModelRenderer extends ModelRenderer
 				for(ModelRenderer modelrenderer : this.childModels) {
 					modelrenderer.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 				}
-
 				matrixStackIn.pop();
 			}
 		}

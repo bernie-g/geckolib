@@ -1,4 +1,4 @@
-package software.bernie.geckolib.testentities.entity;
+package software.bernie.geckolib.test.entity;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;

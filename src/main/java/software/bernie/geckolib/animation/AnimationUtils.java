@@ -4,6 +4,7 @@ import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.KeyFrameLocation;
+import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
 
 import java.util.List;
@@ -149,9 +150,22 @@ public class AnimationUtils
 		return (float) frames.stream().mapToDouble(x -> convertSecondsToTicks(x.getKeyFrameLength())).sum();
 	}
 
-	public static boolean isBonePartOfAnimation(AnimatedModelRenderer modelRenderer, Animation animation)
+	public static VectorKeyFrameList<KeyFrame<Float>> applySpeedModifier(VectorKeyFrameList<KeyFrame<Float>> keyframes, float speedModifier)
 	{
-		return animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(modelRenderer.getModelRendererName()));
+		for(KeyFrame<Float> keyframe : keyframes.xKeyFrames)
+		{
+			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
+		}
+		for(KeyFrame<Float> keyframe : keyframes.yKeyFrames)
+		{
+			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
+		}
+		for(KeyFrame<Float> keyframe : keyframes.zKeyFrames)
+		{
+			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
+		}
+		return keyframes;
 	}
+
 
 }

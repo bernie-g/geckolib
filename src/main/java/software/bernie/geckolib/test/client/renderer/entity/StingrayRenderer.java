@@ -1,4 +1,4 @@
-package software.bernie.geckolib.testentities.client.renderer.entity;
+package software.bernie.geckolib.test.client.renderer.entity;
 
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -9,8 +9,8 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.testentities.client.renderer.model.StingrayModel;
-import software.bernie.geckolib.testentities.entity.StingrayTestEntity;
+import software.bernie.geckolib.test.client.renderer.model.StingrayModel;
+import software.bernie.geckolib.test.entity.StingrayTestEntity;
 
 import javax.annotation.Nullable;
 

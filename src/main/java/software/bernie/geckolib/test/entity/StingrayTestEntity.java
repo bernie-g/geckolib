@@ -1,4 +1,4 @@
-package software.bernie.geckolib.testentities.entity;
+package software.bernie.geckolib.test.entity;
 
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.IAnimatedEntity;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationControllerCollection;
-import software.bernie.geckolib.model.TransitionState;
+import software.bernie.geckolib.animation.AnimationTestEvent;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntity
 {
@@ -25,6 +25,7 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 	{
 		super(p_i48565_1_, p_i48565_2_);
 		this.registerAnimationControllers();
+
 	}
 
 	public void registerAnimationControllers()
@@ -36,8 +37,9 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 		}
 	}
 
-	public boolean wingAnimationPredicate(Entity entity, float limbSwing, float limbSwingAmount, float partialTick, TransitionState state, AnimationController controller)
+	public boolean wingAnimationPredicate(AnimationTestEvent event)
 	{
+		Entity entity = event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
 		if(entityWorld.rainingStrength > 0)
 		{
