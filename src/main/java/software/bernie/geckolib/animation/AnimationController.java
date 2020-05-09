@@ -7,24 +7,12 @@ import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.LivingRenderer;
 import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.keyframe.BoneAnimation;
-import software.bernie.geckolib.json.JSONAnimationUtils;
 import software.bernie.geckolib.model.AnimatedEntityModel;
-import software.bernie.geckolib.model.BoneSnapshot;
 import software.bernie.geckolib.model.BoneSnapshotCollection;
 import software.bernie.geckolib.model.TransitionState;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class AnimationController<T extends Entity>
 {
@@ -32,7 +20,7 @@ public class AnimationController<T extends Entity>
 	public String name;
 	private Animation animation;
 	private Animation transitioningAnimation;
-	public float transitionLength;
+	private float transitionLength;
 	public TransitionState transitionState = TransitionState.NotTransitioning;
 	private IAnimationPredicate animationPredicate;
 	public float tickOffset = 0;
@@ -42,7 +30,7 @@ public class AnimationController<T extends Entity>
 	private boolean scaleEnabled;
 	private float speedModifier = 1;
 	private Queue<Pair<String, Boolean>> animationQueue = new LinkedList<>();
-
+	public boolean animationStoppedFlag = false;
 
 	public void clearTransitioningAnimation()
 	{
@@ -127,6 +115,16 @@ public class AnimationController<T extends Entity>
 		this.animationQueue.clear();
 	}
 
+	public float getTransitionSpeed()
+	{
+		return transitionLength;
+	}
+
+	public void setTransitionSpeed(float transitionLength)
+	{
+		this.transitionLength = transitionLength;
+	}
+
 	public interface IAnimationPredicate {
 		<ENTITY extends Entity> boolean test(AnimationTestEvent<ENTITY> event);
 	}
@@ -164,6 +162,11 @@ public class AnimationController<T extends Entity>
 				Animation loadingAnimation = null;
 				AnimatedEntityModel model = (AnimatedEntityModel) entityModel;
 				loadingAnimation = model.getAnimation(animationName);
+				if(loadingAnimation == null)
+				{
+					this.animation = null;
+					return;
+				}
 				if(loop != null)
 				{
 					loadingAnimation.loop = loop;

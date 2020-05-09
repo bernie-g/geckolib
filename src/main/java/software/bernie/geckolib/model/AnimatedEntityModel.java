@@ -2,7 +2,6 @@ package software.bernie.geckolib.model;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.realmsclient.util.JsonUtils;
 import javafx.util.Pair;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
@@ -25,8 +24,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private AnimationFileManager animationFileManager;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
+
 	public abstract ResourceLocation getAnimationFileLocation();
+
 	public boolean loopByDefault = false;
+
 	public AnimatedEntityModel()
 	{
 		super();
@@ -51,8 +53,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			Animation animation = null;
 			try
 			{
-				animation = JSONAnimationUtils.deserializeJsonToAnimation(JSONAnimationUtils.getAnimation(getAnimationFile(), animationName));
-				if(loopByDefault)
+				animation = JSONAnimationUtils.deserializeJsonToAnimation(
+						JSONAnimationUtils.getAnimation(getAnimationFile(), animationName));
+				if (loopByDefault)
 				{
 					animation.loop = true;
 				}
@@ -108,30 +111,36 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	@Override
 	public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick)
 	{
+		HashMap<String, DirtyTracker> dirtyTracker = new HashMap<String, DirtyTracker>();
+
+		for (AnimatedModelRenderer renderer : this.modelRendererList)
+		{
+			dirtyTracker.put(renderer.getModelRendererName(), new DirtyTracker(false, false, false, renderer));
+		}
 		AnimationControllerCollection animationControllers = entityIn.getAnimationControllers();
 		for (AnimationController animationController : animationControllers.values())
 		{
+
 			float tick = entityIn.ticksExisted + partialTick;
-
-
+			tick *= animationController.getSpeedModifier();
 			VectorKeyFrameList<KeyFrame<Float>> rotationKeyFrames;
 			VectorKeyFrameList<KeyFrame<Float>> scaleKeyFrames;
 			VectorKeyFrameList<KeyFrame<Float>> positionKeyFrames;
 
 			Animation animation = animationController.getAnimation();
-			if(animation == null)
+			if (animation == null)
 			{
 				float adjustedTick = tick - animationController.tickOffset;
-				if(adjustedTick < 0)
+				if (adjustedTick < 0)
 				{
 					adjustedTick = 0.01F;
 				}
-				AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount, partialTick,
+				AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount,
+						partialTick,
 						animationController.transitionState, animationController);
 				animationController.getAnimationPredicate().test(event);
 				continue;
 			}
-			GeckoLib.LOGGER.info(animation.animationName);
 			Animation transitionAnimation = null;
 			float transitionLength = 0;
 			float animationLength = animation.animationLength;
@@ -142,53 +151,74 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			}
 
 			else if (animationController.transitionState == TransitionState.Transitioning && tick - animationController.tickOffset >= AnimationUtils.convertSecondsToTicks(
-					animationController.transitionLength))
+					animationController.getTransitionSpeed()))
 			{
 				animationController.transitionState = TransitionState.NotTransitioning;
 				Animation transitioningAnimation = animationController.getTransitioningAnimation();
-
-				if(transitioningAnimation != null)
+				animationController.tickOffset = tick;
+				if (transitioningAnimation != null)
 				{
 					animation = transitioningAnimation;
 					animationController.manuallyReplaceAnimation();
-
 				}
 				animationLength = animationController.getAnimation().animationLength;
 				animationController.clearTransitioningAnimation();
 			}
 			float adjustedTick = tick - animationController.tickOffset;
-			if(adjustedTick < 0)
+			if (adjustedTick < 0)
 			{
 				adjustedTick = 0.01F;
 			}
-
-			if(animationController.transitionState == TransitionState.NotTransitioning && adjustedTick >= animation.animationLength)
-			{
-				Queue queue = animationController.getAnimationQueue();
-				if(queue.size() != 0)
-				{
-					//i think its cause java's generics aren't real generics and the types are being erased but it should be doing this cast automatically, not sure why it's not
-					Pair<String, Boolean> animationObject = (Pair<String, Boolean>) queue.poll();
-					animationController.setAnimation(animationObject.getKey(), animationObject.getValue());
-					continue;
-				}
-			}
-
-			AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount, partialTick,
+			boolean animationStoppedFlag = false;
+			AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount,
+					partialTick,
 					animationController.transitionState, animationController);
 			if (!animationController.getAnimationPredicate().test(event))
 			{
-				continue;
-			}
-			if(animation.boneAnimations.size() == 0)
-			{
-				for(AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
+				if(!animationController.animationStoppedFlag)
 				{
-					animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(), getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
+					animationController.animationStoppedFlag = true;
+					animationController.tickOffset = tick;
+					adjustedTick = tick - animationController.tickOffset;
+					if (adjustedTick < 0)
+					{
+						adjustedTick = 0.01F;
+					}
+				}
+				animationStoppedFlag = animationController.animationStoppedFlag;
+			}
+			else {
+				if(animationController.animationStoppedFlag)
+				{
+					animationController.animationStoppedFlag = false;
+					animationController.tickOffset = tick;
+					adjustedTick = tick - animationController.tickOffset;
+					if (adjustedTick < 0)
+					{
+						adjustedTick = 0.01F;
+					}
+				}
+				animationStoppedFlag = animationController.animationStoppedFlag;
+			}
+			GeckoLib.LOGGER.info(animation.animationName);
+			if (animationController.modelRendererSnapshots.size() == 0 && animationController.transitionState == TransitionState.JustStarted)
+			{
+
+				for (AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
+				{
+					animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(),
+							getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
 				}
 				animationController.transitionState = TransitionState.Transitioning;
 			}
-			for (BoneAnimation boneAnimation : animation.boneAnimations)
+			List<BoneAnimation> boneAnimationList = animation.boneAnimations;
+			if (transitionAnimation != null)
+			{
+				boneAnimationList = Stream.concat(animation.boneAnimations.stream(),
+						transitionAnimation.boneAnimations.stream()).collect(
+						Collectors.toList());
+			}
+			for (BoneAnimation boneAnimation : boneAnimationList)
 			{
 
 				AnimatedModelRenderer bone = getBone(boneAnimation.boneName);
@@ -205,28 +235,44 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				}
 				if (animationController.transitionState == TransitionState.JustStarted)
 				{
-					for(AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
+					for (AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
 					{
-						animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(), getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
+						animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(),
+								getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
 					}
 					recentSnapshot = animationController.modelRendererSnapshots.get(boneAnimation.boneName);
 					initialSnapshot = bone.getInitialSnapshot();
 					animationController.transitionState = TransitionState.Transitioning;
+					animationController.tickOffset = tick;
+
 				}
 				boolean loop = loopByDefault || animation.loop;
+				boolean transitionRotationFlag = false;
+				if (animationStoppedFlag && adjustedTick == 0)
+				{
+					BoneSnapshotCollection modelRendererSnapshots = animationController.modelRendererSnapshots;
 
+					animationController.modelRendererSnapshots.put(bone.getModelRendererName(),
+							getBone(bone.getModelRendererName()).saveSnapshot());
+					recentSnapshot = modelRendererSnapshots.get(bone.getModelRendererName());
+
+					initialSnapshot = bone.getInitialSnapshot();
+				}
 				if (initialSnapshot != null || recentSnapshot != null)
 				{
-
 					loop = false;
-					BoneAnimation newBoneAnimation = transitionAnimation.boneAnimations.stream().filter(
-							x -> x.boneName.equals(boneAnimation.boneName)).findFirst().orElse(null);
+					BoneAnimation newBoneAnimation = null;
+					if (transitionAnimation != null)
+					{
+						newBoneAnimation = transitionAnimation.boneAnimations.stream().filter(
+								x -> x.boneName.equals(boneAnimation.boneName)).findFirst().orElse(null);
+					}
 					VectorKeyFrameList<KeyFrame<Float>> tempRotationKeyFrames = new VectorKeyFrameList();
 					VectorKeyFrameList<KeyFrame<Float>> tempPositionKeyFrames = new VectorKeyFrameList();
 					VectorKeyFrameList<KeyFrame<Float>> tempScaleKeyFrames = new VectorKeyFrameList();
-					transitionLength = animationController.transitionLength;
+					transitionLength = animationController.getTransitionSpeed();
 
-					if (newBoneAnimation != null && newBoneAnimation.rotationKeyFrames != null && newBoneAnimation.rotationKeyFrames.xKeyFrames.size() >= 1)
+					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.rotationKeyFrames != null && newBoneAnimation.rotationKeyFrames.xKeyFrames.size() >= 1)
 					{
 						Float rX = newBoneAnimation.rotationKeyFrames.xKeyFrames.get(0).getStartValue();
 						Float rY = newBoneAnimation.rotationKeyFrames.yKeyFrames.get(0).getStartValue();
@@ -237,18 +283,22 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 								new KeyFrame(transitionLength, recentSnapshot.rotationValueY, rY));
 						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
 								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ, rZ));
-
 					}
-					else {
+					else
+					{
 						tempRotationKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueX, initialSnapshot.rotationValueX));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueX,
+										initialSnapshot.rotationValueX));
 						tempRotationKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueY, initialSnapshot.rotationValueY));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueY,
+										initialSnapshot.rotationValueY));
 						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ, initialSnapshot.rotationValueZ));
+								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ,
+										initialSnapshot.rotationValueZ));
+						transitionRotationFlag = true;
 					}
 
-					if (newBoneAnimation != null && newBoneAnimation.positionKeyFrames != null && newBoneAnimation.positionKeyFrames.xKeyFrames.size() >= 1)
+					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.positionKeyFrames != null && newBoneAnimation.positionKeyFrames.xKeyFrames.size() >= 1)
 					{
 						Float pX = newBoneAnimation.positionKeyFrames.xKeyFrames.get(0).getStartValue();
 						Float pY = newBoneAnimation.positionKeyFrames.yKeyFrames.get(0).getStartValue();
@@ -260,15 +310,19 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
 								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ, pZ));
 					}
-					else {
+					else
+					{
 						tempPositionKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX, initialSnapshot.positionOffsetX));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX,
+										initialSnapshot.positionOffsetX));
 						tempPositionKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY, initialSnapshot.positionOffsetY));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY,
+										initialSnapshot.positionOffsetY));
 						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ));
+								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ,
+										initialSnapshot.positionOffsetZ));
 					}
-					if (newBoneAnimation != null && newBoneAnimation.scaleKeyFrames != null && newBoneAnimation.scaleKeyFrames.xKeyFrames.size() >= 1)
+					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.scaleKeyFrames != null && newBoneAnimation.scaleKeyFrames.xKeyFrames.size() >= 1)
 					{
 						Float sX = newBoneAnimation.scaleKeyFrames.xKeyFrames.get(0).getStartValue();
 						Float sY = newBoneAnimation.scaleKeyFrames.yKeyFrames.get(0).getStartValue();
@@ -280,16 +334,18 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 								new KeyFrame(transitionLength, recentSnapshot.scaleValueY, sY));
 						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
 								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ, sZ));
-
 					}
 					else
 					{
 						tempScaleKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueX, initialSnapshot.scaleValueX));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueX,
+										initialSnapshot.scaleValueX));
 						tempScaleKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueY, initialSnapshot.scaleValueY));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueY,
+										initialSnapshot.scaleValueY));
 						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
+								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ,
+										initialSnapshot.scaleValueZ));
 					}
 					rotationKeyFrames = tempRotationKeyFrames;
 					positionKeyFrames = tempPositionKeyFrames;
@@ -301,42 +357,90 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					rotationKeyFrames = boneAnimation.rotationKeyFrames;
 					scaleKeyFrames = boneAnimation.scaleKeyFrames;
 					positionKeyFrames = boneAnimation.positionKeyFrames;
-					float speedModifier = animationController.getSpeedModifier();
 
-					rotationKeyFrames = AnimationUtils.applySpeedModifier(rotationKeyFrames, speedModifier);
-					scaleKeyFrames = AnimationUtils.applySpeedModifier(scaleKeyFrames, speedModifier);
-					positionKeyFrames = AnimationUtils.applySpeedModifier(positionKeyFrames, speedModifier);
 				}
+				float speedModifier = animationController.getSpeedModifier();
 
 				if (rotationKeyFrames.xKeyFrames.size() >= 1)
 				{
-					bone.rotateAngleX = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.xKeyFrames, adjustedTick,
-							loop, animationLength);
-					bone.rotateAngleY = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.yKeyFrames, adjustedTick,
-							loop, animationLength);
-					bone.rotateAngleZ = AnimationUtils.LerpRotationKeyFrames(rotationKeyFrames.zKeyFrames, adjustedTick,
-							loop, animationLength);
+					initialSnapshot = bone.getInitialSnapshot();
+					float rotateAngleX = AnimationUtils.LerpKeyFrames(rotationKeyFrames.xKeyFrames,
+							adjustedTick,
+							loop, animationLength, speedModifier);
+					float rotateAngleY = AnimationUtils.LerpKeyFrames(rotationKeyFrames.yKeyFrames,
+							adjustedTick,
+							loop, animationLength, speedModifier);
+					float rotateAngleZ = AnimationUtils.LerpKeyFrames(rotationKeyFrames.zKeyFrames,
+							adjustedTick,
+							loop, animationLength, speedModifier);
+
+					bone.rotateAngleX = transitionRotationFlag ? rotateAngleX : (rotateAngleX + initialSnapshot.rotationValueX);
+					bone.rotateAngleY = transitionRotationFlag ? rotateAngleY : (rotateAngleY + initialSnapshot.rotationValueY);
+					bone.rotateAngleZ = transitionRotationFlag ? rotateAngleZ : (rotateAngleZ + initialSnapshot.rotationValueZ);
+					dirtyTracker.get(bone.getModelRendererName()).hasRotationChanged = true;
 				}
 				if (scaleKeyFrames.xKeyFrames.size() >= 1)
 				{
 					bone.scaleValueX = AnimationUtils.LerpKeyFrames(scaleKeyFrames.xKeyFrames, adjustedTick, loop,
-							animationLength);
+							animationLength, speedModifier);
 					bone.scaleValueY = AnimationUtils.LerpKeyFrames(scaleKeyFrames.yKeyFrames, adjustedTick, loop,
-							animationLength);
+							animationLength, speedModifier);
 					bone.scaleValueZ = AnimationUtils.LerpKeyFrames(scaleKeyFrames.zKeyFrames, adjustedTick, loop,
-							animationLength);
+							animationLength, speedModifier);
+					dirtyTracker.get(bone.getModelRendererName()).hasScaleChanged = true;
+
 				}
 				if (positionKeyFrames.xKeyFrames.size() >= 1)
 				{
 					bone.positionOffsetX = AnimationUtils.LerpKeyFrames(positionKeyFrames.xKeyFrames, adjustedTick,
 							loop,
-							animationLength);
+							animationLength, speedModifier);
 					bone.positionOffsetY = AnimationUtils.LerpKeyFrames(positionKeyFrames.yKeyFrames, adjustedTick,
 							loop,
-							animationLength);
+							animationLength, speedModifier);
 					bone.positionOffsetZ = AnimationUtils.LerpKeyFrames(positionKeyFrames.zKeyFrames, adjustedTick,
 							loop,
-							animationLength);
+							animationLength, speedModifier);
+					dirtyTracker.get(bone.getModelRendererName()).hasPositionChanged = true;
+
+				}
+			}
+			if (animationController.transitionState == TransitionState.NotTransitioning && adjustedTick >= AnimationUtils.convertSecondsToTicks(
+					animation.animationLength))
+			{
+				Queue queue = animationController.getAnimationQueue();
+				if (queue.size() != 0)
+				{
+					//i think its cause java's generics aren't real generics and the types are being erased but it should be doing this cast automatically, not sure why it's not
+					Pair<String, Boolean> animationObject = (Pair<String, Boolean>) queue.poll();
+					animationController.setAnimation(animationObject.getKey(), animationObject.getValue());
+					//continue;
+				}
+			}
+		}
+		if (dirtyTracker != null)
+		{
+			for (DirtyTracker tracker : dirtyTracker.values())
+			{
+				AnimatedModelRenderer model = tracker.model;
+				BoneSnapshot snapshot = model.getInitialSnapshot();
+				if (!tracker.hasRotationChanged)
+				{
+					model.rotateAngleX = snapshot.rotationValueX;
+					model.rotateAngleY = snapshot.rotationValueY;
+					model.rotateAngleZ = snapshot.rotationValueZ;
+				}
+				if (!tracker.hasPositionChanged)
+				{
+					model.positionOffsetX = snapshot.positionOffsetX;
+					model.positionOffsetY = snapshot.positionOffsetY;
+					model.positionOffsetZ = snapshot.positionOffsetZ;
+				}
+				if (!tracker.hasScaleChanged)
+				{
+					model.scaleValueX = snapshot.scaleValueX;
+					model.scaleValueY = snapshot.scaleValueY;
+					model.scaleValueZ = snapshot.scaleValueZ;
 				}
 			}
 		}

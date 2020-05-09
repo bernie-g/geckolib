@@ -12,9 +12,9 @@ public class BoneSnapshot
 		positionOffsetY = modelRenderer.positionOffsetY;
 		positionOffsetZ = modelRenderer.positionOffsetZ;
 
-		rotationValueX = (float) Math.toDegrees(modelRenderer.rotateAngleX);
-		rotationValueY = (float) Math.toDegrees(modelRenderer.rotateAngleY);
-		rotationValueZ = (float)Math.toDegrees(modelRenderer.rotateAngleZ);
+		rotationValueX = modelRenderer.rotateAngleX;
+		rotationValueY = modelRenderer.rotateAngleY;
+		rotationValueZ = modelRenderer.rotateAngleZ;
 		this.modelRenderer = modelRenderer;
 		this.modelRendererName = modelRenderer.getModelRendererName();
 	}

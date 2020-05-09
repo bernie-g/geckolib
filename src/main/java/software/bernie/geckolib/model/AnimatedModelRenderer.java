@@ -39,8 +39,6 @@ public class AnimatedModelRenderer extends ModelRenderer
 		this.modelRendererName = modelRendererName;
 	}
 
-
-
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (this.showModel) {
 			if (!this.cubeList.isEmpty() || !this.childModels.isEmpty()) {
@@ -72,7 +70,7 @@ public class AnimatedModelRenderer extends ModelRenderer
 	@Override
 	public void translateRotate(MatrixStack matrixStackIn)
 	{
-		matrixStackIn.translate(((rotationPointX + positionOffsetX) / 16F), ((rotationPointY  + positionOffsetY) / 16F), ((rotationPointZ + positionOffsetZ) / 16F));
+		matrixStackIn.translate(((rotationPointX + positionOffsetX) / 16F), ((rotationPointY  - positionOffsetY) / 16F), ((rotationPointZ + positionOffsetZ) / 16F));
 		if (this.rotateAngleZ != 0.0F) {
 			matrixStackIn.rotate(Vector3f.ZP.rotation(this.rotateAngleZ));
 		}

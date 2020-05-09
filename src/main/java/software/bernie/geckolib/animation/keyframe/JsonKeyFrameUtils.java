@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class JsonKeyFrameUtils
 {
-	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element, boolean isRotation) throws NumberFormatException
 	{
 		Float previousXValue = null;
 		Float previousYValue = null;
@@ -29,9 +29,13 @@ public class JsonKeyFrameUtils
 			float animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
 
 			JsonArray vectorJsonArray = keyframe.getValue().getAsJsonArray();
-			float currentXValue = vectorJsonArray.get(0).getAsFloat();
-			float currentYValue = vectorJsonArray.get(1).getAsFloat();
-			float currentZValue = vectorJsonArray.get(2).getAsFloat();
+			float float1 = vectorJsonArray.get(0).getAsFloat();
+			float float2 = vectorJsonArray.get(1).getAsFloat();
+			float float3 = vectorJsonArray.get(2).getAsFloat();
+
+			float currentXValue = isRotation ? (float) Math.toRadians(float1) : float1;
+			float currentYValue = isRotation ? (float) Math.toRadians(float2) : float2;
+			float currentZValue = isRotation ? (float) Math.toRadians(float3) : float3;
 
 			KeyFrame<Float> xKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? currentXValue : previousXValue, currentXValue);
 			KeyFrame<Float> yKeyFrame = new KeyFrame(animationTimeDifference, i == 0 ? currentYValue : previousYValue, currentYValue);
@@ -49,10 +53,15 @@ public class JsonKeyFrameUtils
 
 		return new VectorKeyFrameList<>(xKeyFrames, yKeyFrames, zKeyFrames);
 	}
+	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	{
+		return convertJsonToKeyFrames(element, false);
+	}
+
 
 	public static VectorKeyFrameList<KeyFrame<Float>> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
 	{
-		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element);
+		VectorKeyFrameList<KeyFrame<Float>> frameList = convertJsonToKeyFrames(element, true);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
 				frameList.zKeyFrames);
 	}

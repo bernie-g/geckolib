@@ -43,11 +43,11 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
 		if(entityWorld.rainingStrength > 0)
 		{
-			wingController.transitionLength = 2;
+			wingController.setTransitionSpeed(2);
 			wingController.setAnimation("thirdAnimation");
 		}
 		else {
-			wingController.transitionLength = 2;
+			wingController.setTransitionSpeed(2);
 			wingController.setAnimation("secondAnimation");
 		}
 		return true;

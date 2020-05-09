@@ -6,7 +6,9 @@ import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.KeyFrameLocation;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.model.AnimatedModelRenderer;
+import software.bernie.geckolib.model.BoneSnapshot;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,66 +47,18 @@ public class AnimationUtils
 	}
 
 	/**
-	 * Linearly interpolates between two rotation values at a specified tick.
-	 *
-	 * @param currentTick            The current tick (usually entity.ticksExisted + partialTicks to make it smoother)
-	 * @param animationLengthSeconds The animation's length in seconds
-	 * @param animationStartRotation The animation's start rotation
-	 * @param animationEndRotation   The animation's end rotation
-	 * @return The interpolated value (**In radians because the ModelRenderer#translateRotate takes radians**)
-	 */
-	public static float lerpAnimationDegrees(float currentTick, float animationLengthSeconds, float animationStartRotation, float animationEndRotation)
-	{
-		//GeckoLib.LOGGER.info(currentTick);
-		return lerpAnimationFloat(currentTick, animationLengthSeconds, (float) Math.toRadians(animationStartRotation),
-				(float) Math.toRadians(animationEndRotation));
-	}
-
-	/**
-	 * TODO
-	 *
-	 * @param frames          The frames
-	 * @param ageInTicks      The age in ticks
-	 * @param loop            The loop
-	 * @param animationLength The animation length
-	 * @return the float
-	 */
-	public static float LerpRotationKeyFrames(List<KeyFrame<Float>> frames, float ageInTicks, boolean loop, float animationLength)
-	{
-		float animationLengthTicks = convertSecondsToTicks(animationLength);
-		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(frames,
-				loop ? ageInTicks % animationLengthTicks : ageInTicks);
-		KeyFrame<Float> frame = frameLocation.CurrentFrame;
-		if(Float.isNaN(animationLength))
-		{
-			return frame.getEndValue();
-		}
-		if(frameLocation.CurrentAnimationTick == -1)
-		{
-			return frame.getEndValue();
-		}
-		float value = lerpAnimationDegrees(frameLocation.CurrentAnimationTick, frame.getKeyFrameLength(),
-				frame.getStartValue(), frame.getEndValue());
-		if(Float.isNaN(value))
-		{
-			GeckoLib.LOGGER.error("Somehow got a NaN during lerpKeyframes. Blame gecko and cry. Ageinticks: " + ageInTicks + ". Loop:" + loop + ". Animationlength: " + animationLength);
-		}
-		return value;
-	}
-
-	/**
 	 * Lerp key frames float.
 	 *
-	 * @param frames          The frames
+	 * @param framesIn          The frames
 	 * @param ageInTicks      The age in ticks
 	 * @param loop            The loop
 	 * @param animationLength The animation length
 	 * @return the float
 	 */
-	public static float LerpKeyFrames(List<KeyFrame<Float>> frames, float ageInTicks, boolean loop, float animationLength)
+	public static float LerpKeyFrames(List<KeyFrame<Float>> framesIn, float ageInTicks, boolean loop, float animationLength, float speedFactor)
 	{
 		float animationLengthTicks = convertSecondsToTicks(animationLength);
-		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(frames,
+		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(framesIn,
 				loop ? ageInTicks % animationLengthTicks : ageInTicks);
 		KeyFrame<Float> frame = frameLocation.CurrentFrame;
 		if(Float.isNaN(animationLength))
@@ -150,20 +104,13 @@ public class AnimationUtils
 		return (float) frames.stream().mapToDouble(x -> convertSecondsToTicks(x.getKeyFrameLength())).sum();
 	}
 
-	public static VectorKeyFrameList<KeyFrame<Float>> applySpeedModifier(VectorKeyFrameList<KeyFrame<Float>> keyframes, float speedModifier)
+	public static List<KeyFrame<Float>> applySpeedModifier(List<KeyFrame<Float>> keyframes, float speedModifier)
 	{
-		for(KeyFrame<Float> keyframe : keyframes.xKeyFrames)
+		for(KeyFrame<Float> keyframe : keyframes)
 		{
 			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
 		}
-		for(KeyFrame<Float> keyframe : keyframes.yKeyFrames)
-		{
-			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
-		}
-		for(KeyFrame<Float> keyframe : keyframes.zKeyFrames)
-		{
-			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
-		}
+
 		return keyframes;
 	}
 
