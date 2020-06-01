@@ -1,45 +1,52 @@
 package software.bernie.geckolib.animation.keyframe;
 
+import java.util.Objects;
+
 public class KeyFrame<T>
 {
-	private float KeyFrameLength;
-	private T StartValue;
-	private T EndValue;
-	public boolean isIntermediaryKeyFrame = false;
-	public KeyFrame(float keyFrameLength, T startValue, T endValue)
+	private Double length;
+	private T startValue;
+	private T endValue;
+	public KeyFrame(Double length, T startValue, T endValue)
 	{
-		KeyFrameLength = keyFrameLength;
-		StartValue = startValue;
-		EndValue = endValue;
-	}
-	
-	public float getKeyFrameLength()
-	{
-		return KeyFrameLength;
+		this.length = length;
+		this.startValue = startValue;
+		this.endValue = endValue;
 	}
 
-	public void setKeyFrameLength(float keyFrameLength)
+	public Double getLength()
 	{
-		KeyFrameLength = keyFrameLength;
+		return length;
+	}
+
+	public void setLength(Double length)
+	{
+		this.length = length;
 	}
 
 	public T getStartValue()
 	{
-		return StartValue;
+		return startValue;
 	}
 
 	public void setStartValue(T startValue)
 	{
-		StartValue = startValue;
+		this.startValue = startValue;
 	}
 
 	public T getEndValue()
 	{
-		return EndValue;
+		return endValue;
 	}
 
 	public void setEndValue(T endValue)
 	{
-		EndValue = endValue;
+		this.endValue = endValue;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(length, startValue, endValue);
 	}
 }

@@ -2,21 +2,19 @@ package software.bernie.geckolib.model;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import javafx.util.Pair;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.b3d.B3DModel;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.IAnimatedEntity;
 import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.file.AnimationFileManager;
 import software.bernie.geckolib.json.JSONAnimationUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.List;
 
 public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> extends EntityModel<T>
 {
@@ -86,7 +84,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 	public AnimatedModelRenderer getBone(String boneName)
 	{
-		return modelRendererList.stream().filter(x -> x.getModelRendererName().equals(boneName)).findFirst().orElse(
+		return modelRendererList.stream().filter(x -> x.name.equals(boneName)).findFirst().orElse(
 				null);
 	}
 
@@ -109,343 +107,138 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick)
+	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
 	{
-		HashMap<String, DirtyTracker> dirtyTracker = new HashMap<String, DirtyTracker>();
+		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
+		EntityDirtyTracker modelTracker = createNewDirtyTracker();
 
-		for (AnimatedModelRenderer renderer : this.modelRendererList)
+		// Adding partial tick to smooth out the animation
+		double tick = entity.ticksExisted + partialTick;
+
+		// Each animation has it's own collection of animations (called the AnimationControllerCollection), which allows for multiple independent animations
+		AnimationControllerCollection controllers = entity.getAnimationControllers();
+
+		// Store the current value of each bone rotation/position/scale
+		if(controllers.boneSnapshotCollection.isEmpty())
 		{
-			dirtyTracker.put(renderer.getModelRendererName(), new DirtyTracker(false, false, false, renderer));
+			controllers.boneSnapshotCollection = createNewBoneSnapshotCollection();
 		}
-		AnimationControllerCollection animationControllers = entityIn.getAnimationControllers();
-		for (AnimationController animationController : animationControllers.values())
+		BoneSnapshotCollection boneSnapshots = controllers.boneSnapshotCollection;
+
+		for (AnimationController<T> controller : controllers.values())
 		{
 
-			float tick = entityIn.ticksExisted + partialTick;
-			tick *= animationController.getSpeedModifier();
-			VectorKeyFrameList<KeyFrame<Float>> rotationKeyFrames;
-			VectorKeyFrameList<KeyFrame<Float>> scaleKeyFrames;
-			VectorKeyFrameList<KeyFrame<Float>> positionKeyFrames;
+			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing, limbSwingAmount, partialTick, controller);
 
-			Animation animation = animationController.getAnimation();
-			if (animation == null)
+			// Process animations and add new values to the point queues
+			controller.process(tick, animationTestEvent, modelRendererList);
+
+			// Loop through every single bone and lerp each property
+			for (BoneAnimationQueue boneAnimation : controller.boneAnimationQueues.values())
 			{
-				float adjustedTick = tick - animationController.tickOffset;
-				if (adjustedTick < 0)
+				AnimatedModelRenderer bone = boneAnimation.bone;
+				BoneSnapshot snapshot = boneSnapshots.get(bone.name);
+				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+
+				AnimationPoint rXPoint = boneAnimation.rotationXQueue.poll();
+				AnimationPoint rYPoint = boneAnimation.rotationYQueue.poll();
+				AnimationPoint rZPoint = boneAnimation.rotationZQueue.poll();
+
+				AnimationPoint pXPoint = boneAnimation.positionXQueue.poll();
+				AnimationPoint pYPoint = boneAnimation.positionYQueue.poll();
+				AnimationPoint pZPoint = boneAnimation.positionZQueue.poll();
+
+				AnimationPoint sXPoint = boneAnimation.scaleXQueue.poll();
+				AnimationPoint sYPoint = boneAnimation.scaleYQueue.poll();
+				AnimationPoint sZPoint = boneAnimation.scaleZQueue.poll();
+
+				// If there's any rotation points for this bone
+				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					adjustedTick = 0.01F;
+					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint) + initialSnapshot.rotationValueX;
+					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint) + initialSnapshot.rotationValueY;
+					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint) + initialSnapshot.rotationValueZ;
+					snapshot.rotationValueX = bone.rotateAngleX;
+					snapshot.rotationValueY = bone.rotateAngleY;
+					snapshot.rotationValueZ = bone.rotateAngleZ;
+
+					modelTracker.get(bone).hasRotationChanged = true;
 				}
-				AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount,
-						partialTick,
-						animationController.transitionState, animationController);
-				animationController.getAnimationPredicate().test(event);
-				continue;
-			}
-			Animation transitionAnimation = null;
-			float transitionLength = 0;
-			float animationLength = animation.animationLength;
-
-			if (animationController.transitionState == TransitionState.JustStarted)
-			{
-				animationController.tickOffset = tick;
-			}
-
-			else if (animationController.transitionState == TransitionState.Transitioning && tick - animationController.tickOffset >= AnimationUtils.convertSecondsToTicks(
-					animationController.getTransitionSpeed()))
-			{
-				animationController.transitionState = TransitionState.NotTransitioning;
-				Animation transitioningAnimation = animationController.getTransitioningAnimation();
-				animationController.tickOffset = tick;
-				if (transitioningAnimation != null)
+				// If there's any position points for this bone
+				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
-					animation = transitioningAnimation;
-					animationController.manuallyReplaceAnimation();
+					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint);
+					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint);
+					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint);
+					snapshot.positionOffsetX = bone.positionOffsetX;
+					snapshot.positionOffsetY = bone.positionOffsetY;
+					snapshot.positionOffsetZ = bone.positionOffsetZ;
+					modelTracker.get(bone).hasPositionChanged = true;
 				}
-				animationLength = animationController.getAnimation().animationLength;
-				animationController.clearTransitioningAnimation();
-			}
-			float adjustedTick = tick - animationController.tickOffset;
-			if (adjustedTick < 0)
-			{
-				adjustedTick = 0.01F;
-			}
-			boolean animationStoppedFlag = false;
-			AnimationTestEvent event = new AnimationTestEvent(entityIn, adjustedTick, limbSwing, limbSwingAmount,
-					partialTick,
-					animationController.transitionState, animationController);
-			if (!animationController.getAnimationPredicate().test(event))
-			{
-				if(!animationController.animationStoppedFlag)
+
+				// If there's any scale points for this bone
+				if (sXPoint != null && sYPoint != null && sZPoint != null)
 				{
-					animationController.animationStoppedFlag = true;
-					animationController.tickOffset = tick;
-					adjustedTick = tick - animationController.tickOffset;
-					if (adjustedTick < 0)
-					{
-						adjustedTick = 0.01F;
-					}
-				}
-				animationStoppedFlag = animationController.animationStoppedFlag;
-			}
-			else {
-				if(animationController.animationStoppedFlag)
-				{
-					animationController.animationStoppedFlag = false;
-					animationController.tickOffset = tick;
-					adjustedTick = tick - animationController.tickOffset;
-					if (adjustedTick < 0)
-					{
-						adjustedTick = 0.01F;
-					}
-				}
-				animationStoppedFlag = animationController.animationStoppedFlag;
-			}
-			GeckoLib.LOGGER.info(animation.animationName);
-			if (animationController.modelRendererSnapshots.size() == 0 && animationController.transitionState == TransitionState.JustStarted)
-			{
-
-				for (AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
-				{
-					animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(),
-							getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
-				}
-				animationController.transitionState = TransitionState.Transitioning;
-			}
-			List<BoneAnimation> boneAnimationList = animation.boneAnimations;
-			if (transitionAnimation != null)
-			{
-				boneAnimationList = Stream.concat(animation.boneAnimations.stream(),
-						transitionAnimation.boneAnimations.stream()).collect(
-						Collectors.toList());
-			}
-			for (BoneAnimation boneAnimation : boneAnimationList)
-			{
-
-				AnimatedModelRenderer bone = getBone(boneAnimation.boneName);
-				transitionAnimation = animationController.getTransitioningAnimation();
-
-				BoneSnapshot recentSnapshot = null;
-				BoneSnapshot initialSnapshot = null;
-				if (animationController.transitionState == TransitionState.Transitioning)
-				{
-					String boneName = boneAnimation.boneName;
-					BoneSnapshotCollection modelRendererSnapshots = animationController.modelRendererSnapshots;
-					recentSnapshot = modelRendererSnapshots.get(boneName);
-					initialSnapshot = bone.getInitialSnapshot();
-				}
-				if (animationController.transitionState == TransitionState.JustStarted)
-				{
-					for (AnimatedModelRenderer tempBoneAnimation : this.modelRendererList)
-					{
-						animationController.modelRendererSnapshots.put(tempBoneAnimation.getModelRendererName(),
-								getBone(tempBoneAnimation.getModelRendererName()).saveSnapshot());
-					}
-					recentSnapshot = animationController.modelRendererSnapshots.get(boneAnimation.boneName);
-					initialSnapshot = bone.getInitialSnapshot();
-					animationController.transitionState = TransitionState.Transitioning;
-					animationController.tickOffset = tick;
-
-				}
-				boolean loop = loopByDefault || animation.loop;
-				boolean transitionRotationFlag = false;
-				if (animationStoppedFlag && adjustedTick == 0)
-				{
-					BoneSnapshotCollection modelRendererSnapshots = animationController.modelRendererSnapshots;
-
-					animationController.modelRendererSnapshots.put(bone.getModelRendererName(),
-							getBone(bone.getModelRendererName()).saveSnapshot());
-					recentSnapshot = modelRendererSnapshots.get(bone.getModelRendererName());
-
-					initialSnapshot = bone.getInitialSnapshot();
-				}
-				if (initialSnapshot != null || recentSnapshot != null)
-				{
-					loop = false;
-					BoneAnimation newBoneAnimation = null;
-					if (transitionAnimation != null)
-					{
-						newBoneAnimation = transitionAnimation.boneAnimations.stream().filter(
-								x -> x.boneName.equals(boneAnimation.boneName)).findFirst().orElse(null);
-					}
-					VectorKeyFrameList<KeyFrame<Float>> tempRotationKeyFrames = new VectorKeyFrameList();
-					VectorKeyFrameList<KeyFrame<Float>> tempPositionKeyFrames = new VectorKeyFrameList();
-					VectorKeyFrameList<KeyFrame<Float>> tempScaleKeyFrames = new VectorKeyFrameList();
-					transitionLength = animationController.getTransitionSpeed();
-
-					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.rotationKeyFrames != null && newBoneAnimation.rotationKeyFrames.xKeyFrames.size() >= 1)
-					{
-						Float rX = newBoneAnimation.rotationKeyFrames.xKeyFrames.get(0).getStartValue();
-						Float rY = newBoneAnimation.rotationKeyFrames.yKeyFrames.get(0).getStartValue();
-						Float rZ = newBoneAnimation.rotationKeyFrames.zKeyFrames.get(0).getStartValue();
-						tempRotationKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueX, rX));
-						tempRotationKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueY, rY));
-						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ, rZ));
-					}
-					else
-					{
-						tempRotationKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueX,
-										initialSnapshot.rotationValueX));
-						tempRotationKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueY,
-										initialSnapshot.rotationValueY));
-						tempRotationKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.rotationValueZ,
-										initialSnapshot.rotationValueZ));
-						transitionRotationFlag = true;
-					}
-
-					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.positionKeyFrames != null && newBoneAnimation.positionKeyFrames.xKeyFrames.size() >= 1)
-					{
-						Float pX = newBoneAnimation.positionKeyFrames.xKeyFrames.get(0).getStartValue();
-						Float pY = newBoneAnimation.positionKeyFrames.yKeyFrames.get(0).getStartValue();
-						Float pZ = newBoneAnimation.positionKeyFrames.zKeyFrames.get(0).getStartValue();
-						tempPositionKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX, pX));
-						tempPositionKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY, pY));
-						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ, pZ));
-					}
-					else
-					{
-						tempPositionKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetX,
-										initialSnapshot.positionOffsetX));
-						tempPositionKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetY,
-										initialSnapshot.positionOffsetY));
-						tempPositionKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.positionOffsetZ,
-										initialSnapshot.positionOffsetZ));
-					}
-					if (!animationStoppedFlag && newBoneAnimation != null && newBoneAnimation.scaleKeyFrames != null && newBoneAnimation.scaleKeyFrames.xKeyFrames.size() >= 1)
-					{
-						Float sX = newBoneAnimation.scaleKeyFrames.xKeyFrames.get(0).getStartValue();
-						Float sY = newBoneAnimation.scaleKeyFrames.yKeyFrames.get(0).getStartValue();
-						Float sZ = newBoneAnimation.scaleKeyFrames.zKeyFrames.get(0).getStartValue();
-
-						tempScaleKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueX, sX));
-						tempScaleKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueY, sY));
-						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ, sZ));
-					}
-					else
-					{
-						tempScaleKeyFrames.xKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueX,
-										initialSnapshot.scaleValueX));
-						tempScaleKeyFrames.yKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueY,
-										initialSnapshot.scaleValueY));
-						tempScaleKeyFrames.zKeyFrames = Arrays.asList(
-								new KeyFrame(transitionLength, recentSnapshot.scaleValueZ,
-										initialSnapshot.scaleValueZ));
-					}
-					rotationKeyFrames = tempRotationKeyFrames;
-					positionKeyFrames = tempPositionKeyFrames;
-					scaleKeyFrames = tempScaleKeyFrames;
-					animationLength = transitionLength;
-				}
-				else
-				{
-					rotationKeyFrames = boneAnimation.rotationKeyFrames;
-					scaleKeyFrames = boneAnimation.scaleKeyFrames;
-					positionKeyFrames = boneAnimation.positionKeyFrames;
-
-				}
-				float speedModifier = animationController.getSpeedModifier();
-
-				if (rotationKeyFrames.xKeyFrames.size() >= 1)
-				{
-					initialSnapshot = bone.getInitialSnapshot();
-					float rotateAngleX = AnimationUtils.LerpKeyFrames(rotationKeyFrames.xKeyFrames,
-							adjustedTick,
-							loop, animationLength, speedModifier);
-					float rotateAngleY = AnimationUtils.LerpKeyFrames(rotationKeyFrames.yKeyFrames,
-							adjustedTick,
-							loop, animationLength, speedModifier);
-					float rotateAngleZ = AnimationUtils.LerpKeyFrames(rotationKeyFrames.zKeyFrames,
-							adjustedTick,
-							loop, animationLength, speedModifier);
-
-					bone.rotateAngleX = transitionRotationFlag ? rotateAngleX : (rotateAngleX + initialSnapshot.rotationValueX);
-					bone.rotateAngleY = transitionRotationFlag ? rotateAngleY : (rotateAngleY + initialSnapshot.rotationValueY);
-					bone.rotateAngleZ = transitionRotationFlag ? rotateAngleZ : (rotateAngleZ + initialSnapshot.rotationValueZ);
-					dirtyTracker.get(bone.getModelRendererName()).hasRotationChanged = true;
-				}
-				if (scaleKeyFrames.xKeyFrames.size() >= 1)
-				{
-					bone.scaleValueX = AnimationUtils.LerpKeyFrames(scaleKeyFrames.xKeyFrames, adjustedTick, loop,
-							animationLength, speedModifier);
-					bone.scaleValueY = AnimationUtils.LerpKeyFrames(scaleKeyFrames.yKeyFrames, adjustedTick, loop,
-							animationLength, speedModifier);
-					bone.scaleValueZ = AnimationUtils.LerpKeyFrames(scaleKeyFrames.zKeyFrames, adjustedTick, loop,
-							animationLength, speedModifier);
-					dirtyTracker.get(bone.getModelRendererName()).hasScaleChanged = true;
-
-				}
-				if (positionKeyFrames.xKeyFrames.size() >= 1)
-				{
-					bone.positionOffsetX = AnimationUtils.LerpKeyFrames(positionKeyFrames.xKeyFrames, adjustedTick,
-							loop,
-							animationLength, speedModifier);
-					bone.positionOffsetY = AnimationUtils.LerpKeyFrames(positionKeyFrames.yKeyFrames, adjustedTick,
-							loop,
-							animationLength, speedModifier);
-					bone.positionOffsetZ = AnimationUtils.LerpKeyFrames(positionKeyFrames.zKeyFrames, adjustedTick,
-							loop,
-							animationLength, speedModifier);
-					dirtyTracker.get(bone.getModelRendererName()).hasPositionChanged = true;
-
-				}
-			}
-			if (animationController.transitionState == TransitionState.NotTransitioning && adjustedTick >= AnimationUtils.convertSecondsToTicks(
-					animation.animationLength))
-			{
-				Queue queue = animationController.getAnimationQueue();
-				if (queue.size() != 0)
-				{
-					//i think its cause java's generics aren't real generics and the types are being erased but it should be doing this cast automatically, not sure why it's not
-					Pair<String, Boolean> animationObject = (Pair<String, Boolean>) queue.poll();
-					animationController.setAnimation(animationObject.getKey(), animationObject.getValue());
-					//continue;
+					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint);
+					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint);
+					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint);
+					snapshot.scaleValueX = bone.scaleValueX;
+					snapshot.scaleValueY = bone.scaleValueY;
+					snapshot.scaleValueZ = bone.scaleValueZ;
+					modelTracker.get(bone).hasScaleChanged = true;
 				}
 			}
 		}
-		if (dirtyTracker != null)
+
+		for (DirtyTracker tracker : modelTracker)
 		{
-			for (DirtyTracker tracker : dirtyTracker.values())
+			AnimatedModelRenderer model = tracker.model;
+			BoneSnapshot snapshot = model.getInitialSnapshot();
+			BoneSnapshot currentSnapshot = boneSnapshots.get(model.name);
+			if (!tracker.hasRotationChanged)
 			{
-				AnimatedModelRenderer model = tracker.model;
-				BoneSnapshot snapshot = model.getInitialSnapshot();
-				if (!tracker.hasRotationChanged)
+				if(tracker.model.name.equals("larm1"))
 				{
-					model.rotateAngleX = snapshot.rotationValueX;
-					model.rotateAngleY = snapshot.rotationValueY;
-					model.rotateAngleZ = snapshot.rotationValueZ;
+					GeckoLib.LOGGER.info(model.rotateAngleX);
 				}
-				if (!tracker.hasPositionChanged)
-				{
-					model.positionOffsetX = snapshot.positionOffsetX;
-					model.positionOffsetY = snapshot.positionOffsetY;
-					model.positionOffsetZ = snapshot.positionOffsetZ;
-				}
-				if (!tracker.hasScaleChanged)
-				{
-					model.scaleValueX = snapshot.scaleValueX;
-					model.scaleValueY = snapshot.scaleValueY;
-					model.scaleValueZ = snapshot.scaleValueZ;
-				}
+				model.rotateAngleX = lerpConstant(model.rotateAngleX, snapshot.rotationValueX, 0.02);
+				model.rotateAngleY = lerpConstant(model.rotateAngleY, snapshot.rotationValueY, 0.02);
+				model.rotateAngleZ = lerpConstant(model.rotateAngleZ, snapshot.rotationValueZ, 0.02);
+			}
+			if (!tracker.hasPositionChanged)
+			{
+				model.positionOffsetX = lerpConstant(model.positionOffsetX, snapshot.positionOffsetX, 0.01);
+				model.positionOffsetY = lerpConstant(model.positionOffsetY, snapshot.positionOffsetY, 0.01);
+				model.positionOffsetZ = lerpConstant(model.positionOffsetZ, snapshot.positionOffsetZ, 0.01);
+			}
+			if (!tracker.hasScaleChanged)
+			{
+				model.scaleValueX = lerpConstant(model.scaleValueX, snapshot.scaleValueX, 0.05);
+				model.scaleValueY = lerpConstant(model.scaleValueY, snapshot.scaleValueY, 0.05);
+				model.scaleValueZ = lerpConstant(model.scaleValueZ, snapshot.scaleValueZ, 0.05);
 			}
 		}
 	}
 
+	private EntityDirtyTracker createNewDirtyTracker()
+	{
+		EntityDirtyTracker tracker = new EntityDirtyTracker();
+		for(AnimatedModelRenderer bone : modelRendererList)
+		{
+			tracker.add(new DirtyTracker(false, false, false, bone));
+		}
+		return tracker;
+	}
+
+	private BoneSnapshotCollection createNewBoneSnapshotCollection()
+	{
+		BoneSnapshotCollection collection = new BoneSnapshotCollection();
+		for(AnimatedModelRenderer bone : modelRendererList)
+		{
+			collection.put(bone.name, new BoneSnapshot(bone.getInitialSnapshot()));
+		}
+		return collection;
+	}
 
 	@Override
 	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
@@ -456,5 +249,26 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	public Animation getAnimation(String name)
 	{
 		return animationList.get(name);
+	}
+
+	private static float lerpConstant(double currentValue, double finalValue, double speedModifier)
+	{
+		double lowerBound = finalValue - speedModifier;
+		double upperBound = finalValue + speedModifier;
+
+		if(lowerBound <= currentValue && upperBound >= currentValue)
+		{
+			return (float) currentValue;
+		}
+		double increment = 0;
+		if(currentValue < finalValue)
+		{
+			increment = speedModifier;
+		}
+		else {
+			increment = -1 * speedModifier;
+		}
+
+		return (float) (currentValue + increment);
 	}
 }

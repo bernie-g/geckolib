@@ -1,22 +1,19 @@
 package software.bernie.geckolib.animation;
 
-import software.bernie.geckolib.model.BoneSnapshot;
+import software.bernie.geckolib.model.BoneSnapshotCollection;
 
 import java.util.HashMap;
 
 public class AnimationControllerCollection extends HashMap<String, AnimationController>
 {
-	/**
-	 * Associates the specified value with the specified key in this map.
-	 * If the map previously contained a mapping for the key, the old
-	 * value is replaced.
-	 *
-	 * @param value value to be associated with the specified key
-	 * @return the previous value associated with <tt>key</tt>, or
-	 * <tt>null</tt> if there was no mapping for <tt>key</tt>.
-	 * (A <tt>null</tt> return can also indicate that the map
-	 * previously associated <tt>null</tt> with <tt>key</tt>.)
-	 */
+	public BoneSnapshotCollection boneSnapshotCollection;
+
+	public AnimationControllerCollection()
+	{
+		super();
+		boneSnapshotCollection = new BoneSnapshotCollection();
+	}
+
 	public AnimationController addAnimationController(AnimationController value)
 	{
 		return this.put(value.name, value);

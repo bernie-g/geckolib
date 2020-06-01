@@ -1,6 +1,5 @@
 package software.bernie.geckolib.model;
 
-
 //idk what else to call this lol
 public class DirtyTracker
 {
@@ -11,7 +10,6 @@ public class DirtyTracker
 
 	public DirtyTracker(boolean hasScaleChanged, boolean hasPositionChanged, boolean hasRotationChanged, AnimatedModelRenderer model)
 	{
-
 		this.hasScaleChanged = hasScaleChanged;
 		this.hasPositionChanged = hasPositionChanged;
 		this.hasRotationChanged = hasRotationChanged;

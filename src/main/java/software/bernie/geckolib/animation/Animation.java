@@ -6,10 +6,7 @@ import java.util.List;
 public class Animation
 {
 	public String animationName;
-	public float animationLength;
+	public double animationLength;
 	public boolean loop = true;
 	public List<BoneAnimation> boneAnimations;
-	public List<SoundEffectKeyFrame> soundEffectKeyFrames;
-	public List<ParticleEffectKeyFrame> particleEffectKeyFrames;
-	public List<CustomInstructionKeyFrame> customInstructionKeyFrames;
 }

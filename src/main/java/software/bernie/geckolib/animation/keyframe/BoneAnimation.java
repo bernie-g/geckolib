@@ -8,7 +8,7 @@ public class BoneAnimation
 {
 	public BoneSnapshot recentSnapshot = null;
 	public String boneName;
-	public VectorKeyFrameList<KeyFrame<Float>> rotationKeyFrames;
-	public VectorKeyFrameList<KeyFrame<Float>> positionKeyFrames;
-	public VectorKeyFrameList<KeyFrame<Float>> scaleKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Double>> rotationKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Double>> positionKeyFrames;
+	public VectorKeyFrameList<KeyFrame<Double>> scaleKeyFrames;
 }

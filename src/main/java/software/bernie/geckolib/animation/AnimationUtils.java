@@ -1,118 +1,83 @@
 package software.bernie.geckolib.animation;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.IEntityRenderer;
+import net.minecraft.client.renderer.entity.LivingRenderer;
+import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.keyframe.KeyFrame;
-import software.bernie.geckolib.animation.keyframe.KeyFrameLocation;
-import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-import software.bernie.geckolib.model.AnimatedModelRenderer;
-import software.bernie.geckolib.model.BoneSnapshot;
+import software.bernie.geckolib.model.AnimatedEntityModel;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * The type Animation utils.
- */
 public class AnimationUtils
 {
-	public static float convertTicksToSeconds(float ticks)
+	public static double convertTicksToSeconds(double ticks)
 	{
 		return ticks / 20;
 	}
 
-	public static float convertSecondsToTicks(float seconds)
+	public static double convertSecondsToTicks(double seconds)
 	{
 		return seconds * 20;
 	}
 
 	/**
-	 * This is the actual function smoothly interpolate (lerp) between keyframes
+	 * This is the actual function that smoothly interpolates (lerp) between keyframes
 	 *
-	 * @param currentTick            The current tick (usually entity.ticksExisted + partialTicks to make it smoother)
-	 * @param animationLengthSeconds The animation's length in seconds
-	 * @param animationStartValue The animation's start value
-	 * @param animationEndValue   The animation's end value
+	 * @param currentTick The current tick (usually entity.ticksExisted + partialTicks to make it smoother)
+	 * @param position    The animation's length in seconds
+	 * @param startValue  The animation's start value
+	 * @param endValue    The animation's end value
 	 * @return The interpolated value
 	 */
-	public static float lerpAnimationFloat(float currentTick, float animationLengthSeconds, float animationStartValue, float animationEndValue)
+	public static float lerpValues(double currentTick, double position, double startValue, double endValue)
 	{
-		float seconds = convertTicksToSeconds(currentTick);
-		if (seconds > animationLengthSeconds)
+		if (currentTick > position)
 		{
-			return animationEndValue;
+			return (float) endValue;
 		}
-		return MathHelper.lerp(seconds / animationLengthSeconds, animationStartValue,
-				animationEndValue) * animationLengthSeconds / animationLengthSeconds;
+		if(currentTick == 0 && position == 0)
+		{
+			return (float) endValue;
+		}
+		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
+		return (float) (MathHelper.lerp(currentTick / position, startValue,
+				endValue) * position / position);
 	}
 
-	/**
-	 * Lerp key frames float.
-	 *
-	 * @param framesIn          The frames
-	 * @param ageInTicks      The age in ticks
-	 * @param loop            The loop
-	 * @param animationLength The animation length
-	 * @return the float
-	 */
-	public static float LerpKeyFrames(List<KeyFrame<Float>> framesIn, float ageInTicks, boolean loop, float animationLength, float speedFactor)
+	public static float lerpValues(AnimationPoint animationPoint)
 	{
-		float animationLengthTicks = convertSecondsToTicks(animationLength);
-		KeyFrameLocation<KeyFrame<Float>> frameLocation = getCurrentKeyFrameLocation(framesIn,
-				loop ? ageInTicks % animationLengthTicks : ageInTicks);
-		KeyFrame<Float> frame = frameLocation.CurrentFrame;
-		if(Float.isNaN(animationLength))
-		{
-			return frame.getEndValue();
-		}
-		if(frameLocation.CurrentAnimationTick == -1)
-		{
-			return frame.getEndValue();
-		}
-		return lerpAnimationFloat(frameLocation.CurrentAnimationTick, frame.getKeyFrameLength(), frame.getStartValue(), frame.getEndValue());
+		return lerpValues(animationPoint.currentTick, animationPoint.animationEndTick, animationPoint.animationStartValue, animationPoint.animationEndValue);
 	}
 
-	/*
-	Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
-	 */
-	private static KeyFrameLocation<KeyFrame<Float>> getCurrentKeyFrameLocation(List<KeyFrame<Float>> frames, float ageInTicks)
+	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
 	{
-		float seconds = convertTicksToSeconds(ageInTicks);
-		float totalTimeTracker = 0;
-		for (int i = 0; i < frames.size(); i++)
+		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
+		return (EntityRenderer<T>) renderManager.getRenderer(entity);
+	}
+
+	public static <T extends Entity> AnimatedEntityModel getModelForEntity(T entity)
+	{
+		EntityRenderer<T> entityRenderer = getRenderer(entity);
+		if (entityRenderer instanceof IEntityRenderer)
 		{
-			KeyFrame frame = frames.get(i);
-			totalTimeTracker += frame.getKeyFrameLength();
-			if (totalTimeTracker >= seconds)
+			LivingRenderer renderer = (LivingRenderer) entityRenderer;
+			EntityModel entityModel = renderer.getEntityModel();
+			if (entityModel instanceof AnimatedEntityModel)
 			{
-				float tick = ageInTicks - convertSecondsToTicks(totalTimeTracker - frame.getKeyFrameLength());
-				return new KeyFrameLocation(frame, tick);
+				return (AnimatedEntityModel) entityModel;
+			}
+			else {
+				GeckoLib.LOGGER.error("Model for " + entity.getName() + " is not an AnimatedEntityModel. Please inherit the proper class.");
+				return null;
 			}
 		}
-		return new KeyFrameLocation(frames.get(frames.size() - 1), -1);
-	}
-
-	/**
-	 * Sums the length of the animation
-	 *
-	 * @param <T>    The keyframe type
-	 * @param frames The list of keyframes
-	 * @return The animation length in ticks
-	 */
-	public static <T extends KeyFrame> float getAnimationLengthInTicks(List<T> frames)
-	{
-		return (float) frames.stream().mapToDouble(x -> convertSecondsToTicks(x.getKeyFrameLength())).sum();
-	}
-
-	public static List<KeyFrame<Float>> applySpeedModifier(List<KeyFrame<Float>> keyframes, float speedModifier)
-	{
-		for(KeyFrame<Float> keyframe : keyframes)
-		{
-			keyframe.setKeyFrameLength(keyframe.getKeyFrameLength() * speedModifier);
+		else {
+			GeckoLib.LOGGER.error("Could not find valid renderer for " + entity.getName());
+			return null;
 		}
-
-		return keyframes;
 	}
-
 
 }

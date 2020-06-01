@@ -16,10 +16,27 @@ public class BoneSnapshot
 		rotationValueY = modelRenderer.rotateAngleY;
 		rotationValueZ = modelRenderer.rotateAngleZ;
 		this.modelRenderer = modelRenderer;
-		this.modelRendererName = modelRenderer.getModelRendererName();
+		this.name = modelRenderer.name;
 	}
 
-	public String modelRendererName;
+	public BoneSnapshot(BoneSnapshot snapshot)
+	{
+		scaleValueX = snapshot.scaleValueX;
+		scaleValueY = snapshot.scaleValueY;
+		scaleValueZ = snapshot.scaleValueZ;
+
+		positionOffsetX = snapshot.positionOffsetX;
+		positionOffsetY = snapshot.positionOffsetY;
+		positionOffsetZ = snapshot.positionOffsetZ;
+
+		rotationValueX = snapshot.rotationValueX;
+		rotationValueY = snapshot.rotationValueY;
+		rotationValueZ = snapshot.rotationValueZ;
+		this.modelRenderer = snapshot.modelRenderer;
+		this.name = snapshot.name;
+	}
+
+	public String name;
 	private AnimatedModelRenderer modelRenderer;
 
 	public float scaleValueX;

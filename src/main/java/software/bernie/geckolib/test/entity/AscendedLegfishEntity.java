@@ -16,6 +16,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.IAnimatedEntity;
+import software.bernie.geckolib.animation.AnimationBuilder;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationControllerCollection;
 import software.bernie.geckolib.animation.AnimationTestEvent;
@@ -33,9 +34,9 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	{
 		//GeckoLib.LOGGER.info(entityAnimationTestEvent.getLimbSwing());
 		float limbSwingAmount = entityAnimationTestEvent.getLimbSwingAmount();
-		if(!(limbSwingAmount > -0.3F && limbSwingAmount < 0.3F))
+		if(!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
-			moveController.setAnimation("walk", true);
+			moveController.setAnimation(new AnimationBuilder().addAnimation("walk", true));
 			return true;
 		}
 		return false;
@@ -49,12 +50,12 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 		switch(size)
 		{
 			case 1:
-				sizeController.setAnimation("small");
+				sizeController.setAnimation(new AnimationBuilder().addAnimation("small"));
 				break;
 			case 2 :
 				if(!hasGrown)
 				{
- 					sizeController.addAnimationToQueue("grow", false).addAnimationToQueue("upbig", true);
+ 					sizeController.setAnimation(new AnimationBuilder().addAnimation("grow", false).addAnimation("upbig", true));
 					setSize(3);
 					hasGrown = true;
 				}
@@ -72,7 +73,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	{
 		if(world.isRemote)
 		{
-			this.animationControllers.addAnimationController(sizeController);
+			//this.animationControllers.addAnimationController(sizeController);
 			this.animationControllers.addAnimationController(moveController);
 		}
 	}

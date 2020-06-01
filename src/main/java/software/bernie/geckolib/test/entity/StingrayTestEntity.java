@@ -6,9 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.IAnimatedEntity;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationControllerCollection;
-import software.bernie.geckolib.animation.AnimationTestEvent;
+import software.bernie.geckolib.animation.*;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntity
 {
@@ -32,7 +30,7 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 	{
 		if(world.isRemote)
 		{
-			wingController.setAnimation("swimmingAnimation");
+			wingController.setAnimation(new AnimationBuilder().addAnimation("swimmingAnimation"));
 			this.animationControllers.addAnimationController(wingController);
 		}
 	}
@@ -43,12 +41,12 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
 		if(entityWorld.rainingStrength > 0)
 		{
-			wingController.setTransitionSpeed(2);
-			wingController.setAnimation("thirdAnimation");
+			wingController.transitionLength = 40;
+			wingController.setAnimation(new AnimationBuilder().addAnimation("thirdAnimation"));
 		}
 		else {
-			wingController.setTransitionSpeed(2);
-			wingController.setAnimation("secondAnimation");
+			wingController.transitionLength = 40;
+			wingController.setAnimation(new AnimationBuilder().addAnimation("secondAnimation"));
 		}
 		return true;
 	}

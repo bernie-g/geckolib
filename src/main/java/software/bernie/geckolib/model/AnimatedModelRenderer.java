@@ -5,8 +5,6 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.util.math.Rotations;
-import net.minecraft.util.math.Vec3d;
 
 public class AnimatedModelRenderer extends ModelRenderer
 {
@@ -21,7 +19,7 @@ public class AnimatedModelRenderer extends ModelRenderer
 	public float positionOffsetY = 0;
 	public float positionOffsetZ = 0;
 
-	private String modelRendererName;
+	public String name;
 	public BoneSnapshot initialSnapshot;
 
 	public AnimatedModelRenderer(Model model)
@@ -29,14 +27,9 @@ public class AnimatedModelRenderer extends ModelRenderer
 		super(model);
 	}
 
-	public String getModelRendererName()
-	{
-		return modelRendererName;
-	}
-
 	public void setModelRendererName(String modelRendererName)
 	{
-		this.modelRendererName = modelRendererName;
+		this.name = modelRendererName;
 	}
 
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {

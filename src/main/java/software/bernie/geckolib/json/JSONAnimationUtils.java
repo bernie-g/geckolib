@@ -6,6 +6,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.JsonKeyFrameUtils;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
@@ -55,7 +56,7 @@ public class JSONAnimationUtils
 		}
 		if(rotationObject.isJsonPrimitive())
 		{
-			float value = rotationObject.getAsFloat();
+			double value = rotationObject.getAsDouble();
 			Gson gson = new Gson();
 			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
@@ -78,7 +79,7 @@ public class JSONAnimationUtils
 		}
 		if(positionObject.isJsonPrimitive())
 		{
-			float value = positionObject.getAsFloat();
+			double value = positionObject.getAsDouble();
 			Gson gson = new Gson();
 			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
@@ -102,7 +103,7 @@ public class JSONAnimationUtils
 		}
 		if(scaleObject.isJsonPrimitive())
 		{
-			float value = scaleObject.getAsFloat();
+			double value = scaleObject.getAsDouble();
 			Gson gson = new Gson();
 			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0.001", jsonElement));
@@ -190,7 +191,7 @@ public class JSONAnimationUtils
 		// Set some metadata about the animation
  		animation.animationName = element.getKey();
 		JsonElement animation_length = animationJsonObject.get("animation_length");
-		animation.animationLength = animation_length == null ? 0.01F : animation_length.getAsFloat();
+		animation.animationLength = AnimationUtils.convertSecondsToTicks(animation_length == null ? 0.01D : animation_length.getAsDouble());
 		animation.boneAnimations = new ArrayList();
 		JsonElement loop = animationJsonObject.get("loop");
 		animation.loop = loop == null ? false : loop.getAsBoolean();

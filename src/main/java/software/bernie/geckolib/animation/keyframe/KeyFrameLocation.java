@@ -7,9 +7,9 @@ public class KeyFrameLocation<T extends KeyFrame>
 	/*
 	This is the combined total time of all the previous keyframes
 	 */
-	public float CurrentAnimationTick;
+	public double CurrentAnimationTick;
 
-	public KeyFrameLocation(T currentFrame, float currentAnimationTick)
+	public KeyFrameLocation(T currentFrame, double currentAnimationTick)
 	{
 		CurrentFrame = currentFrame;
 		CurrentAnimationTick = currentAnimationTick;
