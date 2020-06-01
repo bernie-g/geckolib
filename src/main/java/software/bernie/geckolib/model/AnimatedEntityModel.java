@@ -131,7 +131,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing, limbSwingAmount, partialTick, controller);
 
 			// Process animations and add new values to the point queues
-			controller.process(tick, animationTestEvent, modelRendererList);
+			controller.process(tick, animationTestEvent, modelRendererList, boneSnapshots);
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.boneAnimationQueues.values())
@@ -193,29 +193,40 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		for (DirtyTracker tracker : modelTracker)
 		{
 			AnimatedModelRenderer model = tracker.model;
-			BoneSnapshot snapshot = model.getInitialSnapshot();
-			BoneSnapshot currentSnapshot = boneSnapshots.get(model.name);
+			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
+			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.model.name);
+
 			if (!tracker.hasRotationChanged)
 			{
-				if(tracker.model.name.equals("larm1"))
-				{
-					GeckoLib.LOGGER.info(model.rotateAngleX);
-				}
-				model.rotateAngleX = lerpConstant(model.rotateAngleX, snapshot.rotationValueX, 0.02);
-				model.rotateAngleY = lerpConstant(model.rotateAngleY, snapshot.rotationValueY, 0.02);
-				model.rotateAngleZ = lerpConstant(model.rotateAngleZ, snapshot.rotationValueZ, 0.02);
+				model.rotateAngleX = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
+				model.rotateAngleY = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
+				model.rotateAngleZ = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
+				saveSnapshot.rotationValueX = model.rotateAngleX;
+				saveSnapshot.rotationValueY = model.rotateAngleY;
+				saveSnapshot.rotationValueZ = model.rotateAngleZ;
 			}
 			if (!tracker.hasPositionChanged)
 			{
-				model.positionOffsetX = lerpConstant(model.positionOffsetX, snapshot.positionOffsetX, 0.01);
-				model.positionOffsetY = lerpConstant(model.positionOffsetY, snapshot.positionOffsetY, 0.01);
-				model.positionOffsetZ = lerpConstant(model.positionOffsetZ, snapshot.positionOffsetZ, 0.01);
+				model.positionOffsetX = lerpConstant(saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX, 0.02);
+				model.positionOffsetY = lerpConstant(saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY, 0.02);
+				model.positionOffsetZ = lerpConstant(saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ, 0.02);
+				saveSnapshot.positionOffsetX = model.positionOffsetX;
+				saveSnapshot.positionOffsetY = model.positionOffsetY;
+				saveSnapshot.positionOffsetZ = model.positionOffsetZ;
 			}
 			if (!tracker.hasScaleChanged)
 			{
-				model.scaleValueX = lerpConstant(model.scaleValueX, snapshot.scaleValueX, 0.05);
-				model.scaleValueY = lerpConstant(model.scaleValueY, snapshot.scaleValueY, 0.05);
-				model.scaleValueZ = lerpConstant(model.scaleValueZ, snapshot.scaleValueZ, 0.05);
+				if(tracker.model.name.equals("Righthand"))
+				{
+					int sdf = 0;
+					//GeckoLib.LOGGER.info(model.rotateAngleX);
+				}
+				model.scaleValueX = lerpConstant(saveSnapshot.scaleValueX, initialSnapshot.scaleValueX, 0.02);
+				model.scaleValueY = lerpConstant(saveSnapshot.scaleValueY, initialSnapshot.scaleValueY, 0.02);
+				model.scaleValueZ = lerpConstant(saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ, 0.02);
+				saveSnapshot.scaleValueX = model.scaleValueX;
+				saveSnapshot.scaleValueY = model.scaleValueY;
+				saveSnapshot.scaleValueZ = model.scaleValueZ;
 			}
 		}
 	}

@@ -36,6 +36,7 @@ public class BoneSnapshot
 		this.name = snapshot.name;
 	}
 
+
 	public String name;
 	private AnimatedModelRenderer modelRenderer;
 

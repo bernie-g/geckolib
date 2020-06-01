@@ -8,10 +8,7 @@ import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.KeyFrameLocation;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-import software.bernie.geckolib.model.AnimatedEntityModel;
-import software.bernie.geckolib.model.AnimatedModelRenderer;
-import software.bernie.geckolib.model.AnimationState;
-import software.bernie.geckolib.model.BoneSnapshot;
+import software.bernie.geckolib.model.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -27,24 +24,28 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	public double transitionLength;
 	public IAnimationPredicate animationPredicate;
 	public double tickOffset = 0;
-	private double keyFrameOffset = 0;
-	private int keyFrameHashCode = 0;
-	public boolean rotationEnabled = true;
-	public boolean positionEnabled = true;
-	public boolean scaleEnabled = true;
-	public double speedModifier = 1;
 	public final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
 	private Queue<Animation> animationQueue = new LinkedList<>();
 	private Animation currentAnimation;
 	private AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
 	private boolean shouldResetTick = false;
 	private HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
+	private boolean justStopped = false;
+	private boolean justStartedTransition = false;
 
 	public interface IAnimationPredicate
 	{
 		<ENTITY extends Entity> boolean test(AnimationTestEvent<ENTITY> event);
 	}
 
+	/**
+	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
+	 *
+	 * @param entity             The entity
+	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
+	 */
 	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate)
 	{
 		this.entity = entity;
@@ -81,12 +82,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				// Reset the adjusted tick to 0 on next animation process call
 				shouldResetTick = true;
 				this.animationState = AnimationState.Transitioning;
+				justStartedTransition = true;
 			}
 		}
 	}
 
 
-	public void process(double tick, AnimationTestEvent animationTestEvent, List<AnimatedModelRenderer> modelRendererList)
+	public void process(double tick, AnimationTestEvent animationTestEvent, List<AnimatedModelRenderer> modelRendererList, BoneSnapshotCollection boneSnapshotCollection)
 	{
 		createInitialQueues(modelRendererList);
 
@@ -98,7 +100,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		{
 			this.shouldResetTick = true;
 			animationState = AnimationState.Running;
-			tick = adjustTick(tick);
+			tick = adjustTick(actualTick);
 		}
 
 		assert tick >= 0 : "GeckoLib: Tick was less than zero";
@@ -110,31 +112,37 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		{
 			// The animation should transition to the model's initial state
 			animationState = AnimationState.Stopped;
+			justStopped = true;
 			return;
 		}
-		if (shouldResetTick || animationState == AnimationState.Transitioning)
+		if (justStartedTransition && (shouldResetTick || justStopped))
 		{
+			justStopped = false;
 			tick = adjustTick(actualTick);
+			GeckoLib.LOGGER.info("reset tick");
 		}
 		else
 		{
-			animationState = AnimationState.Running;
+			if(animationState != AnimationState.Transitioning)
+			{
+				animationState = AnimationState.Running;
+			}
 		}
 		// Handle transitioning to a different animation (or just starting one)
 		if (animationState == AnimationState.Transitioning)
 		{
 			// Just started transitioning, so set the current animation to the first one
-  			if (tick == 0)
+			if (tick == 0)
 			{
+				justStartedTransition = false;
 				this.currentAnimation = animationQueue.poll();
-				saveSnapshotsForAnimation(currentAnimation);
+				saveSnapshotsForAnimation(currentAnimation, boneSnapshotCollection);
 			}
-
-			double transitionEndTime = this.tickOffset + transitionLength;
 			for (BoneAnimation boneAnimation : currentAnimation.boneAnimations)
 			{
 				BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
-				BoneSnapshot boneSnapshot = boneSnapshots.get(boneAnimation.boneName);
+				BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
+				BoneSnapshot initialSnapshot = modelRendererList.stream().filter(x -> x.name.equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
 				assert boneSnapshot != null : "Bone snapshot was null";
 
 				VectorKeyFrameList<KeyFrame<Double>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
@@ -145,18 +153,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				if (!rotationKeyFrames.xKeyFrames.isEmpty())
 				{
 					boneAnimationQueue.rotationXQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueX,
+							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
 									rotationKeyFrames.xKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.rotationYQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueY,
+							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
 									rotationKeyFrames.yKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.rotationZQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueZ,
+							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
 									rotationKeyFrames.zKeyFrames.get(0).getStartValue()));
-					if(boneAnimation.boneName.equals("Righthand"))
-					{
-						GeckoLib.LOGGER.info(boneAnimationQueue.rotationZQueue.peek().toString());
-					}
 				}
 
 				if (!positionKeyFrames.xKeyFrames.isEmpty())
@@ -183,7 +187,6 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 					boneAnimationQueue.scaleZQueue.add(
 							new AnimationPoint(tick, transitionLength, boneSnapshot.scaleValueZ,
 									scaleKeyFrames.zKeyFrames.get(0).getStartValue()));
-
 				}
 			}
 		}
@@ -193,14 +196,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		}
 	}
 
-	private void saveSnapshotsForAnimation(@NotNull Animation animation)
+	private void saveSnapshotsForAnimation(@NotNull Animation animation, BoneSnapshotCollection boneSnapshotCollection)
 	{
-		AnimationControllerCollection controllerCollection = entity.getAnimationControllers();
-		for (BoneSnapshot snapshot : controllerCollection.boneSnapshotCollection.values())
+		for (BoneSnapshot snapshot : boneSnapshotCollection.values())
 		{
 			if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.name)))
 			{
-				boneSnapshots.put(snapshot.name, new BoneSnapshot(snapshot));
+				this.boneSnapshots.put(snapshot.name, new BoneSnapshot(snapshot));
 			}
 		}
 	}
@@ -208,7 +210,6 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private void processCurrentAnimation(double tick, double actualTick)
 	{
 		assert currentAnimation != null;
-
 		// Animation has ended
 		if (tick >= currentAnimation.animationLength)
 		{
@@ -281,15 +282,16 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			shouldResetTick = false;
 			return 0;
 		}
-		assert tick - this.tickOffset >= 0;
-		return tick - this.tickOffset;
+		//assert tick - this.tickOffset >= 0;
+		return (tick - this.tickOffset < 0 ? 0 : tick - this.tickOffset);
 	}
 
 	private AnimationPoint getAnimationPointAtTick(List<KeyFrame<Double>> frames, double tick)
 	{
 		KeyFrameLocation<KeyFrame<Double>> location = getCurrentKeyFrameLocation(frames, tick);
 		KeyFrame<Double> currentFrame = location.CurrentFrame;
-		return new AnimationPoint(location.CurrentAnimationTick, currentFrame.getLength(), currentFrame.getStartValue(), currentFrame.getEndValue());
+		return new AnimationPoint(location.CurrentAnimationTick, currentFrame.getLength(), currentFrame.getStartValue(),
+				currentFrame.getEndValue());
 	}
 
 	/*
