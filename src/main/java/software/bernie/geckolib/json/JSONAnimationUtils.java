@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
 package software.bernie.geckolib.json;
 
 import com.google.common.collect.ImmutableSet;
@@ -8,7 +13,6 @@ import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
-import software.bernie.geckolib.animation.keyframe.JsonKeyFrameUtils;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import java.util.*;
 
@@ -165,7 +169,7 @@ public class JSONAnimationUtils
 	}
 
 	/**
-	 * The animation format bedrock/blockbench uses is bizzare, and exports arrays of objects as plain parameters in a parent object, so this method undos it
+	 * The animation format bedrock/blockbench uses is bizarre, and exports arrays of objects as plain parameters in a parent object, so this method undos it
 	 *
 	 * @param json The json to convert (pass in the parent object or the list of objects)
 	 * @return The set of map entries where the string is the object key and the JsonElement is the actual object
@@ -194,7 +198,7 @@ public class JSONAnimationUtils
 		animation.animationLength = AnimationUtils.convertSecondsToTicks(animation_length == null ? 0.01D : animation_length.getAsDouble());
 		animation.boneAnimations = new ArrayList();
 		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = loop == null ? false : loop.getAsBoolean();
+		animation.loop = loop != null && loop.getAsBoolean();
 
 		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the
 		List<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
@@ -207,7 +211,7 @@ public class JSONAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> scaleKeyFramesJson = getScaleKeyFrames(boneJsonObj);
-				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToScaleKeyFrames(
+				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
 						new ArrayList<>(scaleKeyFramesJson));
 			}
 			catch(Exception e)
@@ -219,7 +223,7 @@ public class JSONAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> positionKeyFramesJson = getPositionKeyFrames(boneJsonObj);
-				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToPositionKeyFrames(
+				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
 						new ArrayList<>(positionKeyFramesJson));
 			}
 			catch(Exception e)

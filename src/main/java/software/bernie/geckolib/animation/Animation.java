@@ -1,8 +1,16 @@
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
 package software.bernie.geckolib.animation;
 
 import software.bernie.geckolib.animation.keyframe.*;
 import java.util.List;
 
+/**
+ * A specific animation instance
+ */
 public class Animation
 {
 	public String animationName;

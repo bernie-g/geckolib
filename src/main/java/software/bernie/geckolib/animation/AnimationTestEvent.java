@@ -1,7 +1,11 @@
-package software.bernie.geckolib.animation;
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
 
+package software.bernie.geckolib.animation;
 import net.minecraft.entity.Entity;
-import software.bernie.geckolib.model.AnimationState;
+import software.bernie.geckolib.animation.model.AnimationController;
 
 public class AnimationTestEvent<T extends Entity>
 {
@@ -12,6 +16,16 @@ public class AnimationTestEvent<T extends Entity>
 	private final float partialTick;
 	private final AnimationController controller;
 
+	/**
+	 * This stores all the fields that are needed in the AnimationTestEvent
+	 *
+	 * @param entity          the entity
+	 * @param animationTick   The amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
+	 * @param limbSwing       the limb swing
+	 * @param limbSwingAmount the limb swing amount
+	 * @param partialTick     the partial tick
+	 * @param controller      the controller
+	 */
 	public AnimationTestEvent(T entity, double animationTick, float limbSwing, float limbSwingAmount, float partialTick, AnimationController controller)
 	{
 		this.entity = entity;
@@ -22,6 +36,11 @@ public class AnimationTestEvent<T extends Entity>
 		this.controller = controller;
 	}
 
+	/**
+	 * Gets the amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
+	 *
+	 * @return the animation tick
+	 */
 	public double getAnimationTick()
 	{
 		return animationTick;
@@ -31,22 +50,18 @@ public class AnimationTestEvent<T extends Entity>
 	{
 		return entity;
 	}
-
 	public float getLimbSwing()
 	{
 		return limbSwing;
 	}
-
 	public float getLimbSwingAmount()
 	{
 		return limbSwingAmount;
 	}
-
 	public float getPartialTick()
 	{
 		return partialTick;
 	}
-
 	public AnimationController getController()
 	{
 		return controller;

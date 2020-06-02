@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
 package software.bernie.geckolib.animation;
 
-import software.bernie.geckolib.model.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.keyframe.AnimationPointQueue;
+import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
 
 public class BoneAnimationQueue
 {

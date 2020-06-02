@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
 package software.bernie.geckolib.animation;
 
 import net.minecraft.client.Minecraft;
@@ -9,7 +14,8 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.model.AnimatedEntityModel;
+import software.bernie.geckolib.animation.keyframe.AnimationPoint;
+import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 
 public class AnimationUtils
 {
@@ -47,17 +53,29 @@ public class AnimationUtils
 				endValue) * position / position);
 	}
 
+	/**
+	 * Lerps an AnimationPoint
+	 *
+	 * @param animationPoint The animation point
+	 * @return the resulting lerped value
+	 */
 	public static float lerpValues(AnimationPoint animationPoint)
 	{
 		return lerpValues(animationPoint.currentTick, animationPoint.animationEndTick, animationPoint.animationStartValue, animationPoint.animationEndValue);
 	}
 
+	/**
+	 * Gets the renderer for an entity
+	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
 	{
 		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 
+	/**
+	 * Gets the AnimatedEntityModel for an entity.
+	 */
 	public static <T extends Entity> AnimatedEntityModel getModelForEntity(T entity)
 	{
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
