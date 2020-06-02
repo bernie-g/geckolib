@@ -12,6 +12,7 @@ import software.bernie.geckolib.model.*;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class AnimationController<T extends Entity & IAnimatedEntity>
@@ -66,18 +67,32 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			}
 			if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()))
 			{
-				currentAnimationBuilder = builder;
-
+				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
-				animationQueue = new LinkedList<>(builder.getRawAnimationList().stream().map((rawAnimation) ->
+				LinkedList<Animation> animations = new LinkedList<>(
+						builder.getRawAnimationList().stream().map((rawAnimation) ->
+						{
+							Animation animation = model.getAnimation(rawAnimation.animationName);
+							if (animation == null)
+							{
+								GeckoLib.LOGGER.error(
+										"Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
+								encounteredError.set(true);
+							}
+							if (rawAnimation.loop != null)
+							{
+								animation.loop = rawAnimation.loop;
+							}
+							return animation;
+						}).collect(Collectors.toList()));
+				if(encounteredError.get())
 				{
-					Animation animation = model.getAnimation(rawAnimation.animationName);
-					if (rawAnimation.loop != null)
-					{
-						animation.loop = rawAnimation.loop;
-					}
-					return animation;
-				}).collect(Collectors.toList()));
+					return;
+				}
+				else {
+					animationQueue = animations;
+				}
+				currentAnimationBuilder = builder;
 
 				// Reset the adjusted tick to 0 on next animation process call
 				shouldResetTick = true;
@@ -192,6 +207,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		}
 		else if (animationState == AnimationState.Running)
 		{
+			GeckoLib.LOGGER.info(currentAnimation.animationName);
 			processCurrentAnimation(tick, actualTick);
 		}
 	}
@@ -200,9 +216,12 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	{
 		for (BoneSnapshot snapshot : boneSnapshotCollection.values())
 		{
-			if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.name)))
+			if(animation != null && animation.boneAnimations != null)
 			{
-				this.boneSnapshots.put(snapshot.name, new BoneSnapshot(snapshot));
+				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.name)))
+				{
+					this.boneSnapshots.put(snapshot.name, new BoneSnapshot(snapshot));
+				}
 			}
 		}
 	}

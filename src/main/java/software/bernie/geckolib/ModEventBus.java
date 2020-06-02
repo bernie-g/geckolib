@@ -10,6 +10,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.geckolib.test.client.renderer.entity.AscendedLegfishRenderer;
 import software.bernie.geckolib.test.client.renderer.entity.StingrayRenderer;
 import software.bernie.geckolib.registry.Entities;
+import software.bernie.geckolib.test.client.renderer.entity.TigrisRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ModEventBus
@@ -20,6 +21,7 @@ public class ModEventBus
 	{
 		RenderingRegistry.registerEntityRenderingHandler(Entities.STING_RAY.get(), manager -> new StingrayRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.ASCENDED_LEG_FISH.get(), manager -> new AscendedLegfishRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(Entities.TIGRIS.get(), manager -> new TigrisRenderer(manager));
 
 	}
 
