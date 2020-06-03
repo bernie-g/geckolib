@@ -29,7 +29,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 			moveController.setAnimation(new AnimationBuilder().addAnimation("tigris.spitfly", false).addAnimation("tigris.sit", false).addAnimation("tigris.sit", false).addAnimation("tigris.run", false).addAnimation("tigris.run", false).addAnimation("tigris.sleep", true));
 		}
 		else {
-			moveController.setAnimation(new AnimationBuilder().addAnimation("tigris.fly"));
+			moveController.setAnimation(new AnimationBuilder().addAnimation("tigris.fly", true));
 		}
 		return true;
 	}

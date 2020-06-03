@@ -314,10 +314,6 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		// Animation has ended
 		if (tick >= currentAnimation.animationLength)
 		{
-			// Reset the adjusted tick so the next animation starts at tick 0
-			shouldResetTick = true;
-			tick = adjustTick(actualTick);
-
 			// If the current animation is set to loop, keep it as the current animation and just start over
 			if (!currentAnimation.loop)
 			{
@@ -335,6 +331,11 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 					this.animationState = AnimationState.Transitioning;
 					shouldResetTick = true;
 				}
+			}
+			else {
+				// Reset the adjusted tick so the next animation starts at tick 0
+				shouldResetTick = true;
+				tick = adjustTick(actualTick);
 			}
 		}
 
