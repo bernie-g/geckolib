@@ -7,12 +7,12 @@ package software.bernie.geckolib.animation.model;
 
 import net.minecraft.entity.Entity;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.apache.commons.lang3.ArrayUtils;
+import org.codehaus.plexus.util.CollectionUtils;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.animation.model.*;
-
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,8 +48,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private IAnimationPredicate animationPredicate;
 
 	/**
+	 * The animation predicate, is tested in every process call (i.e. every frame)
+	 */
+	private ISoundListener soundListener;
+
+	/**
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
+	@FunctionalInterface
 	public interface IAnimationPredicate
 	{
 		/**
@@ -58,6 +64,18 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		 * @return TRUE if the animation should continue, FALSE if it should stop.
 		 */
 		<ENTITY extends Entity> boolean test(AnimationTestEvent<ENTITY> event);
+	}
+
+	/**
+	 * Sound Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the sound yourself.
+	 */
+	@FunctionalInterface
+	public interface ISoundListener
+	{
+		/**
+		 * Sound Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the sound yourself.
+		 */
+		<ENTITY extends Entity> void playSound(SoundEvent<ENTITY> event);
 	}
 
 	private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
@@ -127,6 +145,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	}
 
 	/**
+	 * Registers a sound listener.
+	 */
+	public void registerSoundListener(ISoundListener soundListener)
+	{
+		this.soundListener = soundListener;
+	}
+
+	/**
 	 * This method sets the current animation with an animation builder. You can run this method every frame, if you pass in the same animation builder every time, it won't restart. Additionally, it smoothly transitions between animation states.
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
@@ -152,7 +178,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 										"Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
 								encounteredError.set(true);
 							}
-							if (rawAnimation.loop != null)
+							if (animation != null && rawAnimation.loop != null)
 							{
 								animation.loop = rawAnimation.loop;
 							}
@@ -193,7 +219,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		tick = adjustTick(tick);
 
 		// Transition period has ended, reset the tick and set the animation to running
-		if (getAnimationState() == AnimationState.Transitioning && tick >= transitionLength)
+		if (animationState == AnimationState.Transitioning && tick >= transitionLength)
 		{
 			this.shouldResetTick = true;
 			animationState = AnimationState.Running;
@@ -219,19 +245,20 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		}
 		else
 		{
-			if(getAnimationState() != AnimationState.Transitioning)
+			if(animationState != AnimationState.Transitioning)
 			{
 				animationState = AnimationState.Running;
 			}
 		}
 		// Handle transitioning to a different animation (or just starting one)
-		if (getAnimationState() == AnimationState.Transitioning)
+		if (animationState == AnimationState.Transitioning)
 		{
 			// Just started transitioning, so set the current animation to the first one
 			if (tick == 0)
 			{
 				justStartedTransition = false;
 				this.currentAnimation = animationQueue.poll();
+				resetEventKeyFrames(currentAnimation);
 				saveSnapshotsForAnimation(currentAnimation, boneSnapshotCollection);
 			}
 			for (BoneAnimation boneAnimation : currentAnimation.boneAnimations)
@@ -314,6 +341,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		// Animation has ended
 		if (tick >= currentAnimation.animationLength)
 		{
+			resetEventKeyFrames(currentAnimation);
 			// If the current animation is set to loop, keep it as the current animation and just start over
 			if (!currentAnimation.loop)
 			{
@@ -370,6 +398,19 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				boneAnimationQueue.scaleZQueue.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick));
 			}
 		}
+
+		if(soundListener != null)
+		{
+			for(EventKeyFrame soundKeyFrame : currentAnimation.soundKeyFrames)
+			{
+				if(!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
+				{
+					SoundEvent event = new SoundEvent(this.entity, tick, soundKeyFrame.getEventData(), this);
+					soundListener.playSound(event);
+					soundKeyFrame.hasExecuted = true;
+				}
+			}
+		}
 	}
 
 	//Helper method to populate all the initial animation point queues
@@ -409,7 +450,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	/*
 	Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
     */
-	private static KeyFrameLocation<KeyFrame<Double>> getCurrentKeyFrameLocation(List<KeyFrame<Double>> frames, double ageInTicks)
+	private KeyFrameLocation<KeyFrame<Double>> getCurrentKeyFrameLocation(List<KeyFrame<Double>> frames, double ageInTicks)
 	{
 		double totalTimeTracker = 0;
 		for (int i = 0; i < frames.size(); i++)
@@ -423,5 +464,17 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			}
 		}
 		return new KeyFrameLocation(frames.get(frames.size() - 1), ageInTicks);
+	}
+
+
+	private void resetEventKeyFrames(Animation animation)
+	{
+		if(!animation.soundKeyFrames.isEmpty())
+		{
+			for(EventKeyFrame soundKeyFrame : animation.soundKeyFrames)
+			{
+				soundKeyFrame.hasExecuted = false;
+			}
+		}
 	}
 }

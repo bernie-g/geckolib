@@ -13,6 +13,7 @@ import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
+import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import java.util.*;
 
@@ -43,6 +44,8 @@ public class JSONAnimationUtils
 		JsonObject bones = json.getAsJsonObject("bones");
 		return bones == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(bones));
 	}
+
+
 
 	/**
 	 * Gets rotation key frames.
@@ -120,9 +123,10 @@ public class JSONAnimationUtils
 	 * @param json The animation json
 	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the sound effect keyframes.
 	 */
-	public static Set<Map.Entry<String, JsonElement>> getSoundEffectFrames(JsonObject json)
+	public static ArrayList<Map.Entry<String, JsonElement>> getSoundEffectFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("sound_effects"));
+		JsonObject sound_effects = json.getAsJsonObject("sound_effects");
+		return sound_effects == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(sound_effects));
 	}
 
 	/**
@@ -156,7 +160,7 @@ public class JSONAnimationUtils
 
 
 	/**
-	 * Gets animation.
+	 * Gets an animation by name.
 	 *
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
@@ -168,6 +172,7 @@ public class JSONAnimationUtils
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
 	}
 
+
 	/**
 	 * The animation format bedrock/blockbench uses is bizarre, and exports arrays of objects as plain parameters in a parent object, so this method undos it
 	 *
@@ -178,6 +183,7 @@ public class JSONAnimationUtils
 	{
 		return json.entrySet();
 	}
+
 
 	/**
 	 * This is the central method that parses an animation and converts it to an Animation object with all the correct keyframe times and extra metadata.
@@ -200,6 +206,14 @@ public class JSONAnimationUtils
 		JsonElement loop = animationJsonObject.get("loop");
 		animation.loop = loop != null && loop.getAsBoolean();
 
+		ArrayList<Map.Entry<String, JsonElement>> soundEffectFrames = getSoundEffectFrames(animationJsonObject);
+		if(soundEffectFrames != null)
+		{
+			for(Map.Entry<String, JsonElement> keyFrame : soundEffectFrames)
+			{
+				animation.soundKeyFrames.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, keyFrame.getValue().getAsJsonObject().get("effect").getAsString()));
+			}
+		}
 		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the
 		List<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
 		for (Map.Entry<String, JsonElement> bone : bones)
