@@ -16,7 +16,7 @@ dependencies {
 }
 ```
 ## Documentation
-GeckoLib provides detailed documentation in the form of a [wiki](https://github.com/bernie-g/geckolib/wiki) and javadocs.
+GeckoLib provides detailed documentation in the form of a [wiki](https://github.com/bernie-g/geckolib/wiki) and javadocs. GeckoLib is currently available for 1.12 and 1.15.
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
