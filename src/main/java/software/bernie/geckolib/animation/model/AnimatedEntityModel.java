@@ -278,11 +278,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			}
 			if (!tracker.hasScaleChanged)
 			{
-				if(tracker.model.name.equals("Righthand"))
-				{
-					int sdf = 0;
-					//GeckoLib.LOGGER.info(model.rotateAngleX);
-				}
 				model.scaleValueX = lerpConstant(saveSnapshot.scaleValueX, initialSnapshot.scaleValueX, 0.02);
 				model.scaleValueY = lerpConstant(saveSnapshot.scaleValueY, initialSnapshot.scaleValueY, 0.02);
 				model.scaleValueZ = lerpConstant(saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ, 0.02);

@@ -339,6 +339,10 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			}
 		}
 
+		if(tick == 0 && this.currentAnimation.animationName.equals("grow"))
+		{
+			int sdfsdf = 0;
+		}
 		// Loop through every boneanimation in the current animation and process the values
 		List<BoneAnimation> boneAnimations = currentAnimation.boneAnimations;
 		for (BoneAnimation boneAnimation : boneAnimations)
