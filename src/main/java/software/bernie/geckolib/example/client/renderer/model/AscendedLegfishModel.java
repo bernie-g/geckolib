@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib.example.client.renderer.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
@@ -177,12 +175,8 @@ public class AscendedLegfishModel extends AnimatedEntityModel<AscendedLegfishEnt
 		body.setTextureOffset(30, 0).addBox(-5.5F, -4.5F, -2.5F, 12.0F, 9.0F, 5.0F, 2.0F, false);
 		body.setModelRendererName("body");
 		this.registerModelRenderer(body);
-	}
+		this.rootBones.add(head);
 
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
-	{
-		head.render(matrixStack, buffer, packedLight, packedOverlay);
 	}
 
 	@Override

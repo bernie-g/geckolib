@@ -7,6 +7,8 @@ package software.bernie.geckolib.animation.model;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
@@ -31,6 +33,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private AnimationFileManager animationFileManager;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
+	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
@@ -344,5 +347,14 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		}
 
 		return (float) (currentValue + increment);
+	}
+
+	@Override
+	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	{
+		for(AnimatedModelRenderer model : rootBones)
+		{
+			model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		}
 	}
 }

@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib.example.client.renderer.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
@@ -290,17 +288,15 @@ public class TigrisModel extends AnimatedEntityModel<TigrisEntity>
 		foot_whole4.setTextureOffset(32, 361).addBox(-1.5F, 5.6464F, -3.7593F, 3.0F, 4.0F, 5.0F, 0.0F, true);
 		foot_whole4.setModelRendererName("foot_whole4");
 		this.registerModelRenderer(foot_whole4);
+
+		this.rootBones.add(body);
 	}
 
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
-	{
-		body.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
+
 
 	@Override
 	public ResourceLocation getAnimationFileLocation()
 	{
-		return new ResourceLocation("geckolib:" + "animations/tigris_anim.json");
+		return new ResourceLocation("geckolib", "animations/tigris_anim.json");
 	}
 }

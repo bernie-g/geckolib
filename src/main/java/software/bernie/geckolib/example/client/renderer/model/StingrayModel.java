@@ -8,8 +8,7 @@
 // Paste this class into your mod and generate all required imports
 package software.bernie.geckolib.example.client.renderer.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.example.entity.StingrayTestEntity;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
@@ -150,6 +149,7 @@ public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 		this.registerModelRenderer(bone);
 		this.registerModelRenderer(AllExcept12);
 		this.registerModelRenderer(AllExcept123);
+		this.rootBones.add(Stingray);
 	}
 
 	@Override
@@ -158,10 +158,6 @@ public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 		return new ResourceLocation("geckolib:animations/stingrayanimation.json");
 	}
 
-	@Override
-	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
-	{
-		Stingray.render(matrixStack, buffer, packedLight, packedOverlay);
-	}
+
 
 }
