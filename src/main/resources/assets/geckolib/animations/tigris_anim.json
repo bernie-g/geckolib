@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"tigris.fly": {
+		"fly": {
 			"loop": true,
 			"animation_length": 1.04,
 			"bones": {
@@ -159,9 +159,14 @@
 						"1.0333": [0, 0, 30]
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "flap"
+				}
 			}
 		},
-		"tigris.spitfly": {
+		"spit.fly": {
 			"loop": true,
 			"animation_length": 1.04,
 			"bones": {
@@ -345,7 +350,7 @@
 				}
 			}
 		},
-		"tigris.spit": {
+		"spit.idle": {
 			"loop": true,
 			"animation_length": 1.04,
 			"bones": {
@@ -537,7 +542,7 @@
 				}
 			}
 		},
-		"tigris.walk": {
+		"walk": {
 			"loop": true,
 			"animation_length": 0.9667,
 			"bones": {
@@ -704,7 +709,7 @@
 				}
 			}
 		},
-		"tigris.run": {
+		"run": {
 			"loop": true,
 			"animation_length": 0.9667,
 			"bones": {
@@ -897,7 +902,7 @@
 				}
 			}
 		},
-		"tigris.sleep": {
+		"sleep": {
 			"loop": true,
 			"animation_length": 0.9667,
 			"bones": {
@@ -1056,7 +1061,7 @@
 				}
 			}
 		},
-		"tigris.sit": {
+		"sit": {
 			"loop": true,
 			"animation_length": 1.92,
 			"bones": {
@@ -1220,14 +1225,10 @@
 						"0.0": [60, 0, 0],
 						"1.9167": [60, 0, 0]
 					}
-				},
-				"leg_back": {
-					"rotation": [-70, 0, 0],
-					"position": [0, 2, -1]
 				}
 			}
 		},
-		"tigris.eat": {
+		"eat": {
 			"loop": true,
 			"animation_length": 0.9667,
 			"bones": {

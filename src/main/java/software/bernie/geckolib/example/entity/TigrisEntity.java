@@ -9,6 +9,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.world.World;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animation.SoundEvent;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.animation.AnimationBuilder;
 import software.bernie.geckolib.animation.model.AnimationController;
@@ -26,10 +28,10 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 		moveController.transitionLength = 10;
 		if(KeyboardHandler.isQDown)
 		{
-			moveController.setAnimation(new AnimationBuilder().addAnimation("tigris.spitfly", false).addAnimation("tigris.sit", false).addAnimation("tigris.sit", false).addAnimation("tigris.run", false).addAnimation("tigris.run", false).addAnimation("tigris.sleep", true));
+			moveController.setAnimation(new AnimationBuilder().addAnimation("spit.fly", false).addAnimation("sit", false).addAnimation("sit", false).addAnimation("run", false).addAnimation("run", false).addAnimation("sleep", true));
 		}
 		else {
-			moveController.setAnimation(new AnimationBuilder().addAnimation("tigris.fly", true));
+			moveController.setAnimation(new AnimationBuilder().addAnimation("fly", true));
 		}
 		return true;
 	}
@@ -51,6 +53,12 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 		if(world.isRemote)
 		{
 			this.animationControllers.addAnimationController(moveController);
+			moveController.registerSoundListener(this::moveSoundListener);
 		}
+	}
+
+	private <ENTITY extends Entity> void moveSoundListener(SoundEvent<ENTITY> entitySoundEvent)
+	{
+		GeckoLib.LOGGER.info(entitySoundEvent.sound);
 	}
 }
