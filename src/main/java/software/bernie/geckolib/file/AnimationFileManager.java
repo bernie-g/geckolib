@@ -7,38 +7,38 @@ package software.bernie.geckolib.file;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.SimpleResource;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ResourceImpl;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 /**
  * An animation file manager is responsible for reading animation json files.
  */
 public class AnimationFileManager
 {
-	private ResourceLocation location;
+	private Identifier location;
 
 	/**
 	 * Instantiates a new Animation file manager.
 	 *
 	 * @param Location the resource location of the json file
 	 */
-	public AnimationFileManager(ResourceLocation Location)
+	public AnimationFileManager(Identifier Location)
 	{
 		location = Location;
 	}
 
-	private JsonObject loadAnimationFile(ResourceLocation location) throws Exception
+	private JsonObject loadAnimationFile(Identifier location) throws Exception
 	{
 		Gson GSON = new Gson();
-		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-		SimpleResource resource = (SimpleResource) resourceManager.getResource(location);
+		ReloadableResourceManager resourceManager = (ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager();
+		ResourceImpl resource = (ResourceImpl) resourceManager.getResource(location);
 		Reader reader = new BufferedReader(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-		JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
+		JsonObject jsonobject = JsonHelper.deserialize(GSON, reader, JsonObject.class);
 		resource.close();
 		return jsonobject;
 	}

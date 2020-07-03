@@ -5,13 +5,13 @@
 
 package software.bernie.geckolib.animation.model;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.model.Model;
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 
-public class AnimatedModelRenderer extends ModelRenderer
+public class AnimatedModelRenderer extends ModelPart
 {
 	private BoneSnapshot boneSnapshot;
 	public String currentAnimationName;
@@ -37,15 +37,15 @@ public class AnimatedModelRenderer extends ModelRenderer
 		this.name = modelRendererName;
 	}
 
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		if (this.showModel) {
-			if (!this.cubeList.isEmpty() || !this.childModels.isEmpty()) {
+	public void render(MatrixStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (this.visible) {
+			if (!this.cuboids.isEmpty() || !this.children.isEmpty()) {
 				matrixStackIn.push();
-				this.translateRotate(matrixStackIn);
+				this.rotate(matrixStackIn);
 				this.scale(matrixStackIn);
-				this.doRender(matrixStackIn.getLast(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				this.renderCuboids(matrixStackIn.peek(), bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
-				for(ModelRenderer modelrenderer : this.childModels) {
+				for(ModelPart modelrenderer : this.children) {
 					modelrenderer.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 				}
 				matrixStackIn.pop();
@@ -60,25 +60,25 @@ public class AnimatedModelRenderer extends ModelRenderer
 
 
 	@Override
-	public void setRotationPoint(float rotationPointXIn, float rotationPointYIn, float rotationPointZIn)
+	public void setPivot(float rotationPointXIn, float rotationPointYIn, float rotationPointZIn)
 	{
-		super.setRotationPoint(rotationPointXIn, rotationPointYIn, rotationPointZIn);
+		super.setPivot(rotationPointXIn, rotationPointYIn, rotationPointZIn);
 	}
 
 	@Override
-	public void translateRotate(MatrixStack matrixStackIn)
+	public void rotate(MatrixStack matrixStackIn)
 	{
-		matrixStackIn.translate(((rotationPointX + positionOffsetX) / 16F), ((rotationPointY  - positionOffsetY) / 16F), ((rotationPointZ + positionOffsetZ) / 16F));
-		if (this.rotateAngleZ != 0.0F) {
-			matrixStackIn.rotate(Vector3f.ZP.rotation(this.rotateAngleZ));
+		matrixStackIn.translate(((pivotX + positionOffsetX) / 16F), ((pivotY  - positionOffsetY) / 16F), ((pivotZ + positionOffsetZ) / 16F));
+		if (this.roll != 0.0F) {
+			matrixStackIn.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(this.roll));
 		}
 
-		if (this.rotateAngleY != 0.0F) {
-			matrixStackIn.rotate(Vector3f.YP.rotation(this.rotateAngleY));
+		if (this.yaw != 0.0F) {
+			matrixStackIn.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(this.yaw));
 		}
 
-		if (this.rotateAngleX != 0.0F) {
-			matrixStackIn.rotate(Vector3f.XP.rotation(this.rotateAngleX));
+		if (this.pitch != 0.0F) {
+			matrixStackIn.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(this.pitch));
 		}
 	}
 

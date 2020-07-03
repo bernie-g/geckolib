@@ -5,12 +5,12 @@
 
 package software.bernie.geckolib.animation;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
@@ -69,7 +69,7 @@ public class AnimationUtils
 	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
 	{
-		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
+		EntityRenderDispatcher renderManager = MinecraftClient.getInstance().getEntityRenderManager();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 
@@ -79,10 +79,10 @@ public class AnimationUtils
 	public static <T extends Entity> AnimatedEntityModel getModelForEntity(T entity)
 	{
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
-		if (entityRenderer instanceof IEntityRenderer)
+		if (entityRenderer instanceof FeatureRendererContext)
 		{
-			LivingRenderer renderer = (LivingRenderer) entityRenderer;
-			EntityModel entityModel = renderer.getEntityModel();
+			LivingEntityRenderer renderer = (LivingEntityRenderer) entityRenderer;
+			EntityModel entityModel = renderer.getModel();
 			if (entityModel instanceof AnimatedEntityModel)
 			{
 				return (AnimatedEntityModel) entityModel;

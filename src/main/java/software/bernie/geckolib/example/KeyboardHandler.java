@@ -5,13 +5,13 @@
 
 package software.bernie.geckolib.example;
 
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
+import net.fabricmc.api.EnvType;
+import net.minecraft.client.MinecraftClient;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(value = EnvType.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class KeyboardHandler
 {
 	public static boolean isForwardKeyDown = false;
@@ -21,12 +21,12 @@ public class KeyboardHandler
 	@SubscribeEvent
 	public static void onKeyPress(final InputEvent.KeyInputEvent event)
 	{
-		Minecraft mc = Minecraft.getInstance();
+		MinecraftClient mc = MinecraftClient.getInstance();
 		if (mc.player != null)
 		{
-			isForwardKeyDown = mc.gameSettings.keyBindForward.isKeyDown();
-			isBackKeyDown = mc.gameSettings.keyBindBack.isKeyDown();
-			isQDown = mc.gameSettings.keyBindDrop.isKeyDown();
+			isForwardKeyDown = mc.options.keyForward.isPressed();
+			isBackKeyDown = mc.options.keyBack.isPressed();
+			isQDown = mc.options.keyDrop.isPressed();
 
 		}
 	}

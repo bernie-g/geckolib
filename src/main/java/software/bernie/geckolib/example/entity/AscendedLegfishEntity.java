@@ -7,16 +7,16 @@ package software.bernie.geckolib.example.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.ai.goal.LookRandomlyGoal;
-import net.minecraft.entity.ai.goal.WaterAvoidingRandomWalkingGoal;
-import net.minecraft.entity.monster.MonsterEntity;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.animation.AnimationBuilder;
@@ -25,31 +25,31 @@ import software.bernie.geckolib.animation.model.AnimationControllerCollection;
 import software.bernie.geckolib.animation.AnimationTestEvent;
 import software.bernie.geckolib.example.KeyboardHandler;
 
-public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEntity
+public class AscendedLegfishEntity extends HostileEntity implements IAnimatedEntity
 {
-	private static final DataParameter<Integer> SIZE = EntityDataManager.createKey(AscendedLegfishEntity.class, DataSerializers.VARINT);
+	private static final TrackedData<Integer> SIZE = DataTracker.registerData(AscendedLegfishEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 	public AnimationControllerCollection animationControllers = new AnimationControllerCollection();
 
 	private AnimationController sizeController = new AnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
-	private AnimationController moveController = new AnimationController(this, "moveController", 10F, this::moveController);
+	private AnimationController moveControl = new AnimationController(this, "moveController", 10F, this::moveController);
 
 	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
 	{
 		float limbSwingAmount = entityAnimationTestEvent.getLimbSwingAmount();
 		if(KeyboardHandler.isForwardKeyDown)
 		{
-			moveController.setAnimation(new AnimationBuilder().addAnimation("kick", true));
+			moveControl.setAnimation(new AnimationBuilder().addAnimation("kick", true));
 			return true;
 		}
 		else if(KeyboardHandler.isBackKeyDown)
 		{
-			moveController.setAnimation(new AnimationBuilder().addAnimation("punchwalk", true));
+			moveControl.setAnimation(new AnimationBuilder().addAnimation("punchwalk", true));
 			return true;
 		}
 		else if(!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
-			moveController.setAnimation(new AnimationBuilder().addAnimation("walk", true));
+			moveControl.setAnimation(new AnimationBuilder().addAnimation("walk", true));
 			return true;
 		}
 		return false;
@@ -59,7 +59,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	private boolean hasGrown = false;
 	private <ENTITY extends Entity> boolean sizeAnimationPredicate(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
 	{
-		int size = getSize();
+		int size = getDimensions();
 		switch(size)
 		{
 			case 1:
@@ -76,7 +76,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 		return true;
 	}
 
-	public AscendedLegfishEntity(EntityType<? extends MonsterEntity> type, World worldIn)
+	public AscendedLegfishEntity(EntityType<? extends HostileEntity> type, World worldIn)
 	{
 		super(type, worldIn);
 		registerAnimationControllers();
@@ -84,10 +84,10 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 
 	public void registerAnimationControllers()
 	{
-		if(world.isRemote)
+		if(world.isClient)
 		{
 			this.animationControllers.addAnimationController(sizeController);
-			this.animationControllers.addAnimationController(moveController);
+			this.animationControllers.addAnimationController(moveControl);
 		}
 	}
 
@@ -98,20 +98,20 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	}
 
 	@Override
-	protected void registerData()
+	protected void initDataTracker()
 	{
-		super.registerData();
-		this.dataManager.register(SIZE, 1);
+		super.initDataTracker();
+		this.dataTracker.startTracking(SIZE, 1);
 	}
 
-	public int getSize()
+	public int getDimensions()
 	{
-		return this.dataManager.get(SIZE);
+		return this.dataTracker.get(SIZE);
 	}
 
 	public void setSize(int size)
 	{
-		this.dataManager.set(SIZE, size);
+		this.dataTracker.set(SIZE, size);
 	}
 
 	/**
@@ -121,30 +121,30 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	 * @param amount
 	 */
 	@Override
-	public boolean attackEntityFrom(DamageSource source, float amount)
+	public boolean damage(DamageSource source, float amount)
 	{
-		if(source.getTrueSource() instanceof PlayerEntity)
+		if(source.getAttacker() instanceof PlayerEntity)
 		{
-			if(getSize() == 1)
+			if(getDimensions() == 1)
 			{
 				setSize(2);
 			}
 		}
-		return super.attackEntityFrom(source, amount);
+		return super.damage(source, amount);
 	}
 
 	@Override
-	protected void registerGoals()
+	protected void initGoals()
 	{
-		this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		this.goalSelector.addGoal(7, new LookRandomlyGoal(this));
+		this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
+		this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+		this.goalSelector.add(7, new LookAroundGoal(this));
 	}
 
-	protected void registerAttributes() {
-		super.registerAttributes();
-		this.getAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
-		this.getAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue((double)0.2F);
+	protected void initAttributes() {
+		super.initAttributes();
+		this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(100.0D);
+		this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue((double)0.2F);
 	}
 
 }

@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.example.client.renderer.model;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
 import software.bernie.geckolib.example.entity.AscendedLegfishEntity;
@@ -42,137 +42,137 @@ public class AscendedLegfishModel extends AnimatedEntityModel<AscendedLegfishEnt
 		textureWidth = 64;
 		textureHeight = 64;
 		head = new AnimatedModelRenderer(this);
-		head.setRotationPoint(0.0F, -17.5F, 0.0F);
-		head.setTextureOffset(0, 0).addBox(-4.0F, -4.5F, -7.0F, 8.0F, 5.0F, 14.0F, 0.0F, false);
+		head.setPivot(0.0F, -17.5F, 0.0F);
+		head.setTextureOffset(0, 0).addCuboid(-4.0F, -4.5F, -7.0F, 8.0F, 5.0F, 14.0F, 0.0F, false);
 		head.setModelRendererName("head");
 		this.registerModelRenderer(head);
 
 		larm1 = new AnimatedModelRenderer(this);
-		larm1.setRotationPoint(8.0F, 0.5F, 0.0F);
+		larm1.setPivot(8.0F, 0.5F, 0.0F);
 		head.addChild(larm1);
 		setRotationAngle(larm1, 0.0F, 0.0F, -0.3491F);
-		larm1.setTextureOffset(0, 49).addBox(-3.0F, -0.5F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
+		larm1.setTextureOffset(0, 49).addCuboid(-3.0F, -0.5F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
 		larm1.setModelRendererName("larm1");
 		this.registerModelRenderer(larm1);
 
 		larm2 = new AnimatedModelRenderer(this);
-		larm2.setRotationPoint(0.0F, 9.0F, 0.0F);
+		larm2.setPivot(0.0F, 9.0F, 0.0F);
 		larm1.addChild(larm2);
-		larm2.setTextureOffset(0, 35).addBox(-2.5F, 0.0912F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
+		larm2.setTextureOffset(0, 35).addCuboid(-2.5F, 0.0912F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
 		larm2.setModelRendererName("larm2");
 		this.registerModelRenderer(larm2);
 
 		lhand = new AnimatedModelRenderer(this);
-		lhand.setRotationPoint(0.0F, 10.0F, 0.5F);
+		lhand.setPivot(0.0F, 10.0F, 0.5F);
 		larm2.addChild(lhand);
-		lhand.setTextureOffset(24, 19).addBox(-3.5F, 0.0912F, -4.0F, 7.0F, 7.0F, 7.0F, 0.0F, false);
+		lhand.setTextureOffset(24, 19).addCuboid(-3.5F, 0.0912F, -4.0F, 7.0F, 7.0F, 7.0F, 0.0F, false);
 		lhand.setModelRendererName("lhand");
 		this.registerModelRenderer(lhand);
 
 		rleg1 = new AnimatedModelRenderer(this);
-		rleg1.setRotationPoint(-4.0F, 16.5F, 0.0F);
+		rleg1.setPivot(-4.0F, 16.5F, 0.0F);
 		head.addChild(rleg1);
-		rleg1.setTextureOffset(0, 49).addBox(-3.0F, 0.0F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
+		rleg1.setTextureOffset(0, 49).addCuboid(-3.0F, 0.0F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
 		rleg1.setModelRendererName("rleg1");
 		this.registerModelRenderer(rleg1);
 
 		rleg2 = new AnimatedModelRenderer(this);
-		rleg2.setRotationPoint(0.0F, 10.0F, -0.5F);
+		rleg2.setPivot(0.0F, 10.0F, -0.5F);
 		rleg1.addChild(rleg2);
-		rleg2.setTextureOffset(0, 35).addBox(-2.5F, 0.0F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
+		rleg2.setTextureOffset(0, 35).addCuboid(-2.5F, 0.0F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
 		rleg2.setModelRendererName("rleg2");
 		this.registerModelRenderer(rleg2);
 
 		rankle = new AnimatedModelRenderer(this);
-		rankle.setRotationPoint(0.0F, 10.0F, 0.0F);
+		rankle.setPivot(0.0F, 10.0F, 0.0F);
 		rleg2.addChild(rankle);
-		rankle.setTextureOffset(0, 29).addBox(-2.0F, 0.0F, -1.5F, 4.0F, 3.0F, 3.0F, 0.0F, false);
+		rankle.setTextureOffset(0, 29).addCuboid(-2.0F, 0.0F, -1.5F, 4.0F, 3.0F, 3.0F, 0.0F, false);
 		rankle.setModelRendererName("rankle");
 		this.registerModelRenderer(rankle);
 
 		rfoot = new AnimatedModelRenderer(this);
-		rfoot.setRotationPoint(0.0F, 3.0F, 0.5F);
+		rfoot.setPivot(0.0F, 3.0F, 0.5F);
 		rankle.addChild(rfoot);
-		rfoot.setTextureOffset(0, 20).addBox(-2.5F, 0.0F, -5.0F, 5.0F, 2.0F, 7.0F, 0.0F, false);
+		rfoot.setTextureOffset(0, 20).addCuboid(-2.5F, 0.0F, -5.0F, 5.0F, 2.0F, 7.0F, 0.0F, false);
 		rfoot.setModelRendererName("rfoot");
 		this.registerModelRenderer(rfoot);
 
 		rkneecap = new AnimatedModelRenderer(this);
-		rkneecap.setRotationPoint(0.0F, 8.0F, -2.5F);
+		rkneecap.setPivot(0.0F, 8.0F, -2.5F);
 		rleg1.addChild(rkneecap);
-		rkneecap.setTextureOffset(0, 0).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 1.0F, 0.0F, false);
+		rkneecap.setTextureOffset(0, 0).addCuboid(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 1.0F, 0.0F, false);
 		rkneecap.setModelRendererName("rkneecap");
 		this.registerModelRenderer(rkneecap);
 
 		rarm1 = new AnimatedModelRenderer(this);
-		rarm1.setRotationPoint(-8.0F, 0.5F, 0.0F);
+		rarm1.setPivot(-8.0F, 0.5F, 0.0F);
 		head.addChild(rarm1);
 		setRotationAngle(rarm1, 0.0F, 0.0F, 0.3491F);
-		rarm1.setTextureOffset(0, 49).addBox(-3.0F, -0.5F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
+		rarm1.setTextureOffset(0, 49).addCuboid(-3.0F, -0.5F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
 		rarm1.setModelRendererName("rarm1");
 		this.registerModelRenderer(rarm1);
 
 		rarm2 = new AnimatedModelRenderer(this);
-		rarm2.setRotationPoint(0.0F, 9.0F, 0.0F);
+		rarm2.setPivot(0.0F, 9.0F, 0.0F);
 		rarm1.addChild(rarm2);
-		rarm2.setTextureOffset(0, 35).addBox(-2.5F, 0.0F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
+		rarm2.setTextureOffset(0, 35).addCuboid(-2.5F, 0.0F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
 		rarm2.setModelRendererName("rarm2");
 		this.registerModelRenderer(rarm2);
 
 		rhand = new AnimatedModelRenderer(this);
-		rhand.setRotationPoint(0.0F, 10.0F, -0.5F);
+		rhand.setPivot(0.0F, 10.0F, -0.5F);
 		rarm2.addChild(rhand);
-		rhand.setTextureOffset(24, 33).addBox(-3.5F, 0.0F, -3.0F, 7.0F, 7.0F, 7.0F, 0.0F, false);
+		rhand.setTextureOffset(24, 33).addCuboid(-3.5F, 0.0F, -3.0F, 7.0F, 7.0F, 7.0F, 0.0F, false);
 		rhand.setModelRendererName("rhand");
 		this.registerModelRenderer(rhand);
 
 		lleg1 = new AnimatedModelRenderer(this);
-		lleg1.setRotationPoint(4.0F, 16.5F, 0.0F);
+		lleg1.setPivot(4.0F, 16.5F, 0.0F);
 		head.addChild(lleg1);
-		lleg1.setTextureOffset(0, 49).addBox(-3.0F, 0.0F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
+		lleg1.setTextureOffset(0, 49).addCuboid(-3.0F, 0.0F, -2.5F, 6.0F, 10.0F, 5.0F, 0.0F, false);
 		lleg1.setModelRendererName("lleg1");
 		this.registerModelRenderer(lleg1);
 
 		lleg2 = new AnimatedModelRenderer(this);
-		lleg2.setRotationPoint(0.0F, 10.5F, -0.5F);
+		lleg2.setPivot(0.0F, 10.5F, -0.5F);
 		lleg1.addChild(lleg2);
-		lleg2.setTextureOffset(0, 35).addBox(-2.5F, -0.5F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
+		lleg2.setTextureOffset(0, 35).addCuboid(-2.5F, -0.5F, -2.0F, 5.0F, 10.0F, 4.0F, 0.0F, false);
 		lleg2.setModelRendererName("lleg2");
 		this.registerModelRenderer(lleg2);
 
 		lankle = new AnimatedModelRenderer(this);
-		lankle.setRotationPoint(0.0F, 9.5F, 0.0F);
+		lankle.setPivot(0.0F, 9.5F, 0.0F);
 		lleg2.addChild(lankle);
-		lankle.setTextureOffset(0, 29).addBox(-2.0F, 0.0F, -1.5F, 4.0F, 3.0F, 3.0F, 0.0F, false);
+		lankle.setTextureOffset(0, 29).addCuboid(-2.0F, 0.0F, -1.5F, 4.0F, 3.0F, 3.0F, 0.0F, false);
 		lankle.setModelRendererName("lankle");
 		this.registerModelRenderer(lankle);
 
 		lfoot = new AnimatedModelRenderer(this);
-		lfoot.setRotationPoint(0.0F, 3.0F, 0.5F);
+		lfoot.setPivot(0.0F, 3.0F, 0.5F);
 		lankle.addChild(lfoot);
-		lfoot.setTextureOffset(0, 20).addBox(-2.5F, 0.0F, -5.0F, 5.0F, 2.0F, 7.0F, 0.0F, false);
+		lfoot.setTextureOffset(0, 20).addCuboid(-2.5F, 0.0F, -5.0F, 5.0F, 2.0F, 7.0F, 0.0F, false);
 		lfoot.setModelRendererName("lfoot");
 		this.registerModelRenderer(lfoot);
 
 		lkneecap = new AnimatedModelRenderer(this);
-		lkneecap.setRotationPoint(0.0F, 8.0F, -2.5F);
+		lkneecap.setPivot(0.0F, 8.0F, -2.5F);
 		lleg1.addChild(lkneecap);
-		lkneecap.setTextureOffset(0, 0).addBox(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 1.0F, 0.0F, false);
+		lkneecap.setTextureOffset(0, 0).addCuboid(-1.0F, 0.0F, -1.0F, 2.0F, 3.0F, 1.0F, 0.0F, false);
 		lkneecap.setModelRendererName("lkneecap");
 		this.registerModelRenderer(lkneecap);
 
 		fin = new AnimatedModelRenderer(this);
-		fin.setRotationPoint(0.0F, -6.0F, 0.0F);
+		fin.setPivot(0.0F, -6.0F, 0.0F);
 		head.addChild(fin);
-		fin.setTextureOffset(35, 44).addBox(0.0F, -2.5F, -5.0F, 0.0F, 4.0F, 13.0F, 0.0F, false);
+		fin.setTextureOffset(35, 44).addCuboid(0.0F, -2.5F, -5.0F, 0.0F, 4.0F, 13.0F, 0.0F, false);
 		fin.setModelRendererName("fin");
 		this.registerModelRenderer(fin);
 
 		body = new AnimatedModelRenderer(this);
-		body.setRotationPoint(0.0F, 8.0F, 0.0F);
+		body.setPivot(0.0F, 8.0F, 0.0F);
 		head.addChild(body);
 		setRotationAngle(body, 0.0F, 0.0F, 1.5708F);
-		body.setTextureOffset(30, 0).addBox(-5.5F, -4.5F, -2.5F, 12.0F, 9.0F, 5.0F, 2.0F, false);
+		body.setTextureOffset(30, 0).addCuboid(-5.5F, -4.5F, -2.5F, 12.0F, 9.0F, 5.0F, 2.0F, false);
 		body.setModelRendererName("body");
 		this.registerModelRenderer(body);
 		this.rootBones.add(head);
@@ -180,8 +180,8 @@ public class AscendedLegfishModel extends AnimatedEntityModel<AscendedLegfishEnt
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public Identifier getAnimationFileLocation()
 	{
-		return new ResourceLocation("geckolib:" + "animations/ascended_leg_fish.json");
+		return new Identifier("geckolib:" + "animations/ascended_leg_fish.json");
 	}
 }

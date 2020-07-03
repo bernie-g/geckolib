@@ -17,9 +17,9 @@ public class BoneSnapshot
 		positionOffsetY = modelRenderer.positionOffsetY;
 		positionOffsetZ = modelRenderer.positionOffsetZ;
 
-		rotationValueX = modelRenderer.rotateAngleX;
-		rotationValueY = modelRenderer.rotateAngleY;
-		rotationValueZ = modelRenderer.rotateAngleZ;
+		rotationValueX = modelRenderer.pitch;
+		rotationValueY = modelRenderer.yaw;
+		rotationValueZ = modelRenderer.roll;
 		this.modelRenderer = modelRenderer;
 		this.name = modelRenderer.name;
 	}

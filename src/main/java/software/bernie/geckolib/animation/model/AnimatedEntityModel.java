@@ -7,12 +7,12 @@ package software.bernie.geckolib.animation.model;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.util.JSONException;
+import net.minecraft.client.gl.ShaderParseException;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.entity.IAnimatedEntity;
@@ -20,7 +20,6 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.file.AnimationFileManager;
 import software.bernie.geckolib.json.JSONAnimationUtils;
 import java.util.*;
-import java.util.List;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
@@ -40,7 +39,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 *
 	 * @return the animation file location
 	 */
-	public abstract ResourceLocation getAnimationFileLocation();
+	public abstract Identifier getAnimationFileLocation();
 
 	/**
 	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
@@ -81,7 +80,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					animation.loop = true;
 				}
 			}
-			catch (JSONException e)
+			catch (ShaderParseException e)
 			{
 				GeckoLib.LOGGER.error("Could not load animation: " + animationName, e);
 			}
@@ -150,7 +149,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 * @return the animation by name
 	 * @throws JSONException
 	 */
-	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JSONException
+	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws ShaderParseException
 	{
 		return JSONAnimationUtils.getAnimation(getAnimationFile(), name);
 	}
@@ -166,19 +165,19 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 */
 	public void setRotationAngle(AnimatedModelRenderer modelRenderer, float x, float y, float z)
 	{
-		modelRenderer.rotateAngleX = x;
-		modelRenderer.rotateAngleY = y;
-		modelRenderer.rotateAngleZ = z;
+		modelRenderer.pitch = x;
+		modelRenderer.yaw = y;
+		modelRenderer.roll = z;
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
+	public void animateModel(T entity, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
 		EntityDirtyTracker modelTracker = createNewDirtyTracker();
 
 		// Adding partial tick to smooth out the animation
-		double tick = entity.ticksExisted + partialTick;
+		double tick = entity.age + partialTick;
 
 		// Each animation has it's own collection of animations (called the AnimationControllerCollection), which allows for multiple independent animations
 		AnimationControllerCollection controllers = entity.getAnimationControllers();
@@ -220,12 +219,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any rotation points for this bone
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint) + initialSnapshot.rotationValueX;
-					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint) + initialSnapshot.rotationValueY;
-					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint) + initialSnapshot.rotationValueZ;
-					snapshot.rotationValueX = bone.rotateAngleX;
-					snapshot.rotationValueY = bone.rotateAngleY;
-					snapshot.rotationValueZ = bone.rotateAngleZ;
+					bone.pitch = AnimationUtils.lerpValues(rXPoint) + initialSnapshot.rotationValueX;
+					bone.yaw = AnimationUtils.lerpValues(rYPoint) + initialSnapshot.rotationValueY;
+					bone.roll = AnimationUtils.lerpValues(rZPoint) + initialSnapshot.rotationValueZ;
+					snapshot.rotationValueX = bone.pitch;
+					snapshot.rotationValueY = bone.yaw;
+					snapshot.rotationValueZ = bone.roll;
 
 					modelTracker.get(bone).hasRotationChanged = true;
 				}
@@ -263,12 +262,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 			if (!tracker.hasRotationChanged)
 			{
-				model.rotateAngleX = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
-				model.rotateAngleY = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
-				model.rotateAngleZ = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
-				saveSnapshot.rotationValueX = model.rotateAngleX;
-				saveSnapshot.rotationValueY = model.rotateAngleY;
-				saveSnapshot.rotationValueZ = model.rotateAngleZ;
+				model.pitch = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
+				model.yaw = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
+				model.roll = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
+				saveSnapshot.rotationValueX = model.pitch;
+				saveSnapshot.rotationValueY = model.yaw;
+				saveSnapshot.rotationValueZ = model.roll;
 			}
 			if (!tracker.hasPositionChanged)
 			{
@@ -312,7 +311,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	public void setAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
 	{
 
 	}
@@ -350,7 +349,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void render(MatrixStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
 		for(AnimatedModelRenderer model : rootBones)
 		{

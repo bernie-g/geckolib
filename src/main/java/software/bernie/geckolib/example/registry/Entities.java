@@ -6,7 +6,7 @@
 package software.bernie.geckolib.example.registry;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityCategory;
 import net.minecraft.entity.EntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,11 +24,11 @@ public class Entities
 	public static final RegistryObject<EntityType<TigrisEntity>> TIGRIS = BuildEntity(TigrisEntity::new, TigrisEntity.class, 5F, 3F);
 
 
-	public static <T extends Entity> RegistryObject<EntityType<T>> BuildEntity(EntityType.IFactory<T> entity, Class<T> entityClass, float width, float height)
+	public static <T extends Entity> RegistryObject<EntityType<T>> BuildEntity(EntityType.EntityFactory<T> entity, Class<T> entityClass, float width, float height)
 	{
 		String name = entityClass.getSimpleName().toLowerCase();
 		return ENTITIES.register(name,
-				() -> EntityType.Builder.create(entity, EntityClassification.CREATURE)
-						.size(width, height).build(name));
+				() -> EntityType.Builder.create(entity, EntityCategory.field_6294)
+						.setDimensions(width, height).build(name));
 	}
 }
