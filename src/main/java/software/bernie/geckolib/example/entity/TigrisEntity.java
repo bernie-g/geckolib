@@ -27,13 +27,13 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 
 	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
 	{
-		moveControl.transitionLengthTicks = 10;
-		if(KeyboardHandler.isQDown)
+		moveController.transitionLengthTicks = 10;
+		if(KeyboardHandler.isSneakKeyDown())
 		{
-			moveControl.setAnimation(new AnimationBuilder().addAnimation("spit.fly", false).addAnimation("sit", false).addAnimation("sit", false).addAnimation("run", false).addAnimation("run", false).addAnimation("sleep", true));
+			moveController.setAnimation(new AnimationBuilder().addAnimation("spit.fly", false).addAnimation("sit", false).addAnimation("sit", false).addAnimation("run", false).addAnimation("run", false).addAnimation("sleep", true));
 		}
 		else {
-			moveControl.setAnimation(new AnimationBuilder().addAnimation("fly", true));
+			moveController.setAnimation(new AnimationBuilder().addAnimation("fly", true));
 		}
 		return true;
 	}
@@ -54,14 +54,14 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 	{
 		if(world.isClient)
 		{
-			this.animationControllers.addAnimationController(moveControl);
-			moveControl.registerSoundListener(this::flapListener);
+			this.animationControllers.addAnimationController(moveController);
+			moveController.registerSoundListener(this::flapListener);
 		}
 	}
 
 	private <ENTITY extends Entity> SoundEvent flapListener(SoundKeyframeEvent<ENTITY> event)
 	{
 		//return whatever sound you want to play here, or return null and handle sounds yourself
-		return SoundEvents.field_14550;
+		return SoundEvents.ENTITY_ENDER_DRAGON_FLAP;
 	}
 }

@@ -38,12 +38,12 @@ public class AscendedLegfishEntity extends HostileEntity implements IAnimatedEnt
 	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> event)
 	{
 		float limbSwingAmount = event.getLimbSwingAmount();
-		if(KeyboardHandler.isForwardKeyDown)
+		if(KeyboardHandler.isForwardKeyDown())
 		{
 			moveControl.setAnimation(new AnimationBuilder().addAnimation("kick", true));
 			return true;
 		}
-		else if(KeyboardHandler.isBackKeyDown)
+		else if(KeyboardHandler.isBackKeyDown())
 		{
 			moveControl.setAnimation(new AnimationBuilder().addAnimation("punchwalk", true));
 			return true;

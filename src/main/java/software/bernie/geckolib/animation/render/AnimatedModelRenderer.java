@@ -33,6 +33,54 @@ public class AnimatedModelRenderer extends ModelPart
 		super(model);
 	}
 
+	@Override
+	public AnimatedModelRenderer setTextureOffset(int textureOffsetU, int textureOffsetV)
+	{
+		this.textureOffsetU = textureOffsetU;
+		this.textureOffsetV = textureOffsetV;
+		return this;
+	}
+
+
+	public AnimatedModelRenderer addBox(String name, float x, float y, float z, int sizeX, int sizeY, int sizeZ, float extra, int textureOffsetU, int textureOffsetV)
+	{
+		this.setTextureOffset(textureOffsetU, textureOffsetV);
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, (float)sizeX, (float)sizeY, (float)sizeZ, extra, extra, extra, this.mirror, false);
+		return this;
+	}
+
+
+	public AnimatedModelRenderer addBox(float x, float y, float z, float sizeX, float sizeY, float sizeZ)
+	{
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, sizeX, sizeY, sizeZ, 0.0F, 0.0F, 0.0F, this.mirror, false);
+		return this;
+	}
+
+
+	public AnimatedModelRenderer addBox(float x, float y, float z, float sizeX, float sizeY, float sizeZ, boolean mirror)
+	{
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, sizeX, sizeY, sizeZ, 0.0F, 0.0F, 0.0F, mirror, false);
+		return this;
+	}
+
+
+	public void addBox(float x, float y, float z, float sizeX, float sizeY, float sizeZ, float extra)
+	{
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, sizeX, sizeY, sizeZ, extra, extra, extra, this.mirror, false);
+	}
+
+
+	public void addBox(float x, float y, float z, float sizeX, float sizeY, float sizeZ, float extraX, float extraY, float extraZ)
+	{
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, sizeX, sizeY, sizeZ, extraX, extraY, extraZ, this.mirror, false);
+	}
+
+
+	public void addBox(float x, float y, float z, float sizeX, float sizeY, float sizeZ, float extra, boolean mirror)
+	{
+		this.addCuboid(this.textureOffsetU, this.textureOffsetV, x, y, z, sizeX, sizeY, sizeZ, extra, extra, extra, mirror, false);
+	}
+
 	public void setModelRendererName(String modelRendererName)
 	{
 		this.name = modelRendererName;
@@ -64,6 +112,11 @@ public class AnimatedModelRenderer extends ModelPart
 	public void setPivot(float rotationPointXIn, float rotationPointYIn, float rotationPointZIn)
 	{
 		super.setPivot(rotationPointXIn, rotationPointYIn, rotationPointZIn);
+	}
+
+	public void setRotationPoint(float rotationPointXIn, float rotationPointYIn, float rotationPointZIn)
+	{
+		this.setPivot(rotationPointXIn, rotationPointYIn, rotationPointZIn);
 	}
 
 	@Override

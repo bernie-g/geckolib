@@ -8,7 +8,6 @@ package software.bernie.geckolib.example.client.renderer.entity;
 import software.bernie.geckolib.example.client.renderer.model.TigrisModel;
 import software.bernie.geckolib.example.entity.TigrisEntity;
 
-import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -24,7 +23,6 @@ public class TigrisRenderer extends MobEntityRenderer<TigrisEntity, TigrisModel>
 		super(rendererManager, new TigrisModel(), 0.5F);
 	}
 
-	@Nullable
 	@Override
 	public Identifier getTexture(TigrisEntity entity)
 	{

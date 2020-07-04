@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "geckolib",
+  "version": "${version}",
+
+  "name": "Geckolib",
+  "description": "Geckolib is an entity animation loader for Java Edition, which lets you export bedrock animations and play them automatically.",
+  "authors": [
+    "Gecko, special thanks to Eliot for helping me port to fabric"
+  ],
+  "contact": {
+    "homepage": "https://github.com/bernie-g/geckolib",
+    "sources": "https://github.com/bernie-g/geckolib"
+  },
+
+  "license": "CC0-1.0",
+  "icon": "gecko.jpg",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "software.bernie.geckolib.GeckoLib"
+    ],
+    "client": [
+      "software.bernie.geckolib.ClientProxy"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.8.7",
+    "fabric": "*",
+    "minecraft": "1.15.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  },
+  "accessWidener" : "geckolib.accesswidener"
+}

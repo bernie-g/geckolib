@@ -18,7 +18,6 @@ import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.resource.ResourceImpl;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.SynchronousResourceReloadListener;
-import net.minecraft.resources.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import software.bernie.geckolib.GeckoLib;
@@ -94,7 +93,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		try
 		{
 			Gson GSON = new Gson();
-			ResourceImpl resource = (ResourceImpl) resourceManager.getResource(getAnimationFileLocation());
+			ResourceImpl resource = (ResourceImpl) resourceManager.getResource(myFacing());
 			InputStreamReader stream = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
 			Reader reader = new BufferedReader(
 					stream);

@@ -10,7 +10,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import software.bernie.geckolib.example.client.renderer.model.StingrayModel;
 import software.bernie.geckolib.example.entity.StingrayTestEntity;
 
-import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -27,7 +26,6 @@ public class StingrayRenderer extends MobEntityRenderer<StingrayTestEntity, Stin
 		super(rendererManager, new StingrayModel(), 0.5F);
 	}
 
-	@Nullable
 	@Override
 	public Identifier getTexture(StingrayTestEntity entity)
 	{

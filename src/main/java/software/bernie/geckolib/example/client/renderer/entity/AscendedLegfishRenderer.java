@@ -9,7 +9,6 @@ package software.bernie.geckolib.example.client.renderer.entity;
 import software.bernie.geckolib.example.client.renderer.model.AscendedLegfishModel;
 import software.bernie.geckolib.example.entity.AscendedLegfishEntity;
 
-import javax.annotation.Nullable;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
@@ -25,7 +24,6 @@ public class AscendedLegfishRenderer extends MobEntityRenderer<AscendedLegfishEn
 		super(rendererManager, new AscendedLegfishModel(), 0.5F);
 	}
 
-	@Nullable
 	@Override
 	public Identifier getTexture(AscendedLegfishEntity entity)
 	{

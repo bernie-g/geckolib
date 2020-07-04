@@ -50,7 +50,7 @@ public class StingrayTestEntity extends WaterCreatureEntity implements IAnimated
 		Entity entity = event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
 		wingController.easingType = EasingType.EaseInOutQuart;
-		if(entityWorld.rainGradient > 0)
+		if(entityWorld.getRainGradient(1) > 0)
 		{
 			wingController.transitionLengthTicks = 40;
 			wingController.setAnimation(new AnimationBuilder().addAnimation("thirdAnimation"));

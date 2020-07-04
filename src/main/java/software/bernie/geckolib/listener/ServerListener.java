@@ -1,17 +1,14 @@
 package software.bernie.geckolib.listener;
 
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
-import software.bernie.geckolib.GeckoLib;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.server.command.ServerCommandSource;
 import software.bernie.geckolib.registry.CommandRegistry;
 
-@Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerListener
 {
-	@SubscribeEvent
-	public static void onServerStartingEvent(FMLServerStartingEvent event)
+	// We don't have events like this in Fabric so this gets called by our ModInitializer
+	public static void onServerStartingEvent(CommandDispatcher<ServerCommandSource> dispatcher, boolean dedicated)
 	{
-		CommandRegistry.registerCommands(event.getCommandDispatcher());
+		CommandRegistry.registerCommands(dispatcher);
 	}
 }

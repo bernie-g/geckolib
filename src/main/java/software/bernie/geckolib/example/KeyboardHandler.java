@@ -6,27 +6,21 @@
 package software.bernie.geckolib.example;
 
 import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(value = EnvType.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Environment(EnvType.CLIENT)
 public class KeyboardHandler
 {
-	public static boolean isForwardKeyDown = false;
-	public static boolean isBackKeyDown = false;
-	public static boolean isQDown = false;
+	public static boolean isSneakKeyDown()  {
+		return MinecraftClient.getInstance().options.keySneak.isPressed();
+	}
 
-	@SubscribeEvent
-	public static void onKeyPress(final InputEvent.KeyInputEvent event)
-	{
-		MinecraftClient mc = MinecraftClient.getInstance();
-		if (mc.player != null)
-		{
-			isForwardKeyDown = mc.options.keyForward.isPressed();
-			isBackKeyDown = mc.options.keyBack.isPressed();
-			isQDown = mc.options.keyDrop.isPressed();
-		}
+	public static boolean isForwardKeyDown()  {
+		return MinecraftClient.getInstance().options.keyForward.isPressed();
+	}
+
+	public static boolean isBackKeyDown() {
+		return MinecraftClient.getInstance().options.keyBack.isPressed();
 	}
 }
