@@ -14,12 +14,27 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.github.bernie-g:geckolib:1.15-1.0.2'
+    implementation fg.deobf('com.github.bernie-g:geckolib:1.15-1.0.2')
+}
+```
+
+For 1.15.2 Fabric:
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    implementation fg.deobf('com.github.bernie-g:geckolib:fabric-1.15-1.0.0')
 }
 ```
 
 For 1.12.2:
 ```gradle
+minecraft {
+    useDepAts = true
+}
+
 repositories {
     maven { url 'https://jitpack.io' }
 }
