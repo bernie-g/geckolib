@@ -12,6 +12,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.geckolib.example.client.renderer.entity.AscendedLegfishRenderer;
+import software.bernie.geckolib.example.client.renderer.entity.LightCrystalRenderer;
 import software.bernie.geckolib.example.client.renderer.entity.StingrayRenderer;
 import software.bernie.geckolib.example.registry.Entities;
 import software.bernie.geckolib.example.client.renderer.entity.TigrisRenderer;
@@ -26,5 +27,7 @@ public class ModEventBus
 		RenderingRegistry.registerEntityRenderingHandler(Entities.STING_RAY.get(), manager -> new StingrayRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.ASCENDED_LEG_FISH.get(), manager -> new AscendedLegfishRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.TIGRIS.get(), manager -> new TigrisRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(Entities.LIGHTCRYSTAL.get(), manager -> new LightCrystalRenderer(manager));
+
 	}
 }

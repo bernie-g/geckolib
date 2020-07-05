@@ -12,6 +12,7 @@ import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.model.AnimationController;
 import software.bernie.geckolib.animation.model.AnimationControllerCollection;
+import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.animation.*;
 
@@ -46,6 +47,7 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 	{
 		Entity entity = event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
+		wingController.easingType = EasingType.EaseInOutCubic;
 		if(entityWorld.rainingStrength > 0)
 		{
 			wingController.transitionLength = 40;

@@ -16,6 +16,8 @@ import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
+import software.bernie.geckolib.easing.EasingManager;
+import software.bernie.geckolib.easing.EasingType;
 
 public class AnimationUtils
 {
@@ -32,25 +34,15 @@ public class AnimationUtils
 	/**
 	 * This is the actual function that smoothly interpolates (lerp) between keyframes
 	 *
-	 * @param currentTick The current tick (usually entity.ticksExisted + partialTicks to make it smoother)
-	 * @param position    The animation's length in seconds
 	 * @param startValue  The animation's start value
 	 * @param endValue    The animation's end value
 	 * @return The interpolated value
 	 */
-	public static float lerpValues(double currentTick, double position, double startValue, double endValue)
+	public static float lerpValues(double pct, double startValue, double endValue)
 	{
-		if (currentTick > position)
-		{
-			return (float) endValue;
-		}
-		if(currentTick == 0 && position == 0)
-		{
-			return (float) endValue;
-		}
 		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
-		return (float) (MathHelper.lerp(currentTick / position, startValue,
-				endValue) * position / position);
+		return (float) (MathHelper.lerp(pct, startValue,
+				endValue));
 	}
 
 	/**
@@ -59,9 +51,19 @@ public class AnimationUtils
 	 * @param animationPoint The animation point
 	 * @return the resulting lerped value
 	 */
-	public static float lerpValues(AnimationPoint animationPoint)
+	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType)
 	{
-		return lerpValues(animationPoint.currentTick, animationPoint.animationEndTick, animationPoint.animationStartValue, animationPoint.animationEndValue);
+		if(animationPoint.currentTick >= animationPoint.animationEndTick)
+		{
+			return animationPoint.animationEndValue;
+		}
+		if(animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
+		{
+			return animationPoint.animationEndValue;
+		}
+		double ease = EasingManager.ease(animationPoint.currentTick / animationPoint.animationEndTick, easingType);
+		return lerpValues(ease,
+				animationPoint.animationStartValue, animationPoint.animationEndValue);
 	}
 
 	/**

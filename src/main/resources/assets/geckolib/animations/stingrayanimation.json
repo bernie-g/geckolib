@@ -38,7 +38,7 @@
 		},
 		"secondAnimation": {
 			"loop": true,
-			"animation_length": 2.28,
+			"animation_length": 2.2833,
 			"bones": {
 				"Lefthand": {
 					"rotation": {
@@ -72,7 +72,7 @@
 		},
 		"thirdAnimation": {
 			"loop": true,
-			"animation_length": 2.08,
+			"animation_length": 2.0833,
 			"bones": {
 				"Lefthand": {
 					"rotation": {

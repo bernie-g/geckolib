@@ -220,9 +220,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any rotation points for this bone
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint) + initialSnapshot.rotationValueX;
-					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint) + initialSnapshot.rotationValueY;
-					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint) + initialSnapshot.rotationValueZ;
+					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType) + initialSnapshot.rotationValueX;
+					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType) + initialSnapshot.rotationValueY;
+					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType) + initialSnapshot.rotationValueZ;
 					snapshot.rotationValueX = bone.rotateAngleX;
 					snapshot.rotationValueY = bone.rotateAngleY;
 					snapshot.rotationValueZ = bone.rotateAngleZ;
@@ -232,9 +232,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
-					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint);
-					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint);
-					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint);
+					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint, controller.easingType);
+					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint, controller.easingType);
+					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint, controller.easingType);
 					snapshot.positionOffsetX = bone.positionOffsetX;
 					snapshot.positionOffsetY = bone.positionOffsetY;
 					snapshot.positionOffsetZ = bone.positionOffsetZ;
@@ -244,9 +244,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any scale points for this bone
 				if (sXPoint != null && sYPoint != null && sZPoint != null)
 				{
-					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint);
-					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint);
-					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint);
+					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint, controller.easingType);
+					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint, controller.easingType);
+					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint, controller.easingType);
 					snapshot.scaleValueX = bone.scaleValueX;
 					snapshot.scaleValueY = bone.scaleValueY;
 					snapshot.scaleValueZ = bone.scaleValueZ;

@@ -7,11 +7,10 @@ package software.bernie.geckolib.animation.model;
 
 import net.minecraft.entity.Entity;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.plexus.util.CollectionUtils;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.keyframe.*;
+import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -87,6 +86,8 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
 	private boolean justStartedTransition = false;
+	public EasingType easingType = EasingType.LINEAR;
+
 
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
@@ -102,6 +103,25 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		this.name = name;
 		this.transitionLength = transitionLength;
 		this.animationPredicate = animationPredicate;
+	}
+
+
+	/**
+	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
+	 *
+	 * @param entity             The entity
+	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
+	 * @param easingtype         The method of easing to use. The other constructor defaults to no easing.
+	 */
+	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate, EasingType easingtype)
+	{
+		this.entity = entity;
+		this.name = name;
+		this.transitionLength = transitionLength;
+		this.animationPredicate = animationPredicate;
+		this.easingType = easingtype;
 	}
 
 	/**
@@ -367,10 +387,6 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			}
 		}
 
-		if(tick == 0 && this.currentAnimation.animationName.equals("grow"))
-		{
-			int sdfsdf = 0;
-		}
 		// Loop through every boneanimation in the current animation and process the values
 		List<BoneAnimation> boneAnimations = currentAnimation.boneAnimations;
 		for (BoneAnimation boneAnimation : boneAnimations)
@@ -461,7 +477,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		{
 			KeyFrame frame = frames.get(i);
 			totalTimeTracker += frame.getLength();
-			if (totalTimeTracker >= ageInTicks)
+			if (totalTimeTracker > ageInTicks)
 			{
 				double tick = (ageInTicks - (totalTimeTracker - frame.getLength()));
 				return new KeyFrameLocation<>(frame, tick);
