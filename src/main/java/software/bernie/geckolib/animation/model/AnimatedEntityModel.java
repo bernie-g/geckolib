@@ -220,9 +220,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any rotation points for this bone
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType) + initialSnapshot.rotationValueX;
-					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType) + initialSnapshot.rotationValueY;
-					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType) + initialSnapshot.rotationValueZ;
+					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueX;
+					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueY;
+					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueZ;
 					snapshot.rotationValueX = bone.rotateAngleX;
 					snapshot.rotationValueY = bone.rotateAngleY;
 					snapshot.rotationValueZ = bone.rotateAngleZ;
@@ -232,9 +232,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
-					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint, controller.easingType);
-					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint, controller.easingType);
-					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint, controller.easingType);
+					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod);
+					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod);
+					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod);
 					snapshot.positionOffsetX = bone.positionOffsetX;
 					snapshot.positionOffsetY = bone.positionOffsetY;
 					snapshot.positionOffsetZ = bone.positionOffsetZ;
@@ -244,9 +244,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any scale points for this bone
 				if (sXPoint != null && sYPoint != null && sZPoint != null)
 				{
-					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint, controller.easingType);
-					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint, controller.easingType);
-					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint, controller.easingType);
+					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint, controller.easingType, controller.customEasingMethod);
+					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint, controller.easingType, controller.customEasingMethod);
+					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint, controller.easingType, controller.customEasingMethod);
 					snapshot.scaleValueX = bone.scaleValueX;
 					snapshot.scaleValueY = bone.scaleValueY;
 					snapshot.scaleValueZ = bone.scaleValueZ;

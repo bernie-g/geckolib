@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.event;
 import net.minecraft.entity.Entity;
 import software.bernie.geckolib.animation.model.AnimationController;
 

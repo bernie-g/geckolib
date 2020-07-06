@@ -19,6 +19,8 @@ import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.easing.EasingManager;
 import software.bernie.geckolib.easing.EasingType;
 
+import java.util.function.Function;
+
 public class AnimationUtils
 {
 	public static double convertTicksToSeconds(double ticks)
@@ -51,7 +53,7 @@ public class AnimationUtils
 	 * @param animationPoint The animation point
 	 * @return the resulting lerped value
 	 */
-	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType)
+	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType, Function<Double, Double> customEasingMethod)
 	{
 		if(animationPoint.currentTick >= animationPoint.animationEndTick)
 		{
@@ -60,6 +62,12 @@ public class AnimationUtils
 		if(animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
 		{
 			return animationPoint.animationEndValue;
+		}
+
+		if(easingType == EasingType.CUSTOM && customEasingMethod != null)
+		{
+			return lerpValues(customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
+					animationPoint.animationStartValue, animationPoint.animationEndValue);
 		}
 		double ease = EasingManager.ease(animationPoint.currentTick / animationPoint.animationEndTick, easingType);
 		return lerpValues(ease,

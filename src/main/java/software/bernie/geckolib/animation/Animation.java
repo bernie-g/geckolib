@@ -20,4 +20,6 @@ public class Animation
 	public boolean loop = true;
 	public List<BoneAnimation> boneAnimations;
 	public List<EventKeyFrame> soundKeyFrames = new ArrayList<>();
+	public List<ParticleEventKeyFrame> particleKeyFrames = new ArrayList<>();
+
 }

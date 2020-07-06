@@ -1,28 +1,26 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.event;
 
 import net.minecraft.entity.Entity;
 import software.bernie.geckolib.animation.model.AnimationController;
 
-public class SoundEvent<T extends Entity> extends AnimationEvent<T>
+public class ParticleKeyFrameEvent <T extends Entity> extends AnimationEvent<T>
 {
-	public final String sound;
+	public final String effect;
+	public final String locator;
+	public final String script;
 
 	/**
 	 * This stores all the fields that are needed in the AnimationTestEvent
 	 *
 	 * @param entity        the entity
 	 * @param animationTick The amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
-	 * @param sound        The name of the sound to play
 	 * @param controller    the controller
 	 */
-	public SoundEvent(T entity, double animationTick, String sound, AnimationController controller)
+	public ParticleKeyFrameEvent(T entity, double animationTick, String effect, String locator, String script, AnimationController controller)
 	{
 		super(entity, animationTick, controller);
-		this.sound = sound;
+		this.effect = effect;
+		this.locator = locator;
+		this.script = script;
 	}
 }

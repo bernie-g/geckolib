@@ -6,15 +6,21 @@
 package software.bernie.geckolib.animation.model;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import org.antlr.v4.runtime.misc.NotNull;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.event.ParticleKeyFrameEvent;
+import software.bernie.geckolib.event.SoundKeyframeEvent;
+
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -47,9 +53,23 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private IAnimationPredicate animationPredicate;
 
 	/**
-	 * The animation predicate, is tested in every process call (i.e. every frame)
+	 * The sound listener is called every time a sound keyframe is encountered (i.e. every frame)
 	 */
 	private ISoundListener soundListener;
+
+	/**
+	 * The particle listener is called every time a particle keyframe is encountered (i.e. every frame)
+	 */
+	private IParticleListener particleListener;
+
+	/**
+	 * The SoundCategory to play soundkeyframes in.
+	 */
+	public SoundCategory soundCategory = SoundCategory.NEUTRAL;
+
+	public float pitch = 1.0f;
+	public float volume = 1.0f;
+	public boolean distanceSoundDelay = false;
 
 	/**
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
@@ -66,16 +86,29 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	}
 
 	/**
-	 * Sound Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the sound yourself.
+	 * Sound Listeners are run when a sound keyframe is hit. You can either return the SoundEvent and geckolib will play the sound for you, or return null and handle the sounds yourself.
 	 */
 	@FunctionalInterface
 	public interface ISoundListener
 	{
 		/**
-		 * Sound Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the sound yourself.
+		 * Sound Listeners are run when a sound keyframe is hit. You can either return the SoundEvent and geckolib will play the sound for you, or return null and handle the sounds yourself.
 		 */
-		<ENTITY extends Entity> void playSound(SoundEvent<ENTITY> event);
+		<ENTITY extends Entity> SoundEvent playSound(SoundKeyframeEvent<ENTITY> event);
 	}
+
+	/**
+	 * Particle Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the particle yourself.
+	 */
+	@FunctionalInterface
+	public interface IParticleListener
+	{
+		/**
+		 * Particle Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the particle yourself.
+		 */
+		<ENTITY extends Entity> void summonParticle(ParticleKeyFrameEvent<ENTITY> event);
+	}
+
 
 	private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
 	private double tickOffset = 0;
@@ -86,6 +119,8 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
 	private boolean justStartedTransition = false;
+	public Function<Double, Double> customEasingMethod;
+
 	public EasingType easingType = EasingType.LINEAR;
 
 
@@ -122,6 +157,25 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		this.transitionLength = transitionLength;
 		this.animationPredicate = animationPredicate;
 		this.easingType = easingtype;
+	}
+
+	/**
+	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
+	 *
+	 * @param entity             The entity
+	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
+	 * @param customEasingMethod If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
+	 */
+	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate, Function<Double, Double> customEasingMethod)
+	{
+		this.entity = entity;
+		this.name = name;
+		this.transitionLength = transitionLength;
+		this.animationPredicate = animationPredicate;
+		this.customEasingMethod = customEasingMethod;
+		this.easingType = EasingType.CUSTOM;
 	}
 
 	/**
@@ -170,6 +224,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	public void registerSoundListener(ISoundListener soundListener)
 	{
 		this.soundListener = soundListener;
+	}
+
+	/**
+	 * Registers a particle listener.
+	 */
+	public void registerParticleListener(IParticleListener particleListener)
+	{
+		this.particleListener = particleListener;
 	}
 
 	/**
@@ -425,9 +487,23 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			{
 				if(!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
 				{
-					SoundEvent event = new SoundEvent(this.entity, tick, soundKeyFrame.getEventData(), this);
-					soundListener.playSound(event);
+					SoundKeyframeEvent event = new SoundKeyframeEvent(this.entity, tick, soundKeyFrame.getEventData(), this);
+					SoundEvent soundKeyframeEvent = soundListener.playSound(event);
+					if(soundKeyframeEvent != null)
+					{
+						entity.world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), soundKeyframeEvent, soundCategory, volume, pitch, distanceSoundDelay);
+					}
 					soundKeyFrame.hasExecuted = true;
+				}
+			}
+
+			for(ParticleEventKeyFrame particleEventKeyFrame : currentAnimation.particleKeyFrames)
+			{
+				if(!particleEventKeyFrame.hasExecuted && tick >= particleEventKeyFrame.getStartTick())
+				{
+					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.entity, tick, particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script, this);
+					particleListener.summonParticle(event);
+					particleEventKeyFrame.hasExecuted = true;
 				}
 			}
 		}
@@ -494,6 +570,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			for(EventKeyFrame soundKeyFrame : animation.soundKeyFrames)
 			{
 				soundKeyFrame.hasExecuted = false;
+			}
+		}
+		if(!animation.particleKeyFrames.isEmpty())
+		{
+			for(EventKeyFrame particleKeyFrame : animation.particleKeyFrames)
+			{
+				particleKeyFrame.hasExecuted = false;
 			}
 		}
 	}

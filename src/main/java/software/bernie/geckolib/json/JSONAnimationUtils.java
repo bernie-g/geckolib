@@ -14,6 +14,7 @@ import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
+import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import java.util.*;
 
@@ -135,9 +136,10 @@ public class JSONAnimationUtils
 	 * @param json The animation json
 	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the particle effect keyframes.
 	 */
-	public static Set<Map.Entry<String, JsonElement>> getParticleEffectFrames(JsonObject json)
+	public static ArrayList<Map.Entry<String, JsonElement>> getParticleEffectFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("particle_effects"));
+		JsonObject sound_effects = json.getAsJsonObject("particle_effects");
+		return sound_effects == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(sound_effects));
 	}
 
 	/**
@@ -212,6 +214,17 @@ public class JSONAnimationUtils
 			for(Map.Entry<String, JsonElement> keyFrame : soundEffectFrames)
 			{
 				animation.soundKeyFrames.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, keyFrame.getValue().getAsJsonObject().get("effect").getAsString()));
+			}
+		}
+
+
+		ArrayList<Map.Entry<String, JsonElement>> particleKeyFrames = getParticleEffectFrames(animationJsonObject);
+		if(particleKeyFrames != null)
+		{
+			for(Map.Entry<String, JsonElement> keyFrame : particleKeyFrames)
+			{
+				JsonObject object = keyFrame.getValue().getAsJsonObject();
+				animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, object.get("effect").getAsString(), object.get("locator").getAsString(), object.get("script").getAsString()));
 			}
 		}
 		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the

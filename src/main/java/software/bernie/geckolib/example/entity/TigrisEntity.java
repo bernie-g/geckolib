@@ -8,9 +8,10 @@ package software.bernie.geckolib.example.entity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.GhastEntity;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.SoundEvent;
+import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.animation.AnimationBuilder;
 import software.bernie.geckolib.animation.model.AnimationController;
@@ -53,12 +54,13 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 		if(world.isRemote)
 		{
 			this.animationControllers.addAnimationController(moveController);
-			moveController.registerSoundListener(this::moveSoundListener);
+			moveController.registerSoundListener(this::flapListener);
 		}
 	}
 
-	private <ENTITY extends Entity> void moveSoundListener(SoundEvent<ENTITY> entitySoundEvent)
+	private <ENTITY extends Entity> SoundEvent flapListener(SoundKeyframeEvent<ENTITY> event)
 	{
-		GeckoLib.LOGGER.info(entitySoundEvent.sound);
+		//return whatever sound you want to play here, or return null and handle sounds yourself
+		return SoundEvents.ENTITY_ENDER_DRAGON_FLAP;
 	}
 }
