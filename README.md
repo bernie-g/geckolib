@@ -46,6 +46,10 @@ dependencies {
 ## Documentation
 GeckoLib provides detailed documentation in the form of a [wiki](https://github.com/bernie-g/geckolib/wiki) and javadocs. GeckoLib is currently available for 1.12 and 1.15.
 
+## Support
+If you have questions or need help getting up and running with questions, feel free to join our discord!
+https://discord.gg/MNQcKxB
+
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
