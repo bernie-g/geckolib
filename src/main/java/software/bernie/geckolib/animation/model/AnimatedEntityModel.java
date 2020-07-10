@@ -14,10 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.resources.SimpleResource;
+import net.minecraft.resources.*;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
@@ -67,6 +64,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		super();
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		resourceManager.addReloadListener(this);
+		onResourceManagerReload(resourceManager);
 	}
 
 
@@ -96,7 +94,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 	private void loadAllAnimations()
 	{
-		animationList = new HashMap<>();
+		animationList.clear();
 		Set<Map.Entry<String, JsonElement>> entrySet = JSONAnimationUtils.getAnimations(getAnimationFile());
 		for (Map.Entry<String, JsonElement> entry : entrySet)
 		{
