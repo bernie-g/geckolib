@@ -47,14 +47,14 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 	{
 		Entity entity = event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
-		wingController.easingType = EasingType.EaseInOutCubic;
+		wingController.easingType = EasingType.EaseInOutQuart;
 		if(entityWorld.rainingStrength > 0)
 		{
-			wingController.transitionLength = 40;
+			wingController.transitionLengthTicks = 40;
 			wingController.setAnimation(new AnimationBuilder().addAnimation("thirdAnimation"));
 		}
 		else {
-			wingController.transitionLength = 40;
+			wingController.transitionLengthTicks = 40;
 			wingController.setAnimation(new AnimationBuilder().addAnimation("secondAnimation"));
 		}
 		return true;

@@ -1,0 +1,25 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.easing1.new": {
+      "animation_length": 2.5,
+      "bones": {
+        "bone": {
+          "position": {
+            "0.0": {
+              "vector": [0, 7, 0],
+              "easing": "easeOutBounce"
+            },
+            "0.9667": {
+              "vector": [0, 0, 0],
+              "easing": "easeOutBack"
+            },
+            "1.7167": {
+              "vector": [0, 0, 9]
+            }
+          }
+        }
+      }
+    }
+  }
+}

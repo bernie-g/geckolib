@@ -45,7 +45,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	/**
 	 * How long it takes to transition between animations
 	 */
-	public double transitionLength;
+	public double transitionLengthTicks;
 
 	/**
 	 * The animation predicate, is tested in every process call (i.e. every frame)
@@ -121,7 +121,11 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private boolean justStartedTransition = false;
 	public Function<Double, Double> customEasingMethod;
 
-	public EasingType easingType = EasingType.LINEAR;
+
+	/**
+	 * By default Geckolib uses the easing types of every keyframe. If you want to override that for an entire AnimationController, change this value.
+	 */
+	public EasingType easingType = EasingType.NONE;
 
 
 	/**
@@ -129,14 +133,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 *
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
 	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 */
-	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate)
+	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate)
 	{
 		this.entity = entity;
 		this.name = name;
-		this.transitionLength = transitionLength;
+		this.transitionLengthTicks = transitionLengthTicks;
 		this.animationPredicate = animationPredicate;
 	}
 
@@ -146,15 +150,15 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 *
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
 	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 * @param easingtype         The method of easing to use. The other constructor defaults to no easing.
 	 */
-	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate, EasingType easingtype)
+	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate, EasingType easingtype)
 	{
 		this.entity = entity;
 		this.name = name;
-		this.transitionLength = transitionLength;
+		this.transitionLengthTicks = transitionLengthTicks;
 		this.animationPredicate = animationPredicate;
 		this.easingType = easingtype;
 	}
@@ -164,15 +168,15 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 *
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLength   How long it takes to transition between animations (IN TICKS!!)
+	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
 	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 * @param customEasingMethod If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
 	 */
-	public AnimationController(T entity, String name, float transitionLength, IAnimationPredicate animationPredicate, Function<Double, Double> customEasingMethod)
+	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate, Function<Double, Double> customEasingMethod)
 	{
 		this.entity = entity;
 		this.name = name;
-		this.transitionLength = transitionLength;
+		this.transitionLengthTicks = transitionLengthTicks;
 		this.animationPredicate = animationPredicate;
 		this.customEasingMethod = customEasingMethod;
 		this.easingType = EasingType.CUSTOM;
@@ -301,7 +305,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		tick = adjustTick(tick);
 
 		// Transition period has ended, reset the tick and set the animation to running
-		if (animationState == AnimationState.Transitioning && tick >= transitionLength)
+		if (animationState == AnimationState.Transitioning && tick >= transitionLengthTicks)
 		{
 			this.shouldResetTick = true;
 			animationState = AnimationState.Running;
@@ -358,39 +362,39 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				if (!rotationKeyFrames.xKeyFrames.isEmpty())
 				{
 					boneAnimationQueue.rotationXQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
 									rotationKeyFrames.xKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.rotationYQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
 									rotationKeyFrames.yKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.rotationZQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
 									rotationKeyFrames.zKeyFrames.get(0).getStartValue()));
 				}
 
 				if (!positionKeyFrames.xKeyFrames.isEmpty())
 				{
 					boneAnimationQueue.positionXQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.positionOffsetX,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetX,
 									positionKeyFrames.xKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.positionYQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.positionOffsetY,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetY,
 									positionKeyFrames.yKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.positionZQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.positionOffsetZ,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetZ,
 									positionKeyFrames.zKeyFrames.get(0).getStartValue()));
 				}
 
 				if (!scaleKeyFrames.xKeyFrames.isEmpty())
 				{
 					boneAnimationQueue.scaleXQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.scaleValueX,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueX,
 									scaleKeyFrames.xKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.scaleYQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.scaleValueY,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueY,
 									scaleKeyFrames.yKeyFrames.get(0).getStartValue()));
 					boneAnimationQueue.scaleZQueue.add(
-							new AnimationPoint(tick, transitionLength, boneSnapshot.scaleValueZ,
+							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueZ,
 									scaleKeyFrames.zKeyFrames.get(0).getStartValue()));
 				}
 			}
@@ -470,7 +474,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			{
 				boneAnimationQueue.positionXQueue.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick));
 				boneAnimationQueue.positionYQueue.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick));
-				boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick));
+ 				boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick));
 			}
 
 			if (!scaleKeyFrames.xKeyFrames.isEmpty())
@@ -539,13 +543,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	{
 		KeyFrameLocation<KeyFrame<Double>> location = getCurrentKeyFrameLocation(frames, tick);
 		KeyFrame<Double> currentFrame = location.CurrentFrame;
-		return new AnimationPoint(location.CurrentAnimationTick, currentFrame.getLength(), currentFrame.getStartValue(),
+		return new AnimationPoint(currentFrame, location.CurrentAnimationTick, currentFrame.getLength(), currentFrame.getStartValue(),
 				currentFrame.getEndValue());
 	}
 
-	/*
+	/**
 	Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
-    */
+    **/
 	private KeyFrameLocation<KeyFrame<Double>> getCurrentKeyFrameLocation(List<KeyFrame<Double>> frames, double ageInTicks)
 	{
 		double totalTimeTracker = 0;

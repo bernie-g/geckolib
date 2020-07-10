@@ -38,17 +38,17 @@ public class EasingManager
 				return easeOutQuint(number);
 			case EaseInOutQuint:
 				return easeInOutQuint(number);
-			case EaseInExponential:
+			case EaseInExpo:
 				return easeInExpo(number);
-			case EaseOutExponential:
+			case EaseOutExpo:
 				return easeOutExpo(number);
-			case EaseInOutExponential:
+			case EaseInOutExpo:
 				return easeInOutExpo(number);
-			case EaseInCircular:
+			case EaseInCirc:
 				return easeInCirc(number);
-			case EaseOutCircular:
+			case EaseOutCirc:
 				return easeOutCirc(number);
-			case EaseInOutCircular:
+			case EaseInOutCirc:
 				return easeInOutCirc(number);
 			case EaseInBack:
 				return easeInBack(number);

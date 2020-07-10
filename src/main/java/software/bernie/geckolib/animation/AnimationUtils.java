@@ -69,6 +69,10 @@ public class AnimationUtils
 			return lerpValues(customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
 					animationPoint.animationStartValue, animationPoint.animationEndValue);
 		}
+		else if(easingType == EasingType.NONE && animationPoint.keyframe != null)
+		{
+			easingType = animationPoint.keyframe.easingType;
+		}
 		double ease = EasingManager.ease(animationPoint.currentTick / animationPoint.animationEndTick, easingType);
 		return lerpValues(ease,
 				animationPoint.animationStartValue, animationPoint.animationEndValue);

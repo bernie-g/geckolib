@@ -5,32 +5,44 @@
 
 package software.bernie.geckolib.animation.model;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.SimpleResource;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationTestEvent;
+import software.bernie.geckolib.animation.AnimationUtils;
+import software.bernie.geckolib.animation.BoneAnimationQueue;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.file.AnimationFileManager;
 import software.bernie.geckolib.json.JSONAnimationUtils;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.List;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> extends EntityModel<T>
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> extends EntityModel<T> implements IResourceManagerReloadListener
 {
 	private JsonObject animationFile;
-	private AnimationFileManager animationFileManager;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
@@ -53,20 +65,38 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	public AnimatedEntityModel()
 	{
 		super();
+		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+		resourceManager.addReloadListener(this);
+	}
+
+
+	/**
+	 * Internal method for handling reloads of animation files. Do not override.
+	 */
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager)
+	{
 		try
 		{
-			animationFileManager = new AnimationFileManager(getAnimationFileLocation());
-			setAnimationFile(animationFileManager.loadAnimationFile());
+			Gson GSON = new Gson();
+			SimpleResource resource = (SimpleResource) resourceManager.getResource(getAnimationFileLocation());
+			Reader reader = new BufferedReader(
+					new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
+			resource.close();
+
+			setAnimationFile(jsonobject);
 			loadAllAnimations();
 		}
 		catch (Exception e)
 		{
-			GeckoLib.LOGGER.error("Encountered error while loading initial animations.", e);
+			GeckoLib.LOGGER.error("Encountered error while loading animations.", e);
 		}
 	}
 
 	private void loadAllAnimations()
 	{
+		animationList = new HashMap<>();
 		Set<Map.Entry<String, JsonElement>> entrySet = JSONAnimationUtils.getAnimations(getAnimationFile());
 		for (Map.Entry<String, JsonElement> entry : entrySet)
 		{
@@ -108,17 +138,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	{
 		this.animationFile = animationFile;
 	}
-
-	/**
-	 * Gets the animation file manager for this model.
-	 *
-	 * @return the animation file manager
-	 */
-	public AnimationFileManager getAnimationFileManager()
-	{
-		return animationFileManager;
-	}
-
 
 	/**
 	 * Gets a bone by name.
@@ -184,7 +203,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		AnimationControllerCollection controllers = entity.getAnimationControllers();
 
 		// Store the current value of each bone rotation/position/scale
-		if(controllers.boneSnapshotCollection.isEmpty())
+		if (controllers.boneSnapshotCollection.isEmpty())
 		{
 			controllers.boneSnapshotCollection = createNewBoneSnapshotCollection();
 		}
@@ -193,7 +212,8 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		for (AnimationController<T> controller : controllers.values())
 		{
 
-			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing, limbSwingAmount, partialTick, controller);
+			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing,
+					limbSwingAmount, partialTick, controller);
 
 			// Process animations and add new values to the point queues
 			controller.process(tick, animationTestEvent, modelRendererList, boneSnapshots);
@@ -220,9 +240,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any rotation points for this bone
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueX;
-					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueY;
-					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType, controller.customEasingMethod) + initialSnapshot.rotationValueZ;
+					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType,
+							controller.customEasingMethod) + initialSnapshot.rotationValueX;
+					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType,
+							controller.customEasingMethod) + initialSnapshot.rotationValueY;
+					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType,
+							controller.customEasingMethod) + initialSnapshot.rotationValueZ;
 					snapshot.rotationValueX = bone.rotateAngleX;
 					snapshot.rotationValueY = bone.rotateAngleY;
 					snapshot.rotationValueZ = bone.rotateAngleZ;
@@ -232,9 +255,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
-					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod);
-					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod);
-					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod);
+					bone.positionOffsetX = AnimationUtils.lerpValues(pXPoint, controller.easingType,
+							controller.customEasingMethod);
+					bone.positionOffsetY = AnimationUtils.lerpValues(pYPoint, controller.easingType,
+							controller.customEasingMethod);
+					bone.positionOffsetZ = AnimationUtils.lerpValues(pZPoint, controller.easingType,
+							controller.customEasingMethod);
 					snapshot.positionOffsetX = bone.positionOffsetX;
 					snapshot.positionOffsetY = bone.positionOffsetY;
 					snapshot.positionOffsetZ = bone.positionOffsetZ;
@@ -244,9 +270,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				// If there's any scale points for this bone
 				if (sXPoint != null && sYPoint != null && sZPoint != null)
 				{
-					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint, controller.easingType, controller.customEasingMethod);
-					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint, controller.easingType, controller.customEasingMethod);
-					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint, controller.easingType, controller.customEasingMethod);
+					bone.scaleValueX = AnimationUtils.lerpValues(sXPoint, controller.easingType,
+							controller.customEasingMethod);
+					bone.scaleValueY = AnimationUtils.lerpValues(sYPoint, controller.easingType,
+							controller.customEasingMethod);
+					bone.scaleValueZ = AnimationUtils.lerpValues(sZPoint, controller.easingType,
+							controller.customEasingMethod);
 					snapshot.scaleValueX = bone.scaleValueX;
 					snapshot.scaleValueY = bone.scaleValueY;
 					snapshot.scaleValueZ = bone.scaleValueZ;
@@ -272,9 +301,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			}
 			if (!tracker.hasPositionChanged)
 			{
-				model.positionOffsetX = lerpConstant(saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX, 0.02);
-				model.positionOffsetY = lerpConstant(saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY, 0.02);
-				model.positionOffsetZ = lerpConstant(saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ, 0.02);
+				model.positionOffsetX = lerpConstant(saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX,
+						0.02);
+				model.positionOffsetY = lerpConstant(saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY,
+						0.02);
+				model.positionOffsetZ = lerpConstant(saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ,
+						0.02);
 				saveSnapshot.positionOffsetX = model.positionOffsetX;
 				saveSnapshot.positionOffsetY = model.positionOffsetY;
 				saveSnapshot.positionOffsetZ = model.positionOffsetZ;
@@ -294,7 +326,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private EntityDirtyTracker createNewDirtyTracker()
 	{
 		EntityDirtyTracker tracker = new EntityDirtyTracker();
-		for(AnimatedModelRenderer bone : modelRendererList)
+		for (AnimatedModelRenderer bone : modelRendererList)
 		{
 			tracker.add(new DirtyTracker(false, false, false, bone));
 		}
@@ -304,7 +336,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private BoneSnapshotCollection createNewBoneSnapshotCollection()
 	{
 		BoneSnapshotCollection collection = new BoneSnapshotCollection();
-		for(AnimatedModelRenderer bone : modelRendererList)
+		for (AnimatedModelRenderer bone : modelRendererList)
 		{
 			collection.put(bone.name, new BoneSnapshot(bone.getInitialSnapshot()));
 		}
@@ -333,16 +365,17 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		double lowerBound = finalValue - speedModifier;
 		double upperBound = finalValue + speedModifier;
 
-		if(lowerBound <= currentValue && upperBound >= currentValue)
+		if (lowerBound <= currentValue && upperBound >= currentValue)
 		{
 			return (float) currentValue;
 		}
 		double increment = 0;
-		if(currentValue < finalValue)
+		if (currentValue < finalValue)
 		{
 			increment = speedModifier;
 		}
-		else {
+		else
+		{
 			increment = -1 * speedModifier;
 		}
 
@@ -352,7 +385,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	@Override
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
-		for(AnimatedModelRenderer model : rootBones)
+		for (AnimatedModelRenderer model : rootBones)
 		{
 			model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}

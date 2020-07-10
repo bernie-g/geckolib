@@ -26,7 +26,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 
 	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
 	{
-		moveController.transitionLength = 10;
+		moveController.transitionLengthTicks = 10;
 		if(KeyboardHandler.isQDown)
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("spit.fly", false).addAnimation("sit", false).addAnimation("sit", false).addAnimation("run", false).addAnimation("run", false).addAnimation("sleep", true));
