@@ -3,7 +3,9 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.animation.snapshot;
+
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
 //idk what else to call this lol
 public class DirtyTracker

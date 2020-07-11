@@ -5,10 +5,9 @@
 
 package software.bernie.geckolib.event;
 
-import net.minecraft.entity.Entity;
-import software.bernie.geckolib.animation.model.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationController;
 
-public class SoundKeyframeEvent<T extends Entity> extends AnimationEvent<T>
+public class SoundKeyframeEvent<T> extends AnimationEvent<T>
 {
 	public final String sound;
 

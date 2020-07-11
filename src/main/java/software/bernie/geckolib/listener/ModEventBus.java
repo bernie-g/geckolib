@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib;
+package software.bernie.geckolib.listener;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -12,6 +12,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.example.client.renderer.entity.*;
 import software.bernie.geckolib.example.registry.Entities;
 import software.bernie.geckolib.registry.CommandRegistry;
@@ -21,7 +22,7 @@ public class ModEventBus
 {
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void doClientStuff(final FMLClientSetupEvent event)
+	public static void registerEntityRenderers(final FMLClientSetupEvent event)
 	{
 		RenderingRegistry.registerEntityRenderingHandler(Entities.STING_RAY.get(), manager -> new StingrayRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.ASCENDED_LEG_FISH.get(), manager -> new AscendedLegfishRenderer(manager));
@@ -30,5 +31,4 @@ public class ModEventBus
 		RenderingRegistry.registerEntityRenderingHandler(Entities.BROWN.get(), manager -> new BrownRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.EASING_DEMO.get(), manager -> new EasingDemoRenderer(manager));
 	}
-
 }

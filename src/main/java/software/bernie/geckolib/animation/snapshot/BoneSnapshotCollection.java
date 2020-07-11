@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.animation.snapshot;
 
 import java.util.HashMap;
 

@@ -4,7 +4,7 @@
  */
 package software.bernie.geckolib.entity;
 
-import software.bernie.geckolib.animation.model.AnimationControllerCollection;
+import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
 
 /**
  * This interface must be applied to any Entity that uses an AnimatedEntityModel

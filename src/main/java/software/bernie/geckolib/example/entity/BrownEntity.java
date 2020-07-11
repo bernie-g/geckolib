@@ -5,10 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animation.AnimationBuilder;
-import software.bernie.geckolib.animation.AnimationTestEvent;
-import software.bernie.geckolib.animation.model.AnimationController;
-import software.bernie.geckolib.animation.model.AnimationControllerCollection;
+import software.bernie.geckolib.animation.builder.AnimationBuilder;
+import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
+import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 
 import javax.annotation.Nullable;
@@ -16,7 +17,7 @@ import javax.annotation.Nullable;
 public class BrownEntity extends AnimalEntity implements IAnimatedEntity
 {
 	AnimationControllerCollection collection = new AnimationControllerCollection();
-	AnimationController controller = new AnimationController(this, "controller", 30, this::predicate);
+	AnimationController controller = new EntityAnimationController(this, "controller", 30, this::predicate);
 
 	private <ENTITY extends Entity> boolean predicate(AnimationTestEvent<ENTITY> event)
 	{

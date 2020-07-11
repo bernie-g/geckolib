@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.animation.builder;
 
 import software.bernie.geckolib.animation.keyframe.*;
 

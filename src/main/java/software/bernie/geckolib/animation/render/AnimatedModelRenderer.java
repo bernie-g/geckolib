@@ -3,13 +3,14 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.animation.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 
 public class AnimatedModelRenderer extends ModelRenderer
 {

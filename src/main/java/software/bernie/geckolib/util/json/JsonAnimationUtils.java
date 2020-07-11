@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.json;
+package software.bernie.geckolib.util.json;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
@@ -11,8 +11,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.AnimationUtils;
+import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
 import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
@@ -22,7 +22,7 @@ import java.util.*;
 /**
  * Helper for parsing the bedrock json animation format and finding certain elements
  */
-public class JSONAnimationUtils
+public class JsonAnimationUtils
 {
 	/**
 	 * Gets the "animations" object as a set of maps consisting of the name of the animation and the inner json of the animation.

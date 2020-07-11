@@ -6,10 +6,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.AnimationBuilder;
-import software.bernie.geckolib.animation.AnimationTestEvent;
-import software.bernie.geckolib.animation.model.AnimationController;
-import software.bernie.geckolib.animation.model.AnimationControllerCollection;
+import software.bernie.geckolib.animation.builder.AnimationBuilder;
+import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
+import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.event.ParticleKeyFrameEvent;
@@ -20,7 +21,7 @@ import java.util.Arrays;
 public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
 {
 	AnimationControllerCollection collection = new AnimationControllerCollection();
-	AnimationController easingDemoControlller = new AnimationController(this, "easingDemoController", 20, this::demoPredicate);
+	AnimationController easingDemoControlller = new EntityAnimationController(this, "easingDemoController", 20, this::demoPredicate);
 
 	private <ENTITY extends Entity> boolean demoPredicate(AnimationTestEvent<ENTITY> event)
 	{

@@ -3,7 +3,9 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.animation.controller;
+
+import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 
 import java.util.HashMap;
 
@@ -12,7 +14,7 @@ import java.util.HashMap;
  */
 public class AnimationControllerCollection extends HashMap<String, AnimationController>
 {
-	protected BoneSnapshotCollection boneSnapshotCollection;
+	private BoneSnapshotCollection boneSnapshotCollection;
 
 	/**
 	 * Instantiates a new Animation controller collection.
@@ -32,5 +34,15 @@ public class AnimationControllerCollection extends HashMap<String, AnimationCont
 	public AnimationController addAnimationController(AnimationController value)
 	{
 		return this.put(value.getName(), value);
+	}
+
+	public BoneSnapshotCollection getBoneSnapshotCollection()
+	{
+		return boneSnapshotCollection;
+	}
+
+	public void setBoneSnapshotCollection(BoneSnapshotCollection boneSnapshotCollection)
+	{
+		this.boneSnapshotCollection = boneSnapshotCollection;
 	}
 }

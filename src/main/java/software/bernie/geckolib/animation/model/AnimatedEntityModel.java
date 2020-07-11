@@ -18,14 +18,21 @@ import net.minecraft.resources.*;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.AnimationTestEvent;
-import software.bernie.geckolib.animation.AnimationUtils;
-import software.bernie.geckolib.animation.BoneAnimationQueue;
+import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
+import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
+import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
+import software.bernie.geckolib.animation.snapshot.DirtyTracker;
+import software.bernie.geckolib.animation.snapshot.EntityDirtyTracker;
 import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.json.JSONAnimationUtils;
+import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.util.json.JsonAnimationUtils;
 import software.bernie.geckolib.reload.ReloadManager;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -44,7 +51,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
-
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
 	 *
@@ -57,10 +63,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 */
 	public boolean loopByDefault = false;
 
+
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	public AnimatedEntityModel()
+	protected AnimatedEntityModel()
 	{
 		super();
 		ReloadManager.registerModel(this);
@@ -98,15 +105,15 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private void loadAllAnimations()
 	{
 		animationList.clear();
-		Set<Map.Entry<String, JsonElement>> entrySet = JSONAnimationUtils.getAnimations(getAnimationFile());
+		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(getAnimationFile());
 		for (Map.Entry<String, JsonElement> entry : entrySet)
 		{
 			String animationName = entry.getKey();
 			Animation animation = null;
 			try
 			{
-				animation = JSONAnimationUtils.deserializeJsonToAnimation(
-						JSONAnimationUtils.getAnimation(getAnimationFile(), animationName));
+				animation = JsonAnimationUtils.deserializeJsonToAnimation(
+						JsonAnimationUtils.getAnimation(getAnimationFile(), animationName));
 				if (loopByDefault)
 				{
 					animation.loop = true;
@@ -172,7 +179,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 */
 	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JSONException
 	{
-		return JSONAnimationUtils.getAnimation(getAnimationFile(), name);
+		return JsonAnimationUtils.getAnimation(getAnimationFile(), name);
 	}
 
 
@@ -204,11 +211,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		AnimationControllerCollection controllers = entity.getAnimationControllers();
 
 		// Store the current value of each bone rotation/position/scale
-		if (controllers.boneSnapshotCollection.isEmpty())
+		if (controllers.getBoneSnapshotCollection().isEmpty())
 		{
-			controllers.boneSnapshotCollection = createNewBoneSnapshotCollection();
+			controllers.setBoneSnapshotCollection(createNewBoneSnapshotCollection());
 		}
-		BoneSnapshotCollection boneSnapshots = controllers.boneSnapshotCollection;
+		BoneSnapshotCollection boneSnapshots = controllers.getBoneSnapshotCollection();
 
 		for (AnimationController<T> controller : controllers.values())
 		{

@@ -3,17 +3,22 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.animation.controller;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import org.antlr.v4.runtime.misc.NotNull;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.keyframe.*;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
+import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
@@ -21,38 +26,32 @@ import software.bernie.geckolib.reload.ReloadManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The type Animation controller.
  *
  * @param <T> the type parameter
  */
-public class AnimationController<T extends Entity & IAnimatedEntity>
+public abstract class AnimationController<T extends IAnimatedEntity>
 {
 	/**
 	 * The Entity.
 	 */
-	private T entity;
+	protected T entity;
 
 	/**
 	 * The name of the animation controller
 	 */
 	private String name;
 
-	private AnimationState animationState = AnimationState.Stopped;
+	protected AnimationState animationState = AnimationState.Stopped;
 
 	/**
 	 * How long it takes to transition between animations
 	 */
 	public double transitionLengthTicks;
-
-	/**
-	 * The animation predicate, is tested in every process call (i.e. every frame)
-	 */
-	private IAnimationPredicate animationPredicate;
 
 	/**
 	 * The sound listener is called every time a sound keyframe is encountered (i.e. every frame)
@@ -83,14 +82,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
 	@FunctionalInterface
-	public interface IAnimationPredicate
+	public interface IAnimationPredicate<P>
 	{
 		/**
 		 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 		 *
 		 * @return TRUE if the animation should continue, FALSE if it should stop.
 		 */
-		<ENTITY extends Entity> boolean test(AnimationTestEvent<ENTITY> event);
+		<P> boolean test(AnimationTestEvent<P> event);
 	}
 
 	/**
@@ -132,15 +131,17 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 
 	private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
 	private double tickOffset = 0;
-	private Queue<Animation> animationQueue = new LinkedList<>();
+	protected Queue<Animation> animationQueue = new LinkedList<>();
 	private Animation currentAnimation;
-	private AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
-	private boolean shouldResetTick = false;
+	protected AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
+	protected boolean shouldResetTick = false;
 	private HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
-	private boolean justStartedTransition = false;
+	protected boolean justStartedTransition = false;
 	public Function<Double, Double> customEasingMethod;
-	private boolean needsAnimationReload = false;
+	protected boolean needsAnimationReload = false;
+	public abstract void setAnimation(@Nullable AnimationBuilder builder);
+	protected Consumer<SoundEvent> soundPlayer;
 
 	/**
 	 * By default Geckolib uses the easing types of every keyframe. If you want to override that for an entire AnimationController, change this value.
@@ -154,14 +155,12 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
-	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 */
-	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate)
+	protected AnimationController(T entity, String name, float transitionLengthTicks)
 	{
 		this.entity = entity;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
-		this.animationPredicate = animationPredicate;
 		ReloadManager.registerAnimationController(this);
 	}
 
@@ -172,15 +171,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
-	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 * @param easingtype         The method of easing to use. The other constructor defaults to no easing.
 	 */
-	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate, EasingType easingtype)
+	public AnimationController(T entity, String name, float transitionLengthTicks, EasingType easingtype)
 	{
 		this.entity = entity;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
-		this.animationPredicate = animationPredicate;
 		this.easingType = easingtype;
 		ReloadManager.registerAnimationController(this);
 	}
@@ -191,15 +188,13 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 * @param entity             The entity
 	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
-	 * @param animationPredicate The animation predicate that decides if the animation should stop, continue, or keep running. You should switch animations in this method most of the time.
 	 * @param customEasingMethod If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
 	 */
-	public AnimationController(T entity, String name, float transitionLengthTicks, IAnimationPredicate animationPredicate, Function<Double, Double> customEasingMethod)
+	public AnimationController(T entity, String name, float transitionLengthTicks, Function<Double, Double> customEasingMethod)
 	{
 		this.entity = entity;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
-		this.animationPredicate = animationPredicate;
 		this.customEasingMethod = customEasingMethod;
 		this.easingType = EasingType.CUSTOM;
 		ReloadManager.registerAnimationController(this);
@@ -270,56 +265,6 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	}
 
 
-	/**
-	 * This method sets the current animation with an animation builder. You can run this method every frame, if you pass in the same animation builder every time, it won't restart. Additionally, it smoothly transitions between animation states.
-	 */
-	public void setAnimation(@Nullable AnimationBuilder builder)
-	{
-		AnimatedEntityModel model = AnimationUtils.getModelForEntity(entity);
-		if (model != null)
-		{
-			if (builder == null || builder.getRawAnimationList().size() == 0)
-			{
-				animationState = AnimationState.Stopped;
-			}
-			if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()) || needsAnimationReload)
-			{
-				AtomicBoolean encounteredError = new AtomicBoolean(false);
-				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
-				LinkedList<Animation> animations = new LinkedList<>(
-						builder.getRawAnimationList().stream().map((rawAnimation) ->
-						{
-							Animation animation = model.getAnimation(rawAnimation.animationName);
-							if (animation == null)
-							{
-								GeckoLib.LOGGER.error(
-										"Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
-								encounteredError.set(true);
-							}
-							if (animation != null && rawAnimation.loop != null)
-							{
-								animation.loop = rawAnimation.loop;
-							}
-							return animation;
-						}).collect(Collectors.toList()));
-
-				if(encounteredError.get())
-				{
-					return;
-				}
-				else {
-					animationQueue = animations;
-				}
-				currentAnimationBuilder = builder;
-
-				// Reset the adjusted tick to 0 on next animation process call
-				shouldResetTick = true;
-				this.animationState = AnimationState.Transitioning;
-				justStartedTransition = true;
-				needsAnimationReload = false;
-			}
-		}
-	}
 
 
 	/**
@@ -348,8 +293,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		assert tick >= 0 : "GeckoLib: Tick was less than zero";
 
 		// This tests the animation predicate
-		boolean shouldStop = !this.animationPredicate.test(
-				animationTestEvent);
+		boolean shouldStop = !this.testAnimationPredicate(animationTestEvent);
 		if (shouldStop || (currentAnimation == null && animationQueue.size() == 0))
 		{
 			// The animation should transition to the model's initial state
@@ -439,6 +383,8 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		}
 	}
 
+	protected abstract boolean testAnimationPredicate(AnimationTestEvent<T> event);
+
 	// At the beginning of a new transition, save a snapshot of the model's rotation, position, and scale values as the initial value to lerp from
 	private void saveSnapshotsForAnimation(@NotNull Animation animation, BoneSnapshotCollection boneSnapshotCollection)
 	{
@@ -525,10 +471,10 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				if(!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
 				{
 					SoundKeyframeEvent event = new SoundKeyframeEvent(this.entity, tick, soundKeyFrame.getEventData(), this);
-					SoundEvent soundKeyframeEvent = soundListener.playSound(event);
-					if(soundKeyframeEvent != null)
+					SoundEvent soundEvent = soundListener.playSound(event);
+					if(soundEvent != null)
 					{
-						entity.world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), soundKeyframeEvent, soundCategory, volume, pitch, distanceSoundDelay);
+						soundPlayer.accept(soundEvent);
 					}
 					soundKeyFrame.hasExecuted = true;
 				}

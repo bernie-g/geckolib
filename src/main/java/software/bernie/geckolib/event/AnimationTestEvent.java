@@ -3,11 +3,10 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation;
-import net.minecraft.entity.Entity;
-import software.bernie.geckolib.animation.model.AnimationController;
+package software.bernie.geckolib.event;
+import software.bernie.geckolib.animation.controller.AnimationController;
 
-public class AnimationTestEvent<T extends Entity>
+public class AnimationTestEvent<T>
 {
 	private final T entity;
 	private final double animationTick;

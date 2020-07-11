@@ -9,13 +9,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.util.Timer;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
-import software.bernie.geckolib.animation.model.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.reload.ReloadManager;
 
 public class ReloadAnimationsCommand implements Command<CommandSource>

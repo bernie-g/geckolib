@@ -3,12 +3,12 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.json;
+package software.bernie.geckolib.util.json;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import software.bernie.geckolib.animation.AnimationUtils;
+import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.easing.EasingType;
@@ -133,7 +133,7 @@ public class JsonKeyFrameUtils
 		JsonObject asJsonObject = element.getAsJsonObject();
 		JsonElement easingArgs = asJsonObject.get("easingArgs");
 		JsonArray asJsonArray = easingArgs.getAsJsonArray();
-		return JSONAnimationUtils.convertJsonArrayToList(asJsonArray);
+		return JsonAnimationUtils.convertJsonArrayToList(asJsonArray);
 	}
 
 	/**

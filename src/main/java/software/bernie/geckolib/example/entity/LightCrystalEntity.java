@@ -2,23 +2,19 @@ package software.bernie.geckolib.example.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.item.EnderCrystalEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.HandSide;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animation.AnimationBuilder;
-import software.bernie.geckolib.animation.AnimationTestEvent;
-import software.bernie.geckolib.animation.model.AnimationController;
-import software.bernie.geckolib.animation.model.AnimationControllerCollection;
+import software.bernie.geckolib.animation.builder.AnimationBuilder;
+import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
+import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 
 public class LightCrystalEntity extends MobEntity implements IAnimatedEntity
 {
 	public AnimationControllerCollection controllers = new AnimationControllerCollection();
-	public AnimationController animationController = new AnimationController(this, "default", 0f, this::playAnimation);
+	public AnimationController animationController = new EntityAnimationController(this, "default", 0f, this::playAnimation);
 
 	private <ENTITY extends Entity> boolean playAnimation(AnimationTestEvent<ENTITY> event)
 	{

@@ -3,10 +3,9 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.animation.keyframe.AnimationPointQueue;
-import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
 public class BoneAnimationQueue
 {

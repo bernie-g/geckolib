@@ -1,7 +1,7 @@
 package software.bernie.geckolib.reload;
 
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
-import software.bernie.geckolib.animation.model.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationController;
 
 import java.util.ArrayList;
 import java.util.List;
