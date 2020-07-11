@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib.json;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -135,12 +133,7 @@ public class JsonKeyFrameUtils
 		JsonObject asJsonObject = element.getAsJsonObject();
 		JsonElement easingArgs = asJsonObject.get("easingArgs");
 		JsonArray asJsonArray = easingArgs.getAsJsonArray();
-		return convertJsonArrayToList(asJsonArray);
-	}
-
-	private static List<Double> convertJsonArrayToList(JsonArray array)
-	{
-		return new Gson().fromJson(array, ArrayList.class);
+		return JSONAnimationUtils.convertJsonArrayToList(asJsonArray);
 	}
 
 	/**

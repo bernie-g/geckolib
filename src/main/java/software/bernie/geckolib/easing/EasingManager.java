@@ -2,9 +2,12 @@ package software.bernie.geckolib.easing;
 
 import net.minecraft.util.math.MathHelper;
 
+import javax.annotation.Nullable;
+import java.util.List;
+
 public class EasingManager
 {
-	public static double ease(double number, EasingType easingType)
+	public static double ease(double number, EasingType easingType, @Nullable List<Double> easingArgs)
 	{
 		switch (easingType)
 		{
@@ -51,11 +54,11 @@ public class EasingManager
 			case EaseInOutCirc:
 				return easeInOutCirc(number);
 			case EaseInBack:
-				return easeInBack(number);
+				return easeInBack(number, easingArgs);
 			case EaseOutBack:
-				return easeOutBack(number);
+				return easeOutBack(number, easingArgs);
 			case EaseInOutBack:
-				return easeInOutBack(number);
+				return easeInOutBack(number, easingArgs);
 			case EaseInElastic:
 				return easeInElastic(number);
 			case EaseOutElastic:
@@ -185,25 +188,25 @@ public class EasingManager
 				: (MathHelper.sqrt(1 - Math.pow(-2 * x + 2, 2)) + 1) / 2;
 	}
 
-	public static double easeInBack(double x)
+	public static double easeInBack(double x, @Nullable List<Double> easingArgs)
 	{
-		double c1 = 1.70158;
+		double c1 = 1.70158 * (easingArgs == null || easingArgs.size() == 0 ? 1 : easingArgs.get(0));
 		double c3 = c1 + 1;
 
 		return c3 * x * x * x - c1 * x * x;
 	}
 
-	public static double easeOutBack(double x)
+	public static double easeOutBack(double x, @Nullable List<Double> easingArgs)
 	{
-		double c1 = 1.70158;
+		double c1 = 1.70158 * (easingArgs == null || easingArgs.size() == 0 ? 1 : easingArgs.get(0));
 		double c3 = c1 + 1;
 
 		return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
 	}
 
-	public static double easeInOutBack(double x)
+	public static double easeInOutBack(double x, @Nullable List<Double> easingArgs)
 	{
-		double c1 = 1.70158;
+		double c1 = 1.70158 * (easingArgs == null || easingArgs.size() == 0 ? 1 : easingArgs.get(0));
 		double c2 = c1 * 1.525;
 
 		return x < 0.5

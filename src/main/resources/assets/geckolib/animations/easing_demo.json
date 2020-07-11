@@ -1,25 +1,43 @@
 {
-  "format_version": "1.8.0",
-  "animations": {
-    "animation.easing1.new": {
-      "animation_length": 2.5,
-      "bones": {
-        "bone": {
-          "position": {
-            "0.0": {
-              "vector": [0, 7, 0],
-              "easing": "easeOutBounce"
-            },
-            "0.9667": {
-              "vector": [0, 0, 0],
-              "easing": "easeOutBack"
-            },
-            "1.7167": {
-              "vector": [0, 0, 9]
-            }
-          }
-        }
-      }
-    }
-  }
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.easing1.new": {
+			"animation_length": 1.8,
+			"bones": {
+				"bone": {
+					"position": {
+						"0.0": {
+							"vector": [0, 7, 0],
+							"easing": "easeOutBack"
+						},
+						"0.9667": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutBounce"
+						},
+						"1.7167": {
+							"vector": [0, 0, 9],
+							"easing": "easeOutBack",
+							"easingArgs": [5]
+						}
+					}
+				}
+			},
+			"particle_effects": {
+				"0.7667": {
+					"effect": "sdf",
+					"locator": "sdf",
+					"pre_effect_script": "asdfdf"
+				},
+				"1.3667": {
+					"effect": "sd",
+					"locator": "ds",
+					"pre_effect_script": "ddddd"
+				}
+			},
+			"timeline": {
+				"1.2": ["fireball", "cfgdfg"],
+				"0.1667": ["start raining"]
+			}
+		}
+	}
 }

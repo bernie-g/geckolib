@@ -15,18 +15,18 @@ public class AnimationTestEvent<T extends Entity>
 	private final float limbSwingAmount;
 	private final float partialTick;
 	private final AnimationController controller;
-
+	private final boolean isWalking;
 	/**
 	 * This stores all the fields that are needed in the AnimationTestEvent
-	 *
-	 * @param entity          the entity
+	 *  @param entity          the entity
 	 * @param animationTick   The amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
 	 * @param limbSwing       the limb swing
 	 * @param limbSwingAmount the limb swing amount
 	 * @param partialTick     the partial tick
 	 * @param controller      the controller
+	 * @param isWalking
 	 */
-	public AnimationTestEvent(T entity, double animationTick, float limbSwing, float limbSwingAmount, float partialTick, AnimationController controller)
+	public AnimationTestEvent(T entity, double animationTick, float limbSwing, float limbSwingAmount, float partialTick, AnimationController controller, boolean isWalking)
 	{
 		this.entity = entity;
 		this.animationTick = animationTick;
@@ -34,6 +34,7 @@ public class AnimationTestEvent<T extends Entity>
 		this.limbSwingAmount = limbSwingAmount;
 		this.partialTick = partialTick;
 		this.controller = controller;
+		this.isWalking = isWalking;
 	}
 
 	/**
@@ -65,5 +66,9 @@ public class AnimationTestEvent<T extends Entity>
 	public AnimationController getController()
 	{
 		return controller;
+	}
+	public boolean isWalking()
+	{
+		return isWalking;
 	}
 }

@@ -25,6 +25,7 @@ import software.bernie.geckolib.animation.BoneAnimationQueue;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.json.JSONAnimationUtils;
+import software.bernie.geckolib.reload.ReloadManager;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -62,8 +63,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	public AnimatedEntityModel()
 	{
 		super();
+		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-		resourceManager.addReloadListener(this);
+		//resourceManager.addReloadListener(this);
 		onResourceManagerReload(resourceManager);
 	}
 
@@ -85,6 +87,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 			setAnimationFile(jsonobject);
 			loadAllAnimations();
+
 		}
 		catch (Exception e)
 		{
@@ -211,7 +214,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		{
 
 			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing,
-					limbSwingAmount, partialTick, controller);
+					limbSwingAmount, partialTick, controller, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
 
 			// Process animations and add new values to the point queues
 			controller.process(tick, animationTestEvent, modelRendererList, boneSnapshots);

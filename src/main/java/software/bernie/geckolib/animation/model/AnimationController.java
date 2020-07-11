@@ -14,8 +14,10 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
+import software.bernie.geckolib.reload.ReloadManager;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -62,8 +64,14 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	 */
 	private IParticleListener particleListener;
 
+
 	/**
-	 * The SoundCategory to play soundkeyframes in.
+	 * The custom instruction listener is called every time a custom instruction keyframe is encountered (i.e. every frame)
+	 */
+	private ICustomInstructionListener customInstructionListener;
+
+	/**
+	 * The SoundCategory to play sound keyframes in.
 	 */
 	public SoundCategory soundCategory = SoundCategory.NEUTRAL;
 
@@ -109,6 +117,18 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		<ENTITY extends Entity> void summonParticle(ParticleKeyFrameEvent<ENTITY> event);
 	}
 
+	/**
+	 * Custom instructions can be added in blockbench by enabling animation effects in Animation -> Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
+	 */
+	@FunctionalInterface
+	public interface ICustomInstructionListener
+	{
+		/**
+		 * Custom instructions can be added in blockbench by enabling animation effects in Animation -> Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
+		 */
+		<ENTITY extends Entity> void executeInstruction(CustomInstructionKeyframeEvent<ENTITY> event);
+	}
+
 
 	private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
 	private double tickOffset = 0;
@@ -120,7 +140,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	private boolean justStopped = false;
 	private boolean justStartedTransition = false;
 	public Function<Double, Double> customEasingMethod;
-
+	private boolean needsAnimationReload = false;
 
 	/**
 	 * By default Geckolib uses the easing types of every keyframe. If you want to override that for an entire AnimationController, change this value.
@@ -142,6 +162,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.animationPredicate = animationPredicate;
+		ReloadManager.registerAnimationController(this);
 	}
 
 
@@ -161,6 +182,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.animationPredicate = animationPredicate;
 		this.easingType = easingtype;
+		ReloadManager.registerAnimationController(this);
 	}
 
 	/**
@@ -180,6 +202,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 		this.animationPredicate = animationPredicate;
 		this.customEasingMethod = customEasingMethod;
 		this.easingType = EasingType.CUSTOM;
+		ReloadManager.registerAnimationController(this);
 	}
 
 	/**
@@ -239,6 +262,15 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 	}
 
 	/**
+	 * Registers a custom instruction listener.
+	 */
+	public void registerCustomInstructionListener(ICustomInstructionListener customInstructionListener)
+	{
+		this.customInstructionListener = customInstructionListener;
+	}
+
+
+	/**
 	 * This method sets the current animation with an animation builder. You can run this method every frame, if you pass in the same animation builder every time, it won't restart. Additionally, it smoothly transitions between animation states.
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
@@ -250,7 +282,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			{
 				animationState = AnimationState.Stopped;
 			}
-			if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()))
+			if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()) || needsAnimationReload)
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
@@ -284,6 +316,7 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				shouldResetTick = true;
 				this.animationState = AnimationState.Transitioning;
 				justStartedTransition = true;
+				needsAnimationReload = false;
 			}
 		}
 	}
@@ -485,9 +518,9 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 			}
 		}
 
-		if(soundListener != null)
+		if(soundListener != null || particleListener != null || customInstructionListener != null)
 		{
-			for(EventKeyFrame soundKeyFrame : currentAnimation.soundKeyFrames)
+			for(EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames)
 			{
 				if(!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
 				{
@@ -508,6 +541,17 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.entity, tick, particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script, this);
 					particleListener.summonParticle(event);
 					particleEventKeyFrame.hasExecuted = true;
+				}
+			}
+
+
+			for(EventKeyFrame<List<String>> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes)
+			{
+				if(!customInstructionKeyFrame.hasExecuted && tick >= customInstructionKeyFrame.getStartTick())
+				{
+					CustomInstructionKeyframeEvent event = new CustomInstructionKeyframeEvent(this.entity, tick, customInstructionKeyFrame.getEventData(), this);
+					customInstructionListener.executeInstruction(event);
+					customInstructionKeyFrame.hasExecuted = true;
 				}
 			}
 		}
@@ -569,6 +613,10 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 
 	private void resetEventKeyFrames(Animation animation)
 	{
+		if(animation == null)
+		{
+			return;
+		}
 		if(!animation.soundKeyFrames.isEmpty())
 		{
 			for(EventKeyFrame soundKeyFrame : animation.soundKeyFrames)
@@ -583,5 +631,17 @@ public class AnimationController<T extends Entity & IAnimatedEntity>
 				particleKeyFrame.hasExecuted = false;
 			}
 		}
+		if(!animation.customInstructionKeyframes.isEmpty())
+		{
+			for(EventKeyFrame customInstructionKeyFrame : animation.customInstructionKeyframes)
+			{
+				customInstructionKeyFrame.hasExecuted = false;
+			}
+		}
+	}
+
+	public void markNeedsReload()
+	{
+		this.needsAnimationReload = true;
 	}
 }

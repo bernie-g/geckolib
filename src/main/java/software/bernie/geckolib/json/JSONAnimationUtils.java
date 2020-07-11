@@ -7,6 +7,7 @@ package software.bernie.geckolib.json;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
@@ -138,8 +139,8 @@ public class JSONAnimationUtils
 	 */
 	public static ArrayList<Map.Entry<String, JsonElement>> getParticleEffectFrames(JsonObject json)
 	{
-		JsonObject sound_effects = json.getAsJsonObject("particle_effects");
-		return sound_effects == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(sound_effects));
+		JsonObject particle_effects = json.getAsJsonObject("particle_effects");
+		return particle_effects == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(particle_effects));
 	}
 
 	/**
@@ -148,9 +149,10 @@ public class JSONAnimationUtils
 	 * @param json The animation json
 	 * @return The set of map entries where the string is the keyframe time (not sure why the format stores the times as a string) and the JsonElement is the object, which has all the custom instruction keyframes.
 	 */
-	public static Set<Map.Entry<String, JsonElement>> getCustomInstructionKeyFrames(JsonObject json)
+	public static  ArrayList<Map.Entry<String, JsonElement>> getCustomInstructionKeyFrames(JsonObject json)
 	{
-		return getObjectListAsArray(json.getAsJsonObject("timeline"));
+		JsonObject custom_instructions = json.getAsJsonObject("timeline");
+		return custom_instructions == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(custom_instructions));
 	}
 
 
@@ -208,6 +210,7 @@ public class JSONAnimationUtils
 		JsonElement loop = animationJsonObject.get("loop");
 		animation.loop = loop != null && loop.getAsBoolean();
 
+		//Handle parsing sound effect keyframes
 		ArrayList<Map.Entry<String, JsonElement>> soundEffectFrames = getSoundEffectFrames(animationJsonObject);
 		if(soundEffectFrames != null)
 		{
@@ -217,16 +220,28 @@ public class JSONAnimationUtils
 			}
 		}
 
-
+		//Handle parsing particle effect keyframes
 		ArrayList<Map.Entry<String, JsonElement>> particleKeyFrames = getParticleEffectFrames(animationJsonObject);
 		if(particleKeyFrames != null)
 		{
 			for(Map.Entry<String, JsonElement> keyFrame : particleKeyFrames)
 			{
 				JsonObject object = keyFrame.getValue().getAsJsonObject();
-				animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, object.get("effect").getAsString(), object.get("locator").getAsString(), object.get("script").getAsString()));
+				animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, object.get("effect").getAsString(), object.get("locator").getAsString(), object.get("pre_effect_script").getAsString()));
 			}
 		}
+
+		//Handle parsing custom instruction keyframes
+		ArrayList<Map.Entry<String, JsonElement>> customInstructionKeyFrames = getCustomInstructionKeyFrames(animationJsonObject);
+		if(customInstructionKeyFrames != null)
+		{
+			for(Map.Entry<String, JsonElement> keyFrame : customInstructionKeyFrames)
+			{
+				animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, convertJsonArrayToList(keyFrame.getValue().getAsJsonArray())));
+			}
+		}
+
+
 		// The list of all bones being used in this animation, where String is the name of the bone/group, and the JsonElement is the
 		List<Map.Entry<String, JsonElement>> bones = getBones(animationJsonObject);
 		for (Map.Entry<String, JsonElement> bone : bones)
@@ -274,5 +289,10 @@ public class JSONAnimationUtils
 			animation.boneAnimations.add(boneAnimation);
 		}
 		return animation;
+	}
+
+	static List<Double> convertJsonArrayToList(JsonArray array)
+	{
+		return new Gson().fromJson(array, ArrayList.class);
 	}
 }

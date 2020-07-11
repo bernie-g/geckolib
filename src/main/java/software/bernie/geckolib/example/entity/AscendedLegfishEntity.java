@@ -34,9 +34,9 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	private AnimationController sizeController = new AnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
 	private AnimationController moveController = new AnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
+	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> event)
 	{
-		float limbSwingAmount = entityAnimationTestEvent.getLimbSwingAmount();
+		float limbSwingAmount = event.getLimbSwingAmount();
 		if(KeyboardHandler.isForwardKeyDown)
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("kick", true));
