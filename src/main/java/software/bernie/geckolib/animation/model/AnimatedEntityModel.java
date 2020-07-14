@@ -20,6 +20,7 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.example.KeyboardHandler;
 import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
@@ -52,7 +53,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
-	public int speed = 1;
+	public float speed = 1;
+	public double seekTime;
+	public double lastGameTickTime;
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
 	 *
@@ -211,8 +214,19 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		EntityAnimationManager manager = entity.getAnimationManager();
-		manager.tick += partialTick * speed + partialTick;
-		double tick = manager.tick;
+		if(KeyboardHandler.isForwardKeyDown) {
+		    speed += 0.1f;
+		} else if (KeyboardHandler.isBackKeyDown) {
+			speed = Math.max(speed - 0.1f, 0.0001f);
+		}
+
+		manager.tick = entity.ticksExisted + partialTick;
+		double gameTick = manager.tick;
+		double deltaTicks = gameTick - lastGameTickTime;
+		seekTime += speed * deltaTicks;
+		lastGameTickTime = gameTick;
+
+		System.out.println("setLivingAnimations speed:" + speed + " seekTime:" + seekTime + " gameTick:" + gameTick + " deltaTick:" + deltaTicks);
 		//double tick = entity.ticksExisted + partialTick;
 		// Store the current value of each bone rotation/position/scale
 		if (manager.getBoneSnapshotCollection().isEmpty())
@@ -224,11 +238,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		for (AnimationController<T> controller : manager.values())
 		{
 
-			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing,
+			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, seekTime, limbSwing,
 					limbSwingAmount, partialTick, controller, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
 
 			// Process animations and add new values to the point queues
-			controller.process(tick, animationTestEvent, modelRendererList, boneSnapshots);
+			controller.process(seekTime, animationTestEvent, modelRendererList, boneSnapshots);
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values())
