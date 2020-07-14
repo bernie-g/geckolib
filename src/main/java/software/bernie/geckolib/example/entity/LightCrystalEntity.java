@@ -7,13 +7,13 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
+import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 
 public class LightCrystalEntity extends MobEntity implements IAnimatedEntity
 {
-	public AnimationControllerCollection controllers = new AnimationControllerCollection();
+	public EntityAnimationManager controllers = new EntityAnimationManager();
 	public AnimationController animationController = new EntityAnimationController(this, "default", 0f, this::playAnimation);
 
 	private <ENTITY extends Entity> boolean playAnimation(AnimationTestEvent<ENTITY> event)
@@ -29,7 +29,7 @@ public class LightCrystalEntity extends MobEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public AnimationControllerCollection getAnimationControllers()
+	public EntityAnimationManager getAnimationManager()
 	{
 		return controllers;
 	}

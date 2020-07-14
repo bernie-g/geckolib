@@ -39,6 +39,7 @@ public class EntityAnimationController<T extends Entity & IAnimatedEntity> exten
 	{
 		super(entity, name, transitionLengthTicks);
 		this.animationPredicate = animationPredicate;
+		this.soundPlayer = this::playSound;
 	}
 
 	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IEntityAnimationPredicate<T> animationPredicate, EasingType easingtype)

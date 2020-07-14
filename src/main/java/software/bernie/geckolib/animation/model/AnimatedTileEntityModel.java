@@ -11,10 +11,12 @@ import com.google.gson.JsonObject;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.client.util.JSONException;
-import net.minecraft.entity.Entity;
-import net.minecraft.resources.*;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.SimpleResource;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
@@ -30,9 +32,9 @@ import software.bernie.geckolib.animation.snapshot.DirtyTracker;
 import software.bernie.geckolib.animation.snapshot.EntityDirtyTracker;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.util.json.JsonAnimationUtils;
 import software.bernie.geckolib.reload.ReloadManager;
 import software.bernie.geckolib.util.AnimationUtils;
+import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,13 +48,13 @@ import java.util.*;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> extends EntityModel<T> implements IResourceManagerReloadListener
+public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEntity> extends BaseAnimatedModel<T> implements IResourceManagerReloadListener
 {
 	private JsonObject animationFile;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
-	public int speed = 1;
+
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
 	 *
@@ -65,11 +67,10 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 */
 	public boolean loopByDefault = false;
 
-
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	protected AnimatedEntityModel()
+	protected AnimatedTileEntityModel()
 	{
 		super();
 		ReloadManager.registerModel(this);
@@ -93,7 +94,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
 			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
 			resource.close();
-
 			setAnimationFile(jsonobject);
 			loadAllAnimations();
 		}
@@ -202,26 +202,25 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
+	public void setLivingAnimations(T entity, int ticksExisted, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
 		EntityDirtyTracker modelTracker = createNewDirtyTracker();
 
 		// Adding partial tick to smooth out the animation
+		double tick = ticksExisted + partialTick;
 
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		EntityAnimationManager manager = entity.getAnimationManager();
-		manager.tick += partialTick * speed + partialTick;
-		double tick = manager.tick;
-		//double tick = entity.ticksExisted + partialTick;
-		// Store the current value of each bone rotation/position/scale
-		if (manager.getBoneSnapshotCollection().isEmpty())
-		{
-			manager.setBoneSnapshotCollection(createNewBoneSnapshotCollection());
-		}
-		BoneSnapshotCollection boneSnapshots = manager.getBoneSnapshotCollection();
+		EntityAnimationManager controllers = entity.getAnimationManager();
 
-		for (AnimationController<T> controller : manager.values())
+		// Store the current value of each bone rotation/position/scale
+		if (controllers.getBoneSnapshotCollection().isEmpty())
+		{
+			controllers.setBoneSnapshotCollection(createNewBoneSnapshotCollection());
+		}
+		BoneSnapshotCollection boneSnapshots = controllers.getBoneSnapshotCollection();
+
+		for (AnimationController<T> controller : controllers.values())
 		{
 
 			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, tick, limbSwing,

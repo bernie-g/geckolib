@@ -3,25 +3,28 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.controller;
+package software.bernie.geckolib.manager;
 
+import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 
 import java.util.HashMap;
 
 /**
- * Each entity should have exactly <bold>ONE</bold> AnimationControllerCollection and can add as many animation controllers to the collection as desired.
+ * Each entity should have exactly <bold>ONE</bold> EntityAnimationManager and can add as many animation controllers to the collection as desired.
  */
-public class AnimationControllerCollection extends HashMap<String, AnimationController>
+public class EntityAnimationManager extends HashMap<String, AnimationController>
 {
 	private BoneSnapshotCollection boneSnapshotCollection;
-
+	public float tick;
+	public float newTime;
 	/**
 	 * Instantiates a new Animation controller collection.
 	 */
-	public AnimationControllerCollection()
+	public EntityAnimationManager()
 	{
 		super();
+		this.newTime = System.currentTimeMillis() / 1000;
 		boneSnapshotCollection = new BoneSnapshotCollection();
 	}
 

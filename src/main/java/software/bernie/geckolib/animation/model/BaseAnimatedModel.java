@@ -26,7 +26,6 @@ public abstract class BaseAnimatedModel<T> extends Model
 	 */
 	public abstract void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch);
 
-	public void setLivingAnimations(T entityIn, float limbSwing, float limbSwingAmount, float partialTick) {
-	}
+	public void setLivingAnimations(T entityIn, int ticksExisted, float limbSwing, float limbSwingAmount, float partialTick) { }
 
 }

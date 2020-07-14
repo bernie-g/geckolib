@@ -12,7 +12,7 @@ import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
+import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatedEntity;
@@ -20,11 +20,11 @@ import software.bernie.geckolib.event.AnimationTestEvent;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntity
 {
-	public AnimationControllerCollection animationControllers = new AnimationControllerCollection();
+	public EntityAnimationManager animationControllers = new EntityAnimationManager();
 	private AnimationController wingController = new EntityAnimationController(this, "wingController", 1, this::wingAnimationPredicate);
 
 	@Override
-	public AnimationControllerCollection getAnimationControllers()
+	public EntityAnimationManager getAnimationManager()
 	{
 		return animationControllers;
 	}

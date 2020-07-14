@@ -9,10 +9,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.reload.ReloadManager;
 
@@ -32,7 +32,7 @@ public class ReloadAnimationsCommand implements Command<CommandSource>
 	public int run(CommandContext<CommandSource> context) throws CommandSyntaxException
 	{
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-		for(AnimatedEntityModel model : ReloadManager.getRegisteredModels())
+		for(IResourceManagerReloadListener model : ReloadManager.getRegisteredModels())
 		{
 			model.onResourceManagerReload(resourceManager);
 		}

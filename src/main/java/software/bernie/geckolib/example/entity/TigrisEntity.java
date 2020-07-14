@@ -11,18 +11,18 @@ import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
+import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.controller.AnimationControllerCollection;
 import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 {
-	public AnimationControllerCollection animationControllers = new AnimationControllerCollection();
+	public EntityAnimationManager animationControllers = new EntityAnimationManager();
 	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
 	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
@@ -45,7 +45,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public AnimationControllerCollection getAnimationControllers()
+	public EntityAnimationManager getAnimationManager()
 	{
 		return animationControllers;
 	}

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.reload;
 
+import net.minecraft.resources.IResourceManagerReloadListener;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.controller.AnimationController;
 
@@ -8,11 +9,11 @@ import java.util.List;
 
 public class ReloadManager
 {
-	private static List<AnimatedEntityModel> registeredModels = new ArrayList<>();
+	private static List<IResourceManagerReloadListener> registeredModels = new ArrayList<>();
 	private static List<AnimationController> registeredAnimationControllers = new ArrayList<>();
 
 
-	public static void registerModel(AnimatedEntityModel model)
+	public static void registerModel(IResourceManagerReloadListener model)
 	{
 		registeredModels.add(model);
 	}
@@ -22,7 +23,7 @@ public class ReloadManager
 		registeredAnimationControllers.add(controller);
 	}
 
-	public static List<AnimatedEntityModel> getRegisteredModels()
+	public static List<IResourceManagerReloadListener> getRegisteredModels()
 	{
 		return registeredModels;
 	}
