@@ -77,7 +77,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	public float pitch = 1.0f;
 	public float volume = 1.0f;
 	public boolean distanceSoundDelay = false;
-
+	public boolean isJustStarting = false;
 	/**
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
@@ -265,8 +265,6 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	}
 
 
-
-
 	/**
 	 * This method is called every frame in order to populate the animation point queues, and process animation state logic.
 	 *
@@ -317,7 +315,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		if (animationState == AnimationState.Transitioning)
 		{
 			// Just started transitioning, so set the current animation to the first one
-			if (tick == 0)
+			if (tick == 0 || isJustStarting)
 			{
 				justStartedTransition = false;
 				this.currentAnimation = animationQueue.poll();

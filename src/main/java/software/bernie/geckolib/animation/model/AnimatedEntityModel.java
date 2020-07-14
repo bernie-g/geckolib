@@ -53,7 +53,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
 	private HashMap<String, Animation> animationList = new HashMap();
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
-	public float speed = 1;
 	public double seekTime;
 	public double lastGameTickTime;
 	/**
@@ -214,20 +213,14 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		EntityAnimationManager manager = entity.getAnimationManager();
-		if(KeyboardHandler.isForwardKeyDown) {
-		    speed += 0.1f;
-		} else if (KeyboardHandler.isBackKeyDown) {
-			speed = Math.max(speed - 0.1f, 0.0001f);
-		}
+
 
 		manager.tick = entity.ticksExisted + partialTick;
 		double gameTick = manager.tick;
 		double deltaTicks = gameTick - lastGameTickTime;
-		seekTime += speed * deltaTicks;
+		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		System.out.println("setLivingAnimations speed:" + speed + " seekTime:" + seekTime + " gameTick:" + gameTick + " deltaTick:" + deltaTicks);
-		//double tick = entity.ticksExisted + partialTick;
 		// Store the current value of each bone rotation/position/scale
 		if (manager.getBoneSnapshotCollection().isEmpty())
 		{
@@ -240,7 +233,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 			AnimationTestEvent<T> animationTestEvent = new AnimationTestEvent<T>(entity, seekTime, limbSwing,
 					limbSwingAmount, partialTick, controller, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
-
+			controller.isJustStarting = manager.isFirstTick;
 			// Process animations and add new values to the point queues
 			controller.process(seekTime, animationTestEvent, modelRendererList, boneSnapshots);
 
@@ -347,6 +340,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 				saveSnapshot.scaleValueZ = model.scaleValueZ;
 			}
 		}
+		manager.isFirstTick = false;
 	}
 
 	private EntityDirtyTracker createNewDirtyTracker()

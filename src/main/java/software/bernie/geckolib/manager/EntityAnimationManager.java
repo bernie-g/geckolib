@@ -17,14 +17,16 @@ public class EntityAnimationManager extends HashMap<String, AnimationController>
 {
 	private BoneSnapshotCollection boneSnapshotCollection;
 	public float tick;
-	public float newTime;
+	public boolean isFirstTick = true;
+	private double speedModifier = 1;
+
+
 	/**
 	 * Instantiates a new Animation controller collection.
 	 */
 	public EntityAnimationManager()
 	{
 		super();
-		this.newTime = System.currentTimeMillis() / 1000;
 		boneSnapshotCollection = new BoneSnapshotCollection();
 	}
 
@@ -47,5 +49,16 @@ public class EntityAnimationManager extends HashMap<String, AnimationController>
 	public void setBoneSnapshotCollection(BoneSnapshotCollection boneSnapshotCollection)
 	{
 		this.boneSnapshotCollection = boneSnapshotCollection;
+	}
+
+
+	public void setAnimationSpeed(double speed)
+	{
+		this.speedModifier = speed;
+	}
+
+	public double getCurrentAnimationSpeed()
+	{
+		return this.speedModifier;
 	}
 }
