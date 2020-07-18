@@ -20,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.example.KeyboardHandler;
 import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
@@ -55,6 +54,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
 	public double lastGameTickTime;
+
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
 	 *
@@ -214,7 +214,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		EntityAnimationManager manager = entity.getAnimationManager();
 
-
 		manager.tick = entity.ticksExisted + partialTick;
 		double gameTick = manager.tick;
 		double deltaTicks = gameTick - lastGameTickTime;
@@ -268,6 +267,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					snapshot.rotationValueX = bone.rotateAngleX;
 					snapshot.rotationValueY = bone.rotateAngleY;
 					snapshot.rotationValueZ = bone.rotateAngleZ;
+					snapshot.isCurrentlyRunningRotationAnimation = true;
 
 					modelTracker.get(bone).hasRotationChanged = true;
 				}
@@ -283,6 +283,8 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					snapshot.positionOffsetX = bone.positionOffsetX;
 					snapshot.positionOffsetY = bone.positionOffsetY;
 					snapshot.positionOffsetZ = bone.positionOffsetZ;
+					snapshot.isCurrentlyRunningPositionAnimation = true;
+
 					modelTracker.get(bone).hasPositionChanged = true;
 				}
 
@@ -298,11 +300,14 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					snapshot.scaleValueX = bone.scaleValueX;
 					snapshot.scaleValueY = bone.scaleValueY;
 					snapshot.scaleValueZ = bone.scaleValueZ;
+					snapshot.isCurrentlyRunningScaleAnimation = true;
+
 					modelTracker.get(bone).hasScaleChanged = true;
 				}
 			}
 		}
 
+		double resetTickLength = manager.getResetSpeed();
 		for (DirtyTracker tracker : modelTracker)
 		{
 			AnimatedModelRenderer model = tracker.model;
@@ -311,33 +316,54 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 			if (!tracker.hasRotationChanged)
 			{
-				model.rotateAngleX = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
-				model.rotateAngleY = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
-				model.rotateAngleZ = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
-				saveSnapshot.rotationValueX = model.rotateAngleX;
-				saveSnapshot.rotationValueY = model.rotateAngleY;
-				saveSnapshot.rotationValueZ = model.rotateAngleZ;
+				if (saveSnapshot.isCurrentlyRunningRotationAnimation)
+				{
+					saveSnapshot.mostRecentResetRotationTick = (float) seekTime;
+					saveSnapshot.isCurrentlyRunningRotationAnimation = false;
+				}
+
+				double percentageReset = (seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength;
+
+				model.rotateAngleX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueX,
+						initialSnapshot.rotationValueX);
+				model.rotateAngleY = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueY,
+						initialSnapshot.rotationValueY);
+				model.rotateAngleZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
+						initialSnapshot.rotationValueZ);
 			}
 			if (!tracker.hasPositionChanged)
 			{
-				model.positionOffsetX = lerpConstant(saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX,
-						0.02);
-				model.positionOffsetY = lerpConstant(saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY,
-						0.02);
-				model.positionOffsetZ = lerpConstant(saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ,
-						0.02);
-				saveSnapshot.positionOffsetX = model.positionOffsetX;
-				saveSnapshot.positionOffsetY = model.positionOffsetY;
-				saveSnapshot.positionOffsetZ = model.positionOffsetZ;
+				if (saveSnapshot.isCurrentlyRunningPositionAnimation)
+				{
+					saveSnapshot.mostRecentResetPositionTick = (float) seekTime;
+					saveSnapshot.isCurrentlyRunningPositionAnimation = false;
+				}
+
+				double percentageReset = (seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength;
+
+				model.positionOffsetX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetX,
+						initialSnapshot.positionOffsetX);
+				model.positionOffsetY = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetY,
+						initialSnapshot.positionOffsetY);
+				model.positionOffsetZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetZ,
+						initialSnapshot.positionOffsetZ);
 			}
 			if (!tracker.hasScaleChanged)
 			{
-				model.scaleValueX = lerpConstant(saveSnapshot.scaleValueX, initialSnapshot.scaleValueX, 0.02);
-				model.scaleValueY = lerpConstant(saveSnapshot.scaleValueY, initialSnapshot.scaleValueY, 0.02);
-				model.scaleValueZ = lerpConstant(saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ, 0.02);
-				saveSnapshot.scaleValueX = model.scaleValueX;
-				saveSnapshot.scaleValueY = model.scaleValueY;
-				saveSnapshot.scaleValueZ = model.scaleValueZ;
+				if (saveSnapshot.isCurrentlyRunningScaleAnimation)
+				{
+					saveSnapshot.mostRecentResetScaleTick = (float) seekTime;
+					saveSnapshot.isCurrentlyRunningScaleAnimation = false;
+				}
+
+				double percentageReset = (seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength;
+
+				model.scaleValueX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueX,
+						initialSnapshot.scaleValueX);
+				model.scaleValueY = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueY,
+						initialSnapshot.scaleValueY);
+				model.scaleValueZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueZ,
+						initialSnapshot.scaleValueZ);
 			}
 		}
 		manager.isFirstTick = false;

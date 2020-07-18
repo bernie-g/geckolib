@@ -8,6 +8,7 @@ package software.bernie.geckolib.util.json;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
@@ -125,7 +126,13 @@ public class JsonKeyFrameUtils
 
 	private static EasingType getEasingType(JsonElement element)
 	{
-		return EasingType.getEasingTypeFromString(element.getAsJsonObject().get("easing").getAsString());
+		String easingString = element.getAsJsonObject().get("easing").getAsString();
+		EasingType easing = EasingType.getEasingTypeFromString(easingString);
+		if(easing == null)
+		{
+			GeckoLib.LOGGER.fatal("Unknown easing type: " + easingString);
+		}
+		return easing;
 	}
 
 	private static List<Double> getEasingArgs(JsonElement element)

@@ -8,16 +8,11 @@
 					"position": {
 						"0.0": {
 							"vector": [0, 7, 0],
-							"easing": "easeOutBack"
+							"easing": "easeoutquad"
 						},
 						"0.9667": {
 							"vector": [0, 0, 0],
-							"easing": "easeOutBounce"
-						},
-						"1.7167": {
-							"vector": [0, 0, 9],
-							"easing": "easeOutBack",
-							"easingArgs": [5]
+							"easing": "easeoutbounce"
 						}
 					}
 				}

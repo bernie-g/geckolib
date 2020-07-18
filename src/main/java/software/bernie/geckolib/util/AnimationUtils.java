@@ -40,11 +40,11 @@ public class AnimationUtils
 	 * @param endValue    The animation's end value
 	 * @return The interpolated value
 	 */
-	public static float lerpValues(double pct, double startValue, double endValue)
+	public static float lerpValues(double percentCompleted, double startValue, double endValue)
 	{
 		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
-		return (float) (MathHelper.lerp(pct, startValue,
-				endValue));
+		return (float) (percentCompleted > 1 ? endValue :  (MathHelper.lerp(percentCompleted, startValue,
+				endValue)));
 	}
 
 	/**

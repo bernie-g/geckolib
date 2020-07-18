@@ -21,7 +21,7 @@ public class BrownEntity extends AnimalEntity implements IAnimatedEntity
 
 	private <ENTITY extends Entity> boolean predicate(AnimationTestEvent<ENTITY> event)
 	{
-		controller.setAnimation(new AnimationBuilder().addAnimation("running", true));
+		controller.setAnimation(new AnimationBuilder().addAnimation("crawling", true));
 		return true;
 	}
 

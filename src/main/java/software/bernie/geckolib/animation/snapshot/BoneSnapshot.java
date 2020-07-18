@@ -58,4 +58,13 @@ public class BoneSnapshot
 	public float rotationValueX;
 	public float rotationValueY;
 	public float rotationValueZ;
+
+	public float mostRecentResetRotationTick = 0;
+	public float mostRecentResetPositionTick = 0;
+	public float mostRecentResetScaleTick = 0;
+
+	public boolean isCurrentlyRunningRotationAnimation = true;
+	public boolean isCurrentlyRunningPositionAnimation = true;
+	public boolean isCurrentlyRunningScaleAnimation = true;
+
 }
