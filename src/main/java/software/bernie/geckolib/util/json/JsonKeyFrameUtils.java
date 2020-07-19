@@ -127,7 +127,7 @@ public class JsonKeyFrameUtils
 	private static EasingType getEasingType(JsonElement element)
 	{
 		String easingString = element.getAsJsonObject().get("easing").getAsString();
-		EasingType easing = EasingType.getEasingTypeFromString(easingString);
+		EasingType easing = EasingType.valueOf(easingString);
 		if(easing == null)
 		{
 			GeckoLib.LOGGER.fatal("Unknown easing type: " + easingString);
