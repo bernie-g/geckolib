@@ -66,7 +66,7 @@ public class EntityAnimationController<T extends Entity & IAnimatedEntity> exten
 			{
 				animationState = AnimationState.Stopped;
 			}
-			if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()) || needsAnimationReload)
+			else if (!builder.getRawAnimationList().equals(currentAnimationBuilder.getRawAnimationList()) || needsAnimationReload)
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way

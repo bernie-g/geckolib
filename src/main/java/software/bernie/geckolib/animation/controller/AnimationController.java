@@ -78,6 +78,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	public float volume = 1.0f;
 	public boolean distanceSoundDelay = false;
 	public boolean isJustStarting = false;
+
 	/**
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
@@ -140,7 +141,9 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	protected boolean justStartedTransition = false;
 	public Function<Double, Double> customEasingMethod;
 	protected boolean needsAnimationReload = false;
+
 	public abstract void setAnimation(@Nullable AnimationBuilder builder);
+
 	protected Consumer<SoundEvent> soundPlayer;
 
 	/**
@@ -152,9 +155,9 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity             The entity
-	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
+	 * @param entity                The entity
+	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 */
 	protected AnimationController(T entity, String name, float transitionLengthTicks)
 	{
@@ -168,10 +171,10 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity             The entity
-	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
-	 * @param easingtype         The method of easing to use. The other constructor defaults to no easing.
+	 * @param entity                The entity
+	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
+	 * @param easingtype            The method of easing to use. The other constructor defaults to no easing.
 	 */
 	public AnimationController(T entity, String name, float transitionLengthTicks, EasingType easingtype)
 	{
@@ -185,10 +188,10 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity             The entity
-	 * @param name               Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
-	 * @param transitionLengthTicks   How long it takes to transition between animations (IN TICKS!!)
-	 * @param customEasingMethod If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
+	 * @param entity                The entity
+	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
+	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
+	 * @param customEasingMethod    If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
 	 */
 	public AnimationController(T entity, String name, float transitionLengthTicks, Function<Double, Double> customEasingMethod)
 	{
@@ -306,7 +309,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		}
 		else
 		{
-			if(animationState != AnimationState.Transitioning)
+			if (animationState != AnimationState.Transitioning)
 			{
 				animationState = AnimationState.Running;
 			}
@@ -322,55 +325,62 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 				resetEventKeyFrames(currentAnimation);
 				saveSnapshotsForAnimation(currentAnimation, boneSnapshotCollection);
 			}
-			for (BoneAnimation boneAnimation : currentAnimation.boneAnimations)
+			if (currentAnimation != null)
 			{
-				BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
-				BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
-				BoneSnapshot initialSnapshot = modelRendererList.stream().filter(x -> x.name.equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
-				assert boneSnapshot != null : "Bone snapshot was null";
-
-				VectorKeyFrameList<KeyFrame<Double>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-				VectorKeyFrameList<KeyFrame<Double>> positionKeyFrames = boneAnimation.positionKeyFrames;
-				VectorKeyFrameList<KeyFrame<Double>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
-
-				// Adding the initial positions of the upcoming animation, so the model transitions to the initial state of the new animation
-				if (!rotationKeyFrames.xKeyFrames.isEmpty())
+				for (BoneAnimation boneAnimation : currentAnimation.boneAnimations)
 				{
-					boneAnimationQueue.rotationXQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
-									rotationKeyFrames.xKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.rotationYQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
-									rotationKeyFrames.yKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.rotationZQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
-									rotationKeyFrames.zKeyFrames.get(0).getStartValue()));
-				}
+					BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
+					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
+					BoneSnapshot initialSnapshot = modelRendererList.stream().filter(
+							x -> x.name.equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
+					assert boneSnapshot != null : "Bone snapshot was null";
 
-				if (!positionKeyFrames.xKeyFrames.isEmpty())
-				{
-					boneAnimationQueue.positionXQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetX,
-									positionKeyFrames.xKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.positionYQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetY,
-									positionKeyFrames.yKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.positionZQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetZ,
-									positionKeyFrames.zKeyFrames.get(0).getStartValue()));
-				}
+					VectorKeyFrameList<KeyFrame<Double>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+					VectorKeyFrameList<KeyFrame<Double>> positionKeyFrames = boneAnimation.positionKeyFrames;
+					VectorKeyFrameList<KeyFrame<Double>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
-				if (!scaleKeyFrames.xKeyFrames.isEmpty())
-				{
-					boneAnimationQueue.scaleXQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueX,
-									scaleKeyFrames.xKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.scaleYQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueY,
-									scaleKeyFrames.yKeyFrames.get(0).getStartValue()));
-					boneAnimationQueue.scaleZQueue.add(
-							new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueZ,
-									scaleKeyFrames.zKeyFrames.get(0).getStartValue()));
+					// Adding the initial positions of the upcoming animation, so the model transitions to the initial state of the new animation
+					if (!rotationKeyFrames.xKeyFrames.isEmpty())
+					{
+						boneAnimationQueue.rotationXQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks,
+										boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
+										rotationKeyFrames.xKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.rotationYQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks,
+										boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
+										rotationKeyFrames.yKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.rotationZQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks,
+										boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
+										rotationKeyFrames.zKeyFrames.get(0).getStartValue()));
+					}
+
+					if (!positionKeyFrames.xKeyFrames.isEmpty())
+					{
+						boneAnimationQueue.positionXQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetX,
+										positionKeyFrames.xKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.positionYQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetY,
+										positionKeyFrames.yKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.positionZQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetZ,
+										positionKeyFrames.zKeyFrames.get(0).getStartValue()));
+					}
+
+					if (!scaleKeyFrames.xKeyFrames.isEmpty())
+					{
+						boneAnimationQueue.scaleXQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueX,
+										scaleKeyFrames.xKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.scaleYQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueY,
+										scaleKeyFrames.yKeyFrames.get(0).getStartValue()));
+						boneAnimationQueue.scaleZQueue.add(
+								new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueZ,
+										scaleKeyFrames.zKeyFrames.get(0).getStartValue()));
+					}
 				}
 			}
 		}
@@ -388,7 +398,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	{
 		for (BoneSnapshot snapshot : boneSnapshotCollection.values())
 		{
-			if(animation != null && animation.boneAnimations != null)
+			if (animation != null && animation.boneAnimations != null)
 			{
 				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.name)))
 				{
@@ -423,7 +433,8 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 					shouldResetTick = true;
 				}
 			}
-			else {
+			else
+			{
 				// Reset the adjusted tick so the next animation starts at tick 0
 				shouldResetTick = true;
 				tick = adjustTick(actualTick);
@@ -451,7 +462,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 			{
 				boneAnimationQueue.positionXQueue.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick));
 				boneAnimationQueue.positionYQueue.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick));
- 				boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick));
+				boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick));
 			}
 
 			if (!scaleKeyFrames.xKeyFrames.isEmpty())
@@ -462,15 +473,16 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 			}
 		}
 
-		if(soundListener != null || particleListener != null || customInstructionListener != null)
+		if (soundListener != null || particleListener != null || customInstructionListener != null)
 		{
-			for(EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames)
+			for (EventKeyFrame<String> soundKeyFrame : currentAnimation.soundKeyFrames)
 			{
-				if(!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
+				if (!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
 				{
-					SoundKeyframeEvent event = new SoundKeyframeEvent(this.entity, tick, soundKeyFrame.getEventData(), this);
+					SoundKeyframeEvent event = new SoundKeyframeEvent(this.entity, tick, soundKeyFrame.getEventData(),
+							this);
 					SoundEvent soundEvent = soundListener.playSound(event);
-					if(soundEvent != null)
+					if (soundEvent != null)
 					{
 						soundPlayer.accept(soundEvent);
 					}
@@ -478,22 +490,24 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 				}
 			}
 
-			for(ParticleEventKeyFrame particleEventKeyFrame : currentAnimation.particleKeyFrames)
+			for (ParticleEventKeyFrame particleEventKeyFrame : currentAnimation.particleKeyFrames)
 			{
-				if(!particleEventKeyFrame.hasExecuted && tick >= particleEventKeyFrame.getStartTick())
+				if (!particleEventKeyFrame.hasExecuted && tick >= particleEventKeyFrame.getStartTick())
 				{
-					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.entity, tick, particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script, this);
+					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.entity, tick,
+							particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script,
+							this);
 					particleListener.summonParticle(event);
 					particleEventKeyFrame.hasExecuted = true;
 				}
 			}
 
-
-			for(EventKeyFrame<List<String>> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes)
+			for (EventKeyFrame<List<String>> customInstructionKeyFrame : currentAnimation.customInstructionKeyframes)
 			{
-				if(!customInstructionKeyFrame.hasExecuted && tick >= customInstructionKeyFrame.getStartTick())
+				if (!customInstructionKeyFrame.hasExecuted && tick >= customInstructionKeyFrame.getStartTick())
 				{
-					CustomInstructionKeyframeEvent event = new CustomInstructionKeyframeEvent(this.entity, tick, customInstructionKeyFrame.getEventData(), this);
+					CustomInstructionKeyframeEvent event = new CustomInstructionKeyframeEvent(this.entity, tick,
+							customInstructionKeyFrame.getEventData(), this);
 					customInstructionListener.executeInstruction(event);
 					customInstructionKeyFrame.hasExecuted = true;
 				}
@@ -531,13 +545,14 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	{
 		KeyFrameLocation<KeyFrame<Double>> location = getCurrentKeyFrameLocation(frames, tick);
 		KeyFrame<Double> currentFrame = location.CurrentFrame;
-		return new AnimationPoint(currentFrame, location.CurrentAnimationTick, currentFrame.getLength(), currentFrame.getStartValue(),
+		return new AnimationPoint(currentFrame, location.CurrentAnimationTick, currentFrame.getLength(),
+				currentFrame.getStartValue(),
 				currentFrame.getEndValue());
 	}
 
 	/**
-	Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
-    **/
+	 * Returns the current keyframe object, plus how long the previous keyframes have taken (aka elapsed animation time)
+	 **/
 	private KeyFrameLocation<KeyFrame<Double>> getCurrentKeyFrameLocation(List<KeyFrame<Double>> frames, double ageInTicks)
 	{
 		double totalTimeTracker = 0;
@@ -557,27 +572,27 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 
 	private void resetEventKeyFrames(Animation animation)
 	{
-		if(animation == null)
+		if (animation == null)
 		{
 			return;
 		}
-		if(!animation.soundKeyFrames.isEmpty())
+		if (!animation.soundKeyFrames.isEmpty())
 		{
-			for(EventKeyFrame soundKeyFrame : animation.soundKeyFrames)
+			for (EventKeyFrame soundKeyFrame : animation.soundKeyFrames)
 			{
 				soundKeyFrame.hasExecuted = false;
 			}
 		}
-		if(!animation.particleKeyFrames.isEmpty())
+		if (!animation.particleKeyFrames.isEmpty())
 		{
-			for(EventKeyFrame particleKeyFrame : animation.particleKeyFrames)
+			for (EventKeyFrame particleKeyFrame : animation.particleKeyFrames)
 			{
 				particleKeyFrame.hasExecuted = false;
 			}
 		}
-		if(!animation.customInstructionKeyframes.isEmpty())
+		if (!animation.customInstructionKeyframes.isEmpty())
 		{
-			for(EventKeyFrame customInstructionKeyFrame : animation.customInstructionKeyframes)
+			for (EventKeyFrame customInstructionKeyFrame : animation.customInstructionKeyframes)
 			{
 				customInstructionKeyFrame.hasExecuted = false;
 			}

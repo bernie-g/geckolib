@@ -78,4 +78,10 @@ public class KeyFrame<T>
 	{
 		return Objects.hash(length, startValue, endValue);
 	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		return hashCode() == obj.hashCode();
+	}
 }

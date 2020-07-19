@@ -91,11 +91,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		{
 			Gson GSON = new Gson();
 			SimpleResource resource = (SimpleResource) resourceManager.getResource(getAnimationFileLocation());
+			InputStreamReader stream = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
 			Reader reader = new BufferedReader(
-					new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
+					stream);
 			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
 			resource.close();
-
+			stream.close();
 			setAnimationFile(jsonobject);
 			loadAllAnimations();
 		}
