@@ -276,10 +276,10 @@ public class EasingManager
 	static Function<Double, Double> bounce(Double s)
 	{
 		double k = s == null ? 0.5 : s;
-		Function<Double, Double> q = x -> (121 / 16) * x * x;
-		Function<Double, Double> w = x -> ((121 / 4) * k) * Math.pow(x - (6 / 11), 2) + 1 - k;
-		Function<Double, Double> r = x -> 121 * k * k * Math.pow(x - (9 / 11), 2) + 1 - k * k;
-		Function<Double, Double> t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11), 2) + 1 - k * k * k;
+		Function<Double, Double> q = x -> (121.0 / 16.0) * x * x;
+		Function<Double, Double> w = x -> ((121.0 / 4.0) * k) * Math.pow(x - (6.0 / 11.0), 2) + 1 - k;
+		Function<Double, Double> r = x -> 121 * k * k * Math.pow(x - (9.0 / 11.0), 2) + 1 - k * k;
+		Function<Double, Double> t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11.0), 2) + 1 - k * k * k;
 		return x -> min(q.apply(x), w.apply(x), r.apply(x), t.apply(x));
 	}
 

@@ -20,6 +20,15 @@ public class EasingManagerTest {
             this.t = t;
             this.expectedResult = expectedResult;
         }
+
+        @Override
+        public String toString() {
+            return "BounceTestArg{" +
+                    "k=" + k +
+                    ", t=" + t +
+                    ", expectedResult=" + expectedResult +
+                    '}';
+        }
     }
 
     static Stream<BounceTestArg> bounceTestProvider() {
@@ -30,7 +39,7 @@ public class EasingManagerTest {
             new BounceTestArg(0.5, 0.705,  0.88500313),
             new BounceTestArg(0.5, 0.729,  0.99059025),
             new BounceTestArg(0.5, 0.91,  0.99505),
-            new BounceTestArg(0.5, 0, 1)
+            new BounceTestArg(0.5, 1, 1)
         );
     }
 
@@ -38,6 +47,6 @@ public class EasingManagerTest {
     @MethodSource("bounceTestProvider")
     void testBounce(BounceTestArg args) {
         double result = EasingManager.bounce(args.k).apply(args.t);
-        assertEquals(result, args.expectedResult, 0.000001);
+        assertEquals(args.expectedResult, result, 0.000001);
     }
 }
