@@ -82,6 +82,6 @@ public class KeyFrame<T>
 	@Override
 	public boolean equals(Object obj)
 	{
-		return hashCode() == obj.hashCode();
+		return obj instanceof KeyFrame && hashCode() == obj.hashCode();
 	}
 }
