@@ -4,7 +4,9 @@ import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
+import java.util.stream.DoubleStream;
 
 public class EasingManager
 {
@@ -21,6 +23,8 @@ public class EasingManager
 		{
 			case Linear:
 				return linear().apply(number);
+			case Step:
+				return step(firstArg, number);
 			case EaseInSine:
 				return in(EasingManager::sin).apply(number);
 			case EaseOutSine:
@@ -85,6 +89,15 @@ public class EasingManager
 				return number;
 		}
 	}
+
+
+	// The MIT license notice below applies to the easing functions below except for bounce and step
+	/**
+	 * Copyright (c) Facebook, Inc. and its affiliates.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
 
 	/**
 	 * Runs an easing function forwards.
@@ -270,9 +283,90 @@ public class EasingManager
 		return x -> min(q.apply(x), w.apply(x), r.apply(x), t.apply(x));
 	}
 
+	static double step(Double stepArg, double t) {
+		int steps = stepArg != null ? stepArg.intValue() : 2;
+		double[] intervals = stepRange(steps);
+		return intervals[findIntervalBorderIndex(t, intervals, false)];
+	}
+
 	static double min(double a, double b, double c, double d)
 	{
 		return Math.min(Math.min(a, b), Math.min(c, d));
 	}
+
+	// The MIT license notice below applies to the function findIntervalBorderIndex
+	/* The MIT License (MIT)
+
+	Copyright (c) 2015 Boris Chumichev
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of
+	this software and associated documentation files (the "Software"), to deal in
+	the Software without restriction, including without limitation the rights to
+	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+	the Software, and to permit persons to whom the Software is furnished to do so,
+	subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+	FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+	IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+	CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+	/**
+	 *
+	 * Utilizes bisection method to search an interval to which
+	 * point belongs to, then returns an index of left or right
+	 * border of the interval
+	 *
+	 * @param {Number} point
+	 * @param {Array} intervals
+	 * @param {Boolean} useRightBorder
+	 * @returns {Number}
+	 */
+	static int findIntervalBorderIndex(double point, double[] intervals, boolean useRightBorder) {
+		//If point is beyond given intervals
+		if (point < intervals[0])
+			return 0;
+		if (point > intervals[intervals.length - 1])
+			return intervals.length - 1;
+		//If point is inside interval
+		//Start searching on a full range of intervals
+		int indexOfNumberToCompare = 0;
+		int leftBorderIndex = 0;
+		int rightBorderIndex = intervals.length - 1;
+		//Reduce searching range till it find an interval point belongs to using binary search
+		while (rightBorderIndex - leftBorderIndex != 1) {
+			indexOfNumberToCompare = leftBorderIndex + (rightBorderIndex - leftBorderIndex) / 2;
+			if (point >= intervals[indexOfNumberToCompare]) {
+				leftBorderIndex = indexOfNumberToCompare;
+			} else {
+				rightBorderIndex = indexOfNumberToCompare;
+			}
+		}
+		return useRightBorder ? rightBorderIndex : leftBorderIndex;
+	}
+
+	static double[] stepRange(int steps) {
+		final double stop = 1;
+		if (steps < 2) throw new IllegalArgumentException("steps must be > 2, got:" + steps);
+		double stepLength = stop / (double)steps;
+		// There must be an easier way of doing this but I just don't care
+		AtomicInteger i = new AtomicInteger();
+		return DoubleStream.generate(() -> i.getAndIncrement() * stepLength)
+				.limit(steps)
+				.toArray();
+	};
+
+	// The MIT license notice below applies to the easing functions below except for bounce
+	/**
+	 * Copyright (c) Facebook, Inc. and its affiliates.
+	 *
+	 * This source code is licensed under the MIT license found in the
+	 * LICENSE file in the root directory of this source tree.
+	 */
 
 }
