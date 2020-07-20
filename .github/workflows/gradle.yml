@@ -1,0 +1,47 @@
+# This workflow will build a Java project with Gradle
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ 1.15, develop ]
+  pull_request:
+    branches: [ 1.15, develop ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Assemble with Gradle
+      run: ./gradlew --info assemble
+    - name: Test with Gradle
+      run: ./gradlew --info test
+    - name: Zip Test Results
+      if: ${{ always() }}
+      run: |
+        set -x
+        pwd
+        ls
+        zip -r reports.zip ./build/reports/tests/test
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: reports.zip
+        path: reports.zip
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: geckolib-1.15-1.0.0.jar
+        path: build/libs/geckolib-1.15-1.0.0.jar
