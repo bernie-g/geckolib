@@ -407,27 +407,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		return animationList.get(name);
 	}
 
-	private static float lerpConstant(double currentValue, double finalValue, double speedModifier)
-	{
-		double lowerBound = finalValue - speedModifier;
-		double upperBound = finalValue + speedModifier;
-
-		if (lowerBound <= currentValue && upperBound >= currentValue)
-		{
-			return (float) currentValue;
-		}
-		double increment = 0;
-		if (currentValue < finalValue)
-		{
-			increment = speedModifier;
-		}
-		else
-		{
-			increment = -1 * speedModifier;
-		}
-
-		return (float) (currentValue + increment);
-	}
 
 	@Override
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
