@@ -23,23 +23,35 @@ public class EasingManager
 			case Linear:
 				return linear().apply(number);
 			case EaseInSine:
-				return in(sin()).apply(number);
+				return in(EasingManager::sin).apply(number);
 			case EaseOutSine:
-				return out(sin()).apply(number);
+				return out(EasingManager::sin).apply(number);
 			case EaseInOutSine:
-				return inOut(sin()).apply(number);
+				return inOut(EasingManager::sin).apply(number);
 			case EaseInQuad:
-				return in(quad()).apply(number);
+				return in(EasingManager::quad).apply(number);
 			case EaseOutQuad:
-				return out(quad()).apply(number);
+				return out(EasingManager::quad).apply(number);
 			case EaseInOutQuad:
-				return inOut(quad()).apply(number);
+				return inOut(EasingManager::quad).apply(number);
 			case EaseInCubic:
-				return in(cubic()).apply(number);
+				return in(EasingManager::cubic).apply(number);
 			case EaseOutCubic:
-				return out(cubic()).apply(number);
+				return out(EasingManager::cubic).apply(number);
 			case EaseInOutCubic:
-				return inOut(cubic()).apply(number);
+				return inOut(EasingManager::cubic).apply(number);
+			case EaseInExpo:
+				return in(EasingManager::exp).apply(number);
+			case EaseOutExpo:
+				return out(EasingManager::exp).apply(number);
+			case EaseInOutExpo:
+				return inOut(EasingManager::exp).apply(number);
+			case EaseInCirc:
+				return in(EasingManager::circle).apply(number);
+			case EaseOutCirc:
+				return out(EasingManager::circle).apply(number);
+			case EaseInOutCirc:
+				return inOut(EasingManager::circle).apply(number);
 			case EaseInQuart:
 				return in(quart).apply(number);
 			case EaseOutQuart:
@@ -52,18 +64,6 @@ public class EasingManager
 				return out(quint).apply(number);
 			case EaseInOutQuint:
 				return inOut(quint).apply(number);
-			case EaseInExpo:
-				return in(exp()).apply(number);
-			case EaseOutExpo:
-				return out(exp()).apply(number);
-			case EaseInOutExpo:
-				return inOut(exp()).apply(number);
-			case EaseInCirc:
-				return in(circle()).apply(number);
-			case EaseOutCirc:
-				return out(circle()).apply(number);
-			case EaseInOutCirc:
-				return inOut(circle()).apply(number);
 			case EaseInBack:
 				return in(back(firstArg)).apply(number);
 			case EaseOutBack:
@@ -147,12 +147,12 @@ public class EasingManager
 		return Function.identity();
 	}
 
-	/**
-	 * A simple inertial interaction, similar to an object slowly accelerating to
-	 * speed.
-	 *
-	 * http://cubic-bezier.com/#.42,0,1,1
-	 */
+/**
+ * A simple inertial interaction, similar to an object slowly accelerating to
+ * speed.
+ *
+ * http://cubic-bezier.com/#.42,0,1,1
+ */
 	// static ease(t) {
 	// 		if (!ease) {
 	// 				ease = Easing.bezier(0.42, 0, 1, 1);
@@ -166,9 +166,9 @@ public class EasingManager
 	 * <p>
 	 * http://easings.net/#easeInQuad
 	 */
-	static Function<Double, Double> quad()
+	static double quad(double t)
 	{
-		return t -> t * t;
+		return t * t;
 	}
 
 	/**
@@ -177,9 +177,9 @@ public class EasingManager
 	 * <p>
 	 * http://easings.net/#easeInCubic
 	 */
-	static Function<Double, Double> cubic()
+	static double cubic(double t)
 	{
-		return t -> t * t * t;
+		return t * t * t;
 	}
 
 	/**
@@ -188,9 +188,9 @@ public class EasingManager
 	 * n = 4: http://easings.net/#easeInQuart
 	 * n = 5: http://easings.net/#easeInQuint
 	 */
-	static Function<Double, Double> poly(int n)
+	static Function<Double, Double> poly(double n)
 	{
-		return t -> Math.pow(t, n);
+		return (t) -> Math.pow(t, n);
 	}
 
 	/**
@@ -198,9 +198,9 @@ public class EasingManager
 	 * <p>
 	 * http://easings.net/#easeInSine
 	 */
-	static Function<Double, Double> sin()
+	static double sin(double t)
 	{
-		return t -> 1D - MathHelper.cos((float) ((t * Math.PI) / 2));
+		return 1 - MathHelper.cos((float) ((t * Math.PI) / 2));
 	}
 
 	/**
@@ -208,9 +208,9 @@ public class EasingManager
 	 * <p>
 	 * http://easings.net/#easeInCirc
 	 */
-	static Function<Double, Double> circle()
+	static double circle(double t)
 	{
-		return t -> 1 - Math.sqrt(1 - t * t);
+		return 1 - MathHelper.sqrt(1 - t * t);
 	}
 
 	/**
@@ -218,9 +218,9 @@ public class EasingManager
 	 * <p>
 	 * http://easings.net/#easeInExpo
 	 */
-	static Function<Double, Double> exp()
+	static double exp(double t)
 	{
-		return t -> Math.pow(2, 10 * (t - 1));
+		return Math.pow(2, 10 * (t - 1));
 	}
 
 	/**
