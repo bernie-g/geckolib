@@ -43,8 +43,8 @@ public class AnimationUtils
 	public static float lerpValues(double percentCompleted, double startValue, double endValue)
 	{
 		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
-		return (float) (percentCompleted > 1 ? endValue :  (MathHelper.lerp(percentCompleted, startValue,
-				endValue)));
+		return (float) MathHelper.lerp(percentCompleted, startValue,
+				endValue);
 	}
 
 	/**
