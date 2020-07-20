@@ -118,13 +118,13 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	}
 
 	/**
-	 * Custom instructions can be added in blockbench by enabling animation effects in Animation -> Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
+	 * Custom instructions can be added in blockbench by enabling animation effects in Animation - Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
 	 */
 	@FunctionalInterface
 	public interface ICustomInstructionListener
 	{
 		/**
-		 * Custom instructions can be added in blockbench by enabling animation effects in Animation -> Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
+		 * Custom instructions can be added in blockbench by enabling animation effects in Animation - Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
 		 */
 		<ENTITY extends Entity> void executeInstruction(CustomInstructionKeyframeEvent<ENTITY> event);
 	}

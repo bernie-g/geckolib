@@ -247,7 +247,7 @@ public class EasingManager
 	 */
 	static Function<Double, Double> elastic(Double bounciness)
 	{
-		Double p = (bounciness == null ? 1 : bounciness) * Math.PI;
+		double p = (bounciness == null ? 1 : bounciness) * Math.PI;
 		return t -> 1 - Math.pow(MathHelper.cos((float) ((t * Math.PI) / 2)), 3) * MathHelper.cos((float) (t * p));
 	}
 
@@ -262,7 +262,7 @@ public class EasingManager
 	 */
 	static Function<Double, Double> back(Double s)
 	{
-		Double p = s == null ? 1.70158 : s * 1.70158;
+		double p = s == null ? 1.70158 : s * 1.70158;
 		return t -> t * t * ((p + 1) * t - p);
 	}
 

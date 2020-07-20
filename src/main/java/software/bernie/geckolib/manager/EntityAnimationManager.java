@@ -11,7 +11,7 @@ import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import java.util.HashMap;
 
 /**
- * Each entity should have exactly <bold>ONE</bold> EntityAnimationManager and can add as many animation controllers to the collection as desired.
+ * Each entity should have exactly <b>ONE</b> EntityAnimationManager and can add as many animation controllers to the collection as desired.
  */
 public class EntityAnimationManager extends HashMap<String, AnimationController>
 {
