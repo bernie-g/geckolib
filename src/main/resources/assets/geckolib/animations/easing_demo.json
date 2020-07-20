@@ -1,37 +1,108 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.easing1.new": {
-			"animation_length": 1.8,
+		"bouncetest": {
+			"animation_length": 8.16,
 			"bones": {
 				"bone": {
 					"position": {
 						"0.0": {
-							"vector": [0, 7, 0],
-							"easing": "easeOutQuad"
+							"vector": [0, 0, 0]
 						},
-						"0.9667": {
+						"2.0": {
+							"vector": [0, 0, -15],
+							"easing": "easeInBounce",
+							"easingArgs": [0.25]
+						},
+						"2.1": {
 							"vector": [0, 0, 0],
-							"easing": "easeOutBounce"
+							"easing": "linear"
+						},
+						"4.0833": {
+							"vector": [0, 0, -15],
+							"easing": "easeInBounce",
+							"easingArgs": [0.5]
+						},
+						"4.1667": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"6.1667": {
+							"vector": [0, 0, -15],
+							"easing": "easeInBounce",
+							"easingArgs": [0.75]
+						},
+						"6.2333": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
 						}
 					}
 				}
-			},
-			"particle_effects": {
-				"0.7667": {
-					"effect": "sdf",
-					"locator": "sdf",
-					"pre_effect_script": "asdfdf"
-				},
-				"1.3667": {
-					"effect": "sd",
-					"locator": "ds",
-					"pre_effect_script": "ddddd"
+			}
+		},
+		"backtest": {
+			"animation_length": 8.16,
+			"bones": {
+				"bone": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, -15],
+							"easing": "easeInBack",
+							"easingArgs": [2]
+						},
+						"2.1": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"4.0833": {
+							"vector": [0, 0, -15],
+							"easing": "easeOutBack",
+							"easingArgs": [2]
+						},
+						"4.1667": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						},
+						"6.1667": {
+							"vector": [0, 0, -15],
+							"easing": "easeInOutBack",
+							"easingArgs": [2]
+						},
+						"6.2333": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						}
+					}
 				}
-			},
-			"timeline": {
-				"1.2": ["fireball", "cfgdfg"],
-				"0.1667": ["start raining"]
+			}
+		},
+		"steptest": {
+			"animation_length": 8.16,
+			"bones": {
+				"bone": {
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"2.0": {
+							"vector": [0, 0, -15],
+							"easing": "step",
+							"easingArgs": [16]
+						},
+						"6.1667": {
+							"vector": [0, 0, -15],
+							"easing": "easeInOutBack",
+							"easingArgs": [2]
+						},
+						"6.2333": {
+							"vector": [0, 0, 0],
+							"easing": "linear"
+						}
+					}
+				}
 			}
 		}
 	}

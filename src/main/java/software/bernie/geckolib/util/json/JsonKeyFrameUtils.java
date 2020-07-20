@@ -126,10 +126,11 @@ public class JsonKeyFrameUtils
 
 	private static EasingType getEasingType(JsonElement element)
 	{
-		String easingString = element.getAsJsonObject().get("easing").getAsString();
+		final String easingString = element.getAsJsonObject().get("easing").getAsString();
 		try
 		{
-			EasingType easing = EasingType.valueOf(easingString);
+			final String uppercaseEasingString = Character.toUpperCase(easingString.charAt(0)) + easingString.substring(1);
+			EasingType easing = EasingType.valueOf(uppercaseEasingString);
 			return easing;
 		}
 		catch(Exception e)
