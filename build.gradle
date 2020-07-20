@@ -141,6 +141,19 @@ jar.finalizedBy('reobfJar')
 sourceSets {
     main { output.resourcesDir = output.classesDir }
 }
+
+task javadocnew(type: Javadoc) {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+task javadocJar(type: Jar, dependsOn: javadocnew) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
