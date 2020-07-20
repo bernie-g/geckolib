@@ -4,10 +4,9 @@
  */
 
 package software.bernie.geckolib.event;
-import net.minecraft.entity.Entity;
-import software.bernie.geckolib.animation.model.AnimationController;
+import software.bernie.geckolib.animation.controller.AnimationController;
 
-public class AnimationEvent<T extends Entity>
+public class AnimationEvent<T>
 {
 	private final T entity;
 	private final double animationTick;

@@ -18,25 +18,26 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.animation.AnimationBuilder;
-import software.bernie.geckolib.animation.model.AnimationController;
-import software.bernie.geckolib.animation.model.AnimationControllerCollection;
-import software.bernie.geckolib.animation.AnimationTestEvent;
+import software.bernie.geckolib.animation.builder.AnimationBuilder;
+import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEntity
 {
 	private static final DataParameter<Integer> SIZE = EntityDataManager.createKey(AscendedLegfishEntity.class, DataSerializers.VARINT);
 
-	public AnimationControllerCollection animationControllers = new AnimationControllerCollection();
+	public EntityAnimationManager animationManager = new EntityAnimationManager();
 
-	private AnimationController sizeController = new AnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
-	private AnimationController moveController = new AnimationController(this, "moveController", 10F, this::moveController);
+	private AnimationController sizeController = new EntityAnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
+	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
+	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> event)
 	{
-		float limbSwingAmount = entityAnimationTestEvent.getLimbSwingAmount();
+		float limbSwingAmount = event.getLimbSwingAmount();
 		if(KeyboardHandler.isForwardKeyDown)
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("kick", true));
@@ -86,15 +87,15 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	{
 		if(world.isRemote)
 		{
-			this.animationControllers.addAnimationController(sizeController);
-			this.animationControllers.addAnimationController(moveController);
+			this.animationManager.addAnimationController(sizeController);
+			this.animationManager.addAnimationController(moveController);
 		}
 	}
 
 	@Override
-	public AnimationControllerCollection getAnimationControllers()
+	public EntityAnimationManager getAnimationManager()
 	{
-		return animationControllers;
+		return animationManager;
 	}
 
 	@Override

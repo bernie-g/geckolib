@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
 import java.util.LinkedList;
 

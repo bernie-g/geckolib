@@ -5,19 +5,19 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
-public class EventKeyFrame
+public class EventKeyFrame<T>
 {
-	private String eventData;
+	private T eventData;
 	public boolean hasExecuted = false;
 	private Double startTick;
 
-	public EventKeyFrame(Double startTick, String eventData)
+	public EventKeyFrame(Double startTick, T eventData)
 	{
 		this.startTick = startTick;
 		this.eventData = eventData;
 	}
 
-	public String getEventData()
+	public T getEventData()
 	{
 		return eventData;
 	}

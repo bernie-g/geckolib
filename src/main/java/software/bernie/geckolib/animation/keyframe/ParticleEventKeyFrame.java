@@ -1,6 +1,6 @@
 package software.bernie.geckolib.animation.keyframe;
 
-public class ParticleEventKeyFrame extends EventKeyFrame
+public class ParticleEventKeyFrame extends EventKeyFrame<String>
 {
 	public final String effect;
 	public final String locator;

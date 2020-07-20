@@ -5,6 +5,8 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
+import javax.annotation.Nullable;
+
 public class AnimationPoint
 {
 	/**
@@ -23,24 +25,34 @@ public class AnimationPoint
 	 * The Animation end value.
 	 */
 	public final Float animationEndValue;
-	public AnimationPoint(Double currentTick, Double animationEndTick, Double animationStartValue, Double animationEndValue)
+
+	/**
+	 * The current keyframe.
+	 */
+	@Nullable
+	public final KeyFrame<Double> keyframe;
+
+	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Double animationStartValue, Double animationEndValue)
 	{
+		this.keyframe = keyframe;
 		this.currentTick = currentTick;
 		this.animationEndTick = animationEndTick;
 		this.animationStartValue = animationStartValue.floatValue();
 		this.animationEndValue = animationEndValue.floatValue();
 	}
 
-	public AnimationPoint(Double currentTick, Double animationEndTick, Float animationStartValue, Float animationEndValue)
+	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Float animationStartValue, Float animationEndValue)
 	{
 		this.currentTick = currentTick;
 		this.animationEndTick = animationEndTick;
 		this.animationStartValue = animationStartValue;
 		this.animationEndValue = animationEndValue;
+		this.keyframe = keyframe;
 	}
 
-	public AnimationPoint(Double currentTick, Double animationEndTick, Float animationStartValue, Double animationEndValue)
+	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Float animationStartValue, Double animationEndValue)
 	{
+		this.keyframe = keyframe;
 		this.currentTick = currentTick;
 		this.animationEndTick = animationEndTick;
 		this.animationStartValue = animationStartValue;

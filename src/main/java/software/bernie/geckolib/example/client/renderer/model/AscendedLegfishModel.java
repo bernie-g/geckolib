@@ -7,7 +7,7 @@ package software.bernie.geckolib.example.client.renderer.model;
 
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
-import software.bernie.geckolib.animation.model.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.example.entity.AscendedLegfishEntity;
 
 // Made with Blockbench 3.5.2
