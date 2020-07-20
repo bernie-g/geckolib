@@ -30,5 +30,6 @@ public class ModEventBus
 		RenderingRegistry.registerEntityRenderingHandler(Entities.LIGHTCRYSTAL.get(), manager -> new LightCrystalRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.BROWN.get(), manager -> new BrownRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(Entities.EASING_DEMO.get(), manager -> new EasingDemoRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(Entities.ROBOT.get(), manager -> new RobotRenderer(manager));
 	}
 }

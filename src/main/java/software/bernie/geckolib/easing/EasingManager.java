@@ -262,7 +262,7 @@ public class EasingManager
 	 */
 	static Function<Double, Double> back(Double s)
 	{
-		Double p = s == null ? 1.70158 : s;
+		Double p = s == null ? 1.70158 : s * 1.70158;
 		return t -> t * t * ((p + 1) * t - p);
 	}
 

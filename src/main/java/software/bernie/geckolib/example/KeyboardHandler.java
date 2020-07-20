@@ -27,7 +27,6 @@ public class KeyboardHandler
 			isForwardKeyDown = mc.gameSettings.keyBindForward.isKeyDown();
 			isBackKeyDown = mc.gameSettings.keyBindBack.isKeyDown();
 			isQDown = mc.gameSettings.keyBindDrop.isKeyDown();
-
 		}
 	}
 }
