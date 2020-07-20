@@ -31,11 +31,17 @@ jobs:
       run: |
         set -x
         pwd
-        ls -lR
-        zip -r reports.zip core/build/reports
+        ls
+        zip -r reports.zip ./build/reports/tests/test
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
       if: ${{ always() }}
       with:
         name: reports.zip
         path: reports.zip
+    - name: Upload Build
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: geckolib-1.15-1.0.0.jar
+        path: build/libs/geckolib-1.15-1.0.0.jar
