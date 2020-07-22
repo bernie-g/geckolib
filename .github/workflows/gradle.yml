@@ -7,7 +7,7 @@ on:
   push:
     branches: [ 1.15, develop ]
   pull_request:
-    branches: [ 1.15, develop ]
+    branches: []
 
 jobs:
   build:
@@ -66,7 +66,7 @@ jobs:
       with:
         args: --acl public-read --follow-symlinks --delete
       env:
-        AWS_S3_BUCKET: geckolib
+        AWS_S3_BUCKET: geckolib.bernie.software
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
