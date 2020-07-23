@@ -1,7 +1,7 @@
 package software.bernie.geckolib.animation.controller;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sound.SoundEvent;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.builder.Animation;
@@ -113,7 +113,7 @@ public class EntityAnimationController<T extends Entity & IAnimatedEntity> exten
 
 	public void playSound(SoundEvent event)
 	{
-		entity.world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), event, soundCategory, volume, pitch, distanceSoundDelay);
+		entity.world.playSound(entity.getX(), entity.getY(), entity.getZ(), event, soundCategory, volume, pitch, distanceSoundDelay);
 	}
 
 }

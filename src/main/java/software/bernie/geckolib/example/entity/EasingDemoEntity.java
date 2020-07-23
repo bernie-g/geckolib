@@ -1,9 +1,9 @@
 package software.bernie.geckolib.example.entity;
 
-import net.minecraft.entity.AgeableEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -49,7 +49,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
 
 	@Nullable
 	@Override
-	public AgeableEntity createChild(AgeableEntity ageable)
+	public PassiveEntity createChild(PassiveEntity ageable)
 	{
 		return null;
 	}

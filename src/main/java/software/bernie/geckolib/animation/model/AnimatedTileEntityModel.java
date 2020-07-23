@@ -8,17 +8,6 @@ package software.bernie.geckolib.animation.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.JSONException;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.resources.SimpleResource;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.controller.AnimationController;
@@ -42,13 +31,24 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.ShaderParseException;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ResourceImpl;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.SynchronousResourceReloadListener;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEntity> extends BaseAnimatedModel<T> implements IResourceManagerReloadListener
+public abstract class AnimatedTileEntityModel<T extends BlockEntity & IAnimatedEntity> extends BaseAnimatedModel<T> implements SynchronousResourceReloadListener
 {
 	private JsonObject animationFile;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
@@ -60,7 +60,7 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	 *
 	 * @return the animation file location
 	 */
-	public abstract ResourceLocation getAnimationFileLocation();
+	public abstract Identifier getAnimationFileLocation();
 
 	/**
 	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
@@ -74,9 +74,9 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	{
 		super();
 		ReloadManager.registerModel(this);
-		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+		ReloadableResourceManager resourceManager = (ReloadableResourceManager) MinecraftClient.getInstance().getResourceManager();
 		//resourceManager.addReloadListener(this);
-		onResourceManagerReload(resourceManager);
+		apply(resourceManager);
 	}
 
 
@@ -84,15 +84,15 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	 * Internal method for handling reloads of animation files. Do not override.
 	 */
 	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager)
+	public void apply(ResourceManager resourceManager)
 	{
 		try
 		{
 			Gson GSON = new Gson();
-			SimpleResource resource = (SimpleResource) resourceManager.getResource(getAnimationFileLocation());
+			ResourceImpl resource = (ResourceImpl) resourceManager.getResource(getAnimationFileLocation());
 			Reader reader = new BufferedReader(
 					new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8));
-			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
+			JsonObject jsonobject = JsonHelper.deserialize(GSON, reader, JsonObject.class);
 			resource.close();
 			setAnimationFile(jsonobject);
 			loadAllAnimations();
@@ -121,7 +121,7 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 					animation.loop = true;
 				}
 			}
-			catch (JSONException e)
+			catch (ShaderParseException e)
 			{
 				GeckoLib.LOGGER.error("Could not load animation: " + animationName, e);
 				throw new RuntimeException(e);
@@ -180,7 +180,7 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	 * @return the animation by name
 	 * @throws JSONException
 	 */
-	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JSONException
+	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws ShaderParseException
 	{
 		return JsonAnimationUtils.getAnimation(getAnimationFile(), name);
 	}
@@ -196,9 +196,9 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	 */
 	public void setRotationAngle(AnimatedModelRenderer modelRenderer, float x, float y, float z)
 	{
-		modelRenderer.rotateAngleX = x;
-		modelRenderer.rotateAngleY = y;
-		modelRenderer.rotateAngleZ = z;
+		modelRenderer.pitch = x;
+		modelRenderer.yaw = y;
+		modelRenderer.roll = z;
 	}
 
 	@Override
@@ -251,15 +251,15 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 				// If there's any rotation points for this bone
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
-					bone.rotateAngleX = AnimationUtils.lerpValues(rXPoint, controller.easingType,
+					bone.pitch = AnimationUtils.lerpValues(rXPoint, controller.easingType,
 							controller.customEasingMethod) + initialSnapshot.rotationValueX;
-					bone.rotateAngleY = AnimationUtils.lerpValues(rYPoint, controller.easingType,
+					bone.yaw = AnimationUtils.lerpValues(rYPoint, controller.easingType,
 							controller.customEasingMethod) + initialSnapshot.rotationValueY;
-					bone.rotateAngleZ = AnimationUtils.lerpValues(rZPoint, controller.easingType,
+					bone.roll = AnimationUtils.lerpValues(rZPoint, controller.easingType,
 							controller.customEasingMethod) + initialSnapshot.rotationValueZ;
-					snapshot.rotationValueX = bone.rotateAngleX;
-					snapshot.rotationValueY = bone.rotateAngleY;
-					snapshot.rotationValueZ = bone.rotateAngleZ;
+					snapshot.rotationValueX = bone.pitch;
+					snapshot.rotationValueY = bone.yaw;
+					snapshot.rotationValueZ = bone.roll;
 
 					modelTracker.get(bone).hasRotationChanged = true;
 				}
@@ -303,12 +303,12 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 
 			if (!tracker.hasRotationChanged)
 			{
-				model.rotateAngleX = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
-				model.rotateAngleY = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
-				model.rotateAngleZ = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
-				saveSnapshot.rotationValueX = model.rotateAngleX;
-				saveSnapshot.rotationValueY = model.rotateAngleY;
-				saveSnapshot.rotationValueZ = model.rotateAngleZ;
+				model.pitch = lerpConstant(saveSnapshot.rotationValueX, initialSnapshot.rotationValueX, 0.02);
+				model.yaw = lerpConstant(saveSnapshot.rotationValueY, initialSnapshot.rotationValueY, 0.02);
+				model.roll = lerpConstant(saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ, 0.02);
+				saveSnapshot.rotationValueX = model.pitch;
+				saveSnapshot.rotationValueY = model.yaw;
+				saveSnapshot.rotationValueZ = model.roll;
 			}
 			if (!tracker.hasPositionChanged)
 			{
@@ -394,7 +394,7 @@ public abstract class AnimatedTileEntityModel<T extends TileEntity & IAnimatedEn
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void render(MatrixStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
 		for (AnimatedModelRenderer model : rootBones)
 		{

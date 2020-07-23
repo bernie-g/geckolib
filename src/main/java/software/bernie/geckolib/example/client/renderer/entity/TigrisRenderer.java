@@ -5,36 +5,35 @@
 
 package software.bernie.geckolib.example.client.renderer.entity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.example.client.renderer.model.TigrisModel;
 import software.bernie.geckolib.example.entity.TigrisEntity;
 
 import javax.annotation.Nullable;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.MobEntityRenderer;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
-@OnlyIn(Dist.CLIENT)
-public class TigrisRenderer extends MobRenderer<TigrisEntity, TigrisModel>
+@Environment(EnvType.CLIENT)
+public class TigrisRenderer extends MobEntityRenderer<TigrisEntity, TigrisModel>
 {
-	public TigrisRenderer(EntityRendererManager rendererManager)
+	public TigrisRenderer(EntityRenderDispatcher rendererManager)
 	{
 		super(rendererManager, new TigrisModel(), 0.5F);
 	}
 
 	@Nullable
 	@Override
-	public ResourceLocation getEntityTexture(TigrisEntity entity)
+	public Identifier getTexture(TigrisEntity entity)
 	{
-		return new ResourceLocation("geckolib" + ":textures/model/entity/tigris.png");
+		return new Identifier("geckolib" + ":textures/model/entity/tigris.png");
 	}
 
 	@Override
-	protected void applyRotations(TigrisEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
+	protected void setupTransforms(TigrisEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
 	{
-		super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
+		super.setupTransforms(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
 	}
 }

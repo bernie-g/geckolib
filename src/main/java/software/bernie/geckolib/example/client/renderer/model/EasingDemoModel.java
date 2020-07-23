@@ -4,7 +4,7 @@
 // Blockbench plugin created by Gecko
 package software.bernie.geckolib.example.client.renderer.model;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Identifier;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
@@ -17,8 +17,8 @@ public class EasingDemoModel extends AnimatedEntityModel<software.bernie.geckoli
         textureWidth = 16;
 		textureHeight = 16;
 		bone = new AnimatedModelRenderer(this);
-		bone.setRotationPoint(8.0F, 24.0F, 7.0F);
-		bone.setTextureOffset(0, 0).addBox(-1.0F, -1.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, false);
+		bone.setPivot(8.0F, 24.0F, 7.0F);
+		bone.setTextureOffset(0, 0).addCuboid(-1.0F, -1.0F, 0.0F, 1.0F, 1.0F, 1.0F, 0.0F, false);
 		bone.setModelRendererName("bone");
 		this.registerModelRenderer(bone);
 
@@ -27,8 +27,8 @@ public class EasingDemoModel extends AnimatedEntityModel<software.bernie.geckoli
 
 
     @Override
-    public ResourceLocation getAnimationFileLocation()
+    public Identifier getAnimationFileLocation()
     {
-        return new ResourceLocation("geckolib", "animations/easing_demo.json");
+        return new Identifier("geckolib", "animations/easing_demo.json");
     }
 }

@@ -1,19 +1,19 @@
 package software.bernie.geckolib.reload;
 
-import net.minecraft.resources.IResourceManagerReloadListener;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.controller.AnimationController;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.resource.SynchronousResourceReloadListener;
 
 public class ReloadManager
 {
-	private static List<IResourceManagerReloadListener> registeredModels = new ArrayList<>();
+	private static List<SynchronousResourceReloadListener> registeredModels = new ArrayList<>();
 	private static List<AnimationController> registeredAnimationControllers = new ArrayList<>();
 
 
-	public static void registerModel(IResourceManagerReloadListener model)
+	public static void registerModel(SynchronousResourceReloadListener model)
 	{
 		registeredModels.add(model);
 	}
@@ -23,7 +23,7 @@ public class ReloadManager
 		registeredAnimationControllers.add(controller);
 	}
 
-	public static List<IResourceManagerReloadListener> getRegisteredModels()
+	public static List<SynchronousResourceReloadListener> getRegisteredModels()
 	{
 		return registeredModels;
 	}

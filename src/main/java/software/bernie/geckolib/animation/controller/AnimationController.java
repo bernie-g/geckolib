@@ -6,8 +6,8 @@
 package software.bernie.geckolib.animation.controller;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import org.antlr.v4.runtime.misc.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.builder.Animation;
@@ -72,7 +72,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	/**
 	 * The SoundCategory to play sound keyframes in.
 	 */
-	public SoundCategory soundCategory = SoundCategory.NEUTRAL;
+	public SoundCategory soundCategory = SoundCategory.field_15254;
 
 	public float pitch = 1.0f;
 	public float volume = 1.0f;

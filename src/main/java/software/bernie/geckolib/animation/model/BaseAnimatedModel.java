@@ -1,10 +1,9 @@
 package software.bernie.geckolib.animation.model;
 
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-
+import net.minecraft.util.Identifier;
 import java.util.function.Function;
 
 public abstract class BaseAnimatedModel<T> extends Model
@@ -14,10 +13,10 @@ public abstract class BaseAnimatedModel<T> extends Model
 	public boolean isChild = true;
 
 	protected BaseAnimatedModel() {
-		this(RenderType::getEntityCutoutNoCull);
+		this(RenderLayer::getEntityCutoutNoCull);
 	}
 
-	protected BaseAnimatedModel(Function<ResourceLocation, RenderType> p_i225945_1_) {
+	protected BaseAnimatedModel(Function<Identifier, RenderLayer> p_i225945_1_) {
 		super(p_i225945_1_);
 	}
 
