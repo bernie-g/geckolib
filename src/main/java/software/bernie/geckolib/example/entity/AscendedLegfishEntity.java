@@ -142,10 +142,10 @@ public class AscendedLegfishEntity extends HostileEntity implements IAnimatedEnt
 		this.goalSelector.add(7, new LookAroundGoal(this));
 	}
 
-	protected void initAttributes() {
-		super.initAttributes();
-		this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(100.0D);
-		this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue((double)0.2F);
-	}
-
+	// 1.16 removed LivingEntity#initAttributes and now there's DefaultAttributeRegistry instead which looks annoying to try to override, so fuck it
+	//	protected void initAttributes() {
+	//		super.initAttributes();
+	//		this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(100.0D);
+	//		this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue((double)0.2F);
+	//	}
 }
