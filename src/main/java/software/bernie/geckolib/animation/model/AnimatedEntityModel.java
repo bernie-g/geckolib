@@ -37,10 +37,7 @@ import software.bernie.geckolib.util.json.JsonAnimationUtils;
 import software.bernie.geckolib.reload.ReloadManager;
 import software.bernie.geckolib.util.AnimationUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
@@ -90,16 +87,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	@Override
 	public void apply(ResourceManager resourceManager)
 	{
-		try
-		{
+		try (
+			InputStream inputStream = getStreamForResourceLocation(getAnimationFileLocation());
+			Reader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+		) {
 			Gson GSON = new Gson();
-			ResourceImpl resource = (ResourceImpl) resourceManager.getResource(myFacing());
-			InputStreamReader stream = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
-			Reader reader = new BufferedReader(
-					stream);
 			JsonObject jsonobject = JsonHelper.deserialize(GSON, reader, JsonObject.class);
-			resource.close();
-			stream.close();
 			setAnimationFile(jsonobject);
 			loadAllAnimations();
 		}
@@ -108,6 +101,10 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			GeckoLib.LOGGER.error("Encountered error while loading animations.", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	public InputStream getStreamForResourceLocation(Identifier resourceLocation) {
+		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
 	}
 
 	private void loadAllAnimations()
