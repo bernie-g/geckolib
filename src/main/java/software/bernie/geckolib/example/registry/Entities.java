@@ -27,11 +27,31 @@ public class Entities
 			new Identifier(GeckoLib.ModID, "ascended_leg_fish"),
 			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, AscendedLegfishEntity::new).dimensions(
 					EntityDimensions.fixed(2.4F, 4.2F)).trackable(160, 2).build());
-//	public static final RegistryObject<EntityType<LightCrystalEntity>> LIGHTCRYSTAL = BuildEntity(LightCrystalEntity::new, LightCrystalEntity.class, 2F, 2F);
-//	public static final RegistryObject<EntityType<BrownEntity>> BROWN = BuildEntity(BrownEntity::new, BrownEntity.class, 2F, 2F);
-//	public static final RegistryObject<EntityType<EasingDemoEntity>> EASING_DEMO = BuildEntity(EasingDemoEntity::new, EasingDemoEntity.class, 0.1F, 0.1F);
-//	public static final RegistryObject<EntityType<RobotEntity>> ROBOT = BuildEntity(RobotEntity::new, RobotEntity.class, .7F, 1.3F);
 
+	public static final EntityType<LightCrystalEntity> LIGHTCRYSTAL = Registry.register(
+			Registry.ENTITY_TYPE,
+			new Identifier(GeckoLib.ModID, "light_crystal"),
+			FabricEntityTypeBuilder.create(EntityCategory.MISC, LightCrystalEntity::new).dimensions(
+							EntityDimensions.fixed(2, 2)).trackable(160, 2).build());
+
+	public static final EntityType<BrownEntity> BROWN =
+			Registry.register(
+			Registry.ENTITY_TYPE,
+			new Identifier(GeckoLib.ModID, "brown"),
+			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, BrownEntity::new).dimensions(
+				EntityDimensions.fixed(2, 2)).trackable(160, 2).build());
+
+	public static final EntityType<EasingDemoEntity> EASING_DEMO = Registry.register(
+					Registry.ENTITY_TYPE,
+					new Identifier(GeckoLib.ModID, "easing_demo"),
+					FabricEntityTypeBuilder.create(EntityCategory.MISC, EasingDemoEntity::new).dimensions(
+							EntityDimensions.fixed(0.1f, 0.1f)).trackable(160, 2).build());
+
+	public static final EntityType<RobotEntity> ROBOT = Registry.register(
+			Registry.ENTITY_TYPE,
+			new Identifier(GeckoLib.ModID, "robot"),
+			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, RobotEntity::new).dimensions(
+					EntityDimensions.fixed(0.7f, 1.3f)).trackable(160, 2).build());
 
 	public static final EntityType<TigrisEntity> TIGRIS = Registry.register(
 			Registry.ENTITY_TYPE,
