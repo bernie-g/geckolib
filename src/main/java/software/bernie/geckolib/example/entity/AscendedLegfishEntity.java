@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAroundGoal;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.ai.goal.WanderAroundFarGoal;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -142,10 +143,9 @@ public class AscendedLegfishEntity extends HostileEntity implements IAnimatedEnt
 		this.goalSelector.add(7, new LookAroundGoal(this));
 	}
 
-	// 1.16 removed LivingEntity#initAttributes and now there's DefaultAttributeRegistry instead which looks annoying to try to override, so fuck it
-	//	protected void initAttributes() {
-	//		super.initAttributes();
-	//		this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(100.0D);
-	//		this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue((double)0.2F);
-	//	}
+	public static DefaultAttributeContainer.Builder createAscendedLegfishAttributes() {
+	    return AscendedLegfishEntity.createMobAttributes()
+				.add(EntityAttributes.GENERIC_MAX_HEALTH, 100.0D)
+				.add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2);
+	}
 }

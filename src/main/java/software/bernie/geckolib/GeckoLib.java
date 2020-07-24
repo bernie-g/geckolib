@@ -25,5 +25,6 @@ public class GeckoLib implements ModInitializer
     public void onInitialize()
     {
         CommandRegistrationCallback.EVENT.register(ServerListener::onServerStartingEvent);
+        Entities.registerDefaultAttributes();
     }
 }
