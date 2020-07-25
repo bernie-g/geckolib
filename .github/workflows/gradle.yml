@@ -7,7 +7,7 @@ on:
   push:
     branches: [ 1.15, develop ]
   pull_request:
-    branches: [ 1.15, develop ]
+    branches: []
 
 jobs:
   build:
@@ -26,22 +26,49 @@ jobs:
       run: ./gradlew --info assemble
     - name: Test with Gradle
       run: ./gradlew --info test
+    - name: Docs with Gradle
+      run: ./gradlew --info javadoc
     - name: Zip Test Results
       if: ${{ always() }}
       run: |
         set -x
-        pwd
+        OLDWD=`pwd`
         ls
-        zip -r reports.zip ./build/reports/tests/test
+        cd ./build/reports/tests
+        zip -r "$OLDWD/reports.zip" test
+    - name: Zip Docs
+      if: ${{ always() }}
+      run: |
+        set -x
+        OLDWD=`pwd`
+        cd ./build/docs
+        zip -r "$OLDWD/docs.zip" javadoc
     - name: Upload Test Results
       uses: actions/upload-artifact@v2
       if: ${{ always() }}
       with:
         name: reports.zip
         path: reports.zip
+    - name: Upload Docs
+      uses: actions/upload-artifact@v2
+      if: ${{ always() }}
+      with:
+        name: docs.zip
+        path: docs.zip
     - name: Upload Build
       uses: actions/upload-artifact@v2
       if: ${{ always() }}
       with:
         name: geckolib-1.15-1.0.0.jar
         path: build/libs/geckolib-1.15-1.0.0.jar
+    - name: Deploy Docs to AWS S3
+      uses: jakejarvis/s3-sync-action@master
+      with:
+        args: --acl public-read --follow-symlinks --delete
+      env:
+        AWS_S3_BUCKET: geckolib.bernie.software
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
+        SOURCE_DIR: 'build/docs/javadoc'      # optional: defaults to entire repository
+        DEST_DIR: 'javadocs'
