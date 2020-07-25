@@ -13,9 +13,9 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.0.0'
+version = '2.0.0-beta.3'
 group = 'software.bernie.geckolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'geckolib-1.15'
+archivesBaseName = 'forge-1.15.2-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 

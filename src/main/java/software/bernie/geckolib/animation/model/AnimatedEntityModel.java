@@ -323,7 +323,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					saveSnapshot.isCurrentlyRunningRotationAnimation = false;
 				}
 
-				double percentageReset = (seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength;
+				double percentageReset = Math.min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
 
 				model.rotateAngleX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueX,
 						initialSnapshot.rotationValueX);
@@ -340,7 +340,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					saveSnapshot.isCurrentlyRunningPositionAnimation = false;
 				}
 
-				double percentageReset = (seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength;
+				double percentageReset = Math.min((seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength, 1);
 
 				model.positionOffsetX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetX,
 						initialSnapshot.positionOffsetX);
@@ -357,7 +357,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					saveSnapshot.isCurrentlyRunningScaleAnimation = false;
 				}
 
-				double percentageReset = (seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength;
+				double percentageReset = Math.min((seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength, 1);
 
 				model.scaleValueX = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueX,
 						initialSnapshot.scaleValueX);
