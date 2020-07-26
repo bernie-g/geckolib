@@ -59,4 +59,10 @@ public class Entities
 			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, TigrisEntity::new).dimensions(
 					EntityDimensions.fixed(5F, 3F)).trackable(160, 2).build());
 
+	public static final EntityType<EntityColorfulPig> COLORFUL_PIG = Registry.register(
+			Registry.ENTITY_TYPE,
+			new Identifier(GeckoLib.ModID, "colorful_pig"),
+			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, EntityColorfulPig::new).dimensions(
+					EntityDimensions.fixed(.7F, 1.3F)).trackable(160, 2).build());
+
 }

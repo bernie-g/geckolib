@@ -27,5 +27,6 @@ public class ModEventBus implements ClientModInitializer
 		EntityRendererRegistry.INSTANCE.register(Entities.EASING_DEMO, (dispatcher, context) -> new EasingDemoRenderer(dispatcher));
 		EntityRendererRegistry.INSTANCE.register(Entities.ROBOT, (dispatcher, context) -> new RobotRenderer(dispatcher));
 		EntityRendererRegistry.INSTANCE.register(Entities.TIGRIS, (dispatcher, context) -> new TigrisRenderer(dispatcher));
+		EntityRendererRegistry.INSTANCE.register(Entities.COLORFUL_PIG, (dispatcher, context) -> new ColorfulPigRenderer(dispatcher));
 	}
 }

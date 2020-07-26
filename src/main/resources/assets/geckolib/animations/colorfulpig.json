@@ -1,0 +1,151 @@
+
+
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.turtywurty.move": {
+			"loop": true,
+			"animation_length": 0.96,
+			"bones": {
+				"RightBack": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2333": {
+							"vector": [20, 0, 0]
+						},
+						"0.4833": {
+							"vector": [0, 0, 0]
+						},
+						"0.7167": {
+							"vector": [-20, 0, 0]
+						},
+						"0.9667": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"LeftBack": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2333": {
+							"vector": [-20, 0, 0]
+						},
+						"0.4833": {
+							"vector": [0, 0, 0]
+						},
+						"0.7167": {
+							"vector": [20, 0, 0]
+						},
+						"0.9667": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"RightFront": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2333": {
+							"vector": [20, 0, 0]
+						},
+						"0.4833": {
+							"vector": [0, 0, 0]
+						},
+						"0.7167": {
+							"vector": [-20, 0, 0]
+						},
+						"0.9667": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"LeftFront": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.2333": {
+							"vector": [-20, 0, 0]
+						},
+						"0.4833": {
+							"vector": [0, 0, 0]
+						},
+						"0.7167": {
+							"vector": [20, 0, 0]
+						},
+						"0.9667": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			},
+			"sound_effects": {
+				"0.4833": {
+					"effect": "moving"
+				}
+			}
+		},
+		"animation.turtywurty.idle": {
+			"loop": true,
+			"animation_length": 0.8,
+			"bones": {
+				"Body": {
+					"rotation": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4": {
+							"vector": [0, 0, 0],
+							"easing": "easeInSine"
+						},
+						"0.8": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						}
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.4": {
+							"vector": [0, 2, 0],
+							"easing": "easeInSine"
+						},
+						"0.8": {
+							"vector": [0, 0, 0],
+							"easing": "easeOutSine"
+						}
+					},
+					"scale": {
+						"0.0": {
+							"vector": [1, 1, 1]
+						},
+						"0.4": {
+							"vector": [1.2, 1.2, 1.2],
+							"easing": "easeInSine"
+						},
+						"0.8": {
+							"vector": [1, 1, 1],
+							"easing": "easeOutSine"
+						}
+					}
+				}
+			},
+			"sound_effects": {
+				"0.4": {
+					"effect": "ambient"
+				}
+			},
+			"particle_effects": {
+				"0.4": {
+					"effect": "test"
+				}
+			}
+		}
+	}
+}
