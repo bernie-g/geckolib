@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.0.0-beta.5'
+version = '2.0.0-beta.6'
 group = 'software.bernie.geckolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'forge-1.15.2-geckolib'
 
@@ -120,6 +120,7 @@ dependencies {
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
+    from sourceSets.main.allSource
     manifest {
         attributes([
             "Specification-Title": "examplemod",
@@ -152,8 +153,18 @@ task javadocJar(type: Jar, dependsOn: javadocnew) {
     from javadoc.destinationDir
 }
 
-
-
+task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+task packageSources(type: Jar, dependsOn: 'classes') {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+artifacts {
+    archives packageJavadoc
+    archives packageSources
+}
 publishing {
     publications {
         mavenJava(MavenPublication) {
