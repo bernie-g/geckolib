@@ -1,4 +1,9 @@
-package software.bernie.geckolib;
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
+package software.bernie.geckolib.listener;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -9,7 +14,7 @@ import software.bernie.geckolib.example.entity.StingrayTestEntity;
 import software.bernie.geckolib.example.registry.Entities;
 
 @Environment(EnvType.CLIENT)
-public class ClientProxy implements ClientModInitializer
+public class ModEventBus implements ClientModInitializer
 {
 
 	@Override
@@ -22,5 +27,6 @@ public class ClientProxy implements ClientModInitializer
 		EntityRendererRegistry.INSTANCE.register(Entities.EASING_DEMO, (dispatcher, context) -> new EasingDemoRenderer(dispatcher));
 		EntityRendererRegistry.INSTANCE.register(Entities.ROBOT, (dispatcher, context) -> new RobotRenderer(dispatcher));
 		EntityRendererRegistry.INSTANCE.register(Entities.TIGRIS, (dispatcher, context) -> new TigrisRenderer(dispatcher));
+		EntityRendererRegistry.INSTANCE.register(Entities.COLORFUL_PIG, (dispatcher, context) -> new ColorfulPigRenderer(dispatcher));
 	}
 }
