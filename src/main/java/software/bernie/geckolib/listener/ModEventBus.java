@@ -1,4 +1,9 @@
-package software.bernie.geckolib;
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+
+package software.bernie.geckolib.listener;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -9,7 +14,7 @@ import software.bernie.geckolib.example.entity.StingrayTestEntity;
 import software.bernie.geckolib.example.registry.Entities;
 
 @Environment(EnvType.CLIENT)
-public class ClientProxy implements ClientModInitializer
+public class ModEventBus implements ClientModInitializer
 {
 
 	@Override

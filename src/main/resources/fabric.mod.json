@@ -22,7 +22,7 @@
       "software.bernie.geckolib.GeckoLib"
     ],
     "client": [
-      "software.bernie.geckolib.ClientProxy"
+      "software.bernie.geckolib.listener.ModEventBus"
     ]
   },
 
