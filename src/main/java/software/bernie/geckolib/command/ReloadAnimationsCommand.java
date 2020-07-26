@@ -42,7 +42,7 @@ public class ReloadAnimationsCommand implements Command<ServerCommandSource>
 		}
 
 		Style style = new Style();
-		style.setColor(Formatting.RED);
+		style.setColor(Formatting.GREEN);
 		context.getSource().sendFeedback(new LiteralText("Reloaded " + ReloadManager.getRegisteredModels().size() + " animations.").setStyle(
 				style), false);
 		return 0;

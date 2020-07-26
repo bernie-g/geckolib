@@ -169,6 +169,7 @@ public class JsonAnimationUtils
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
 	 * @return the animation
+	 * @throws JSONException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName) throws ShaderParseException
 	{
@@ -226,7 +227,10 @@ public class JsonAnimationUtils
 			for(Map.Entry<String, JsonElement> keyFrame : particleKeyFrames)
 			{
 				JsonObject object = keyFrame.getValue().getAsJsonObject();
-				animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, object.get("effect").getAsString(), object.get("locator").getAsString(), object.get("pre_effect_script").getAsString()));
+				JsonElement effect = object.get("effect");
+				JsonElement locator = object.get("locator");
+				JsonElement pre_effect_script = object.get("pre_effect_script");
+				animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, effect == null ? "" : effect.getAsString(), locator == null ? "" : locator.getAsString(), pre_effect_script == null ? "" : pre_effect_script.getAsString()));
 			}
 		}
 

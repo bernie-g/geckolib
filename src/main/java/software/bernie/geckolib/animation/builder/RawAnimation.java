@@ -5,8 +5,7 @@
 
 package software.bernie.geckolib.animation.builder;
 
-
-
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class RawAnimation
@@ -16,6 +15,7 @@ public class RawAnimation
 	/**
 	 * If loop is null, the animation processor will use the loopByDefault boolean to decide if the animation should loop.
 	 */
+	@Nullable
 	public Boolean loop;
 
 	/**
@@ -24,7 +24,7 @@ public class RawAnimation
 	 * @param animationName The name of the animation
 	 * @param loop          Whether it should loop
 	 */
-	public RawAnimation(String animationName, Boolean loop)
+	public RawAnimation(String animationName, @Nullable Boolean loop)
 	{
 		this.animationName = animationName;
 		this.loop = loop;
