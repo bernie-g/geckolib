@@ -6,6 +6,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LightningEntity;
 import net.minecraft.entity.ai.goal.*;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
@@ -69,11 +70,10 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 		super.tickMovement();
 	}
 
-	@Override
-	protected void initAttributes() {
-		super.initAttributes();
-		this.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(16.0D);
-		this.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(0.23D);
+	public static DefaultAttributeContainer.Builder createColorfulPigAttributes() {
+		return AscendedLegfishEntity.createMobAttributes()
+				.add(EntityAttributes.GENERIC_MAX_HEALTH, 16.0D)
+				.add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.23D);
 	}
 
 	@Environment(EnvType.CLIENT)

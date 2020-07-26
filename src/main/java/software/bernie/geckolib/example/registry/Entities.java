@@ -63,7 +63,7 @@ public class Entities
 	public static final EntityType<EntityColorfulPig> COLORFUL_PIG = Registry.register(
 			Registry.ENTITY_TYPE,
 			new Identifier(GeckoLib.ModID, "colorful_pig"),
-			FabricEntityTypeBuilder.create(EntityCategory.CREATURE, EntityColorfulPig::new).dimensions(
+			FabricEntityTypeBuilder.create(SpawnGroup.CREATURE, EntityColorfulPig::new).dimensions(
 					EntityDimensions.fixed(.7F, 1.3F)).trackable(160, 2).build());
 
 	public static void registerDefaultAttributes() {
@@ -82,7 +82,7 @@ public class Entities
 		FabricDefaultAttributeRegistry.register(EASING_DEMO, EasingDemoEntity.createMobAttributes());
 		FabricDefaultAttributeRegistry.register(ROBOT, RobotEntity.createMobAttributes());
 		FabricDefaultAttributeRegistry.register(TIGRIS, TigrisEntity.createMobAttributes());
-		FabricDefaultAttributeRegistry.register(COLORFUL_PIG, EntityColorfulPig.createMobAttributes());
+		FabricDefaultAttributeRegistry.register(COLORFUL_PIG, EntityColorfulPig.createColorfulPigAttributes());
 	}
 
 }
