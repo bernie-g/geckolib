@@ -1,6 +1,7 @@
 package software.bernie.geckolib.easing;
 
 import net.minecraft.util.math.MathHelper;
+import software.bernie.geckolib.util.Memoizer;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -12,84 +13,90 @@ public class EasingManager
 {
 	public static double ease(double number, EasingType easingType, @Nullable List<Double> easingArgs)
 	{
-		Function<Double, Double> quart = poly(4);
-		Function<Double, Double> quint = poly(5);
-
 		Double firstArg = easingArgs == null || easingArgs.size() < 1 ? null : easingArgs.get(0);
-		Double secondArg = easingArgs == null || easingArgs.size() < 2 ? null : easingArgs.get(1);
-		Double thirdArg = easingArgs == null || easingArgs.size() < 3 ? null : easingArgs.get(2);
-
-		switch (easingType)
-		{
-			case Linear:
-				return linear().apply(number);
-			case Step:
-				return step(firstArg, number);
-			case EaseInSine:
-				return in(EasingManager::sin).apply(number);
-			case EaseOutSine:
-				return out(EasingManager::sin).apply(number);
-			case EaseInOutSine:
-				return inOut(EasingManager::sin).apply(number);
-			case EaseInQuad:
-				return in(EasingManager::quad).apply(number);
-			case EaseOutQuad:
-				return out(EasingManager::quad).apply(number);
-			case EaseInOutQuad:
-				return inOut(EasingManager::quad).apply(number);
-			case EaseInCubic:
-				return in(EasingManager::cubic).apply(number);
-			case EaseOutCubic:
-				return out(EasingManager::cubic).apply(number);
-			case EaseInOutCubic:
-				return inOut(EasingManager::cubic).apply(number);
-			case EaseInExpo:
-				return in(EasingManager::exp).apply(number);
-			case EaseOutExpo:
-				return out(EasingManager::exp).apply(number);
-			case EaseInOutExpo:
-				return inOut(EasingManager::exp).apply(number);
-			case EaseInCirc:
-				return in(EasingManager::circle).apply(number);
-			case EaseOutCirc:
-				return out(EasingManager::circle).apply(number);
-			case EaseInOutCirc:
-				return inOut(EasingManager::circle).apply(number);
-			case EaseInQuart:
-				return in(quart).apply(number);
-			case EaseOutQuart:
-				return out(quart).apply(number);
-			case EaseInOutQuart:
-				return inOut(quart).apply(number);
-			case EaseInQuint:
-				return in(quint).apply(number);
-			case EaseOutQuint:
-				return out(quint).apply(number);
-			case EaseInOutQuint:
-				return inOut(quint).apply(number);
-			case EaseInBack:
-				return in(back(firstArg)).apply(number);
-			case EaseOutBack:
-				return out(back(firstArg)).apply(number);
-			case EaseInOutBack:
-				return inOut(back(firstArg)).apply(number);
-			case EaseInElastic:
-				return in(elastic(firstArg)).apply(number);
-			case EaseOutElastic:
-				return out(elastic(firstArg)).apply(number);
-			case EaseInOutElastic:
-				return inOut(elastic(firstArg)).apply(number);
-			case EaseInBounce:
-				return in(bounce(firstArg)).apply(number);
-			case EaseOutBounce:
-				return out(bounce(firstArg)).apply(number);
-			case EaseInOutBounce:
-				return inOut(bounce(firstArg)).apply(number);
-			default:
-				return number;
-		}
+		return getEasingFunction.apply(easingType).apply(firstArg).apply(number);
 	}
 
+	// Memoize easing functions so we don't need to create new ones from HOFs every frame
+	static Function<Double, Double> quart = poly(4);
+	static Function<Double, Double> quint = poly(5);
+	// This could be simplified if we found a memoizer that could handle BiFunction but I didn't want to introduce a new dependency so I just curried it
+	static Function<EasingType, Function<Double, Function<Double, Double>>> getEasingFunction =
+			Memoizer.memoize(easingType -> Memoizer.memoize(firstArg -> getEasingFuncImpl(easingType).apply(firstArg)));
+
+	// Wow, manually currying functions in Java is really not very pleasant, sorry
+	static Function<Double, Function<Double, Double>> getEasingFuncImpl(EasingType easingType) {
+        return firstArg -> {
+			switch (easingType)
+			{
+				default:
+				case Linear:
+					return in(EasingManager::linear);
+				case Step:
+					return in(step(firstArg));
+				case EaseInSine:
+					return in(EasingManager::sin);
+				case EaseOutSine:
+					return out(EasingManager::sin);
+				case EaseInOutSine:
+					return inOut(EasingManager::sin);
+				case EaseInQuad:
+					return in(EasingManager::quad);
+				case EaseOutQuad:
+					return out(EasingManager::quad);
+				case EaseInOutQuad:
+					return inOut(EasingManager::quad);
+				case EaseInCubic:
+					return in(EasingManager::cubic);
+				case EaseOutCubic:
+					return out(EasingManager::cubic);
+				case EaseInOutCubic:
+					return inOut(EasingManager::cubic);
+				case EaseInExpo:
+					return in(EasingManager::exp);
+				case EaseOutExpo:
+					return out(EasingManager::exp);
+				case EaseInOutExpo:
+					return inOut(EasingManager::exp);
+				case EaseInCirc:
+					return in(EasingManager::circle);
+				case EaseOutCirc:
+					return out(EasingManager::circle);
+				case EaseInOutCirc:
+					return inOut(EasingManager::circle);
+				case EaseInQuart:
+					return in(quart);
+				case EaseOutQuart:
+					return out(quart);
+				case EaseInOutQuart:
+					return inOut(quart);
+				case EaseInQuint:
+					return in(quint);
+				case EaseOutQuint:
+					return out(quint);
+				case EaseInOutQuint:
+					return inOut(quint);
+				case EaseInBack:
+					return in(back(firstArg));
+				case EaseOutBack:
+					return out(back(firstArg));
+				case EaseInOutBack:
+					return inOut(back(firstArg));
+				case EaseInElastic:
+					return in(elastic(firstArg));
+				case EaseOutElastic:
+					return out(elastic(firstArg));
+				case EaseInOutElastic:
+					return inOut(elastic(firstArg));
+				case EaseInBounce:
+					return in(bounce(firstArg));
+				case EaseOutBounce:
+					return out(bounce(firstArg));
+				case EaseInOutBounce:
+					return inOut(bounce(firstArg));
+			}
+		};
+	}
 
 	// The MIT license notice below applies to the easing functions below except for bounce and step
 	/**
@@ -154,17 +161,17 @@ public class EasingManager
 	 * <p>
 	 * http://cubic-bezier.com/#0,0,1,1
 	 */
-	static Function<Double, Double> linear()
+	static double linear(double t)
 	{
-		return Function.identity();
+		return t;
 	}
 
-/**
- * A simple inertial interaction, similar to an object slowly accelerating to
- * speed.
- *
- * http://cubic-bezier.com/#.42,0,1,1
- */
+	/**
+	 * A simple inertial interaction, similar to an object slowly accelerating to
+	 * speed.
+	 *
+	 * http://cubic-bezier.com/#.42,0,1,1
+	 */
 	// static ease(t) {
 	// 		if (!ease) {
 	// 				ease = Easing.bezier(0.42, 0, 1, 1);
@@ -283,10 +290,10 @@ public class EasingManager
 		return x -> min(q.apply(x), w.apply(x), r.apply(x), t.apply(x));
 	}
 
-	static double step(Double stepArg, double t) {
+	static Function<Double, Double> step(Double stepArg) {
 		int steps = stepArg != null ? stepArg.intValue() : 2;
 		double[] intervals = stepRange(steps);
-		return intervals[findIntervalBorderIndex(t, intervals, false)];
+		return t -> intervals[findIntervalBorderIndex(t, intervals, false)];
 	}
 
 	static double min(double a, double b, double c, double d)
