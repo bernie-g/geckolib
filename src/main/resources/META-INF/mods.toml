@@ -22,7 +22,7 @@ displayName="Geckolib" #mandatory
 # A URL for the "homepage" for this mod, displayed in the mod UI
 displayURL="http://bernie.software/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
-logoFile="gecko.jpg" #optional
+logoFile="geckolib.png" #optional
 # A text field displayed in the mod UI
 credits="Thanks to The Ult1mate guy for the test models and animations, and Lukas and Commoble for the programming help." #optional
 # A text field displayed in the mod UI

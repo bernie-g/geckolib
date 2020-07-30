@@ -24,6 +24,7 @@ public class Entities
 	public static final RegistryObject<EntityType<BrownEntity>> BROWN = BuildEntity(BrownEntity::new, BrownEntity.class, 2F, 2F);
 	public static final RegistryObject<EntityType<EasingDemoEntity>> EASING_DEMO = BuildEntity(EasingDemoEntity::new, EasingDemoEntity.class, 0.1F, 0.1F);
 	public static final RegistryObject<EntityType<RobotEntity>> ROBOT = BuildEntity(RobotEntity::new, RobotEntity.class, .7F, 1.3F);
+	public static final RegistryObject<EntityType<EntityColorfulPig>> COLORFUL_PIG = BuildEntity(EntityColorfulPig::new, EntityColorfulPig.class, .7F, 1.3F);
 
 
 	public static <T extends Entity> RegistryObject<EntityType<T>> BuildEntity(EntityType.IFactory<T> entity, Class<T> entityClass, float width, float height)
