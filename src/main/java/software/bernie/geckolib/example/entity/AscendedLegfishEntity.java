@@ -18,24 +18,24 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
-public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEntity
+public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
 {
 	private static final DataParameter<Integer> SIZE = EntityDataManager.createKey(AscendedLegfishEntity.class, DataSerializers.VARINT);
 
-	public EntityAnimationManager animationManager = new EntityAnimationManager();
+	public AnimationManager animationManager = new AnimationManager();
 
 	private AnimationController sizeController = new EntityAnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
 	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> boolean moveController(EntityAnimationPredicate<ENTITY> event)
 	{
 		float limbSwingAmount = event.getLimbSwingAmount();
 		if(KeyboardHandler.isForwardKeyDown)
@@ -58,7 +58,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 
 
 	private boolean hasGrown = false;
-	private <ENTITY extends Entity> boolean sizeAnimationPredicate(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
+	private <ENTITY extends Entity & IAnimatable> boolean sizeAnimationPredicate(EntityAnimationPredicate<ENTITY> entityEntityAnimationPredicate)
 	{
 		int size = getSize();
 		switch(size)
@@ -93,7 +93,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatedEnt
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return animationManager;
 	}

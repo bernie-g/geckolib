@@ -5,25 +5,27 @@
 
 package software.bernie.geckolib.animation.snapshot;
 
+import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
 public class BoneSnapshot
 {
-	public BoneSnapshot(AnimatedModelRenderer modelRenderer)
+	public BoneSnapshot(IBone modelRenderer)
 	{
-		scaleValueX = modelRenderer.scaleValueX;
-		scaleValueY = modelRenderer.scaleValueY;
-		scaleValueZ = modelRenderer.scaleValueZ;
+		rotationValueX = modelRenderer.getRotationX();
+		rotationValueY = modelRenderer.getRotationY();
+		rotationValueZ = modelRenderer.getRotationZ();
 
-		positionOffsetX = modelRenderer.positionOffsetX;
-		positionOffsetY = modelRenderer.positionOffsetY;
-		positionOffsetZ = modelRenderer.positionOffsetZ;
+		positionOffsetX = modelRenderer.getPositionX();
+		positionOffsetY = modelRenderer.getPositionY();
+		positionOffsetZ = modelRenderer.getPositionZ();
 
-		rotationValueX = modelRenderer.rotateAngleX;
-		rotationValueY = modelRenderer.rotateAngleY;
-		rotationValueZ = modelRenderer.rotateAngleZ;
+		scaleValueX = modelRenderer.getScaleX();
+		scaleValueY = modelRenderer.getScaleY();
+		scaleValueZ = modelRenderer.getScaleZ();
+
 		this.modelRenderer = modelRenderer;
-		this.name = modelRenderer.name;
+		this.name = modelRenderer.getName();
 	}
 
 	public BoneSnapshot(BoneSnapshot snapshot)
@@ -45,7 +47,7 @@ public class BoneSnapshot
 
 
 	public String name;
-	private AnimatedModelRenderer modelRenderer;
+	private IBone modelRenderer;
 
 	public float scaleValueX;
 	public float scaleValueY;

@@ -8,8 +8,9 @@ import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.easing.EasingType;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.AnimationTestPredicate;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class EntityAnimationController<T extends Entity & IAnimatedEntity> extends AnimationController<T>
+public class EntityAnimationController<T extends Entity & IAnimatable> extends AnimationController<T>
 {
 	/**
 	 * The animation predicate, is tested in every process call (i.e. every frame)
@@ -29,9 +30,9 @@ public class EntityAnimationController<T extends Entity & IAnimatedEntity> exten
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
 	@FunctionalInterface
-	public interface IEntityAnimationPredicate<E extends Entity>
+	public interface IEntityAnimationPredicate<E extends Entity & IAnimatable>
 	{
-		<E extends Entity> boolean test(AnimationTestEvent<E> event);
+		<E extends Entity & IAnimatable> boolean test(EntityAnimationPredicate<E> event);
 	}
 
 
@@ -106,9 +107,9 @@ public class EntityAnimationController<T extends Entity & IAnimatedEntity> exten
 	}
 
 	@Override
-	protected boolean testAnimationPredicate(AnimationTestEvent<T> event)
+	protected boolean testAnimationPredicate(AnimationTestPredicate<T> event)
 	{
-		return this.animationPredicate.test(event);
+		return this.animationPredicate.test((EntityAnimationPredicate) event);
 	}
 
 	public void playSound(SoundEvent event)

@@ -10,29 +10,31 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
+import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 
-public class AnimatedModelRenderer extends ModelRenderer
+public class AnimatedModelRenderer extends ModelRenderer implements IBone
 {
 	private BoneSnapshot boneSnapshot;
 	public String currentAnimationName;
 
-	public float scaleValueX = 1;
-	public float scaleValueY = 1;
-	public float scaleValueZ = 1;
+	private float scaleValueX = 1;
+	private float scaleValueY = 1;
+	private float scaleValueZ = 1;
 
-	public float positionOffsetX = 0;
-	public float positionOffsetY = 0;
-	public float positionOffsetZ = 0;
+	private float positionOffsetX = 0;
+	private float positionOffsetY = 0;
+	private float positionOffsetZ = 0;
 
 	public String name;
-	public BoneSnapshot initialSnapshot;
+	private BoneSnapshot initialSnapshot;
 
 	public AnimatedModelRenderer(Model model)
 	{
 		super(model);
 	}
 
+	@Override
 	public void setModelRendererName(String modelRendererName)
 	{
 		this.name = modelRendererName;
@@ -83,19 +85,135 @@ public class AnimatedModelRenderer extends ModelRenderer
 		}
 	}
 
+	@Override
 	public void saveInitialSnapshot()
 	{
 		this.initialSnapshot = new BoneSnapshot(this);
 	}
 
+	@Override
 	public BoneSnapshot getInitialSnapshot()
 	{
 		return this.initialSnapshot;
 	}
 
+	@Override
 	public BoneSnapshot saveSnapshot()
 	{
 		return new BoneSnapshot(this);
 	}
 
+	@Override
+	public String getName()
+	{
+		return name;
+	}
+
+	@Override
+	public float getRotationX()
+	{
+		return rotateAngleX;
+	}
+
+	@Override
+	public float getRotationY()
+	{
+		return rotateAngleY;
+	}
+
+	@Override
+	public float getRotationZ()
+	{
+		return rotateAngleZ;
+	}
+
+	@Override
+	public float getPositionX()
+	{
+		return positionOffsetX;
+	}
+
+	@Override
+	public float getPositionY()
+	{
+		return positionOffsetY;
+	}
+
+	@Override
+	public float getPositionZ()
+	{
+		return positionOffsetZ;
+	}
+
+	@Override
+	public float getScaleX()
+	{
+		return scaleValueX;
+	}
+
+	@Override
+	public float getScaleY()
+	{
+		return scaleValueY;
+	}
+
+	@Override
+	public float getScaleZ()
+	{
+		return scaleValueZ;
+	}
+
+	@Override
+	public void setRotationX(float value)
+	{
+		this.rotateAngleX = value;
+	}
+
+	@Override
+	public void setRotationY(float value)
+	{
+		this.rotateAngleY = value;
+	}
+
+	@Override
+	public void setRotationZ(float value)
+	{
+		this.rotateAngleZ = value;
+	}
+
+	@Override
+	public void setPositionX(float value)
+	{
+		this.positionOffsetX = value;
+	}
+
+	@Override
+	public void setPositionY(float value)
+	{
+		this.positionOffsetY = value;
+	}
+
+	@Override
+	public void setPositionZ(float value)
+	{
+		this.positionOffsetZ = value;
+	}
+
+	@Override
+	public void setScaleX(float value)
+	{
+		this.scaleValueX = value;
+	}
+
+	@Override
+	public void setScaleY(float value)
+	{
+		this.scaleValueY= value;
+	}
+
+	@Override
+	public void setScaleZ(float value)
+	{
+		this.scaleValueZ= value;
+	}
 }

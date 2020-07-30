@@ -5,15 +5,15 @@
 
 package software.bernie.geckolib.animation.snapshot;
 
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.processor.IBone;
 
 import java.util.ArrayList;
 
 public class EntityDirtyTracker extends ArrayList<DirtyTracker>
 {
-	public DirtyTracker get(AnimatedModelRenderer bone)
+	public DirtyTracker get(IBone bone)
 	{
-		return this.stream().filter(x -> x.model.name == bone.name).findFirst().orElseThrow(ArrayIndexOutOfBoundsException::new);
+		return this.stream().filter(x -> x.model.getName() == bone.getName()).findFirst().orElseThrow(ArrayIndexOutOfBoundsException::new);
 	}
 
 }

@@ -11,21 +11,22 @@ import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.event.AnimationTestPredicate;
+import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
-import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
-public class TigrisEntity extends GhastEntity implements IAnimatedEntity
+public class TigrisEntity extends GhastEntity implements IAnimatable
 {
-	public EntityAnimationManager animationControllers = new EntityAnimationManager();
+	public AnimationManager animationControllers = new AnimationManager();
 	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity> boolean moveController(AnimationTestEvent<ENTITY> entityAnimationTestEvent)
+	private <ENTITY extends Entity & IAnimatable> boolean moveController(EntityAnimationPredicate<ENTITY> entityEntityAnimationPredicate)
 	{
 		moveController.transitionLengthTicks = 10;
 		if(KeyboardHandler.isQDown)
@@ -45,7 +46,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return animationControllers;
 	}
@@ -59,7 +60,8 @@ public class TigrisEntity extends GhastEntity implements IAnimatedEntity
 		}
 	}
 
-	private <ENTITY extends Entity> SoundEvent flapListener(SoundKeyframeEvent<ENTITY> event)
+
+	private <ENTITY extends IAnimatable> SoundEvent flapListener(SoundKeyframeEvent<ENTITY> event)
 	{
 		//return whatever sound you want to play here, or return null and handle sounds yourself
 		return SoundEvents.ENTITY_ENDER_DRAGON_FLAP;

@@ -12,19 +12,19 @@ import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.easing.EasingType;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 
-public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntity
+public class StingrayTestEntity extends WaterMobEntity implements IAnimatable
 {
-	public EntityAnimationManager animationControllers = new EntityAnimationManager();
+	public AnimationManager animationControllers = new AnimationManager();
 	private AnimationController wingController = new EntityAnimationController(this, "wingController", 1, this::wingAnimationPredicate);
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return animationControllers;
 	}
@@ -45,9 +45,9 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatedEntit
 		}
 	}
 
-	<E extends Entity> boolean wingAnimationPredicate(AnimationTestEvent<E> event)
+	<E extends IAnimatable> boolean wingAnimationPredicate(EntityAnimationPredicate<E> event)
 	{
-		Entity entity = event.getEntity();
+		Entity entity = (Entity) event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();
 		wingController.easingType = EasingType.EaseInOutQuart;
 		if(entityWorld.rainingStrength > 0)

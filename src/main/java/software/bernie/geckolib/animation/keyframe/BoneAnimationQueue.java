@@ -5,11 +5,11 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.processor.IBone;
 
 public class BoneAnimationQueue
 {
-	public final AnimatedModelRenderer bone;
+	public final IBone bone;
 	public AnimationPointQueue rotationXQueue = new AnimationPointQueue();
 	public AnimationPointQueue rotationYQueue = new AnimationPointQueue();
 	public AnimationPointQueue rotationZQueue = new AnimationPointQueue();
@@ -20,7 +20,7 @@ public class BoneAnimationQueue
 	public AnimationPointQueue scaleYQueue = new AnimationPointQueue();
 	public AnimationPointQueue scaleZQueue = new AnimationPointQueue();
 
-	public BoneAnimationQueue(AnimatedModelRenderer bone)
+	public BoneAnimationQueue(IBone bone)
 	{
 		this.bone = bone;
 	}

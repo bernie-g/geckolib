@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Each entity should have exactly <b>ONE</b> EntityAnimationManager and can add as many animation controllers to the collection as desired.
  */
-public class EntityAnimationManager extends HashMap<String, AnimationController>
+public class AnimationManager extends HashMap<String, AnimationController>
 {
 	private BoneSnapshotCollection boneSnapshotCollection;
 	public float tick;
@@ -25,7 +25,7 @@ public class EntityAnimationManager extends HashMap<String, AnimationController>
 	/**
 	 * Instantiates a new Animation controller collection.
 	 */
-	public EntityAnimationManager()
+	public AnimationManager()
 	{
 		super();
 		boneSnapshotCollection = new BoneSnapshotCollection();

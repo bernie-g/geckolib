@@ -7,18 +7,18 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.manager.AnimationManager;
 
 import javax.annotation.Nullable;
 
-public class RobotEntity extends AnimalEntity implements IAnimatedEntity
+public class RobotEntity extends AnimalEntity implements IAnimatable
 {
-	EntityAnimationManager manager = new EntityAnimationManager();
+	AnimationManager manager = new AnimationManager();
 	EntityAnimationController controller = new EntityAnimationController(this, "walkController", 20, this::animationPredicate);
 
-	private <E extends Entity> boolean animationPredicate(AnimationTestEvent<E> event)
+	private <E extends Entity & IAnimatable> boolean animationPredicate(EntityAnimationPredicate<E> event)
 	{
 		controller.setAnimation(new AnimationBuilder().addAnimation("walk"));
 		return true;
@@ -38,7 +38,7 @@ public class RobotEntity extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return manager;
 	}

@@ -7,23 +7,23 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.manager.EntityAnimationManager;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.event.ParticleKeyFrameEvent;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 
-public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
+public class EasingDemoEntity extends AnimalEntity implements IAnimatable
 {
-	EntityAnimationManager collection = new EntityAnimationManager();
+	AnimationManager collection = new AnimationManager();
 	AnimationController easingDemoControlller = new EntityAnimationController(this, "easingDemoController", 20, this::demoPredicate);
 
-	private <ENTITY extends Entity> boolean demoPredicate(AnimationTestEvent<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> boolean demoPredicate(EntityAnimationPredicate<ENTITY> event)
 	{
 		easingDemoControlller.setAnimation(new AnimationBuilder().addAnimation("bouncetest", false));
 		return true;
@@ -37,12 +37,12 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
 		easingDemoControlller.registerCustomInstructionListener(this::customInstructionListener);
 	}
 
-	private <ENTITY extends Entity> void customInstructionListener(CustomInstructionKeyframeEvent<ENTITY> event)
+	private <ENTITY extends IAnimatable> void customInstructionListener(CustomInstructionKeyframeEvent<ENTITY> event)
 	{
 		GeckoLib.LOGGER.info(Arrays.toString(event.instructions.toArray()));
 	}
 
-	private <ENTITY extends Entity> void listenForParticles(ParticleKeyFrameEvent<ENTITY> event)
+	private <ENTITY extends IAnimatable> void listenForParticles(ParticleKeyFrameEvent<ENTITY> event)
 	{
 		GeckoLib.LOGGER.info(event.effect + " " + event.locator + " " + event);
 	}
@@ -55,7 +55,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return collection;
 	}

@@ -5,23 +5,22 @@
 
 package software.bernie.geckolib.animation.controller;
 
-import net.minecraft.entity.Entity;
+// Only two minecraft calls, do not introduce more.
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+
+
 import org.antlr.v4.runtime.misc.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.keyframe.*;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.easing.EasingType;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
-import software.bernie.geckolib.event.ParticleKeyFrameEvent;
-import software.bernie.geckolib.event.SoundKeyframeEvent;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.*;
 import software.bernie.geckolib.reload.ReloadManager;
 
 import javax.annotation.Nullable;
@@ -34,7 +33,7 @@ import java.util.function.Function;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimationController<T extends IAnimatedEntity>
+public abstract class AnimationController<T extends IAnimatable>
 {
 	/**
 	 * The Entity.
@@ -90,7 +89,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		 *
 		 * @return TRUE if the animation should continue, FALSE if it should stop.
 		 */
-		<P> boolean test(AnimationTestEvent<P> event);
+		<P extends IAnimatable> boolean test(EntityAnimationPredicate<P> event);
 	}
 
 	/**
@@ -102,7 +101,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		/**
 		 * Sound Listeners are run when a sound keyframe is hit. You can either return the SoundEvent and geckolib will play the sound for you, or return null and handle the sounds yourself.
 		 */
-		<ENTITY extends Entity> SoundEvent playSound(SoundKeyframeEvent<ENTITY> event);
+		<ENTITY extends IAnimatable> SoundEvent playSound(SoundKeyframeEvent<ENTITY> event);
 	}
 
 	/**
@@ -114,7 +113,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		/**
 		 * Particle Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the particle yourself.
 		 */
-		<ENTITY extends Entity> void summonParticle(ParticleKeyFrameEvent<ENTITY> event);
+		<ENTITY extends IAnimatable> void summonParticle(ParticleKeyFrameEvent<ENTITY> event);
 	}
 
 	/**
@@ -126,7 +125,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		/**
 		 * Custom instructions can be added in blockbench by enabling animation effects in Animation - Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
 		 */
-		<ENTITY extends Entity> void executeInstruction(CustomInstructionKeyframeEvent<ENTITY> event);
+		<ENTITY extends IAnimatable> void executeInstruction(CustomInstructionKeyframeEvent<ENTITY> event);
 	}
 
 
@@ -272,11 +271,11 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	 * This method is called every frame in order to populate the animation point queues, and process animation state logic.
 	 *
 	 * @param tick                   The current tick + partial tick
-	 * @param animationTestEvent     The animation test event
+	 * @param entityAnimationPredicate     The animation test event
 	 * @param modelRendererList      The list of all AnimatedModelRender's
 	 * @param boneSnapshotCollection The bone snapshot collection
 	 */
-	public void process(double tick, AnimationTestEvent animationTestEvent, List<AnimatedModelRenderer> modelRendererList, BoneSnapshotCollection boneSnapshotCollection)
+	public void process(double tick, AnimationTestPredicate entityAnimationPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection)
 	{
 		createInitialQueues(modelRendererList);
 
@@ -294,7 +293,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		assert tick >= 0 : "GeckoLib: Tick was less than zero";
 
 		// This tests the animation predicate
-		boolean shouldStop = !this.testAnimationPredicate(animationTestEvent);
+		boolean shouldStop = !this.testAnimationPredicate(entityAnimationPredicate);
 		if (shouldStop || (currentAnimation == null && animationQueue.size() == 0))
 		{
 			// The animation should transition to the model's initial state
@@ -332,7 +331,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 					BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
 					BoneSnapshot initialSnapshot = modelRendererList.stream().filter(
-							x -> x.name.equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
+							x -> x.getName().equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
 					assert boneSnapshot != null : "Bone snapshot was null";
 
 					VectorKeyFrameList<KeyFrame<Double>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
@@ -391,7 +390,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 		}
 	}
 
-	protected abstract boolean testAnimationPredicate(AnimationTestEvent<T> event);
+	protected abstract boolean testAnimationPredicate(AnimationTestPredicate<T> event);
 
 	// At the beginning of a new transition, save a snapshot of the model's rotation, position, and scale values as the initial value to lerp from
 	private void saveSnapshotsForAnimation(@NotNull Animation animation, BoneSnapshotCollection boneSnapshotCollection)
@@ -516,13 +515,13 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	}
 
 	//Helper method to populate all the initial animation point queues
-	private void createInitialQueues(List<AnimatedModelRenderer> modelRendererList)
+	private void createInitialQueues(List<IBone> modelRendererList)
 	{
 		if (boneAnimationQueues.size() == 0)
 		{
-			for (AnimatedModelRenderer modelRenderer : modelRendererList)
+			for (IBone modelRenderer : modelRendererList)
 			{
-				boneAnimationQueues.put(modelRenderer.name, new BoneAnimationQueue(modelRenderer));
+				boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
 			}
 		}
 	}
@@ -602,5 +601,10 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	public void markNeedsReload()
 	{
 		this.needsAnimationReload = true;
+	}
+
+	public void clearAnimationCache()
+	{
+		this.currentAnimationBuilder = new AnimationBuilder();
 	}
 }

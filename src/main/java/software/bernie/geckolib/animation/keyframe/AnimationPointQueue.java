@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.animation.processor.IBone;
 
 import java.util.LinkedList;
 
@@ -14,5 +14,5 @@ import java.util.LinkedList;
  */
 public class AnimationPointQueue extends LinkedList<AnimationPoint>
 {
-	public AnimatedModelRenderer model;
+	public IBone model;
 }

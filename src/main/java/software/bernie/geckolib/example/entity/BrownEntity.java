@@ -6,22 +6,33 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.manager.EntityAnimationManager;
-import software.bernie.geckolib.event.AnimationTestEvent;
+import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
+import software.bernie.geckolib.entity.IAnimatable;
 
 import javax.annotation.Nullable;
 
-public class BrownEntity extends AnimalEntity implements IAnimatedEntity
+public class BrownEntity extends AnimalEntity implements IAnimatable
 {
-	EntityAnimationManager collection = new EntityAnimationManager();
+	AnimationManager collection = new AnimationManager();
 	AnimationController controller = new EntityAnimationController(this, "controller", 30, this::predicate);
 
-	private <ENTITY extends Entity> boolean predicate(AnimationTestEvent<ENTITY> event)
+
+	int ticksExecuting = 0;
+	private <ENTITY extends Entity & IAnimatable> boolean predicate(EntityAnimationPredicate<ENTITY> event)
 	{
-		controller.setAnimation(new AnimationBuilder().addAnimation("crawling", true));
+		ticksExecuting++;
+		if(ticksExecuting >= 2000)
+		{
+			controller.setAnimation(new AnimationBuilder().addAnimation("crawling", false));
+			ticksExecuting = 0;
+		}
+		else {
+			ticksExecuting++;
+		}
+
 		return true;
 	}
 
@@ -39,7 +50,7 @@ public class BrownEntity extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
 		return collection;
 	}
