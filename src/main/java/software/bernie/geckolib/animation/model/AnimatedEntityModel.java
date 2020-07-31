@@ -331,6 +331,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.rotationValueY);
 				model.roll = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
 						initialSnapshot.rotationValueZ);
+
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.rotationValueX = model.rotateAngleX;
+					saveSnapshot.rotationValueY = model.rotateAngleY;
+					saveSnapshot.rotationValueZ = model.rotateAngleZ;
+				}
 			}
 			if (!tracker.hasPositionChanged)
 			{
@@ -348,6 +355,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.positionOffsetY);
 				model.positionOffsetZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetZ,
 						initialSnapshot.positionOffsetZ);
+
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.positionOffsetX = model.positionOffsetX;
+					saveSnapshot.positionOffsetY = model.positionOffsetY;
+					saveSnapshot.positionOffsetZ = model.positionOffsetZ;
+				}
 			}
 			if (!tracker.hasScaleChanged)
 			{
@@ -365,6 +379,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.scaleValueY);
 				model.scaleValueZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueZ,
 						initialSnapshot.scaleValueZ);
+
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.scaleValueX = model.scaleValueX;
+					saveSnapshot.scaleValueY = model.scaleValueY;
+					saveSnapshot.scaleValueZ = model.scaleValueZ;
+				}
 			}
 		}
 		manager.isFirstTick = false;
