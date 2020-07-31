@@ -270,8 +270,8 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					snapshot.rotationValueZ = bone.rotateAngleZ;
 					snapshot.isCurrentlyRunningRotationAnimation = true;
 
-					modelTracker.get(bone).hasRotationChanged = true;   
-				}
+					modelTracker.get(bone).hasRotationChanged = true;
+				}  
 				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
