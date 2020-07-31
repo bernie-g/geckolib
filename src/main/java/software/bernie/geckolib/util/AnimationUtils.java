@@ -6,13 +6,11 @@
 package software.bernie.geckolib.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.entity.IEntityRenderer;
-import net.minecraft.client.renderer.entity.LivingRenderer;
-import net.minecraft.client.renderer.entity.model.EntityModel;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
@@ -43,9 +41,14 @@ public class AnimationUtils
 	public static float lerpValues(double percentCompleted, double startValue, double endValue)
 	{
 		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
-		return (float) MathHelper.lerp(percentCompleted, startValue,
+		return (float) lerp(percentCompleted, startValue,
 				endValue);
 	}
+
+	public static double lerp(double pct, double start, double end) {
+		return start + pct * (end - start);
+	}
+
 
 	/**
 	 * Lerps an AnimationPoint
@@ -79,24 +82,15 @@ public class AnimationUtils
 	}
 
 	/**
-	 * Gets the renderer for an entity
-	 */
-	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
-	{
-		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
-		return (EntityRenderer<T>) renderManager.getRenderer(entity);
-	}
-
-	/**
 	 * Gets the AnimatedEntityModel for an entity.
 	 */
 	public static <T extends Entity> AnimatedEntityModel getModelForEntity(T entity)
 	{
-		EntityRenderer<T> entityRenderer = getRenderer(entity);
-		if (entityRenderer instanceof IEntityRenderer)
+		Render<Entity> entityRenderer = getRenderer(entity);
+		if (entityRenderer instanceof RenderLiving)
 		{
-			LivingRenderer renderer = (LivingRenderer) entityRenderer;
-			EntityModel entityModel = renderer.getEntityModel();
+			RenderLiving renderer = (RenderLiving) entityRenderer;
+			ModelBase entityModel = renderer.getMainModel();
 			if (entityModel instanceof AnimatedEntityModel)
 			{
 				return (AnimatedEntityModel) entityModel;
@@ -112,4 +106,13 @@ public class AnimationUtils
 		}
 	}
 
+	/**
+	 * Gets the renderer for an entity
+	 * @return
+	 */
+	public static <T extends Entity> Render<Entity> getRenderer(T entity)
+	{
+		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+		return renderManager.getEntityRenderObject(entity);
+	}
 }

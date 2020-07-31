@@ -8,19 +8,20 @@ package software.bernie.geckolib.animation.model;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.util.JSONException;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.SimpleResource;
+import net.minecraft.client.util.JsonException;
 import net.minecraft.entity.Entity;
-import net.minecraft.resources.*;
-import net.minecraft.util.JSONUtils;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
@@ -30,9 +31,10 @@ import software.bernie.geckolib.animation.snapshot.DirtyTracker;
 import software.bernie.geckolib.animation.snapshot.EntityDirtyTracker;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.util.json.JsonAnimationUtils;
+import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.reload.ReloadManager;
 import software.bernie.geckolib.util.AnimationUtils;
+import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -46,7 +48,7 @@ import java.util.*;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> extends EntityModel<T> implements IResourceManagerReloadListener
+public abstract class AnimatedEntityModel<T extends EntityLivingBase & IAnimatedEntity> extends ModelBase implements IResourceManagerReloadListener
 {
 	private JsonObject animationFile;
 	private List<AnimatedModelRenderer> modelRendererList = new ArrayList();
@@ -75,7 +77,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	{
 		super();
 		ReloadManager.registerModel(this);
-		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
+		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager();
 		//resourceManager.addReloadListener(this);
 		onResourceManagerReload(resourceManager);
 	}
@@ -94,7 +96,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 			InputStreamReader stream = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
 			Reader reader = new BufferedReader(
 					stream);
-			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
+			JsonObject jsonobject = JsonUtils.fromJson(GSON, reader, JsonObject.class);
 			resource.close();
 			stream.close();
 			setAnimationFile(jsonobject);
@@ -124,7 +126,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 					animation.loop = true;
 				}
 			}
-			catch (JSONException e)
+			catch (JsonException e)
 			{
 				GeckoLib.LOGGER.error("Could not load animation: " + animationName, e);
 				throw new RuntimeException(e);
@@ -181,9 +183,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 *
 	 * @param name The name
 	 * @return the animation by name
-	 * @throws JSONException
+	 * @throws JsonException
 	 */
-	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JSONException
+	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JsonException
 	{
 		return JsonAnimationUtils.getAnimation(getAnimationFile(), name);
 	}
@@ -205,8 +207,10 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
+	public void setLivingAnimations(EntityLivingBase entityIn, float limbSwing, float limbSwingAmount, float partialTick)
 	{
+		T entity = (T) entityIn;
+
 		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
 		EntityDirtyTracker modelTracker = createNewDirtyTracker();
 
@@ -331,6 +335,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.rotationValueY);
 				model.rotateAngleZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
 						initialSnapshot.rotationValueZ);
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.rotationValueX = model.rotateAngleX;
+					saveSnapshot.rotationValueY = model.rotateAngleY;
+					saveSnapshot.rotationValueZ = model.rotateAngleZ;
+				}
 			}
 			if (!tracker.hasPositionChanged)
 			{
@@ -348,6 +358,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.positionOffsetY);
 				model.positionOffsetZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.positionOffsetZ,
 						initialSnapshot.positionOffsetZ);
+
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.positionOffsetX = model.positionOffsetX;
+					saveSnapshot.positionOffsetY = model.positionOffsetY;
+					saveSnapshot.positionOffsetZ = model.positionOffsetZ;
+				}
 			}
 			if (!tracker.hasScaleChanged)
 			{
@@ -365,6 +382,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 						initialSnapshot.scaleValueY);
 				model.scaleValueZ = AnimationUtils.lerpValues(percentageReset, saveSnapshot.scaleValueZ,
 						initialSnapshot.scaleValueZ);
+
+				if(percentageReset >= 1)
+				{
+					saveSnapshot.scaleValueX = model.scaleValueX;
+					saveSnapshot.scaleValueY = model.scaleValueY;
+					saveSnapshot.scaleValueZ = model.scaleValueZ;
+				}
 			}
 		}
 		manager.isFirstTick = false;
@@ -391,9 +415,8 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	}
 
 	@Override
-	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scaleFactor, Entity entityIn)
 	{
-
 	}
 
 	/**
@@ -407,13 +430,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 		return animationList.get(name);
 	}
 
-
 	@Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
 		for (AnimatedModelRenderer model : rootBones)
 		{
-			model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			model.render(scale);
 		}
 	}
 }

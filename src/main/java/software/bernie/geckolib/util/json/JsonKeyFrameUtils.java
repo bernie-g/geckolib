@@ -9,10 +9,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.easing.EasingType;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

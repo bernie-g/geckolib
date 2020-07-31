@@ -5,6 +5,7 @@
 
 package software.bernie.geckolib.animation.snapshot;
 
+
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
 public class BoneSnapshot

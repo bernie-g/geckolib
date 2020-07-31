@@ -10,13 +10,14 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.util.JSONException;
+import net.minecraft.client.util.JsonException;
 import software.bernie.geckolib.animation.builder.Animation;
-import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
 import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib.util.AnimationUtils;
+
 import java.util.*;
 
 /**
@@ -156,10 +157,10 @@ public class JsonAnimationUtils
 	}
 
 
-	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key) throws JSONException
+	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key) throws JsonException
 	{
 		return json.stream().filter(x -> x.getKey().equals(key)).findFirst().orElseThrow(
-				() -> new JSONException("Could not find key: " + key)).getValue();
+				() -> new JsonException("Could not find key: " + key)).getValue();
 	}
 
 
@@ -169,9 +170,9 @@ public class JsonAnimationUtils
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
 	 * @return the animation
-	 * @throws JSONException the json exception
+	 * @throws JsonException the json exception
 	 */
-	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName) throws JSONException
+	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName) throws JsonException
 	{
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
 	}

@@ -5,7 +5,9 @@
 
 package software.bernie.geckolib.animation.builder;
 
-import software.bernie.geckolib.animation.keyframe.*;
+import software.bernie.geckolib.animation.keyframe.BoneAnimation;
+import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
+import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
 
 import java.util.ArrayList;
 import java.util.List;

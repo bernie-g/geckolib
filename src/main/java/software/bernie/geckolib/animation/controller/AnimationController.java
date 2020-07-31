@@ -8,8 +8,7 @@ package software.bernie.geckolib.animation.controller;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import org.antlr.v4.runtime.misc.NotNull;
-import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.keyframe.*;
@@ -24,8 +23,12 @@ import software.bernie.geckolib.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.reload.ReloadManager;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -394,7 +397,7 @@ public abstract class AnimationController<T extends IAnimatedEntity>
 	protected abstract boolean testAnimationPredicate(AnimationTestEvent<T> event);
 
 	// At the beginning of a new transition, save a snapshot of the model's rotation, position, and scale values as the initial value to lerp from
-	private void saveSnapshotsForAnimation(@NotNull Animation animation, BoneSnapshotCollection boneSnapshotCollection)
+	private void saveSnapshotsForAnimation(@Nonnull Animation animation, BoneSnapshotCollection boneSnapshotCollection)
 	{
 		for (BoneSnapshot snapshot : boneSnapshotCollection.values())
 		{
