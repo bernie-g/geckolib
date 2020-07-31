@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.0.0-beta.7'
+version = '2.0.0'
 group = 'software.bernie.geckolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'forge-1.15.2-geckolib'
 
