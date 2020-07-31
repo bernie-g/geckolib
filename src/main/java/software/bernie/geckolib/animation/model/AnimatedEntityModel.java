@@ -334,9 +334,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 
 				if(percentageReset >= 1)
 				{
-					saveSnapshot.rotationValueX = model.rotateAngleX;
-					saveSnapshot.rotationValueY = model.rotateAngleY;
-					saveSnapshot.rotationValueZ = model.rotateAngleZ;
+					saveSnapshot.rotationValueX = model.pitch;
+					saveSnapshot.rotationValueY = model.yaw;
+					saveSnapshot.rotationValueZ = model.roll;
 				}
 			}
 			if (!tracker.hasPositionChanged)
