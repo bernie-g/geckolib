@@ -47,6 +47,7 @@ public class AnimationUtils
 				endValue);
 	}
 
+	
 	/**
 	 * Lerps an AnimationPoint
 	 *

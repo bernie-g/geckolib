@@ -16,16 +16,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
-import software.bernie.geckolib.entity.IAnimatedEntity;
-import software.bernie.geckolib.event.AnimationTestEvent;
-import software.bernie.geckolib.manager.EntityAnimationManager;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.manager.AnimationManager;
 
-public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
+
+public class EntityColorfulPig extends AnimalEntity implements IAnimatable
 {
 
 	private EatGrassGoal eatGrassGoal;
 	private int exampleTimer;
-	private EntityAnimationManager manager = new EntityAnimationManager();
+	private AnimationManager manager = new AnimationManager();
 	private EntityAnimationController controller = new EntityAnimationController(this, "moveController", 20,
 			this::animationPredicate);
 
@@ -116,7 +117,7 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 	}
 
 
-	private <E extends EntityColorfulPig> boolean animationPredicate(AnimationTestEvent<E> event) {
+	private <E extends EntityColorfulPig> boolean animationPredicate(EntityAnimationPredicate<E> event) {
 		if (event.isWalking()) {
 			controller.setAnimation(new AnimationBuilder().addAnimation("animation.turtywurty.move"));
 			return true;
@@ -125,7 +126,7 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public EntityAnimationManager getAnimationManager() {
+	public AnimationManager getAnimationManager() {
 		return manager;
 	}
 }

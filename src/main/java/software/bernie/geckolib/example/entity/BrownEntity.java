@@ -21,17 +21,12 @@ public class BrownEntity extends AnimalEntity implements IAnimatable
 
 
 	int ticksExecuting = 0;
+
 	private <ENTITY extends Entity & IAnimatable> boolean predicate(EntityAnimationPredicate<ENTITY> event)
 	{
-		ticksExecuting++;
-		if(ticksExecuting >= 2000)
-		{
-			controller.setAnimation(new AnimationBuilder().addAnimation("crawling", false));
-			ticksExecuting = 0;
-		}
-		else {
-			ticksExecuting++;
-		}
+
+		controller.setAnimation(new AnimationBuilder().addAnimation("crawling", true));
+		ticksExecuting = 0;
 
 		return true;
 	}
