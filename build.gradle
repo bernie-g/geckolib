@@ -13,9 +13,10 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-version = '2.0.0'
-group = 'software.bernie.geckolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'forge-1.15.2-geckolib'
+def snapshotVersion = System.getenv("SNAPSHOT_VERSION")
+version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
+group = project.maven_group
+archivesBaseName = project.archives_base_name
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -123,13 +124,13 @@ jar {
     from sourceSets.main.allSource
     manifest {
         attributes([
-            "Specification-Title": "examplemod",
-            "Specification-Vendor": "examplemodsareus",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"examplemodsareus",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title"     : "examplemod",
+                "Specification-Vendor"    : "examplemodsareus",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "examplemodsareus",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
@@ -142,6 +143,7 @@ jar.finalizedBy('reobfJar')
 sourceSets {
     main { output.resourcesDir = output.classesDir }
 }
+
 
 task javadocnew(type: Javadoc) {
     source = sourceSets.main.allJava
@@ -161,6 +163,7 @@ task packageSources(type: Jar, dependsOn: 'classes') {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
+
 artifacts {
     archives packageJavadoc
     archives packageSources
@@ -169,6 +172,9 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact jar
+            artifact packageSources
+            artifact packageJavadoc
+            artifactId = project.archives_base_name
         }
     }
     repositories {
@@ -180,3 +186,19 @@ publishing {
 artifacts {
     archives javadocJar
 }
+
+
+publishing {
+    repositories {
+        maven {
+            url repsyUrl
+            credentials {
+                def envUsername = System.getenv("repsyUsername")
+                def envPassword = System.getenv("repsyPassword")
+                username = envUsername == null ? repsyUsername : envUsername
+                password = envPassword == null ? repsyPassword : envPassword
+            }
+        }
+    }
+}
+
