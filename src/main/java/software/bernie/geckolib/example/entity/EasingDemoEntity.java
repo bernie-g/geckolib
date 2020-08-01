@@ -44,7 +44,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatable
 
 	private <ENTITY extends IAnimatable> void listenForParticles(ParticleKeyFrameEvent<ENTITY> event)
 	{
-		GeckoLib.LOGGER.info(event.effect + " " + event.locator + " " + event);
+		GeckoLib.LOGGER.info("{} {} {}", event.effect, event.locator, event);
 	}
 
 	@Nullable
