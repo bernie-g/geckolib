@@ -21,7 +21,6 @@ public class GeckoLib
 
     public GeckoLib() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
         Entities.ENTITIES.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
     }
