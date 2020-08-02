@@ -24,6 +24,9 @@ jobs:
       run: chmod +x gradlew
     - name: Assemble with Gradle
       run: ./gradlew --info assemble
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Test with Gradle
       run: ./gradlew --info test
     - name: Docs with Gradle
@@ -72,5 +75,4 @@ jobs:
         AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
         SOURCE_DIR: 'build/docs/javadoc'      # optional: defaults to entire repository
         DEST_DIR: 'javadocs'
-        repsyUsername: ${{ secrets.repsyUsername }}
-        repsyPassword: ${{ secrets.repsyPassword }}
+
