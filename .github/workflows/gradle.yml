@@ -5,7 +5,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ 1.15, develop ]
+    branches: [ 1.15, 1.12, 1.16, fabric/1.15, fabric/1.16, develop ]
   pull_request:
     branches: []
 
@@ -69,12 +69,6 @@ jobs:
       with:
         name: docs.zip
         path: docs.zip
-    - name: Upload Build
-      uses: actions/upload-artifact@v2
-      if: ${{ always() }}
-      with:
-        name: geckolib-1.15-1.0.0.jar
-        path: build/libs/geckolib-1.15-1.0.0.jar
     - name: Deploy Docs to AWS S3
       uses: jakejarvis/s3-sync-action@master
       with:
