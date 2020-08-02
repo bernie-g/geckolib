@@ -29,8 +29,19 @@ jobs:
         repsyPassword: ${{ secrets.repsyPassword }}
     - name: Test with Gradle
       run: ./gradlew --info test
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Docs with Gradle
       run: ./gradlew --info javadoc
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
+    - name: Publish Snapshot to Repsy
+      run: ./gradlew --info publish
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Zip Test Results
       if: ${{ always() }}
       run: |
