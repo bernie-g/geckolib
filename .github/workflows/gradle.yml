@@ -5,7 +5,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ 1.15, develop ]
+    branches: [ 1.15, 1.12, 1.16, fabric/1.15, fabric/1.16, develop ]
   pull_request:
     branches: []
 
@@ -24,10 +24,24 @@ jobs:
       run: chmod +x gradlew
     - name: Assemble with Gradle
       run: ./gradlew --info assemble
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Test with Gradle
       run: ./gradlew --info test
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Docs with Gradle
       run: ./gradlew --info javadoc
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
+    - name: Publish Snapshot to Repsy
+      run: ./gradlew --info publish
+      env:
+        repsyUsername: ${{ secrets.repsyUsername }}
+        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Zip Test Results
       if: ${{ always() }}
       run: |
@@ -55,12 +69,6 @@ jobs:
       with:
         name: docs.zip
         path: docs.zip
-    - name: Upload Build
-      uses: actions/upload-artifact@v2
-      if: ${{ always() }}
-      with:
-        name: geckolib-1.15-1.0.0.jar
-        path: build/libs/geckolib-1.15-1.0.0.jar
     - name: Deploy Docs to AWS S3
       uses: jakejarvis/s3-sync-action@master
       with:
@@ -72,3 +80,4 @@ jobs:
         AWS_REGION: 'us-west-1'   # optional: defaults to us-east-1
         SOURCE_DIR: 'build/docs/javadoc'      # optional: defaults to entire repository
         DEST_DIR: 'javadocs'
+
