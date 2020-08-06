@@ -13,7 +13,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 
-def snapshotVersion = System.getenv("GITHUB_RUN_ID")
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 group = project.maven_group
 archivesBaseName = project.archives_base_name
