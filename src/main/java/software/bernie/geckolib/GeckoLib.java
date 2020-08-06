@@ -12,6 +12,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.example.registry.Entities;
+import software.bernie.geckolib.listener.ServerListener;
 
 @Mod(GeckoLib.ModID)
 public class GeckoLib
@@ -21,7 +22,9 @@ public class GeckoLib
 
     public GeckoLib() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(ServerListener::onSetup);
         Entities.ENTITIES.register(bus);
         MinecraftForge.EVENT_BUS.register(this);
     }
+
 }

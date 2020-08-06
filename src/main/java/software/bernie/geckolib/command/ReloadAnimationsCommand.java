@@ -41,10 +41,8 @@ public class ReloadAnimationsCommand implements Command<CommandSource>
 			controller.markNeedsReload();
 		}
 
-		Style style = new Style();
-		style.setColor(TextFormatting.GREEN);
-		context.getSource().sendFeedback(new StringTextComponent("Reloaded " + ReloadManager.getRegisteredModels().size() + " animations.").setStyle(
-				style), false);
+		Style style = Style.field_240709_b_.func_240712_a_(TextFormatting.GREEN);
+		context.getSource().sendFeedback(new StringTextComponent("Reloaded " + ReloadManager.getRegisteredModels().size() + " animations.").func_240703_c_(style), false);
 		return 0;
 	}
 

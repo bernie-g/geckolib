@@ -1,8 +1,12 @@
 package software.bernie.geckolib.example.entity;
 
 import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.CreatureAttribute;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
+import net.minecraft.entity.ai.attributes.AttributeModifierMap;
+import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -42,4 +46,6 @@ public class RobotEntity extends AnimalEntity implements IAnimatedEntity
 	{
 		return manager;
 	}
+
+
 }
