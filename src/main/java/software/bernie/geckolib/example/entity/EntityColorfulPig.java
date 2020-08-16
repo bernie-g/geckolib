@@ -9,6 +9,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -16,6 +17,8 @@ import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
 import software.bernie.geckolib.event.AnimationTestEvent;
 import software.bernie.geckolib.manager.EntityAnimationManager;
+
+import javax.annotation.Nullable;
 
 public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 {
@@ -35,10 +38,6 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 		manager.addAnimationController(controller);
 	}
 
-	@Override
-	public AgeableEntity createChild(AgeableEntity ageable) {
-		return null;
-	}
 
 	@Override
 	protected void registerGoals() {
@@ -58,6 +57,13 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 	protected void updateAITasks() {
 		this.exampleTimer = this.eatGrassGoal.getEatingGrassTimer();
 		super.updateAITasks();
+	}
+
+	@Nullable
+	@Override
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	{
+		return null;
 	}
 
 	@Override
@@ -100,11 +106,6 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 		} else {
 			return this.exampleTimer > 0 ? ((float) Math.PI / 5F) : this.rotationPitch * ((float) Math.PI / 180F);
 		}
-	}
-
-	@Override
-	public void onStruckByLightning(LightningBoltEntity lightningBolt) {
-		this.setGlowing(true);
 	}
 
 

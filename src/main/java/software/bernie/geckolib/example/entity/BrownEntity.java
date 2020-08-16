@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.manager.EntityAnimationManager;
 import software.bernie.geckolib.event.AnimationTestEvent;
@@ -31,16 +32,17 @@ public class BrownEntity extends AnimalEntity implements IAnimatedEntity
 		collection.addAnimationController(controller);
 	}
 
-	@Nullable
-	@Override
-	public AgeableEntity createChild(AgeableEntity ageable)
-	{
-		return null;
-	}
 
 	@Override
 	public EntityAnimationManager getAnimationManager()
 	{
 		return collection;
+	}
+
+	@Nullable
+	@Override
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	{
+		return null;
 	}
 }

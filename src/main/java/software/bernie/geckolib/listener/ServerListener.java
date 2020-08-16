@@ -52,6 +52,9 @@ public class ServerListener
 		map.func_233814_a_(Attributes.field_233830_m_);
 
 		map.func_233814_a_(ForgeMod.ENTITY_GRAVITY.get());
+		map.func_233814_a_(ForgeMod.SWIM_SPEED.get());
+		map.func_233814_a_(ForgeMod.REACH_DISTANCE.get());
+		map.func_233814_a_(ForgeMod.NAMETAG_DISTANCE.get());
 
 
 		return map;

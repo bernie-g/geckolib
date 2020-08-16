@@ -9,6 +9,7 @@ import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatedEntity;
@@ -34,12 +35,6 @@ public class RobotEntity extends AnimalEntity implements IAnimatedEntity
 		manager.addAnimationController(controller);
 	}
 
-	@Nullable
-	@Override
-	public AgeableEntity createChild(AgeableEntity ageable)
-	{
-		return null;
-	}
 
 	@Override
 	public EntityAnimationManager getAnimationManager()
@@ -48,4 +43,10 @@ public class RobotEntity extends AnimalEntity implements IAnimatedEntity
 	}
 
 
+	@Nullable
+	@Override
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	{
+		return null;
+	}
 }

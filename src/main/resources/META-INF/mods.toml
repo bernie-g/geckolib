@@ -6,7 +6,7 @@
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[32,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
+loaderVersion="[33,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
 license="LGPL 3.0"
@@ -26,7 +26,8 @@ displayName="GeckoLib" #mandatory
 displayURL="http://bernie.software/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="geckolib.png" #optional
-# A text field displayed in the mod UI
+
+credits="Thanks to The Ult1mate guy for the test models and animations, and Eliot for the plugin and core library help." #optional
 # A text field displayed in the mod UI
 authors="Gecko, Eliot" #optional
 # The description text for the mod (multi line!) (#mandatory)
@@ -39,7 +40,7 @@ modId="forge" #mandatory
 # Does this dependency have to exist - if not, ordering below must be specified
 mandatory=true #mandatory
 # The version range of the dependency
-versionRange="[32,)" #mandatory
+versionRange="[33,)" #mandatory
 # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
 ordering="NONE"
 # Side this dependency is applied on - BOTH, CLIENT or SERVER
@@ -48,6 +49,6 @@ side="BOTH"
 [[dependencies.geckolib]]
 modId="minecraft"
 mandatory=true
-versionRange="[1.16.1]"
+versionRange="[1.16.2]"
 ordering="NONE"
 side="BOTH"
