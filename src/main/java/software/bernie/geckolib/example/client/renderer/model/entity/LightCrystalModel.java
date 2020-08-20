@@ -1,4 +1,4 @@
-package software.bernie.geckolib.example.client.renderer.model;
+package software.bernie.geckolib.example.client.renderer.model.entity;
 
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;

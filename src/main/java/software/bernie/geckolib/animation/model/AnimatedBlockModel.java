@@ -7,36 +7,37 @@ package software.bernie.geckolib.animation.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.util.JSONException;
-import net.minecraft.entity.Entity;
-import net.minecraft.resources.*;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.model.Model;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.TileAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.IFileProvider;
-import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.reload.ReloadManager;
+import software.bernie.geckolib.tesr.BlockAnimationManager;
+import software.bernie.geckolib.tesr.ITileAnimatable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IFileProvider, IResourceManagerReloadListener
+public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable> extends Model implements IFileProvider, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -48,14 +49,13 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	protected AnimatedEntityModel()
+	protected AnimatedBlockModel()
 	{
-		super();
+		super(RenderType::getEntityCutoutNoCull);
 		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader(this);
-
 		registerMolangVariables();
 
 		onResourceManagerReload(resourceManager);
@@ -65,7 +65,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	{
 		parser.register(new Variable("query.anim_time", 0));
 	}
-
 
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
@@ -113,33 +112,27 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		modelRenderer.rotateAngleZ = z;
 	}
 
-	@Override
 	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationManager manager = entity.getAnimationManager();
+		BlockAnimationManager manager = entity.getAnimationManager();
 
-		manager.tick = entity.ticksExisted + partialTick;
+		manager.tick = manager.ticksExisted + partialTick;
 		double gameTick = manager.tick;
 		double deltaTicks = gameTick - lastGameTickTime;
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		EntityAnimationPredicate<T> predicate = new EntityAnimationPredicate<T>(entity, seekTime, limbSwing,
-				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
-
+		TileAnimationPredicate<T> predicate = new TileAnimationPredicate<T>(entity, seekTime);
 		processor.tickAnimation(entity, seekTime, predicate, parser);
 	}
 
-	@Override
-	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) { }
 
 	public Animation getAnimation(String name)
 	{
 		return loader.getAnimation(name);
 	}
 
-	@Override
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
 		for (AnimatedModelRenderer model : rootBones)
@@ -163,5 +156,4 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	{
 		this.loader.setLoopByDefault(loopByDefault);
 	}
-
 }

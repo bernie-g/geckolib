@@ -4,7 +4,7 @@
  */
 
 package software.bernie.geckolib.event;
-import software.bernie.geckolib.animation.controller.AnimationController;
+
 import software.bernie.geckolib.entity.IAnimatable;
 
 public class EntityAnimationPredicate<T extends IAnimatable> extends AnimationTestPredicate

@@ -14,22 +14,22 @@ public class KeyFrameLocation<T extends KeyFrame>
 	/**
 	 * The curent frame.
 	 */
-	public T CurrentFrame;
+	public T currentFrame;
 
 	/**
 	 * This is the combined total time of all the previous keyframes
 	 */
-	public double CurrentAnimationTick;
+	public double currentTick;
 
 	/**
 	 * Instantiates a new Key frame location.
 	 *
 	 * @param currentFrame         the current frame
-	 * @param currentAnimationTick the current animation tick
+	 * @param currentTick the current animation tick
 	 */
-	public KeyFrameLocation(T currentFrame, double currentAnimationTick)
+	public KeyFrameLocation(T currentFrame, double currentTick)
 	{
-		CurrentFrame = currentFrame;
-		CurrentAnimationTick = currentAnimationTick;
+		this.currentFrame = currentFrame;
+		this.currentTick = currentTick;
 	}
 }

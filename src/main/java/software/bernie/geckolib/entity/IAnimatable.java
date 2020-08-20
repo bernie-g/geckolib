@@ -16,5 +16,5 @@ public interface IAnimatable
 	 *
 	 * @return the animation controllers
 	 */
-	AnimationManager getAnimationManager();
+	<T extends AnimationManager> T getAnimationManager();
 }

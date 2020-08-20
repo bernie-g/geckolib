@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.example.client.renderer.model.AscendedLegfishModel;
+import software.bernie.geckolib.example.client.renderer.model.entity.AscendedLegfishModel;
 import software.bernie.geckolib.example.entity.AscendedLegfishEntity;
 
 import javax.annotation.Nullable;

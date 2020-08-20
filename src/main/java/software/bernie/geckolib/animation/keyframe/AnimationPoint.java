@@ -5,6 +5,8 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
+import com.eliotlash.mclib.math.IValue;
+
 import javax.annotation.Nullable;
 
 public class AnimationPoint
@@ -20,43 +22,34 @@ public class AnimationPoint
 	/**
 	 * The Animation start value.
 	 */
-	public final Float animationStartValue;
+	public final Double animationStartValue;
 	/**
 	 * The Animation end value.
 	 */
-	public final Float animationEndValue;
+	public final Double animationEndValue;
 
 	/**
 	 * The current keyframe.
 	 */
 	@Nullable
-	public final KeyFrame<Double> keyframe;
+	public final KeyFrame<IValue> keyframe;
 
-	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Double animationStartValue, Double animationEndValue)
+	public AnimationPoint(@Nullable KeyFrame<IValue> keyframe, Double currentTick, Double animationEndTick, Double animationStartValue, Double animationEndValue)
 	{
 		this.keyframe = keyframe;
-		this.currentTick = currentTick;
-		this.animationEndTick = animationEndTick;
-		this.animationStartValue = animationStartValue.floatValue();
-		this.animationEndValue = animationEndValue.floatValue();
-	}
-
-	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Float animationStartValue, Float animationEndValue)
-	{
 		this.currentTick = currentTick;
 		this.animationEndTick = animationEndTick;
 		this.animationStartValue = animationStartValue;
 		this.animationEndValue = animationEndValue;
-		this.keyframe = keyframe;
 	}
 
-	public AnimationPoint(@Nullable KeyFrame<Double> keyframe, Double currentTick, Double animationEndTick, Float animationStartValue, Double animationEndValue)
+	public AnimationPoint(KeyFrame<IValue> keyframe, double tick, double animationEndTick, float animationStartValue, double animationEndValue)
 	{
 		this.keyframe = keyframe;
-		this.currentTick = currentTick;
+		this.currentTick = tick;
 		this.animationEndTick = animationEndTick;
-		this.animationStartValue = animationStartValue;
-		this.animationEndValue = animationEndValue.floatValue();
+		this.animationStartValue = Double.valueOf(animationStartValue);
+		this.animationEndValue = animationEndValue;
 	}
 
 	@Override

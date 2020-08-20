@@ -5,10 +5,15 @@
 
 package software.bernie.geckolib.util.json;
 
+import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.molang.MolangException;
+import com.eliotlash.molang.MolangParser;
+import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.molang.ConstantValue;
 import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
@@ -23,50 +28,46 @@ import java.util.Map;
  */
 public class JsonKeyFrameUtils
 {
-	private static VectorKeyFrameList<KeyFrame<Double>> convertJson(List<Map.Entry<String, JsonElement>> element, boolean isRotation) throws NumberFormatException
+	private static VectorKeyFrameList<KeyFrame<IValue>> convertJson(List<Map.Entry<String, JsonElement>> element, boolean isRotation, MolangParser parser) throws NumberFormatException, MolangException
 	{
-		Double previousXValue = null;
-		Double previousYValue = null;
-		Double previousZValue = null;
+		IValue previousXValue = null;
+		IValue previousYValue = null;
+		IValue previousZValue = null;
 
-		List<KeyFrame<Double>> xKeyFrames = new ArrayList();
-		List<KeyFrame<Double>> yKeyFrames = new ArrayList();
-		List<KeyFrame<Double>> zKeyFrames = new ArrayList();
+		List<KeyFrame<IValue>> xKeyFrames = new ArrayList();
+		List<KeyFrame<IValue>> yKeyFrames = new ArrayList();
+		List<KeyFrame<IValue>> zKeyFrames = new ArrayList();
 
 		for (int i = 0; i < element.size(); i++)
 		{
 			Map.Entry<String, JsonElement> keyframe = element.get(i);
 			Map.Entry<String, JsonElement> previousKeyFrame = i == 0 ? null : element.get(i - 1);
 
-			double previousKeyFrameLocation = previousKeyFrame == null ? 0 : Double.parseDouble(
-					previousKeyFrame.getKey());
-			double currentKeyFrameLocation = Double.parseDouble(keyframe.getKey());
-			double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
+			Double previousKeyFrameLocation = previousKeyFrame == null ? 0 : Double.parseDouble(previousKeyFrame.getKey());
+			Double currentKeyFrameLocation = Double.parseDouble(keyframe.getKey());
+			Double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
 
 			JsonArray vectorJsonArray = getKeyFrameVector(keyframe.getValue());
-			float double1 = vectorJsonArray.get(0).getAsFloat();
-			float double2 = vectorJsonArray.get(1).getAsFloat();
-			float double3 = vectorJsonArray.get(2).getAsFloat();
+			IValue xValue = parseExpression(parser, vectorJsonArray.get(0));
+			IValue yValue = parseExpression(parser, vectorJsonArray.get(1));
+			IValue zValue = parseExpression(parser, vectorJsonArray.get(2));
 
-			double currentXValue = isRotation ? (float) Math.toRadians(double1) : double1;
-			double currentYValue = isRotation ? (float) Math.toRadians(double2) : double2;
-			double currentZValue = isRotation ? (float) Math.toRadians(double3) : double3;
-			KeyFrame<Double> xKeyFrame;
-			KeyFrame<Double> yKeyFrame;
-			KeyFrame<Double> zKeyFrame;
+			IValue currentXValue = isRotation && xValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(xValue.get())) : xValue;
+			IValue currentYValue = isRotation && yValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(yValue.get())) : yValue;
+			IValue currentZValue = isRotation && zValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(zValue.get())) : zValue;
+			KeyFrame<IValue> xKeyFrame;
+			KeyFrame<IValue> yKeyFrame;
+			KeyFrame<IValue> zKeyFrame;
 
 			if (keyframe.getValue().isJsonObject() && hasEasingType(keyframe.getValue()))
 			{
 				EasingType easingType = getEasingType(keyframe.getValue());
 				if (hasEasingArgs(keyframe.getValue()))
 				{
-					List<Double> easingArgs = getEasingArgs(keyframe.getValue());
-					xKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference),
-							i == 0 ? currentXValue : previousXValue, currentXValue, easingType, easingArgs);
-					yKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference),
-							i == 0 ? currentYValue : previousYValue, currentYValue, easingType, easingArgs);
-					zKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference),
-							i == 0 ? currentZValue : previousZValue, currentZValue, easingType, easingArgs);
+					List<IValue> easingArgs = getEasingArgs(keyframe.getValue());
+					xKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference), i == 0 ? currentXValue : previousXValue, currentXValue, easingType, easingArgs);
+					yKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference), i == 0 ? currentYValue : previousYValue, currentYValue, easingType, easingArgs);
+					zKeyFrame = new KeyFrame(AnimationUtils.convertSecondsToTicks(animationTimeDifference), i == 0 ? currentZValue : previousZValue, currentZValue, easingType, easingArgs);
 				}
 				else
 				{
@@ -140,7 +141,7 @@ public class JsonKeyFrameUtils
 		}
 	}
 
-	private static List<Double> getEasingArgs(JsonElement element)
+	private static List<IValue> getEasingArgs(JsonElement element)
 	{
 		JsonObject asJsonObject = element.getAsJsonObject();
 		JsonElement easingArgs = asJsonObject.get("easingArgs");
@@ -152,25 +153,41 @@ public class JsonKeyFrameUtils
 	 * Convert json to a rotation key frame vector list. This method also converts degrees to radians.
 	 *
 	 * @param element The keyframe parent json element
+	 * @param parser
 	 * @return the vector key frame list
 	 * @throws NumberFormatException The number format exception
 	 */
-	public static VectorKeyFrameList<KeyFrame<Double>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToKeyFrames(List<Map.Entry<String, JsonElement>> element, MolangParser parser) throws NumberFormatException, MolangException
 	{
-		return convertJson(element, false);
+		return convertJson(element, false, parser);
 	}
 
 	/**
 	 * Convert json to normal json keyframes
 	 *
 	 * @param element The keyframe parent json element
+	 * @param parser
 	 * @return the vector key frame list
 	 * @throws NumberFormatException
 	 */
-	public static VectorKeyFrameList<KeyFrame<Double>> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element) throws NumberFormatException
+	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToRotationKeyFrames(List<Map.Entry<String, JsonElement>> element, MolangParser parser) throws NumberFormatException, MolangException
 	{
-		VectorKeyFrameList<KeyFrame<Double>> frameList = convertJson(element, true);
+		VectorKeyFrameList<KeyFrame<IValue>> frameList = convertJson(element, true, parser);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames,
 				frameList.zKeyFrames);
 	}
+
+
+	public static IValue parseExpression(MolangParser parser, JsonElement element) throws MolangException
+	{
+		if(element.getAsJsonPrimitive().isString())
+		{
+			return parser.parseJson(element);
+		}
+		else {
+			return ConstantValue.fromDouble(element.getAsDouble());
+		}
+	}
+	
+	
 }

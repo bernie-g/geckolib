@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.example.client.renderer.model.BrownModel;
+import software.bernie.geckolib.example.client.renderer.model.entity.BrownModel;
 import software.bernie.geckolib.example.entity.BrownEntity;
 
 import javax.annotation.Nullable;

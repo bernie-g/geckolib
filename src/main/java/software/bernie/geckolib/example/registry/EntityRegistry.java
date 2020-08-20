@@ -14,7 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.example.entity.*;
 
-public class Entities
+public class EntityRegistry
 {
 	public static final DeferredRegister<EntityType<?>> ENTITIES = new DeferredRegister<>(ForgeRegistries.ENTITIES, GeckoLib.ModID);
 	public static final RegistryObject<EntityType<StingrayTestEntity>> STING_RAY = BuildEntity(StingrayTestEntity::new, StingrayTestEntity.class, 2.845F, 0.3125F);
@@ -25,6 +25,7 @@ public class Entities
 	public static final RegistryObject<EntityType<EasingDemoEntity>> EASING_DEMO = BuildEntity(EasingDemoEntity::new, EasingDemoEntity.class, 0.1F, 0.1F);
 	public static final RegistryObject<EntityType<RobotEntity>> ROBOT = BuildEntity(RobotEntity::new, RobotEntity.class, .7F, 1.3F);
 	public static final RegistryObject<EntityType<EntityColorfulPig>> COLORFUL_PIG = BuildEntity(EntityColorfulPig::new, EntityColorfulPig.class, .7F, 1.3F);
+	public static final RegistryObject<EntityType<BatEntity>> BAT = BuildEntity(BatEntity::new, BatEntity.class, .7F, 1.3F);
 
 
 	public static <T extends Entity> RegistryObject<EntityType<T>> BuildEntity(EntityType.IFactory<T> entity, Class<T> entityClass, float width, float height)

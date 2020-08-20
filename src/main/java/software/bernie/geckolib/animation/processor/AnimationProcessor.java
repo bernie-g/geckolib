@@ -1,7 +1,6 @@
 package software.bernie.geckolib.animation.processor;
 
-import com.google.gson.JsonElement;
-import net.minecraft.client.util.JSONException;
+import com.eliotlash.molang.MolangParser;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
@@ -13,17 +12,15 @@ import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.util.AnimationUtils;
-import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AnimationProcessor<T extends IAnimatable>
 {
 	private List<IBone> modelRendererList = new ArrayList();
 
-	public void tickAnimation(IAnimatable entity, double seekTime, AnimationTestPredicate predicate)
+	public void tickAnimation(IAnimatable entity, double seekTime, AnimationTestPredicate predicate, MolangParser parser)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 
@@ -46,7 +43,7 @@ public class AnimationProcessor<T extends IAnimatable>
 			predicate.setController(controller);
 
 			// Process animations and add new values to the point queues
-			controller.process(seekTime, predicate, modelRendererList, boneSnapshots);
+			controller.process(seekTime, predicate, modelRendererList, boneSnapshots, parser);
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values())

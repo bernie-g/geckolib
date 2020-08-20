@@ -5,6 +5,8 @@
 
 package software.bernie.geckolib.util.json;
 
+import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -193,11 +195,12 @@ public class JsonAnimationUtils
 	 * This is the central method that parses an animation and converts it to an Animation object with all the correct keyframe times and extra metadata.
 	 *
 	 * @param element The animation json
+	 * @param parser
 	 * @return The newly constructed Animation object
 	 * @throws ClassCastException    Throws this exception if the JSON is formatted incorrectly
 	 * @throws IllegalStateException Throws this exception if the JSON is formatted incorrectly
 	 */
-	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element) throws ClassCastException, IllegalStateException
+	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element, MolangParser parser) throws ClassCastException, IllegalStateException
 	{
 		Animation animation = new Animation();
 		JsonObject animationJsonObject = element.getValue().getAsJsonObject();
@@ -256,8 +259,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> scaleKeyFramesJson = getScaleKeyFrames(boneJsonObj);
-				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
-						new ArrayList<>(scaleKeyFramesJson));
+				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(new ArrayList<>(scaleKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -268,8 +270,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> positionKeyFramesJson = getPositionKeyFrames(boneJsonObj);
-				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
-						new ArrayList<>(positionKeyFramesJson));
+				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(new ArrayList<>(positionKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -280,8 +281,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> rotationKeyFramesJson = getRotationKeyFrames(boneJsonObj);
-				boneAnimation.rotationKeyFrames = JsonKeyFrameUtils.convertJsonToRotationKeyFrames(
-						new ArrayList<>(rotationKeyFramesJson));
+				boneAnimation.rotationKeyFrames = JsonKeyFrameUtils.convertJsonToRotationKeyFrames(new ArrayList<>(rotationKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -294,7 +294,7 @@ public class JsonAnimationUtils
 		return animation;
 	}
 
-	static List<Double> convertJsonArrayToList(JsonArray array)
+	static List<IValue> convertJsonArrayToList(JsonArray array)
 	{
 		return new Gson().fromJson(array, ArrayList.class);
 	}

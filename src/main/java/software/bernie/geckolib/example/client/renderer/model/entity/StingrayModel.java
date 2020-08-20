@@ -6,7 +6,7 @@
 // Made with Blockbench 3.5.0
 // Exported for Minecraft version 1.15
 // Paste this class into your mod and generate all required imports
-package software.bernie.geckolib.example.client.renderer.model;
+package software.bernie.geckolib.example.client.renderer.model.entity;
 
 
 import net.minecraft.util.ResourceLocation;

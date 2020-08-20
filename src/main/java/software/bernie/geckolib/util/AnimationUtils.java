@@ -47,7 +47,7 @@ public class AnimationUtils
 				endValue);
 	}
 
-	
+
 	/**
 	 * Lerps an AnimationPoint
 	 *
@@ -58,11 +58,11 @@ public class AnimationUtils
 	{
 		if(animationPoint.currentTick >= animationPoint.animationEndTick)
 		{
-			return animationPoint.animationEndValue;
+			return animationPoint.animationEndValue.floatValue();
 		}
 		if(animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
 		{
-			return animationPoint.animationEndValue;
+			return animationPoint.animationEndValue.floatValue();
 		}
 
 		if(easingType == EasingType.CUSTOM && customEasingMethod != null)

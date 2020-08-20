@@ -25,7 +25,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatable
 
 	private <ENTITY extends Entity & IAnimatable> boolean demoPredicate(EntityAnimationPredicate<ENTITY> event)
 	{
-		easingDemoControlller.setAnimation(new AnimationBuilder().addAnimation("bouncetest", false));
+		easingDemoControlller.setAnimation(new AnimationBuilder().addAnimation("animation.model.new", true));
 		return true;
 	}
 

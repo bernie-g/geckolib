@@ -11,11 +11,9 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.example.client.renderer.entity.*;
-import software.bernie.geckolib.example.registry.Entities;
-import software.bernie.geckolib.registry.CommandRegistry;
+import software.bernie.geckolib.example.registry.EntityRegistry;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModEventBus
@@ -24,14 +22,15 @@ public class ModEventBus
 	@SubscribeEvent
 	public static void registerEntityRenderers(final FMLClientSetupEvent event)
 	{
-		RenderingRegistry.registerEntityRenderingHandler(Entities.STING_RAY.get(), manager -> new StingrayRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.ASCENDED_LEG_FISH.get(), manager -> new AscendedLegfishRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.TIGRIS.get(), manager -> new TigrisRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.LIGHTCRYSTAL.get(), manager -> new LightCrystalRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.BROWN.get(), manager -> new BrownRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.EASING_DEMO.get(), manager -> new EasingDemoRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.ROBOT.get(), manager -> new RobotRenderer(manager));
-		RenderingRegistry.registerEntityRenderingHandler(Entities.COLORFUL_PIG.get(), manager -> new ColorfulPigRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.STING_RAY.get(), manager -> new StingrayRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ASCENDED_LEG_FISH.get(), manager -> new AscendedLegfishRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.TIGRIS.get(), manager -> new TigrisRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.LIGHTCRYSTAL.get(), manager -> new LightCrystalRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BROWN.get(), manager -> new BrownRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.EASING_DEMO.get(), manager -> new EasingDemoRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ROBOT.get(), manager -> new RobotRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.COLORFUL_PIG.get(), manager -> new ColorfulPigRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BAT.get(), manager -> new BatRenderer(manager));
 
 	}
 }

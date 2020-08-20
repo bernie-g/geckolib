@@ -1,5 +1,7 @@
 package software.bernie.geckolib.file;
 
+import com.eliotlash.mclib.math.Variable;
+import com.eliotlash.molang.MolangParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,6 +19,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -47,7 +50,7 @@ public class AnimationFileLoader
 		this.animationList = animationList;
 	}
 
-	private void loadAllAnimations()
+	private void loadAllAnimations(MolangParser parser)
 	{
 		animationList.clear();
 		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(getAnimationFile());
@@ -57,8 +60,7 @@ public class AnimationFileLoader
 			Animation animation = null;
 			try
 			{
-				animation = JsonAnimationUtils.deserializeJsonToAnimation(
-						JsonAnimationUtils.getAnimation(getAnimationFile(), animationName));
+				animation = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(getAnimationFile(), animationName), parser);
 				if (loopByDefault)
 				{
 					animation.loop = true;
@@ -91,7 +93,7 @@ public class AnimationFileLoader
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
 	 */
-	public void onResourceManagerReload(IResourceManager resourceManager)
+	public void onResourceManagerReload(IResourceManager resourceManager, MolangParser parser)
 	{
 		try
 		{
@@ -104,7 +106,7 @@ public class AnimationFileLoader
 			resource.close();
 			stream.close();
 			setAnimationFile(jsonobject);
-			loadAllAnimations();
+			loadAllAnimations(parser);
 		}
 		catch (IOException e)
 		{

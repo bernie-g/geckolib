@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib.example.client.renderer.model.TigrisModel;
+import software.bernie.geckolib.example.client.renderer.model.entity.TigrisModel;
 import software.bernie.geckolib.example.entity.TigrisEntity;
 
 import javax.annotation.Nullable;
