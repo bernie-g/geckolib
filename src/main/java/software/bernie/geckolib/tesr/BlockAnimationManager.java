@@ -9,5 +9,7 @@ import software.bernie.geckolib.manager.AnimationManager;
 
 public class BlockAnimationManager extends AnimationManager
 {
-	public int ticksExisted;
+	public Float startTick;
+	public int lastPausedTick;
+
 }

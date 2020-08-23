@@ -9,7 +9,7 @@ import software.bernie.geckolib.tesr.BlockAnimationController;
 import software.bernie.geckolib.tesr.BlockAnimationManager;
 import software.bernie.geckolib.tesr.ITileAnimatable;
 
-public class TileEntityJackInTheBox extends TileEntity implements ITileAnimatable, ITickableTileEntity
+public class TileEntityJackInTheBox extends TileEntity implements ITileAnimatable
 {
 	private final BlockAnimationManager manager = new BlockAnimationManager();
 	private final BlockAnimationController controller = new BlockAnimationController(this, "controller", 0, this::predicate);
@@ -17,7 +17,7 @@ public class TileEntityJackInTheBox extends TileEntity implements ITileAnimatabl
 	private <E extends TileEntity & ITileAnimatable> boolean predicate(TileAnimationPredicate<E> eTileAnimationPredicate)
 	{
 		controller.transitionLengthTicks = 20;
-		controller.setAnimation(new AnimationBuilder().addAnimation("animation.model.ChestPopUpIdle", true));
+		controller.setAnimation(new AnimationBuilder().addAnimation("animation.model.ChestPopUp", false).addAnimation("animation.model.ChestPopUpIdle", false).addAnimation("animation.model.ChestClose").addAnimation("animation.model.ChestPeek"));
 		return true;
 	}
 
@@ -32,14 +32,5 @@ public class TileEntityJackInTheBox extends TileEntity implements ITileAnimatabl
 	public BlockAnimationManager getAnimationManager()
 	{
 		return manager;
-	}
-
-	@Override
-	public void tick()
-	{
-		if(world.isRemote)
-		{
-			manager.ticksExisted++;
-		}
 	}
 }

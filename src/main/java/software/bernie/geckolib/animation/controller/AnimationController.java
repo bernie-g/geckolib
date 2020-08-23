@@ -377,7 +377,6 @@ public abstract class AnimationController<T extends IAnimatable>
 	private void setAnimTime(MolangParser parser, double tick)
 	{
 		parser.setValue("query.anim_time", tick / 20);
-		GeckoLib.LOGGER.info(tick / 20);
 	}
 
 	protected abstract boolean testAnimationPredicate(AnimationTestPredicate<T> event);

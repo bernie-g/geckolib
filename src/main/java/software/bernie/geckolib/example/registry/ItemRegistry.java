@@ -11,5 +11,7 @@ public class ItemRegistry
 {
 	public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, GeckoLib.ModID);
 
-	public static final RegistryObject<BlockItem> JACK_IN_THE_BOX_ITEM = ITEMS.register("jackintheboxitem", () -> new BlockItem(BlockRegistry.JACK_IN_THE_BOX.get(), new Item.Properties()));
+	public static final RegistryObject<BlockItem> JACK_IN_THE_BOX_ITEM = ITEMS.register("jackintheboxitem", () -> new BlockItem(BlockRegistry.JACK_IN_THE_BOX.get(), new Item.Properties().setISTER(
+			() ->
+	)));
 }

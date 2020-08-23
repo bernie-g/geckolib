@@ -12,6 +12,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.model.Model;
+import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
@@ -36,7 +37,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable> extends Model implements IFileProvider, IResourceManagerReloadListener
+public abstract class AnimatedItemModel<T extends ItemStack & ITileAnimatable> extends Model implements IFileProvider, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -48,7 +49,7 @@ public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable>
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	protected AnimatedBlockModel()
+	protected AnimatedItemModel()
 	{
 		super(RenderType::getEntityCutoutNoCull);
 		ReloadManager.registerModel(this);
@@ -111,7 +112,7 @@ public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable>
 		modelRenderer.rotateAngleZ = z;
 	}
 
-	public void setLivingAnimations(T entity, float partialTick)
+	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		BlockAnimationManager manager = entity.getAnimationManager();

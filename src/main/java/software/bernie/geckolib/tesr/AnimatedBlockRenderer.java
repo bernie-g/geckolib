@@ -2,8 +2,13 @@ package software.bernie.geckolib.tesr;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.Vector4f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -41,18 +46,17 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & ITileAnimatab
 		this.render((T) tile, partialTicks, matrixStackIn, bufferIn, combinedLightIn);
 	}
 
-	public void render(T tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		matrixStackIn.push();
-		matrixStackIn.scale(-1.0F, -1.0F, 1.0F);
-		this.renderCustom(tile, matrixStackIn, partialTicks);
-		matrixStackIn.translate(0.0D, (double) -1.501F, 0.0D);
-		matrixStackIn.translate(-0.5, 0, 0.5);
+		stack.push();
+		stack.scale(-1.0F, -1.0F, 1.0F);
+		this.renderCustom(tile, stack, partialTicks);
+		stack.translate(0.0D, (double) -1.501F, 0.0D);
+		stack.translate(-0.5, 0, 0.5);
+		
+		rotateBlock(getFacing(tile), stack);
 
-		float f8 = 0.0F;
-		float f5 = 0.0F;
-
-		this.entityModel.setLivingAnimations(tile, f5, f8, partialTicks);
+		this.entityModel.setLivingAnimations(tile, partialTicks);
 		boolean isVisible = true;
 		ResourceLocation blockTexture = getBlockTexture(tile);
 		RenderType rendertype = RenderType.getEntityCutoutNoCull(blockTexture);
@@ -61,10 +65,35 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & ITileAnimatab
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(rendertype);
 			int i = 1;
 			int noOverlay = OverlayTexture.NO_OVERLAY;
-			this.entityModel.render(matrixStackIn, ivertexbuilder, 15728640, 655360, 1.0F, 1.0F, 1.0F, 1.0F);
+			this.entityModel.render(stack, ivertexbuilder, packedLightIn, 655360, 1.0F, 1.0F, 1.0F, 1.0F);
 		}
 
-		matrixStackIn.pop();
+		stack.pop();
+	}
+
+	private void rotateBlock(Direction facing, MatrixStack stack)
+	{
+		switch (facing)
+		{
+			case SOUTH:
+				stack.rotate(Vector3f.YP.rotationDegrees(180));
+				break;
+			case WEST:
+				stack.rotate(Vector3f.YP.rotationDegrees(270));
+				break;
+			case NORTH:
+				stack.rotate(Vector3f.YP.rotationDegrees(0));
+				break;
+			case EAST:
+				stack.rotate(Vector3f.YP.rotationDegrees(90));
+				break;
+			case UP:
+				stack.rotate(Vector3f.XP.rotationDegrees(90));
+				break;
+			case DOWN:
+				stack.rotate(Vector3f.XN.rotationDegrees(90));
+				break;
+		}
 	}
 
 	@Nullable
@@ -86,20 +115,20 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & ITileAnimatab
 	}
 
 
-	private static float getFacingAngle(Direction facingIn)
+	private Direction getFacing(T tile)
 	{
-		switch (facingIn)
+		BlockState blockState = tile.getBlockState();
+		if (blockState.has(HorizontalBlock.HORIZONTAL_FACING))
 		{
-			case SOUTH:
-				return 90.0F;
-			case WEST:
-				return 0.0F;
-			case NORTH:
-				return 270.0F;
-			case EAST:
-				return 180.0F;
-			default:
-				return 0.0F;
+			return blockState.get(HorizontalBlock.HORIZONTAL_FACING);
+		}
+		else if (blockState.has(DirectionalBlock.FACING))
+		{
+			return blockState.get(DirectionalBlock.FACING);
+		}
+		else
+		{
+			return Direction.NORTH;
 		}
 	}
 }
