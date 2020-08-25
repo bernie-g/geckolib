@@ -27,9 +27,10 @@ public class BatEntity extends CreatureEntity implements IAnimatable
 		return true;
 	}
 
+
 	@Override
-	public <T extends AnimationManager> T getAnimationManager()
+	public AnimationManager getAnimationManager()
 	{
-		return (T) manager;
+		return manager;
 	}
 }

@@ -1,8 +1,10 @@
 package software.bernie.geckolib.tesr;
 
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
@@ -16,7 +18,9 @@ import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
-import software.bernie.geckolib.itemstack.AnimatedItemRenderer;
+import software.bernie.geckolib.file.IAnimtableModel;
+import software.bernie.geckolib.item.AnimatedItemRenderer;
+import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -28,9 +32,9 @@ import java.util.stream.Collectors;
 
 public class SpecialAnimationController<T extends IAnimatable> extends AnimationController<T>
 {
-	private static List<Function<Object, SpecialAnimatedModel>> modelFetchers = new ArrayList<>();
+	private static List<Function<Object, IAnimtableModel>> modelFetchers = new ArrayList<>();
 
-	public static void addModelFetcher(Function<Object, SpecialAnimatedModel> fetcher)
+	public static void addModelFetcher(Function<Object, IAnimtableModel> fetcher)
 	{
 		modelFetchers.add(fetcher);
 	}
@@ -62,6 +66,16 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
 					return animatedRenderer.getEntityModel();
 				}
+			}
+			return null;
+		});
+
+		addModelFetcher((Object object) ->
+		{
+			if (object instanceof AnimatedArmorItem)
+			{
+				AnimatedArmorItem armorItem = (AnimatedArmorItem) object;
+				return armorItem.getModel();
 			}
 			return null;
 		});
@@ -107,7 +121,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
 	{
-		SpecialAnimatedModel model = getModel(this.animatable);
+		IAnimtableModel model = getModel(this.animatable);
 
 		if (model != null)
 		{
@@ -119,7 +133,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
-				SpecialAnimatedModel finalModel = model;
+				IAnimtableModel finalModel = model;
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
@@ -156,11 +170,11 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 		}
 	}
 
-	private SpecialAnimatedModel getModel(T animatable)
+	private IAnimtableModel getModel(T animatable)
 	{
-		for (Function<Object, SpecialAnimatedModel> modelGetter : modelFetchers)
+		for (Function<Object, IAnimtableModel> modelGetter : modelFetchers)
 		{
-			SpecialAnimatedModel model = modelGetter.apply(animatable);
+			IAnimtableModel model = modelGetter.apply(animatable);
 			if(model != null)
 			{
 				return model;

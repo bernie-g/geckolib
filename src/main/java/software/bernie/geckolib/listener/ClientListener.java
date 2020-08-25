@@ -13,7 +13,7 @@ import software.bernie.geckolib.example.client.renderer.tile.JackInTheBoxTileRen
 import software.bernie.geckolib.example.registry.BlockRegistry;
 import software.bernie.geckolib.example.registry.ItemRegistry;
 import software.bernie.geckolib.example.registry.TileRegistry;
-import software.bernie.geckolib.itemstack.AnimatedItemRenderer;
+import software.bernie.geckolib.item.AnimatedItemRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientListener

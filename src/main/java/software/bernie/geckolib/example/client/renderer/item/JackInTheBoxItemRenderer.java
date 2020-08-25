@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.example.client.renderer.model.tile.JackInTheBoxModel;
 import software.bernie.geckolib.example.item.JackInTheBoxItem;
-import software.bernie.geckolib.itemstack.AnimatedItemRenderer;
+import software.bernie.geckolib.item.AnimatedItemRenderer;
 
 public class JackInTheBoxItemRenderer extends AnimatedItemRenderer<JackInTheBoxItem, JackInTheBoxModel>
 {

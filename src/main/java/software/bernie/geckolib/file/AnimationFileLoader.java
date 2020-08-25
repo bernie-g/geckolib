@@ -1,6 +1,5 @@
 package software.bernie.geckolib.file;
 
-import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -9,25 +8,22 @@ import net.minecraft.client.util.JSONException;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.SimpleResource;
 import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class AnimationFileLoader
 {
-	private IFileProvider provider;
+	private IAnimtableModel provider;
 
-	public AnimationFileLoader(IFileProvider provider)
+	public AnimationFileLoader(IAnimtableModel provider)
 	{
 		this.provider = provider;
 	}
@@ -95,16 +91,11 @@ public class AnimationFileLoader
 	 */
 	public void onResourceManagerReload(IResourceManager resourceManager, MolangParser parser)
 	{
-		try
+		try(InputStream inputStream = getStreamForResourceLocation(provider.getAnimationFileLocation());
+		    Reader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));)
 		{
 			Gson GSON = new Gson();
-			SimpleResource resource = (SimpleResource) resourceManager.getResource(provider.getAnimationFileLocation());
-			InputStreamReader stream = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8);
-			Reader reader = new BufferedReader(
-					stream);
 			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
-			resource.close();
-			stream.close();
 			setAnimationFile(jsonobject);
 			loadAllAnimations(parser);
 		}
@@ -113,6 +104,10 @@ public class AnimationFileLoader
 			GeckoLib.LOGGER.error("Encountered error while loading animations.", e);
 			throw new RuntimeException(e);
 		}
+	}
+
+	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation) {
+		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
 	}
 
 	/**

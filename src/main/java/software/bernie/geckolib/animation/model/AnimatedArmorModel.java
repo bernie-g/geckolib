@@ -10,8 +10,9 @@ import com.eliotlash.molang.MolangParser;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.model.Model;
+import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
@@ -24,6 +25,7 @@ import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.IAnimtableModel;
+import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.reload.ReloadManager;
 
@@ -35,7 +37,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimtableModel, IResourceManagerReloadListener
+public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimtableModel, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -44,12 +46,27 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 
+	private AnimatedModelRenderer helmetRenderer;
+	private AnimatedModelRenderer chestplateRenderer;
+
+	private AnimatedModelRenderer leftArmRenderer;
+	private AnimatedModelRenderer rightArmRenderer;
+
+	private AnimatedModelRenderer leftLegRenderer;
+	private AnimatedModelRenderer rightLegRenderer;
+
+	private AnimatedModelRenderer leftBootRenderer;
+	private AnimatedModelRenderer rightBootRenderer;
+
+	private boolean hasSetup = false;
+
+
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	protected SpecialAnimatedModel()
+	protected AnimatedArmorModel()
 	{
-		super(RenderType::getEntityCutoutNoCull);
+		super(1);
 		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
@@ -136,12 +153,24 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void render(MatrixStack matrixStack, IVertexBuilder buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha)
 	{
+		copyModelAngles(this.bipedHead, this.helmetRenderer);
+		copyModelAngles(this.bipedBody, this.chestplateRenderer);
+		copyModelAngles(this.bipedRightArm, this.rightArmRenderer);
+		copyModelAngles(this.bipedLeftArm, this.leftArmRenderer);
+		copyModelAngles(this.bipedRightLeg, this.rightLegRenderer);
+		copyModelAngles(this.bipedLeftLeg, this.leftLegRenderer);
+		copyModelAngles(this.bipedRightLeg, this.rightBootRenderer);
+		copyModelAngles(this.bipedLeftLeg, this.leftBootRenderer);
+
+		matrixStack.push();
+		if(isSneak) matrixStack.translate(0, 0.2, 0);
 		for (AnimatedModelRenderer model : rootBones)
 		{
-			model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			model.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
+		matrixStack.pop();
 	}
 
 	/**
@@ -165,4 +194,77 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	{
 		return (Util.milliTime() / 50f);
 	}
+
+
+	private final void copyModelAngles(ModelRenderer in, ModelRenderer out){
+		out.rotateAngleX = in.rotateAngleX;
+		out.rotateAngleY = in.rotateAngleY;
+		out.rotateAngleZ = in.rotateAngleZ;
+	}
+
+	public BipedModel applySlot(EquipmentSlotType slot){
+		if(!hasSetup)
+		{
+			setupArmor();
+			hasSetup = true;
+		}
+
+		helmetRenderer.showModel = false;
+		chestplateRenderer.showModel = false;
+		rightArmRenderer.showModel = false;
+		leftArmRenderer.showModel = false;
+		rightLegRenderer.showModel = false;
+		leftLegRenderer.showModel = false;
+		rightBootRenderer.showModel = false;
+		leftBootRenderer.showModel = false;
+
+		switch(slot){
+			case HEAD:
+				helmetRenderer.showModel = true;
+				break;
+			case CHEST:
+				chestplateRenderer.showModel = true;
+				rightArmRenderer.showModel = true;
+				leftArmRenderer.showModel = true;
+				break;
+			case LEGS:
+				rightLegRenderer.showModel = true;
+				leftLegRenderer.showModel = true;
+				break;
+			case FEET:
+				rightBootRenderer.showModel = true;
+				leftBootRenderer.showModel = true;
+				break;
+			default:
+				break;
+		}
+		return this;
+	}
+
+	public void setHelmet(AnimatedModelRenderer helmetRenderer)
+	{
+		this.helmetRenderer = helmetRenderer;
+	}
+
+	public void setChestPlate(AnimatedModelRenderer chestPlate, AnimatedModelRenderer leftArm, AnimatedModelRenderer rightArm)
+	{
+		this.chestplateRenderer = chestPlate;
+		this.leftArmRenderer = leftArm;
+		this.rightArmRenderer = rightArm;
+	}
+
+	public void setLeggings(AnimatedModelRenderer leftLeg, AnimatedModelRenderer rightLeg)
+	{
+		this.leftLegRenderer = leftLeg;
+		this.rightLegRenderer = rightLeg;
+	}
+
+	public void setBoots(AnimatedModelRenderer leftBoot, AnimatedModelRenderer rightBoot)
+	{
+		this.leftBootRenderer = leftBoot;
+		this.rightBootRenderer = rightBoot;
+	}
+
+	public abstract void setupArmor();
+
 }

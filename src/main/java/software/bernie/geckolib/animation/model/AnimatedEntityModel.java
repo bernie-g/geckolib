@@ -19,7 +19,7 @@ import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.file.IFileProvider;
+import software.bernie.geckolib.file.IAnimtableModel;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
@@ -32,7 +32,7 @@ import java.util.*;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IFileProvider, IResourceManagerReloadListener
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimtableModel, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
