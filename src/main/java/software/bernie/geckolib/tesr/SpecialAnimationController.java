@@ -1,6 +1,9 @@
 package software.bernie.geckolib.tesr;
 
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
 import software.bernie.geckolib.GeckoLib;
@@ -8,19 +11,63 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.model.AnimatedBlockModel;
+import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
 import software.bernie.geckolib.easing.EasingType;
-import software.bernie.geckolib.event.AnimationTestPredicate;
-import software.bernie.geckolib.event.TileAnimationPredicate;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.itemstack.AnimatedItemRenderer;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class BlockAnimationController<T extends TileEntity & ITileAnimatable> extends AnimationController<T>
+public class SpecialAnimationController<T extends IAnimatable> extends AnimationController<T>
 {
+	private static List<Function<Object, SpecialAnimatedModel>> modelFetchers = new ArrayList<>();
+
+	public static void addModelFetcher(Function<Object, SpecialAnimatedModel> fetcher)
+	{
+		modelFetchers.add(fetcher);
+	}
+
+	static
+	{
+		addModelFetcher((Object object) ->
+		{
+			if (object instanceof Item)
+			{
+				Item item = (Item) object;
+				ItemStackTileEntityRenderer renderer = item.getItemStackTileEntityRenderer();
+				if (renderer instanceof AnimatedItemRenderer)
+				{
+					return ((AnimatedItemRenderer<?, ?>) renderer).getEntityModel();
+				}
+			}
+			return null;
+		});
+
+		addModelFetcher((Object object) ->
+		{
+			if (object instanceof TileEntity)
+			{
+				TileEntity tile = (TileEntity) object;
+				TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tile);
+				if (renderer instanceof AnimatedBlockRenderer)
+				{
+					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
+					return animatedRenderer.getEntityModel();
+				}
+			}
+			return null;
+		});
+	}
+
+
 	/**
 	 * The animation predicate, is tested in every process call (i.e. every frame)
 	 */
@@ -30,26 +77,26 @@ public class BlockAnimationController<T extends TileEntity & ITileAnimatable> ex
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
 	@FunctionalInterface
-	public interface ITileAnimationPredicate<E extends TileEntity & ITileAnimatable>
+	public interface ITileAnimationPredicate<E extends IAnimatable>
 	{
-		<E extends TileEntity & ITileAnimatable> boolean test(TileAnimationPredicate<E> event);
+		<E extends IAnimatable> boolean test(SpecialAnimationPredicate<E> event);
 	}
 
 
-	public BlockAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate)
+	public SpecialAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate)
 	{
 		super(entity, name, transitionLengthTicks);
 		this.animationPredicate = animationPredicate;
 		this.soundPlayer = this::playSound;
 	}
 
-	public BlockAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate, EasingType easingtype)
+	public SpecialAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate, EasingType easingtype)
 	{
 		super(entity, name, transitionLengthTicks, easingtype);
 		this.animationPredicate = animationPredicate;
 	}
 
-	public BlockAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate, Function<Double, Double> customEasingMethod)
+	public SpecialAnimationController(T entity, String name, float transitionLengthTicks, ITileAnimationPredicate<T> animationPredicate, Function<Double, Double> customEasingMethod)
 	{
 		super(entity, name, transitionLengthTicks, customEasingMethod);
 		this.animationPredicate = animationPredicate;
@@ -60,8 +107,7 @@ public class BlockAnimationController<T extends TileEntity & ITileAnimatable> ex
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
 	{
-		AnimatedBlockRenderer<?, ?> renderer = (AnimatedBlockRenderer<?, ?>) TileEntityRendererDispatcher.instance.getRenderer(entity);
-		AnimatedBlockModel model = renderer.getEntityModel();
+		SpecialAnimatedModel model = getModel(this.animatable);
 
 		if (model != null)
 		{
@@ -73,10 +119,11 @@ public class BlockAnimationController<T extends TileEntity & ITileAnimatable> ex
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
+				SpecialAnimatedModel finalModel = model;
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
-							Animation animation = model.getAnimation(rawAnimation.animationName);
+							Animation animation = finalModel.getAnimation(rawAnimation.animationName);
 							if (animation == null)
 							{
 								GeckoLib.LOGGER.error(
@@ -109,10 +156,24 @@ public class BlockAnimationController<T extends TileEntity & ITileAnimatable> ex
 		}
 	}
 
+	private SpecialAnimatedModel getModel(T animatable)
+	{
+		for (Function<Object, SpecialAnimatedModel> modelGetter : modelFetchers)
+		{
+			SpecialAnimatedModel model = modelGetter.apply(animatable);
+			if(model != null)
+			{
+				return model;
+			}
+		}
+		GeckoLib.LOGGER.error("Could not find suitable model for entity of type {}. Did you register a Model Fetcher?", animatable.getClass());
+		return null;
+	}
+
 	@Override
 	protected boolean testAnimationPredicate(AnimationTestPredicate<T> event)
 	{
-		return this.animationPredicate.test((TileAnimationPredicate<T>) event);
+		return this.animationPredicate.test((SpecialAnimationPredicate<T>) event);
 	}
 
 	public void playSound(SoundEvent event)

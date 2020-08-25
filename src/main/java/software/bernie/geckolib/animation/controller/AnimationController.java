@@ -7,14 +7,12 @@ package software.bernie.geckolib.animation.controller;
 
 // Only two minecraft calls, do not introduce more.
 import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 
 
 import org.antlr.v4.runtime.misc.NotNull;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -25,6 +23,8 @@ import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.*;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.reload.ReloadManager;
 
 import javax.annotation.Nullable;
@@ -42,7 +42,7 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * The Entity.
 	 */
-	protected T entity;
+	protected T animatable;
 
 	/**
 	 * The name of the animation controller
@@ -158,13 +158,13 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity                The entity
+	 * @param animatable                The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 */
-	protected AnimationController(T entity, String name, float transitionLengthTicks)
+	protected AnimationController(T animatable, String name, float transitionLengthTicks)
 	{
-		this.entity = entity;
+		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
 		ReloadManager.registerAnimationController(this);
@@ -174,14 +174,14 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity                The entity
+	 * @param animatable                The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 * @param easingtype            The method of easing to use. The other constructor defaults to no easing.
 	 */
-	public AnimationController(T entity, String name, float transitionLengthTicks, EasingType easingtype)
+	public AnimationController(T animatable, String name, float transitionLengthTicks, EasingType easingtype)
 	{
-		this.entity = entity;
+		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.easingType = easingtype;
@@ -191,14 +191,14 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param entity                The entity
+	 * @param animatable                The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 * @param customEasingMethod    If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
 	 */
-	public AnimationController(T entity, String name, float transitionLengthTicks, Function<Double, Double> customEasingMethod)
+	public AnimationController(T animatable, String name, float transitionLengthTicks, Function<Double, Double> customEasingMethod)
 	{
-		this.entity = entity;
+		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.customEasingMethod = customEasingMethod;
@@ -467,7 +467,7 @@ public abstract class AnimationController<T extends IAnimatable>
 			{
 				if (!soundKeyFrame.hasExecuted && tick >= soundKeyFrame.getStartTick())
 				{
-					SoundKeyframeEvent event = new SoundKeyframeEvent(this.entity, tick, soundKeyFrame.getEventData(),
+					SoundKeyframeEvent event = new SoundKeyframeEvent(this.animatable, tick, soundKeyFrame.getEventData(),
 							this);
 					SoundEvent soundEvent = soundListener.playSound(event);
 					if (soundEvent != null)
@@ -482,7 +482,7 @@ public abstract class AnimationController<T extends IAnimatable>
 			{
 				if (!particleEventKeyFrame.hasExecuted && tick >= particleEventKeyFrame.getStartTick())
 				{
-					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.entity, tick,
+					ParticleKeyFrameEvent event = new ParticleKeyFrameEvent(this.animatable, tick,
 							particleEventKeyFrame.effect, particleEventKeyFrame.locator, particleEventKeyFrame.script,
 							this);
 					particleListener.summonParticle(event);
@@ -494,7 +494,7 @@ public abstract class AnimationController<T extends IAnimatable>
 			{
 				if (!customInstructionKeyFrame.hasExecuted && tick >= customInstructionKeyFrame.getStartTick())
 				{
-					CustomInstructionKeyframeEvent event = new CustomInstructionKeyframeEvent(this.entity, tick,
+					CustomInstructionKeyframeEvent event = new CustomInstructionKeyframeEvent(this.animatable, tick,
 							customInstructionKeyFrame.getEventData(), this);
 					customInstructionListener.executeInstruction(event);
 					customInstructionKeyFrame.hasExecuted = true;

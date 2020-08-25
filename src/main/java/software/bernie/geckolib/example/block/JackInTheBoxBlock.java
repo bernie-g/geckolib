@@ -1,11 +1,13 @@
 package software.bernie.geckolib.example.block;
 
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
 import net.minecraft.world.IBlockReader;
 import software.bernie.geckolib.example.registry.TileRegistry;
 
@@ -37,7 +39,8 @@ public class JackInTheBoxBlock extends DirectionalBlock
 		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+	{
 		builder.add(FACING);
 	}
 

@@ -9,7 +9,7 @@ import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.animation.snapshot.DirtyTracker;
 import software.bernie.geckolib.animation.snapshot.EntityDirtyTracker;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.AnimationTestPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.util.AnimationUtils;
 

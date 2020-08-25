@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;

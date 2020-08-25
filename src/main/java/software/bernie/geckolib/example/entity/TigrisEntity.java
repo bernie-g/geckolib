@@ -11,14 +11,13 @@ import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.SoundEvents;
 import net.minecraft.world.World;
-import software.bernie.geckolib.event.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class TigrisEntity extends GhastEntity implements IAnimatable

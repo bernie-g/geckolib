@@ -8,8 +8,6 @@ import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
@@ -17,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 
 

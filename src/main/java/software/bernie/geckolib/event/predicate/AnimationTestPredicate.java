@@ -1,4 +1,4 @@
-package software.bernie.geckolib.event;
+package software.bernie.geckolib.event.predicate;
 
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.entity.IAnimatable;

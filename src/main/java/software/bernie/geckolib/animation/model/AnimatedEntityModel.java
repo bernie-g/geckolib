@@ -7,21 +7,17 @@ package software.bernie.geckolib.animation.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
-import net.minecraft.client.util.JSONException;
 import net.minecraft.entity.Entity;
 import net.minecraft.resources.*;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.IFileProvider;
 import software.bernie.geckolib.manager.AnimationManager;

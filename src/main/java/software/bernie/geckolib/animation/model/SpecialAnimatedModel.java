@@ -15,18 +15,17 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Util;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.event.TileAnimationPredicate;
+import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.IFileProvider;
+import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.reload.ReloadManager;
-import software.bernie.geckolib.tesr.BlockAnimationManager;
-import software.bernie.geckolib.tesr.ITileAnimatable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable> extends Model implements IFileProvider, IResourceManagerReloadListener
+public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IFileProvider, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -48,7 +47,7 @@ public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable>
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
-	protected AnimatedBlockModel()
+	protected SpecialAnimatedModel()
 	{
 		super(RenderType::getEntityCutoutNoCull);
 		ReloadManager.registerModel(this);
@@ -111,10 +110,10 @@ public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable>
 		modelRenderer.rotateAngleZ = z;
 	}
 
-	public void setLivingAnimations(T entity, float partialTick)
+	public void setLivingAnimations(T entity)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		BlockAnimationManager manager = entity.getAnimationManager();
+		AnimationManager manager = entity.getAnimationManager();
 		if(manager.startTick == null)
 		{
 			manager.startTick = getCurrentTick();
@@ -126,7 +125,7 @@ public abstract class AnimatedBlockModel<T extends TileEntity & ITileAnimatable>
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		TileAnimationPredicate<T> predicate = new TileAnimationPredicate<T>(entity, seekTime);
+		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
 		processor.tickAnimation(entity, seekTime, predicate, parser);
 	}
 

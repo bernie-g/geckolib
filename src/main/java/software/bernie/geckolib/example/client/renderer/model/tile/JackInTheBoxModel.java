@@ -5,13 +5,12 @@
 package software.bernie.geckolib.example.client.renderer.model.tile;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.AnimatedBlockModel;
+import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.example.block.tile.TileEntityJackInTheBox;
 
-public class JackInTheBoxModel extends AnimatedBlockModel<TileEntityJackInTheBox>
+public class JackInTheBoxModel extends SpecialAnimatedModel<TileEntityJackInTheBox>
 {
-
 	private final AnimatedModelRenderer Chest_body;
 	private final AnimatedModelRenderer Top;
 	private final AnimatedModelRenderer Lock;

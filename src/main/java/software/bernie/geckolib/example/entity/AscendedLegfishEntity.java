@@ -23,7 +23,7 @@ import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable

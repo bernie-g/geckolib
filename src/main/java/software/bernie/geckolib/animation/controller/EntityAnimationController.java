@@ -9,8 +9,8 @@ import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.AnimationTestPredicate;
-import software.bernie.geckolib.event.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
@@ -60,7 +60,7 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
 	{
-		AnimatedEntityModel model = AnimationUtils.getModelForEntity(entity);
+		AnimatedEntityModel model = AnimationUtils.getModelForEntity(animatable);
 		if (model != null)
 		{
 			if (builder == null || builder.getRawAnimationList().size() == 0)
@@ -114,7 +114,7 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 
 	public void playSound(SoundEvent event)
 	{
-		entity.world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), event, soundCategory, volume, pitch, distanceSoundDelay);
+		animatable.world.playSound(animatable.getPosX(), animatable.getPosY(), animatable.getPosZ(), event, soundCategory, volume, pitch, distanceSoundDelay);
 	}
 
 }
