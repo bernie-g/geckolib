@@ -64,7 +64,7 @@ public class AnimationFileLoader
 			}
 			catch (JSONException e)
 			{
-				GeckoLib.LOGGER.error("Could not load animation: " + animationName, e);
+				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
 			}
 			animationList.put(animationName, animation);

@@ -78,7 +78,7 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 							if (animation == null)
 							{
 								GeckoLib.LOGGER.error(
-										"Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
+										"Could not load animation: {}. Is it missing?", rawAnimation.animationName);
 								encounteredError.set(true);
 							}
 							if (animation != null && rawAnimation.loop != null)
