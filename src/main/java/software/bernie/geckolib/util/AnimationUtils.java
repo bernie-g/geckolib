@@ -103,12 +103,12 @@ public class AnimationUtils
 				return (AnimatedEntityModel) entityModel;
 			}
 			else {
-				GeckoLib.LOGGER.error("Model for {} is not an AnimatedEntityModel. Please inherit the proper class.", entity.getName());
+				GeckoLib.LOGGER.error("Model for " + entity.getName() + " is not an AnimatedEntityModel. Please inherit the proper class.");
 				return null;
 			}
 		}
 		else {
-			GeckoLib.LOGGER.error("Could not find valid renderer for {}", entity.getName());
+			GeckoLib.LOGGER.error("Could not find valid renderer for " + entity.getName());
 			return null;
 		}
 	}
