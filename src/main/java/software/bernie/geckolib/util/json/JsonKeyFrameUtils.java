@@ -136,7 +136,7 @@ public class JsonKeyFrameUtils
 		}
 		catch(Exception e)
 		{
-			GeckoLib.LOGGER.fatal("Unknown easing type: " + easingString);
+			GeckoLib.LOGGER.fatal("Unknown easing type: {}", easingString);
 			throw new RuntimeException(e);
 		}
 	}
