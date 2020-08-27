@@ -99,10 +99,11 @@ public class AnimationFileLoader
 			setAnimationFile(jsonobject);
 			loadAllAnimations(parser);
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
-			GeckoLib.LOGGER.error("Encountered error while loading animations.", e);
-			throw new RuntimeException(e);
+			String message = "Couldn't load " + provider.getAnimationFileLocation();
+			GeckoLib.LOGGER.error(message, e);
+			throw new RuntimeException(new FileNotFoundException(provider.getAnimationFileLocation().toString()));
 		}
 	}
 

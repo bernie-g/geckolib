@@ -2,7 +2,6 @@ package software.bernie.geckolib.tesr;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
-import javafx.scene.paint.Color;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.HorizontalBlock;
@@ -16,6 +15,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
 import software.bernie.geckolib.entity.IAnimatable;
+
+import java.awt.*;
 
 public abstract class AnimatedBlockRenderer<T extends TileEntity & IAnimatable, M extends SpecialAnimatedModel> extends TileEntityRenderer
 {
@@ -61,7 +62,7 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & IAnimatable, 
 		{
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(rendertype);
 			Color renderColor = getRenderColor(tile,partialTicks, stack, bufferIn, packedLightIn);
-			this.entityModel.render(stack, ivertexbuilder, packedLightIn, 655360, (float) renderColor.getRed(), (float) renderColor.getGreen(), (float) renderColor.getBlue(), (float) renderColor.getOpacity());
+			this.entityModel.render(stack, ivertexbuilder, packedLightIn, 655360, (float) renderColor.getRed() / 255, (float) renderColor.getGreen() / 255, (float) renderColor.getBlue() / 255, (float) renderColor.getAlpha() / 255);
 		}
 		stack.pop();
 	}

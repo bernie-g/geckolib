@@ -1,13 +1,14 @@
 package software.bernie.geckolib.example.client.renderer.tile;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import javafx.scene.paint.Color;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.example.block.tile.TileEntityJackInTheBox;
 import software.bernie.geckolib.example.client.renderer.model.tile.JackInTheBoxModel;
 import software.bernie.geckolib.tesr.AnimatedBlockRenderer;
+
+import java.awt.*;
 
 public class JackInTheBoxTileRenderer extends AnimatedBlockRenderer<TileEntityJackInTheBox, JackInTheBoxModel>
 {
@@ -27,15 +28,15 @@ public class JackInTheBoxTileRenderer extends AnimatedBlockRenderer<TileEntityJa
 	@Override
 	protected Color getRenderColor(TileEntityJackInTheBox tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		if(hue >= 255)
+		if(hue >= 1)
 		{
 			hue = 0;
 		}
 		else {
-			hue += 0.5;
+			hue += 0.001f;
 		}
 
-		Color hsb = Color.hsb(hue, 1, 1);
+		Color hsb = Color.getHSBColor(hue, 1, 1);
 		return hsb;
 	}
 }
