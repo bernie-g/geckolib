@@ -25,7 +25,5 @@ public class ClientListener
 		AnimatedItemRenderer renderer = (AnimatedItemRenderer) ItemRegistry.JACK_IN_THE_BOX_ITEM.get().getItemStackTileEntityRenderer();
 		renderer.setModel(new JackInTheBoxModel());
 		RenderTypeLookup.setRenderLayer(BlockRegistry.JACK_IN_THE_BOX.get(), RenderType.getCutout());
-
-
 	}
 }

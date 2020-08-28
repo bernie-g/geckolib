@@ -116,6 +116,6 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & IAnimatable, 
 
 	protected Color getRenderColor(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		return new Color(1, 1, 1, 1);
+		return new Color(255, 255, 255, 255);
 	}
 }

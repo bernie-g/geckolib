@@ -68,6 +68,6 @@ public abstract class AnimatedItemRenderer<T extends Item & IAnimatable, M exten
 
 	protected Color getRenderColor(T tile, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		return new Color(1, 1, 1, 1);
+		return new Color(255, 255, 255, 255);
 	}
 }
