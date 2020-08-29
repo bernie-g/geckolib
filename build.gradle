@@ -114,8 +114,8 @@ dependencies {
     // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    implementation fg.deobf('com.eliotlash.molang:molang:SNAPSHOT.8')
-    implementation fg.deobf('com.eliotlash.mclib:mclib:SNAPSHOT.8')
+    compile fg.deobf('com.eliotlash.molang:molang:SNAPSHOT.8')
+    compile fg.deobf('com.eliotlash.mclib:mclib:SNAPSHOT.8')
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
