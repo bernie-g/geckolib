@@ -1,4 +1,4 @@
-package software.bernie.geckolib.tesr;
+package software.bernie.geckolib.block;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;

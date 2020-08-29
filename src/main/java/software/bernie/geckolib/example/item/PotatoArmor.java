@@ -5,21 +5,18 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.model.AnimatedArmorModel;
-import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.example.client.renderer.model.armor.PotatoArmorModel;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.tesr.SpecialAnimationController;
+import software.bernie.geckolib.block.SpecialAnimationController;
 
 import javax.annotation.Nullable;
 

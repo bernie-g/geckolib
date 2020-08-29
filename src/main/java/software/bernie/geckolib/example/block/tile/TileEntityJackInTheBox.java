@@ -6,7 +6,7 @@ import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.example.registry.TileRegistry;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.tesr.SpecialAnimationController;
+import software.bernie.geckolib.block.SpecialAnimationController;
 
 
 public class TileEntityJackInTheBox extends TileEntity implements IAnimatable

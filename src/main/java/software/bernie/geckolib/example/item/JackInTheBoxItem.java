@@ -10,7 +10,7 @@ import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 import software.bernie.geckolib.example.client.renderer.item.JackInTheBoxItemRenderer;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.tesr.SpecialAnimationController;
+import software.bernie.geckolib.block.SpecialAnimationController;
 
 public class JackInTheBoxItem extends BlockItem implements IAnimatable
 {

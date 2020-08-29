@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.example.block.tile.TileEntityJackInTheBox;
 import software.bernie.geckolib.example.client.renderer.model.tile.JackInTheBoxModel;
-import software.bernie.geckolib.tesr.AnimatedBlockRenderer;
+import software.bernie.geckolib.block.AnimatedBlockRenderer;
 
 import java.awt.*;
 
