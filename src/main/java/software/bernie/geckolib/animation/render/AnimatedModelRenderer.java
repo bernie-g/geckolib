@@ -71,7 +71,8 @@ public class AnimatedModelRenderer extends ModelRenderer implements IBone
 	@Override
 	public void translateRotate(MatrixStack matrixStackIn)
 	{
-		matrixStackIn.translate(((rotationPointX + positionOffsetX) / 16F), ((rotationPointY  - positionOffsetY) / 16F), ((rotationPointZ + positionOffsetZ) / 16F));
+		matrixStackIn.translate(((rotationPointX) / 16F), (rotationPointY / 16F), ((rotationPointZ) / 16F));
+
 		if (this.rotateAngleZ != 0.0F) {
 			matrixStackIn.rotate(Vector3f.ZP.rotation(this.rotateAngleZ));
 		}
@@ -83,6 +84,7 @@ public class AnimatedModelRenderer extends ModelRenderer implements IBone
 		if (this.rotateAngleX != 0.0F) {
 			matrixStackIn.rotate(Vector3f.XP.rotation(this.rotateAngleX));
 		}
+
 	}
 
 	@Override
@@ -95,12 +97,6 @@ public class AnimatedModelRenderer extends ModelRenderer implements IBone
 	public BoneSnapshot getInitialSnapshot()
 	{
 		return this.initialSnapshot;
-	}
-
-	@Override
-	public BoneSnapshot saveSnapshot()
-	{
-		return new BoneSnapshot(this);
 	}
 
 	@Override

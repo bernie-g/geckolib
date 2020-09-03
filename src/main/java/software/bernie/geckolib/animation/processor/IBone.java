@@ -32,6 +32,9 @@ public interface IBone
 
 	void saveInitialSnapshot();
 	BoneSnapshot getInitialSnapshot();
-	BoneSnapshot saveSnapshot();
+	default BoneSnapshot saveSnapshot()
+	{
+		return new BoneSnapshot(this);
+	}
 	String getName();
 }

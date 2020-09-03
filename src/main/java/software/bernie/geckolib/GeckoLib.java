@@ -5,7 +5,6 @@
 
 package software.bernie.geckolib;
 
-import com.eliotlash.molang.expressions.MolangAssignment;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;

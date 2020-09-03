@@ -8,16 +8,15 @@ package software.bernie.geckolib.util.json;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangException;
 import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.molang.ConstantValue;
-import software.bernie.geckolib.util.AnimationUtils;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.easing.EasingType;
+import software.bernie.geckolib.molang.ConstantValue;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import java.util.ArrayList;
 import java.util.List;

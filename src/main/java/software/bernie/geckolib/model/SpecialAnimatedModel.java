@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.Util;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
@@ -23,7 +23,6 @@ import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.file.IAnimtableModel;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.reload.ReloadManager;
 
@@ -35,7 +34,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimtableModel, IResourceManagerReloadListener
+public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -70,7 +69,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.onResourceManagerReload(resourceManager, parser);
+		this.loader.loadFile(resourceManager, parser);
 	}
 
 	/**
@@ -144,25 +143,21 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		}
 	}
 
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public boolean isLoopByDefault()
+	@Override
+	public ResourceLocation getAnimationFileLocation()
 	{
-		return loader.isLoopByDefault();
+		return this.getAnimationFileLocation();
 	}
 
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public void setLoopByDefault(boolean loopByDefault)
+	@Override
+	public AnimationFileLoader getAnimationLoader()
 	{
-		this.loader.setLoopByDefault(loopByDefault);
+		return this.getAnimationLoader();
 	}
 
-
-	public float getCurrentTick()
+	@Override
+	public AnimationProcessor getAnimationProcessor()
 	{
-		return (Util.milliTime() / 50f);
+		return this.processor;
 	}
 }

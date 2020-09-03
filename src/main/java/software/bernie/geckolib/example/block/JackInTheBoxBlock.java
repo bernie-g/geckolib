@@ -30,7 +30,7 @@ public class JackInTheBoxBlock extends DirectionalBlock
 	@Override
 	public TileEntity createTileEntity(BlockState state, IBlockReader world)
 	{
-		return TileRegistry.JACK_IN_THE_BOX_TILE.get().create();
+		return TileRegistry.BOTARIUM_TILE.get().create();
 	}
 
 	@Override

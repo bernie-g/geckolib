@@ -5,15 +5,17 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.HorizontalBlock;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
+import software.bernie.geckolib.model.SpecialAnimatedModel;
 import software.bernie.geckolib.entity.IAnimatable;
 
 import java.awt.*;
@@ -54,18 +56,20 @@ public abstract class AnimatedBlockRenderer<T extends TileEntity & IAnimatable, 
 
 		rotateBlock(getFacing(tile), stack);
 		this.renderCustom(tile, stack, partialTicks);
-
 		this.entityModel.setLivingAnimations(tile);
 		ResourceLocation blockTexture = getBlockTexture(tile);
+		Minecraft.getInstance().textureManager.bindTexture(getBlockTexture(tile));
 		RenderType rendertype = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, blockTexture);
 		if (rendertype != null)
 		{
 			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(rendertype);
 			Color renderColor = getRenderColor(tile,partialTicks, stack, bufferIn, packedLightIn);
-			this.entityModel.render(stack, ivertexbuilder, packedLightIn, 655360, (float) renderColor.getRed() / 255, (float) renderColor.getGreen() / 255, (float) renderColor.getBlue() / 255, (float) renderColor.getAlpha() / 255);
+			this.entityModel.render(stack, ivertexbuilder, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255, (float) renderColor.getGreen() / 255, (float) renderColor.getBlue() / 255, (float) renderColor.getAlpha() / 255);
 		}
 		stack.pop();
 	}
+
+
 
 	private void rotateBlock(Direction facing, MatrixStack stack)
 	{

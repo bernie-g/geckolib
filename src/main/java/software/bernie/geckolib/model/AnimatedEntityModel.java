@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
@@ -14,12 +14,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.resources.*;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.file.IAnimtableModel;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
@@ -32,7 +32,7 @@ import java.util.*;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimtableModel, IResourceManagerReloadListener
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModel, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -69,7 +69,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.onResourceManagerReload(resourceManager, parser);
+		this.loader.loadFile(resourceManager, parser);
 	}
 
 	/**
@@ -160,4 +160,22 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		this.loader.setLoopByDefault(loopByDefault);
 	}
 
+
+	@Override
+	public ResourceLocation getAnimationFileLocation()
+	{
+		return this.getAnimationFileLocation();
+	}
+
+	@Override
+	public AnimationFileLoader getAnimationLoader()
+	{
+		return this.getAnimationLoader();
+	}
+
+	@Override
+	public AnimationProcessor getAnimationProcessor()
+	{
+		return this.processor;
+	}
 }

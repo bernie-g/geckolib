@@ -15,7 +15,7 @@ import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
-import software.bernie.geckolib.file.IAnimtableModel;
+import software.bernie.geckolib.model.IAnimatableModel;
 import software.bernie.geckolib.item.AnimatedItemRenderer;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 
@@ -29,9 +29,9 @@ import java.util.stream.Collectors;
 
 public class SpecialAnimationController<T extends IAnimatable> extends AnimationController<T>
 {
-	private static List<Function<Object, IAnimtableModel>> modelFetchers = new ArrayList<>();
+	private static List<Function<Object, IAnimatableModel>> modelFetchers = new ArrayList<>();
 
-	public static void addModelFetcher(Function<Object, IAnimtableModel> fetcher)
+	public static void addModelFetcher(Function<Object, IAnimatableModel> fetcher)
 	{
 		modelFetchers.add(fetcher);
 	}
@@ -118,7 +118,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
 	{
-		IAnimtableModel model = getModel(this.animatable);
+		IAnimatableModel model = getModel(this.animatable);
 
 		if (model != null)
 		{
@@ -130,7 +130,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
-				IAnimtableModel finalModel = model;
+				IAnimatableModel finalModel = model;
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
@@ -167,11 +167,11 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 		}
 	}
 
-	private IAnimtableModel getModel(T animatable)
+	private IAnimatableModel getModel(T animatable)
 	{
-		for (Function<Object, IAnimtableModel> modelGetter : modelFetchers)
+		for (Function<Object, IAnimatableModel> modelGetter : modelFetchers)
 		{
-			IAnimtableModel model = modelGetter.apply(animatable);
+			IAnimatableModel model = modelGetter.apply(animatable);
 			if(model != null)
 			{
 				return model;

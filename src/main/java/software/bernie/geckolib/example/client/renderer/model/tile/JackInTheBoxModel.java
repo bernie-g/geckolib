@@ -5,7 +5,7 @@
 package software.bernie.geckolib.example.client.renderer.model.tile;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
+import software.bernie.geckolib.model.SpecialAnimatedModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.example.block.tile.TileEntityJackInTheBox;
 

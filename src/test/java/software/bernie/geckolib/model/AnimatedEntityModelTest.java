@@ -1,8 +1,6 @@
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.model;
 
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class AnimatedEntityModelTest
 {

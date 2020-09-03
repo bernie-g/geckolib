@@ -23,7 +23,7 @@ public class TileEntityJackInTheBox extends TileEntity implements IAnimatable
 
 	public TileEntityJackInTheBox()
 	{
-		super(TileRegistry.JACK_IN_THE_BOX_TILE.get());
+		super(TileRegistry.BOTARIUM_TILE.get());
 		manager.addAnimationController(controller);
 	}
 

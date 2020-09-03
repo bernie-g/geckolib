@@ -23,7 +23,6 @@ public class AnimationProcessor<T extends IAnimatable>
 	public void tickAnimation(IAnimatable entity, double seekTime, AnimationTestPredicate predicate, MolangParser parser)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-
 		AnimationManager manager = entity.getAnimationManager();
 		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
 		EntityDirtyTracker modelTracker = createNewDirtyTracker();
@@ -93,7 +92,10 @@ public class AnimationProcessor<T extends IAnimatable>
 					snapshot.positionOffsetY = bone.getPositionY();
 					snapshot.positionOffsetZ = bone.getPositionZ();
 					snapshot.isCurrentlyRunningPositionAnimation = true;
-
+					if(bone.getName().equals("topmachine"))
+					{
+						//GeckoLib.LOGGER.info(bone.getPositionY());
+					}
 					modelTracker.get(bone).hasPositionChanged = true;
 				}
 

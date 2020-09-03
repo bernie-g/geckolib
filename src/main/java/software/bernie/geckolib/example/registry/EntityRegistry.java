@@ -26,6 +26,8 @@ public class EntityRegistry
 	public static final RegistryObject<EntityType<RobotEntity>> ROBOT = BuildEntity(RobotEntity::new, RobotEntity.class, .7F, 1.3F);
 	public static final RegistryObject<EntityType<EntityColorfulPig>> COLORFUL_PIG = BuildEntity(EntityColorfulPig::new, EntityColorfulPig.class, .7F, 1.3F);
 	public static final RegistryObject<EntityType<BatEntity>> BAT = BuildEntity(BatEntity::new, BatEntity.class, .7F, 1.3F);
+	public static final RegistryObject<EntityType<EntityBotarium>> BOTARIUM_TEST_ENTITY = BuildEntity(EntityBotarium::new, EntityBotarium.class, .7F, 1.3F);
+	public static final RegistryObject<EntityType<GeoExampleEntity>> GEO_EXAMPLE_ENTITY = BuildEntity(GeoExampleEntity::new, GeoExampleEntity.class, .7F, 1.3F);
 
 
 	public static <T extends Entity> RegistryObject<EntityType<T>> BuildEntity(EntityType.IFactory<T> entity, Class<T> entityClass, float width, float height)

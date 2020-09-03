@@ -10,7 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.model.AnimatedArmorModel;
+import software.bernie.geckolib.model.AnimatedArmorModel;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.example.client.renderer.model.armor.PotatoArmorModel;

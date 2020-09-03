@@ -31,6 +31,7 @@ public class ModEventBus
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.ROBOT.get(), manager -> new RobotRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.COLORFUL_PIG.get(), manager -> new ColorfulPigRenderer(manager));
 		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BAT.get(), manager -> new BatRenderer(manager));
-
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BOTARIUM_TEST_ENTITY.get(), manager -> new EntityBotariumRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), manager -> new ExampleGeoRenderer(manager));
 	}
 }

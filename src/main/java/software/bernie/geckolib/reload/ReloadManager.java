@@ -1,7 +1,6 @@
 package software.bernie.geckolib.reload;
 
 import net.minecraft.resources.IResourceManagerReloadListener;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.controller.AnimationController;
 
 import java.util.ArrayList;

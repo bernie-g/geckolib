@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.example.client.renderer.model.tile.JackInTheBoxModel;
+import software.bernie.geckolib.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.geckolib.example.client.renderer.tile.JackInTheBoxTileRenderer;
 import software.bernie.geckolib.example.registry.BlockRegistry;
 import software.bernie.geckolib.example.registry.ItemRegistry;
@@ -22,8 +23,9 @@ public class ClientListener
 	public static void onClientSetup(FMLClientSetupEvent event)
 	{
 		ClientRegistry.bindTileEntityRenderer(TileRegistry.JACK_IN_THE_BOX_TILE.get(), JackInTheBoxTileRenderer::new);
+		ClientRegistry.bindTileEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
 		AnimatedItemRenderer renderer = (AnimatedItemRenderer) ItemRegistry.JACK_IN_THE_BOX_ITEM.get().getItemStackTileEntityRenderer();
 		renderer.setModel(new JackInTheBoxModel());
-		RenderTypeLookup.setRenderLayer(BlockRegistry.JACK_IN_THE_BOX.get(), RenderType.getCutout());
+		RenderTypeLookup.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.getCutout());
 	}
 }

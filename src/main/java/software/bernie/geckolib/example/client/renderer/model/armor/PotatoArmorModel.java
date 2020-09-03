@@ -5,7 +5,7 @@
 package software.bernie.geckolib.example.client.renderer.model.armor;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.AnimatedArmorModel;
+import software.bernie.geckolib.model.AnimatedArmorModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.example.item.PotatoArmor;
 

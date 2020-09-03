@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.model.SpecialAnimatedModel;
+import software.bernie.geckolib.model.SpecialAnimatedModel;
 import software.bernie.geckolib.entity.IAnimatable;
 
 import java.awt.*;

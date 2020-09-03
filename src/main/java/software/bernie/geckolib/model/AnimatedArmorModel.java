@@ -3,7 +3,7 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib.animation.model;
+package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
@@ -16,6 +16,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
@@ -24,7 +25,6 @@ import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.file.IAnimtableModel;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.reload.ReloadManager;
@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimtableModel, IResourceManagerReloadListener
+public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimatableModel, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -87,7 +87,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.onResourceManagerReload(resourceManager, parser);
+		this.loader.loadFile(resourceManager, parser);
 	}
 
 	/**
@@ -267,4 +267,21 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 
 	public abstract void setupArmor();
 
+	@Override
+	public ResourceLocation getAnimationFileLocation()
+	{
+		return this.getAnimationFileLocation();
+	}
+
+	@Override
+	public AnimationFileLoader getAnimationLoader()
+	{
+		return this.getAnimationLoader();
+	}
+
+	@Override
+	public AnimationProcessor getAnimationProcessor()
+	{
+		return this.processor;
+	}
 }

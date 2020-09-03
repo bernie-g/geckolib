@@ -15,7 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
+import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.easing.EasingManager;
 import software.bernie.geckolib.easing.EasingType;
 

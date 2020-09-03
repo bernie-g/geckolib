@@ -3,7 +3,7 @@ package software.bernie.geckolib.item.armor;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.IArmorMaterial;
-import software.bernie.geckolib.animation.model.AnimatedArmorModel;
+import software.bernie.geckolib.model.AnimatedArmorModel;
 
 public abstract class AnimatedArmorItem extends ArmorItem
 {
