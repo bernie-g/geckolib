@@ -16,6 +16,7 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
@@ -24,7 +25,6 @@ import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.reload.ReloadManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,20 +42,19 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	private final AnimationProcessor processor;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
-
+	public boolean crashWhenCantFindBone = true;
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
 	protected SpecialAnimatedModel()
 	{
 		super(RenderType::getEntityCutoutNoCull);
-		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader(this);
 		registerMolangVariables();
-
 		onResourceManagerReload(resourceManager);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	private void registerMolangVariables()
@@ -125,7 +124,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		lastGameTickTime = gameTick;
 
 		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
-		processor.tickAnimation(entity, seekTime, predicate, parser);
+		processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 	}
 
 
@@ -159,5 +158,11 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	public AnimationProcessor getAnimationProcessor()
 	{
 		return this.processor;
+	}
+
+	@Override
+	public void reloadOnInputKey()
+	{
+		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}
 }

@@ -18,6 +18,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
+import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
@@ -27,7 +28,6 @@ import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.reload.ReloadManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,13 +67,13 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	protected AnimatedArmorModel()
 	{
 		super(1);
-		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader(this);
 		registerMolangVariables();
 
 		onResourceManagerReload(resourceManager);
+		MinecraftForge.EVENT_BUS.register((IAnimatableModel)this);
 	}
 
 	private void registerMolangVariables()
@@ -143,7 +143,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		lastGameTickTime = gameTick;
 
 		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
-		processor.tickAnimation(entity, seekTime, predicate, parser);
+		processor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 
 
@@ -283,5 +283,11 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	public AnimationProcessor getAnimationProcessor()
 	{
 		return this.processor;
+	}
+
+	@Override
+	public void reloadOnInputKey()
+	{
+		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}
 }

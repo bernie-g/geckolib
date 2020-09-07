@@ -9,9 +9,11 @@ public class GeoQuad
 {
 	public GeoVertex[] vertices;
 	public final Vector3f normal;
+	public Direction direction;
 
 	public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth, float texHeight, Boolean mirrorIn, Direction directionIn)
 	{
+		this.direction = directionIn;
 		this.vertices = verticesIn;
 
 		/*

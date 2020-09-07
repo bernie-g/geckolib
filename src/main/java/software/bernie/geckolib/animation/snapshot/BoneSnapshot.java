@@ -28,6 +28,31 @@ public class BoneSnapshot
 		this.name = modelRenderer.getName();
 	}
 
+	public BoneSnapshot(IBone modelRenderer, boolean dontSaveRotations)
+	{
+		if(dontSaveRotations)
+		{
+			rotationValueX = 0;
+			rotationValueY = 0;
+			rotationValueZ = 0;
+		}
+
+		rotationValueX = modelRenderer.getRotationX();
+		rotationValueY = modelRenderer.getRotationY();
+		rotationValueZ = modelRenderer.getRotationZ();
+
+		positionOffsetX = modelRenderer.getPositionX();
+		positionOffsetY = modelRenderer.getPositionY();
+		positionOffsetZ = modelRenderer.getPositionZ();
+
+		scaleValueX = modelRenderer.getScaleX();
+		scaleValueY = modelRenderer.getScaleY();
+		scaleValueZ = modelRenderer.getScaleZ();
+
+		this.modelRenderer = modelRenderer;
+		this.name = modelRenderer.getName();
+	}
+
 	public BoneSnapshot(BoneSnapshot snapshot)
 	{
 		scaleValueX = snapshot.scaleValueX;

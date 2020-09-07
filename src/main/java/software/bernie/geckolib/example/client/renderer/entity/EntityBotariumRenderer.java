@@ -33,4 +33,5 @@ public class EntityBotariumRenderer extends MobRenderer<EntityBotarium, EntityBo
 	{
 		super.applyRotations(entityLiving, matrixStackIn, ageInTicks, rotationYaw, partialTicks);
 	}
+
 }

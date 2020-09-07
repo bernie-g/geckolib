@@ -6,14 +6,21 @@
 package software.bernie.geckolib.animation.controller;
 
 // Only two minecraft calls, do not introduce more.
+
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-
-
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
 import org.antlr.v4.runtime.misc.NotNull;
-import software.bernie.geckolib.animation.*;
+import org.lwjgl.glfw.GLFW;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.keyframe.*;
@@ -22,10 +29,12 @@ import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.*;
+import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
+import software.bernie.geckolib.event.ParticleKeyFrameEvent;
+import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
-import software.bernie.geckolib.reload.ReloadManager;
+import software.bernie.geckolib.listener.ClientListener;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -39,6 +48,16 @@ import java.util.function.Function;
  */
 public abstract class AnimationController<T extends IAnimatable>
 {
+	@SubscribeEvent
+	void onReloadInput(InputEvent.KeyInputEvent inputKeyEvent)
+	{
+		if (inputKeyEvent.getAction() == GLFW.GLFW_RELEASE && inputKeyEvent.getKey() == ClientListener.reloadGeckoLibKeyBind.getKey().getKeyCode())
+		{
+			markNeedsReload();
+		}
+	}
+
+
 	/**
 	 * The Entity.
 	 */
@@ -158,7 +177,7 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param animatable                The entity
+	 * @param animatable            The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 */
@@ -167,14 +186,14 @@ public abstract class AnimationController<T extends IAnimatable>
 		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
-		ReloadManager.registerAnimationController(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param animatable                The entity
+	 * @param animatable            The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 * @param easingtype            The method of easing to use. The other constructor defaults to no easing.
@@ -185,13 +204,13 @@ public abstract class AnimationController<T extends IAnimatable>
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.easingType = easingtype;
-		ReloadManager.registerAnimationController(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	/**
 	 * Instantiates a new Animation controller. Each animation controller can run one animation at a time. You can have several animation controllers for each entity, i.e. one animation to control the entity's size, one to control movement, attacks, etc.
 	 *
-	 * @param animatable                The entity
+	 * @param animatable            The entity
 	 * @param name                  Name of the animation controller (move_controller, size_controller, attack_controller, etc.)
 	 * @param transitionLengthTicks How long it takes to transition between animations (IN TICKS!!)
 	 * @param customEasingMethod    If you want to use an easing method that's not included in the EasingType enum, pass your method into here. The parameter that's passed in will be a number between 0 and 1. Return a number also within 0 and 1. Take a look at {@link software.bernie.geckolib.easing.EasingManager}
@@ -203,7 +222,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		this.transitionLengthTicks = transitionLengthTicks;
 		this.customEasingMethod = customEasingMethod;
 		this.easingType = EasingType.CUSTOM;
-		ReloadManager.registerAnimationController(this);
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	/**
@@ -274,12 +293,12 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * This method is called every frame in order to populate the animation point queues, and process animation state logic.
 	 *
-	 * @param tick                   The current tick + partial tick
-	 * @param entityAnimationPredicate     The animation test event
-	 * @param modelRendererList      The list of all AnimatedModelRender's
-	 * @param boneSnapshotCollection The bone snapshot collection
+	 * @param tick                     The current tick + partial tick
+	 * @param entityAnimationPredicate The animation test event
+	 * @param modelRendererList        The list of all AnimatedModelRender's
+	 * @param boneSnapshotCollection   The bone snapshot collection
 	 */
-	public void process(double tick, AnimationTestPredicate entityAnimationPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection, MolangParser parser)
+	public void process(double tick, AnimationTestPredicate entityAnimationPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
 	{
 		createInitialQueues(modelRendererList);
 
@@ -335,8 +354,20 @@ public abstract class AnimationController<T extends IAnimatable>
 				{
 					BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
-					BoneSnapshot initialSnapshot = modelRendererList.stream().filter(
-							x -> x.getName().equals(boneAnimation.boneName)).findFirst().get().getInitialSnapshot();
+					Optional<IBone> first = modelRendererList.stream().filter(
+							x -> x.getName().equals(boneAnimation.boneName)).findFirst();
+					if (!first.isPresent())
+					{
+						if (crashWhenCantFindBone)
+						{
+							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
+						}
+						else
+						{
+							continue;
+						}
+					}
+					BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
 					assert boneSnapshot != null : "Bone snapshot was null";
 
 					VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
@@ -370,7 +401,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		else if (getAnimationState() == AnimationState.Running)
 		{
 			// Actually run the animation
-			processCurrentAnimation(tick, actualTick, parser);
+			processCurrentAnimation(tick, actualTick, parser, crashWhenCantFindBone);
 		}
 	}
 
@@ -396,7 +427,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		}
 	}
 
-	private void processCurrentAnimation(double tick, double actualTick, MolangParser parser)
+	private void processCurrentAnimation(double tick, double actualTick, MolangParser parser, boolean crashWhenCantFindBone)
 	{
 		assert currentAnimation != null;
 		// Animation has ended
@@ -434,7 +465,17 @@ public abstract class AnimationController<T extends IAnimatable>
 		for (BoneAnimation boneAnimation : boneAnimations)
 		{
 			BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
-
+			if (boneAnimationQueue == null)
+			{
+				if (crashWhenCantFindBone)
+				{
+					throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
+				}
+				else
+				{
+					continue;
+				}
+			}
 			VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
 			VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
 			VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
@@ -500,6 +541,11 @@ public abstract class AnimationController<T extends IAnimatable>
 					customInstructionKeyFrame.hasExecuted = true;
 				}
 			}
+		}
+
+		if (this.transitionLengthTicks == 0 && shouldResetTick && this.animationState == AnimationState.Transitioning)
+		{
+			this.currentAnimation = animationQueue.poll();
 		}
 	}
 

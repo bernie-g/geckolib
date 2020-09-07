@@ -5,12 +5,19 @@ import com.eliotlash.molang.MolangParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraftforge.client.event.InputEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import org.lwjgl.glfw.GLFW;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
+import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.GeoModelLoader;
+import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoModel;
+import software.bernie.geckolib.listener.ClientListener;
 import software.bernie.geckolib.manager.AnimationManager;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimatableModel, IGeoModel, IResourceManagerReloadListener
@@ -22,6 +29,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 
 	public double seekTime;
 	public double lastGameTickTime;
+	public boolean crashWhenCantFindBone = true;
 
 	protected AnimatedGeoModel()
 	{
@@ -30,6 +38,21 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		this.processor = new AnimationProcessor();
 		registerMolangVariables();
 		onResourceManagerReload(Minecraft.getInstance().getResourceManager());
+		registerSelf();
+	}
+
+	@SubscribeEvent
+	public void onReloadInput(InputEvent.KeyInputEvent inputKeyEvent)
+	{
+		if (inputKeyEvent.getAction() == GLFW.GLFW_RELEASE && inputKeyEvent.getKey() == ClientListener.reloadGeckoLibKeyBind.getKey().getKeyCode())
+		{
+			reloadOnInputKey();
+		}
+	}
+
+	private void registerSelf()
+	{
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Override
@@ -37,6 +60,21 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 	{
 		modelLoader.loadModel(resourceManager);
 		this.animationFileLoader.loadFile(resourceManager, parser);
+
+		//this.processor.clearModelRendererList();
+		for (GeoBone bone : modelLoader.getModel().topLevelBones)
+		{
+			registerBone(bone);
+		}
+	}
+
+	public void registerBone(GeoBone bone)
+	{
+		registerModelRenderer(bone);
+		for (GeoBone childBone : bone.childBones)
+		{
+			registerBone(childBone);
+		}
 	}
 
 	private void registerMolangVariables()
@@ -60,7 +98,10 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		lastGameTickTime = gameTick;
 
 		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
-		processor.tickAnimation(entity, seekTime, predicate, parser);
+		if (!this.processor.getModelRendererList().isEmpty())
+		{
+			processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
+		}
 	}
 
 	@Override
@@ -80,4 +121,16 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 	{
 		return this.modelLoader.getModel();
 	}
+
+	public void registerModelRenderer(IBone modelRenderer)
+	{
+		processor.registerModelRenderer(modelRenderer);
+	}
+
+	@Override
+	public void reloadOnInputKey()
+	{
+		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
+	}
+
 }

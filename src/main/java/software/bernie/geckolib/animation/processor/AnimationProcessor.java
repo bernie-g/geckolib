@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animation.processor;
 
 import com.eliotlash.molang.MolangParser;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
@@ -20,7 +21,7 @@ public class AnimationProcessor<T extends IAnimatable>
 {
 	private List<IBone> modelRendererList = new ArrayList();
 
-	public void tickAnimation(IAnimatable entity, double seekTime, AnimationTestPredicate predicate, MolangParser parser)
+	public void tickAnimation(IAnimatable entity, double seekTime, AnimationTestPredicate predicate, MolangParser parser, boolean crashWhenCantFindBone)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
@@ -42,7 +43,7 @@ public class AnimationProcessor<T extends IAnimatable>
 			predicate.setController(controller);
 
 			// Process animations and add new values to the point queues
-			controller.process(seekTime, predicate, modelRendererList, boneSnapshots, parser);
+			controller.process(seekTime, predicate, modelRendererList, boneSnapshots, parser, crashWhenCantFindBone);
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values())
@@ -64,6 +65,12 @@ public class AnimationProcessor<T extends IAnimatable>
 				AnimationPoint sZPoint = boneAnimation.scaleZQueue.poll();
 
 				// If there's any rotation points for this bone
+				DirtyTracker dirtyTracker = modelTracker.get(bone);
+				if(dirtyTracker == null)
+				{
+					continue;
+
+				}
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
 					bone.setRotationX(AnimationUtils.lerpValues(rXPoint, controller.easingType,
@@ -77,8 +84,9 @@ public class AnimationProcessor<T extends IAnimatable>
 					snapshot.rotationValueZ = bone.getRotationZ();
 					snapshot.isCurrentlyRunningRotationAnimation = true;
 
-					modelTracker.get(bone).hasRotationChanged = true;
+					dirtyTracker.hasRotationChanged = true;
 				}
+
 				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null)
 				{
@@ -92,11 +100,8 @@ public class AnimationProcessor<T extends IAnimatable>
 					snapshot.positionOffsetY = bone.getPositionY();
 					snapshot.positionOffsetZ = bone.getPositionZ();
 					snapshot.isCurrentlyRunningPositionAnimation = true;
-					if(bone.getName().equals("topmachine"))
-					{
-						//GeckoLib.LOGGER.info(bone.getPositionY());
-					}
-					modelTracker.get(bone).hasPositionChanged = true;
+
+					dirtyTracker.hasPositionChanged = true;
 				}
 
 				// If there's any scale points for this bone
@@ -113,7 +118,7 @@ public class AnimationProcessor<T extends IAnimatable>
 					snapshot.scaleValueZ = bone.getScaleZ();
 					snapshot.isCurrentlyRunningScaleAnimation = true;
 
-					modelTracker.get(bone).hasScaleChanged = true;
+					dirtyTracker.hasScaleChanged = true;
 				}
 			}
 		}
@@ -124,6 +129,10 @@ public class AnimationProcessor<T extends IAnimatable>
 			IBone model = tracker.model;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
 			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.model.getName());
+			if(saveSnapshot == null)
+			{
+				throw new RuntimeException("Could not find save snapshot for bone: " + tracker.model.getName() + ". Please don't add bones that are used in an animation at runtime.");
+			}
 
 			if (!tracker.hasRotationChanged)
 			{
@@ -245,4 +254,13 @@ public class AnimationProcessor<T extends IAnimatable>
 	}
 
 
+	public void clearModelRendererList()
+	{
+		this.modelRendererList.clear();
+	}
+
+	public List<IBone> getModelRendererList()
+	{
+		return modelRendererList;
+	}
 }

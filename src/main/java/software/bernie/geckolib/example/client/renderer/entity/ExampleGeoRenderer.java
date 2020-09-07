@@ -14,8 +14,8 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity>
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(GeoExampleEntity entity)
+	public ResourceLocation getTexture(GeoExampleEntity entity)
 	{
-		return new ResourceLocation("geckolib" + ":textures/model/entity/examplegeomodel.png");
+		return new ResourceLocation("geckolib" + ":textures/model/entity/botarium.png");
 	}
 }

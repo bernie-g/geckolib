@@ -35,9 +35,9 @@ public class GeoBone implements IBone
 	public float rotationPointY;
 	public float rotationPointZ;
 
-	public float rotateX;
-	public float rotateY;
-	public float rotateZ;
+	private float rotateX;
+	private float rotateY;
+	private float rotateZ;
 
 	@Override
 	public void setModelRendererName(String modelRendererName)
@@ -48,7 +48,7 @@ public class GeoBone implements IBone
 	@Override
 	public void saveInitialSnapshot()
 	{
-		this.initialSnapshot = new BoneSnapshot(this);
+		this.initialSnapshot = new BoneSnapshot(this, true);
 	}
 
 	@Override
@@ -63,18 +63,13 @@ public class GeoBone implements IBone
 		return this.name;
 	}
 
-
-
-
-
 	// Boilerplate code incoming
-
 
 
 	@Override
 	public float getRotationX()
 	{
-		return rotateX;
+		return -rotateX;
 	}
 
 	@Override

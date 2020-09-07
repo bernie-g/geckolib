@@ -3,6 +3,7 @@ package software.bernie.geckolib.block;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundEvent;
@@ -15,9 +16,11 @@ import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.geo.render.GeoBlockRenderer;
 import software.bernie.geckolib.model.IAnimatableModel;
 import software.bernie.geckolib.item.AnimatedItemRenderer;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -63,6 +66,10 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
 					return animatedRenderer.getEntityModel();
 				}
+				else if(renderer instanceof GeoBlockRenderer)
+				{
+					return (IAnimatableModel)((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+				}
 			}
 			return null;
 		});
@@ -73,6 +80,15 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 			{
 				AnimatedArmorItem armorItem = (AnimatedArmorItem) object;
 				return armorItem.getModel();
+			}
+			return null;
+		});
+
+		addModelFetcher((Object object) ->
+		{
+			if (object instanceof Entity)
+			{
+				return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity)object);
 			}
 			return null;
 		});

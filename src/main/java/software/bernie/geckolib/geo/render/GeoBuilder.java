@@ -32,6 +32,7 @@ public class GeoBuilder
 		Bone rawBone = bone.selfBone;
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
 		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
+		rotation.mul(1, -1, 1);
 
 		geoBone.mirror = rawBone.getMirror();
 		geoBone.dontRender = rawBone.getNeverRender();
@@ -40,11 +41,12 @@ public class GeoBuilder
 		geoBone.parent = parent;
 		geoBone.setModelRendererName(rawBone.getName());
 
-		geoBone.setRotationX(rotation.getX());
-		geoBone.setRotationY(rotation.getY());
-		geoBone.setRotationZ(rotation.getZ());
 
-		geoBone.rotationPointX = pivot.getX();
+		geoBone.setRotationX((float) Math.toRadians(rotation.getX()));
+		geoBone.setRotationY((float) Math.toRadians(rotation.getY()));
+		geoBone.setRotationZ((float) Math.toRadians(rotation.getZ()));
+
+		geoBone.rotationPointX = -pivot.getX();
 		geoBone.rotationPointY = pivot.getY();
 		geoBone.rotationPointZ = pivot.getZ();
 

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.resources.*;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
@@ -23,7 +24,6 @@ import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.reload.ReloadManager;
 
 import java.util.*;
 
@@ -47,13 +47,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	protected AnimatedEntityModel()
 	{
 		super();
-		ReloadManager.registerModel(this);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader(this);
 
 		registerMolangVariables();
-
+		MinecraftForge.EVENT_BUS.register(this);
 		onResourceManagerReload(resourceManager);
 	}
 
@@ -124,7 +123,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		EntityAnimationPredicate<T> predicate = new EntityAnimationPredicate<T>(entity, seekTime, limbSwing,
 				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
 
-		processor.tickAnimation(entity, seekTime, predicate, parser);
+		processor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 
 	@Override
@@ -177,5 +176,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	public AnimationProcessor getAnimationProcessor()
 	{
 		return this.processor;
+	}
+
+	@Override
+	public void reloadOnInputKey()
+	{
+		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}
 }

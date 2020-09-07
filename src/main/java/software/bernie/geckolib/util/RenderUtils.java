@@ -3,6 +3,7 @@ package software.bernie.geckolib.util;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.Vector3f;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoCube;
 
@@ -14,16 +15,17 @@ public class RenderUtils
 		stack.translate(pivot.getX() / 16, pivot.getY() / 16, pivot.getZ() / 16);
 	}
 
-	public static void moveToPivot(GeoBone bone, MatrixStack stack)
-	{
-		stack.translate(bone.rotationPointX, bone.rotationPointY, bone.rotationPointZ);
-	}
-
 	public static void moveBackFromPivot(GeoCube cube, MatrixStack stack)
 	{
 		Vector3f pivot = cube.pivot;
 		stack.translate(-pivot.getX() / 16, -pivot.getY() / 16, -pivot.getZ() / 16);
 	}
+
+	public static void moveToPivot(GeoBone bone, MatrixStack stack)
+	{
+		stack.translate(bone.rotationPointX / 16, bone.rotationPointY / 16, bone.rotationPointZ / 16);
+	}
+
 
 	public static void moveBackFromPivot(GeoBone bone, MatrixStack stack)
 	{
@@ -32,22 +34,36 @@ public class RenderUtils
 
 	public static void scale(GeoBone bone, MatrixStack stack)
 	{
-		stack.scale(bone.getScaleX() / 16, bone.getScaleY() / 16, bone.getScaleZ() / 16);
+		stack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 	}
 
 	public static void translate(GeoBone bone, MatrixStack stack)
 	{
-		stack.translate(bone.getPositionX() / 16, bone.getPositionY() / 16, bone.getPositionZ() / 16);
+		stack.translate(-bone.getPositionX() / 16, bone.getPositionY() / 16 , bone.getPositionZ() / 16);
 	}
 
 	public static void rotate(GeoBone bone, MatrixStack stack)
 	{
-		stack.rotate(new Quaternion(bone.rotateX, bone.rotateY, bone.rotateZ, true));
+		if(bone.name.equals("screen"))
+		{
+			GeckoLib.LOGGER.info(bone.getRotationX());
+		}
+		if (bone.getRotationZ() != 0.0F) {
+			stack.rotate(Vector3f.ZP.rotation(bone.getRotationZ()));
+		}
+
+		if (bone.getRotationY() != 0.0F) {
+			stack.rotate(Vector3f.YP.rotation(bone.getRotationY()));
+		}
+
+		if (bone.getRotationX() != 0.0F) {
+			stack.rotate(Vector3f.XP.rotation(-bone.getRotationX()));
+		}
 	}
 
 	public static void rotate(GeoCube bone, MatrixStack stack)
 	{
 		Vector3f rotation = bone.rotation;
-		stack.rotate(new Quaternion(rotation.getX(), rotation.getY(), rotation.getZ(), true));
+		stack.rotate(new Quaternion(rotation.getX(), rotation.getY(), rotation.getZ(), false));
 	}
 }

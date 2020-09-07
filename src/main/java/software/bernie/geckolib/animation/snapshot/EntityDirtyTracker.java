@@ -13,7 +13,7 @@ public class EntityDirtyTracker extends ArrayList<DirtyTracker>
 {
 	public DirtyTracker get(IBone bone)
 	{
-		return this.stream().filter(x -> x.model.getName() == bone.getName()).findFirst().orElseThrow(ArrayIndexOutOfBoundsException::new);
+		return this.stream().filter(x -> x.model.getName().equals(bone.getName())).findFirst().orElse(null);
 	}
 
 }

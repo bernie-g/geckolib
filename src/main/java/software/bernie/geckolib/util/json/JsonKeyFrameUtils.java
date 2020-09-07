@@ -11,6 +11,7 @@ import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.math.NumberUtils;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
@@ -43,7 +44,7 @@ public class JsonKeyFrameUtils
 			Map.Entry<String, JsonElement> previousKeyFrame = i == 0 ? null : element.get(i - 1);
 
 			Double previousKeyFrameLocation = previousKeyFrame == null ? 0 : Double.parseDouble(previousKeyFrame.getKey());
-			Double currentKeyFrameLocation = Double.parseDouble(keyframe.getKey());
+			Double currentKeyFrameLocation = NumberUtils.isCreatable(keyframe.getKey()) ? Double.parseDouble(keyframe.getKey()) : 0;
 			Double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
 
 			JsonArray vectorJsonArray = getKeyFrameVector(keyframe.getValue());

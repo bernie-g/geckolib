@@ -8,7 +8,7 @@ import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
 import software.bernie.geckolib.example.registry.TileRegistry;
 import software.bernie.geckolib.manager.AnimationManager;
 
-public class BotariumTileEntity extends TileEntity implements IAnimatable
+public class FertilizerTileEntity extends TileEntity implements IAnimatable
 {
 	private final AnimationManager manager = new AnimationManager();
 	private final SpecialAnimationController controller = new SpecialAnimationController(this, "controller", 0, this::predicate);
@@ -16,13 +16,13 @@ public class BotariumTileEntity extends TileEntity implements IAnimatable
 	private <E extends TileEntity & IAnimatable> boolean predicate(SpecialAnimationPredicate<E> eSpecialAnimationPredicate)
 	{
 		controller.transitionLengthTicks = 0;
-		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", false).addAnimation("Botarium.anim.idle", true));
+		controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", false).addAnimation("fertilizer.animation.idle", true));
 		return true;
 	}
 
-	public BotariumTileEntity()
+	public FertilizerTileEntity()
 	{
-		super(TileRegistry.BOTARIUM_TILE.get());
+		super(TileRegistry.FERTILIZER.get());
 		manager.addAnimationController(controller);
 	}
 
