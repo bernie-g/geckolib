@@ -180,7 +180,7 @@ public class AscendedLegfishModel extends AnimatedEntityModel<AscendedLegfishEnt
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(AscendedLegfishEntity entity)
 	{
 		return new ResourceLocation("geckolib:" + "animations/ascended_leg_fish.json");
 	}

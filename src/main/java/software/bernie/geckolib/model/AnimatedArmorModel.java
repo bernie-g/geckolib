@@ -7,6 +7,9 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -25,19 +28,21 @@ import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimatableModel, IResourceManagerReloadListener
+public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimatableModel<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -59,6 +64,17 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	private AnimatedModelRenderer rightBootRenderer;
 
 	private boolean hasSetup = false;
+	public boolean loopByDefault = false;
+
+	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
+	{
+		@Override
+		public AnimationFile load(ResourceLocation key)
+		{
+			AnimatedArmorModel<T> model = AnimatedArmorModel.this;
+			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+		}
+	});
 
 
 	/**
@@ -69,11 +85,11 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		super(1);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
-		this.loader = new AnimationFileLoader(this);
+		this.loader = new AnimationFileLoader();
 		registerMolangVariables();
 
 		onResourceManagerReload(resourceManager);
-		MinecraftForge.EVENT_BUS.register((IAnimatableModel)this);
+		MinecraftForge.EVENT_BUS.register((IAnimatableModel) this);
 	}
 
 	private void registerMolangVariables()
@@ -87,7 +103,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.loadFile(resourceManager, parser);
+		this.animationCache.invalidateAll();
 	}
 
 	/**
@@ -131,7 +147,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
-		if(manager.startTick == null)
+		if (manager.startTick == null)
 		{
 			manager.startTick = getCurrentTick();
 		}
@@ -146,10 +162,17 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		processor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 
-
-	public Animation getAnimation(String name)
+	@Override
+	public Animation getAnimation(String name, ResourceLocation location)
 	{
-		return loader.getAnimation(name);
+		try
+		{
+			return this.animationCache.get(location).getAnimation(name);
+		}
+		catch (ExecutionException e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 
 	@Override
@@ -165,7 +188,10 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		copyModelAngles(this.bipedLeftLeg, this.leftBootRenderer);
 
 		matrixStack.push();
-		if(isSneak) matrixStack.translate(0, 0.2, 0);
+		if (isSneak)
+		{
+			matrixStack.translate(0, 0.2, 0);
+		}
 		for (AnimatedModelRenderer model : rootBones)
 		{
 			model.render(matrixStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -173,37 +199,21 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		matrixStack.pop();
 	}
 
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public boolean isLoopByDefault()
-	{
-		return loader.isLoopByDefault();
-	}
-
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public void setLoopByDefault(boolean loopByDefault)
-	{
-		this.loader.setLoopByDefault(loopByDefault);
-	}
-
-
 	public float getCurrentTick()
 	{
 		return (Util.milliTime() / 50f);
 	}
 
-
-	private final void copyModelAngles(ModelRenderer in, ModelRenderer out){
+	private final void copyModelAngles(ModelRenderer in, ModelRenderer out)
+	{
 		out.rotateAngleX = in.rotateAngleX;
 		out.rotateAngleY = in.rotateAngleY;
 		out.rotateAngleZ = in.rotateAngleZ;
 	}
 
-	public BipedModel applySlot(EquipmentSlotType slot){
-		if(!hasSetup)
+	public BipedModel applySlot(EquipmentSlotType slot)
+	{
+		if (!hasSetup)
 		{
 			setupArmor();
 			hasSetup = true;
@@ -218,7 +228,8 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		rightBootRenderer.showModel = false;
 		leftBootRenderer.showModel = false;
 
-		switch(slot){
+		switch (slot)
+		{
 			case HEAD:
 				helmetRenderer.showModel = true;
 				break;
@@ -266,18 +277,6 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	}
 
 	public abstract void setupArmor();
-
-	@Override
-	public ResourceLocation getAnimationFileLocation()
-	{
-		return this.getAnimationFileLocation();
-	}
-
-	@Override
-	public AnimationFileLoader getAnimationLoader()
-	{
-		return this.getAnimationLoader();
-	}
 
 	@Override
 	public AnimationProcessor getAnimationProcessor()

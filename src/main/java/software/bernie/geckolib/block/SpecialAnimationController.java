@@ -150,7 +150,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
-							Animation animation = finalModel.getAnimation(rawAnimation.animationName);
+							Animation animation = finalModel.getAnimation(rawAnimation.animationName, finalModel.getAnimationFileLocation(animatable));
 							if (animation == null)
 							{
 								GeckoLib.LOGGER.error(

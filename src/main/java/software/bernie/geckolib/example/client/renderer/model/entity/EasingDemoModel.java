@@ -5,10 +5,11 @@
 package software.bernie.geckolib.example.client.renderer.model.entity;
 
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib.example.entity.EasingDemoEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 
-public class EasingDemoModel extends AnimatedEntityModel<software.bernie.geckolib.example.entity.EasingDemoEntity> {
+public class EasingDemoModel extends AnimatedEntityModel<EasingDemoEntity> {
 
     private final AnimatedModelRenderer bone;
 
@@ -27,7 +28,7 @@ public class EasingDemoModel extends AnimatedEntityModel<software.bernie.geckoli
 
 
     @Override
-    public ResourceLocation getAnimationFileLocation()
+    public ResourceLocation getAnimationFileLocation(EasingDemoEntity entity)
     {
         return new ResourceLocation("geckolib", "animations/easing_demo.json");
     }

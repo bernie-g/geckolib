@@ -3,10 +3,9 @@ package software.bernie.geckolib.geo.render;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
-import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.geo.render.built.*;
-import software.bernie.geckolib.model.IGeoModel;
+import software.bernie.geckolib.model.IGeoModelProvider;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.awt.*;
@@ -80,7 +79,7 @@ public interface IGeoRenderer<T>
 		}
 	}
 
-	IGeoModel getGeoModelProvider();
+	IGeoModelProvider getGeoModelProvider();
 
 	default void renderCustom(T entity, MatrixStack matrixStackIn, float partialTicks)
 	{

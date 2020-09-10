@@ -11,13 +11,13 @@ import software.bernie.geckolib.model.AnimatedGeoModel;
 public class BotariumModel extends AnimatedGeoModel<BotariumTileEntity>
 {
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(BotariumTileEntity entity)
 	{
 		return new ResourceLocation("geckolib", "animations/botarium_tier1_anim.json");
 	}
 
 	@Override
-	public ResourceLocation getModelLocation()
+	public ResourceLocation getModelLocation(BotariumTileEntity animatable)
 	{
 		return new ResourceLocation("geckolib", "geo/botarium_block.json");
 	}

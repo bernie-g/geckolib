@@ -9,17 +9,13 @@ package software.bernie.geckolib.animation.controller;
 
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.lwjgl.glfw.GLFW;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -54,6 +50,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		if (inputKeyEvent.getAction() == GLFW.GLFW_RELEASE && inputKeyEvent.getKey() == ClientListener.reloadGeckoLibKeyBind.getKey().getKeyCode())
 		{
 			markNeedsReload();
+			this.boneAnimationQueues.clear();
 		}
 	}
 

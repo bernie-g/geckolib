@@ -1,21 +1,21 @@
 package software.bernie.geckolib.animation.processor;
 
 import com.eliotlash.molang.MolangParser;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.animation.snapshot.DirtyTracker;
-import software.bernie.geckolib.animation.snapshot.EntityDirtyTracker;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AnimationProcessor<T extends IAnimatable>
 {
@@ -26,7 +26,7 @@ public class AnimationProcessor<T extends IAnimatable>
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
 		// Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
-		EntityDirtyTracker modelTracker = createNewDirtyTracker();
+		HashMap<String, DirtyTracker> modelTracker = createNewDirtyTracker();
 
 		// Store the current value of each bone rotation/position/scale
 		if (manager.getBoneSnapshotCollection().isEmpty())
@@ -65,11 +65,10 @@ public class AnimationProcessor<T extends IAnimatable>
 				AnimationPoint sZPoint = boneAnimation.scaleZQueue.poll();
 
 				// If there's any rotation points for this bone
-				DirtyTracker dirtyTracker = modelTracker.get(bone);
+				DirtyTracker dirtyTracker = modelTracker.get(bone.getName());
 				if(dirtyTracker == null)
 				{
 					continue;
-
 				}
 				if (rXPoint != null && rYPoint != null && rZPoint != null)
 				{
@@ -124,17 +123,23 @@ public class AnimationProcessor<T extends IAnimatable>
 		}
 
 		double resetTickLength = manager.getResetSpeed();
-		for (DirtyTracker tracker : modelTracker)
+		for (Map.Entry<String, DirtyTracker> tracker : modelTracker.entrySet())
 		{
-			IBone model = tracker.model;
+			IBone model = tracker.getValue().model;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
-			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.model.getName());
+			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getValue().model.getName());
 			if(saveSnapshot == null)
 			{
-				throw new RuntimeException("Could not find save snapshot for bone: " + tracker.model.getName() + ". Please don't add bones that are used in an animation at runtime.");
+				if(crashWhenCantFindBone)
+				{
+					throw new RuntimeException("Could not find save snapshot for bone: " + tracker.getValue().model.getName() + ". Please don't add bones that are used in an animation at runtime.");
+				}
+				else {
+					continue;
+				}
 			}
 
-			if (!tracker.hasRotationChanged)
+			if (!tracker.getValue().hasRotationChanged)
 			{
 				if (saveSnapshot.isCurrentlyRunningRotationAnimation)
 				{
@@ -158,7 +163,7 @@ public class AnimationProcessor<T extends IAnimatable>
 					saveSnapshot.rotationValueZ = model.getRotationZ();
 				}
 			}
-			if (!tracker.hasPositionChanged)
+			if (!tracker.getValue().hasPositionChanged)
 			{
 				if (saveSnapshot.isCurrentlyRunningPositionAnimation)
 				{
@@ -182,7 +187,7 @@ public class AnimationProcessor<T extends IAnimatable>
 					saveSnapshot.positionOffsetZ = model.getPositionZ();
 				}
 			}
-			if (!tracker.hasScaleChanged)
+			if (!tracker.getValue().hasScaleChanged)
 			{
 				if (saveSnapshot.isCurrentlyRunningScaleAnimation)
 				{
@@ -210,12 +215,12 @@ public class AnimationProcessor<T extends IAnimatable>
 		manager.isFirstTick = false;
 	}
 
-	private EntityDirtyTracker createNewDirtyTracker()
+	private HashMap<String, DirtyTracker> createNewDirtyTracker()
 	{
-		EntityDirtyTracker tracker = new EntityDirtyTracker();
+		HashMap<String, DirtyTracker> tracker = new HashMap<>();
 		for (IBone bone : modelRendererList)
 		{
-			tracker.add(new DirtyTracker(false, false, false, bone));
+			tracker.put(bone.getName(), new DirtyTracker(false, false, false, bone));
 		}
 		return tracker;
 	}

@@ -153,11 +153,8 @@ public class StingrayModel extends AnimatedEntityModel<StingrayTestEntity>
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(StingrayTestEntity entity)
 	{
 		return new ResourceLocation("geckolib:animations/stingrayanimation.json");
 	}
-
-
-
 }

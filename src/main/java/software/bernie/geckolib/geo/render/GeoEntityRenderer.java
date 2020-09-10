@@ -13,15 +13,15 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.model.IGeoModel;
+import software.bernie.geckolib.model.IGeoModelProvider;
 
 import java.awt.*;
 
 public abstract class GeoEntityRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
 {
-	private final AnimatedGeoModel modelProvider;
+	private final AnimatedGeoModel<T> modelProvider;
 
-	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel modelProvider)
+	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider)
 	{
 		super(renderManager);
 		this.modelProvider = modelProvider;
@@ -35,7 +35,7 @@ public abstract class GeoEntityRenderer<T extends Entity & IAnimatable> extends 
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entityIn));
-		GeoModel model = modelProvider.getModel();
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, stack, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, stack, bufferIn, packedLightIn, getEntityTexture(entityIn));
 		render(model, entityIn, partialTicks, stack, bufferIn.getBuffer(renderType), packedLightIn, getPackedOverlay((LivingEntity) entityIn, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
@@ -50,7 +50,7 @@ public abstract class GeoEntityRenderer<T extends Entity & IAnimatable> extends 
 	}
 
 	@Override
-	public IGeoModel getGeoModelProvider()
+	public IGeoModelProvider getGeoModelProvider()
 	{
 		return this.modelProvider;
 	}

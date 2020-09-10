@@ -11,8 +11,7 @@ import software.bernie.geckolib.geo.raw.pojo.RawGeoModel;
 import software.bernie.geckolib.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib.geo.render.GeoBuilder;
 import software.bernie.geckolib.geo.render.built.GeoModel;
-import software.bernie.geckolib.model.IAnimatableModel;
-import software.bernie.geckolib.model.IGeoModel;
+import software.bernie.geckolib.model.IGeoModelProvider;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
@@ -20,71 +19,53 @@ import java.io.InputStream;
 
 public class GeoModelLoader
 {
-	private final IGeoModel provider;
-	private RawGeoModel rawModel;
-	private RawGeometryTree rawGeometryTree;
-	private GeoModel model;
+	private final IGeoModelProvider provider;
 
-	public GeoModelLoader(IGeoModel provider)
+	public GeoModelLoader(IGeoModelProvider provider)
 	{
 		this.provider = provider;
 	}
 
-	public void loadModel(IResourceManager resourceManager)
+	public GeoModel loadModel(IResourceManager resourceManager, ResourceLocation location)
 	{
 		try
 		{
 			//Deserialize from json into basic json objects, bones are still stored as a flat list
-			this.rawModel = Converter.fromJsonString(getModelAsString(resourceManager));
+			RawGeoModel rawModel = Converter.fromJsonString(getModelAsString(resourceManager, location));
 			if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0)
 			{
-				throw new GeoModelException(provider.getModelLocation(), "Wrong geometry json version, expected 1.12.0");
+				throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
 			}
 
 			//Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
-			this.rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
+			RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
 
 			//Build the quads and cubes from the raw tree into a built and ready to be rendered GeoModel
-			this.model = GeoBuilder.constructGeoModel(rawGeometryTree);
+			return GeoBuilder.constructGeoModel(rawGeometryTree);
 		}
 		catch (Exception e)
 		{
-			GeckoLib.LOGGER.error(String.format("Error parsing %S", provider.getModelLocation()), e);
+			GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
 			throw (new RuntimeException(e));
 		}
 	}
 
-	private String getModelAsString(IResourceManager resourceManager)
+	private String getModelAsString(IResourceManager resourceManager, ResourceLocation location)
 	{
-		try (InputStream inputStream = getStreamForResourceLocation(provider.getModelLocation()))
+		try (InputStream inputStream = getStreamForResourceLocation(location))
 		{
 			return IOUtils.toString(inputStream);
 		}
 		catch (Exception e)
 		{
-			String message = "Couldn't load " + provider.getModelLocation();
+			String message = "Couldn't load " + location;
 			GeckoLib.LOGGER.error(message, e);
-			throw new RuntimeException(new FileNotFoundException(provider.getModelLocation().toString()));
+			throw new RuntimeException(new FileNotFoundException(location.toString()));
 		}
 	}
 
 	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation)
 	{
 		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
-	}
-
-	public RawGeoModel getRawModel()
-	{
-		return rawModel;
-	}
-
-	public RawGeometryTree getRawGeometryTree()
-	{
-		return rawGeometryTree;
-	}
-
-	public GeoModel getModel()
-	{
-		return model;
 	}
 }

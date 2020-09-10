@@ -209,7 +209,7 @@ public class BatModel extends AnimatedEntityModel<BatEntity> {
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(BatEntity entity)
 	{
 		return new ResourceLocation("geckolib", "animations/bat.json");
 	}

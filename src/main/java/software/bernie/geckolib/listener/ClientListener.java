@@ -14,14 +14,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.example.client.renderer.model.tile.JackInTheBoxModel;
 import software.bernie.geckolib.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.geckolib.example.client.renderer.tile.FertilizerTileRenderer;
-import software.bernie.geckolib.example.client.renderer.tile.JackInTheBoxTileRenderer;
 import software.bernie.geckolib.example.registry.BlockRegistry;
-import software.bernie.geckolib.example.registry.ItemRegistry;
 import software.bernie.geckolib.example.registry.TileRegistry;
-import software.bernie.geckolib.item.AnimatedItemRenderer;
 
 import java.util.Arrays;
 
@@ -33,12 +29,9 @@ public class ClientListener
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event)
 	{
-		ClientRegistry.bindTileEntityRenderer(TileRegistry.JACK_IN_THE_BOX_TILE.get(), JackInTheBoxTileRenderer::new);
 		ClientRegistry.bindTileEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
 		ClientRegistry.bindTileEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
 
-		AnimatedItemRenderer renderer = (AnimatedItemRenderer) ItemRegistry.JACK_IN_THE_BOX_ITEM.get().getItemStackTileEntityRenderer();
-		renderer.setModel(new JackInTheBoxModel());
 		RenderTypeLookup.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.getCutout());
 
 		if(!Arrays.stream(Minecraft.getInstance().gameSettings.keyBindings).anyMatch(x -> x.getKeyDescription().equals(reloadGeckoLibKeyBind.getKeyDescription())))

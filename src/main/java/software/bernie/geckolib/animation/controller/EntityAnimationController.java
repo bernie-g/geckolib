@@ -74,7 +74,7 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
-							Animation animation = model.getAnimation(rawAnimation.animationName);
+							Animation animation = model.getAnimation(rawAnimation.animationName, model.getAnimationFileLocation(this.animatable));
 							if (animation == null)
 							{
 								GeckoLib.LOGGER.error(

@@ -19,7 +19,7 @@ import software.bernie.geckolib.easing.EasingManager;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.geo.render.IGeoRenderer;
 import software.bernie.geckolib.model.AnimatedEntityModel;
-import software.bernie.geckolib.model.IGeoModel;
+import software.bernie.geckolib.model.IGeoModelProvider;
 
 import java.util.function.Function;
 
@@ -118,7 +118,7 @@ public class AnimationUtils
 		return null;
 	}
 
-	public static <T extends Entity> IGeoModel getGeoModelForEntity(T entity)
+	public static <T extends Entity> IGeoModelProvider getGeoModelForEntity(T entity)
 	{
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
 

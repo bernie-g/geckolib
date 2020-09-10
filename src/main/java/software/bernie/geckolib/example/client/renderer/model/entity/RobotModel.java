@@ -82,7 +82,7 @@ public class RobotModel extends AnimatedEntityModel<RobotEntity> {
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(RobotEntity entity)
 	{
 		return new ResourceLocation("geckolib", "animations/robot.json");
 	}

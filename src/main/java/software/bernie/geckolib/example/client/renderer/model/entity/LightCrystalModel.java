@@ -229,7 +229,7 @@ public class LightCrystalModel extends AnimatedEntityModel<LightCrystalEntity>
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(LightCrystalEntity entity)
 	{
 		return new ResourceLocation("geckolib", "animations/lightcrystal.json");
 	}

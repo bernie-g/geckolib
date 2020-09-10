@@ -7,6 +7,9 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -23,18 +26,20 @@ import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel, IResourceManagerReloadListener
+public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -43,6 +48,31 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 	public boolean crashWhenCantFindBone = true;
+	private boolean loopByDefault;
+
+	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
+	{
+		@Override
+		public AnimationFile load(ResourceLocation key)
+		{
+			SpecialAnimatedModel<T> model = SpecialAnimatedModel.this;
+			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+		}
+	});
+
+	@Override
+	public Animation getAnimation(String name, ResourceLocation location)
+	{
+		try
+		{
+			return this.animationCache.get(location).getAnimation(name);
+		}
+		catch (ExecutionException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
 	/**
 	 * Instantiates a new Animated entity model and loads the current animation file.
 	 */
@@ -51,7 +81,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		super(RenderType::getEntityCutoutNoCull);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
-		this.loader = new AnimationFileLoader(this);
+		this.loader = new AnimationFileLoader();
 		registerMolangVariables();
 		onResourceManagerReload(resourceManager);
 		MinecraftForge.EVENT_BUS.register(this);
@@ -68,7 +98,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.loadFile(resourceManager, parser);
+		this.animationCache.invalidateAll();
 	}
 
 	/**
@@ -112,7 +142,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
-		if(manager.startTick == null)
+		if (manager.startTick == null)
 		{
 			manager.startTick = getCurrentTick();
 		}
@@ -127,12 +157,6 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 	}
 
-
-	public Animation getAnimation(String name)
-	{
-		return loader.getAnimation(name);
-	}
-
 	@Override
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
@@ -140,18 +164,6 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		{
 			model.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
-	}
-
-	@Override
-	public ResourceLocation getAnimationFileLocation()
-	{
-		return this.getAnimationFileLocation();
-	}
-
-	@Override
-	public AnimationFileLoader getAnimationLoader()
-	{
-		return this.getAnimationLoader();
 	}
 
 	@Override

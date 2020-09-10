@@ -8,6 +8,9 @@ package software.bernie.geckolib.model;
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -20,19 +23,21 @@ import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModel, IResourceManagerReloadListener
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModel<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -40,16 +45,27 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	private final AnimationProcessor processor;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
+	private boolean loopByDefault;
+
+	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
+	{
+		@Override
+		public AnimationFile load(ResourceLocation key)
+		{
+			AnimatedEntityModel<T> model = AnimatedEntityModel.this;
+			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+		}
+	});
 
 	/**
-	 * Instantiates a new Animated entity model and loads the current animation file.
+	 * Instantiates a new Animated entity model.
 	 */
 	protected AnimatedEntityModel()
 	{
 		super();
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.processor = new AnimationProcessor();
-		this.loader = new AnimationFileLoader(this);
+		this.loader = new AnimationFileLoader();
 
 		registerMolangVariables();
 		MinecraftForge.EVENT_BUS.register(this);
@@ -61,6 +77,18 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		parser.register(new Variable("query.anim_time", 0));
 	}
 
+	@Override
+	public Animation getAnimation(String name, ResourceLocation location)
+	{
+		try
+		{
+			return this.animationCache.get(location).getAnimation(name);
+		}
+		catch (ExecutionException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
 
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
@@ -68,7 +96,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.loader.loadFile(resourceManager, parser);
+		this.animationCache.invalidateAll();
 	}
 
 	/**
@@ -129,10 +157,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	@Override
 	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) { }
 
-	public Animation getAnimation(String name)
-	{
-		return loader.getAnimation(name);
-	}
 
 	@Override
 	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
@@ -143,34 +167,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		}
 	}
 
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public boolean isLoopByDefault()
-	{
-		return loader.isLoopByDefault();
-	}
-
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	public void setLoopByDefault(boolean loopByDefault)
-	{
-		this.loader.setLoopByDefault(loopByDefault);
-	}
-
-
-	@Override
-	public ResourceLocation getAnimationFileLocation()
-	{
-		return this.getAnimationFileLocation();
-	}
-
-	@Override
-	public AnimationFileLoader getAnimationLoader()
-	{
-		return this.getAnimationLoader();
-	}
 
 	@Override
 	public AnimationProcessor getAnimationProcessor()

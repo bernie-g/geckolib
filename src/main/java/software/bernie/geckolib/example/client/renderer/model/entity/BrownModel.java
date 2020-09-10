@@ -969,7 +969,7 @@ public class BrownModel extends AnimatedEntityModel<BrownEntity>
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(BrownEntity entity)
 	{
 		return new ResourceLocation("geckolib", "animations/brown.json");
 	}

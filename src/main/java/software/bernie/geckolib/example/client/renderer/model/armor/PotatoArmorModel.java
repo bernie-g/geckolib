@@ -339,7 +339,7 @@ public class PotatoArmorModel extends AnimatedArmorModel<PotatoArmor>
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(PotatoArmor armor)
 	{
 		return new ResourceLocation("geckolib", "animations/potato_armor.json");
 	}

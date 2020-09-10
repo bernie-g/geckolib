@@ -92,7 +92,7 @@ public class ColorfulPigModel extends AnimatedEntityModel<EntityColorfulPig> {
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(EntityColorfulPig entity)
 	{
 		return new ResourceLocation("geckolib", "animations/colorfulpig.json");
 	}

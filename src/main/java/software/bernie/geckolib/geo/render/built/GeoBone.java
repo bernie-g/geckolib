@@ -65,11 +65,10 @@ public class GeoBone implements IBone
 
 	// Boilerplate code incoming
 
-
 	@Override
 	public float getRotationX()
 	{
-		return -rotateX;
+		return rotateX;
 	}
 
 	@Override

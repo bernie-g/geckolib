@@ -8,14 +8,12 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.example.item.JackInTheBoxItem;
 import software.bernie.geckolib.example.item.PotatoArmor;
 
 public class ItemRegistry
 {
 	public static final DeferredRegister<Item> ITEMS = new DeferredRegister<>(ForgeRegistries.ITEMS, GeckoLib.ModID);
 
-	public static final RegistryObject<BlockItem> JACK_IN_THE_BOX_ITEM = ITEMS.register("jackintheboxitem", () -> new JackInTheBoxItem(BlockRegistry.BOTARIUM_BLOCK.get()));
 
 	public static final RegistryObject<ArmorItem> POTATO_HELMET = ITEMS.register("potato_helmet", () -> new PotatoArmor(EquipmentSlotType.HEAD));
 	public static final RegistryObject<ArmorItem> POTATO_CHEST = ITEMS.register("potato_chest", () -> new PotatoArmor(EquipmentSlotType.CHEST));

@@ -237,7 +237,7 @@ public class EntityBotariumModel extends AnimatedEntityModel<EntityBotarium>
 
 
 	@Override
-	public ResourceLocation getAnimationFileLocation()
+	public ResourceLocation getAnimationFileLocation(EntityBotarium entity)
 	{
 		return new ResourceLocation("geckolib", "animations/botarium_tier1_anim.json");
 	}
