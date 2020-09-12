@@ -13,6 +13,7 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
@@ -45,7 +46,9 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		@Override
 		public GeoModel load(ResourceLocation key) throws Exception
 		{
-			GeoModel geoModel = AnimatedGeoModel.this.modelLoader.loadModel(Minecraft.getInstance().getResourceManager(), key);
+			AnimatedGeoModel<T> model = AnimatedGeoModel.this;
+			GeoModel geoModel = model.modelLoader.loadModel(Minecraft.getInstance().getResourceManager(), key);
+			model.processor.clearModelRendererList();
 			for (GeoBone bone : geoModel.topLevelBones)
 			{
 				registerBone(bone);
@@ -105,8 +108,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		animationCache.invalidateAll();
 		modelCache.invalidateAll();
+		animationCache.invalidateAll();
 	}
 
 	public void registerBone(GeoBone bone)
@@ -143,6 +146,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		{
 			processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 		}
+		GeckoLib.LOGGER.info(this.getBone("frontpanel").getRotationX());
 	}
 
 	@Override

@@ -16,7 +16,7 @@ public class FertilizerTileEntity extends TileEntity implements IAnimatable
 	private <E extends TileEntity & IAnimatable> boolean predicate(SpecialAnimationPredicate<E> eSpecialAnimationPredicate)
 	{
 		controller.transitionLengthTicks = 0;
-		controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", false).addAnimation("fertilizer.animation.idle", true));
+		controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true).addAnimation("fertilizer.animation.idle", true));
 		return true;
 	}
 

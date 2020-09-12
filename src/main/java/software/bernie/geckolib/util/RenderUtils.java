@@ -44,10 +44,6 @@ public class RenderUtils
 
 	public static void rotate(GeoBone bone, MatrixStack stack)
 	{
-		if(bone.name.equals("screen"))
-		{
-			GeckoLib.LOGGER.info(bone.getRotationX());
-		}
 		if (bone.getRotationZ() != 0.0F) {
 			stack.rotate(Vector3f.ZP.rotation(bone.getRotationZ()));
 		}

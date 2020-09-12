@@ -53,6 +53,10 @@ public class AnimationManager extends HashMap<String, AnimationController>
 		this.boneSnapshotCollection = boneSnapshotCollection;
 	}
 
+	public void clearSnapshotCache()
+	{
+		this.boneSnapshotCollection = new BoneSnapshotCollection();
+	}
 
 	/**
 	 * Sets the speed multipler of how fast the animation goes. This cannot be negative, and the default value is 1.

@@ -24,7 +24,7 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 			return new ResourceLocation("geckolib", "geo/fertilizer.json");
 		}
 		else {
-			return new ResourceLocation("geckolib", "geo/botarium_block.json");
+			return new ResourceLocation("geckolib", "geo/fertilizer.json");
 		}
 	}
 }
