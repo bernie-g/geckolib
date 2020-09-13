@@ -3,7 +3,6 @@ package software.bernie.geckolib.util;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.Vector3f;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoCube;
 
@@ -39,20 +38,23 @@ public class RenderUtils
 
 	public static void translate(GeoBone bone, MatrixStack stack)
 	{
-		stack.translate(-bone.getPositionX() / 16, bone.getPositionY() / 16 , bone.getPositionZ() / 16);
+		stack.translate(-bone.getPositionX() / 16, bone.getPositionY() / 16, bone.getPositionZ() / 16);
 	}
 
 	public static void rotate(GeoBone bone, MatrixStack stack)
 	{
-		if (bone.getRotationZ() != 0.0F) {
+		if (bone.getRotationZ() != 0.0F)
+		{
 			stack.rotate(Vector3f.ZP.rotation(bone.getRotationZ()));
 		}
 
-		if (bone.getRotationY() != 0.0F) {
+		if (bone.getRotationY() != 0.0F)
+		{
 			stack.rotate(Vector3f.YP.rotation(bone.getRotationY()));
 		}
 
-		if (bone.getRotationX() != 0.0F) {
+		if (bone.getRotationX() != 0.0F)
+		{
 			stack.rotate(Vector3f.XP.rotation(-bone.getRotationX()));
 		}
 	}

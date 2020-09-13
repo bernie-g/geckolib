@@ -146,7 +146,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		{
 			processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 		}
-		GeckoLib.LOGGER.info(this.getBone("frontpanel").getRotationX());
 	}
 
 	@Override

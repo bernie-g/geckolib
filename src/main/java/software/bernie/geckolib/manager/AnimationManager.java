@@ -21,7 +21,6 @@ public class AnimationManager extends HashMap<String, AnimationController>
 	private double speedModifier = 1;
 	private double resetTickLength = 30;
 	public Float startTick;
-	public int lastPausedTick;
 
 	/**
 	 * Instantiates a new Animation controller collection.
