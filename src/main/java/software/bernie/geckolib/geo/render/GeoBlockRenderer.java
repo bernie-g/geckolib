@@ -68,13 +68,13 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 				stack.rotate(Vector3f.YP.rotationDegrees(180));
 				break;
 			case WEST:
-				stack.rotate(Vector3f.YP.rotationDegrees(270));
+				stack.rotate(Vector3f.YP.rotationDegrees(90));
 				break;
 			case NORTH:
 				stack.rotate(Vector3f.YP.rotationDegrees(0));
 				break;
 			case EAST:
-				stack.rotate(Vector3f.YP.rotationDegrees(90));
+				stack.rotate(Vector3f.YP.rotationDegrees(270));
 				break;
 			case UP:
 				stack.rotate(Vector3f.XP.rotationDegrees(90));
