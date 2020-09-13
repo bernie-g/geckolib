@@ -24,7 +24,7 @@ import java.util.Arrays;
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientListener
 {
-	public static final KeyBinding reloadGeckoLibKeyBind = new KeyBinding("Reloads GeckoLib models", KeyConflictContext.IN_GAME, KeyModifier.CONTROL, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_R, "GeckoLib");
+	public static final KeyBinding reloadGeckoLibKeyBind = new KeyBinding("Reloads GeckoLib models", KeyConflictContext.IN_GAME, KeyModifier.NONE, InputMappings.Type.KEYSYM, GLFW.GLFW_KEY_SLASH, "GeckoLib");
 
 	@SubscribeEvent
 	public static void onClientSetup(FMLClientSetupEvent event)

@@ -1,13 +1,18 @@
 package software.bernie.geckolib.geo.render;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Direction;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
@@ -32,17 +37,19 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		this.render((T) tile, partialTicks, matrixStackIn, bufferIn, combinedLightIn);
 	}
 
-	public void render(T entityIn, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
+	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		modelProvider.setLivingAnimations(entityIn);
+		modelProvider.setLivingAnimations(tile);
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
-		Minecraft.getInstance().textureManager.bindTexture(getTexture(entityIn));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
-		Color renderColor = getRenderColor(entityIn, partialTicks, stack, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(entityIn, partialTicks, stack, bufferIn, packedLightIn, getTexture(entityIn));
-		render(model, entityIn, partialTicks, stack, bufferIn.getBuffer(renderType), packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		rotateBlock(getFacing(tile), stack);
+
+		Minecraft.getInstance().textureManager.bindTexture(getTexture(tile));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
+		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, packedLightIn);
+		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, getTexture(tile));
+		render(model, tile, partialTicks, stack, bufferIn.getBuffer(renderType), packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
 
@@ -50,5 +57,48 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	public IGeoModelProvider getGeoModelProvider()
 	{
 		return this.modelProvider;
+	}
+
+
+	private void rotateBlock(Direction facing, MatrixStack stack)
+	{
+		switch (facing)
+		{
+			case SOUTH:
+				stack.rotate(Vector3f.YP.rotationDegrees(180));
+				break;
+			case WEST:
+				stack.rotate(Vector3f.YP.rotationDegrees(270));
+				break;
+			case NORTH:
+				stack.rotate(Vector3f.YP.rotationDegrees(0));
+				break;
+			case EAST:
+				stack.rotate(Vector3f.YP.rotationDegrees(90));
+				break;
+			case UP:
+				stack.rotate(Vector3f.XP.rotationDegrees(90));
+				break;
+			case DOWN:
+				stack.rotate(Vector3f.XN.rotationDegrees(90));
+				break;
+		}
+	}
+
+	private Direction getFacing(T tile)
+	{
+		BlockState blockState = tile.getBlockState();
+		if (blockState.has(HorizontalBlock.HORIZONTAL_FACING))
+		{
+			return blockState.get(HorizontalBlock.HORIZONTAL_FACING);
+		}
+		else if (blockState.has(DirectionalBlock.FACING))
+		{
+			return blockState.get(DirectionalBlock.FACING);
+		}
+		else
+		{
+			return Direction.NORTH;
+		}
 	}
 }
