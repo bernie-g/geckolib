@@ -5,7 +5,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ 1.15, 1.12, 1.16, fabric/1.15, fabric/1.16, develop ]
+    branches: [ bedrock-renderer-dev, develop ]
   pull_request:
     branches: []
 
