@@ -12,9 +12,9 @@ import java.awt.*;
 
 public interface IGeoRenderer<T>
 {
-	default void render(GeoModel model, T entity, float partialTicks, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	default void render(GeoModel model, T entity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
-		renderCustom(entity, matrixStackIn, partialTicks, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		renderCustom(entity, matrixStackIn, partialTicks, matrixStackIn, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		//Render all top level bones
 		for (GeoBone group : model.topLevelBones)
 		{
@@ -81,16 +81,16 @@ public interface IGeoRenderer<T>
 
 	IGeoModelProvider getGeoModelProvider();
 
-	default void renderCustom(T entity, MatrixStack stackIn, float ticks, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
+	default void renderCustom(T instance, MatrixStack stackIn, float ticks, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{
 	}
 
-	default RenderType getRenderType(T entity, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ResourceLocation textureLocation)
+	default RenderType getRenderType(T instance, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ResourceLocation textureLocation)
 	{
 		return RenderType.getEntityTranslucent(textureLocation);
 	}
 
-	default Color getRenderColor(T entity, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
+	default Color getRenderColor(T instance, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
 		return new Color(255, 255, 255, 255);
 	}
