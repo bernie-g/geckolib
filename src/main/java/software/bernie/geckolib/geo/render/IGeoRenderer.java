@@ -14,7 +14,7 @@ public interface IGeoRenderer<T>
 {
 	default void render(GeoModel model, T entity, float partialTicks, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
-		renderCustom(entity, matrixStackIn, partialTicks);
+		renderCustom(entity, matrixStackIn, partialTicks, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		//Render all top level bones
 		for (GeoBone group : model.topLevelBones)
 		{
@@ -81,7 +81,7 @@ public interface IGeoRenderer<T>
 
 	IGeoModelProvider getGeoModelProvider();
 
-	default void renderCustom(T entity, MatrixStack matrixStackIn, float partialTicks)
+	default void renderCustom(T entity, MatrixStack stackIn, float ticks, MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{
 	}
 
