@@ -38,7 +38,7 @@ public abstract class GeoEntityRenderer<T extends Entity & IAnimatable> extends 
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, stack, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, stack, bufferIn, packedLightIn, getEntityTexture(entityIn));
-		render(model, entityIn, partialTicks, stack, bufferIn, bufferIn.getBuffer(renderType), packedLightIn, getPackedOverlay((LivingEntity) entityIn, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+		render(model, entityIn, partialTicks, renderType, stack, bufferIn, packedLightIn, getPackedOverlay((LivingEntity) entityIn, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 		super.render(entityIn, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}

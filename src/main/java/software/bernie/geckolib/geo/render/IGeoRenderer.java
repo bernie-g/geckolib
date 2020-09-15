@@ -12,13 +12,15 @@ import java.awt.*;
 
 public interface IGeoRenderer<T>
 {
-	default void render(GeoModel model, T entity, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	default void render(GeoModel model, T entity, float partialTicks, RenderType type, MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 	{
-		renderCustom(entity, matrixStackIn, partialTicks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		renderEarly(entity, matrixStackIn, partialTicks, renderTypeBuffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		IVertexBuilder buffer = renderTypeBuffer.getBuffer(type);
+		renderLate(entity, matrixStackIn, partialTicks, renderTypeBuffer, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		//Render all top level bones
 		for (GeoBone group : model.topLevelBones)
 		{
-			renderRecursively(group, matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			renderRecursively(group, matrixStackIn, buffer, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		}
 	}
 
@@ -81,7 +83,11 @@ public interface IGeoRenderer<T>
 
 	IGeoModelProvider getGeoModelProvider();
 
-	default void renderCustom(T instance, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
+	default void renderEarly(T instance, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
+	{
+	}
+
+	default void renderLate(T instance, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{
 	}
 

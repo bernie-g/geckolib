@@ -49,7 +49,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, getTexture(tile));
-		render(model, tile, partialTicks, stack, bufferIn, bufferIn.getBuffer(renderType), packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		render(model, tile, partialTicks, renderType, stack, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
 
