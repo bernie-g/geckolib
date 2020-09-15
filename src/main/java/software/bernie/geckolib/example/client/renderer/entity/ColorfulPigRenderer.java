@@ -6,9 +6,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.MobEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import software.bernie.geckolib.example.client.renderer.model.BrownModel;
 import software.bernie.geckolib.example.client.renderer.model.ColorfulPigModel;
-import software.bernie.geckolib.example.entity.BrownEntity;
 import software.bernie.geckolib.example.entity.EntityColorfulPig;
 
 import javax.annotation.Nullable;

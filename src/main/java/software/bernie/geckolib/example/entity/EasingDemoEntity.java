@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -49,7 +50,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatedEntity
 
 	@Nullable
 	@Override
-	public PassiveEntity createChild(PassiveEntity ageable)
+	public PassiveEntity createChild(ServerWorld world, PassiveEntity ageable)
 	{
 		return null;
 	}

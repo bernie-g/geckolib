@@ -11,6 +11,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
@@ -38,7 +39,7 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public PassiveEntity createChild(PassiveEntity ageable) {
+	public PassiveEntity createChild(ServerWorld world, PassiveEntity ageable) {
 		return null;
 	}
 
@@ -109,10 +110,9 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatedEntity
 	}
 
 	@Override
-	public void onStruckByLightning(LightningEntity lightningBolt) {
+	public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
 		this.setGlowing(true);
 	}
-
 
 	private <E extends EntityColorfulPig> boolean animationPredicate(AnimationTestEvent<E> event) {
 		if (event.isWalking()) {
