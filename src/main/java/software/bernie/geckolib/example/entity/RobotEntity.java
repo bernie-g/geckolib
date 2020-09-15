@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
@@ -32,7 +33,7 @@ public class RobotEntity extends AnimalEntity implements IAnimatedEntity
 
 	@Nullable
 	@Override
-	public PassiveEntity createChild(PassiveEntity ageable)
+	public PassiveEntity createChild(ServerWorld world, PassiveEntity ageable)
 	{
 		return null;
 	}

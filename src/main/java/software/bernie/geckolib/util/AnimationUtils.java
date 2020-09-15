@@ -83,7 +83,7 @@ public class AnimationUtils
 	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
 	{
-		EntityRenderDispatcher renderManager = MinecraftClient.getInstance().getEntityRenderManager();
+		EntityRenderDispatcher renderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 
