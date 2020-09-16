@@ -7,7 +7,8 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
+version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 group = project.maven_group
 
 
@@ -69,23 +70,58 @@ jar {
     from "LICENSE"
 }
 
+task javadocnew(type: Javadoc) {
+    source = sourceSets.main.allJava
+    classpath = configurations.compile
+}
+
+task javadocJar(type: Jar, dependsOn: javadocnew) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+task packageSources(type: Jar, dependsOn: 'classes') {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+artifacts {
+    archives packageJavadoc
+    archives packageSources
+}
+artifacts {
+    archives javadocJar
+}
 // configure the maven publication
 publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
-            }
-            artifact(sourcesJar) {
-                builtBy remapSourcesJar
+    repositories {
+        maven {
+            url repsyUrl
+            credentials {
+                def envUsername = System.getenv("repsyUsername")
+                def envPassword = System.getenv("repsyPassword")
+                username = envUsername == null ? repsyUsername : envUsername
+                password = envPassword == null ? repsyPassword : envPassword
             }
         }
     }
+}
 
-    // select the repositories you want to publish to
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifact packageSources
+            artifact packageJavadoc
+            artifactId = project.archives_base_name
+        }
+    }
     repositories {
-        // uncomment to publish to the local maven
-        // mavenLocal()
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
     }
 }

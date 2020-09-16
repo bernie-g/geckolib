@@ -181,7 +181,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatedEntity> ex
 	 *
 	 * @param name The name
 	 * @return the animation by name
-	 * @throws JSONException
 	 */
 	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws ShaderParseException
 	{

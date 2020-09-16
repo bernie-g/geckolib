@@ -178,7 +178,6 @@ public abstract class AnimatedTileEntityModel<T extends BlockEntity & IAnimatedE
 	 *
 	 * @param name The name
 	 * @return the animation by name
-	 * @throws JSONException
 	 */
 	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws ShaderParseException
 	{

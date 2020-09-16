@@ -169,7 +169,6 @@ public class JsonAnimationUtils
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
 	 * @return the animation
-	 * @throws JSONException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName) throws ShaderParseException
 	{
