@@ -30,7 +30,6 @@ public interface IGeoRenderer<T>
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
 		RenderUtils.rotate(bone, stack);
-
 		RenderUtils.scale(bone, stack);
 		RenderUtils.moveBackFromPivot(bone, stack);
 

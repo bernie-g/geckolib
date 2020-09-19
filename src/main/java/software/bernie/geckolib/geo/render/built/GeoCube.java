@@ -11,20 +11,22 @@ public class GeoCube
 	public GeoQuad[] quads = new GeoQuad[6];
 	public Vector3f pivot;
 	public Vector3f rotation;
-	public Double inflate;
+	public double inflate;
 	public Boolean mirror;
 
 	private GeoCube()
 	{
 	}
 
-	public static GeoCube createFromPojoCube(Cube cubeIn, ModelProperties properties)
+	public static GeoCube createFromPojoCube(Cube cubeIn, ModelProperties properties, Double boneInflate)
 	{
 		GeoCube cube = new GeoCube();
 
 		UvUnion uvUnion = cubeIn.getUv();
 		UvFaces faces = uvUnion.faceUV;
 		boolean isBoxUV = uvUnion.isBoxUV;
+		cube.mirror = cubeIn.getMirror();
+		cube.inflate = cubeIn.getInflate() == null ? (boneInflate == null ? 0 : boneInflate) : cubeIn.getInflate() / 16;
 
 		float textureHeight = properties.getTextureHeight().floatValue();
 		float textureWidth = properties.getTextureWidth().floatValue();
@@ -32,12 +34,12 @@ public class GeoCube
 		Vector3d size = VectorUtils.fromArray(cubeIn.getSize());
 		Vector3d origin = VectorUtils.fromArray(cubeIn.getOrigin());
 		origin.x = -(origin.x + size.x) / 16;
-		origin.y = origin.y / 16;
-		origin.z = origin.z / 16;
+		origin.y /= 16;
+		origin.z /= 16;
 
-		size.x = size.x / 16;
-		size.y = size.y / 16;
-		size.z = size.z / 16;
+		size.x /= 16;
+		size.y /= 16;
+		size.z /= 16;
 
 		if (size.x == 0)
 		{
@@ -63,8 +65,7 @@ public class GeoCube
 
 		cube.pivot = pivot;
 		cube.rotation = rotation;
-		cube.mirror = cubeIn.getMirror();
-		cube.inflate = cubeIn.getInflate();
+
 
 		//
 		//
@@ -96,14 +97,14 @@ public class GeoCube
 		//
 
 		//Making all 8 points of the cube using the origin (where the Z, X, and Y values are smallest) and offseting each point by the right size values
-		GeoVertex P1 = new GeoVertex(origin.x, origin.y, origin.z);
-		GeoVertex P2 = new GeoVertex(origin.x, origin.y, origin.z + size.z);
-		GeoVertex P3 = new GeoVertex(origin.x, origin.y + size.y, origin.z);
-		GeoVertex P4 = new GeoVertex(origin.x, origin.y + size.y, origin.z + size.z);
-		GeoVertex P5 = new GeoVertex(origin.x + size.x, origin.y, origin.z);
-		GeoVertex P6 = new GeoVertex(origin.x + size.x, origin.y, origin.z + size.z);
-		GeoVertex P7 = new GeoVertex(origin.x + size.x, origin.y + size.y, origin.z);
-		GeoVertex P8 = new GeoVertex(origin.x + size.x, origin.y + size.y, origin.z + size.z);
+		GeoVertex P1 = new GeoVertex(origin.x - cube.inflate, origin.y - cube.inflate, origin.z - cube.inflate);
+		GeoVertex P2 = new GeoVertex(origin.x - cube.inflate, origin.y - cube.inflate, origin.z + size.z + cube.inflate);
+		GeoVertex P3 = new GeoVertex(origin.x - cube.inflate, origin.y + size.y + cube.inflate, origin.z - cube.inflate);
+		GeoVertex P4 = new GeoVertex(origin.x - cube.inflate, origin.y + size.y + cube.inflate, origin.z + size.z + cube.inflate);
+		GeoVertex P5 = new GeoVertex(origin.x + size.x + cube.inflate, origin.y - cube.inflate, origin.z - cube.inflate);
+		GeoVertex P6 = new GeoVertex(origin.x + size.x + cube.inflate, origin.y - cube.inflate, origin.z + size.z + cube.inflate);
+		GeoVertex P7 = new GeoVertex(origin.x + size.x + cube.inflate, origin.y + size.y + cube.inflate, origin.z - cube.inflate);
+		GeoVertex P8 = new GeoVertex(origin.x + size.x + cube.inflate, origin.y + size.y + cube.inflate, origin.z + size.z + cube.inflate);
 
 
 		GeoQuad quadWest;

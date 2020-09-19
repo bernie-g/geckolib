@@ -1,7 +1,6 @@
 package software.bernie.geckolib.example.client.renderer.tile;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.example.block.tile.FertilizerTileEntity;
 import software.bernie.geckolib.example.client.renderer.model.tile.FertilizerModel;
 import software.bernie.geckolib.geo.render.GeoBlockRenderer;

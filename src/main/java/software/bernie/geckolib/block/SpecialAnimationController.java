@@ -196,7 +196,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 
 	public void playSound(SoundEvent event)
 	{
-		//TODO add code for tile entity sounds
+		
 		//entity.world.playSound(entity.getPosX(), entity.getPosY(), entity.getPosZ(), event, soundCategory, volume, pitch, distanceSoundDelay);
 	}
 
