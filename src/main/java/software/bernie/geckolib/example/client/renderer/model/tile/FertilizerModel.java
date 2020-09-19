@@ -27,4 +27,10 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 			return new ResourceLocation("geckolib", "geo/fertilizer.json");
 		}
 	}
+
+	@Override
+	public ResourceLocation getTextureLocation(FertilizerTileEntity entity)
+	{
+		return new ResourceLocation("geckolib" + ":textures/block/fertilizer.png");
+	}
 }

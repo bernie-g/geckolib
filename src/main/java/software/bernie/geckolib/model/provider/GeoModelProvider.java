@@ -15,7 +15,6 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class GeoModelProvider<T> implements IModelDataProvider
 {
-
 	public double seekTime;
 	public double lastGameTickTime;
 	public boolean shouldCrashOnMissing = false;
@@ -57,5 +56,6 @@ public abstract class GeoModelProvider<T> implements IModelDataProvider
 		}
 	}
 
-	public abstract ResourceLocation getModelLocation(T animatable);
+	public abstract ResourceLocation getModelLocation(T object);
+	public abstract ResourceLocation getTextureLocation(T object);
 }

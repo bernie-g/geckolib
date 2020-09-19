@@ -82,6 +82,7 @@ public interface IGeoRenderer<T>
 	}
 
 	GeoModelProvider getGeoModelProvider();
+	ResourceLocation getTextureLocation(T instance);
 
 	default void renderEarly(T instance, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{
@@ -101,6 +102,5 @@ public interface IGeoRenderer<T>
 		return new Color(255, 255, 255, 255);
 	}
 
-	ResourceLocation getTexture(T entity);
 
 }

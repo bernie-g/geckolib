@@ -12,10 +12,4 @@ public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntit
 	{
 		super(rendererDispatcherIn, new FertilizerModel());
 	}
-
-	@Override
-	public ResourceLocation getTexture(FertilizerTileEntity entity)
-	{
-		return new ResourceLocation("geckolib" + ":textures/block/fertilizer.png");
-	}
 }

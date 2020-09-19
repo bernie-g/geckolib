@@ -18,4 +18,10 @@ public class ExampleGeoModel extends AnimatedGeoModel<GeoExampleEntity>
 	{
 		return new ResourceLocation(GeckoLib.ModID, "geo/geotestmodel.json");
 	}
+
+	@Override
+	public ResourceLocation getTextureLocation(GeoExampleEntity entity)
+	{
+		return new ResourceLocation("geckolib" + ":textures/model/entity/botarium.png");
+	}
 }

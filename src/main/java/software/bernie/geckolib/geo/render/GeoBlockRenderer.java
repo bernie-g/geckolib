@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
@@ -44,10 +45,10 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		stack.translate(0.5, 0, 0.5);
 		rotateBlock(getFacing(tile), stack);
 
-		Minecraft.getInstance().textureManager.bindTexture(getTexture(tile));
+		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(tile));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, getTexture(tile));
+		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, modelProvider.getTextureLocation(tile));
 		render(model, tile, partialTicks, renderType, stack, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
@@ -99,5 +100,11 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		{
 			return Direction.NORTH;
 		}
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(T instance)
+	{
+		return this.modelProvider.getTextureLocation(instance);
 	}
 }

@@ -11,7 +11,6 @@ import software.bernie.geckolib.example.entity.BrownEntity;
 
 public class BrownModel extends AnimatedEntityModel<BrownEntity>
 {
-
 	private final AnimatedModelRenderer all;
 	private final AnimatedModelRenderer rightleg;
 	private final AnimatedModelRenderer rightleg3;

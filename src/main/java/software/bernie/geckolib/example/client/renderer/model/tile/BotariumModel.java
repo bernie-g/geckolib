@@ -21,4 +21,10 @@ public class BotariumModel extends AnimatedGeoModel<BotariumTileEntity>
 	{
 		return new ResourceLocation("geckolib", "geo/botarium_block.json");
 	}
+
+	@Override
+	public ResourceLocation getTextureLocation(BotariumTileEntity entity)
+	{
+		return new ResourceLocation("geckolib" + ":textures/model/entity/botarium.png");
+	}
 }

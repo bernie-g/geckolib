@@ -30,7 +30,7 @@ import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
 {
-	private final GeoModelProvider<T> modelProvider;
+	private final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
 	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider)
@@ -137,7 +137,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public ResourceLocation getEntityTexture(T entity)
 	{
-		return getTexture(entity);
+		return modelProvider.getTextureLocation(entity);
 	}
 
 	@Override
@@ -234,6 +234,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	 */
 	protected float handleRotationFloat(T livingBase, float partialTicks) {
 		return (float)livingBase.ticksExisted + partialTicks;
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(T instance)
+	{
+		return this.modelProvider.getTextureLocation(instance);
 	}
 
 	public final boolean addLayer(GeoLayerRenderer<T> layer)
