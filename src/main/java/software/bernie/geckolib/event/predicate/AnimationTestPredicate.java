@@ -1,7 +1,7 @@
 package software.bernie.geckolib.event.predicate;
 
-import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.animation.controller.BaseAnimationController;
+import software.bernie.geckolib.animation.IAnimatable;
 
 import javax.annotation.Nullable;
 
@@ -15,7 +15,7 @@ public class AnimationTestPredicate<T extends IAnimatable>
 	private final boolean isMoving;
 
 	@Nullable
-	protected AnimationController controller;
+	protected BaseAnimationController controller;
 
 	public AnimationTestPredicate(T entity, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving)
 	{
@@ -41,12 +41,12 @@ public class AnimationTestPredicate<T extends IAnimatable>
 		return entity;
 	}
 
-	public AnimationController getController()
+	public BaseAnimationController getController()
 	{
 		return controller;
 	}
 
-	public void setController(@Nullable AnimationController controller)
+	public void setController(@Nullable BaseAnimationController controller)
 	{
 		this.controller = controller;
 	}

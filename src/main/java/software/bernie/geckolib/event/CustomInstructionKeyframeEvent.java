@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.event;
 
-import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.BaseAnimationController;
 
 import java.util.List;
 
@@ -21,7 +21,7 @@ public class CustomInstructionKeyframeEvent<T> extends AnimationEvent<T>
 	 * @param instructions  A list of all the custom instructions. In blockbench, each line in the custom instruction box is a separate instruction.
 	 * @param controller    the controller
 	 */
-	public CustomInstructionKeyframeEvent(T entity, double animationTick, List<String> instructions, AnimationController controller)
+	public CustomInstructionKeyframeEvent(T entity, double animationTick, List<String> instructions, BaseAnimationController controller)
 	{
 		super(entity, animationTick, controller);
 		this.instructions = instructions;

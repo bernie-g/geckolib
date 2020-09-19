@@ -26,12 +26,12 @@ import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.animation.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.item.armor.AnimatedArmorItem;
-import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.item.AnimatedArmorItem;
+import software.bernie.geckolib.animation.manager.AnimationManager;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
 

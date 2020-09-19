@@ -5,8 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.decorator.ExtraModelData;
-import software.bernie.geckolib.decorator.IModelDataProvider;
+import software.bernie.geckolib.model.provider.data.ExtraModelData;
 import software.bernie.geckolib.file.GeoModelLoader;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 

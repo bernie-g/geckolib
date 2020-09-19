@@ -11,10 +11,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib.example.registry.BlockRegistry;
-import software.bernie.geckolib.example.registry.EntityRegistry;
-import software.bernie.geckolib.example.registry.ItemRegistry;
-import software.bernie.geckolib.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockRegistry;
+import software.bernie.example.registry.EntityRegistry;
+import software.bernie.example.registry.ItemRegistry;
+import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib.listener.ClientListener;
 
 @Mod(GeckoLib.ModID)

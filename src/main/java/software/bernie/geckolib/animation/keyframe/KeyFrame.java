@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.easing.EasingType;
+import software.bernie.geckolib.animation.easing.EasingType;
 
 import java.util.ArrayList;
 import java.util.List;

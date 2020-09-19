@@ -15,9 +15,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
-import software.bernie.geckolib.easing.EasingManager;
-import software.bernie.geckolib.easing.EasingType;
-import software.bernie.geckolib.geo.render.IGeoRenderer;
+import software.bernie.geckolib.animation.easing.EasingManager;
+import software.bernie.geckolib.animation.easing.EasingType;
+import software.bernie.geckolib.renderers.geo.IGeoRenderer;
 import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
 
@@ -114,7 +114,6 @@ public class AnimationUtils
 				}
 			}
 		}
-		GeckoLib.LOGGER.error("Could not find valid renderer for {}", entity.getName());
 		return null;
 	}
 
@@ -126,8 +125,6 @@ public class AnimationUtils
 		{
 			return ((IGeoRenderer<?>) entityRenderer).getGeoModelProvider();
 		}
-
-		GeckoLib.LOGGER.error("Could not find valid renderer for {}", entity.getName());
 		return null;
 	}
 }

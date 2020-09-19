@@ -15,7 +15,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.keyframe.KeyFrame;
 import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-import software.bernie.geckolib.easing.EasingType;
+import software.bernie.geckolib.animation.easing.EasingType;
 import software.bernie.geckolib.molang.ConstantValue;
 import software.bernie.geckolib.util.AnimationUtils;
 

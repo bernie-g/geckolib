@@ -1,16 +1,15 @@
 package software.bernie.geckolib.animation.processor;
 
 import com.eliotlash.molang.MolangParser;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.animation.controller.BaseAnimationController;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
 import software.bernie.geckolib.animation.snapshot.BoneSnapshotCollection;
 import software.bernie.geckolib.animation.snapshot.DirtyTracker;
-import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.animation.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.animation.manager.AnimationManager;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class AnimationProcessor<T extends IAnimatable>
 		}
 		BoneSnapshotCollection boneSnapshots = manager.getBoneSnapshotCollection();
 
-		for (AnimationController<T> controller : manager.values())
+		for (BaseAnimationController<T> controller : manager.values())
 		{
 			controller.isJustStarting = manager.isFirstTick;
 

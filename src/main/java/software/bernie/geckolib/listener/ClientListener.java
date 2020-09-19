@@ -14,10 +14,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import org.lwjgl.glfw.GLFW;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.example.client.renderer.tile.BotariumTileRenderer;
-import software.bernie.geckolib.example.client.renderer.tile.FertilizerTileRenderer;
-import software.bernie.geckolib.example.registry.BlockRegistry;
-import software.bernie.geckolib.example.registry.TileRegistry;
+import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
+import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
+import software.bernie.example.registry.BlockRegistry;
+import software.bernie.example.registry.TileRegistry;
 
 import java.util.Arrays;
 
