@@ -21,7 +21,7 @@ import java.util.Set;
 public class AnimationFileLoader
 {
 
-	public AnimationFile loadAllAnimations(MolangParser parser, boolean loopByDefault, ResourceLocation location)
+	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location)
 	{
 		AnimationFile animationFile = new AnimationFile();
 		JsonObject jsonRepresentation = loadFile(location);
@@ -33,10 +33,6 @@ public class AnimationFileLoader
 			try
 			{
 				animation = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
-				if (loopByDefault)
-				{
-					animation.loop = true;
-				}
 				animationFile.putAnimation(animationName, animation);
 			}
 			catch (JSONException e)

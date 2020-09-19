@@ -17,32 +17,35 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
+import software.bernie.geckolib.decorator.EntityModelData;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 import java.awt.*;
 import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
 {
-	private final AnimatedGeoModel<T> modelProvider;
+	private final GeoModelProvider<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
 	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider)
 	{
 		super(renderManager);
 		this.modelProvider = modelProvider;
-		this.modelProvider.crashWhenCantFindBone = false;
 	}
 
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
-		this.modelProvider.isSitting = shouldSit;
-		this.modelProvider.isChild = entity.isChild();
+		EntityModelData entityModelData = getOrCreateEntityModelData();
+		entityModelData.isSitting = shouldSit;
+		entityModelData.isChild = entity.isChild();
 		float f = MathHelper.interpolateAngle(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
 		float f1 = MathHelper.interpolateAngle(partialTicks, entity.prevRotationYawHead, entity.rotationYawHead);
 		float f2 = f1 - f;
@@ -98,7 +101,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			}
 		}
 		AnimationTestPredicate predicate = new AnimationTestPredicate(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
-		modelProvider.setLivingAnimations(entity, predicate);
+
+		if(modelProvider instanceof IAnimatableModelProvider)
+		{
+			((IAnimatableModelProvider<T>) modelProvider).setLivingAnimations(entity, predicate);
+		}
 
 		stack.push();
 		stack.translate(0, 0.01f, 0);
@@ -117,6 +124,16 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
+	private EntityModelData getOrCreateEntityModelData()
+	{
+		EntityModelData modelData = this.modelProvider.getModelData(EntityModelData.class);
+		if(modelData == null)
+		{
+			this.modelProvider.putModelData(EntityModelData.class, new EntityModelData());
+		}
+		return modelData;
+	}
+
 	@Override
 	public ResourceLocation getEntityTexture(T entity)
 	{
@@ -124,7 +141,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	@Override
-	public AnimatedGeoModel getGeoModelProvider()
+	public GeoModelProvider getGeoModelProvider()
 	{
 		return this.modelProvider;
 	}

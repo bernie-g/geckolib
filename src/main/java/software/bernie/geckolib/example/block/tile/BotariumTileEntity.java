@@ -16,7 +16,7 @@ public class BotariumTileEntity extends TileEntity implements IAnimatable
 	private <E extends TileEntity & IAnimatable> boolean predicate(AnimationTestPredicate<E> eSpecialAnimationPredicate)
 	{
 		controller.transitionLengthTicks = 0;
-		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", false).addAnimation("Botarium.anim.idle", true));
+		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
 		return true;
 	}
 

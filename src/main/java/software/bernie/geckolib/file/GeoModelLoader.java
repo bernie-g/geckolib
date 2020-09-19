@@ -11,7 +11,7 @@ import software.bernie.geckolib.geo.raw.pojo.RawGeoModel;
 import software.bernie.geckolib.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib.geo.render.GeoBuilder;
 import software.bernie.geckolib.geo.render.built.GeoModel;
-import software.bernie.geckolib.model.IGeoModelProvider;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
@@ -19,9 +19,9 @@ import java.io.InputStream;
 
 public class GeoModelLoader
 {
-	private final IGeoModelProvider provider;
+	private final GeoModelProvider provider;
 
-	public GeoModelLoader(IGeoModelProvider provider)
+	public GeoModelLoader(GeoModelProvider provider)
 	{
 		this.provider = provider;
 	}

@@ -16,7 +16,7 @@ import net.minecraft.util.Direction;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.model.IGeoModelProvider;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 import java.awt.*;
 
@@ -28,7 +28,6 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	{
 		super(rendererDispatcherIn);
 		this.modelProvider = modelProvider;
-		this.modelProvider.crashWhenCantFindBone = false;
 	}
 
 	@Override
@@ -54,7 +53,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	}
 
 	@Override
-	public IGeoModelProvider getGeoModelProvider()
+	public GeoModelProvider getGeoModelProvider()
 	{
 		return this.modelProvider;
 	}

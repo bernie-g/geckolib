@@ -20,44 +20,22 @@ import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.file.GeoModelLoader;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.listener.ClientListener;
 import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.ExecutionException;
 
-public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimatableModel<T>, IGeoModelProvider<T>, IResourceManagerReloadListener
+public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
-	private final GeoModelLoader modelLoader;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
-	private final AnimationProcessor processor;
-
-	public double seekTime;
-	public double lastGameTickTime;
-	public boolean crashWhenCantFindBone = true;
-	public boolean isSitting;
-	public boolean isChild;
-	private boolean loopByDefault;
-
-	private final LoadingCache<ResourceLocation, GeoModel> modelCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, GeoModel>()
-	{
-		@Override
-		public GeoModel load(ResourceLocation key) throws Exception
-		{
-			AnimatedGeoModel<T> model = AnimatedGeoModel.this;
-			GeoModel geoModel = model.modelLoader.loadModel(Minecraft.getInstance().getResourceManager(), key);
-			model.processor.clearModelRendererList();
-			for (GeoBone bone : geoModel.topLevelBones)
-			{
-				registerBone(bone);
-			}
-			return geoModel;
-		}
-	});
+	private final AnimationProcessor animationProcessor;
 
 	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
 	{
@@ -65,16 +43,15 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		public AnimationFile load(ResourceLocation key)
 		{
 			AnimatedGeoModel<T> model = AnimatedGeoModel.this;
-			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+			return model.loader.loadAllAnimations(model.parser, key);
 		}
 	});
 
-
 	protected AnimatedGeoModel()
 	{
-		this.modelLoader = new GeoModelLoader(this);
+		this.genericModelProvider = this;
 		this.loader = new AnimationFileLoader();
-		this.processor = new AnimationProcessor();
+		this.animationProcessor = new AnimationProcessor();
 		registerMolangVariables();
 		onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 		registerSelf();
@@ -98,7 +75,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 	{
 		if (inputKeyEvent.getAction() == GLFW.GLFW_RELEASE && inputKeyEvent.getKey() == ClientListener.reloadGeckoLibKeyBind.getKey().getKeyCode())
 		{
-			reloadOnInputKey();
+			reload();
 		}
 	}
 
@@ -128,11 +105,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		parser.register(new Variable("query.anim_time", 0));
 	}
 
-	public void setLivingAnimations(T entity)
-	{
-		setLivingAnimations(entity, null);
-	}
 
+	@Override
 	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
@@ -149,7 +123,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		lastGameTickTime = gameTick;
 
 		AnimationTestPredicate<T> predicate;
-
 		if (customPredicate == null)
 		{
 			predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
@@ -161,40 +134,37 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 
 		predicate.animationTick = seekTime;
 
-		if (!this.processor.getModelRendererList().isEmpty())
+		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
-			processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
+			animationProcessor.tickAnimation(entity, seekTime, predicate, parser, shouldCrashOnMissing);
 		}
 	}
 
 	@Override
 	public AnimationProcessor getAnimationProcessor()
 	{
-		return this.processor;
+		return this.animationProcessor;
 	}
 
-	@Override
-	public GeoModel getModel(ResourceLocation location)
-	{
-		try
-		{
-			return this.modelCache.get(location);
-		}
-		catch (ExecutionException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
 
 	public void registerModelRenderer(IBone modelRenderer)
 	{
-		processor.registerModelRenderer(modelRenderer);
+		animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
 	@Override
-	public void reloadOnInputKey()
+	public void reload()
 	{
 		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}
 
+	@Override
+	public void reloadModel(GeoModel model)
+	{
+		animationProcessor.clearModelRendererList();
+		for (GeoBone bone : model.topLevelBones)
+		{
+			registerBone(bone);
+		}
+	}
 }

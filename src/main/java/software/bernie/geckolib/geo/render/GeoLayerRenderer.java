@@ -10,7 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.model.IGeoModelProvider;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable>
 {
@@ -38,7 +38,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable>
 		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingRenderer.getPackedOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
 	}
 
-	public IGeoModelProvider getEntityModel()
+	public GeoModelProvider getEntityModel()
 	{
 		return this.entityRenderer.getGeoModelProvider();
 	}

@@ -1,12 +1,15 @@
-package software.bernie.geckolib.model;
+package software.bernie.geckolib.model.provider;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 
-public interface IAnimatableModel<E>
+import javax.annotation.Nullable;
+
+public interface IAnimatableModelProvider<E>
 {
 	/**
 	 * This resource location needs to point to a json file of your animation file, i.e. "geckolib:animations/frog_animation.json"
@@ -19,6 +22,13 @@ public interface IAnimatableModel<E>
 	{
 		return (Util.milliTime() / 50f);
 	}
+
+	default void setLivingAnimations(E entity)
+	{
+		this.setLivingAnimations(entity, null);
+	}
+
+	void setLivingAnimations(E entity, @Nullable AnimationTestPredicate customPredicate);
 
 	AnimationProcessor getAnimationProcessor();
 
@@ -35,5 +45,4 @@ public interface IAnimatableModel<E>
 		return this.getAnimationProcessor().getBone(boneName);
 	}
 
-	void reloadOnInputKey();
 }

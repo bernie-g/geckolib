@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animation.processor;
 
 import com.eliotlash.molang.MolangParser;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;

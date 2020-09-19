@@ -7,7 +7,6 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -16,20 +15,26 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.resources.*;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
+import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
-import java.util.*;
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -37,7 +42,8 @@ import java.util.concurrent.ExecutionException;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModel<T>, IResourceManagerReloadListener
+@Deprecated
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -45,7 +51,6 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	private final AnimationProcessor processor;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
-	private boolean loopByDefault;
 
 	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
 	{
@@ -53,7 +58,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		public AnimationFile load(ResourceLocation key)
 		{
 			AnimatedEntityModel<T> model = AnimatedEntityModel.this;
-			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+			return model.loader.loadAllAnimations(model.parser, key);
 		}
 	});
 
@@ -137,6 +142,12 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	}
 
 	@Override
+	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
+	{
+		this.setLivingAnimations(entity, customPredicate.getLimbSwing(), customPredicate.getLimbSwingAmount(), customPredicate.getPartialTick());
+	}
+
+	@Override
 	public void setLivingAnimations(T entity, float limbSwing, float limbSwingAmount, float partialTick)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
@@ -155,7 +166,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	}
 
 	@Override
-	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) { }
+	public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch)
+	{
+	}
 
 
 	@Override
@@ -175,7 +188,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	}
 
 	@Override
-	public void reloadOnInputKey()
+	public void reload()
 	{
 		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}

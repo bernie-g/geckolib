@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.*;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.geo.render.built.*;
-import software.bernie.geckolib.model.IGeoModelProvider;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.awt.*;
@@ -81,7 +81,7 @@ public interface IGeoRenderer<T>
 		}
 	}
 
-	IGeoModelProvider getGeoModelProvider();
+	GeoModelProvider getGeoModelProvider();
 
 	default void renderEarly(T instance, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
 	{

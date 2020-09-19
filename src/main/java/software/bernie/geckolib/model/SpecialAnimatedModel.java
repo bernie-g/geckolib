@@ -29,17 +29,14 @@ import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-/**
- * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
- *
- * @param <T> the type parameter
- */
-public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel<T>, IResourceManagerReloadListener
+public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -48,7 +45,6 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 	public boolean crashWhenCantFindBone = true;
-	private boolean loopByDefault;
 
 	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
 	{
@@ -56,7 +52,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		public AnimationFile load(ResourceLocation key)
 		{
 			SpecialAnimatedModel<T> model = SpecialAnimatedModel.this;
-			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+			return model.loader.loadAllAnimations(model.parser, key);
 		}
 	});
 
@@ -73,9 +69,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		}
 	}
 
-	/**
-	 * Instantiates a new Animated entity model and loads the current animation file.
-	 */
+
 	protected SpecialAnimatedModel()
 	{
 		super(RenderType::getEntityCutoutNoCull);
@@ -172,8 +166,9 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		return this.processor;
 	}
 
+
 	@Override
-	public void reloadOnInputKey()
+	public void reload()
 	{
 		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}

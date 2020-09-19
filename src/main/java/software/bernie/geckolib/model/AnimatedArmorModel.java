@@ -32,7 +32,10 @@ import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.manager.AnimationManager;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
+import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -42,7 +45,7 @@ import java.util.concurrent.ExecutionException;
  *
  * @param <T> the type parameter
  */
-public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimatableModel<T>, IResourceManagerReloadListener
+public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatable> extends BipedModel implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
@@ -72,7 +75,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		public AnimationFile load(ResourceLocation key)
 		{
 			AnimatedArmorModel<T> model = AnimatedArmorModel.this;
-			return model.loader.loadAllAnimations(model.parser, model.loopByDefault, key);
+			return model.loader.loadAllAnimations(model.parser, key);
 		}
 	});
 
@@ -89,7 +92,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		registerMolangVariables();
 
 		onResourceManagerReload(resourceManager);
-		MinecraftForge.EVENT_BUS.register((IAnimatableModel) this);
+		MinecraftForge.EVENT_BUS.register((IAnimatableModelProvider) this);
 	}
 
 	private void registerMolangVariables()
@@ -143,7 +146,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		modelRenderer.rotateAngleZ = z;
 	}
 
-	public void setLivingAnimations(T entity)
+	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
@@ -285,7 +288,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	}
 
 	@Override
-	public void reloadOnInputKey()
+	public void reload()
 	{
 		this.onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 	}

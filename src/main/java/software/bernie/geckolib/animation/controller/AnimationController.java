@@ -289,10 +289,10 @@ public abstract class AnimationController<T extends IAnimatable>
 	/**
 	 * This method is called every frame in order to populate the animation point queues, and process animation state logic.
 	 *
-	 * @param tick                     The current tick + partial tick
+	 * @param tick                   The current tick + partial tick
 	 * @param AnimationTestPredicate The animation test event
-	 * @param modelRendererList        The list of all AnimatedModelRender's
-	 * @param boneSnapshotCollection   The bone snapshot collection
+	 * @param modelRendererList      The list of all AnimatedModelRender's
+	 * @param boneSnapshotCollection The bone snapshot collection
 	 */
 	public void process(double tick, AnimationTestPredicate AnimationTestPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
 	{
@@ -548,13 +548,12 @@ public abstract class AnimationController<T extends IAnimatable>
 	//Helper method to populate all the initial animation point queues
 	private void createInitialQueues(List<IBone> modelRendererList)
 	{
-		if (boneAnimationQueues.size() == 0)
+		boneAnimationQueues.clear();
+		for (IBone modelRenderer : modelRendererList)
 		{
-			for (IBone modelRenderer : modelRendererList)
-			{
-				boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
-			}
+			boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
 		}
+
 	}
 
 	// Used to reset the "tick" everytime a new animation starts, a transition starts, or something else of importance happens

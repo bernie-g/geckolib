@@ -16,7 +16,7 @@ import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.geo.render.GeoBlockRenderer;
-import software.bernie.geckolib.model.IAnimatableModel;
+import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.item.AnimatedItemRenderer;
 import software.bernie.geckolib.item.armor.AnimatedArmorItem;
 import software.bernie.geckolib.util.AnimationUtils;
@@ -31,9 +31,9 @@ import java.util.stream.Collectors;
 
 public class SpecialAnimationController<T extends IAnimatable> extends AnimationController<T>
 {
-	private static List<Function<Object, IAnimatableModel>> modelFetchers = new ArrayList<>();
+	private static List<Function<Object, IAnimatableModelProvider>> modelFetchers = new ArrayList<>();
 
-	public static void addModelFetcher(Function<Object, IAnimatableModel> fetcher)
+	public static void addModelFetcher(Function<Object, IAnimatableModelProvider> fetcher)
 	{
 		modelFetchers.add(fetcher);
 	}
@@ -67,7 +67,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 				}
 				else if(renderer instanceof GeoBlockRenderer)
 				{
-					return (IAnimatableModel)((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+					return (IAnimatableModelProvider)((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
 			}
 			return null;
@@ -87,7 +87,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 		{
 			if (object instanceof Entity)
 			{
-				return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity)object);
+				return (IAnimatableModelProvider) AnimationUtils.getGeoModelForEntity((Entity)object);
 			}
 			return null;
 		});
@@ -125,7 +125,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 	 */
 	public void setAnimation(@Nullable AnimationBuilder builder)
 	{
-		IAnimatableModel model = getModel(this.animatable);
+		IAnimatableModelProvider model = getModel(this.animatable);
 
 		if (model != null)
 		{
@@ -137,7 +137,7 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 			{
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
-				IAnimatableModel finalModel = model;
+				IAnimatableModelProvider finalModel = model;
 				LinkedList<Animation> animations = new LinkedList<>(
 						builder.getRawAnimationList().stream().map((rawAnimation) ->
 						{
@@ -174,11 +174,11 @@ public class SpecialAnimationController<T extends IAnimatable> extends Animation
 		}
 	}
 
-	private IAnimatableModel getModel(T animatable)
+	private IAnimatableModelProvider getModel(T animatable)
 	{
-		for (Function<Object, IAnimatableModel> modelGetter : modelFetchers)
+		for (Function<Object, IAnimatableModelProvider> modelGetter : modelFetchers)
 		{
-			IAnimatableModel model = modelGetter.apply(animatable);
+			IAnimatableModelProvider model = modelGetter.apply(animatable);
 			if(model != null)
 			{
 				return model;
