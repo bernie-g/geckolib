@@ -29,7 +29,6 @@ import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
 import software.bernie.geckolib.listener.ClientListener;
 
 import javax.annotation.Nullable;
@@ -109,7 +108,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		 *
 		 * @return TRUE if the animation should continue, FALSE if it should stop.
 		 */
-		<P extends IAnimatable> boolean test(EntityAnimationPredicate<P> event);
+		<P extends IAnimatable> boolean test(AnimationTestPredicate<P> event);
 	}
 
 	/**
@@ -291,11 +290,11 @@ public abstract class AnimationController<T extends IAnimatable>
 	 * This method is called every frame in order to populate the animation point queues, and process animation state logic.
 	 *
 	 * @param tick                     The current tick + partial tick
-	 * @param entityAnimationPredicate The animation test event
+	 * @param AnimationTestPredicate The animation test event
 	 * @param modelRendererList        The list of all AnimatedModelRender's
 	 * @param boneSnapshotCollection   The bone snapshot collection
 	 */
-	public void process(double tick, AnimationTestPredicate entityAnimationPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
+	public void process(double tick, AnimationTestPredicate AnimationTestPredicate, List<IBone> modelRendererList, BoneSnapshotCollection boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
 	{
 		createInitialQueues(modelRendererList);
 
@@ -313,7 +312,7 @@ public abstract class AnimationController<T extends IAnimatable>
 		assert tick >= 0 : "GeckoLib: Tick was less than zero";
 
 		// This tests the animation predicate
-		boolean shouldStop = !this.testAnimationPredicate(entityAnimationPredicate);
+		boolean shouldStop = !this.testAnimationPredicate(AnimationTestPredicate);
 		if (shouldStop || (currentAnimation == null && animationQueue.size() == 0))
 		{
 			// The animation should transition to the model's initial state

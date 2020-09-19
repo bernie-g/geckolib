@@ -25,7 +25,7 @@ import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
@@ -153,7 +153,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
+		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
 		processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 	}
 

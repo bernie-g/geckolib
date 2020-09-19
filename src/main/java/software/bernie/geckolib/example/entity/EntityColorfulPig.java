@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 
 
@@ -115,8 +115,8 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatable
 	}
 
 
-	private <E extends EntityColorfulPig> boolean animationPredicate(EntityAnimationPredicate<E> event) {
-		if (event.isWalking()) {
+	private <E extends EntityColorfulPig> boolean animationPredicate(AnimationTestPredicate<E> event) {
+		if (event.isMoving()) {
 			controller.setAnimation(new AnimationBuilder().addAnimation("animation.turtywurty.move"));
 			return true;
 		}

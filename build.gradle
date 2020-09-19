@@ -148,6 +148,10 @@ artifacts {
     archives packageJavadoc
     archives packageSources
 }
+artifacts {
+    archives javadocJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -163,10 +167,6 @@ publishing {
         }
     }
 }
-artifacts {
-    archives javadocJar
-}
-
 publishing {
     repositories {
         maven {

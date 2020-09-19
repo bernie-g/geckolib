@@ -16,7 +16,7 @@ import software.bernie.geckolib.manager.AnimationManager;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatable
 {
@@ -45,7 +45,7 @@ public class StingrayTestEntity extends WaterMobEntity implements IAnimatable
 		}
 	}
 
-	<E extends IAnimatable> boolean wingAnimationPredicate(EntityAnimationPredicate<E> event)
+	<E extends IAnimatable> boolean wingAnimationPredicate(AnimationTestPredicate<E> event)
 	{
 		Entity entity = (Entity) event.getEntity();
 		ClientWorld entityWorld = (ClientWorld) entity.getEntityWorld();

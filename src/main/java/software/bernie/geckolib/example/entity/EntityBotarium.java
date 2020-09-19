@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 
 import javax.annotation.Nullable;
@@ -18,7 +18,7 @@ public class EntityBotarium extends AnimalEntity implements IAnimatable
 	AnimationManager manager = new AnimationManager();
 	EntityAnimationController controller = new EntityAnimationController(this, "walkController", 0.1f, this::animationPredicate);
 
-	private <E extends Entity & IAnimatable> boolean animationPredicate(EntityAnimationPredicate<E> event)
+	private <E extends Entity & IAnimatable> boolean animationPredicate(AnimationTestPredicate<E> event)
 	{
 		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
 		return true;

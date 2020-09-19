@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 
 public class BatEntity extends CreatureEntity implements IAnimatable
@@ -21,7 +21,7 @@ public class BatEntity extends CreatureEntity implements IAnimatable
 		manager.addAnimationController(controller);
 	}
 
-	private <E extends Entity & IAnimatable> boolean predicate(EntityAnimationPredicate<E> eEntityAnimationPredicate)
+	private <E extends Entity & IAnimatable> boolean predicate(AnimationTestPredicate<E> eAnimationTestPredicate)
 	{
  		controller.setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
 		return true;

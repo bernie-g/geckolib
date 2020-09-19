@@ -13,12 +13,11 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.GeoModelLoader;
@@ -27,6 +26,7 @@ import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.listener.ClientListener;
 import software.bernie.geckolib.manager.AnimationManager;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.ExecutionException;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimatableModel<T>, IGeoModelProvider<T>, IResourceManagerReloadListener
@@ -39,6 +39,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 	public double seekTime;
 	public double lastGameTickTime;
 	public boolean crashWhenCantFindBone = true;
+	public boolean isSitting;
+	public boolean isChild;
 	private boolean loopByDefault;
 
 	private final LoadingCache<ResourceLocation, GeoModel> modelCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, GeoModel>()
@@ -128,6 +130,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 
 	public void setLivingAnimations(T entity)
 	{
+		setLivingAnimations(entity, null);
+	}
+
+	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
+	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
 		if (manager.startTick == null)
@@ -141,7 +148,19 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> implements IAnimat
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		SpecialAnimationPredicate<T> predicate = new SpecialAnimationPredicate<T>(entity, seekTime);
+		AnimationTestPredicate<T> predicate;
+
+		if (customPredicate == null)
+		{
+			predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
+		}
+		else
+		{
+			predicate = customPredicate;
+		}
+
+		predicate.animationTick = seekTime;
+
 		if (!this.processor.getModelRendererList().isEmpty())
 		{
 			processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);

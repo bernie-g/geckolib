@@ -22,7 +22,7 @@ import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animation.builder.Animation;
 import software.bernie.geckolib.animation.processor.AnimationProcessor;
 import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.manager.AnimationManager;
@@ -148,9 +148,9 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		EntityAnimationPredicate<T> predicate = new EntityAnimationPredicate<T>(entity, seekTime, limbSwing,
+		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, limbSwing,
 				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
-
+		predicate.animationTick = seekTime;
 		processor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 

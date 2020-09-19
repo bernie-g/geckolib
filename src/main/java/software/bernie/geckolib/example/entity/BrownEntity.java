@@ -7,7 +7,7 @@ import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
@@ -22,7 +22,7 @@ public class BrownEntity extends AnimalEntity implements IAnimatable
 
 	int ticksExecuting = 0;
 
-	private <ENTITY extends Entity & IAnimatable> boolean predicate(EntityAnimationPredicate<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> boolean predicate(AnimationTestPredicate<ENTITY> event)
 	{
 
 		controller.setAnimation(new AnimationBuilder().addAnimation("crawling", true));

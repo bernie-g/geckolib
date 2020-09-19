@@ -8,7 +8,7 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.manager.AnimationManager;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.animation.controller.AnimationController;
 import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
@@ -23,7 +23,7 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatable
 	AnimationManager collection = new AnimationManager();
 	AnimationController easingDemoControlller = new EntityAnimationController(this, "easingDemoController", 20, this::demoPredicate);
 
-	private <ENTITY extends Entity & IAnimatable> boolean demoPredicate(EntityAnimationPredicate<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> boolean demoPredicate(AnimationTestPredicate<ENTITY> event)
 	{
 		easingDemoControlller.setAnimation(new AnimationBuilder().addAnimation("animation.model.new", true));
 		return true;

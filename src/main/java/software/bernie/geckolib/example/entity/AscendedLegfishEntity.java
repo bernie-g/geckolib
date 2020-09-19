@@ -23,7 +23,7 @@ import software.bernie.geckolib.animation.controller.EntityAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
@@ -35,7 +35,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
 	private AnimationController sizeController = new EntityAnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
 	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity & IAnimatable> boolean moveController(EntityAnimationPredicate<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> boolean moveController(AnimationTestPredicate<ENTITY> event)
 	{
 		float limbSwingAmount = event.getLimbSwingAmount();
 		if(KeyboardHandler.isForwardKeyDown)
@@ -58,7 +58,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
 
 
 	private boolean hasGrown = false;
-	private <ENTITY extends Entity & IAnimatable> boolean sizeAnimationPredicate(EntityAnimationPredicate<ENTITY> entityEntityAnimationPredicate)
+	private <ENTITY extends Entity & IAnimatable> boolean sizeAnimationPredicate(AnimationTestPredicate<ENTITY> entityAnimationTestPredicate)
 	{
 		int size = getSize();
 		switch(size)

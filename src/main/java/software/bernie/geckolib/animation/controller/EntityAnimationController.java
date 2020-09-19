@@ -10,7 +10,7 @@ import software.bernie.geckolib.model.AnimatedEntityModel;
 import software.bernie.geckolib.easing.EasingType;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
@@ -24,32 +24,32 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 	/**
 	 * The animation predicate, is tested in every process call (i.e. every frame)
 	 */
-	private IEntityAnimationPredicate<T> animationPredicate;
+	private IAnimationTestPredicate<T> animationPredicate;
 
 	/**
 	 * An AnimationPredicate is run every render frame for ever AnimationController. The "test" method is where you should change animations, stop animations, restart, etc.
 	 */
 	@FunctionalInterface
-	public interface IEntityAnimationPredicate<E extends Entity & IAnimatable>
+	public interface IAnimationTestPredicate<E extends Entity & IAnimatable>
 	{
-		<E extends Entity & IAnimatable> boolean test(EntityAnimationPredicate<E> event);
+		<E extends Entity & IAnimatable> boolean test(AnimationTestPredicate<E> event);
 	}
 
 
-	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IEntityAnimationPredicate<T> animationPredicate)
+	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IAnimationTestPredicate<T> animationPredicate)
 	{
 		super(entity, name, transitionLengthTicks);
 		this.animationPredicate = animationPredicate;
 		this.soundPlayer = this::playSound;
 	}
 
-	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IEntityAnimationPredicate<T> animationPredicate, EasingType easingtype)
+	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IAnimationTestPredicate<T> animationPredicate, EasingType easingtype)
 	{
 		super(entity, name, transitionLengthTicks, easingtype);
 		this.animationPredicate = animationPredicate;
 	}
 
-	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IEntityAnimationPredicate<T> animationPredicate, Function<Double, Double> customEasingMethod)
+	public EntityAnimationController(T entity, String name, float transitionLengthTicks, IAnimationTestPredicate<T> animationPredicate, Function<Double, Double> customEasingMethod)
 	{
 		super(entity, name, transitionLengthTicks, customEasingMethod);
 		this.animationPredicate = animationPredicate;
@@ -109,7 +109,7 @@ public class EntityAnimationController<T extends Entity & IAnimatable> extends A
 	@Override
 	protected boolean testAnimationPredicate(AnimationTestPredicate<T> event)
 	{
-		return this.animationPredicate.test((EntityAnimationPredicate) event);
+		return this.animationPredicate.test((AnimationTestPredicate) event);
 	}
 
 	public void playSound(SoundEvent event)

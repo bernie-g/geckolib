@@ -17,7 +17,7 @@ import software.bernie.geckolib.event.SoundKeyframeEvent;
 import software.bernie.geckolib.entity.IAnimatable;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.event.predicate.EntityAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.example.KeyboardHandler;
 
 public class TigrisEntity extends GhastEntity implements IAnimatable
@@ -25,7 +25,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatable
 	public AnimationManager animationControllers = new AnimationManager();
 	private AnimationController moveController = new EntityAnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity & IAnimatable> boolean moveController(EntityAnimationPredicate<ENTITY> entityEntityAnimationPredicate)
+	private <ENTITY extends Entity & IAnimatable> boolean moveController(AnimationTestPredicate<ENTITY> entityAnimationTestPredicate)
 	{
 		moveController.transitionLengthTicks = 10;
 		if(KeyboardHandler.isQDown)

@@ -6,7 +6,7 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.animation.builder.AnimationBuilder;
 import software.bernie.geckolib.block.SpecialAnimationController;
 import software.bernie.geckolib.entity.IAnimatable;
-import software.bernie.geckolib.event.predicate.SpecialAnimationPredicate;
+import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.manager.AnimationManager;
 
 public class GeoExampleEntity extends CreatureEntity implements IAnimatable
@@ -14,7 +14,7 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 	AnimationManager manager = new AnimationManager();
 	SpecialAnimationController controller = new SpecialAnimationController(this, "controller", 0, this::predicate);
 
-	private <E extends IAnimatable> boolean predicate(SpecialAnimationPredicate<E> eSpecialAnimationPredicate)
+	private <E extends IAnimatable> boolean predicate(AnimationTestPredicate<E> eSpecialAnimationPredicate)
 	{
 		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
 		return true;
