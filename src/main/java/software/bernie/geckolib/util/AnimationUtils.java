@@ -14,10 +14,12 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.keyframe.AnimationPoint;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
-import software.bernie.geckolib.easing.EasingManager;
-import software.bernie.geckolib.easing.EasingType;
+import software.bernie.geckolib.core.keyframe.AnimationPoint;
+import software.bernie.geckolib.core.easing.EasingManager;
+import software.bernie.geckolib.core.easing.EasingType;
+import software.bernie.geckolib.renderers.geo.IGeoRenderer;
+import software.bernie.geckolib.model.AnimatedEntityModel;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 import java.util.function.Function;
 
@@ -36,8 +38,8 @@ public class AnimationUtils
 	/**
 	 * This is the actual function that smoothly interpolates (lerp) between keyframes
 	 *
-	 * @param startValue  The animation's start value
-	 * @param endValue    The animation's end value
+	 * @param startValue The animation's start value
+	 * @param endValue   The animation's end value
 	 * @return The interpolated value
 	 */
 	public static float lerpValues(double percentCompleted, double startValue, double endValue)
@@ -56,21 +58,21 @@ public class AnimationUtils
 	 */
 	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType, Function<Double, Double> customEasingMethod)
 	{
-		if(animationPoint.currentTick >= animationPoint.animationEndTick)
+		if (animationPoint.currentTick >= animationPoint.animationEndTick)
 		{
 			return animationPoint.animationEndValue.floatValue();
 		}
-		if(animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
+		if (animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
 		{
 			return animationPoint.animationEndValue.floatValue();
 		}
 
-		if(easingType == EasingType.CUSTOM && customEasingMethod != null)
+		if (easingType == EasingType.CUSTOM && customEasingMethod != null)
 		{
 			return lerpValues(customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
 					animationPoint.animationStartValue, animationPoint.animationEndValue);
 		}
-		else if(easingType == EasingType.NONE && animationPoint.keyframe != null)
+		else if (easingType == EasingType.NONE && animationPoint.keyframe != null)
 		{
 			easingType = animationPoint.keyframe.easingType;
 		}
@@ -96,21 +98,33 @@ public class AnimationUtils
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
 		if (entityRenderer instanceof IEntityRenderer)
 		{
-			LivingRenderer renderer = (LivingRenderer) entityRenderer;
-			EntityModel entityModel = renderer.getEntityModel();
-			if (entityModel instanceof AnimatedEntityModel)
+			if (entityRenderer instanceof LivingRenderer)
 			{
-				return (AnimatedEntityModel) entityModel;
-			}
-			else {
-				GeckoLib.LOGGER.error("Model for {} is not an AnimatedEntityModel. Please inherit the proper class.", entity.getName());
-				return null;
+
+				LivingRenderer renderer = (LivingRenderer) entityRenderer;
+				EntityModel entityModel = renderer.getEntityModel();
+				if (entityModel instanceof AnimatedEntityModel)
+				{
+					return (AnimatedEntityModel) entityModel;
+				}
+				else
+				{
+					GeckoLib.LOGGER.error("Model for {} is not an AnimatedEntityModel. Please inherit the proper class.", entity.getName());
+					return null;
+				}
 			}
 		}
-		else {
-			GeckoLib.LOGGER.error("Could not find valid renderer for {}", entity.getName());
-			return null;
-		}
+		return null;
 	}
 
+	public static <T extends Entity> GeoModelProvider getGeoModelForEntity(T entity)
+	{
+		EntityRenderer<T> entityRenderer = getRenderer(entity);
+
+		if (entityRenderer instanceof IGeoRenderer)
+		{
+			return ((IGeoRenderer<?>) entityRenderer).getGeoModelProvider();
+		}
+		return null;
+	}
 }

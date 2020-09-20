@@ -6,13 +6,14 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-
-
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
@@ -68,12 +69,15 @@ minecraft {
 }
 repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven { url 'https://maven.enginehub.org/repo/' }
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.1.63'
-    compile fg.deobf('com.eliotlash.molang:molang:SNAPSHOT.8')
-    compile fg.deobf('com.eliotlash.mclib:mclib:SNAPSHOT.8')
+    minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
@@ -82,6 +86,23 @@ dependencies {
     test {
         useJUnitPlatform()
     }
+}
+shadowJar {
+    dependencies {
+        include(dependency('com.eliotlash.molang:molang:.*'))
+        include(dependency('com.eliotlash.mclib:mclib:.*'))
+        include(dependency('com.fasterxml.jackson.core:.*'))
+        include(dependency('com.fasterxml.jackson.datatype:.*'))
+    }
+
+    relocate 'com.eliotlash', 'software.bernie.com.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.com.fasterxml'
+
+    classifier ''
+}
+
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
 }
 
 jar {
@@ -127,6 +148,10 @@ artifacts {
     archives packageJavadoc
     archives packageSources
 }
+artifacts {
+    archives javadocJar
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -142,10 +167,6 @@ publishing {
         }
     }
 }
-artifacts {
-    archives javadocJar
-}
-
 publishing {
     repositories {
         maven {

@@ -1,22 +1,29 @@
 package software.bernie.geckolib.event.predicate;
 
-import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.entity.IAnimatable;
+import software.bernie.geckolib.core.controller.BaseAnimationController;
+import software.bernie.geckolib.core.IAnimatable;
 
 import javax.annotation.Nullable;
 
 public class AnimationTestPredicate<T extends IAnimatable>
 {
 	private final T entity;
-	private final double animationTick;
+	public double animationTick;
+	private final float limbSwing;
+	private final float limbSwingAmount;
+	private final float partialTick;
+	private final boolean isMoving;
 
 	@Nullable
-	protected AnimationController controller;
+	protected BaseAnimationController controller;
 
-	public AnimationTestPredicate(T entity, double animationTick)
+	public AnimationTestPredicate(T entity, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving)
 	{
-		this.animationTick = animationTick;
 		this.entity = entity;
+		this.limbSwing = limbSwing;
+		this.limbSwingAmount = limbSwingAmount;
+		this.partialTick = partialTick;
+		this.isMoving = isMoving;
 	}
 
 	/**
@@ -34,13 +41,31 @@ public class AnimationTestPredicate<T extends IAnimatable>
 		return entity;
 	}
 
-	public AnimationController getController()
+	public BaseAnimationController getController()
 	{
 		return controller;
 	}
 
-	public void setController(@Nullable AnimationController controller)
+	public void setController(@Nullable BaseAnimationController controller)
 	{
 		this.controller = controller;
+	}
+
+
+	public float getLimbSwing()
+	{
+		return limbSwing;
+	}
+	public float getLimbSwingAmount()
+	{
+		return limbSwingAmount;
+	}
+	public float getPartialTick()
+	{
+		return partialTick;
+	}
+	public boolean isMoving()
+	{
+		return isMoving;
 	}
 }

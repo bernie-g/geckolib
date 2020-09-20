@@ -4,13 +4,13 @@
  */
 
 package software.bernie.geckolib.event;
-import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.core.controller.BaseAnimationController;
 
 public class AnimationEvent<T>
 {
 	private final T entity;
 	private final double animationTick;
-	private final AnimationController controller;
+	private final BaseAnimationController controller;
 	/**
 	 * This stores all the fields that are needed in the AnimationTestEvent
 	 *
@@ -18,7 +18,7 @@ public class AnimationEvent<T>
 	 * @param animationTick   The amount of ticks that have passed in either the current transition or animation, depending on the controller's AnimationState.
 	 * @param controller      the controller
 	 */
-	public AnimationEvent(T entity, double animationTick, AnimationController controller)
+	public AnimationEvent(T entity, double animationTick, BaseAnimationController controller)
 	{
 		this.entity = entity;
 		this.animationTick = animationTick;
@@ -39,7 +39,7 @@ public class AnimationEvent<T>
 	{
 		return entity;
 	}
-	public AnimationController getController()
+	public BaseAnimationController getController()
 	{
 		return controller;
 	}

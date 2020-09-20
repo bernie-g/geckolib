@@ -8,16 +8,16 @@ package software.bernie.geckolib.util.json;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangException;
 import com.eliotlash.molang.MolangParser;
-import com.eliotlash.molang.expressions.MolangExpression;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.math.NumberUtils;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.core.keyframe.KeyFrame;
+import software.bernie.geckolib.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib.core.easing.EasingType;
 import software.bernie.geckolib.molang.ConstantValue;
 import software.bernie.geckolib.util.AnimationUtils;
-import software.bernie.geckolib.animation.keyframe.KeyFrame;
-import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-import software.bernie.geckolib.easing.EasingType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class JsonKeyFrameUtils
 			Map.Entry<String, JsonElement> previousKeyFrame = i == 0 ? null : element.get(i - 1);
 
 			Double previousKeyFrameLocation = previousKeyFrame == null ? 0 : Double.parseDouble(previousKeyFrame.getKey());
-			Double currentKeyFrameLocation = Double.parseDouble(keyframe.getKey());
+			Double currentKeyFrameLocation = NumberUtils.isCreatable(keyframe.getKey()) ? Double.parseDouble(keyframe.getKey()) : 0;
 			Double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
 
 			JsonArray vectorJsonArray = getKeyFrameVector(keyframe.getValue());

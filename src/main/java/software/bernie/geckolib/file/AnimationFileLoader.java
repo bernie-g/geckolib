@@ -5,141 +5,73 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.SimpleResource;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
 
 public class AnimationFileLoader
 {
-	private IAnimtableModel provider;
 
-	public AnimationFileLoader(IAnimtableModel provider)
+	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location)
 	{
-		this.provider = provider;
-	}
-
-	/**
-	 * If animations should loop by default and ignore their pre-existing loop settings (that you can enable in blockbench by right clicking)
-	 */
-	protected boolean loopByDefault = false;
-	private JsonObject animationFile;
-
-	private HashMap<String, Animation> animationList = new HashMap();
-
-	public HashMap<String, Animation> getAnimationList()
-	{
-		return animationList;
-	}
-
-	public void setAnimationList(HashMap<String, Animation> animationList)
-	{
-		this.animationList = animationList;
-	}
-
-	private void loadAllAnimations(MolangParser parser)
-	{
-		animationList.clear();
-		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(getAnimationFile());
+		AnimationFile animationFile = new AnimationFile();
+		JsonObject jsonRepresentation = loadFile(location);
+		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
 		for (Map.Entry<String, JsonElement> entry : entrySet)
 		{
 			String animationName = entry.getKey();
-			Animation animation = null;
+			Animation animation;
 			try
 			{
-				animation = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(getAnimationFile(), animationName), parser);
-				if (loopByDefault)
-				{
-					animation.loop = true;
-				}
+				animation = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
+				animationFile.putAnimation(animationName, animation);
 			}
 			catch (JSONException e)
 			{
 				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
 			}
-			animationList.put(animationName, animation);
 		}
+		return animationFile;
 	}
 
-	public boolean isLoopByDefault()
-	{
-		return loopByDefault;
-	}
-
-	public void setLoopByDefault(boolean loopByDefault)
-	{
-		this.loopByDefault = loopByDefault;
-	}
-
-	public Animation getAnimation(String name)
-	{
-		return animationList.get(name);
-	}
 
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
 	 */
-	public void onResourceManagerReload(IResourceManager resourceManager, MolangParser parser)
+	private JsonObject loadFile(ResourceLocation location)
 	{
-		try(InputStream inputStream = getStreamForResourceLocation(provider.getAnimationFileLocation());
-		    Reader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));)
+		String content = getFileAsString(location);
+		Gson GSON = new Gson();
+		return JSONUtils.fromJson(GSON, content, JsonObject.class);
+	}
+
+
+	public String getFileAsString(ResourceLocation location)
+	{
+		try (InputStream inputStream = getStreamForResourceLocation(location))
 		{
-			Gson GSON = new Gson();
-			JsonObject jsonobject = JSONUtils.fromJson(GSON, reader, JsonObject.class);
-			setAnimationFile(jsonobject);
-			loadAllAnimations(parser);
+			return IOUtils.toString(inputStream);
 		}
 		catch (Exception e)
 		{
-			String message = "Couldn't load " + provider.getAnimationFileLocation();
+			String message = "Couldn't load " + location;
 			GeckoLib.LOGGER.error(message, e);
-			throw new RuntimeException(new FileNotFoundException(provider.getAnimationFileLocation().toString()));
+			throw new RuntimeException(new FileNotFoundException(location.toString()));
 		}
 	}
 
-	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation) {
+	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation)
+	{
 		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
-	}
-
-	/**
-	 * Gets the current animation file.
-	 *
-	 * @return the animation file
-	 */
-	public JsonObject getAnimationFile()
-	{
-		return animationFile;
-	}
-
-	/**
-	 * Sets the animation file to read from.
-	 *
-	 * @param animationFile The animation file
-	 */
-	public void setAnimationFile(JsonObject animationFile)
-	{
-		this.animationFile = animationFile;
-	}
-
-	/**
-	 * Gets a json animation by name.
-	 *
-	 * @param name The name
-	 * @return the animation by name
-	 * @throws JSONException
-	 */
-	public Map.Entry<String, JsonElement> getAnimationByName(String name) throws JSONException
-	{
-		return JsonAnimationUtils.getAnimation(getAnimationFile(), name);
 	}
 }
