@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,19 +18,33 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
-import software.bernie.geckolib.model.provider.data.EntityModelData;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
+import software.bernie.geckolib.core.IAnimatableModel;
+import software.bernie.geckolib.model.provider.data.EntityModelData;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import java.awt.*;
 import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
 {
+	static
+	{
+		AnimationController.addModelFetcher((Object object) ->
+		{
+			if (object instanceof Entity)
+			{
+				return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity) object);
+			}
+			return null;
+		});
+	}
+
 	private final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
@@ -89,22 +104,25 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		float limbSwingAmount = 0.0F;
 		float limbSwing = 0.0F;
-		if (!shouldSit && entity.isAlive()) {
+		if (!shouldSit && entity.isAlive())
+		{
 			limbSwingAmount = MathHelper.lerp(partialTicks, entity.prevLimbSwingAmount, entity.limbSwingAmount);
 			limbSwing = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
-			if (entity.isChild()) {
+			if (entity.isChild())
+			{
 				limbSwing *= 3.0F;
 			}
 
-			if (limbSwingAmount > 1.0F) {
+			if (limbSwingAmount > 1.0F)
+			{
 				limbSwingAmount = 1.0F;
 			}
 		}
 		AnimationTestPredicate predicate = new AnimationTestPredicate(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
 
-		if(modelProvider instanceof IAnimatableModelProvider)
+		if (modelProvider instanceof IAnimatableModel)
 		{
-			((IAnimatableModelProvider<T>) modelProvider).setLivingAnimations(entity, predicate);
+			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, predicate);
 		}
 
 		stack.push();
@@ -115,8 +133,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, packedLightIn, getEntityTexture(entity));
 		render(model, entity, partialTicks, renderType, stack, bufferIn, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
 
-		if (!entity.isSpectator()) {
-			for(GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
+		if (!entity.isSpectator())
+		{
+			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers)
+			{
 				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, f2, f6);
 			}
 		}
@@ -127,7 +147,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	private EntityModelData getOrCreateEntityModelData()
 	{
 		EntityModelData modelData = this.modelProvider.getModelData(EntityModelData.class);
-		if(modelData == null)
+		if (modelData == null)
 		{
 			this.modelProvider.putModelData(EntityModelData.class, new EntityModelData());
 		}
@@ -225,15 +245,17 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	/**
 	 * Returns where in the swing animation the living entity is (from 0 to 1).  Args : entity, partialTickTime
 	 */
-	protected float getSwingProgress(T livingBase, float partialTickTime) {
+	protected float getSwingProgress(T livingBase, float partialTickTime)
+	{
 		return livingBase.getSwingProgress(partialTickTime);
 	}
 
 	/**
 	 * Defines what float the third param in setRotationAngles of ModelBase is
 	 */
-	protected float handleRotationFloat(T livingBase, float partialTicks) {
-		return (float)livingBase.ticksExisted + partialTicks;
+	protected float handleRotationFloat(T livingBase, float partialTicks)
+	{
+		return (float) livingBase.ticksExisted + partialTicks;
 	}
 
 	@Override

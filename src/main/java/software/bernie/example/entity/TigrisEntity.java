@@ -10,11 +10,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.manager.AnimationManager;
-import software.bernie.geckolib.animation.controller.AnimationController;
+import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.event.SoundKeyframeEvent;
-import software.bernie.geckolib.animation.IAnimatable;
-import software.bernie.geckolib.animation.builder.AnimationBuilder;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.example.KeyboardHandler;
 

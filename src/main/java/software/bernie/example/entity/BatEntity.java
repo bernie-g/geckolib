@@ -4,11 +4,11 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.builder.AnimationBuilder;
+import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.animation.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationManager;
 
 public class BatEntity extends CreatureEntity implements IAnimatable
 {

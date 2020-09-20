@@ -14,15 +14,40 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
+import software.bernie.geckolib.core.IAnimatableModel;
+import software.bernie.geckolib.renderers.legacy.AnimatedBlockRenderer;
 
 import java.awt.*;
 
 public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntityRenderer implements IGeoRenderer<T>
 {
+	static
+	{
+		AnimationController.addModelFetcher((Object object) ->
+		{
+			if (object instanceof TileEntity)
+			{
+				TileEntity tile = (TileEntity) object;
+				TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tile);
+				if (renderer instanceof AnimatedBlockRenderer)
+				{
+					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
+					return animatedRenderer.getEntityModel();
+				}
+				else if(renderer instanceof GeoBlockRenderer)
+				{
+					return (IAnimatableModel)((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+				}
+			}
+			return null;
+		});
+	}
+
 	private final AnimatedGeoModel<T> modelProvider;
 
 	public GeoBlockRenderer(TileEntityRendererDispatcher rendererDispatcherIn, AnimatedGeoModel<T> modelProvider)

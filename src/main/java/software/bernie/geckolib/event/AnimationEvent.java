@@ -4,7 +4,7 @@
  */
 
 package software.bernie.geckolib.event;
-import software.bernie.geckolib.animation.controller.BaseAnimationController;
+import software.bernie.geckolib.core.controller.BaseAnimationController;
 
 public class AnimationEvent<T>
 {

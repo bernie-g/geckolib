@@ -10,11 +10,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.WaterMobEntity;
 import net.minecraft.world.World;
-import software.bernie.geckolib.animation.builder.AnimationBuilder;
-import software.bernie.geckolib.animation.controller.AnimationController;
-import software.bernie.geckolib.animation.manager.AnimationManager;
-import software.bernie.geckolib.animation.easing.EasingType;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.builder.AnimationBuilder;
+import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.easing.EasingType;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatable

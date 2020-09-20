@@ -8,14 +8,34 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.model.SpecialAnimatedModel;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
 
 import java.awt.*;
 
 public abstract class AnimatedItemRenderer<T extends Item & IAnimatable, M extends SpecialAnimatedModel> extends ItemStackTileEntityRenderer
 {
-	protected M entityModel;
+	// Register a model fetcher for this renderer
+	static
+	{
+		AnimationController.addModelFetcher((Object object) ->
+		{
+			if (object instanceof Item)
+			{
+				Item item = (Item) object;
+				ItemStackTileEntityRenderer renderer = item.getItemStackTileEntityRenderer();
+				if (renderer instanceof AnimatedItemRenderer)
+				{
+					return ((AnimatedItemRenderer<?, ?>) renderer).getEntityModel();
+				}
+			}
+			return null;
+		});
+	}
+
+
+		protected M entityModel;
 
 	public void setModel(M model)
 	{

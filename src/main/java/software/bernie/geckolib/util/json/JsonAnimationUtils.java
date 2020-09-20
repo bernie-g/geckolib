@@ -13,12 +13,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
-import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.util.AnimationUtils;
-import software.bernie.geckolib.animation.keyframe.BoneAnimation;
-import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
-import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
-import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib.core.keyframe.BoneAnimation;
+import software.bernie.geckolib.core.keyframe.EventKeyFrame;
+import software.bernie.geckolib.core.keyframe.ParticleEventKeyFrame;
+import software.bernie.geckolib.core.keyframe.VectorKeyFrameList;
 import java.util.*;
 
 /**

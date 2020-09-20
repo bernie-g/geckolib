@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable>

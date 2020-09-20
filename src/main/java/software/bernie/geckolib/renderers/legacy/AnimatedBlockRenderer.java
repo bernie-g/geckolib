@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.model.SpecialAnimatedModel;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
 
 import java.awt.*;
 

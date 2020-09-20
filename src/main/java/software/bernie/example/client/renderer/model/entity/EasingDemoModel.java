@@ -7,7 +7,7 @@ package software.bernie.example.client.renderer.model.entity;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.example.entity.EasingDemoEntity;
 import software.bernie.geckolib.model.AnimatedEntityModel;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 
 public class EasingDemoModel extends AnimatedEntityModel<EasingDemoEntity> {
 

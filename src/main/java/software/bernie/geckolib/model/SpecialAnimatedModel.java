@@ -20,15 +20,16 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import software.bernie.geckolib.animation.builder.Animation;
-import software.bernie.geckolib.animation.processor.AnimationProcessor;
-import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.builder.Animation;
+import software.bernie.geckolib.core.processor.AnimationProcessor;
+import software.bernie.geckolib.core.processor.IBone;
+import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.animation.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
@@ -36,12 +37,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
+public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
 	public double lastGameTickTime;
-	private final AnimationProcessor processor;
+	private final AnimationProcessor animationProcessor;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 	public boolean crashWhenCantFindBone = true;
@@ -57,11 +58,11 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	});
 
 	@Override
-	public Animation getAnimation(String name, ResourceLocation location)
+	public Animation getAnimation(String name, IAnimatable animatable)
 	{
 		try
 		{
-			return this.animationCache.get(location).getAnimation(name);
+			return this.animationCache.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 		}
 		catch (ExecutionException e)
 		{
@@ -74,7 +75,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	{
 		super(RenderType::getEntityCutoutNoCull);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-		this.processor = new AnimationProcessor();
+		this.animationProcessor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader();
 		registerMolangVariables();
 		onResourceManagerReload(resourceManager);
@@ -93,6 +94,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
 		this.animationCache.invalidateAll();
+		this.animationProcessor.reloadAnimations = true;
 	}
 
 	/**
@@ -103,7 +105,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	 */
 	public IBone getBone(String boneName)
 	{
-		return processor.getBone(boneName);
+		return animationProcessor.getBone(boneName);
 	}
 
 	/**
@@ -113,7 +115,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	 */
 	public void registerModelRenderer(IBone modelRenderer)
 	{
-		processor.registerModelRenderer(modelRenderer);
+		animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
 
@@ -148,7 +150,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		lastGameTickTime = gameTick;
 
 		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
-		processor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
+		animationProcessor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
 	}
 
 	@Override
@@ -163,7 +165,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	@Override
 	public AnimationProcessor getAnimationProcessor()
 	{
-		return this.processor;
+		return this.animationProcessor;
 	}
 
 

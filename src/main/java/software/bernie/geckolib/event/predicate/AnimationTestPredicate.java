@@ -1,7 +1,7 @@
 package software.bernie.geckolib.event.predicate;
 
-import software.bernie.geckolib.animation.controller.BaseAnimationController;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.controller.BaseAnimationController;
+import software.bernie.geckolib.core.IAnimatable;
 
 import javax.annotation.Nullable;
 

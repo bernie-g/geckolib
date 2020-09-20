@@ -20,17 +20,20 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import software.bernie.geckolib.animation.builder.Animation;
-import software.bernie.geckolib.animation.processor.AnimationProcessor;
-import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.builder.Animation;
+import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.processor.AnimationProcessor;
+import software.bernie.geckolib.core.processor.IBone;
+import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.animation.manager.AnimationManager;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
+import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -43,12 +46,24 @@ import java.util.concurrent.ExecutionException;
  * @param <T> the type parameter
  */
 @Deprecated
-public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
+public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extends EntityModel<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
+	static
+	{
+		AnimationController.addModelFetcher((Object object) ->
+		{
+			if (object instanceof Entity)
+			{
+				return AnimationUtils.getModelForEntity((Entity) object);
+			}
+			return null;
+		});
+	}
+
 	public List<AnimatedModelRenderer> rootBones = new ArrayList<>();
 	public double seekTime;
 	public double lastGameTickTime;
-	private final AnimationProcessor processor;
+	private final AnimationProcessor animationProcessor;
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 
@@ -69,7 +84,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	{
 		super();
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
-		this.processor = new AnimationProcessor();
+		this.animationProcessor = new AnimationProcessor();
 		this.loader = new AnimationFileLoader();
 
 		registerMolangVariables();
@@ -83,11 +98,11 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	}
 
 	@Override
-	public Animation getAnimation(String name, ResourceLocation location)
+	public Animation getAnimation(String name, IAnimatable animatable)
 	{
 		try
 		{
-			return this.animationCache.get(location).getAnimation(name);
+			return this.animationCache.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 		}
 		catch (ExecutionException e)
 		{
@@ -102,6 +117,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
 		this.animationCache.invalidateAll();
+		this.animationProcessor.reloadAnimations = true;
 	}
 
 	/**
@@ -112,7 +128,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	 */
 	public IBone getBone(String boneName)
 	{
-		return processor.getBone(boneName);
+		return animationProcessor.getBone(boneName);
 	}
 
 	/**
@@ -122,7 +138,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	 */
 	public void registerModelRenderer(IBone modelRenderer)
 	{
-		processor.registerModelRenderer(modelRenderer);
+		animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
 
@@ -162,7 +178,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, limbSwing,
 				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
 		predicate.animationTick = seekTime;
-		processor.tickAnimation(entity, seekTime, predicate, parser, true);
+		animationProcessor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 
 	@Override
@@ -184,7 +200,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	@Override
 	public AnimationProcessor getAnimationProcessor()
 	{
-		return this.processor;
+		return this.animationProcessor;
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package software.bernie.geckolib.geo.render.built;
 
-import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.animation.snapshot.BoneSnapshot;
+import software.bernie.geckolib.core.processor.IBone;
+import software.bernie.geckolib.core.snapshot.BoneSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;

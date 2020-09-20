@@ -1,6 +1,6 @@
 package software.bernie.geckolib.file;
 
-import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.core.builder.Animation;
 
 import java.util.HashMap;
 

@@ -13,25 +13,26 @@ import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
-import software.bernie.geckolib.animation.builder.Animation;
-import software.bernie.geckolib.animation.processor.AnimationProcessor;
-import software.bernie.geckolib.animation.processor.IBone;
-import software.bernie.geckolib.animation.IAnimatable;
+import software.bernie.geckolib.core.builder.Animation;
+import software.bernie.geckolib.core.processor.AnimationProcessor;
+import software.bernie.geckolib.core.processor.IBone;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.listener.ClientListener;
-import software.bernie.geckolib.animation.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
 
 import javax.annotation.Nullable;
 import java.util.concurrent.ExecutionException;
 
-public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
+public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
 	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
@@ -58,11 +59,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public Animation getAnimation(String name, ResourceLocation location)
+	public Animation getAnimation(String name, IAnimatable animatable)
 	{
 		try
 		{
-			return this.animationCache.get(location).getAnimation(name);
+			return this.animationCache.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 		}
 		catch (ExecutionException e)
 		{
@@ -89,6 +90,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	{
 		modelCache.invalidateAll();
 		animationCache.invalidateAll();
+		this.animationProcessor.reloadAnimations = true;
 	}
 
 	public void registerBone(GeoBone bone)

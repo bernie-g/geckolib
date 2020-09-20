@@ -9,7 +9,7 @@ import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.builder.Animation;
+import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
 import java.io.BufferedInputStream;

@@ -8,7 +8,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.model.AnimatedEntityModel;
-import software.bernie.geckolib.animation.render.AnimatedModelRenderer;
+import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 import software.bernie.example.entity.EntityBotarium;
 
 public class EntityBotariumModel extends AnimatedEntityModel<EntityBotarium>
