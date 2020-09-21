@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.core.manager.AnimationManager;
 
 

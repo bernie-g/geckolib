@@ -19,13 +19,6 @@ import java.io.InputStream;
 
 public class GeoModelLoader
 {
-	private final GeoModelProvider provider;
-
-	public GeoModelLoader(GeoModelProvider provider)
-	{
-		this.provider = provider;
-	}
-
 	public GeoModel loadModel(IResourceManager resourceManager, ResourceLocation location)
 	{
 		try

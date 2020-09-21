@@ -20,7 +20,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;

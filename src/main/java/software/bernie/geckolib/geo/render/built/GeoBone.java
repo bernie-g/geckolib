@@ -48,7 +48,10 @@ public class GeoBone implements IBone
 	@Override
 	public void saveInitialSnapshot()
 	{
-		this.initialSnapshot = new BoneSnapshot(this, true);
+		if (this.initialSnapshot == null)
+		{
+			this.initialSnapshot = new BoneSnapshot(this, true);
+		}
 	}
 
 	@Override

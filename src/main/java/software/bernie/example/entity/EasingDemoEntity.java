@@ -8,11 +8,11 @@ import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.manager.AnimationManager;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.event.CustomInstructionKeyframeEvent;
-import software.bernie.geckolib.event.ParticleKeyFrameEvent;
+import software.bernie.geckolib.core.event.CustomInstructionKeyframeEvent;
+import software.bernie.geckolib.core.event.ParticleKeyFrameEvent;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;

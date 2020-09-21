@@ -24,13 +24,19 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 			return new ResourceLocation("geckolib", "geo/fertilizer.json");
 		}
 		else {
-			return new ResourceLocation("geckolib", "geo/fertilizer.json");
+			return new ResourceLocation("geckolib", "geo/botarium_block.json");
 		}
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(FertilizerTileEntity entity)
 	{
-		return new ResourceLocation("geckolib" + ":textures/block/fertilizer.png");
+		if(entity.getWorld().isRaining())
+		{
+			return new ResourceLocation("geckolib" + ":textures/block/fertilizer.png");
+		}
+		else {
+			return new ResourceLocation("geckolib" + ":textures/block/cloche.png");
+		}
 	}
 }

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.util.JSONException;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
@@ -14,6 +15,7 @@ import software.bernie.geckolib.util.json.JsonAnimationUtils;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.Set;
@@ -21,10 +23,10 @@ import java.util.Set;
 public class AnimationFileLoader
 {
 
-	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location)
+	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, IResourceManager manager)
 	{
 		AnimationFile animationFile = new AnimationFile();
-		JsonObject jsonRepresentation = loadFile(location);
+		JsonObject jsonRepresentation = loadFile(location, manager);
 		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
 		for (Map.Entry<String, JsonElement> entry : entrySet)
 		{
@@ -48,17 +50,17 @@ public class AnimationFileLoader
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
 	 */
-	private JsonObject loadFile(ResourceLocation location)
+	private JsonObject loadFile(ResourceLocation location, IResourceManager manager)
 	{
-		String content = getFileAsString(location);
+		String content = getFileAsString(location, manager);
 		Gson GSON = new Gson();
 		return JSONUtils.fromJson(GSON, content, JsonObject.class);
 	}
 
 
-	public String getFileAsString(ResourceLocation location)
+	public String getFileAsString(ResourceLocation location, IResourceManager manager)
 	{
-		try (InputStream inputStream = getStreamForResourceLocation(location))
+		try (InputStream inputStream = getStreamForResourceLocation(location, manager))
 		{
 			return IOUtils.toString(inputStream);
 		}
@@ -70,8 +72,16 @@ public class AnimationFileLoader
 		}
 	}
 
-	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation)
+	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation, IResourceManager manager)
 	{
-		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
+		try
+		{
+			return new BufferedInputStream(manager.getResource(resourceLocation).getInputStream());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
