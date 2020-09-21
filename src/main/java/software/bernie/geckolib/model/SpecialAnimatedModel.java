@@ -5,11 +5,6 @@
 
 package software.bernie.geckolib.model;
 
-import com.eliotlash.mclib.math.Variable;
-import com.eliotlash.molang.MolangParser;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -18,24 +13,21 @@ import net.minecraft.client.renderer.model.Model;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
-import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
-import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.file.AnimationFile;
-import software.bernie.geckolib.file.AnimationFileLoader;
-import software.bernie.geckolib.core.manager.AnimationManager;
-import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
+import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
+import software.bernie.geckolib.resource.GeckoLibCache;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
 {
@@ -43,32 +35,9 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	public double seekTime;
 	public double lastGameTickTime;
 	private final AnimationProcessor animationProcessor;
-	private final AnimationFileLoader loader;
-	private final MolangParser parser = new MolangParser();
 	public boolean crashWhenCantFindBone = true;
 
-	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
-	{
-		@Override
-		public AnimationFile load(ResourceLocation key)
-		{
-			SpecialAnimatedModel<T> model = SpecialAnimatedModel.this;
-			return model.loader.loadAllAnimations(model.parser, key);
-		}
-	});
 
-	@Override
-	public Animation getAnimation(String name, IAnimatable animatable)
-	{
-		try
-		{
-			return this.animationCache.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
-		}
-		catch (ExecutionException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
 
 
 	protected SpecialAnimatedModel()
@@ -76,15 +45,14 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		super(RenderType::getEntityCutoutNoCull);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.animationProcessor = new AnimationProcessor();
-		this.loader = new AnimationFileLoader();
-		registerMolangVariables();
 		onResourceManagerReload(resourceManager);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	private void registerMolangVariables()
+	@Override
+	public Animation getAnimation(String name, IAnimatable animatable)
 	{
-		parser.register(new Variable("query.anim_time", 0));
+		return GeckoLibCache.getInstance().animations.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 	}
 
 	/**
@@ -93,7 +61,6 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.animationCache.invalidateAll();
 		this.animationProcessor.reloadAnimations = true;
 	}
 
@@ -150,7 +117,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		lastGameTickTime = gameTick;
 
 		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
-		animationProcessor.tickAnimation(entity, seekTime, predicate, parser, crashWhenCantFindBone);
+		animationProcessor.tickAnimation(entity, seekTime, predicate, GeckoLibCache.getInstance().parser, crashWhenCantFindBone);
 	}
 
 	@Override

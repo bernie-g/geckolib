@@ -15,7 +15,7 @@ import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.easing.EasingType;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
 
 public class StingrayTestEntity extends WaterMobEntity implements IAnimatable
 {

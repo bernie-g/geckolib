@@ -27,7 +27,7 @@ import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
 import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.item.AnimatedArmorItem;
@@ -35,6 +35,7 @@ import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.model.provider.IGenericModelProvider;
+import software.bernie.geckolib.resource.GeckoLibCache;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -52,7 +53,6 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	public double seekTime;
 	public double lastGameTickTime;
 	private final AnimationProcessor animationProcessor;
-	private final AnimationFileLoader loader;
 	private final MolangParser parser = new MolangParser();
 
 	private AnimatedModelRenderer helmetRenderer;
@@ -68,17 +68,6 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	private AnimatedModelRenderer rightBootRenderer;
 
 	private boolean hasSetup = false;
-	public boolean loopByDefault = false;
-
-	private final LoadingCache<ResourceLocation, AnimationFile> animationCache = CacheBuilder.newBuilder().build(new CacheLoader<ResourceLocation, AnimationFile>()
-	{
-		@Override
-		public AnimationFile load(ResourceLocation key)
-		{
-			AnimatedArmorModel<T> model = AnimatedArmorModel.this;
-			return model.loader.loadAllAnimations(model.parser, key);
-		}
-	});
 
 
 	/**
@@ -89,17 +78,11 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		super(1);
 		IReloadableResourceManager resourceManager = (IReloadableResourceManager) Minecraft.getInstance().getResourceManager();
 		this.animationProcessor = new AnimationProcessor();
-		this.loader = new AnimationFileLoader();
-		registerMolangVariables();
 
 		onResourceManagerReload(resourceManager);
 		MinecraftForge.EVENT_BUS.register((IAnimatableModel) this);
 	}
 
-	private void registerMolangVariables()
-	{
-		parser.register(new Variable("query.anim_time", 0));
-	}
 
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
@@ -107,7 +90,6 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	@Override
 	public void onResourceManagerReload(IResourceManager resourceManager)
 	{
-		this.animationCache.invalidateAll();
 		this.animationProcessor.reloadAnimations = true;
 	}
 
@@ -170,14 +152,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable)
 	{
-		try
-		{
-			return this.animationCache.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
-		}
-		catch (ExecutionException e)
-		{
-			throw new RuntimeException(e);
-		}
+		return GeckoLibCache.getInstance().animations.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 	}
 
 	@Override
