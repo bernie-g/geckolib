@@ -77,8 +77,9 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
-    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}"
-    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}:sources"
+//    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}"
+//    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}:sources"
+    compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
@@ -177,8 +178,8 @@ publishing {
             credentials {
                 def envUsername = System.getenv("repsyUsername")
                 def envPassword = System.getenv("repsyPassword")
-                username = envUsername == null ? repsyUsername : envUsername
-                password = envPassword == null ? repsyPassword : envPassword
+                username = envUsername == null ? findProperty("repsyUsername") : envUsername
+                password = envPassword == null ? findProperty("repsyPassword") : envPassword
             }
         }
     }

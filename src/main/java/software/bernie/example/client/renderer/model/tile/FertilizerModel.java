@@ -11,9 +11,15 @@ import software.bernie.geckolib.model.AnimatedGeoModel;
 public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 {
 	@Override
-	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity entity)
+	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable)
 	{
-		return new ResourceLocation("geckolib", "animations/fertilizer_anim.json");
+		if(animatable.getWorld().isRaining())
+		{
+			return new ResourceLocation("geckolib", "animations/fertilizer_anim.json");
+		}
+		else {
+			return new ResourceLocation("geckolib", "animations/botarium_tier1_anim.json");
+		}
 	}
 
 	@Override
