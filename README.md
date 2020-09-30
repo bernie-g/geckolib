@@ -1,6 +1,6 @@
 ![geckkolib](https://i.softwarelocker.net/geckolib.png)
 
-Geckolib is an entity animation loader for Java Edition, which lets you export bedrock animations and play them automatically.
+GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge and Fabric. 
 
 ## Installation
 [![curseforge](http://cf.way2muchnoise.eu/versions/geckolib.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
@@ -22,7 +22,8 @@ If you have questions or need help getting up and running with questions, feel f
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
-
+## Sponsor Us
+If you'd like to help support us, feel free to donate to our [patreon](https://www.patreon.com/geckosmods). The patreon is also where we post major announcements about the future of GeckoLib. We post smaller announcements in our discord.
 
 ## License
 [LGPL 3.0](https://www.gnu.org/licenses/lgpl-3.0.html)
