@@ -8,7 +8,7 @@ import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
@@ -20,6 +20,7 @@ import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.resource.GeckoLibCache;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IResourceManagerReloadListener
 {
@@ -56,7 +57,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
+	public void setLivingAnimations(T entity, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
@@ -71,10 +72,10 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		AnimationTestPredicate<T> predicate;
+		AnimationEvent<T> predicate;
 		if (customPredicate == null)
 		{
-			predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
+			predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
 		}
 		else
 		{

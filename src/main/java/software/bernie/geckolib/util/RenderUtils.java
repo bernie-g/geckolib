@@ -3,6 +3,7 @@ package software.bernie.geckolib.util;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.Vector3f;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoCube;
 
@@ -55,7 +56,7 @@ public class RenderUtils
 
 		if (bone.getRotationX() != 0.0F)
 		{
-			stack.rotate(Vector3f.XP.rotation(-bone.getRotationX()));
+			stack.rotate(Vector3f.XP.rotation(bone.getRotationX()));
 		}
 	}
 

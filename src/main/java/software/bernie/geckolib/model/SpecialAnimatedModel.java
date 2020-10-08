@@ -17,7 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
@@ -27,6 +27,7 @@ import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 import software.bernie.geckolib.resource.GeckoLibCache;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IGenericModelProvider<T>, IResourceManagerReloadListener
@@ -116,7 +117,7 @@ public abstract class SpecialAnimatedModel<T extends IAnimatable> extends Model 
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
+		AnimationEvent<T> predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
 		animationProcessor.tickAnimation(entity, seekTime, predicate, GeckoLibCache.getInstance().parser, crashWhenCantFindBone);
 	}
 

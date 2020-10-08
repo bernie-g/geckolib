@@ -6,9 +6,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.manager.AnimationManager;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.event.CustomInstructionKeyframeEvent;
@@ -22,10 +23,10 @@ public class EasingDemoEntity extends AnimalEntity implements IAnimatable
 	AnimationManager collection = new AnimationManager();
 	AnimationController easingDemoControlller = new AnimationController(this, "easingDemoController", 20, this::demoPredicate);
 
-	private <ENTITY extends Entity & IAnimatable> boolean demoPredicate(AnimationTestPredicate<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> PlayState demoPredicate(AnimationEvent<ENTITY> event)
 	{
 		easingDemoControlller.setAnimation(new AnimationBuilder().addAnimation("animation.model.new", true));
-		return true;
+		return PlayState.CONTINUE;
 	}
 
 	public EasingDemoEntity(EntityType<? extends AnimalEntity> type, World worldIn)

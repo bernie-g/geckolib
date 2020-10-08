@@ -12,10 +12,11 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationManager;
 
 
@@ -115,12 +116,12 @@ public class EntityColorfulPig extends AnimalEntity implements IAnimatable
 	}
 
 
-	private <E extends EntityColorfulPig> boolean animationPredicate(AnimationTestPredicate<E> event) {
+	private <E extends EntityColorfulPig> PlayState animationPredicate(AnimationEvent<E> event) {
 		if (event.isMoving()) {
 			controller.setAnimation(new AnimationBuilder().addAnimation("animation.turtywurty.move"));
-			return true;
+			return PlayState.CONTINUE;
 		}
-		return false;
+		return PlayState.STOP;
 	}
 
 	@Override

@@ -10,12 +10,13 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.monster.GhastEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.example.KeyboardHandler;
 
 public class TigrisEntity extends GhastEntity implements IAnimatable
@@ -23,7 +24,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatable
 	public AnimationManager animationControllers = new AnimationManager();
 	private AnimationController moveController = new AnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity & IAnimatable> boolean moveController(AnimationTestPredicate<ENTITY> entityAnimationTestPredicate)
+	private <ENTITY extends Entity & IAnimatable> PlayState moveController(AnimationEvent<ENTITY> entityAnimationEvent)
 	{
 		moveController.transitionLengthTicks = 10;
 		if(KeyboardHandler.isQDown)
@@ -33,7 +34,7 @@ public class TigrisEntity extends GhastEntity implements IAnimatable
 		else {
 			moveController.setAnimation(new AnimationBuilder().addAnimation("fly", true));
 		}
-		return true;
+		return PlayState.CONTINUE;
 	}
 
 	public TigrisEntity(EntityType<? extends GhastEntity> type, World worldIn)

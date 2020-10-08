@@ -4,10 +4,11 @@ import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.world.World;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationManager;
 
 public class BatEntity extends CreatureEntity implements IAnimatable
@@ -21,10 +22,10 @@ public class BatEntity extends CreatureEntity implements IAnimatable
 		manager.addAnimationController(controller);
 	}
 
-	private <E extends Entity & IAnimatable> boolean predicate(AnimationTestPredicate<E> eAnimationTestPredicate)
+	private <E extends Entity & IAnimatable> PlayState predicate(AnimationEvent<E> eAnimationEvent)
 	{
  		controller.setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
-		return true;
+		return PlayState.CONTINUE;
 	}
 
 

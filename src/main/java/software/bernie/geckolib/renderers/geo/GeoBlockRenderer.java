@@ -16,10 +16,9 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.model.provider.GeoModelProvider;
-import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.renderers.legacy.AnimatedBlockRenderer;
 
 import java.awt.*;
@@ -39,9 +38,9 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
 					return animatedRenderer.getEntityModel();
 				}
-				else if(renderer instanceof GeoBlockRenderer)
+				else if (renderer instanceof GeoBlockRenderer)
 				{
-					return (IAnimatableModel)((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+					return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
 			}
 			return null;
@@ -68,6 +67,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
+
 		rotateBlock(getFacing(tile), stack);
 
 		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(tile));
@@ -79,7 +79,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	}
 
 	@Override
-	public GeoModelProvider getGeoModelProvider()
+	public AnimatedGeoModel<T> getGeoModelProvider()
 	{
 		return this.modelProvider;
 	}

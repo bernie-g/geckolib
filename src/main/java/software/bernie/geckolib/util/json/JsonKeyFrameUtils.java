@@ -52,8 +52,8 @@ public class JsonKeyFrameUtils
 			IValue yValue = parseExpression(parser, vectorJsonArray.get(1));
 			IValue zValue = parseExpression(parser, vectorJsonArray.get(2));
 
-			IValue currentXValue = isRotation && xValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(xValue.get())) : xValue;
-			IValue currentYValue = isRotation && yValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(yValue.get())) : yValue;
+			IValue currentXValue = isRotation && xValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(-xValue.get())) : xValue;
+			IValue currentYValue = isRotation && yValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(-yValue.get())) : yValue;
 			IValue currentZValue = isRotation && zValue instanceof ConstantValue ? ConstantValue.fromDouble(Math.toRadians(zValue.get())) : zValue;
 			KeyFrame<IValue> xKeyFrame;
 			KeyFrame<IValue> yKeyFrame;

@@ -18,7 +18,7 @@ import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
@@ -30,6 +30,7 @@ import software.bernie.geckolib.util.AnimationUtils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -124,7 +125,7 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
+	public void setLivingAnimations(T entity, @Nullable AnimationEvent customPredicate)
 	{
 		this.setLivingAnimations(entity, customPredicate.getLimbSwing(), customPredicate.getLimbSwingAmount(), customPredicate.getPartialTick());
 	}
@@ -141,8 +142,8 @@ public abstract class AnimatedEntityModel<T extends Entity & IAnimatable> extend
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, limbSwing,
-				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
+		AnimationEvent<T> predicate = new AnimationEvent<T>(entity, limbSwing,
+				limbSwingAmount, partialTick, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.emptyList());
 		predicate.animationTick = seekTime;
 		animationProcessor.tickAnimation(entity, seekTime, predicate, GeckoLibCache.getInstance().parser, true);
 	}

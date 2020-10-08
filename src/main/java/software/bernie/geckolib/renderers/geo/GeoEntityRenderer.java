@@ -20,7 +20,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
@@ -29,6 +29,7 @@ import software.bernie.geckolib.model.provider.data.EntityModelData;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
@@ -118,7 +119,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				limbSwingAmount = 1.0F;
 			}
 		}
-		AnimationTestPredicate predicate = new AnimationTestPredicate(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F));
+		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.emptyList());
 
 		if (modelProvider instanceof IAnimatableModel)
 		{

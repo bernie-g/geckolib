@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.model.SpecialAnimatedModel;
-import software.bernie.geckolib.core.IAnimatable;
 
 import java.awt.*;
 
@@ -35,7 +35,7 @@ public abstract class AnimatedItemRenderer<T extends Item & IAnimatable, M exten
 	}
 
 
-		protected M entityModel;
+	protected M entityModel;
 
 	public void setModel(M model)
 	{

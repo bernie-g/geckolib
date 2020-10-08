@@ -6,8 +6,10 @@ import net.minecraft.item.Item;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
+import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmor;
+import software.bernie.geckolib.GeckoLib;
 
 public class ItemRegistry
 {
@@ -18,5 +20,6 @@ public class ItemRegistry
 	public static final RegistryObject<ArmorItem> POTATO_CHEST = ITEMS.register("potato_chest", () -> new PotatoArmor(EquipmentSlotType.CHEST));
 	public static final RegistryObject<ArmorItem> POTATO_LEGS = ITEMS.register("potato_legs", () -> new PotatoArmor(EquipmentSlotType.LEGS));
 	public static final RegistryObject<ArmorItem> POTATO_BOOTS = ITEMS.register("potato_boots", () -> new PotatoArmor(EquipmentSlotType.FEET));
+	public static final RegistryObject<JackInTheBoxItem> JACK = ITEMS.register("jackintheboxitem", () -> new JackInTheBoxItem(new Item.Properties().setISTER(() -> JackInTheBoxRenderer::new)));
 
 }

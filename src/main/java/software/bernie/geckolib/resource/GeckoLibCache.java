@@ -1,6 +1,5 @@
 package software.bernie.geckolib.resource;
 
-import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
@@ -50,20 +49,23 @@ public class GeckoLibCache
 
 	public CompletableFuture<Void> resourceReload(IFutureReloadListener.IStage stage, IResourceManager resourceManager, IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor, Executor gameExecutor)
 	{
-		animations.clear();
-		geoModels.clear();
+		HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
+		HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
+
 		CompletableFuture[] animationFileFutures = resourceManager.getAllResourceLocations("animations", fileName -> fileName.endsWith(".json"))
 				.stream()
 				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(resource -> animations.put(resource, animationLoader.loadAllAnimations(parser, resource, resourceManager))))
+				.map(completable -> completable.thenAcceptAsync(resource -> tempAnimations.put(resource, animationLoader.loadAllAnimations(parser, resource, resourceManager))))
 				.toArray(x -> new CompletableFuture[x]);
 
 		CompletableFuture[] geoModelFutures = resourceManager.getAllResourceLocations("geo", fileName -> fileName.endsWith(".json"))
 				.stream()
 				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(resource -> geoModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
+				.map(completable -> completable.thenAcceptAsync(resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
 				.toArray(x -> new CompletableFuture[x]);
-
-		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenCompose(stage::markCompleteAwaitingOthers);
+		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x -> {
+			animations = tempAnimations;
+			geoModels = tempModels;
+		}).thenCompose(stage::markCompleteAwaitingOthers);
 	}
 }

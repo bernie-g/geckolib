@@ -9,8 +9,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.model.AnimatedArmorModel;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.example.client.renderer.model.armor.PotatoArmorModel;
@@ -26,10 +27,10 @@ public class PotatoArmor extends AnimatedArmorItem implements IAnimatable
 	private final AnimationManager manager = new AnimationManager();
 	private final AnimationController controller = new AnimationController(this, "controller", 20, this::predicate);
 
-	private <E extends IAnimatable> boolean predicate(AnimationTestPredicate<E> eSpecialAnimationPredicate)
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> eSpecialAnimationPredicate)
 	{
 		controller.setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", true));
-		return true;
+		return PlayState.CONTINUE;
 	}
 
 	public PotatoArmor(EquipmentSlotType slot)

@@ -18,10 +18,11 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
+import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.example.KeyboardHandler;
 import software.bernie.geckolib.core.manager.AnimationManager;
 
@@ -34,31 +35,31 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
 	private AnimationController sizeController = new AnimationController(this, "sizeController", 1F, this::sizeAnimationPredicate);
 	private AnimationController moveController = new AnimationController(this, "moveController", 10F, this::moveController);
 
-	private <ENTITY extends Entity & IAnimatable> boolean moveController(AnimationTestPredicate<ENTITY> event)
+	private <ENTITY extends Entity & IAnimatable> PlayState moveController(AnimationEvent<ENTITY> event)
 	{
 		float limbSwingAmount = event.getLimbSwingAmount();
 		if (KeyboardHandler.isForwardKeyDown)
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("kick", true));
-			return true;
+			return PlayState.CONTINUE;
 		}
 		else if (KeyboardHandler.isBackKeyDown)
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("punchwalk", true));
-			return true;
+			return PlayState.CONTINUE;
 		}
 		else if (!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F))
 		{
 			moveController.setAnimation(new AnimationBuilder().addAnimation("walk", true));
-			return true;
+			return PlayState.CONTINUE;
 		}
-		return false;
+		return PlayState.STOP;
 	}
 
 
 	private boolean hasGrown = false;
 
-	private <ENTITY extends Entity & IAnimatable> boolean sizeAnimationPredicate(AnimationTestPredicate<ENTITY> entityAnimationTestPredicate)
+	private <ENTITY extends Entity & IAnimatable> PlayState sizeAnimationPredicate(AnimationEvent<ENTITY> entityAnimationEvent)
 	{
 		int size = getSize();
 		switch (size)
@@ -74,7 +75,7 @@ public class AscendedLegfishEntity extends MonsterEntity implements IAnimatable
 					hasGrown = true;
 				}
 		}
-		return true;
+		return PlayState.CONTINUE;
 	}
 
 	public AscendedLegfishEntity(EntityType<? extends MonsterEntity> type, World worldIn)

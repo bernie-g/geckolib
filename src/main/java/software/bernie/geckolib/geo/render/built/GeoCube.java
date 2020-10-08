@@ -54,7 +54,7 @@ public class GeoCube
 			size.z = 0f;
 		}
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
-		rotation.mul(-1, -1, 1);
+		rotation.mul(1, 1, 1);
 
 		rotation.setX((float) Math.toRadians(rotation.getX()));
 		rotation.setY((float) Math.toRadians(rotation.getY()));

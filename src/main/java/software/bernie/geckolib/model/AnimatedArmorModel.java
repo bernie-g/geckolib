@@ -5,11 +5,7 @@
 
 package software.bernie.geckolib.model;
 
-import com.eliotlash.mclib.math.Variable;
 import com.eliotlash.molang.MolangParser;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
@@ -19,7 +15,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.core.builder.Animation;
@@ -27,9 +22,7 @@ import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
 import software.bernie.geckolib.renderers.legacy.AnimatedModelRenderer;
 import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.core.event.predicate.AnimationTestPredicate;
-import software.bernie.geckolib.file.AnimationFile;
-import software.bernie.geckolib.file.AnimationFileLoader;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.item.AnimatedArmorItem;
 import software.bernie.geckolib.core.manager.AnimationManager;
 import software.bernie.geckolib.core.IAnimatableModel;
@@ -39,8 +32,8 @@ import software.bernie.geckolib.resource.GeckoLibCache;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * An AnimatedEntityModel is the equivalent of an Entity Model, except it provides extra functionality for rendering animations from bedrock json animation files. The entity passed into the generic parameter needs to implement IAnimatedEntity.
@@ -130,7 +123,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		modelRenderer.rotateAngleZ = z;
 	}
 
-	public void setLivingAnimations(T entity, @Nullable AnimationTestPredicate customPredicate)
+	public void setLivingAnimations(T entity, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
 		AnimationManager manager = entity.getAnimationManager();
@@ -145,7 +138,7 @@ public abstract class AnimatedArmorModel<T extends AnimatedArmorItem & IAnimatab
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
 
-		AnimationTestPredicate<T> predicate = new AnimationTestPredicate<T>(entity, 0, 0, 0, false);
+		AnimationEvent<T> predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
 		animationProcessor.tickAnimation(entity, seekTime, predicate, parser, true);
 	}
 
