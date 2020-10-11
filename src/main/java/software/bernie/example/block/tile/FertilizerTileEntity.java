@@ -6,16 +6,18 @@ import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.controller.BaseAnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationData;
+import software.bernie.geckolib.core.manager.AnimationFactory;
 
 public class FertilizerTileEntity extends TileEntity implements IAnimatable
 {
-	private final AnimationManager manager = new AnimationManager();
-	private final AnimationController controller = new AnimationController(this, "controller", 0, this::predicate);
+	private final AnimationFactory manager = new AnimationFactory(this);
 
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
+		BaseAnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
 		if (event.getAnimatable().getWorld().isRaining())
 		{
@@ -31,14 +33,18 @@ public class FertilizerTileEntity extends TileEntity implements IAnimatable
 	public FertilizerTileEntity()
 	{
 		super(TileRegistry.FERTILIZER.get());
-		manager.addAnimationController(controller);
+	}
+
+
+	@Override
+	public void registerControllers(AnimationData data)
+	{
+		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationManager getAnimationManager()
+	public AnimationFactory getFactory()
 	{
-		return manager;
+		return this.manager;
 	}
-
-
 }

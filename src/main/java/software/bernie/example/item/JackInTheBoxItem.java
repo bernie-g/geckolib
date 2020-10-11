@@ -7,29 +7,34 @@ import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationData;
+import software.bernie.geckolib.core.manager.AnimationFactory;
 
 public class JackInTheBoxItem extends Item implements IAnimatable
 {
-	public AnimationManager manager = new AnimationManager();
-	public AnimationController controller = new AnimationController(this, "controller", 20, this::predicate);
+	public AnimationFactory factory = new AnimationFactory(this);
 
 	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event)
 	{
 		ItemStack itemstack = event.getExtraDataOfType(ItemStack.class).get(0);
-		this.controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", true));
 		return PlayState.CONTINUE;
 	}
 
 	public JackInTheBoxItem(Properties properties)
 	{
 		super(properties);
-		this.manager.addAnimationController(controller);
 	}
 
 	@Override
-	public AnimationManager getAnimationManager()
+	public void registerControllers(AnimationData data)
 	{
-		return manager;
+		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));
+	}
+
+	@Override
+	public AnimationFactory getFactory()
+	{
+		return this.factory;
 	}
 }

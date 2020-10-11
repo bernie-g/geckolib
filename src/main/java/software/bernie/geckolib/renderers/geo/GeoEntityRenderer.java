@@ -123,7 +123,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		if (modelProvider instanceof IAnimatableModel)
 		{
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, predicate);
+			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
 		stack.push();
@@ -150,7 +150,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		EntityModelData modelData = this.modelProvider.getModelData(EntityModelData.class);
 		if (modelData == null)
 		{
-			this.modelProvider.putModelData(EntityModelData.class, new EntityModelData());
+			modelData = new EntityModelData();
+			this.modelProvider.putModelData(EntityModelData.class, modelData);
 		}
 		return modelData;
 	}

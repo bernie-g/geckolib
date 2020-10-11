@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
@@ -23,6 +24,7 @@ import software.bernie.geckolib.util.GeoUtils;
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel implements IGeoRenderer<T>
@@ -90,7 +92,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		stack.scale(-1.0F, -1.0F, 1.0F);
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false, Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
-		modelProvider.setLivingAnimations(currentArmorItem, itemEvent);
+		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
 		stack.push();
 		stack.translate(0, 0.01f, 0);
@@ -151,14 +153,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 		try
 		{
-			GeoUtils.copyRotations(this.bipedHead, headBone);
-			GeoUtils.copyRotations(this.bipedBody, bodyBone);
-			GeoUtils.copyRotations(this.bipedRightArm, rightArmBone);
-			GeoUtils.copyRotations(this.bipedLeftArm, leftArmBone);
-			GeoUtils.copyRotations(this.bipedRightLeg, rightLegBone);
-			GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
-			GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
-			GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
+			if (!(this.entityLiving instanceof ArmorStandEntity))
+			{
+				GeoUtils.copyRotations(this.bipedHead, headBone);
+				GeoUtils.copyRotations(this.bipedBody, bodyBone);
+				GeoUtils.copyRotations(this.bipedRightArm, rightArmBone);
+				GeoUtils.copyRotations(this.bipedLeftArm, leftArmBone);
+				GeoUtils.copyRotations(this.bipedRightLeg, rightLegBone);
+				GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
+				GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
+				GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
+			}
 		}
 		catch (Exception e)
 		{
@@ -245,5 +250,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			GeckoLib.LOGGER.info("Could not find an armor bone.");
 		}
 		return this;
+	}
+
+	@Override
+	public Integer getUniqueID(T animatable)
+	{
+		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(), itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUniqueID().toString());
 	}
 }

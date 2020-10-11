@@ -9,7 +9,7 @@ import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationData;
 import software.bernie.geckolib.core.processor.AnimationProcessor;
 import software.bernie.geckolib.core.processor.IBone;
 import software.bernie.geckolib.geo.exception.GeoModelException;
@@ -57,10 +57,10 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, @Nullable AnimationEvent customPredicate)
+	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationManager manager = entity.getAnimationManager();
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		if (manager.startTick == null)
 		{
 			manager.startTick = getCurrentTick();
@@ -86,7 +86,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
-			animationProcessor.tickAnimation(entity, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
 	}
 

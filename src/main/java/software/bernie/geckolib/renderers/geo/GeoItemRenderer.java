@@ -17,6 +17,7 @@ import software.bernie.geckolib.model.AnimatedGeoModel;
 
 import java.awt.*;
 import java.util.Collections;
+import java.util.Objects;
 
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends ItemStackTileEntityRenderer implements IGeoRenderer<T>
 {
@@ -39,7 +40,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	}
 
 	protected AnimatedGeoModel<T> modelProvider;
-
+	protected ItemStack currentItemStack;
 	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider)
 	{
 		this.modelProvider = modelProvider;
@@ -64,8 +65,9 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ItemStack itemStack)
 	{
+		this.currentItemStack = itemStack;
 		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, 0, false, Collections.singletonList(itemStack));
-		modelProvider.setLivingAnimations(animatable, itemEvent);
+		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);
@@ -92,5 +94,11 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	public ResourceLocation getTextureLocation(T instance)
 	{
 		return this.modelProvider.getTextureLocation(instance);
+	}
+
+	@Override
+	public Integer getUniqueID(T animatable)
+	{
+		return Objects.hash(currentItemStack.getItem(), currentItemStack.getCount(), currentItemStack.hasTag() ? currentItemStack.getTag().toString() : 1);
 	}
 }
