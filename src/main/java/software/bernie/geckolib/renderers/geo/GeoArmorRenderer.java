@@ -87,9 +87,9 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	public void render(float partialTicks, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn)
 	{
-
 		stack.translate(0.0D, 1.501F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false, Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
@@ -129,10 +129,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			}
 			catch (Exception e)
 			{
+				throw new RuntimeException("Could not find an armor bone.", e);
 			}
 		}
 		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(currentArmorItem));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn, modelProvider.getTextureLocation(currentArmorItem));
 		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
@@ -167,7 +167,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		}
 		catch (Exception e)
 		{
-			GeckoLib.LOGGER.info("Could not find an armor bone.");
+			throw new RuntimeException("Could not find an armor bone.", e);
 		}
 	}
 
@@ -206,6 +206,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	public GeoArmorRenderer applySlot(EquipmentSlotType slot)
 	{
+		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
+
 		IBone headBone = this.modelProvider.getBone(this.headBone);
 		IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
 		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
@@ -247,7 +249,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		}
 		catch (Exception e)
 		{
-			GeckoLib.LOGGER.info("Could not find an armor bone.");
+			throw new RuntimeException("Could not find an armor bone.", e);
 		}
 		return this;
 	}
