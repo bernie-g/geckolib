@@ -56,7 +56,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-		modelProvider.setLivingAnimations(tile);
+		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);

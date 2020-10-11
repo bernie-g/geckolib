@@ -8,16 +8,16 @@ import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib.core.manager.AnimationManager;
+import software.bernie.geckolib.core.manager.AnimationData;
+import software.bernie.geckolib.core.manager.AnimationFactory;
 
 public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 {
-	AnimationManager manager = new AnimationManager();
-	AnimationController controller = new AnimationController(this, "controller", 0, this::predicate);
+	AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> eSpecialAnimationPredicate)
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
-		controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
 		return PlayState.CONTINUE;
 	}
 
@@ -25,12 +25,18 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 	{
 		super(type, worldIn);
 		this.ignoreFrustumCheck = true;
-		manager.addAnimationController(controller);
+	}
+
+
+	@Override
+	public void registerControllers(AnimationData data)
+	{
+		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationManager getAnimationManager()
+	public AnimationFactory getFactory()
 	{
-		return manager;
+		return this.factory;
 	}
 }
