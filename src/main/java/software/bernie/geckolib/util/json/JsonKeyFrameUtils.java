@@ -16,7 +16,7 @@ import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.keyframe.KeyFrame;
 import software.bernie.geckolib.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib.core.easing.EasingType;
-import software.bernie.geckolib.molang.ConstantValue;
+import software.bernie.geckolib.core.ConstantValue;
 import software.bernie.geckolib.util.AnimationUtils;
 
 import java.util.ArrayList;
