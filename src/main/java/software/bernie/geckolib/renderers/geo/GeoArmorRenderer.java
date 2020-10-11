@@ -106,10 +106,15 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 			try
 			{
-				//azure youre gonna have to do stuff like this:
-
-				//headBone.setPositionY(headBone.getPositionY() - 5);
-				//bodyBone.setPositionZ(bodyBone.getPositionX() - 2);
+				headBone.setPositionY(headBone.getPositionY() - 5);
+				bodyBone.setPositionZ(bodyBone.getPositionX() - 1);
+				bodyBone.setPositionY(bodyBone.getPositionX() - 3);
+				rightArmBone.setPositionY(bodyBone.getPositionX() - 3);
+				leftArmBone.setPositionY(bodyBone.getPositionX() - 3);
+				rightLegBone.setPositionZ(bodyBone.getPositionX() + 4);
+				leftLegBone.setPositionZ(bodyBone.getPositionX() + 4);
+				rightBootBone.setPositionZ(bodyBone.getPositionX() + 4);
+				leftBootBone.setPositionZ(bodyBone.getPositionX() + 4);
 			}
 			catch (Exception e)
 			{
