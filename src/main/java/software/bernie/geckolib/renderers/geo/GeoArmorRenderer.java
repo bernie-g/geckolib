@@ -96,14 +96,14 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		stack.translate(0, 0.01f, 0);
 		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
 		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-		if(this.swingProgress > 0.0F) 
+		if (this.swingProgress > 0.0F)
 		{
-				rightArmBone.setScaleZ(1.25F);
-				rightArmBone.setScaleX(1.25F);
-				leftArmBone.setScaleZ(1.3F);
-				leftArmBone.setScaleX(1.05F);
+			rightArmBone.setScaleZ(1.25F);
+			rightArmBone.setScaleX(1.25F);
+			leftArmBone.setScaleZ(1.3F);
+			leftArmBone.setScaleX(1.05F);
 		}
-		if(isSneak)
+		if (isSneak)
 		{
 			IBone headBone = this.modelProvider.getBone(this.headBone);
 			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
@@ -159,9 +159,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
 			GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
 			GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
-			GeckoLib.LOGGER.info(rightBootBone.getPivotZ());
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			GeckoLib.LOGGER.info("Could not find an armor bone.");
 		}
@@ -190,7 +189,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.currentArmorItem = (T) itemStack.getItem();
 	}
 
-	public final GeoArmorRenderer applyEntityStats(BipedModel defaultArmor){
+	public final GeoArmorRenderer applyEntityStats(BipedModel defaultArmor)
+	{
 		this.isChild = defaultArmor.isChild;
 		this.isSneak = defaultArmor.isSneak;
 		this.isSitting = defaultArmor.isSitting;
@@ -199,7 +199,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
-	public GeoArmorRenderer applySlot(EquipmentSlotType slot){
+	public GeoArmorRenderer applySlot(EquipmentSlotType slot)
+	{
 		IBone headBone = this.modelProvider.getBone(this.headBone);
 		IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
 		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
@@ -219,7 +220,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			rightBootBone.setHidden(true);
 			leftBootBone.setHidden(true);
 
-			switch(slot)
+			switch (slot)
 			{
 				case HEAD:
 					headBone.setHidden(false);
@@ -239,7 +240,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 					break;
 			}
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			GeckoLib.LOGGER.info("Could not find an armor bone.");
 		}

@@ -10,12 +10,12 @@ public class PotatoArmorRenderer extends GeoArmorRenderer<PotatoArmorItem>
 	{
 		super(new PotatoArmorModel());
 		this.headBone = "helmet";
-		this.bodyBone = "body";
-		this.rightArmBone = "right_arm";
-		this.leftArmBone = "left_arm";
-		this.rightLegBone = "leg3";
-		this.leftLegBone = "leg2";
-		this.rightBootBone = "FootRight3";
-		this.leftBootBone = "FootRight2";
+		this.bodyBone = "chestplate";
+		this.rightArmBone = "rightArm";
+		this.leftArmBone = "leftArm";
+		this.rightLegBone = "rightLeg";
+		this.leftLegBone = "leftLeg";
+		this.rightBootBone = "rightBoot";
+		this.leftBootBone = "leftBoot";
 	}
 }
