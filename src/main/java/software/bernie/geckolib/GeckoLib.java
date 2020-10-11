@@ -6,7 +6,6 @@
 package software.bernie.geckolib;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
@@ -35,6 +34,5 @@ public class GeckoLib
 		ItemRegistry.ITEMS.register(bus);
 		TileRegistry.TILES.register(bus);
 		BlockRegistry.BLOCKS.register(bus);
-		MinecraftForge.EVENT_BUS.register(this);
 	}
 }

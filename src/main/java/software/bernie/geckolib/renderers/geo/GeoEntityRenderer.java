@@ -19,12 +19,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
 import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
-import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.model.provider.data.EntityModelData;
 import software.bernie.geckolib.util.AnimationUtils;
 
@@ -130,9 +130,9 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
-		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, packedLightIn, getEntityTexture(entity));
-		render(model, entity, partialTicks, renderType, stack, bufferIn, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
+		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
+		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator())
 		{

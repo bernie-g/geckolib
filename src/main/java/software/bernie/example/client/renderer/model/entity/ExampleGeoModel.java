@@ -10,7 +10,7 @@ public class ExampleGeoModel extends AnimatedGeoModel<GeoExampleEntity>
 	@Override
 	public ResourceLocation getAnimationFileLocation(GeoExampleEntity entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "animations/botarium_tier1_anim.json");
+		return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
 	}
 
 	@Override

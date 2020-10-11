@@ -10,7 +10,7 @@ public class JackInTheBoxModel extends AnimatedGeoModel<JackInTheBoxItem>
 	@Override
 	public ResourceLocation getModelLocation(JackInTheBoxItem object)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "geo/jack_in_the_box_model.json");
+		return new ResourceLocation(GeckoLib.ModID, "geo/jack.geo.json");
 	}
 
 	@Override

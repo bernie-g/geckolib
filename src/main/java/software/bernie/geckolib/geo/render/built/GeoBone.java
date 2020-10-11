@@ -19,7 +19,7 @@ public class GeoBone implements IBone
 	public Boolean mirror;
 	public Double inflate;
 	public Boolean dontRender;
-
+	public boolean isHidden;
 	//I still have no idea what this field does, but its in the json file so ¯\_(ツ)_/¯
 	public Boolean reset;
 
@@ -174,5 +174,53 @@ public class GeoBone implements IBone
 	public void setScaleZ(float value)
 	{
 		this.scaleZ = value;
+	}
+
+	@Override
+	public boolean isHidden()
+	{
+		return this.isHidden;
+	}
+
+	@Override
+	public void setHidden(boolean hidden)
+	{
+		this.isHidden = hidden;
+	}
+
+	@Override
+	public void setPivotX(float value)
+	{
+		this.rotationPointX = value;
+	}
+
+	@Override
+	public void setPivotY(float value)
+	{
+		this.rotationPointY = value;
+	}
+
+	@Override
+	public void setPivotZ(float value)
+	{
+		this.rotationPointZ = value;
+	}
+
+	@Override
+	public float getPivotX()
+	{
+		return this.rotationPointX;
+	}
+
+	@Override
+	public float getPivotY()
+	{
+		return this.rotationPointY;
+	}
+
+	@Override
+	public float getPivotZ()
+	{
+		return this.rotationPointZ;
 	}
 }

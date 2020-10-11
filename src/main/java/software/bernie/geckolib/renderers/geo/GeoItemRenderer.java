@@ -65,16 +65,16 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ItemStack itemStack)
 	{
 		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, 0, false, Collections.singletonList(itemStack));
-		//modelProvider.setLivingAnimations(animatable, itemEvent);
+		modelProvider.setLivingAnimations(animatable, itemEvent);
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);
 
 		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(animatable));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, packedLightIn, modelProvider.getTextureLocation(animatable));
-		render(model, animatable, 0, renderType, stack, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
+		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn, modelProvider.getTextureLocation(animatable));
+		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
 

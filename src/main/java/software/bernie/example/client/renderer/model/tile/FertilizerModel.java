@@ -15,10 +15,10 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 	{
 		if(animatable.getWorld().isRaining())
 		{
-			return new ResourceLocation("geckolib", "animations/fertilizer_anim.json");
+			return new ResourceLocation("geckolib", "animations/fertilizer.animation.json");
 		}
 		else {
-			return new ResourceLocation("geckolib", "animations/botarium_tier1_anim.json");
+			return new ResourceLocation("geckolib", "animations/botarium.animation.json");
 		}
 	}
 
@@ -27,10 +27,10 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 	{
 		if(animatable.getWorld().isRaining())
 		{
-			return new ResourceLocation("geckolib", "geo/fertilizer.json");
+			return new ResourceLocation("geckolib", "geo/fertilizer.geo.json");
 		}
 		else {
-			return new ResourceLocation("geckolib", "geo/botarium_block.json");
+			return new ResourceLocation("geckolib", "geo/botarium.geo.json");
 		}
 	}
 
@@ -42,7 +42,7 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
 			return new ResourceLocation("geckolib" + ":textures/block/fertilizer.png");
 		}
 		else {
-			return new ResourceLocation("geckolib" + ":textures/block/cloche.png");
+			return new ResourceLocation("geckolib" + ":textures/block/botarium.png");
 		}
 	}
 }

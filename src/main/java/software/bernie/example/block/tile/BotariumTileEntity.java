@@ -17,7 +17,7 @@ public class BotariumTileEntity extends TileEntity implements IAnimatable
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> eSpecialAnimationPredicate)
 	{
 		controller.transitionLengthTicks = 0;
-		this.controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", true));
+		this.controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true));
 		return PlayState.CONTINUE;
 	}
 

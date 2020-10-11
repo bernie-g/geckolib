@@ -5,28 +5,26 @@
 package software.bernie.example.client.renderer.model.tile;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 
-public class BotariumModel extends AnimatedGeoModel<BotariumTileEntity>
+public class BotariumModel extends AnimatedGeoModel
 {
 	@Override
-	public ResourceLocation getAnimationFileLocation(BotariumTileEntity entity)
+	public ResourceLocation getAnimationFileLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "animations/jackinthebox.animation.json");
-
+		return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(BotariumTileEntity animatable)
+	public ResourceLocation getModelLocation(Object animatable)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "geo/jack_in_the_box_model.json");
+		return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(BotariumTileEntity entity)
+	public ResourceLocation getTextureLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "textures/item/jack.png");
+		return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
 	}
 }

@@ -16,10 +16,8 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.renderers.legacy.AnimatedBlockRenderer;
 
 import java.awt.*;
 
@@ -33,12 +31,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 			{
 				TileEntity tile = (TileEntity) object;
 				TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tile);
-				if (renderer instanceof AnimatedBlockRenderer)
-				{
-					AnimatedBlockRenderer<?, ?> animatedRenderer = (AnimatedBlockRenderer<?, ?>) renderer;
-					return animatedRenderer.getEntityModel();
-				}
-				else if (renderer instanceof GeoBlockRenderer)
+				if (renderer instanceof GeoBlockRenderer)
 				{
 					return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -72,9 +65,9 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(tile));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
-		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, packedLightIn, modelProvider.getTextureLocation(tile));
-		render(model, tile, partialTicks, renderType, stack, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
+		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn, modelProvider.getTextureLocation(tile));
+		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
 
