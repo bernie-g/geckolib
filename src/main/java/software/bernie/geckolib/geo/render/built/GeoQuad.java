@@ -2,8 +2,6 @@ package software.bernie.geckolib.geo.render.built;
 
 import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.Direction;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.Validate;
 
 public class GeoQuad
 {

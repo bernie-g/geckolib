@@ -1,6 +1,6 @@
 package software.bernie.geckolib.geo.raw.pojo;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Specifies the UV's for the face that stretches along the x and z axes, and faces the -y

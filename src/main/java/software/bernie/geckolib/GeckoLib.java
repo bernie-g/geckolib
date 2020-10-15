@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib;
 
-import cpw.mods.modlauncher.Launcher;
-import cpw.mods.modlauncher.api.TypesafeMap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;

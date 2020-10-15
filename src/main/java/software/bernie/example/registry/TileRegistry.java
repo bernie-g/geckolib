@@ -4,9 +4,9 @@ import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
+import software.bernie.geckolib.GeckoLib;
 
 public class TileRegistry
 {

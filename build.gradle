@@ -138,7 +138,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
-
+            artifact packageSources
             artifactId = project.archives_base_name
         }
     }

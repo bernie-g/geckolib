@@ -22,7 +22,7 @@ import software.bernie.geckolib.resource.GeckoLibCache;
 import javax.annotation.Nullable;
 import java.util.Collections;
 
-public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T>, IResourceManagerReloadListener
+public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T>
 {
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
@@ -30,7 +30,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	protected AnimatedGeoModel()
 	{
 		this.animationProcessor = new AnimationProcessor();
-		onResourceManagerReload(Minecraft.getInstance().getResourceManager());
 		registerSelf();
 	}
 
@@ -40,11 +39,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@Override
-	public void onResourceManagerReload(IResourceManager resourceManager)
-	{
-		this.animationProcessor.reloadAnimations = true;
-	}
 
 	public void registerBone(GeoBone bone)
 	{

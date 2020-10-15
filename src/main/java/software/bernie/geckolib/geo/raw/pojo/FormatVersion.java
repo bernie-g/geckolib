@@ -1,7 +1,9 @@
 package software.bernie.geckolib.geo.raw.pojo;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.IOException;
-import com.fasterxml.jackson.annotation.*;
 
 public enum FormatVersion {
 	VERSION_1_12_0, VERSION_1_14_0;

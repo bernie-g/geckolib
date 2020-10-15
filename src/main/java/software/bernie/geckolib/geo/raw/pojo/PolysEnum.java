@@ -1,7 +1,9 @@
 package software.bernie.geckolib.geo.raw.pojo;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.io.IOException;
-import com.fasterxml.jackson.annotation.*;
 
 /**
  * If not specifying vertex indices, arrays of data must be a list of tris or quads, set by

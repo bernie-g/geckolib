@@ -11,7 +11,6 @@ import software.bernie.geckolib.geo.raw.pojo.RawGeoModel;
 import software.bernie.geckolib.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib.geo.render.GeoBuilder;
 import software.bernie.geckolib.geo.render.built.GeoModel;
-import software.bernie.geckolib.model.provider.GeoModelProvider;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;

@@ -1,6 +1,6 @@
 package software.bernie.geckolib.geo.raw.pojo;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * ***EXPERIMENTAL*** A triangle or quad mesh object.  Can be used in conjunction with cubes

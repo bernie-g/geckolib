@@ -1,6 +1,6 @@
 package software.bernie.geckolib.geo.raw.pojo;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RawGeoModel
 {
