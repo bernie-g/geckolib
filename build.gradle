@@ -6,13 +6,11 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
-apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
@@ -91,77 +89,26 @@ dependencies {
         useJUnitPlatform()
     }
 }
-shadowJar {
-    dependencies {
-        include(dependency('com.eliotlash.molang:molang:.*'))
-        include(dependency('com.eliotlash.mclib:mclib:.*'))
-        include(dependency('com.fasterxml.jackson.core:.*'))
-        include(dependency('com.fasterxml.jackson.datatype:.*'))
-    }
-
-    relocate 'com.eliotlash', 'software.bernie.com.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.com.fasterxml'
-
-    classifier ''
-}
-
-reobf {
-    shadowJar {} // Reobfuscate the shadowed JAR
-}
 
 jar {
-    from sourceSets.main.allSource
     manifest {
         attributes([
-            "Specification-Title": "GeckoLib",
-            "Specification-Vendor": "Gecko",
-            "Specification-Version": "1", // We are version 1 of ourselves
-            "Implementation-Title": project.name,
-            "Implementation-Version": "${version}",
-            "Implementation-Vendor" :"Gecko",
-            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Specification-Title": "GeckoLib",
+                "Specification-Vendor": "Gecko",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Gecko",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
-jar.finalizedBy('reobfJar')
-sourceSets {
-    main { output.resourcesDir = output.classesDir }
-}
-
-task javadocnew(type: Javadoc) {
-    source = sourceSets.main.allJava
-    classpath = configurations.compile
-}
-
-task javadocJar(type: Jar, dependsOn: javadocnew) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-task packageSources(type: Jar, dependsOn: 'classes') {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-artifacts {
-    archives packageJavadoc
-    archives packageSources
-}
-artifacts {
-    archives javadocJar
-}
-tasks.packageSources.dependsOn tasks.shadowJar
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact jar
-            artifact packageSources
-            artifact packageJavadoc
             artifactId = project.archives_base_name
         }
     }
