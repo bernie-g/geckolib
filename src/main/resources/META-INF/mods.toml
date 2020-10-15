@@ -16,20 +16,20 @@ modId="geckolib" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="Geckolib" #mandatory
+displayName="GeckoLib" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="http://bernie.software/" #optional
+displayURL="http://geckolib.com/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="geckolib.png" #optional
 # A text field displayed in the mod UI
-credits="Thanks to The Ult1mate guy for the test models and animations, and Lukas and Commoble for the programming help." #optional
+credits="Gecko, Eliot" #optional
 # A text field displayed in the mod UI
-authors="Gecko" #optional
+authors="Gecko, Eliot" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-Geckolib is an entity animation loader for Java Edition, which lets you export bedrock animations and play them automatically.'''
+GeckoLib is an animation engine for modders. It supports forward-kinematic animations and renders bedrock entity geo models.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.geckolib]] #optional
     # the modid of the dependency
