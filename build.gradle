@@ -97,20 +97,17 @@ shadowJar {
         include(dependency('com.eliotlash.mclib:mclib:.*'))
         include(dependency('com.fasterxml.jackson.core:.*'))
         include(dependency('com.fasterxml.jackson.datatype:.*'))
+        include(project(':geckolib-core'))
     }
 
-    relocate 'com.eliotlash', 'software.bernie.com.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.com.fasterxml'
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
 
     classifier ''
 }
 
-reobf {
-    shadowJar {} // Reobfuscate the shadowed JAR
-}
 
 jar {
-    from sourceSets.main.allSource
     manifest {
         attributes([
             "Specification-Title": "GeckoLib",
@@ -124,44 +121,17 @@ jar {
     }
 }
 
-jar.finalizedBy('reobfJar')
-sourceSets {
-    main { output.resourcesDir = output.classesDir }
-}
-
-task javadocnew(type: Javadoc) {
-    source = sourceSets.main.allJava
-    classpath = configurations.compile
-}
-
-task javadocJar(type: Jar, dependsOn: javadocnew) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
 task packageSources(type: Jar, dependsOn: 'classes') {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
-artifacts {
-    archives packageJavadoc
-    archives packageSources
-}
-artifacts {
-    archives javadocJar
-}
-tasks.packageSources.dependsOn tasks.shadowJar
+
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
-            artifact packageSources
-            artifact packageJavadoc
+            artifact shadowJar
+
             artifactId = project.archives_base_name
         }
     }
