@@ -6,7 +6,6 @@ import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.core.controller.BaseAnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationData;
 import software.bernie.geckolib.core.manager.AnimationFactory;
@@ -17,7 +16,7 @@ public class FertilizerTileEntity extends TileEntity implements IAnimatable
 
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
-		BaseAnimationController controller = event.getController();
+		AnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
 		if (event.getAnimatable().getWorld().isRaining())
 		{

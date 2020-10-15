@@ -12,7 +12,6 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
