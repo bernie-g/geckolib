@@ -1,6 +1,6 @@
 package software.bernie.geckolib.model.provider.data;
 
-public class EntityModelData extends ExtraModelData
+public class EntityModelData
 {
 	public boolean isSitting;
 	public boolean isChild;

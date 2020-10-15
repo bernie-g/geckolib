@@ -59,9 +59,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
-		EntityModelData entityModelData = getOrCreateEntityModelData();
+		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
 		entityModelData.isChild = entity.isChild();
+
 		float f = MathHelper.interpolateAngle(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
 		float f1 = MathHelper.interpolateAngle(partialTicks, entity.prevRotationYawHead, entity.rotationYawHead);
 		float f2 = f1 - f;
@@ -119,8 +120,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				limbSwingAmount = 1.0F;
 			}
 		}
-		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.emptyList());
-
+		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel)
 		{
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
@@ -145,16 +145,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
-	private EntityModelData getOrCreateEntityModelData()
-	{
-		EntityModelData modelData = this.modelProvider.getModelData(EntityModelData.class);
-		if (modelData == null)
-		{
-			modelData = new EntityModelData();
-			this.modelProvider.putModelData(EntityModelData.class, modelData);
-		}
-		return modelData;
-	}
 
 	@Override
 	public ResourceLocation getEntityTexture(T entity)
