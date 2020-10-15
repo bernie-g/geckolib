@@ -105,7 +105,12 @@ shadowJar {
 
     classifier ''
 }
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
+}
 
+
+jar.finalizedBy('reobfJar')
 
 jar {
     manifest {
@@ -125,7 +130,9 @@ task packageSources(type: Jar, dependsOn: 'classes') {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
-
+artifacts{
+    archives shadowJar
+}
 
 publishing {
     publications {
