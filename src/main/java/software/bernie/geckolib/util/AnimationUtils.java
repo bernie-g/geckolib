@@ -8,18 +8,9 @@ package software.bernie.geckolib.util;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.math.MathHelper;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animation.keyframe.AnimationPoint;
-import software.bernie.geckolib.animation.model.AnimatedEntityModel;
-import software.bernie.geckolib.easing.EasingManager;
-import software.bernie.geckolib.easing.EasingType;
-
-import java.util.function.Function;
+import software.bernie.geckolib.model.provider.GeoModelProvider;
+import software.bernie.geckolib.renderer.geo.IGeoRenderer;
 
 public class AnimationUtils
 {
@@ -34,51 +25,6 @@ public class AnimationUtils
 	}
 
 	/**
-	 * This is the actual function that smoothly interpolates (lerp) between keyframes
-	 *
-	 * @param startValue  The animation's start value
-	 * @param endValue    The animation's end value
-	 * @return The interpolated value
-	 */
-	public static float lerpValues(double percentCompleted, double startValue, double endValue)
-	{
-		// current tick / position should be between 0 and 1 and represent the percentage of the lerping that has completed
-		return (float) MathHelper.lerp(percentCompleted, startValue,
-				endValue);
-	}
-
-	/**
-	 * Lerps an AnimationPoint
-	 *
-	 * @param animationPoint The animation point
-	 * @return the resulting lerped value
-	 */
-	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType, Function<Double, Double> customEasingMethod)
-	{
-		if(animationPoint.currentTick >= animationPoint.animationEndTick)
-		{
-			return animationPoint.animationEndValue;
-		}
-		if(animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0)
-		{
-			return animationPoint.animationEndValue;
-		}
-
-		if(easingType == EasingType.CUSTOM && customEasingMethod != null)
-		{
-			return lerpValues(customEasingMethod.apply(animationPoint.currentTick / animationPoint.animationEndTick),
-					animationPoint.animationStartValue, animationPoint.animationEndValue);
-		}
-		else if(easingType == EasingType.NONE && animationPoint.keyframe != null)
-		{
-			easingType = animationPoint.keyframe.easingType;
-		}
-		double ease = EasingManager.ease(animationPoint.currentTick / animationPoint.animationEndTick, easingType, animationPoint.keyframe == null ? null : animationPoint.keyframe.easingArgs);
-		return lerpValues(ease,
-				animationPoint.animationStartValue, animationPoint.animationEndValue);
-	}
-
-	/**
 	 * Gets the renderer for an entity
 	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
@@ -87,29 +33,14 @@ public class AnimationUtils
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 
-	/**
-	 * Gets the AnimatedEntityModel for an entity.
-	 */
-	public static <T extends Entity> AnimatedEntityModel getModelForEntity(T entity)
+	public static <T extends Entity> GeoModelProvider getGeoModelForEntity(T entity)
 	{
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
-		if (entityRenderer instanceof FeatureRendererContext)
-		{
-			LivingEntityRenderer renderer = (LivingEntityRenderer) entityRenderer;
-			EntityModel entityModel = renderer.getModel();
-			if (entityModel instanceof AnimatedEntityModel)
-			{
-				return (AnimatedEntityModel) entityModel;
-			}
-			else {
-				GeckoLib.LOGGER.error("Model for " + entity.getName() + " is not an AnimatedEntityModel. Please inherit the proper class.");
-				return null;
-			}
-		}
-		else {
-			GeckoLib.LOGGER.error("Could not find valid renderer for " + entity.getName());
-			return null;
-		}
-	}
 
+		if (entityRenderer instanceof IGeoRenderer)
+		{
+			return ((IGeoRenderer<?>) entityRenderer).getGeoModelProvider();
+		}
+		return null;
+	}
 }

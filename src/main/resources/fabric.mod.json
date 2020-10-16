@@ -19,12 +19,16 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "software.bernie.geckolib.GeckoLib"
+      "software.bernie.geckolib.GeckoLib",
+      "software.bernie.example.Listener"
     ],
     "client": [
-      "software.bernie.geckolib.listener.ModEventBus"
+      "software.bernie.example.ClientListener"
     ]
   },
+  "mixins": [
+    "fabric.mixins.json"
+  ],
 
   "depends": {
     "fabricloader": ">=0.8.7",

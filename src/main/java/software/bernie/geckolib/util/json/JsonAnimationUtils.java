@@ -5,19 +5,22 @@
 
 package software.bernie.geckolib.util.json;
 
+import com.eliotlash.mclib.math.IValue;
+import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import software.bernie.geckolib.animation.builder.Animation;
-import software.bernie.geckolib.util.AnimationUtils;
-import software.bernie.geckolib.animation.keyframe.BoneAnimation;
-import software.bernie.geckolib.animation.keyframe.EventKeyFrame;
-import software.bernie.geckolib.animation.keyframe.ParticleEventKeyFrame;
-import software.bernie.geckolib.animation.keyframe.VectorKeyFrameList;
-import java.util.*;
 import net.minecraft.client.gl.ShaderParseException;
+import software.bernie.geckolib.core.builder.Animation;
+import software.bernie.geckolib.core.keyframe.BoneAnimation;
+import software.bernie.geckolib.core.keyframe.EventKeyFrame;
+import software.bernie.geckolib.core.keyframe.ParticleEventKeyFrame;
+import software.bernie.geckolib.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib.util.AnimationUtils;
+
+import java.util.*;
 
 /**
  * Helper for parsing the bedrock json animation format and finding certain elements
@@ -169,6 +172,7 @@ public class JsonAnimationUtils
 	 * @param animationFile the animation file
 	 * @param animationName the animation name
 	 * @return the animation
+	 * @throws ShaderParseException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName) throws ShaderParseException
 	{
@@ -192,11 +196,12 @@ public class JsonAnimationUtils
 	 * This is the central method that parses an animation and converts it to an Animation object with all the correct keyframe times and extra metadata.
 	 *
 	 * @param element The animation json
+	 * @param parser
 	 * @return The newly constructed Animation object
 	 * @throws ClassCastException    Throws this exception if the JSON is formatted incorrectly
 	 * @throws IllegalStateException Throws this exception if the JSON is formatted incorrectly
 	 */
-	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element) throws ClassCastException, IllegalStateException
+	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element, MolangParser parser) throws ClassCastException, IllegalStateException
 	{
 		Animation animation = new Animation();
 		JsonObject animationJsonObject = element.getValue().getAsJsonObject();
@@ -255,8 +260,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> scaleKeyFramesJson = getScaleKeyFrames(boneJsonObj);
-				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
-						new ArrayList<>(scaleKeyFramesJson));
+				boneAnimation.scaleKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(new ArrayList<>(scaleKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -267,8 +271,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> positionKeyFramesJson = getPositionKeyFrames(boneJsonObj);
-				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(
-						new ArrayList<>(positionKeyFramesJson));
+				boneAnimation.positionKeyFrames = JsonKeyFrameUtils.convertJsonToKeyFrames(new ArrayList<>(positionKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -279,8 +282,7 @@ public class JsonAnimationUtils
 			try
 			{
 				Set<Map.Entry<String, JsonElement>> rotationKeyFramesJson = getRotationKeyFrames(boneJsonObj);
-				boneAnimation.rotationKeyFrames = JsonKeyFrameUtils.convertJsonToRotationKeyFrames(
-						new ArrayList<>(rotationKeyFramesJson));
+				boneAnimation.rotationKeyFrames = JsonKeyFrameUtils.convertJsonToRotationKeyFrames(new ArrayList<>(rotationKeyFramesJson), parser);
 			}
 			catch(Exception e)
 			{
@@ -293,7 +295,7 @@ public class JsonAnimationUtils
 		return animation;
 	}
 
-	static List<Double> convertJsonArrayToList(JsonArray array)
+	static List<IValue> convertJsonArrayToList(JsonArray array)
 	{
 		return new Gson().fromJson(array, ArrayList.class);
 	}
