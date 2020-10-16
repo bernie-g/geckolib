@@ -30,15 +30,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	protected AnimatedGeoModel()
 	{
 		this.animationProcessor = new AnimationProcessor();
-		registerSelf();
 	}
-
-
-	private void registerSelf()
-	{
-		MinecraftForge.EVENT_BUS.register(this);
-	}
-
 
 	public void registerBone(GeoBone bone)
 	{
