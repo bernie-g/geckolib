@@ -144,12 +144,10 @@ public class JsonAnimationUtils {
         return custom_instructions == null ? new ArrayList<>() : new ArrayList<>(getObjectListAsArray(custom_instructions));
     }
 
-
     private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key) throws ShaderParseException {
         return json.stream().filter(x -> x.getKey().equals(key)).findFirst().orElseThrow(
                 () -> new ShaderParseException("Could not find key: " + key)).getValue();
     }
-
 
     /**
      * Gets an animation by name.
@@ -163,7 +161,6 @@ public class JsonAnimationUtils {
         return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
     }
 
-
     /**
      * The animation format bedrock/blockbench uses is bizarre, and exports arrays of objects as plain parameters in a parent object, so this method undos it
      *
@@ -173,7 +170,6 @@ public class JsonAnimationUtils {
     public static Set<Map.Entry<String, JsonElement>> getObjectListAsArray(JsonObject json) {
         return json.entrySet();
     }
-
 
     /**
      * This is the central method that parses an animation and converts it to an Animation object with all the correct keyframe times and extra metadata.

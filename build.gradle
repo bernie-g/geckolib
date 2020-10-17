@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
@@ -109,6 +109,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
+artifacts {
+    shadowJar
+}
 
 jar {
     from "LICENSE"
@@ -117,14 +120,17 @@ jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
-            artifact sourcesJar
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(jar) {
+                builtBy jar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
             artifactId = project.archives_base_name
         }
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+    repositories {}
 }

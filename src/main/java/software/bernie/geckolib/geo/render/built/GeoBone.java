@@ -58,32 +58,32 @@ public class GeoBone implements IBone {
     // Boilerplate code incoming
 
     @Override
-    public float getRotationX() {
+    public float getPitch() {
         return rotateX;
     }
 
     @Override
-    public void setRotationX(float value) {
+    public void setPitch(float value) {
         this.rotateX = value;
     }
 
     @Override
-    public float getRotationY() {
+    public float getYaw() {
         return rotateY;
     }
 
     @Override
-    public void setRotationY(float value) {
+    public void setYaw(float value) {
         this.rotateY = value;
     }
 
     @Override
-    public float getRotationZ() {
+    public float getRoll() {
         return rotateZ;
     }
 
     @Override
-    public void setRotationZ(float value) {
+    public void setRoll(float value) {
         this.rotateZ = value;
     }
 
@@ -157,33 +157,4 @@ public class GeoBone implements IBone {
         this.isHidden = hidden;
     }
 
-    @Override
-    public float getPivotX() {
-        return this.pivotX;
-    }
-
-    @Override
-    public void setPivotX(float value) {
-        this.pivotX = value;
-    }
-
-    @Override
-    public float getPivotY() {
-        return this.pivotY;
-    }
-
-    @Override
-    public void setPivotY(float value) {
-        this.pivotY = value;
-    }
-
-    @Override
-    public float getPivotZ() {
-        return this.pivotZ;
-    }
-
-    @Override
-    public void setPivotZ(float value) {
-        this.pivotZ = value;
-    }
 }

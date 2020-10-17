@@ -68,8 +68,8 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
 
     public void render(T animatable, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn, ItemStack itemStack) {
         this.currentItemStack = itemStack;
-        AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, 0, false, Collections.singletonList(itemStack));
-        renderers.get(animatable).modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
+        AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(itemStack));
+        modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
         stack.push();
         stack.translate(0, 0.01f, 0);
         stack.translate(0.5, 0.5, 0.5);

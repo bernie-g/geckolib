@@ -1,6 +1,5 @@
 package software.bernie.geckolib;
 
-import com.sun.istack.internal.NotNull;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -108,7 +107,6 @@ public final class ArmorRenderingRegistry {
          * @param defaultModel The default vanilla armor model
          * @return The model of the armor piece. Should never be null.
          */
-        @NotNull
         BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel);
     }
 
