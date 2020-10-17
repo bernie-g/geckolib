@@ -66,7 +66,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ItemStack itemStack)
 	{
 		this.currentItemStack = itemStack;
-		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, 0, false, Collections.singletonList(itemStack));
+		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().timer.renderPartialTicks, false, Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		stack.push();
 		stack.translate(0, 0.01f, 0);

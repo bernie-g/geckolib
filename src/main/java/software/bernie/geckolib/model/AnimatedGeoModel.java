@@ -57,7 +57,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		double deltaTicks = gameTick - lastGameTickTime;
 		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
 		lastGameTickTime = gameTick;
-
 		AnimationEvent<T> predicate;
 		if (customPredicate == null)
 		{
