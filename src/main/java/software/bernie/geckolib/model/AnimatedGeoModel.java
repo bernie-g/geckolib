@@ -92,7 +92,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable)
 	{
-		return GeckoLibCache.getInstance().animations.get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
+		return GeckoLibCache.getInstance().getAnimations().get(this.getAnimationFileLocation((T) animatable)).getAnimation(name);
 	}
 
 	@Override

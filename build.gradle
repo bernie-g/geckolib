@@ -22,6 +22,8 @@ archivesBaseName = 'forge-1.15.2-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
+
+
 minecraft {
     mappings channel: 'snapshot', version: '20200225-1.15.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -92,6 +94,8 @@ dependencies {
     }
 }
 shadowJar {
+    minimize()
+
     dependencies {
         include(dependency('com.eliotlash.molang:molang:.*'))
         include(dependency('com.eliotlash.mclib:mclib:.*'))
@@ -102,16 +106,20 @@ shadowJar {
 
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    exclude('META-INF/**')
     classifier ''
 }
+
+
+
 reobf {
     shadowJar {} // Reobfuscate the shadowed JAR
 }
 
 
 jar.finalizedBy('reobfJar')
-
 jar {
     manifest {
         attributes([
@@ -124,6 +132,10 @@ jar {
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    exclude('META-INF/**')
 }
 
 task packageSources(type: Jar, dependsOn: 'classes') {

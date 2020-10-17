@@ -6,6 +6,7 @@ import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.file.AnimationFile;
 import software.bernie.geckolib.file.AnimationFileLoader;
 import software.bernie.geckolib.file.GeoModelLoader;
@@ -26,8 +27,26 @@ public class GeckoLibCache
 
 	public final MolangParser parser = new MolangParser();
 
-	public static HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
-	public static HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+	public HashMap<ResourceLocation, AnimationFile> getAnimations()
+	{
+		if(!GeckoLib.hasInitialized)
+		{
+			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
+		}
+		return animations;
+	}
+
+	public HashMap<ResourceLocation, GeoModel> getGeoModels()
+	{
+		if(!GeckoLib.hasInitialized)
+		{
+			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
+		}
+		return geoModels;
+	}
+
+	private HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
+	private HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
 
 	protected GeckoLibCache()
 	{

@@ -12,7 +12,7 @@ public abstract class GeoModelProvider<T>
 
 	public GeoModel getModel(ResourceLocation location)
 	{
-		return GeckoLibCache.geoModels.get(location);
+		return GeckoLibCache.getInstance().getGeoModels().get(location);
 	}
 
 	public abstract ResourceLocation getModelLocation(T object);
