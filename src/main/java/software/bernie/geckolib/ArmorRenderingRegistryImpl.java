@@ -9,55 +9,55 @@ import net.minecraft.item.ItemStack;
 import java.util.Objects;
 
 public final class ArmorRenderingRegistryImpl {
-	private ArmorRenderingRegistryImpl() {
-	}
+    private ArmorRenderingRegistryImpl() {
+    }
 
-	public static void registerModel(ArmorRenderingRegistry.ModelProvider provider, Iterable<Item> items) {
-		Objects.requireNonNull(items);
+    public static void registerModel(ArmorRenderingRegistry.ModelProvider provider, Iterable<Item> items) {
+        Objects.requireNonNull(items);
 
-		for (Item item : items) {
-			Objects.requireNonNull(item);
+        for (Item item : items) {
+            Objects.requireNonNull(item);
 
-			((ArmorProviderExtensions) item).fabric_setArmorModelProvider(provider);
-		}
-	}
+            ((ArmorProviderExtensions) item).fabric_setArmorModelProvider(provider);
+        }
+    }
 
-	public static void registerTexture(ArmorRenderingRegistry.TextureProvider provider, Iterable<Item> items) {
-		Objects.requireNonNull(items);
+    public static void registerTexture(ArmorRenderingRegistry.TextureProvider provider, Iterable<Item> items) {
+        Objects.requireNonNull(items);
 
-		for (Item item : items) {
-			Objects.requireNonNull(item);
+        for (Item item : items) {
+            Objects.requireNonNull(item);
 
-			((ArmorProviderExtensions) item).fabric_setArmorTextureProvider(provider);
-		}
-	}
+            ((ArmorProviderExtensions) item).fabric_setArmorTextureProvider(provider);
+        }
+    }
 
-	public static BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
-		if (!stack.isEmpty()) {
-			ArmorRenderingRegistry.ModelProvider provider = ((ArmorProviderExtensions) stack.getItem()).fabric_getArmorModelProvider();
-			if (provider != null) {
-				return provider.getArmorModel(entity, stack, slot, defaultModel);
-			}
-			if (stack.getItem() instanceof ArmorProvider) {
-				return ((ArmorProvider) stack.getItem()).getArmorModel(entity, stack, slot, defaultModel);
-			}
-		}
+    public static BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
+        if (!stack.isEmpty()) {
+            ArmorRenderingRegistry.ModelProvider provider = ((ArmorProviderExtensions) stack.getItem()).fabric_getArmorModelProvider();
+            if (provider != null) {
+                return provider.getArmorModel(entity, stack, slot, defaultModel);
+            }
+            if (stack.getItem() instanceof ArmorProvider) {
+                return ((ArmorProvider) stack.getItem()).getArmorModel(entity, stack, slot, defaultModel);
+            }
+        }
 
-		return defaultModel;
-	}
+        return defaultModel;
+    }
 
-	public static String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
-		if (!stack.isEmpty()) {
-			ArmorRenderingRegistry.TextureProvider provider = ((ArmorProviderExtensions) stack.getItem()).fabric_getArmorTextureProvider();
+    public static String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
+        if (!stack.isEmpty()) {
+            ArmorRenderingRegistry.TextureProvider provider = ((ArmorProviderExtensions) stack.getItem()).fabric_getArmorTextureProvider();
 
-			if (provider != null) {
-				return provider.getArmorTexture(entity, stack, slot, defaultTexture);
-			}
-			if (stack.getItem() instanceof ArmorProvider) {
-				return ((ArmorProvider) stack.getItem()).getArmorTexture(entity, stack, slot, defaultTexture);
-			}
-		}
+            if (provider != null) {
+                return provider.getArmorTexture(entity, stack, slot, defaultTexture);
+            }
+            if (stack.getItem() instanceof ArmorProvider) {
+                return ((ArmorProvider) stack.getItem()).getArmorTexture(entity, stack, slot, defaultTexture);
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

@@ -19,8 +19,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "software.bernie.geckolib.GeckoLib",
-      "software.bernie.example.Listener"
+      "software.bernie.example.GeckoLibMod"
     ],
     "client": [
       "software.bernie.example.ClientListener"
@@ -34,9 +33,6 @@
     "fabricloader": ">=0.8.7",
     "fabric": "*",
     "minecraft": "1.16.x"
-  },
-  "suggests": {
-    "flamingo": "*"
   },
   "accessWidener" : "geckolib.accesswidener"
 }

@@ -6,5 +6,9 @@ pluginManagement {
             url = 'https://maven.fabricmc.net/'
         }
         gradlePluginPortal()
+        mavenCentral()
     }
 }
+rootProject.name = 'gecholib'
+include ':geckolib-core'
+project(':geckolib-core').projectDir = new File('./core')

@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version '0.4-SNAPSHOT'
     id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -26,26 +27,59 @@ dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-
-    // Fabric API. This is technically optional, but you probably want it anyway.
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation('com.eliotlash.molang:molang:SNAPSHOT.8')
-    modImplementation('com.eliotlash.mclib:mclib:SNAPSHOT.8')
 
-    // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
-    // You may need to force-disable transitiveness on them.
-
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+    modImplementation 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    modImplementation 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile project(':geckolib-core')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
     test {
         useJUnitPlatform()
     }
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+}
+
+shadowJar {
+    minimize()
+
+    dependencies {
+        include(dependency('com.eliotlash.molang:molang:.*'))
+        include(dependency('com.eliotlash.mclib:mclib:.*'))
+        include(dependency('com.fasterxml.jackson.core:.*'))
+        include(dependency('com.fasterxml.jackson.datatype:.*'))
+        include(project(':geckolib-core'))
+    }
+
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    exclude('META-INF/**')
+    classifier ''
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title": "GeckoLib",
+                "Specification-Vendor": "Gecko",
+                "Specification-Version": "1", // We are version 1 of ourselves
+                "Implementation-Title": project.name,
+                "Implementation-Version": "${version}",
+                "Implementation-Vendor" :"Gecko",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    exclude('META-INF/**')
 }
 
 processResources {
@@ -72,45 +106,19 @@ tasks.withType(JavaCompile) {
 // if it is present.
 // If you remove this task, sources will not be generated.
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = "sources"
     from sourceSets.main.allSource
+    classifier = 'sources'
 }
 
 jar {
     from "LICENSE"
 }
 
-task javadocnew(type: Javadoc) {
-    source = sourceSets.main.allJava
-    classpath = configurations.compile
-}
-
-task javadocJar(type: Jar, dependsOn: javadocnew) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
-
-task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
-task packageSources(type: Jar, dependsOn: 'classes') {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-artifacts {
-    archives packageJavadoc
-    archives packageSources
-}
-artifacts {
-    archives javadocJar
-}
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact jar
-            artifact packageSources
-            artifact packageJavadoc
+            artifact sourcesJar
             artifactId = project.archives_base_name
         }
     }

@@ -1,0 +1,64 @@
+apply plugin: 'java'
+apply plugin: 'maven-publish'
+
+group project.group
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
+version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
+archivesBaseName = project.archivesBaseName
+
+repositories {
+    mavenCentral()
+    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+}
+
+dependencies {
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+}
+
+java {
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+            artifactId = project.archivesBaseName
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url repsyUrl
+            credentials {
+                def envUsername = System.getenv("repsyUsername")
+                def envPassword = System.getenv("repsyPassword")
+                username = envUsername == null ? findProperty("repsyUsername") : envUsername
+                password = envPassword == null ? findProperty("repsyPassword") : envPassword
+            }
+        }
+    }
+}
+

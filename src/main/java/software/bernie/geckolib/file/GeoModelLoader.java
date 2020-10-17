@@ -16,48 +16,37 @@ import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class GeoModelLoader
-{
-	public GeoModel loadModel(ResourceManager resourceManager, Identifier location)
-	{
-		try
-		{
-			//Deserialize from json into basic json objects, bones are still stored as a flat list
-			RawGeoModel rawModel = Converter.fromJsonString(getModelAsString(resourceManager, location));
-			if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0)
-			{
-				throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
-			}
+public class GeoModelLoader {
+    public GeoModel loadModel(ResourceManager resourceManager, Identifier location) {
+        try {
+            //Deserialize from json into basic json objects, bones are still stored as a flat list
+            RawGeoModel rawModel = Converter.fromJsonString(getModelAsString(resourceManager, location));
+            if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
+                throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
+            }
 
-			//Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
-			RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
+            //Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
+            RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
 
-			//Build the quads and cubes from the raw tree into a built and ready to be rendered GeoModel
-			return GeoBuilder.constructGeoModel(rawGeometryTree);
-		}
-		catch (Exception e)
-		{
-			GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
-			throw (new RuntimeException(e));
-		}
-	}
+            //Build the quads and cubes from the raw tree into a built and ready to be rendered GeoModel
+            return GeoBuilder.constructGeoModel(rawGeometryTree);
+        } catch (Exception e) {
+            GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
+            throw (new RuntimeException(e));
+        }
+    }
 
-	private String getModelAsString(ResourceManager resourceManager, Identifier location)
-	{
-		try (InputStream inputStream = getStreamForIdentifier(location))
-		{
-			return IOUtils.toString(inputStream);
-		}
-		catch (Exception e)
-		{
-			String message = "Couldn't load " + location;
-			GeckoLib.LOGGER.error(message, e);
-			throw new RuntimeException(new FileNotFoundException(location.toString()));
-		}
-	}
+    private String getModelAsString(ResourceManager resourceManager, Identifier location) {
+        try (InputStream inputStream = getStreamForIdentifier(location)) {
+            return IOUtils.toString(inputStream);
+        } catch (Exception e) {
+            String message = "Couldn't load " + location;
+            GeckoLib.LOGGER.error(message, e);
+            throw new RuntimeException(new FileNotFoundException(location.toString()));
+        }
+    }
 
-	public InputStream getStreamForIdentifier(Identifier resourceLocation)
-	{
-		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
-	}
+    public InputStream getStreamForIdentifier(Identifier resourceLocation) {
+        return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
+    }
 }

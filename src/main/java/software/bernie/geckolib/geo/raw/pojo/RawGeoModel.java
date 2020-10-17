@@ -2,18 +2,27 @@ package software.bernie.geckolib.geo.raw.pojo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class RawGeoModel
-{
+public class RawGeoModel {
     private FormatVersion formatVersion;
     private MinecraftGeometry[] minecraftGeometry;
 
     @JsonProperty("format_version")
-    public FormatVersion getFormatVersion() { return formatVersion; }
+    public FormatVersion getFormatVersion() {
+        return formatVersion;
+    }
+
     @JsonProperty("format_version")
-    public void setFormatVersion(FormatVersion value) { this.formatVersion = value; }
+    public void setFormatVersion(FormatVersion value) {
+        this.formatVersion = value;
+    }
 
     @JsonProperty("minecraft:geometry")
-    public MinecraftGeometry[] getMinecraftGeometry() { return minecraftGeometry; }
+    public MinecraftGeometry[] getMinecraftGeometry() {
+        return minecraftGeometry;
+    }
+
     @JsonProperty("minecraft:geometry")
-    public void setMinecraftGeometry(MinecraftGeometry[] value) { this.minecraftGeometry = value; }
+    public void setMinecraftGeometry(MinecraftGeometry[] value) {
+        this.minecraftGeometry = value;
+    }
 }

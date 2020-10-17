@@ -11,32 +11,26 @@ import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationData;
 import software.bernie.geckolib.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends PathAwareEntity implements IAnimatable
-{
-	AnimationFactory factory = new AnimationFactory(this);
+public class GeoExampleEntity extends PathAwareEntity implements IAnimatable {
+    AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
-		return PlayState.CONTINUE;
-	}
+    public GeoExampleEntity(EntityType<? extends PathAwareEntity> type, World worldIn) {
+        super(type, worldIn);
+        this.ignoreCameraFrustum = true;
+    }
 
-	public GeoExampleEntity(EntityType<? extends PathAwareEntity> type, World worldIn)
-	{
-		super(type, worldIn);
-		this.ignoreCameraFrustum = true;
-	}
+    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+        event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
+        return PlayState.CONTINUE;
+    }
 
+    @Override
+    public void registerControllers(AnimationData data) {
+        data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+    }
 
-	@Override
-	public void registerControllers(AnimationData data)
-	{
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
-	}
-
-	@Override
-	public AnimationFactory getFactory()
-	{
-		return this.factory;
-	}
+    @Override
+    public AnimationFactory getFactory() {
+        return this.factory;
+    }
 }

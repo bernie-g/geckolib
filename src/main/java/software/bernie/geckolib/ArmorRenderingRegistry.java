@@ -26,105 +26,105 @@ import java.util.Arrays;
  */
 @Environment(EnvType.CLIENT)
 public final class ArmorRenderingRegistry {
-	private ArmorRenderingRegistry() {
-	}
+    private ArmorRenderingRegistry() {
+    }
 
-	/**
-	 * Registers a provider for custom armor models for an item.
-	 *
-	 * @param provider the provider for the model
-	 * @param items    the items to be registered for
-	 */
-	public static void registerModel(@Nullable ModelProvider provider, Item... items) {
-		registerModel(provider, Arrays.asList(items));
-	}
+    /**
+     * Registers a provider for custom armor models for an item.
+     *
+     * @param provider the provider for the model
+     * @param items    the items to be registered for
+     */
+    public static void registerModel(@Nullable ModelProvider provider, Item... items) {
+        registerModel(provider, Arrays.asList(items));
+    }
 
-	/**
-	 * Registers a provider for custom armor models for an item.
-	 *
-	 * @param provider the provider for the model
-	 * @param items    the items to be registered for
-	 */
-	public static void registerModel(@Nullable ModelProvider provider, Iterable<Item> items) {
-		ArmorRenderingRegistryImpl.registerModel(provider, items);
-	}
+    /**
+     * Registers a provider for custom armor models for an item.
+     *
+     * @param provider the provider for the model
+     * @param items    the items to be registered for
+     */
+    public static void registerModel(@Nullable ModelProvider provider, Iterable<Item> items) {
+        ArmorRenderingRegistryImpl.registerModel(provider, items);
+    }
 
-	/**
-	 * Registers a provider for custom texture models for an item.
-	 *
-	 * @param provider the provider for the texture
-	 * @param items    the items to be registered for
-	 */
-	public static void registerTexture(@Nullable TextureProvider provider, Item... items) {
-		registerTexture(provider, Arrays.asList(items));
-	}
+    /**
+     * Registers a provider for custom texture models for an item.
+     *
+     * @param provider the provider for the texture
+     * @param items    the items to be registered for
+     */
+    public static void registerTexture(@Nullable TextureProvider provider, Item... items) {
+        registerTexture(provider, Arrays.asList(items));
+    }
 
-	/**
-	 * Registers a provider for custom texture models for an item.
-	 *
-	 * @param provider the provider for the texture
-	 * @param items    the items to be registered for
-	 */
-	public static void registerTexture(@Nullable TextureProvider provider, Iterable<Item> items) {
-		ArmorRenderingRegistryImpl.registerTexture(provider, items);
-	}
+    /**
+     * Registers a provider for custom texture models for an item.
+     *
+     * @param provider the provider for the texture
+     * @param items    the items to be registered for
+     */
+    public static void registerTexture(@Nullable TextureProvider provider, Iterable<Item> items) {
+        ArmorRenderingRegistryImpl.registerTexture(provider, items);
+    }
 
-	/**
-	 * Gets the model of the armor piece.
-	 *
-	 * @param entity       The entity equipping the armor
-	 * @param stack        The item stack of the armor
-	 * @param slot         The slot which the armor is in
-	 * @param defaultModel The default model that vanilla provides
-	 * @return The model of the armor piece. Should never be null.
-	 */
-	public static BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
-		return ArmorRenderingRegistryImpl.getArmorModel(entity, stack, slot, defaultModel);
-	}
+    /**
+     * Gets the model of the armor piece.
+     *
+     * @param entity       The entity equipping the armor
+     * @param stack        The item stack of the armor
+     * @param slot         The slot which the armor is in
+     * @param defaultModel The default model that vanilla provides
+     * @return The model of the armor piece. Should never be null.
+     */
+    public static BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel) {
+        return ArmorRenderingRegistryImpl.getArmorModel(entity, stack, slot, defaultModel);
+    }
 
-	/**
-	 * Gets the armor texture identifier in string, to be converted to {@link net.minecraft.util.Identifier}.
-	 *
-	 * @param entity         The entity equipping the armor
-	 * @param stack          The item stack of the armor
-	 * @param slot           The slot which the armor is in
-	 * @param defaultTexture The default vanilla texture identifier
-	 * @return the custom armor texture identifier, return null to use the vanilla ones. Defaulted to the item's registry id.
-	 */
-	/* @Nullable */
-	public static String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
-		return ArmorRenderingRegistryImpl.getArmorTexture(entity, stack, slot, defaultTexture);
-	}
+    /**
+     * Gets the armor texture identifier in string, to be converted to {@link net.minecraft.util.Identifier}.
+     *
+     * @param entity         The entity equipping the armor
+     * @param stack          The item stack of the armor
+     * @param slot           The slot which the armor is in
+     * @param defaultTexture The default vanilla texture identifier
+     * @return the custom armor texture identifier, return null to use the vanilla ones. Defaulted to the item's registry id.
+     */
+    /* @Nullable */
+    public static String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
+        return ArmorRenderingRegistryImpl.getArmorTexture(entity, stack, slot, defaultTexture);
+    }
 
-	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
-	public interface ModelProvider {
-		/**
-		 * Gets the model of the armor piece.
-		 *
-		 * @param entity       The entity equipping the armor
-		 * @param stack        The item stack of the armor
-		 * @param slot         The slot which the armor is in
-		 * @param defaultModel The default vanilla armor model
-		 * @return The model of the armor piece. Should never be null.
-		 */
-		@NotNull
-		BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel);
-	}
+    @FunctionalInterface
+    @Environment(EnvType.CLIENT)
+    public interface ModelProvider {
+        /**
+         * Gets the model of the armor piece.
+         *
+         * @param entity       The entity equipping the armor
+         * @param stack        The item stack of the armor
+         * @param slot         The slot which the armor is in
+         * @param defaultModel The default vanilla armor model
+         * @return The model of the armor piece. Should never be null.
+         */
+        @NotNull
+        BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, BipedEntityModel<LivingEntity> defaultModel);
+    }
 
-	@FunctionalInterface
-	@Environment(EnvType.CLIENT)
-	public interface TextureProvider {
-		/**
-		 * Gets the armor texture identifier in string, to be converted to {@link net.minecraft.util.Identifier}.
-		 *
-		 * @param entity         The entity equipping the armor
-		 * @param stack          The item stack of the armor
-		 * @param slot           The slot which the armor is in
-		 * @param defaultTexture The default vanilla texture identifier
-		 * @return the custom armor texture identifier, return null to use the vanilla ones. Defaulted to the item's registry id.
-		 */
-		@Nullable
-		String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture);
-	}
+    @FunctionalInterface
+    @Environment(EnvType.CLIENT)
+    public interface TextureProvider {
+        /**
+         * Gets the armor texture identifier in string, to be converted to {@link net.minecraft.util.Identifier}.
+         *
+         * @param entity         The entity equipping the armor
+         * @param stack          The item stack of the armor
+         * @param slot           The slot which the armor is in
+         * @param defaultTexture The default vanilla texture identifier
+         * @return the custom armor texture identifier, return null to use the vanilla ones. Defaulted to the item's registry id.
+         */
+        @Nullable
+        String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture);
+    }
 }

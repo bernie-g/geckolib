@@ -40,11 +40,6 @@ public class Converter {
             .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             .toFormatter()
             .withZone(ZoneOffset.UTC);
-
-    public static OffsetDateTime parseDateTimeString(String str) {
-        return ZonedDateTime.from(Converter.DATE_TIME_FORMATTER.parse(str)).toOffsetDateTime();
-    }
-
     private static final DateTimeFormatter TIME_FORMATTER = new DateTimeFormatterBuilder()
             .appendOptional(DateTimeFormatter.ISO_TIME)
             .appendOptional(DateTimeFormatter.ISO_OFFSET_TIME)
@@ -53,11 +48,17 @@ public class Converter {
             .parseDefaulting(ChronoField.DAY_OF_MONTH, 1)
             .toFormatter()
             .withZone(ZoneOffset.UTC);
+    private static ObjectReader reader;
+    private static ObjectWriter writer;
+    // Serialize/deserialize helpers
+
+    public static OffsetDateTime parseDateTimeString(String str) {
+        return ZonedDateTime.from(Converter.DATE_TIME_FORMATTER.parse(str)).toOffsetDateTime();
+    }
 
     public static OffsetTime parseTimeString(String str) {
         return ZonedDateTime.from(Converter.TIME_FORMATTER.parse(str)).toOffsetDateTime().toOffsetTime();
     }
-    // Serialize/deserialize helpers
 
     public static RawGeoModel fromJsonString(String json) throws IOException {
         return getObjectReader().readValue(json);
@@ -67,9 +68,6 @@ public class Converter {
         return getObjectWriter().writeValueAsString(obj);
     }
 
-    private static ObjectReader reader;
-    private static ObjectWriter writer;
-
     private static void instantiateMapper() {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
@@ -77,7 +75,7 @@ public class Converter {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(OffsetDateTime.class, new JsonDeserializer<OffsetDateTime>() {
             @Override
-            public OffsetDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+            public OffsetDateTime deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
                 String value = jsonParser.getText();
                 return Converter.parseDateTimeString(value);
             }

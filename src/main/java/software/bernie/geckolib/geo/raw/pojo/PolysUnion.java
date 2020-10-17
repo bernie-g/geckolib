@@ -20,7 +20,7 @@ public class PolysUnion {
 
     static class Deserializer extends JsonDeserializer<PolysUnion> {
         @Override
-        public PolysUnion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+        public PolysUnion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             PolysUnion value = new PolysUnion();
             switch (jsonParser.currentToken()) {
                 case VALUE_STRING:
@@ -34,7 +34,8 @@ public class PolysUnion {
                 case START_ARRAY:
                     value.doubleArrayArrayArrayValue = jsonParser.readValueAs(double[][][].class);
                     break;
-                default: throw new IOException("Cannot deserialize PolysUnion");
+                default:
+                    throw new IOException("Cannot deserialize PolysUnion");
             }
             return value;
         }

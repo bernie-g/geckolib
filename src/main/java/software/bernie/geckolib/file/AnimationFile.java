@@ -4,17 +4,14 @@ import software.bernie.geckolib.core.builder.Animation;
 
 import java.util.HashMap;
 
-public class AnimationFile
-{
-	private HashMap<String, Animation> animations = new HashMap<>();
+public class AnimationFile {
+    private final HashMap<String, Animation> animations = new HashMap<>();
 
-	public Animation getAnimation(String name)
-	{
-		return animations.get(name);
-	}
+    public Animation getAnimation(String name) {
+        return animations.get(name);
+    }
 
-	public void putAnimation(String name, Animation animation)
-	{
-		this.animations.put(name, animation);
-	}
+    public void putAnimation(String name, Animation animation) {
+        this.animations.put(name, animation);
+    }
 }

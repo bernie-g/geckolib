@@ -11,14 +11,16 @@ import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.TileRegistry;
+import software.bernie.geckolib.GeckoLib;
 
-public class Listener implements ModInitializer {
-	@Override
-	public void onInitialize() {
-		new BlockRegistry();
-		new ItemRegistry();
-		new EntityRegistry();
-		FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, EntityUtils.createGenericEntityAttributes());
-		new TileRegistry();
-	}
+public class GeckoLibMod implements ModInitializer {
+    @Override
+    public void onInitialize() {
+        GeckoLib.initialize();
+        new EntityRegistry();
+        FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, EntityUtils.createGenericEntityAttributes());
+        new ItemRegistry();
+        new TileRegistry();
+        new BlockRegistry();
+    }
 }

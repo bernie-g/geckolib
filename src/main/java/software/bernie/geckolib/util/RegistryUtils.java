@@ -80,7 +80,7 @@ public class RegistryUtils {
 
     public static Block registerNetherStem(String name, MaterialColor materialColor) {
         return register(new PillarBlock(AbstractBlock.Settings.of(Material.WOOD, (blockState) -> materialColor)
-                .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(GeckoLib.ModID, name),
+                        .strength(1.0F).sounds(BlockSoundGroup.NETHER_STEM)), new Identifier(GeckoLib.ModID, name),
                 ItemGroup.BUILDING_BLOCKS);
     }
 

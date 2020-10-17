@@ -12,17 +12,32 @@ public class MinecraftGeometry {
      * geometry and other bones are attached.
      */
     @JsonProperty("bones")
-    public Bone[] getBones() { return bones; }
+    public Bone[] getBones() {
+        return bones;
+    }
+
     @JsonProperty("bones")
-    public void setBones(Bone[] value) { this.bones = value; }
+    public void setBones(Bone[] value) {
+        this.bones = value;
+    }
 
     @JsonProperty("cape")
-    public String getCape() { return cape; }
+    public String getCape() {
+        return cape;
+    }
+
     @JsonProperty("cape")
-    public void setCape(String value) { this.cape = value; }
+    public void setCape(String value) {
+        this.cape = value;
+    }
 
     @JsonProperty("description")
-    public ModelProperties getProperties() { return modelProperties; }
+    public ModelProperties getProperties() {
+        return modelProperties;
+    }
+
     @JsonProperty("description")
-    public void setProperties(ModelProperties value) { this.modelProperties = value; }
+    public void setProperties(ModelProperties value) {
+        this.modelProperties = value;
+    }
 }

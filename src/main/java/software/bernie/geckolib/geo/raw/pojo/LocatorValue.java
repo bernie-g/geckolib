@@ -20,7 +20,7 @@ public class LocatorValue {
 
     static class Deserializer extends JsonDeserializer<LocatorValue> {
         @Override
-        public LocatorValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+        public LocatorValue deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             LocatorValue value = new LocatorValue();
             switch (jsonParser.getCurrentToken()) {
                 case START_ARRAY:
@@ -29,7 +29,8 @@ public class LocatorValue {
                 case START_OBJECT:
                     value.locatorClassValue = jsonParser.readValueAs(LocatorClass.class);
                     break;
-                default: throw new IOException("Cannot deserialize LocatorValue");
+                default:
+                    throw new IOException("Cannot deserialize LocatorValue");
             }
             return value;
         }

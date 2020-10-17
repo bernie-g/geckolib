@@ -21,7 +21,7 @@ public class UvUnion {
 
     static class Deserializer extends JsonDeserializer<UvUnion> {
         @Override
-        public UvUnion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
+        public UvUnion deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
             UvUnion value = new UvUnion();
             switch (jsonParser.currentToken()) {
                 case VALUE_NULL:
@@ -34,7 +34,8 @@ public class UvUnion {
                     value.faceUV = jsonParser.readValueAs(UvFaces.class);
                     value.isBoxUV = false;
                     break;
-                default: throw new IOException("Cannot deserialize UvUnion");
+                default:
+                    throw new IOException("Cannot deserialize UvUnion");
             }
             return value;
         }
