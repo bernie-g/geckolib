@@ -15,7 +15,6 @@ import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.resource.GeckoLibCache;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T> implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
@@ -35,7 +34,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
     }
 
     @Override
-    public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
+    public void setLivingAnimations(T entity, Integer uniqueID,  AnimationEvent customPredicate) {
         // Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
         AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
         if (manager.startTick == null) {

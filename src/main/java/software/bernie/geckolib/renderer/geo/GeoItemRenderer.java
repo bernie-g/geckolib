@@ -17,7 +17,6 @@ import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collections;
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRenderer<T>, BuiltinItemRendererRegistry.DynamicItemRenderer {
     private static final Map<Class<? extends Item>, GeoItemRenderer> renderers = new ConcurrentHashMap<>();
+
     // Register a model fetcher for this renderer
     static {
         AnimationController.addModelFetcher((Object object) -> {
@@ -48,8 +48,9 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
         this.modelProvider = model;
     }
 
-    public static void registerItemRenderer(Class<? extends Item> itemClass, GeoItemRenderer renderer) {
-        renderers.put(itemClass, renderer);
+    public static void registerItemRenderer(Item item, GeoItemRenderer renderer) {
+        renderers.put(item.getClass(), renderer);
+        BuiltinItemRendererRegistry.INSTANCE.register(item, renderer);
     }
 
     public static GeoItemRenderer getRenderer(Class<? extends Item> item) {
@@ -69,7 +70,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
     public void render(T animatable, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn, ItemStack itemStack) {
         this.currentItemStack = itemStack;
         AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, 0, false, Collections.singletonList(itemStack));
-        renderers.get(animatable).modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
+        modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
         stack.push();
         stack.translate(0, 0.01f, 0);
         stack.translate(0.5, 0.5, 0.5);
@@ -83,12 +84,12 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
     }
 
     @Override
-    public RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
+    public RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
         return RenderLayer.getEntityCutoutNoCull(textureLocation);
     }
 
     @Override
-    public Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn) {
+    public Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn) {
         return new Color(255, 255, 255, 255);
     }
 

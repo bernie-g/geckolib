@@ -69,15 +69,15 @@ public class AnimationProcessor<T extends IAnimatable> {
                     continue;
                 }
                 if (rXPoint != null && rYPoint != null && rZPoint != null) {
-                    bone.setPitch(MathUtil.lerpValues(rXPoint, controller.easingType,
+                    bone.setRotationX(MathUtil.lerpValues(rXPoint, controller.easingType,
                             controller.customEasingMethod) + initialSnapshot.rotationValueX);
-                    bone.setYaw(MathUtil.lerpValues(rYPoint, controller.easingType,
+                    bone.setRotationY(MathUtil.lerpValues(rYPoint, controller.easingType,
                             controller.customEasingMethod) + initialSnapshot.rotationValueY);
-                    bone.setRoll(MathUtil.lerpValues(rZPoint, controller.easingType,
+                    bone.setRotationZ(MathUtil.lerpValues(rZPoint, controller.easingType,
                             controller.customEasingMethod) + initialSnapshot.rotationValueZ);
-                    snapshot.rotationValueX = bone.getPitch();
-                    snapshot.rotationValueY = bone.getYaw();
-                    snapshot.rotationValueZ = bone.getRoll();
+                    snapshot.rotationValueX = bone.getRotationX();
+                    snapshot.rotationValueY = bone.getRotationY();
+                    snapshot.rotationValueZ = bone.getRotationZ();
                     snapshot.isCurrentlyRunningRotationAnimation = true;
 
                     dirtyTracker.hasRotationChanged = true;
@@ -140,17 +140,17 @@ public class AnimationProcessor<T extends IAnimatable> {
 
                 double percentageReset = Math.min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
 
-                model.setPitch(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX,
+                model.setRotationX(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX,
                         initialSnapshot.rotationValueX));
-                model.setYaw(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY,
+                model.setRotationY(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY,
                         initialSnapshot.rotationValueY));
-                model.setRoll(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
+                model.setRotationZ(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
                         initialSnapshot.rotationValueZ));
 
                 if (percentageReset >= 1) {
-                    saveSnapshot.rotationValueX = model.getPitch();
-                    saveSnapshot.rotationValueY = model.getYaw();
-                    saveSnapshot.rotationValueZ = model.getRoll();
+                    saveSnapshot.rotationValueX = model.getRotationX();
+                    saveSnapshot.rotationValueY = model.getRotationY();
+                    saveSnapshot.rotationValueZ = model.getRotationZ();
                 }
             }
             if (!tracker.getValue().hasPositionChanged) {

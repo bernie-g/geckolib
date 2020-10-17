@@ -13,11 +13,10 @@ import software.bernie.geckolib.geo.render.built.*;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.util.RenderUtils;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 
 public interface IGeoRenderer<T> {
-    default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
         renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
         if (renderTypeBuffer != null) {
@@ -84,17 +83,17 @@ public interface IGeoRenderer<T> {
 
     Identifier getTextureLocation(T instance);
 
-    default void renderEarly(T animatable, MatrixStack stackIn, float ticks, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+    default void renderEarly(T animatable, MatrixStack stackIn, float ticks,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
     }
 
     default void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
     }
 
-    default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
+    default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
         return RenderLayer.getEntityTranslucent(textureLocation);
     }
 
-    default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn) {
+    default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn) {
         return new Color(255, 255, 255, 255);
     }
 
