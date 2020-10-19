@@ -34,16 +34,16 @@ public class RenderUtils {
     }
 
     public static void rotate(GeoBone bone, MatrixStack stack) {
-        if (bone.getRoll() != 0.0F) {
-            stack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(bone.getRoll()));
+        if (bone.getRotationZ() != 0.0F) {
+            stack.multiply(Vector3f.POSITIVE_Z.getRadialQuaternion(bone.getRotationZ()));
         }
 
-        if (bone.getYaw() != 0.0F) {
-            stack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(bone.getYaw()));
+        if (bone.getRotationY() != 0.0F) {
+            stack.multiply(Vector3f.POSITIVE_Y.getRadialQuaternion(bone.getRotationY()));
         }
 
-        if (bone.getPitch() != 0.0F) {
-            stack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(bone.getPitch()));
+        if (bone.getRotationX() != 0.0F) {
+            stack.multiply(Vector3f.POSITIVE_X.getRadialQuaternion(bone.getRotationX()));
         }
     }
 

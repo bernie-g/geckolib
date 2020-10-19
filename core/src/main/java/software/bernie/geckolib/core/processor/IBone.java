@@ -3,41 +3,29 @@ package software.bernie.geckolib.core.processor;
 import software.bernie.geckolib.core.snapshot.BoneSnapshot;
 
 public interface IBone {
-    float getPitch();
+    float getRotationX();
+    float getRotationY();
+    float getRotationZ();
 
-    void setPitch(float value);
-
-    float getYaw();
-
-    void setYaw(float value);
-
-    float getRoll();
-
-    void setRoll(float value);
+    void setRotationX(float value);
+    void setRotationY(float value);
+    void setRotationZ(float value);
 
     float getPositionX();
-
-    void setPositionX(float value);
-
     float getPositionY();
-
-    void setPositionY(float value);
-
     float getPositionZ();
 
+    void setPositionX(float value);
+    void setPositionY(float value);
     void setPositionZ(float value);
 
     float getScaleX();
-
-    void setScaleX(float value);
-
     float getScaleY();
-
-    void setScaleY(float value);
-
     float getScaleZ();
 
     void setScaleZ(float value);
+    void setScaleY(float value);
+    void setScaleX(float value);
 
     boolean isHidden();
 

@@ -58,32 +58,32 @@ public class GeoBone implements IBone {
     // Boilerplate code incoming
 
     @Override
-    public float getPitch() {
+    public float getRotationX() {
         return rotateX;
     }
 
     @Override
-    public void setPitch(float value) {
+    public void setRotationX(float value) {
         this.rotateX = value;
     }
 
     @Override
-    public float getYaw() {
+    public float getRotationY() {
         return rotateY;
     }
 
     @Override
-    public void setYaw(float value) {
+    public void setRotationY(float value) {
         this.rotateY = value;
     }
 
     @Override
-    public float getRoll() {
+    public float getRotationZ() {
         return rotateZ;
     }
 
     @Override
-    public void setRoll(float value) {
+    public void setRotationZ(float value) {
         this.rotateZ = value;
     }
 

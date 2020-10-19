@@ -27,9 +27,9 @@ public class BoneSnapshot {
     private final IBone modelRenderer;
 
     public BoneSnapshot(IBone modelRenderer) {
-        rotationValueX = modelRenderer.getPitch();
-        rotationValueY = modelRenderer.getYaw();
-        rotationValueZ = modelRenderer.getRoll();
+        rotationValueX = modelRenderer.getRotationX();
+        rotationValueY = modelRenderer.getRotationY();
+        rotationValueZ = modelRenderer.getRotationZ();
 
         positionOffsetX = modelRenderer.getPositionX();
         positionOffsetY = modelRenderer.getPositionY();
@@ -49,9 +49,9 @@ public class BoneSnapshot {
             rotationValueZ = 0;
         }
 
-        rotationValueX = modelRenderer.getPitch();
-        rotationValueY = modelRenderer.getYaw();
-        rotationValueZ = modelRenderer.getRoll();
+        rotationValueX = modelRenderer.getRotationX();
+        rotationValueY = modelRenderer.getRotationY();
+        rotationValueZ = modelRenderer.getRotationZ();
 
         positionOffsetX = modelRenderer.getPositionX();
         positionOffsetY = modelRenderer.getPositionY();

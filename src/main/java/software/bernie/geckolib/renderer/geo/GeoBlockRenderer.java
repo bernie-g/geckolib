@@ -23,12 +23,12 @@ import java.awt.*;
 
 public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> extends BlockEntityRenderer implements IGeoRenderer<T> {
     static {
-        AnimationController.addModelFetcher((Object object) ->
-        {
+        AnimationController.addModelFetcher((Object object) -> {
             if (object instanceof BlockEntity) {
                 BlockEntity tile = (BlockEntity) object;
                 BlockEntityRenderer<BlockEntity> renderer = BlockEntityRenderDispatcher.INSTANCE.get(tile);
-                if (renderer instanceof GeoBlockRenderer) {
+                if (renderer instanceof GeoBlockRenderer)
+                {
                     return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
                 }
             }

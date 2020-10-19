@@ -37,10 +37,9 @@ public class GeoBuilder {
         geoBone.parent = parent;
         geoBone.setModelRendererName(rawBone.getName());
 
-
-        geoBone.setPitch((float) Math.toRadians(rotation.getX()));
-        geoBone.setYaw((float) Math.toRadians(rotation.getY()));
-        geoBone.setRoll((float) Math.toRadians(rotation.getZ()));
+        geoBone.setRotationX((float) Math.toRadians(rotation.getX()));
+        geoBone.setRotationY((float) Math.toRadians(rotation.getY()));
+        geoBone.setRotationZ((float) Math.toRadians(rotation.getZ()));
 
         geoBone.pivotX = -pivot.getX();
         geoBone.pivotY = pivot.getY();

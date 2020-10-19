@@ -17,7 +17,6 @@ import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 
-import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collections;
 import java.util.Map;
@@ -48,8 +47,9 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
         this.modelProvider = model;
     }
 
-    public static void registerItemRenderer(Class<? extends Item> itemClass, GeoItemRenderer renderer) {
-        renderers.put(itemClass, renderer);
+    public static void registerItemRenderer(Item item, GeoItemRenderer renderer) {
+        renderers.put(item.getClass(), renderer);
+        BuiltinItemRendererRegistry.INSTANCE.register(item, renderer);
     }
 
     public static GeoItemRenderer getRenderer(Class<? extends Item> item) {
@@ -83,12 +83,12 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
     }
 
     @Override
-    public RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
+    public RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
         return RenderLayer.getEntityCutoutNoCull(textureLocation);
     }
 
     @Override
-    public Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn) {
+    public Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn) {
         return new Color(255, 255, 255, 255);
     }
 
