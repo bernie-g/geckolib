@@ -14,7 +14,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.item.ArmorItem;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -25,7 +24,6 @@ import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.AnimatedGeoModel;
-import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.model.provider.data.EntityModelData;
 
 import java.awt.*;
@@ -37,6 +35,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer
 {
 	private final AnimatedGeoModel<IAnimatable> modelProvider;
+	private final T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	private IAnimatable currentAnimatable;
 	private static Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
@@ -54,10 +53,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		});
 	}
 
-	protected GeoReplacedEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<IAnimatable> modelProvider)
+	protected GeoReplacedEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<IAnimatable> modelProvider, T animatable)
 	{
 		super(renderManager);
 		this.modelProvider = modelProvider;
+		this.animatable = animatable;
 	}
 
 	public static void registerReplacedEntity(Class<? extends IAnimatable> itemClass, GeoReplacedEntityRenderer renderer)
@@ -73,7 +73,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	@Override
 	public void render(Entity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
-
+		this.render(entityIn, this.animatable, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	public void render(Entity entity, IAnimatable animatable, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)

@@ -1,9 +1,7 @@
 package software.bernie.example.client.renderer.entity;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.util.math.MathHelper;
@@ -13,20 +11,10 @@ import software.bernie.geckolib.renderers.geo.GeoReplacedEntityRenderer;
 
 public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedCreeperEntity>
 {
-	private final ReplacedCreeperEntity replacedEntity;
-
 	public ReplacedCreeperRenderer(EntityRendererManager renderManager)
 	{
-		super(renderManager, new ReplacedCreeperModel());
-		this.replacedEntity = new ReplacedCreeperEntity();
+		super(renderManager, new ReplacedCreeperModel(), new ReplacedCreeperEntity());
 	}
-
-	@Override
-	public void render(Entity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
-	{
-		this.render(entityIn, replacedEntity, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
-
 
 	@Override
 	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
