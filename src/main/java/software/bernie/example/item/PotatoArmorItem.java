@@ -6,8 +6,8 @@ import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
@@ -26,6 +26,11 @@ import java.util.List;
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 {
 	private AnimationFactory factory = new AnimationFactory(this);
+
+	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder)
+	{
+		super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
+	}
 
 	// Predicate runs every frame
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event)
@@ -63,10 +68,6 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 		return PlayState.STOP;
 	}
 
-	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder)
-	{
-		super(materialIn, slot, builder.group(ItemGroup.COMBAT));
-	}
 
 
 	//All you need to do here is add your animation controllers to the AnimationData

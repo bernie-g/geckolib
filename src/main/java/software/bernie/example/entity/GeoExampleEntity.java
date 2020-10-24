@@ -13,7 +13,7 @@ import software.bernie.geckolib.core.manager.AnimationFactory;
 
 public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 {
-	AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{

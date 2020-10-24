@@ -1,10 +1,10 @@
-package software.bernie.example.client.renderer.model.entity;
+package software.bernie.example.client.model.entity;
 
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.model.AnimatedGeoModel;
 
-public class BatModel extends AnimatedGeoModel
+public class ExampleEntityModel extends AnimatedGeoModel
 {
 	@Override
 	public ResourceLocation getAnimationFileLocation(Object entity)

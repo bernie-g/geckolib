@@ -78,7 +78,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	}
 
 
-	private void rotateBlock(Direction facing, MatrixStack stack)
+	protected void rotateBlock(Direction facing, MatrixStack stack)
 	{
 		switch (facing)
 		{

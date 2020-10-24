@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"animation.bat.fly": {
-			"animation_length": 6,
+			"loop": true,
 			"bones": {
 				"main": {
 					"rotation": [60, 0, 0],
@@ -12,7 +12,7 @@
 					"rotation": [-5, 0, 0]
 				},
 				"head": {
-					"rotation": ["math.sin(query.anim_time*360+90)-35+math.sin(query.anim_time*360+90)*-7", 0, 0]
+					"rotation": ["-35+math.sin(query.anim_time*360+90)*-7", 0, 0]
 				},
 				"jaw": {
 					"rotation": [-2.5, 0, 0]
@@ -168,5 +168,6 @@
 				}
 			}
 		}
-	}
+	},
+	"geckolib_format_version": 2
 }

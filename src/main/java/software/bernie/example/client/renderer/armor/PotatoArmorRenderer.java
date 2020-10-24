@@ -1,6 +1,6 @@
 package software.bernie.example.client.renderer.armor;
 
-import software.bernie.example.client.renderer.model.armor.PotatoArmorModel;
+import software.bernie.example.client.model.armor.PotatoArmorModel;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.geckolib.renderers.geo.GeoArmorRenderer;
 

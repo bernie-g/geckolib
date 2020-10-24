@@ -1,10 +1,6 @@
 package software.bernie.geckolib.model;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
@@ -29,7 +25,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	protected AnimatedGeoModel()
 	{
-		this.animationProcessor = new AnimationProcessor();
+		this.animationProcessor = new AnimationProcessor(this);
 	}
 
 	public void registerBone(GeoBone bone)
@@ -55,7 +51,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		manager.tick = (getCurrentTick() - manager.startTick);
 		double gameTick = manager.tick;
 		double deltaTicks = gameTick - lastGameTickTime;
-		seekTime += manager.getCurrentAnimationSpeed() * deltaTicks;
+		seekTime += deltaTicks;
 		lastGameTickTime = gameTick;
 		AnimationEvent<T> predicate;
 		if (customPredicate == null)
@@ -68,7 +64,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 
 		predicate.animationTick = seekTime;
-
+		animationProcessor.preAnimationSetup(seekTime);
 		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
 			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
@@ -112,5 +108,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			this.currentModel = model;
 		}
 		return model;
+	}
+
+	@Override
+	public void setMolangQueries(double currentTick)
+	{
+		//Wither you should set the queries here and they'll be called from AnimationProcessor
 	}
 }
