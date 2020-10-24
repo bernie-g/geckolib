@@ -1,6 +1,13 @@
 package software.bernie.geckolib.model;
 
+import com.eliotlash.molang.MolangParser;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Vector3d;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
@@ -14,6 +21,7 @@ import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.resource.GeckoLibCache;
+import software.bernie.geckolib.util.VectorUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -64,7 +72,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 
 		predicate.animationTick = seekTime;
-		animationProcessor.preAnimationSetup(seekTime);
+		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
 		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
 			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
@@ -111,8 +119,25 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public void setMolangQueries(double currentTick)
+	public void setMolangQueries(IAnimatable animatable, double currentTick)
 	{
-		//Wither you should set the queries here and they'll be called from AnimationProcessor
+		MolangParser parser = GeckoLibCache.getInstance().parser;
+		Minecraft minecraftInstance = Minecraft.getInstance();
+
+		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
+
+		if (animatable instanceof Entity) {
+			parser.setValue("query.distance_from_camera",
+					minecraftInstance.player.getPositionVec().distanceTo(((Entity) animatable).getPositionVec()));
+
+			if (animatable instanceof LivingEntity) {
+				parser.setValue("query.health", ((LivingEntity) animatable).getHealth());
+				parser.setValue("query.max_health", ((LivingEntity) animatable).getMaxHealth());
+
+				float yawSpeed = ((LivingEntity) animatable).getYaw((float) currentTick) - ((LivingEntity) animatable).getYaw((float) (currentTick - 0.1));
+
+				parser.setValue("query.yaw_speed", yawSpeed);
+			}
+		}
 	}
 }
