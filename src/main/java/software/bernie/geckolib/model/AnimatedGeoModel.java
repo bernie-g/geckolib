@@ -131,12 +131,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 					minecraftInstance.player.getPositionVec().distanceTo(((Entity) animatable).getPositionVec()));
 
 			if (animatable instanceof LivingEntity) {
-				parser.setValue("query.health", ((LivingEntity) animatable).getHealth());
-				parser.setValue("query.max_health", ((LivingEntity) animatable).getMaxHealth());
-
-				float yawSpeed = ((LivingEntity) animatable).getYaw((float) currentTick) - ((LivingEntity) animatable).getYaw((float) (currentTick - 0.1));
-
-				parser.setValue("query.yaw_speed", yawSpeed);
+				LivingEntity livingEntity = (LivingEntity) animatable;
+				parser.setValue("query.health", livingEntity.getHealth());
+				parser.setValue("query.max_health", livingEntity.getMaxHealth());
+				
+				float rotationYawHead = livingEntity.getRotationYawHead();
+				parser.setValue("query.yaw_speed", Math.toRadians(rotationYawHead));
 			}
 		}
 	}
