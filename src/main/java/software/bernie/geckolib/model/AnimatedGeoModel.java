@@ -130,7 +130,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		if (animatable instanceof Entity) {
 			parser.setValue("query.distance_from_camera",
-					minecraftInstance.player.getPositionVec().distanceTo(((Entity) animatable).getPositionVec()));
+					minecraftInstance.gameRenderer.getActiveRenderInfo().getProjectedView()
+							.distanceTo(((Entity) animatable).getPositionVec()));
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).onGround));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			//Should probably check specifically whether it's in rain?
