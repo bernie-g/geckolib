@@ -150,8 +150,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				float groundSpeed = MathHelper.sqrt(+velocity.x * +velocity.z);
 				parser.setValue("query.ground_speed", groundSpeed);
 
-				float rotationYawHead = livingEntity.getRotationYawHead();
-				parser.setValue("query.yaw_speed", Math.toRadians(rotationYawHead));
+				float yawSpeed = livingEntity.getYaw((float) currentTick) - livingEntity.getYaw((float) (currentTick - 0.1));
+				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
 	}
