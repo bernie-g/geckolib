@@ -18,6 +18,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
+import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
@@ -38,7 +39,8 @@ public class ClientListener
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event)
 	{
-		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), manager -> new ExampleGeoRenderer(manager));
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
+		RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
 
 		GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 		ClientRegistry.bindTileEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);

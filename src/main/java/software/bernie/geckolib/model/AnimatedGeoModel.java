@@ -126,10 +126,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
+		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
 
 		if (animatable instanceof Entity) {
 			parser.setValue("query.distance_from_camera",
-					minecraftInstance.player.getPositionVec().distanceTo(((Entity) animatable).getPositionVec()));
+					minecraftInstance.gameRenderer.getActiveRenderInfo().getProjectedView()
+							.distanceTo(((Entity) animatable).getPositionVec()));
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).onGround));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			//Should probably check specifically whether it's in rain?
@@ -149,8 +151,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				float groundSpeed = MathHelper.sqrt(+velocity.x * +velocity.z);
 				parser.setValue("query.ground_speed", groundSpeed);
 
-				float rotationYawHead = livingEntity.getRotationYawHead();
-				parser.setValue("query.yaw_speed", Math.toRadians(rotationYawHead));
+				float yawSpeed = livingEntity.getYaw((float) currentTick) - livingEntity.getYaw((float) (currentTick - 0.1));
+				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
 	}
