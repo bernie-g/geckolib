@@ -126,6 +126,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
+		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
 
 		if (animatable instanceof Entity) {
 			parser.setValue("query.distance_from_camera",
