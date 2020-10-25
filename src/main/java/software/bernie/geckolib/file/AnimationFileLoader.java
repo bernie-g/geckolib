@@ -52,15 +52,15 @@ public class AnimationFileLoader
 	 */
 	private JsonObject loadFile(ResourceLocation location, IResourceManager manager)
 	{
-		String content = getFileAsString(location, manager);
+		String content = getResourceAsString(location, manager);
 		Gson GSON = new Gson();
 		return JSONUtils.fromJson(GSON, content, JsonObject.class);
 	}
 
 
-	public String getFileAsString(ResourceLocation location, IResourceManager manager)
+	public static String getResourceAsString(ResourceLocation location, IResourceManager manager)
 	{
-		try (InputStream inputStream = getStreamForResourceLocation(location, manager))
+		try (InputStream inputStream = manager.getResource(location).getInputStream())
 		{
 			return IOUtils.toString(inputStream);
 		}
@@ -70,18 +70,5 @@ public class AnimationFileLoader
 			GeckoLib.LOGGER.error(message, e);
 			throw new RuntimeException(new FileNotFoundException(location.toString()));
 		}
-	}
-
-	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation, IResourceManager manager)
-	{
-		try
-		{
-			return new BufferedInputStream(manager.getResource(resourceLocation).getInputStream());
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
 	}
 }

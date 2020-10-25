@@ -42,14 +42,10 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	static
 	{
-		AnimationController.addModelFetcher((Object object) ->
+		AnimationController.addModelFetcher((IAnimatable object) ->
 		{
-			if (object instanceof IAnimatable)
-			{
-				GeoReplacedEntityRenderer renderer = renderers.get(object.getClass());
-				return renderer == null ? null : renderer.getGeoModelProvider();
-			}
-			return null;
+			GeoReplacedEntityRenderer renderer = renderers.get(object.getClass());
+			return renderer == null ? null : renderer.getGeoModelProvider();
 		});
 	}
 
@@ -86,7 +82,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 		else
 		{
-			throw(new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
+			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
 		}
 
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
@@ -177,11 +173,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
-	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
+	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks)
+	{
 		return 0.0F;
 	}
 
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime)
+	{
 	}
 
 	@Override

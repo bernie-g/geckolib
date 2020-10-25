@@ -32,7 +32,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	static
 	{
-		AnimationController.addModelFetcher((Object object) ->
+		AnimationController.addModelFetcher((IAnimatable object) ->
 		{
 			if (object instanceof ArmorItem)
 			{

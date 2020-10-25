@@ -2,7 +2,6 @@ package software.bernie.geckolib.file;
 
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.geo.exception.GeoModelException;
 import software.bernie.geckolib.geo.raw.pojo.Converter;
@@ -12,10 +11,6 @@ import software.bernie.geckolib.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib.geo.render.GeoBuilder;
 import software.bernie.geckolib.geo.render.built.GeoModel;
 
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-
 public class GeoModelLoader
 {
 	public GeoModel loadModel(IResourceManager resourceManager, ResourceLocation location)
@@ -23,7 +18,7 @@ public class GeoModelLoader
 		try
 		{
 			//Deserialize from json into basic json objects, bones are still stored as a flat list
-			RawGeoModel rawModel = Converter.fromJsonString(getModelAsString(resourceManager, location));
+			RawGeoModel rawModel = Converter.fromJsonString(AnimationFileLoader.getResourceAsString(location, resourceManager));
 			if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0)
 			{
 				throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
@@ -40,24 +35,5 @@ public class GeoModelLoader
 			GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
 			throw (new RuntimeException(e));
 		}
-	}
-
-	private String getModelAsString(IResourceManager resourceManager, ResourceLocation location)
-	{
-		try (InputStream inputStream = getStreamForResourceLocation(location))
-		{
-			return IOUtils.toString(inputStream);
-		}
-		catch (Exception e)
-		{
-			String message = "Couldn't load " + location;
-			GeckoLib.LOGGER.error(message, e);
-			throw new RuntimeException(new FileNotFoundException(location.toString()));
-		}
-	}
-
-	public InputStream getStreamForResourceLocation(ResourceLocation resourceLocation)
-	{
-		return new BufferedInputStream(GeckoLib.class.getResourceAsStream("/assets/" + resourceLocation.getNamespace() + "/" + resourceLocation.getPath()));
 	}
 }

@@ -24,7 +24,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	// Register a model fetcher for this renderer
 	static
 	{
-		AnimationController.addModelFetcher((Object object) ->
+		AnimationController.addModelFetcher((IAnimatable object) ->
 		{
 			if (object instanceof Item)
 			{

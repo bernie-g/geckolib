@@ -36,7 +36,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 {
 	static
 	{
-		AnimationController.addModelFetcher((Object object) ->
+		AnimationController.addModelFetcher((IAnimatable object) ->
 		{
 			if (object instanceof Entity)
 			{
