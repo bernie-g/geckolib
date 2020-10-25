@@ -8,10 +8,7 @@ package software.bernie.geckolib.util.json;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.*;
 import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib.core.builder.Animation;
 import software.bernie.geckolib.core.keyframe.BoneAnimation;
@@ -67,9 +64,9 @@ public class JsonAnimationUtils
 		}
 		if (rotationObject.isJsonPrimitive())
 		{
-			double value = rotationObject.getAsDouble();
+			JsonPrimitive primitive = rotationObject.getAsJsonPrimitive();
 			Gson gson = new Gson();
-			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(primitive, primitive, primitive));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0", jsonElement));
 		}
 		return getObjectListAsArray(rotationObject.getAsJsonObject());
@@ -91,9 +88,9 @@ public class JsonAnimationUtils
 		}
 		if (positionObject.isJsonPrimitive())
 		{
-			double value = positionObject.getAsDouble();
+			JsonPrimitive primitive = positionObject.getAsJsonPrimitive();
 			Gson gson = new Gson();
-			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(primitive, primitive, primitive));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0", jsonElement));
 		}
 		return getObjectListAsArray(positionObject.getAsJsonObject());
@@ -115,9 +112,9 @@ public class JsonAnimationUtils
 		}
 		if (scaleObject.isJsonPrimitive())
 		{
-			double value = scaleObject.getAsDouble();
+			JsonPrimitive primitive = scaleObject.getAsJsonPrimitive();
 			Gson gson = new Gson();
-			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(value, value, value));
+			JsonElement jsonElement = gson.toJsonTree(Arrays.asList(primitive, primitive, primitive));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0", jsonElement));
 		}
 		return getObjectListAsArray(scaleObject.getAsJsonObject());
