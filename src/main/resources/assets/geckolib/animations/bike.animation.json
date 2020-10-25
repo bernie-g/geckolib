@@ -1,0 +1,27 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.bike.idle": {
+			"loop": true,
+			"bones": {
+				"body": {
+					"rotation": ["math.cos(query.anim_time * 200) * 0.5", 0, "(math.sin(query.anim_time * 200) * 0.5) + math.clamp(query.yaw_speed * -20, -20, 20)"],
+					"position": [0, "math.cos(query.anim_time * 100) * 0.5", 0],
+					"scale": ["Math.clamp(query.distance_from_camera / 5, 1, 6)", "Math.clamp(query.distance_from_camera / 5, 1, 6)", "Math.clamp(query.distance_from_camera / 5, 1, 6)"]
+				},
+				"lfin1": {
+					"rotation": [0, 0, "-35+math.sin(query.anim_time*400*query.actor_count)*25"]
+				},
+				"lfin2": {
+					"rotation": [0, 0, "-35+math.sin(query.anim_time*300*query.actor_count)*20"]
+				},
+				"rfin1": {
+					"rotation": [0, 0, "35+math.sin(query.anim_time*400*query.actor_count)*-25"]
+				},
+				"rfin2": {
+					"rotation": [0, 0, "35+math.sin(query.anim_time*300*query.actor_count)*-20"]
+				}
+			}
+		}
+	}
+}
