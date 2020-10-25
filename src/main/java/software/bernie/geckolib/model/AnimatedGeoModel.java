@@ -2,7 +2,6 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.molang.MolangParser;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Vector3d;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -21,6 +20,7 @@ import software.bernie.geckolib.geo.render.built.GeoModel;
 import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.resource.GeckoLibCache;
+import software.bernie.geckolib.util.MolangUtils;
 import software.bernie.geckolib.util.VectorUtils;
 
 import javax.annotation.Nullable;
@@ -125,16 +125,30 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		Minecraft minecraftInstance = Minecraft.getInstance();
 
 		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
+		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
 
 		if (animatable instanceof Entity) {
 			parser.setValue("query.distance_from_camera",
 					minecraftInstance.player.getPositionVec().distanceTo(((Entity) animatable).getPositionVec()));
+			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).onGround));
+			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
+			//Should probably check specifically whether it's in rain?
+			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubbleColumn()));
+
 
 			if (animatable instanceof LivingEntity) {
 				LivingEntity livingEntity = (LivingEntity) animatable;
 				parser.setValue("query.health", livingEntity.getHealth());
 				parser.setValue("query.max_health", livingEntity.getMaxHealth());
-				
+				parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isBurning()));
+				//Doesn't work for some reason?
+				parser.setValue("query.on_fire_time", livingEntity.getFireTimer());
+
+				Vec3d velocity = livingEntity.getMotion();
+				//Must be always positive to prevent NaNs
+				float groundSpeed = MathHelper.sqrt(+velocity.x * +velocity.z);
+				parser.setValue("query.ground_speed", groundSpeed);
+
 				float rotationYawHead = livingEntity.getRotationYawHead();
 				parser.setValue("query.yaw_speed", Math.toRadians(rotationYawHead));
 			}

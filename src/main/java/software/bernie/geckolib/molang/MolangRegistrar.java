@@ -14,5 +14,11 @@ public class MolangRegistrar
 		parser.register(new Variable("query.max_health", 0));
 		parser.register(new Variable("query.distance_from_camera", 0));
 		parser.register(new Variable("query.yaw_speed", 0));
+		parser.register(new Variable("query.is_in_water_or_rain", 0));
+		parser.register(new Variable("query.is_in_water", 0));
+		parser.register(new Variable("query.is_on_ground", 0));
+		parser.register(new Variable("query.time_of_day", 0));
+		parser.register(new Variable("query.is_on_fire", 0));
+		parser.register(new Variable("query.ground_speed", 0));
 	}
 }
