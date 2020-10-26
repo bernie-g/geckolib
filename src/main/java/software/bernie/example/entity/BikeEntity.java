@@ -1,0 +1,102 @@
+package software.bernie.example.entity;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.*;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.passive.PassiveEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.PlayState;
+import software.bernie.geckolib.core.builder.AnimationBuilder;
+import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib.core.manager.AnimationData;
+import software.bernie.geckolib.core.manager.AnimationFactory;
+
+import javax.annotation.Nullable;
+
+public class BikeEntity extends AnimalEntity implements IAnimatable
+{
+	private final AnimationFactory factory = new AnimationFactory(this);
+
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
+	{
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
+		return PlayState.CONTINUE;
+	}
+
+	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn)
+	{
+		super(type, worldIn);
+		this.ignoreCameraFrustum = true;
+	}
+
+	@Override
+	public ActionResult interactMob(PlayerEntity player, Hand hand) {
+		if (!this.hasPassengers()) {
+			player.startRiding(this);
+			return super.interactMob(player, hand);
+		}
+		return super.interactMob(player, hand);
+	}
+
+	@Override
+	protected void playStepSound(BlockPos pos, BlockState blockIn) {
+	}
+
+	@Override
+	public void travel(Vec3d pos) {
+		if (this.isAlive()) {
+			if (this.hasPassengers()) {
+				LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
+				this.yaw = livingentity.yaw;
+				this.prevYaw = this.yaw;
+				this.pitch = livingentity.pitch * 0.5F;
+				this.setRotation(this.yaw, this.pitch);
+				this.bodyYaw = this.yaw;
+				this.headYaw = this.bodyYaw;
+				float f = livingentity.sidewaysSpeed * 0.5F;
+				float f1 = livingentity.forwardSpeed;
+				if (f1 <= 0.0F) {
+					f1 *= 0.25F;
+				}
+
+				this.setMovementSpeed(0.3F);
+				super.travel(new Vec3d(f, pos.y, f1));
+			}
+		}
+	}
+
+	@Nullable
+	public Entity getControllingPassenger() {
+		return this.getPassengerList().isEmpty() ? null : this.getPassengerList().get(0);
+	}
+
+	@Override
+	public boolean canBeControlledByRider() {
+		return true;
+	}
+
+	@Override
+	public void registerControllers(AnimationData data)
+	{
+		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+	}
+
+	@Override
+	public AnimationFactory getFactory()
+	{
+		return this.factory;
+	}
+
+	@Override
+	public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+		return null;
+	}
+}

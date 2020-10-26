@@ -48,4 +48,27 @@ public class VectorKeyFrameList<T extends KeyFrame> {
         yKeyFrames = new ArrayList<>();
         zKeyFrames = new ArrayList<>();
     }
+
+    public double getLastKeyframeTime()
+    {
+        double xTime = 0;
+        for (T frame : xKeyFrames)
+        {
+            xTime += frame.getLength();
+        }
+
+        double yTime = 0;
+        for (T frame : yKeyFrames)
+        {
+            yTime += frame.getLength();
+        }
+
+        double zTime = 0;
+        for (T frame : zKeyFrames)
+        {
+            zTime += frame.getLength();
+        }
+
+        return Math.max(xTime, Math.max(yTime, zTime));
+    }
 }

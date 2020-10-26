@@ -30,8 +30,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
     private static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
     static {
-        AnimationController.addModelFetcher((Object object) ->
-        {
+        AnimationController.addModelFetcher((IAnimatable object) -> {
             if (object instanceof ArmorItem) {
                 GeoArmorRenderer renderer = renderers.get(object.getClass());
                 return renderer == null ? null : renderer.getGeoModelProvider();

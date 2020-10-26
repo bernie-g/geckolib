@@ -1,4 +1,4 @@
-package software.bernie.example.client.renderer.model.armor;
+package software.bernie.example.client.model.armor;
 
 import net.minecraft.util.Identifier;
 import software.bernie.example.item.PotatoArmorItem;

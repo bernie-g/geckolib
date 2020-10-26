@@ -157,33 +157,4 @@ public class GeoBone implements IBone {
         this.isHidden = hidden;
     }
 
-    @Override
-    public float getPivotX() {
-        return this.pivotX;
-    }
-
-    @Override
-    public void setPivotX(float value) {
-        this.pivotX = value;
-    }
-
-    @Override
-    public float getPivotY() {
-        return this.pivotY;
-    }
-
-    @Override
-    public void setPivotY(float value) {
-        this.pivotY = value;
-    }
-
-    @Override
-    public float getPivotZ() {
-        return this.pivotZ;
-    }
-
-    @Override
-    public void setPivotZ(float value) {
-        this.pivotZ = value;
-    }
 }

@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '0.4-SNAPSHOT'
+    id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
 }
@@ -49,10 +49,10 @@ shadowJar {
     minimize()
 
     dependencies {
-        include(dependency('com.eliotlash.molang:molang:.*'))
-        include(dependency('com.eliotlash.mclib:mclib:.*'))
-        include(dependency('com.fasterxml.jackson.core:.*'))
-        include(dependency('com.fasterxml.jackson.datatype:.*'))
+        include('com.eliotlash.molang:molang:.*')
+        include('com.eliotlash.mclib:mclib:.*')
+        include('com.fasterxml.jackson.core:.*')
+        include('com.fasterxml.jackson.datatype:.*')
         include(project(':geckolib-core'))
     }
 
@@ -61,7 +61,7 @@ shadowJar {
     exclude('software/bernie/example/**')
     exclude('assets/**')
     exclude('META-INF/**')
-    classifier ''
+    classifier 'shadowed'
 }
 
 jar {
@@ -109,6 +109,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
     classifier = 'sources'
 }
+artifacts {
+    shadowJar
+}
 
 jar {
     from "LICENSE"
@@ -117,14 +120,20 @@ jar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
-            artifact sourcesJar
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(jar) {
+                builtBy jar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+            artifact(shadowJar) {
+                builtBy shadowJar
+            }
             artifactId = project.archives_base_name
         }
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
+    repositories {}
 }

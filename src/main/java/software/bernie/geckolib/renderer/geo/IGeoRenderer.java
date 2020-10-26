@@ -62,13 +62,13 @@ public interface IGeoRenderer<T> {
             normal.transform(matrix3f);
 
             if (normal.getX() < 0) {
-                normal.add(-1, 1, 1);
+                normal.multiplyComponentwise(-1, 1, 1);
             }
             if (normal.getY() < 0) {
-                normal.add(1, -1, 1);
+                normal.multiplyComponentwise(1, -1, 1);
             }
             if (normal.getZ() < 0) {
-                normal.add(1, 1, -1);
+                normal.multiplyComponentwise(1, 1, -1);
             }
 
             for (GeoVertex vertex : quad.vertices) {
@@ -89,8 +89,8 @@ public interface IGeoRenderer<T> {
     default void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
     }
 
-    default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
-        return RenderLayer.getEntityTranslucent(textureLocation);
+    default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
+        return RenderLayer.getEntityCutout(textureLocation);
     }
 
     default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn) {

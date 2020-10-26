@@ -23,12 +23,12 @@ import java.awt.*;
 
 public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> extends BlockEntityRenderer implements IGeoRenderer<T> {
     static {
-        AnimationController.addModelFetcher((Object object) ->
-        {
+        AnimationController.addModelFetcher((IAnimatable object) -> {
             if (object instanceof BlockEntity) {
                 BlockEntity tile = (BlockEntity) object;
                 BlockEntityRenderer<BlockEntity> renderer = BlockEntityRenderDispatcher.INSTANCE.get(tile);
-                if (renderer instanceof GeoBlockRenderer) {
+                if (renderer instanceof GeoBlockRenderer)
+                {
                     return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
                 }
             }
@@ -69,8 +69,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
         return this.modelProvider;
     }
 
-
-    private void rotateBlock(Direction facing, MatrixStack stack) {
+    protected void rotateBlock(Direction facing, MatrixStack stack) {
         switch (facing) {
             case SOUTH:
                 stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));

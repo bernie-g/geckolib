@@ -2,6 +2,7 @@ package software.bernie.geckolib.core.processor;
 
 import com.eliotlash.molang.MolangParser;
 import software.bernie.geckolib.core.IAnimatable;
+import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
@@ -19,8 +20,20 @@ import java.util.Map;
 public class AnimationProcessor<T extends IAnimatable> {
     public boolean reloadAnimations = false;
     private final List<IBone> modelRendererList = new ArrayList();
+    private double lastTickValue = -1;
+    private final IAnimatableModel animatedModel;
+
+    public AnimationProcessor(IAnimatableModel animatedModel)
+    {
+        this.animatedModel = animatedModel;
+    }
 
     public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event, MolangParser parser, boolean crashWhenCantFindBone) {
+        if(seekTime == lastTickValue) {
+            return;
+        }
+        lastTickValue = seekTime;
+
         // Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
         AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
         // Keeps track of which bones have had animations applied to them, and eventually sets the ones that don't have an animation to their default values
@@ -243,5 +256,9 @@ public class AnimationProcessor<T extends IAnimatable> {
 
     public List<IBone> getModelRendererList() {
         return modelRendererList;
+    }
+
+    public void preAnimationSetup(IAnimatable animatable, double seekTime) {
+        this.animatedModel.setMolangQueries(animatable, seekTime);
     }
 }

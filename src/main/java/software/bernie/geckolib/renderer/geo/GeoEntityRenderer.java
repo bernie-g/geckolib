@@ -34,7 +34,7 @@ import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T> {
     static {
-        AnimationController.addModelFetcher((Object object) ->
+        AnimationController.addModelFetcher((IAnimatable object) ->
         {
             if (object instanceof Entity) {
                 return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity) object);

@@ -18,6 +18,7 @@ import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.keyframe.*;
 import software.bernie.geckolib.core.processor.IBone;
 import software.bernie.geckolib.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib.core.util.Axis;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * @param <T> the type parameter
  */
 public class AnimationController<T extends IAnimatable> {
-    static List<Function<Object, IAnimatableModel>> modelFetchers = new ArrayList<>();
+    static List<Function<IAnimatable, IAnimatableModel>> modelFetchers = new ArrayList<>();
     private final HashMap<String, BoneAnimationQueue> boneAnimationQueues = new HashMap<>();
     /**
      * How long it takes to transition between animations
@@ -121,7 +122,7 @@ public class AnimationController<T extends IAnimatable> {
         this.animationPredicate = animationPredicate;
     }
 
-    public static void addModelFetcher(Function<Object, IAnimatableModel> fetcher) {
+    public static void addModelFetcher(Function<IAnimatable, IAnimatableModel> fetcher) {
         modelFetchers.add(fetcher);
     }
 
@@ -137,20 +138,19 @@ public class AnimationController<T extends IAnimatable> {
                 AtomicBoolean encounteredError = new AtomicBoolean(false);
                 // Convert the list of animation names to the actual list, keeping track of the loop boolean along the way
                 IAnimatableModel finalModel = model;
-                LinkedList<Animation> animations = new LinkedList<>(
-                        builder.getRawAnimationList().stream().map((rawAnimation) ->
-                        {
-                            Animation animation = finalModel.getAnimation(rawAnimation.animationName, animatable);
-                            if (animation == null) {
-                                System.out.println(
-                                        "Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
-                                encounteredError.set(true);
-                            }
-                            if (animation != null && rawAnimation.loop != null) {
-                                animation.loop = rawAnimation.loop;
-                            }
-                            return animation;
-                        }).collect(Collectors.toList()));
+                LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) ->
+                {
+                    Animation animation = finalModel.getAnimation(rawAnimation.animationName, animatable);
+                    if (animation == null) {
+                        System.out.println(
+                                "Could not load animation: " + rawAnimation.animationName + ". Is it missing?");
+                        encounteredError.set(true);
+                    }
+                    if (animation != null && rawAnimation.loop != null) {
+                        animation.loop = rawAnimation.loop;
+                    }
+                    return animation;
+                }).collect(Collectors.toCollection(LinkedList::new));
 
                 if (encounteredError.get()) {
                     return;
@@ -340,7 +340,7 @@ public class AnimationController<T extends IAnimatable> {
     }
 
     private IAnimatableModel getModel(T animatable) {
-        for (Function<Object, IAnimatableModel> modelGetter : modelFetchers) {
+        for (Function<IAnimatable, IAnimatableModel> modelGetter : modelFetchers) {
             IAnimatableModel model = modelGetter.apply(animatable);
             if (model != null) {
                 return model;
@@ -407,21 +407,21 @@ public class AnimationController<T extends IAnimatable> {
             VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
             if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
-                boneAnimationQueue.rotationXQueue.add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true));
-                boneAnimationQueue.rotationYQueue.add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true));
-                boneAnimationQueue.rotationZQueue.add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true));
+                boneAnimationQueue.rotationXQueue.add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
+                boneAnimationQueue.rotationYQueue.add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y));
+                boneAnimationQueue.rotationZQueue.add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z));
             }
 
             if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-                boneAnimationQueue.positionXQueue.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false));
-                boneAnimationQueue.positionYQueue.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false));
-                boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false));
+                boneAnimationQueue.positionXQueue.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X));
+                boneAnimationQueue.positionYQueue.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
+                boneAnimationQueue.positionZQueue.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z));
             }
 
             if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
-                boneAnimationQueue.scaleXQueue.add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false));
-                boneAnimationQueue.scaleYQueue.add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false));
-                boneAnimationQueue.scaleZQueue.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false));
+                boneAnimationQueue.scaleXQueue.add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X));
+                boneAnimationQueue.scaleYQueue.add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y));
+                boneAnimationQueue.scaleZQueue.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z));
             }
         }
 
@@ -480,7 +480,7 @@ public class AnimationController<T extends IAnimatable> {
     }
 
     //Helper method to transform a KeyFrameLocation to an AnimationPoint
-    private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation) {
+    private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation, Axis axis) {
         KeyFrameLocation<KeyFrame<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
         KeyFrame<IValue> currentFrame = location.currentFrame;
         double startValue = currentFrame.getStartValue().get();
@@ -489,9 +489,17 @@ public class AnimationController<T extends IAnimatable> {
         if (isRotation) {
             if (!(currentFrame.getStartValue() instanceof ConstantValue)) {
                 startValue = Math.toRadians(startValue);
+                if (axis == Axis.X || axis == Axis.Y)
+                {
+                    startValue *= -1;
+                }
             }
             if (!(currentFrame.getEndValue() instanceof ConstantValue)) {
                 endValue = Math.toRadians(endValue);
+                if (axis == Axis.X || axis == Axis.Y)
+                {
+                    endValue *= -1;
+                }
             }
         }
 
@@ -567,7 +575,7 @@ public class AnimationController<T extends IAnimatable> {
         /**
          * Sound Listeners are run when a sound keyframe is hit. You can either return the SoundEvent and geckolib will play the sound for you, or return null and handle the sounds yourself.
          */
-        <ENTITY extends IAnimatable> void playSound(SoundKeyframeEvent<ENTITY> event);
+        <A extends IAnimatable> void playSound(SoundKeyframeEvent<A> event);
     }
 
     /**
@@ -578,7 +586,7 @@ public class AnimationController<T extends IAnimatable> {
         /**
          * Particle Listeners are run when a sound keyframe is hit. You need to handle the actual playing of the particle yourself.
          */
-        <ENTITY extends IAnimatable> void summonParticle(ParticleKeyFrameEvent<ENTITY> event);
+        <A extends IAnimatable> void summonParticle(ParticleKeyFrameEvent<A> event);
     }
 
     /**
@@ -589,6 +597,6 @@ public class AnimationController<T extends IAnimatable> {
         /**
          * Custom instructions can be added in blockbench by enabling animation effects in Animation - Animate Effects. You can then add custom instruction keyframes and use them as timecodes/events to handle in code.
          */
-        <ENTITY extends IAnimatable> void executeInstruction(CustomInstructionKeyframeEvent<ENTITY> event);
+        <A extends IAnimatable> void executeInstruction(CustomInstructionKeyframeEvent<A> event);
     }
 }

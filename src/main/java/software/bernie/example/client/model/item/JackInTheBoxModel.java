@@ -1,4 +1,4 @@
-package software.bernie.example.client.renderer.model.item;
+package software.bernie.example.client.model.item;
 
 import net.minecraft.util.Identifier;
 import software.bernie.example.item.JackInTheBoxItem;

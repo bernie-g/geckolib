@@ -72,7 +72,7 @@ public abstract class MixinArmorFeatureRenderer extends FeatureRenderer {
     }
 
     @Inject(method = "getArmorTexture", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-    private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, /*  */ String suffix, CallbackInfoReturnable<Identifier> cir, String vanillaIdentifier) {
+    private void getArmorTexture(ArmorItem armorItem, boolean secondLayer, String suffix, CallbackInfoReturnable<Identifier> cir, String vanillaIdentifier) {
         String model = ArmorRenderingRegistry.getArmorTexture(storedEntity, storedEntity.getEquippedStack(storedSlot), storedSlot, vanillaIdentifier);
 
         if (model != null) {

@@ -6,8 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
@@ -27,14 +26,12 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Settings builder) {
-        super(materialIn, slot, builder.group(ItemGroup.COMBAT));
+        super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
     }
 
     // Predicate runs every frame
     private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
         //This is all the extradata this event carries. The livingentity is the entity that's wearing the armor. The itemstack and equipmentslottype are self explanatory.
-        List<EquipmentSlot> slotData = event.getExtraDataOfType(EquipmentSlot.class);
-        List<ItemStack> stackData = event.getExtraDataOfType(ItemStack.class);
         LivingEntity livingEntity = event.getExtraDataOfType(LivingEntity.class).get(0);
 
         //Always loop the animation but later on in this method we'll decide whether or not to actually play it
