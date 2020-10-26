@@ -33,4 +33,5 @@ public class BotariumBlock extends FacingBlock implements BlockEntityProvider {
     public BlockEntity createBlockEntity(BlockView world) {
         return TileRegistry.BOTARIUM_TILE.instantiate();
     }
+
 }

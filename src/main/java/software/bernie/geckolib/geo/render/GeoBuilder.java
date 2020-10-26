@@ -28,7 +28,7 @@ public class GeoBuilder {
         Bone rawBone = bone.selfBone;
         Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
         Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
-        rotation.add(-1, -1, 1);
+        rotation.multiplyComponentwise(-1, -1, 1);
 
         geoBone.mirror = rawBone.getMirror();
         geoBone.dontRender = rawBone.getNeverRender();

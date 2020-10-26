@@ -17,7 +17,6 @@ public class AnimationData {
     public Float startTick;
     private HashMap<IBone, BoneSnapshot> boneSnapshotCollection;
     private final HashMap<String, AnimationController> animationControllers = new HashMap<>();
-    private double speedModifier = 1;
     private double resetTickLength = 30;
 
     /**
@@ -48,17 +47,6 @@ public class AnimationData {
 
     public void clearSnapshotCache() {
         this.boneSnapshotCollection = new HashMap<>();
-    }
-
-    /**
-     * Sets the speed multipler of how fast the animation goes. This cannot be negative, and the default value is 1.
-     */
-    public void setAnimationSpeed(double speed) {
-        this.speedModifier = speed < 0 ? 0 : speed;
-    }
-
-    public double getCurrentAnimationSpeed() {
-        return this.speedModifier;
     }
 
     public double getResetSpeed() {

@@ -6,7 +6,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
@@ -26,7 +26,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Settings builder) {
-        super(materialIn, slot, builder.group(ItemGroup.COMBAT));
+        super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
     }
 
     // Predicate runs every frame

@@ -48,12 +48,12 @@ public class GeoCube {
             size.z = 0f;
         }
         Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
-        rotation.add(1, 1, 1);
+        rotation.multiplyComponentwise(1, 1, 1);
 
         rotation.set((float) Math.toRadians(rotation.getX()), (float) Math.toRadians(rotation.getY()), (float) Math.toRadians(rotation.getZ()));
 
         Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
-        pivot.add(-1, 1, 1);
+        pivot.multiplyComponentwise(-1, 1, 1);
 
         cube.pivot = pivot;
         cube.rotation = rotation;

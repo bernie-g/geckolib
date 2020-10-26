@@ -27,7 +27,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
     private static final Map<Class<? extends Item>, GeoItemRenderer> renderers = new ConcurrentHashMap<>();
     // Register a model fetcher for this renderer
     static {
-        AnimationController.addModelFetcher((Object object) -> {
+        AnimationController.addModelFetcher((IAnimatable object) -> {
             if (object instanceof Item) {
                 GeoItemRenderer renderer = renderers.get(object.getClass());
                 return renderer == null ? null : renderer.getGeoModelProvider();

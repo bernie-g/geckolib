@@ -49,10 +49,10 @@ shadowJar {
     minimize()
 
     dependencies {
-        include(dependency('com.eliotlash.molang:molang:.*'))
-        include(dependency('com.eliotlash.mclib:mclib:.*'))
-        include(dependency('com.fasterxml.jackson.core:.*'))
-        include(dependency('com.fasterxml.jackson.datatype:.*'))
+        include('com.eliotlash.molang:molang:.*')
+        include('com.eliotlash.mclib:mclib:.*')
+        include('com.fasterxml.jackson.core:.*')
+        include('com.fasterxml.jackson.datatype:.*')
         include(project(':geckolib-core'))
     }
 
@@ -61,7 +61,7 @@ shadowJar {
     exclude('software/bernie/example/**')
     exclude('assets/**')
     exclude('META-INF/**')
-    classifier ''
+    classifier 'shadowed'
 }
 
 jar {
@@ -128,6 +128,9 @@ publishing {
             }
             artifact(sourcesJar) {
                 builtBy remapSourcesJar
+            }
+            artifact(shadowJar) {
+                builtBy shadowJar
             }
             artifactId = project.archives_base_name
         }

@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class Animation {
     public String animationName;
-    public double animationLength;
+    public Double animationLength;
     public boolean loop = true;
     public List<BoneAnimation> boneAnimations;
     public List<EventKeyFrame<String>> soundKeyFrames = new ArrayList<>();
