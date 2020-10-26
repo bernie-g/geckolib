@@ -28,18 +28,14 @@ public interface IBone {
     void setScaleX(float value);
 
     boolean isHidden();
-
     void setHidden(boolean hidden);
-
     void setModelRendererName(String modelRendererName);
 
     void saveInitialSnapshot();
-
     BoneSnapshot getInitialSnapshot();
-
-    default BoneSnapshot saveSnapshot() {
+    default BoneSnapshot saveSnapshot()
+    {
         return new BoneSnapshot(this);
     }
-
     String getName();
 }

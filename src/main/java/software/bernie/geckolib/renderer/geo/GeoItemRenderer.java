@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRenderer<T>, BuiltinItemRendererRegistry.DynamicItemRenderer {
     private static final Map<Class<? extends Item>, GeoItemRenderer> renderers = new ConcurrentHashMap<>();
+
     // Register a model fetcher for this renderer
     static {
         AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -71,7 +72,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
         AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(itemStack));
         modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
         stack.push();
-        stack.translate(0, 0.01f, 0);
+        //stack.translate(0, 0.01f, 0);
         stack.translate(0.5, 0.5, 0.5);
 
         MinecraftClient.getInstance().getTextureManager().bindTexture(modelProvider.getTextureLocation(animatable));

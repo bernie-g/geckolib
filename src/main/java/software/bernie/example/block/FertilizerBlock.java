@@ -7,8 +7,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.world.BlockView;
 import software.bernie.example.registry.TileRegistry;
 
-import javax.annotation.Nullable;
-
 public class FertilizerBlock extends FacingBlock implements BlockEntityProvider {
     public FertilizerBlock() {
         super(AbstractBlock.Settings.of(Material.STONE).nonOpaque());
@@ -23,7 +21,7 @@ public class FertilizerBlock extends FacingBlock implements BlockEntityProvider 
         builder.add(FACING);
     }
 
-    @Nullable
+
     @Override
     public BlockState getPlacementState(ItemPlacementContext context) {
         return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());

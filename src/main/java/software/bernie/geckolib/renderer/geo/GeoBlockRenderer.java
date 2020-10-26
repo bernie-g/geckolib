@@ -54,7 +54,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
         stack.translate(0, 0.01f, 0);
         stack.translate(0.5, 0, 0.5);
 
-        rotateBlock(getFacing(tile), stack);
+        //rotateBlock(getFacing(tile), stack);
 
         MinecraftClient.getInstance().getTextureManager().bindTexture(modelProvider.getTextureLocation(tile));
         GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));

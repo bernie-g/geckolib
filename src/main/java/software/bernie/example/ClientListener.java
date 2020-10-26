@@ -48,5 +48,6 @@ public class ClientListener implements ClientModInitializer {
         GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
 
         BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
+
     }
 }
