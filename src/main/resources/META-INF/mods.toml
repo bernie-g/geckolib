@@ -46,6 +46,6 @@ GeckoLib is an animation engine for modders. It supports forward-kinematic anima
 [[dependencies.geckolib]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2]"
+    versionRange="[1.15, 1.16)"
     ordering="NONE"
     side="BOTH"
