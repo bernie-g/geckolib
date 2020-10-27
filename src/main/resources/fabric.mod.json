@@ -34,5 +34,4 @@
     "fabric": "*",
     "minecraft": "1.16.x"
   },
-  "accessWidener" : "geckolib.accesswidener"
 }
