@@ -1,8 +1,8 @@
 package software.bernie.geckolib.geo.render.built;
 
-import net.minecraft.client.renderer.Vector3d;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.vector.Vector3f;
 import software.bernie.geckolib.geo.raw.pojo.*;
 import software.bernie.geckolib.util.VectorUtils;
 
@@ -33,26 +33,11 @@ public class GeoCube
 
 		Vector3d size = VectorUtils.fromArray(cubeIn.getSize());
 		Vector3d origin = VectorUtils.fromArray(cubeIn.getOrigin());
-		origin.x = -(origin.x + size.x) / 16;
-		origin.y /= 16;
-		origin.z /= 16;
+		origin = new Vector3d(-(origin.x + size.x) / 16, origin.y / 16, origin.z / 16);
 
-		size.x /= 16;
-		size.y /= 16;
-		size.z /= 16;
 
-		if (size.x == 0)
-		{
-			size.x = 0f;
-		}
-		if (size.y == 0)
-		{
-			size.y = 0f;
-		}
-		if (size.z == 0)
-		{
-			size.z = 0f;
-		}
+		size = size.mul(0.0625f, 0.0625, 0.0625f);
+
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
 		rotation.mul(1, 1, 1);
 

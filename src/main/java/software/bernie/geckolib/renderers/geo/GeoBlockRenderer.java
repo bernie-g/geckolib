@@ -7,13 +7,13 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Vector3f;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.controller.AnimationController;
 import software.bernie.geckolib.geo.render.built.GeoModel;
@@ -106,11 +106,11 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	private Direction getFacing(T tile)
 	{
 		BlockState blockState = tile.getBlockState();
-		if (blockState.has(HorizontalBlock.HORIZONTAL_FACING))
+		if (blockState.func_235901_b_(HorizontalBlock.HORIZONTAL_FACING))
 		{
 			return blockState.get(HorizontalBlock.HORIZONTAL_FACING);
 		}
-		else if (blockState.has(DirectionalBlock.FACING))
+		else if (blockState.func_235901_b_(DirectionalBlock.FACING))
 		{
 			return blockState.get(DirectionalBlock.FACING);
 		}

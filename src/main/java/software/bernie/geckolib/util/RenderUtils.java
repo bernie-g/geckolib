@@ -1,8 +1,8 @@
 package software.bernie.geckolib.util;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.Quaternion;
-import net.minecraft.client.renderer.Vector3f;
+import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Vector3f;
 import software.bernie.geckolib.geo.render.built.GeoBone;
 import software.bernie.geckolib.geo.render.built.GeoCube;
 

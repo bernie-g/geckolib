@@ -18,13 +18,13 @@ def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
 group = 'software.bernie.geckolib'
-archivesBaseName = 'forge-1.15.2-geckolib'
+archivesBaseName = 'forge-1.16.3-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200225-1.15.1'
+    mappings channel: 'snapshot', version: '20200514-1.16.3'
     runs {
         client {
             workingDirectory project.file('run')
@@ -74,11 +74,9 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
+    minecraft 'net.minecraftforge:forge:1.16.3-34.1.33'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
-//    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}"
-//    compile "software.bernie.geckolib:geckolib-core:${project.geckolib_core_version}:sources"
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'

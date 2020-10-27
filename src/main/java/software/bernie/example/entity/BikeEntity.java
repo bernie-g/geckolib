@@ -2,12 +2,17 @@ package software.bernie.example.entity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.attributes.AttributeModifierManager;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import software.bernie.example.GeckoLibMod;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
@@ -34,13 +39,15 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 		this.ignoreFrustumCheck = true;
 	}
 
+
+
 	@Override
-	public boolean processInteract(PlayerEntity player, Hand hand) {
+	public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
 		if (!this.isBeingRidden()) {
 			player.startRiding(this);
-			return super.processInteract(player, hand);
+			return super.func_230254_b_(player, hand);
 		}
-		return super.processInteract(player, hand);
+		return super.func_230254_b_(player, hand);
 	}
 
 	@Override
@@ -48,7 +55,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	public void travel(Vec3d pos) {
+	public void travel(Vector3d pos) {
 		if (this.isAlive()) {
 			if (this.isBeingRidden()) {
 				LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
@@ -65,7 +72,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 				}
 
 				this.setAIMoveSpeed(0.3F);
-				super.travel(new Vec3d((double)f, pos.y, (double)f1));
+				super.travel(new Vector3d((double)f, pos.y, (double)f1));
 			}
 		}
 	}
@@ -92,9 +99,12 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 		return this.factory;
 	}
 
-	@Nullable
+
 	@Override
-	public AgeableEntity createChild(AgeableEntity ageable) {
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
+	{
 		return null;
 	}
+
+
 }
