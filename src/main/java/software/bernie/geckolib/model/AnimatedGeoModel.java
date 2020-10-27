@@ -147,8 +147,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				parser.setValue("query.on_fire_time", livingEntity.getFireTimer());
 
 				Vec3d velocity = livingEntity.getMotion();
-				//Must be always positive to prevent NaNs
-				float groundSpeed = MathHelper.sqrt(+velocity.x * +velocity.z);
+				float groundSpeed = MathHelper.sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z));
 				parser.setValue("query.ground_speed", groundSpeed);
 
 				float yawSpeed = livingEntity.getYaw((float) currentTick) - livingEntity.getYaw((float) (currentTick - 0.1));
