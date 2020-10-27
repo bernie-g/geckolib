@@ -17,7 +17,7 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.model.new", true));
 		return PlayState.CONTINUE;
 	}
 
