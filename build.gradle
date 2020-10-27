@@ -72,13 +72,13 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shade]
-
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     exclude('software/bernie/example/**')
     exclude('assets/**')
-     exclude('META-INF/**')
-    classifier 'shadowed'
+    exclude('META-INF/**')
+    exclude('fabric.mod.json')
+    classifier 'dev'
 }
 
 jar {
@@ -96,6 +96,7 @@ jar {
 
     exclude('software/bernie/example/**')
     exclude('assets/**')
+    exclude('fabric.mod.json')
     exclude('META-INF/**')
 }
 
