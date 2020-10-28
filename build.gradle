@@ -35,6 +35,7 @@ configurations {
 }
 
 tasks.remapJar.dependsOn(shadowJar)
+tasks.remapJar.setInput(shadowJar.archivePath)
 
 dependencies {
     // Minecraft/Fabric deps
