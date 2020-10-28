@@ -74,10 +74,10 @@ shadowJar {
     configurations = [project.configurations.shade]
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
-    exclude('META-INF/**')
-    exclude('fabric.mod.json')
+    //exclude('software/bernie/example/**')
+    //exclude('assets/**')
+    //exclude('META-INF/**')
+    //exclude('fabric.mod.json')
     classifier 'dev'
 }
 
@@ -94,11 +94,11 @@ jar {
         ])
     }
 
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
-    exclude('fabric.mod.json')
-    exclude('META-INF/**')
-}
+    //exclude('software/bernie/example/**')
+    //exclude('assets/**')
+    //exclude('fabric.mod.json')
+    //exclude('META-INF/**')
+}//
 
 processResources {
     inputs.property "version", project.version
@@ -145,5 +145,22 @@ publishing {
             artifactId = project.archives_base_name
         }
     }
-    repositories {}
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+publishing {
+    repositories {
+        maven {
+            url repsyUrl
+            credentials {
+                def envUsername = System.getenv("repsyUsername")
+                def envPassword = System.getenv("repsyPassword")
+                username = envUsername == null ? findProperty("repsyUsername") : envUsername
+                password = envPassword == null ? findProperty("repsyPassword") : envPassword
+            }
+        }
+    }
 }
