@@ -71,20 +71,33 @@ public class GeckoLibCache
 		HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
 		HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
 
-		CompletableFuture[] animationFileFutures = resourceManager.getAllResourceLocations("animations", fileName -> fileName.endsWith(".json"))
-				.stream()
-				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(resource -> tempAnimations.put(resource, animationLoader.loadAllAnimations(parser, resource, resourceManager))))
-				.toArray(x -> new CompletableFuture[x]);
+		try
+		{
+			CompletableFuture[] animationFileFutures = resourceManager.getAllResourceLocations("animations", fileName -> fileName.endsWith(".json"))
+					.stream()
+					.map(location -> CompletableFuture.supplyAsync(() -> location))
+					.map(completable -> completable.thenAcceptAsync(resource -> tempAnimations.put(resource, animationLoader.loadAllAnimations(parser, resource, resourceManager))))
+					.toArray(x -> new CompletableFuture[x]);
 
-		CompletableFuture[] geoModelFutures = resourceManager.getAllResourceLocations("geo", fileName -> fileName.endsWith(".json"))
-				.stream()
-				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
-				.toArray(x -> new CompletableFuture[x]);
-		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x -> {
-			animations = tempAnimations;
-			geoModels = tempModels;
-		}).thenCompose(stage::markCompleteAwaitingOthers);
+			CompletableFuture[] geoModelFutures = resourceManager.getAllResourceLocations("geo", fileName -> fileName.endsWith(".json"))
+					.stream()
+					.map(location -> CompletableFuture.supplyAsync(() -> location))
+					.map(completable -> completable.thenAcceptAsync(resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))).exceptionally((x) ->
+					{
+						GeckoLib.LOGGER.fatal(x);
+						return null;
+					}))
+					.toArray(x -> new CompletableFuture[x]);
+			CompletableFuture<Void> futures = CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x ->
+			{
+				animations = tempAnimations;
+				geoModels = tempModels;
+			}).thenCompose(stage::markCompleteAwaitingOthers);
+			return futures;
+		}
+		catch(Exception e)
+		{
+			throw new RuntimeException(e);
+		}
 	}
 }

@@ -25,7 +25,7 @@ public class GeoModelLoader
 			}
 
 			//Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
-			RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel);
+			RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel, location);
 
 			//Build the quads and cubes from the raw tree into a built and ready to be rendered GeoModel
 			return GeoBuilder.constructGeoModel(rawGeometryTree);

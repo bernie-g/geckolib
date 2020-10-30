@@ -1,5 +1,6 @@
 package software.bernie.example.item;
 
+
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
@@ -69,13 +70,13 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 	}
 
 
-
 	//All you need to do here is add your animation controllers to the AnimationData
 	@Override
 	public void registerControllers(AnimationData data)
 	{
 		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));
 	}
+
 
 	@Override
 	public AnimationFactory getFactory()

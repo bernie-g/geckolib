@@ -1,5 +1,7 @@
 package software.bernie.geckolib.geo.raw.tree;
 
+import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.geo.raw.pojo.Bone;
 import software.bernie.geckolib.geo.raw.pojo.MinecraftGeometry;
 import software.bernie.geckolib.geo.raw.pojo.ModelProperties;
@@ -9,13 +11,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RawGeometryTree
 {
 	public HashMap<String, RawBoneGroup> topLevelBones = new HashMap<>();
 	public ModelProperties properties;
 
-	public static RawGeometryTree parseHierarchy(RawGeoModel model)
+	public static RawGeometryTree parseHierarchy(RawGeoModel model, ResourceLocation location)
 	{
 
 		RawGeometryTree hierarchy = new RawGeometryTree();
@@ -24,13 +27,22 @@ public class RawGeometryTree
 		List<Bone> bones = new ArrayList<>(Arrays.asList(geometry.getBones()));
 
 		int index = bones.size() - 1;
+		int loopsWithoutChange = 0;
 		while (true)
 		{
+			loopsWithoutChange++;
+			if(loopsWithoutChange > 1000)
+			{
+				GeckoLib.LOGGER.warn("Some bones in " + location.toString() + " do not have existing parents: ");
+				GeckoLib.LOGGER.warn(bones.stream().map(x -> x.getName()).collect(Collectors.joining(", ")));
+				break;
+			}
 			Bone bone = bones.get(index);
 			if (!hasParent(bone))
 			{
 				hierarchy.topLevelBones.put(bone.getName(), new RawBoneGroup(bone));
 				bones.remove(bone);
+				loopsWithoutChange = 0;
 			}
 			else
 			{
@@ -39,6 +51,7 @@ public class RawGeometryTree
 				{
 					groupFromHierarchy.children.put(bone.getName(), new RawBoneGroup(bone));
 					bones.remove(bone);
+					loopsWithoutChange = 0;
 				}
 			}
 
