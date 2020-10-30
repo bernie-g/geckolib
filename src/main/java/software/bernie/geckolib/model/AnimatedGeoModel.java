@@ -2,6 +2,7 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.molang.MolangParser;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.NativeUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
@@ -106,7 +107,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		{
 			throw new GeoModelException(location, "Could not find model.");
 		}
-		if(model != currentModel)
+		if (model != currentModel)
 		{
 			this.animationProcessor.clearModelRendererList();
 			for (GeoBone bone : model.topLevelBones)
@@ -128,7 +129,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
 		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
 
-		if (animatable instanceof Entity) {
+		if (animatable instanceof Entity)
+		{
 			parser.setValue("query.distance_from_camera",
 					minecraftInstance.gameRenderer.getActiveRenderInfo().getProjectedView()
 							.distanceTo(((Entity) animatable).getPositionVec()));
@@ -137,8 +139,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			//Should probably check specifically whether it's in rain?
 			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubbleColumn()));
 
-
-			if (animatable instanceof LivingEntity) {
+			if (animatable instanceof LivingEntity)
+			{
 				LivingEntity livingEntity = (LivingEntity) animatable;
 				parser.setValue("query.health", livingEntity.getHealth());
 				parser.setValue("query.max_health", livingEntity.getMaxHealth());
@@ -154,5 +156,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
+	}
+
+	@Override
+	public float getCurrentTick()
+	{
+		return (float) NativeUtil.getTime() * 20;
 	}
 }
