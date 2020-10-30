@@ -12,6 +12,8 @@ import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.PlayState;
 import software.bernie.geckolib.core.builder.AnimationBuilder;
 import software.bernie.geckolib.core.controller.AnimationController;
+import software.bernie.geckolib.core.easing.EasingManager;
+import software.bernie.geckolib.core.easing.EasingType;
 import software.bernie.geckolib.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib.core.manager.AnimationData;
 import software.bernie.geckolib.core.manager.AnimationFactory;
@@ -35,8 +37,10 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	public boolean processInteract(PlayerEntity player, Hand hand) {
-		if (!this.isBeingRidden()) {
+	public boolean processInteract(PlayerEntity player, Hand hand)
+	{
+		if (!this.isBeingRidden())
+		{
 			player.startRiding(this);
 			return super.processInteract(player, hand);
 		}
@@ -44,14 +48,18 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) {
+	protected void playStepSound(BlockPos pos, BlockState blockIn)
+	{
 	}
 
 	@Override
-	public void travel(Vec3d pos) {
-		if (this.isAlive()) {
-			if (this.isBeingRidden()) {
-				LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
+	public void travel(Vec3d pos)
+	{
+		if (this.isAlive())
+		{
+			if (this.isBeingRidden())
+			{
+				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
 				this.rotationYaw = livingentity.rotationYaw;
 				this.prevRotationYaw = this.rotationYaw;
 				this.rotationPitch = livingentity.rotationPitch * 0.5F;
@@ -60,12 +68,13 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 				this.rotationYawHead = this.renderYawOffset;
 				float f = livingentity.moveStrafing * 0.5F;
 				float f1 = livingentity.moveForward;
-				if (f1 <= 0.0F) {
+				if (f1 <= 0.0F)
+				{
 					f1 *= 0.25F;
 				}
 
 				this.setAIMoveSpeed(0.3F);
-				super.travel(new Vec3d((double)f, pos.y, (double)f1));
+				super.travel(new Vec3d((double) f, pos.y, (double) f1));
 			}
 		}
 	}
@@ -94,7 +103,8 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 
 	@Nullable
 	@Override
-	public AgeableEntity createChild(AgeableEntity ageable) {
+	public AgeableEntity createChild(AgeableEntity ageable)
+	{
 		return null;
 	}
 }
