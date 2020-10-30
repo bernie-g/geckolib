@@ -6,7 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import software.bernie.geckolib.core.IAnimatable;
 import software.bernie.geckolib.core.IAnimatableModel;
 import software.bernie.geckolib.core.builder.Animation;
@@ -21,7 +21,6 @@ import software.bernie.geckolib.model.provider.GeoModelProvider;
 import software.bernie.geckolib.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib.resource.GeckoLibCache;
 import software.bernie.geckolib.util.MolangUtils;
-import software.bernie.geckolib.util.VectorUtils;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -126,13 +125,13 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
-		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
+		parser.setValue("query.moon_phase", minecraftInstance.world.func_242414_af());
 
 		if (animatable instanceof Entity) {
 			parser.setValue("query.distance_from_camera",
 					minecraftInstance.gameRenderer.getActiveRenderInfo().getProjectedView()
 							.distanceTo(((Entity) animatable).getPositionVec()));
-			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).onGround));
+			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).func_233570_aj_()));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			//Should probably check specifically whether it's in rain?
 			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubbleColumn()));
@@ -146,7 +145,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				//Doesn't work for some reason?
 				parser.setValue("query.on_fire_time", livingEntity.getFireTimer());
 
-				Vec3d velocity = livingEntity.getMotion();
+				Vector3d velocity = livingEntity.getMotion();
 				float groundSpeed = MathHelper.sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z));
 				parser.setValue("query.ground_speed", groundSpeed);
 
