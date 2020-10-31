@@ -48,25 +48,8 @@ public class GeoQuad
 			vertices[3] = verticesIn[3].setTextureUV(u2, v2); // Bottom right corner
 		}
 
-//		//Mirrors the quad i guess?
-//		if (mirrorIn != null && mirrorIn)
-//		{
-//			int i = verticesIn.length;
-//
-//			for (int j = 0; j < i / 2; ++j)
-//			{
-//				GeoVertex modelrenderer$positiontexturevertex = verticesIn[j];
-//				verticesIn[j] = verticesIn[i - 1 - j];
-//				verticesIn[i - 1 - j] = modelrenderer$positiontexturevertex;
-//			}
-//		}
-
 		//only god knows what this does, but eliot told me it generates a normal vector which helps the game do lighting properly or something idk i didnt pay attention in physics we were in remote learning gimme a break
 		this.normal = directionIn.toVector3f();
-//		if (mirrorIn != null && mirrorIn)
-//		{
-//			this.normal.mul(-1.0F, 1.0F, 1.0F);
-//		}
 	}
 
 
