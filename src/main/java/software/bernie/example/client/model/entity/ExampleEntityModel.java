@@ -15,12 +15,12 @@ public class ExampleEntityModel extends AnimatedGeoModel
 	@Override
 	public ResourceLocation getModelLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "geo/ice_bee.geo.json");
+		return new ResourceLocation(GeckoLib.ModID, "geo/race_car.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/ice_bee_tex.png");
+		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/race_car.png");
 	}
 }

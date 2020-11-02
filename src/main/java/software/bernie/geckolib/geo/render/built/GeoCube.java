@@ -39,7 +39,7 @@ public class GeoCube
 		size = size.mul(0.0625f, 0.0625, 0.0625f);
 
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
-		rotation.mul(1, 1, 1);
+		rotation.mul(-1, -1, 1);
 
 		rotation.setX((float) Math.toRadians(rotation.getX()));
 		rotation.setY((float) Math.toRadians(rotation.getY()));
@@ -119,6 +119,7 @@ public class GeoCube
 		{
 			double[] UV = cubeIn.getUv().boxUVCoords;
 			Vector3d UVSize = VectorUtils.fromArray(cubeIn.getSize());
+			UVSize = new Vector3d(Math.floor(UVSize.x), Math.floor(UVSize.y), Math.floor(UVSize.z));
 
 			quadWest = new GeoQuad(new GeoVertex[]{P4, P3, P1, P2},  new double[] {UV[0] + UVSize.z + UVSize.x, UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.WEST);
 			quadEast = new GeoQuad(new GeoVertex[]{P7, P8, P6, P5}, new double[] {UV[0], UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.EAST);

@@ -46,7 +46,9 @@ public interface IGeoRenderer<T>
 		{
 			for (GeoCube cube : bone.childCubes)
 			{
+				stack.push();
 				renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				stack.pop();
 			}
 			for (GeoBone childBone : bone.childBones)
 			{
