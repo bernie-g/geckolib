@@ -36,30 +36,20 @@ public class GeoQuad
 		// u2, v2  - Bottom right corner of uv region
 
 		//Sets the new normalized texture coordinates of each vertex using the positions described above
-		vertices[0] = verticesIn[0].setTextureUV(u2, v1); // Top left corner
-		vertices[1] = verticesIn[1].setTextureUV(u1, v1); // Top right corner
-		vertices[2] = verticesIn[2].setTextureUV(u1, v2); // Bottom left corner
-		vertices[3] = verticesIn[3].setTextureUV(u2, v2); // Bottom right corner
-
-		//Mirrors the quad i guess?
-		if (mirrorIn != null && mirrorIn)
-		{
-			int i = verticesIn.length;
-
-			for (int j = 0; j < i / 2; ++j)
-			{
-				GeoVertex modelrenderer$positiontexturevertex = verticesIn[j];
-				verticesIn[j] = verticesIn[i - 1 - j];
-				verticesIn[i - 1 - j] = modelrenderer$positiontexturevertex;
-			}
+		if (mirrorIn != null && mirrorIn) {
+			vertices[0] = verticesIn[0].setTextureUV(u1, v1); // Top left corner
+			vertices[1] = verticesIn[1].setTextureUV(u2, v1); // Top right corner
+			vertices[2] = verticesIn[2].setTextureUV(u2, v2); // Bottom left corner
+			vertices[3] = verticesIn[3].setTextureUV(u1, v2); // Bottom right corner
+		} else {
+			vertices[0] = verticesIn[0].setTextureUV(u2, v1); // Top left corner
+			vertices[1] = verticesIn[1].setTextureUV(u1, v1); // Top right corner
+			vertices[2] = verticesIn[2].setTextureUV(u1, v2); // Bottom left corner
+			vertices[3] = verticesIn[3].setTextureUV(u2, v2); // Bottom right corner
 		}
 
 		//only god knows what this does, but eliot told me it generates a normal vector which helps the game do lighting properly or something idk i didnt pay attention in physics we were in remote learning gimme a break
 		this.normal = directionIn.toVector3f();
-		if (mirrorIn != null && mirrorIn)
-		{
-			this.normal.mul(-1.0F, 1.0F, 1.0F);
-		}
 	}
 
 
