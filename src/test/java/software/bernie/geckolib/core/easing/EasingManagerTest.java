@@ -2,6 +2,7 @@ package software.bernie.geckolib.core.easing;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import software.bernie.geckolib3.core.easing.EasingManager;
 
 import java.util.stream.Stream;
 

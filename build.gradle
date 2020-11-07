@@ -111,7 +111,6 @@ shadowJar {
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     exclude('software/bernie/example/**')
     exclude('assets/**')
-    exclude('META-INF/**')
     classifier ''
 }
 
@@ -140,7 +139,6 @@ jar {
 
     exclude('software/bernie/example/**')
     exclude('assets/**')
-    exclude('META-INF/**')
 }
 
 task packageSources(type: ShadowJar, dependsOn: 'classes') {
@@ -152,31 +150,54 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     classifier = 'sources'
 }
 
+task noToml(type: ShadowJar, dependsOn: 'classes') {
+    configurations = [project.configurations.shade]
+    from sourceSets.main.allSource
+    exclude('META-INF/**')
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    classifier = 'no_toml'
+}
+
 
 artifacts {
     archives shadowJar
     archives packageSources
+    archives noToml
 }
 
 afterEvaluate {
     publish.dependsOn('reobfShadowJar')
     publish.dependsOn('reobfJar')
     publish.dependsOn('packageSources')
+    publish.dependsOn('noToml')
     shadowJar.dependsOn(packageSources)
+    shadowJar.dependsOn(noToml)
     shadowJar.dependsOn('classes')
 }
 
 shadowJar.finalizedBy(reobfShadowJar)
 jar.finalizedBy(packageSources)
+jar.finalizedBy(noToml)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
             artifact packageSources
+            artifact noToml
             artifactId = project.archives_base_name
         }
     }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+publishing {
     repositories {
         maven {
             url repsyUrl

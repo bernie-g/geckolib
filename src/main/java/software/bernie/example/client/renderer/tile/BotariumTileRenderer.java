@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.client.model.tile.BotariumModel;
-import software.bernie.geckolib.renderers.geo.GeoBlockRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
 public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity>
 {
