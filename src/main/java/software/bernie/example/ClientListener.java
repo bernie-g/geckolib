@@ -28,9 +28,9 @@ import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.TileRegistry;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.renderers.geo.GeoArmorRenderer;
-import software.bernie.geckolib.renderers.geo.GeoReplacedEntityRenderer;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ClientListener

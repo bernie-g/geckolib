@@ -1,11 +1,11 @@
-package software.bernie.geckolib.geo.raw.tree;
+package software.bernie.geckolib3.geo.raw.tree;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.geo.raw.pojo.Bone;
-import software.bernie.geckolib.geo.raw.pojo.MinecraftGeometry;
-import software.bernie.geckolib.geo.raw.pojo.ModelProperties;
-import software.bernie.geckolib.geo.raw.pojo.RawGeoModel;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.geo.raw.pojo.Bone;
+import software.bernie.geckolib3.geo.raw.pojo.MinecraftGeometry;
+import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
+import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;

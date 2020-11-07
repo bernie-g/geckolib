@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderers.geo;
+package software.bernie.geckolib3.renderers.geo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.block.BlockState;
@@ -14,10 +14,10 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.core.IAnimatable;
-import software.bernie.geckolib.core.controller.AnimationController;
-import software.bernie.geckolib.geo.render.built.GeoModel;
-import software.bernie.geckolib.model.AnimatedGeoModel;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 import java.awt.*;
 
@@ -56,6 +56,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.push();
 		stack.translate(0, 0.01f, 0);

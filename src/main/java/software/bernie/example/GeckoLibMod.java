@@ -11,7 +11,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import software.bernie.example.registry.*;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(GeckoLib.ModID)
 public class GeckoLibMod
@@ -35,5 +35,6 @@ public class GeckoLibMod
 				return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
 			}
 		};
+
 	}
 }

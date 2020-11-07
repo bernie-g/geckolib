@@ -9,7 +9,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib3.GeckoLib;
 
 public class ItemRegistry
 {
