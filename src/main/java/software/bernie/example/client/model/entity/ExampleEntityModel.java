@@ -1,8 +1,8 @@
 package software.bernie.example.client.model.entity;
 
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.model.AnimatedGeoModel;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ExampleEntityModel extends AnimatedGeoModel
 {
