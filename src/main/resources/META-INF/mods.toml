@@ -15,7 +15,7 @@ license="LGPL 3.0"
 
 [[mods]] #mandatory
 # The modid of the mod
-modId="geckolib" #mandatory
+modId="geckolib3" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod

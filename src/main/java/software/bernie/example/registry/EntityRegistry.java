@@ -13,7 +13,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry
 {

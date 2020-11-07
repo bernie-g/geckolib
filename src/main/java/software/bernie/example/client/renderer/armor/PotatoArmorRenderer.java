@@ -2,7 +2,7 @@ package software.bernie.example.client.renderer.armor;
 
 import software.bernie.example.client.model.armor.PotatoArmorModel;
 import software.bernie.example.item.PotatoArmorItem;
-import software.bernie.geckolib.renderers.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 public class PotatoArmorRenderer extends GeoArmorRenderer<PotatoArmorItem>
 {

@@ -19,7 +19,7 @@ apply plugin: 'java'
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
-group = 'software.bernie.geckolib'
+group = 'software.bernie.geckolib3'
 archivesBaseName = 'forge-1.16.3-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'

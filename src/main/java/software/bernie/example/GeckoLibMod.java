@@ -5,7 +5,6 @@
 
 package software.bernie.example;
 
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -17,7 +16,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import software.bernie.example.registry.*;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib3.GeckoLib;
 
 @Mod(GeckoLib.ModID)
 public class GeckoLibMod
