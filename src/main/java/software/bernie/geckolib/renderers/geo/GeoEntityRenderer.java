@@ -65,13 +65,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		float f = MathHelper.interpolateAngle(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
 		float f1 = MathHelper.interpolateAngle(partialTicks, entity.prevRotationYawHead, entity.rotationYawHead);
-		float f2 = f1 - f;
+		float netHeadYaw = f1 - f;
 		if (shouldSit && entity.getRidingEntity() instanceof LivingEntity)
 		{
 			LivingEntity livingentity = (LivingEntity) entity.getRidingEntity();
 			f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset, livingentity.renderYawOffset);
-			f2 = f1 - f;
-			float f3 = MathHelper.wrapDegrees(f2);
+			netHeadYaw = f1 - f;
+			float f3 = MathHelper.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F)
 			{
 				f3 = -85.0F;
@@ -88,10 +88,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				f += f3 * 0.2F;
 			}
 
-			f2 = f1 - f;
+			netHeadYaw = f1 - f;
 		}
 
-		float f6 = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+		float headPitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
 		if (entity.getPose() == Pose.SLEEPING)
 		{
 			Direction direction = entity.getBedDirection();
@@ -120,7 +120,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				limbSwingAmount = 1.0F;
 			}
 		}
+		entityModelData.headPitch = -headPitch;
+		entityModelData.netHeadYaw = -netHeadYaw;
+
 		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel)
 		{
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
@@ -129,7 +133,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
 		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
@@ -138,7 +141,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		{
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers)
 			{
-				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, f2, f6);
+				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch);
 			}
 		}
 		stack.pop();

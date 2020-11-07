@@ -148,6 +148,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				limbSwingAmount = 1.0F;
 			}
 		}
+
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel)
 		{
@@ -157,7 +159,6 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
 		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);

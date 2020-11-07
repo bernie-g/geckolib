@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -22,6 +24,9 @@ archivesBaseName = 'forge-1.16.3-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
+configurations {
+    shade
+}
 
 minecraft {
     mappings channel: 'snapshot', version: '20200514-1.16.3'
@@ -81,6 +86,14 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
+
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    shade project(':geckolib-core')
+    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
@@ -89,22 +102,15 @@ dependencies {
         useJUnitPlatform()
     }
 }
-shadowJar {
-    minimize()
 
-    dependencies {
-        include(dependency('com.eliotlash.molang:molang:.*'))
-        include(dependency('com.eliotlash.mclib:mclib:.*'))
-        include(dependency('com.fasterxml.jackson.core:.*'))
-        include(dependency('com.fasterxml.jackson.datatype:.*'))
-        include(project(':geckolib-core'))
-    }
+shadowJar {
+    configurations = [project.configurations.shade]
+    from sourceSets.main.allSource
 
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     exclude('software/bernie/example/**')
     exclude('assets/**')
-    exclude('META-INF/**')
     classifier ''
 }
 
@@ -112,9 +118,11 @@ shadowJar {
 reobf {
     shadowJar {} // Reobfuscate the shadowed JAR
 }
-
-
+tasks.build.dependsOn reobfShadowJar
+publish.dependsOn('reobfJar')
+shadowJar.dependsOn('classes')
 jar.finalizedBy('reobfJar')
+
 jar {
     manifest {
         attributes([
@@ -131,22 +139,55 @@ jar {
 
     exclude('software/bernie/example/**')
     exclude('assets/**')
-    exclude('META-INF/**')
 }
 
-task packageSources(type: Jar, dependsOn: 'classes') {
+task packageSources(type: ShadowJar, dependsOn: 'classes') {
+    configurations = [project.configurations.shade]
     from sourceSets.main.allSource
+    exclude('META-INF/**')
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
 }
+
+task noToml(type: ShadowJar, dependsOn: 'classes') {
+    configurations = [project.configurations.shade]
+    from sourceSets.main.allSource
+    exclude('META-INF/**')
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    classifier = 'no_toml'
+}
+
+
 artifacts {
     archives shadowJar
+    archives packageSources
+    archives noToml
 }
+
+afterEvaluate {
+    publish.dependsOn('reobfShadowJar')
+    publish.dependsOn('reobfJar')
+    publish.dependsOn('packageSources')
+    publish.dependsOn('noToml')
+    shadowJar.dependsOn(packageSources)
+    shadowJar.dependsOn(noToml)
+    shadowJar.dependsOn('classes')
+}
+
+shadowJar.finalizedBy(reobfShadowJar)
+jar.finalizedBy(packageSources)
+jar.finalizedBy(noToml)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
             artifact packageSources
+            artifact noToml
             artifactId = project.archives_base_name
         }
     }

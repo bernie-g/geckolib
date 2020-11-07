@@ -69,6 +69,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, ItemStack itemStack)
 	{
 		this.currentItemStack = itemStack;
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getRenderPartialTicks(), false, Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		stack.push();
@@ -76,7 +77,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		stack.translate(0.5, 0.5, 0.5);
 
 		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(animatable));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn, modelProvider.getTextureLocation(animatable));
 		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
