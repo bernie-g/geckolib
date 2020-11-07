@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class RawGeometryTree
-{ 
+{
 	public HashMap<String, RawBoneGroup> topLevelBones = new HashMap<>();
 	public ModelProperties properties;
 
