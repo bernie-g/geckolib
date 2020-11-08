@@ -20,7 +20,6 @@ public class RawGeometryTree
 
 	public static RawGeometryTree parseHierarchy(RawGeoModel model, ResourceLocation location)
 	{
-
 		RawGeometryTree hierarchy = new RawGeometryTree();
 		MinecraftGeometry geometry = model.getMinecraftGeometry()[0];
 		hierarchy.properties = geometry.getProperties();
