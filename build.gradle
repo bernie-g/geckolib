@@ -73,12 +73,11 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shade]
+    from sourceSets.main.allSource
+
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    //exclude('software/bernie/example/**')
-    //exclude('assets/**')
-    //exclude('META-INF/**')
-    //exclude('fabric.mod.json')
+    exclude('software/bernie/geckolib/**')
     classifier 'dev'
 }
 
@@ -94,12 +93,9 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-
-    //exclude('software/bernie/example/**')
-    //exclude('assets/**')
-    //exclude('fabric.mod.json')
-    //exclude('META-INF/**')
-}//
+    exclude('software/bernie/example/**')
+    exclude('software/bernie/geckolib/**')
+}
 
 processResources {
     inputs.property "version", project.version
