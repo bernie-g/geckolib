@@ -5,6 +5,7 @@
 
 package software.bernie.example;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.attributes.AttributeModifierMap;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
@@ -15,6 +16,7 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
 import software.bernie.geckolib3.GeckoLib;
 
@@ -26,21 +28,25 @@ public class GeckoLibMod
 	public GeckoLibMod()
 	{
 		GeckoLib.initialize();
-		IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-		bus.addListener(this::onCommonSetup);
-		EntityRegistry.ENTITIES.register(bus);
-		ItemRegistry.ITEMS.register(bus);
-		TileRegistry.TILES.register(bus);
-		BlockRegistry.BLOCKS.register(bus);
-		SoundRegistry.SOUNDS.register(bus);
-		geckolibItemGroup = new ItemGroup(0, "geckolib_examples")
+		if (!FMLEnvironment.production)
 		{
-			@Override
-			public ItemStack createIcon()
+			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+			bus.addListener(this::onCommonSetup);
+			EntityRegistry.ENTITIES.register(bus);
+			ItemRegistry.ITEMS.register(bus);
+			TileRegistry.TILES.register(bus);
+			BlockRegistry.BLOCKS.register(bus);
+			SoundRegistry.SOUNDS.register(bus);
+			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples")
 			{
-				return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
-			}
-		};
+				@Override
+				public ItemStack createIcon()
+				{
+					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
+				}
+			};
+
+		}
 
 	}
 

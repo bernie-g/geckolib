@@ -19,7 +19,7 @@ modId="geckolib3" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
 version="${file.jarVersion}" #mandatory
  # A display name for the mod
-displayName="GeckoLib Example Mod" #mandatory
+displayName="GeckoLib" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification <here>
 #updateJSONURL="http://myurl.me/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -34,7 +34,7 @@ authors="Gecko, Eliot" #optional
 description='''
 GeckoLib is an animation engine for modders. It supports forward-kinematic animations and renders bedrock entity geo models.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.geckolib]] #optional
+[[dependencies.geckolib3]] #optional
     # the modid of the dependency
     modId="forge" #mandatory
     # Does this dependency have to exist - if not, ordering below must be specified
@@ -46,7 +46,7 @@ GeckoLib is an animation engine for modders. It supports forward-kinematic anima
     # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
 # Here's another dependency
-[[dependencies.geckolib]]
+[[dependencies.geckolib3]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16, 1.17)"
