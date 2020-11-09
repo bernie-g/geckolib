@@ -2,6 +2,7 @@ package software.bernie.geckolib.model;
 
 import com.eliotlash.molang.MolangParser;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
