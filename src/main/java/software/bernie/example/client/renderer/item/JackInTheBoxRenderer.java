@@ -2,7 +2,7 @@ package software.bernie.example.client.renderer.item;
 
 import software.bernie.example.client.model.item.JackInTheBoxModel;
 import software.bernie.example.item.JackInTheBoxItem;
-import software.bernie.geckolib.renderer.geo.GeoItemRenderer;
+import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
 public class JackInTheBoxRenderer extends GeoItemRenderer<JackInTheBoxItem> {
     public JackInTheBoxRenderer() {

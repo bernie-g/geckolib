@@ -5,7 +5,7 @@ import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.Item;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
-import software.bernie.geckolib.util.RegistryUtils;
+import software.bernie.geckolib3.util.RegistryUtils;
 
 public class ItemRegistry {
     public static final JackInTheBoxItem JACK_IN_THE_BOX = RegistryUtils.registerItem("jackintheboxitem", new JackInTheBoxItem(new Item.Settings()));

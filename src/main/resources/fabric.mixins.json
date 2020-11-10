@@ -1,6 +1,6 @@
 {
     "required": true,
-    "package": "software.bernie.geckolib.mixins.fabric",
+    "package": "software.bernie.geckolib3.mixins.fabric",
     "compatibilityLevel": "JAVA_8",
     "injectors": {
         "defaultRequire": 1

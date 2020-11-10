@@ -34,9 +34,6 @@ configurations {
     shade
 }
 
-tasks.remapJar.dependsOn(shadowJar)
-tasks.remapJar.setInput(shadowJar.archivePath)
-
 dependencies {
     // Minecraft/Fabric deps
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -73,7 +70,6 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
 
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
@@ -132,7 +128,10 @@ jar {
     from "LICENSE"
 }
 
-
+remapJar {
+    dependsOn(shadowJar)
+    input.set(shadowJar.archivePath)
+}
 
 publishing {
     publications {

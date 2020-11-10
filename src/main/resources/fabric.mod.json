@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "geckolib",
+  "id": "geckolib3",
   "version": "${version}",
 
   "name": "Geckolib",
@@ -15,7 +15,6 @@
 
   "license": "CC0-1.0",
   "icon": "gecko.jpg",
-
   "environment": "*",
   "entrypoints": {
     "main": [

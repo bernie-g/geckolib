@@ -8,7 +8,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import software.bernie.example.client.model.entity.BikeModel;
 import software.bernie.example.entity.BikeEntity;
-import software.bernie.geckolib.renderer.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity>
 {
