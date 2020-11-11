@@ -20,7 +20,7 @@ def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
 group = 'software.bernie.geckolib'
-archivesBaseName = 'forge-1.15.2-geckolib'
+archivesBaseName = 'forge-1.12.2-geckolib'
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -29,7 +29,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200225-1.15.1'
+    mappings channel: 'snapshot', version: '20171003-1.12'
     runs {
         client {
             workingDirectory project.file('run')
@@ -79,7 +79,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
     compile project(':geckolib-core')
