@@ -71,6 +71,8 @@ minecraft {
             }
         }
     }
+
+    accessTransformer = file('src/main/resources/META-INF/at.cfg')
 }
 repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }

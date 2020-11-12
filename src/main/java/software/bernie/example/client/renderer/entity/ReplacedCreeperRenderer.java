@@ -1,9 +1,5 @@
 package software.bernie.example.client.renderer.entity;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.monster.CreeperEntity;
 import net.minecraft.util.math.MathHelper;
 import software.bernie.example.client.model.entity.ReplacedCreeperModel;
 import software.bernie.example.entity.ReplacedCreeperEntity;

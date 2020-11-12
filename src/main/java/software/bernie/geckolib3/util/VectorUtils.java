@@ -1,9 +1,10 @@
 package software.bernie.geckolib3.util;
 
-import net.minecraft.client.renderer.Vector3d;
-import net.minecraft.client.renderer.Vector3f;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
+
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 public class VectorUtils
 {

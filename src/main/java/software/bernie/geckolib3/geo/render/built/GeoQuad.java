@@ -1,15 +1,15 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.util.Direction;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.Vec3i;
 
 public class GeoQuad
 {
 	public GeoVertex[] vertices;
-	public final Vector3f normal;
-	public Direction direction;
+	public final Vec3i normal;
+	public EnumFacing direction;
 
-	public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth, float texHeight, Boolean mirrorIn, Direction directionIn)
+	public GeoQuad(GeoVertex[] verticesIn, float u1, float v1, float uSize, float vSize, float texWidth, float texHeight, Boolean mirrorIn, EnumFacing directionIn)
 	{
 		this.direction = directionIn;
 		this.vertices = verticesIn;
@@ -55,15 +55,19 @@ public class GeoQuad
 		}
 
 		//only god knows what this does, but eliot told me it generates a normal vector which helps the game do lighting properly or something idk i didnt pay attention in physics we were in remote learning gimme a break
-		this.normal = directionIn.toVector3f();
+		Vec3i normal = directionIn.getDirectionVec();
 		if (mirrorIn != null && mirrorIn)
 		{
-			this.normal.mul(-1.0F, 1.0F, 1.0F);
+			this.normal = new Vec3i(-1 * normal.getX(), 1 * normal.getY(), 1 * normal.getZ());
+		}
+		else
+		{
+			this.normal = directionIn.getDirectionVec();
 		}
 	}
 
 
-	public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, float texWidth, float texHeight, Boolean mirrorIn, Direction directionIn)
+	public GeoQuad(GeoVertex[] verticesIn, double[] uvCoords, double[] uvSize, float texWidth, float texHeight, Boolean mirrorIn, EnumFacing directionIn)
 	{
 		this(verticesIn, (float) uvCoords[0], (float) uvCoords[1], (float) uvSize[0], (float) uvSize[1], texWidth, texHeight, mirrorIn, directionIn);
 	}

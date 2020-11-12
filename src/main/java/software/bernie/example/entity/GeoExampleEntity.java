@@ -1,9 +1,8 @@
 package software.bernie.example.entity;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -13,7 +12,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends CreatureEntity implements IAnimatable
+public class GeoExampleEntity extends EntityCreature implements IAnimatable
 {
 	private AnimationFactory factory = new AnimationFactory(this);
 
@@ -23,9 +22,9 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 		return PlayState.CONTINUE;
 	}
 
-	public GeoExampleEntity(EntityType<? extends CreatureEntity> type, World worldIn)
+	public GeoExampleEntity(World worldIn)
 	{
-		super(type, worldIn);
+		super(worldIn);
 		this.ignoreFrustumCheck = true;
 	}
 
@@ -43,9 +42,9 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable
 	}
 
 	@Override
-	protected void registerGoals()
+	protected void initEntityAI()
 	{
-		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-		super.registerGoals();
+		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		super.initEntityAI();
 	}
 }

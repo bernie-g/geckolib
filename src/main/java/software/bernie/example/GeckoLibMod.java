@@ -5,18 +5,22 @@
 
 package software.bernie.example;
 
-import net.minecraft.item.ItemGroup;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import software.bernie.example.registry.*;
+import software.bernie.example.registry.BlockRegistry;
+import software.bernie.example.registry.EntityRegistry;
+import software.bernie.example.registry.ItemRegistry;
+import software.bernie.example.registry.SoundRegistry;
+import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
-@Mod(GeckoLib.ModID)
+@Mod(modid = GeckoLib.ModID)
 public class GeckoLibMod
 {
-	public static ItemGroup geckolibItemGroup;
+	public static CreativeTabs geckolibItemGroup;
 
 	public GeckoLibMod()
 	{
@@ -27,10 +31,10 @@ public class GeckoLibMod
 		TileRegistry.TILES.register(bus);
 		BlockRegistry.BLOCKS.register(bus);
 		SoundRegistry.SOUNDS.register(bus);
-		geckolibItemGroup = new ItemGroup(0, "geckolib_examples")
+		geckolibItemGroup = new CreativeTabs(0, "geckolib_examples")
 		{
 			@Override
-			public ItemStack createIcon()
+			public ItemStack getTabIconItem()
 			{
 				return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
 			}

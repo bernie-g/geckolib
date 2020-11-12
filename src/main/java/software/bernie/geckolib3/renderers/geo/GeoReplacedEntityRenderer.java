@@ -1,20 +1,15 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import com.eliotlash.mclib.utils.Interpolations;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Pose;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerModelPart;
-import net.minecraft.util.Direction;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EnumPlayerModelParts;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextFormatting;
@@ -32,9 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer
+public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAnimatable> extends Render<T> implements IGeoRenderer
 {
-	private final AnimatedGeoModel<IAnimatable> modelProvider;
+	private final AnimatedGeoModel<T> modelProvider;
 	private final T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	private IAnimatable currentAnimatable;
@@ -49,7 +44,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		});
 	}
 
-	protected GeoReplacedEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<IAnimatable> modelProvider, T animatable)
+	protected GeoReplacedEntityRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider, T animatable)
 	{
 		super(renderManager);
 		this.modelProvider = modelProvider;
@@ -67,38 +62,23 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@Override
-	public void render(Entity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn)
+	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
-		this.render(entityIn, this.animatable, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-	}
-
-	public void render(Entity entity, IAnimatable animatable, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
-	{
-		this.currentAnimatable = animatable;
-		LivingEntity entityLiving;
-		if (entity instanceof LivingEntity)
-		{
-			entityLiving = (LivingEntity) entity;
-		}
-		else
-		{
-			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
-		}
-
-		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
+		// TODO: entity.isPassenger() looks redundant here
+		boolean shouldSit = /* entity.isPassenger() && */ (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
-		entityModelData.isChild = entityLiving.isChild();
+		entityModelData.isChild = entity.isChild();
 
-		float f = MathHelper.interpolateAngle(partialTicks, entityLiving.prevRenderYawOffset, entityLiving.renderYawOffset);
-		float f1 = MathHelper.interpolateAngle(partialTicks, entityLiving.prevRotationYawHead, entityLiving.rotationYawHead);
-		float f2 = f1 - f;
-		if (shouldSit && entity.getRidingEntity() instanceof LivingEntity)
+		float f = Interpolations.lerpYaw(entity.prevRenderYawOffset, entity.renderYawOffset, partialTicks);
+		float f1 = Interpolations.lerpYaw(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
+		float netHeadYaw = f1 - f;
+		if (shouldSit && entity.getRidingEntity() instanceof EntityLivingBase)
 		{
-			LivingEntity livingentity = (LivingEntity) entity.getRidingEntity();
-			f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset, livingentity.renderYawOffset);
-			f2 = f1 - f;
-			float f3 = MathHelper.wrapDegrees(f2);
+			EntityLivingBase livingentity = (EntityLivingBase) entity.getRidingEntity();
+			f = Interpolations.lerpYaw(livingentity.prevRenderYawOffset, livingentity.renderYawOffset, partialTicks);
+			netHeadYaw = f1 - f;
+			float f3 = MathHelper.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F)
 			{
 				f3 = -85.0F;
@@ -115,30 +95,30 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				f += f3 * 0.2F;
 			}
 
-			f2 = f1 - f;
+			netHeadYaw = f1 - f;
 		}
 
-		float f6 = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+		float headPitch = Interpolations.lerp(entity.prevRotationPitch, entity.rotationPitch, partialTicks);
+		/* TODO: vanilla mobs can't sleep in beds in 1.12.2 and below
 		if (entity.getPose() == Pose.SLEEPING)
 		{
-			Direction direction = entityLiving.getBedDirection();
+			Direction direction = entity.getBedDirection();
 			if (direction != null)
 			{
 				float f4 = entity.getEyeHeight(Pose.STANDING) - 0.1F;
 				stack.translate((double) ((float) (-direction.getXOffset()) * f4), 0.0D, (double) ((float) (-direction.getZOffset()) * f4));
 			}
-		}
-		float f7 = this.handleRotationFloat(entityLiving, partialTicks);
-		this.applyRotations(entityLiving, stack, f7, f, partialTicks);
-		this.preRenderCallback(entityLiving, stack, partialTicks);
+		} */
+		float f7 = this.handleRotationFloat(entity, partialTicks);
+		this.applyRotations(entity, f7, f, partialTicks);
 
 		float limbSwingAmount = 0.0F;
 		float limbSwing = 0.0F;
-		if (!shouldSit && entity.isAlive())
+		if (!shouldSit && entity.isEntityAlive())
 		{
-			limbSwingAmount = MathHelper.lerp(partialTicks, entityLiving.prevLimbSwingAmount, entityLiving.limbSwingAmount);
-			limbSwing = entityLiving.limbSwing - entityLiving.limbSwingAmount * (1.0F - partialTicks);
-			if (entityLiving.isChild())
+			limbSwingAmount = Interpolations.lerp(entity.prevLimbSwingAmount, entity.limbSwingAmount, partialTicks);
+			limbSwing = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
+			if (entity.isChild())
 			{
 				limbSwing *= 3.0F;
 			}
@@ -148,45 +128,42 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				limbSwingAmount = 1.0F;
 			}
 		}
+		entityModelData.headPitch = -headPitch;
+		entityModelData.netHeadYaw = -netHeadYaw;
 
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel)
 		{
-			((IAnimatableModel) modelProvider).setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
+			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
-		stack.push();
-		stack.translate(0, 0.01f, 0);
-		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
-		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0.01f, 0);
+		Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
+		Color renderColor = getRenderColor(entity, partialTicks);
+		render(model, entity, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
 
-		if (!entity.isSpectator())
+		if (entity instanceof EntityPlayer && !((EntityPlayer) entity).isSpectator())
 		{
-			for (GeoLayerRenderer layerRenderer : this.layerRenderers)
+			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers)
 			{
-				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, f2, f6);
+				layerRenderer.doRenderLayer(entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch, 1 / 16F);
 			}
 		}
-		stack.pop();
-		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+		GlStateManager.popMatrix();
+
+		super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
-	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks)
-	{
-		return 0.0F;
-	}
-
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime)
+	protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime)
 	{
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(Entity entity)
+	public ResourceLocation getEntityTexture(T entity)
 	{
-		return modelProvider.getTextureLocation(currentAnimatable);
+		return modelProvider.getTextureLocation(entity);
 	}
 
 	@Override
@@ -195,17 +172,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return this.modelProvider;
 	}
 
-	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn)
+	protected void applyRotations(T entityLiving, float ageInTicks, float rotationYaw, float partialTicks)
 	{
-		return OverlayTexture.getPackedUV(OverlayTexture.getU(uIn), OverlayTexture.getV(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));
-	}
-
-	protected void applyRotations(LivingEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw, float partialTicks)
-	{
-		Pose pose = entityLiving.getPose();
-		if (pose != Pose.SLEEPING)
+		if (!entityLiving.isPlayerSleeping())
 		{
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+			GlStateManager.rotate(180.0F - rotationYaw, 0, 1, 0);
 		}
 
 		if (entityLiving.deathTime > 0)
@@ -217,8 +188,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				f = 1.0F;
 			}
 
-			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
+			GlStateManager.rotate(f * this.getDeathMaxRotation(entityLiving), 0, 0, 1);
 		}
+		/* TODO: probably doesn't exist in 1.12.2 as well
 		else if (entityLiving.isSpinAttacking())
 		{
 			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.rotationPitch));
@@ -231,25 +203,24 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f1));
 			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
 			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(270.0F));
-		}
-		else if (entityLiving.hasCustomName() || entityLiving instanceof PlayerEntity)
+		} */
+		else if (entityLiving.hasCustomName() || entityLiving instanceof EntityPlayer)
 		{
-			String s = TextFormatting.getTextWithoutFormattingCodes(entityLiving.getName().getString());
-			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof PlayerEntity) || ((PlayerEntity) entityLiving).isWearing(PlayerModelPart.CAPE)))
+			String s = TextFormatting.getTextWithoutFormattingCodes(entityLiving.getName());
+			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof EntityPlayer) || ((EntityPlayer) entityLiving).isWearing(EnumPlayerModelParts.CAPE)))
 			{
-				matrixStackIn.translate(0.0D, (double) (entityLiving.getHeight() + 0.1F), 0.0D);
-				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+				GlStateManager.translate(0.0D, (double) (entityLiving.height + 0.1F), 0.0D);
+				GlStateManager.rotate(180, 0, 0, 1);
 			}
 		}
-
 	}
 
-	protected boolean isVisible(LivingEntity livingEntityIn)
+	protected boolean isVisible(EntityLivingBase livingEntityIn)
 	{
 		return !livingEntityIn.isInvisible();
 	}
 
-	private static float getFacingAngle(Direction facingIn)
+	private static float getFacingAngle(EnumFacing facingIn)
 	{
 		switch (facingIn)
 		{
@@ -266,7 +237,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 	}
 
-	protected float getDeathMaxRotation(LivingEntity entityLivingBaseIn)
+	protected float getDeathMaxRotation(EntityLivingBase entityLivingBaseIn)
 	{
 		return 90.0F;
 	}
@@ -274,7 +245,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	/**
 	 * Returns where in the swing animation the living entity is (from 0 to 1).  Args : entity, partialTickTime
 	 */
-	protected float getSwingProgress(LivingEntity livingBase, float partialTickTime)
+	protected float getSwingProgress(EntityLivingBase livingBase, float partialTickTime)
 	{
 		return livingBase.getSwingProgress(partialTickTime);
 	}
@@ -282,18 +253,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	/**
 	 * Defines what float the third param in setRotationAngles of ModelBase is
 	 */
-	protected float handleRotationFloat(LivingEntity livingBase, float partialTicks)
+	protected float handleRotationFloat(EntityLivingBase livingBase, float partialTicks)
 	{
 		return (float) livingBase.ticksExisted + partialTicks;
 	}
 
-	@Override
-	public ResourceLocation getTextureLocation(Object instance)
-	{
-		return this.modelProvider.getTextureLocation((IAnimatable) instance);
-	}
-
-	public final boolean addLayer(GeoLayerRenderer<? extends LivingEntity> layer)
+	public final boolean addLayer(GeoLayerRenderer<? extends EntityLivingBase> layer)
 	{
 		return this.layerRenderers.add(layer);
 	}

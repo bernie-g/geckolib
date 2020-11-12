@@ -1,9 +1,8 @@
 package software.bernie.geckolib3.resource;
 
 import com.eliotlash.molang.MolangParser;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 import software.bernie.geckolib3.GeckoLib;
@@ -18,7 +17,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
 
-public class GeckoLibCache
+public class GeckoLibCache implements IResourceManagerReloadListener
 {
 	private static GeckoLibCache INSTANCE;
 
@@ -64,6 +63,12 @@ public class GeckoLibCache
 			return INSTANCE;
 		}
 		return INSTANCE;
+	}
+
+	@Override
+	public void onResourceManagerReload(IResourceManager resourceManager)
+	{
+		// TODO: ...
 	}
 
 	public CompletableFuture<Void> resourceReload(IFutureReloadListener.IStage stage, IResourceManager resourceManager, IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor, Executor gameExecutor)

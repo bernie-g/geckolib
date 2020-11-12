@@ -1,10 +1,11 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import net.minecraft.client.renderer.Vector3d;
-import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.util.Direction;
+import net.minecraft.util.EnumFacing;
 import software.bernie.geckolib3.geo.raw.pojo.*;
 import software.bernie.geckolib3.util.VectorUtils;
+
+import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
 public class GeoCube
 {
@@ -40,14 +41,15 @@ public class GeoCube
 		size.z *= 0.0625f;
 
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
-		rotation.mul(-1, -1, 1);
+		rotation.x *= -1;
+		rotation.y *= -1;
 
 		rotation.setX((float) Math.toRadians(rotation.getX()));
 		rotation.setY((float) Math.toRadians(rotation.getY()));
 		rotation.setZ((float) Math.toRadians(rotation.getZ()));
 
 		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
-		pivot.mul(-1, 1, 1);
+		pivot.x *= -1;
 
 		cube.pivot = pivot;
 		cube.rotation = rotation;
@@ -109,12 +111,12 @@ public class GeoCube
 			FaceUv up = faces.getUp();
 			FaceUv down = faces.getDown();
 			//Pass in vertices starting from the top right corner, then going counter-clockwise
-			quadWest = new GeoQuad(new GeoVertex[]{P4, P3, P1, P2}, west.getUv(), west.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.WEST);
-			quadEast = new GeoQuad(new GeoVertex[]{P7, P8, P6, P5}, east.getUv(), east.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.EAST);
-			quadNorth = new GeoQuad(new GeoVertex[]{P3, P7, P5, P1}, north.getUv(), north.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.NORTH);
-			quadSouth = new GeoQuad(new GeoVertex[]{P8, P4, P2, P6}, south.getUv(), south.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.SOUTH);
-			quadUp = new GeoQuad(new GeoVertex[]{P4, P8, P7, P3}, up.getUv(), up.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.UP);
-			quadDown = new GeoQuad(new GeoVertex[]{P6, P2, P1, P5}, down.getUv(), down.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), Direction.DOWN);
+			quadWest = new GeoQuad(new GeoVertex[]{P4, P3, P1, P2}, west.getUv(), west.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.WEST);
+			quadEast = new GeoQuad(new GeoVertex[]{P7, P8, P6, P5}, east.getUv(), east.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.EAST);
+			quadNorth = new GeoQuad(new GeoVertex[]{P3, P7, P5, P1}, north.getUv(), north.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.NORTH);
+			quadSouth = new GeoQuad(new GeoVertex[]{P8, P4, P2, P6}, south.getUv(), south.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.SOUTH);
+			quadUp = new GeoQuad(new GeoVertex[]{P4, P8, P7, P3}, up.getUv(), up.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.UP);
+			quadDown = new GeoQuad(new GeoVertex[]{P6, P2, P1, P5}, down.getUv(), down.getUvSize(), textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.DOWN);
 		}
 		else
 		{
@@ -122,12 +124,12 @@ public class GeoCube
 			Vector3d UVSize = VectorUtils.fromArray(cubeIn.getSize());
 			UVSize = new Vector3d(Math.floor(UVSize.x), Math.floor(UVSize.y), Math.floor(UVSize.z));
 
-			quadWest = new GeoQuad(new GeoVertex[]{P4, P3, P1, P2},  new double[] {UV[0] + UVSize.z + UVSize.x, UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.WEST);
-			quadEast = new GeoQuad(new GeoVertex[]{P7, P8, P6, P5}, new double[] {UV[0], UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.EAST);
-			quadNorth = new GeoQuad(new GeoVertex[]{P3, P7, P5, P1}, new double[] {UV[0] + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.NORTH);
-			quadSouth = new GeoQuad(new GeoVertex[]{P8, P4, P2, P6},  new double[] {UV[0] + UVSize.z + UVSize.x + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.SOUTH);
-			quadUp = new GeoQuad(new GeoVertex[]{P4, P8, P7, P3}, new double[] {UV[0] + UVSize.z, UV[1]}, new double[] {UVSize.x, UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.UP);
-			quadDown = new GeoQuad(new GeoVertex[]{P6, P2, P1, P5}, new double[] {UV[0] + UVSize.z + UVSize.x, UV[1]}, new double[] {UVSize.x, UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.DOWN);
+			quadWest = new GeoQuad(new GeoVertex[]{P4, P3, P1, P2},  new double[] {UV[0] + UVSize.z + UVSize.x, UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.WEST);
+			quadEast = new GeoQuad(new GeoVertex[]{P7, P8, P6, P5}, new double[] {UV[0], UV[1] + UVSize.z}, new double[] {UVSize.z, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.EAST);
+			quadNorth = new GeoQuad(new GeoVertex[]{P3, P7, P5, P1}, new double[] {UV[0] + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.NORTH);
+			quadSouth = new GeoQuad(new GeoVertex[]{P8, P4, P2, P6},  new double[] {UV[0] + UVSize.z + UVSize.x + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.SOUTH);
+			quadUp = new GeoQuad(new GeoVertex[]{P4, P8, P7, P3}, new double[] {UV[0] + UVSize.z, UV[1]}, new double[] {UVSize.x, UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.UP);
+			quadDown = new GeoQuad(new GeoVertex[]{P6, P2, P1, P5}, new double[] {UV[0] + UVSize.z + UVSize.x, UV[1]}, new double[] {UVSize.x, UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), EnumFacing.DOWN);
 		}
 
 		cube.quads[0] = quadWest;

@@ -1,74 +1,79 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import software.bernie.geckolib3.geo.render.built.*;
+import net.minecraft.util.math.Vec3i;
+import org.lwjgl.opengl.GL11;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.GeoQuad;
+import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
 
-import javax.annotation.Nullable;
+import javax.vecmath.Vector4f;
 import java.awt.*;
 
 public interface IGeoRenderer<T>
 {
-	default void render(GeoModel model, T animatable, float partialTicks, RenderType type, MatrixStack matrixStackIn, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	default void render(GeoModel model, T animatable, float partialTicks, float red, float green, float blue, float alpha)
 	{
-		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		renderEarly(animatable, partialTicks, red, green, blue, alpha);
 
-		if (renderTypeBuffer != null)
-		{
-			vertexBuilder = renderTypeBuffer.getBuffer(type);
-		}
-		renderLate(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		renderLate(animatable, partialTicks, red, green, blue, alpha);
 		//Render all top level bones
 		for (GeoBone group : model.topLevelBones)
 		{
-			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			renderRecursively(group, red, green, blue, alpha);
 		}
 	}
 
-	default void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	default void renderRecursively(GeoBone bone, float red, float green, float blue, float alpha)
 	{
-		stack.push();
-		RenderUtils.translate(bone, stack);
-		RenderUtils.moveToPivot(bone, stack);
-		RenderUtils.rotate(bone, stack);
-		RenderUtils.scale(bone, stack);
-		RenderUtils.moveBackFromPivot(bone, stack);
+		GlStateManager.pushMatrix();
+		RenderUtils.translate(bone);
+		RenderUtils.moveToPivot(bone);
+		RenderUtils.rotate(bone);
+		RenderUtils.scale(bone);
+		RenderUtils.moveBackFromPivot(bone);
 
 		if (!bone.isHidden)
 		{
 			for (GeoCube cube : bone.childCubes)
 			{
-				stack.push();
-				renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-				stack.pop();
+				GlStateManager.pushMatrix();
+				renderCube(cube, red, green, blue, alpha);
+				GlStateManager.popMatrix();
 			}
 			for (GeoBone childBone : bone.childBones)
 			{
-				renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				renderRecursively(childBone, red, green, blue, alpha);
 			}
 		}
 
 
-		stack.pop();
+		GlStateManager.popMatrix();
 	}
 
-	default void renderCube(GeoCube cube, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	default void renderCube(GeoCube cube, float red, float green, float blue, float alpha)
 	{
-		RenderUtils.moveToPivot(cube, stack);
-		RenderUtils.rotate(cube, stack);
-		RenderUtils.moveBackFromPivot(cube, stack);
-		Matrix3f matrix3f = stack.getLast().getNormal();
-		Matrix4f matrix4f = stack.getLast().getMatrix();
+		BufferBuilder builder = Tessellator.getInstance().getBuffer();
+
+		RenderUtils.moveToPivot(cube);
+		RenderUtils.rotate(cube);
+		RenderUtils.moveBackFromPivot(cube);
+
+		builder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR_NORMAL);
 
 		for (GeoQuad quad : cube.quads)
 		{
-			Vector3f normal = quad.normal.copy();
-			normal.transform(matrix3f);
+			Vec3i normal = quad.normal;
 
+			/* ???
 			if (normal.getX() < 0)
 			{
 				normal.mul(-1, 1, 1);
@@ -81,34 +86,32 @@ public interface IGeoRenderer<T>
 			{
 				normal.mul(1, 1, -1);
 			}
+			*/
 
 			for (GeoVertex vertex : quad.vertices)
 			{
 				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(), 1.0F);
-				vector4f.transform(matrix4f);
-				bufferIn.addVertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha, vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(), normal.getZ());
+
+				builder.pos(vector4f.getX(), vector4f.getY(), vector4f.getZ()).tex(vertex.textureU, vertex.textureV).color(red, green, blue, alpha).normal(normal.getX(), normal.getY(), normal.getZ()).endVertex();
 			}
 		}
+
+		Tessellator.getInstance().draw();
 	}
 
 	GeoModelProvider getGeoModelProvider();
 
 	ResourceLocation getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float ticks, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
+	default void renderEarly(T animatable, float ticks, float red, float green, float blue, float partialTicks)
 	{
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks)
+	default void renderLate(T animatable, float ticks, float red, float green, float blue, float partialTicks)
 	{
 	}
 
-	default RenderType getRenderType(T animatable, float partialTicks, MatrixStack stack, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
-	{
-		return RenderType.getEntityCutout(textureLocation);
-	}
-
-	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn)
+	default Color getRenderColor(T animatable, float partialTicks)
 	{
 		return new Color(255, 255, 255, 255);
 	}

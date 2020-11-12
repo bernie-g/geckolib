@@ -1,10 +1,13 @@
 package software.bernie.geckolib3;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.resource.ResourceListener;
+
+import java.util.concurrent.FutureTask;
 
 public class GeckoLib
 {
@@ -19,8 +22,20 @@ public class GeckoLib
 	{
 		if (!hasInitialized)
 		{
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ResourceListener::registerReloadListener);
+			FMLCommonHandler.callFuture(new FutureTask<>(() ->
+			{
+				if (FMLCommonHandler.instance().getSide() == Side.CLIENT)
+				{
+					doOnlyOnClient();
+				}
+			}, null));
 		}
 		hasInitialized = true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void doOnlyOnClient()
+	{
+		ResourceListener.registerReloadListener();
 	}
 }

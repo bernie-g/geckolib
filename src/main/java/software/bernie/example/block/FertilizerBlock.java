@@ -1,47 +1,64 @@
 package software.bernie.example.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import software.bernie.example.registry.TileRegistry;
 
 import javax.annotation.Nullable;
 
-public class FertilizerBlock extends DirectionalBlock
+public class FertilizerBlock extends BlockDirectional implements ITileEntityProvider
 {
 	public FertilizerBlock()
 	{
-		super(Properties.create(Material.ROCK).notSolid());
+		super(Material.ROCK);
 	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state)
+	public boolean hasTileEntity(IBlockState state)
 	{
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world)
+	public TileEntity createNewTileEntity(World worldIn, int meta)
 	{
 		return TileRegistry.FERTILIZER.get().create();
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state)
+	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
+	@Override
+	protected BlockStateContainer createBlockState()
 	{
-		builder.add(FACING);
+		return new BlockStateContainer(FACING);
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
 	}
 
 	@Nullable
