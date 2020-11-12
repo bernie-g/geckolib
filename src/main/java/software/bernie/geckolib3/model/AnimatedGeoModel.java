@@ -143,8 +143,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				parser.setValue("query.health", livingEntity.getHealth());
 				parser.setValue("query.max_health", livingEntity.getMaxHealth());
 				parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isBurning()));
-				//Doesn't work for some reason?
-				parser.setValue("query.on_fire_time", livingEntity.fire);
 
 				double dx = livingEntity.motionX;
 				double dz = livingEntity.motionZ;

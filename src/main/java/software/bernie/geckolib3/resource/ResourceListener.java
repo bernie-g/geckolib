@@ -12,6 +12,6 @@ public class ResourceListener
 			throw new RuntimeException("GeckoLib was initialized too early! If you are on fabric, please read the wiki on when to initialize!");
 		}
 		IReloadableResourceManager reloadable = (IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager();
-		reloadable.registerReloadListener(GeckoLibCache.getInstance()::resourceReload);
+		reloadable.registerReloadListener(GeckoLibCache.getInstance());
 	}
 }

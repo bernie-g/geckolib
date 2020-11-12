@@ -30,6 +30,8 @@ public interface IGeoRenderer<T>
 		{
 			renderRecursively(group, red, green, blue, alpha);
 		}
+
+		renderAfter(animatable, partialTicks, red, green, blue, alpha);
 	}
 
 	default void renderRecursively(GeoBone bone, float red, float green, float blue, float alpha)
@@ -108,6 +110,10 @@ public interface IGeoRenderer<T>
 	}
 
 	default void renderLate(T animatable, float ticks, float red, float green, float blue, float partialTicks)
+	{
+	}
+
+	default void renderAfter(T animatable, float ticks, float red, float green, float blue, float partialTicks)
 	{
 	}
 

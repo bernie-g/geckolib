@@ -21,13 +21,14 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAnimatable> extends Render<T> implements IGeoRenderer
+public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends Render<EntityLivingBase> implements IGeoRenderer
 {
 	private final AnimatedGeoModel<T> modelProvider;
 	private final T animatable;
@@ -62,7 +63,7 @@ public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAn
 	}
 
 	@Override
-	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
+	public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
 		// TODO: entity.isPassenger() looks redundant here
 		boolean shouldSit = /* entity.isPassenger() && */ (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
@@ -146,7 +147,7 @@ public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAn
 
 		if (entity instanceof EntityPlayer && !((EntityPlayer) entity).isSpectator())
 		{
-			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers)
+			for (GeoLayerRenderer layerRenderer : this.layerRenderers)
 			{
 				layerRenderer.doRenderLayer(entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch, 1 / 16F);
 			}
@@ -160,10 +161,16 @@ public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAn
 	{
 	}
 
+	@Nullable
 	@Override
-	public ResourceLocation getEntityTexture(T entity)
+	protected ResourceLocation getEntityTexture(EntityLivingBase entity)
 	{
-		return modelProvider.getTextureLocation(entity);
+		return modelProvider.getTextureLocation(currentAnimatable);
+	}
+
+	@Override
+	public ResourceLocation getTextureLocation(Object instance) {
+		return null;
 	}
 
 	@Override
@@ -172,7 +179,7 @@ public abstract class GeoReplacedEntityRenderer<T extends EntityLivingBase & IAn
 		return this.modelProvider;
 	}
 
-	protected void applyRotations(T entityLiving, float ageInTicks, float rotationYaw, float partialTicks)
+	protected void applyRotations(EntityLivingBase entityLiving, float ageInTicks, float rotationYaw, float partialTicks)
 	{
 		if (!entityLiving.isPlayerSleeping())
 		{

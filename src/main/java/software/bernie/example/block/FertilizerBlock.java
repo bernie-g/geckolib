@@ -1,23 +1,18 @@
 package software.bernie.example.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
-import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import software.bernie.example.registry.TileRegistry;
 
@@ -52,7 +47,7 @@ public class FertilizerBlock extends BlockDirectional implements ITileEntityProv
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(FACING);
+		return new BlockStateContainer(this, new IProperty[] {FACING});
 	}
 
 	@Override

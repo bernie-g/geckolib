@@ -1,16 +1,17 @@
 package software.bernie.example.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.SoundRegistry;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -33,9 +34,11 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 		return PlayState.CONTINUE;
 	}
 
-	public JackInTheBoxItem(Properties properties)
+	public JackInTheBoxItem()
 	{
-		super(properties.group(GeckoLibMod.geckolibItemGroup));
+		super();
+
+		this.setCreativeTab(GeckoLibMod.geckolibItemGroup);
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 		// The animation for the jackinthebox has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music plays the box opening sound
-		ClientPlayerEntity player = Minecraft.getInstance().player;
+		EntityPlayerSP player = Minecraft.getMinecraft().player;
 		player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
 	}
 
@@ -65,7 +68,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand)
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand hand)
 	{
 		if (!worldIn.isRemote)
 		{
@@ -79,7 +82,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 
 		if (controller.getAnimationState() == AnimationState.Stopped)
 		{
-			player.sendStatusMessage(new StringTextComponent("Opening the jack in the box!"), true);
+			player.sendStatusMessage(new TextComponentString("Opening the jack in the box!"), true);
 			// If you don't do this, the popup animation will only play once because the animation will be cached.
 			controller.markNeedsReload();
 			//Set the animation to open the jackinthebox which will start playing music and eventually do the actual animation. Also sets it to not loop
