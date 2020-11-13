@@ -3,7 +3,7 @@
     "category": "record",
     "sounds": [
       {
-        "name": "geckolib:jack_music",
+        "name": "geckolib3:jack_music",
         "stream": true
       }
     ]

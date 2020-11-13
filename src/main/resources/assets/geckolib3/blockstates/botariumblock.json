@@ -1,0 +1,19 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "textures": {
+      "all": "blocks/dirt"
+    },
+    "model": "cube_all",
+    "uvlock": true
+  },
+  "variants": {
+    "normal": [{}],
+    "facing=west":  [{}],
+    "facing=east":  [{}],
+    "facing=south":  [{}],
+    "facing=north":  [{}],
+    "facing=up":  [{}],
+    "facing=down":  [{}]
+  }
+}

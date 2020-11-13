@@ -92,7 +92,7 @@ public interface IGeoRenderer<T> {
 	}
 
 	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
-		return RenderLayer.getEntityCutout(textureLocation);
+		return RenderLayer.getEntityCutoutNoCull(textureLocation);
 	}
 
 	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn) {
