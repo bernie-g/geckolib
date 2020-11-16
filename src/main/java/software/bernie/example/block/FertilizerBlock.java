@@ -49,16 +49,20 @@ public class FertilizerBlock extends BlockDirectional implements ITileEntityProv
 	}
 
 	@Override
-	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	public int getMetaFromState(IBlockState state)
 	{
-		return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
+		return (state.getValue(FACING)).getIndex();
 	}
 
-	/* TODO: no idea how it's done
-	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context)
+	public IBlockState getStateFromMeta(int meta)
 	{
-		return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite());
-	} */
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer).getOpposite());
+	}
 }

@@ -33,6 +33,7 @@ public class BikeEntity extends EntityAnimal implements IAnimatable
 	{
 		super(worldIn);
 		this.ignoreFrustumCheck = true;
+		this.setSize(0.5F, 0.6F);
 	}
 
 	@Override

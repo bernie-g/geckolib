@@ -7,7 +7,6 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
@@ -21,12 +20,10 @@ import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
-import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
-@Mod.EventBusSubscriber(modid = GeckoLib.ModID)
 public class CommonListener
 {
 	@SubscribeEvent
@@ -48,7 +45,7 @@ public class CommonListener
 		int id = 0;
 
 		event.getRegistry().register(EntityEntryBuilder.create().entity(BikeEntity.class).name("Bike").id(new ResourceLocation(GeckoLib.ModID, "bike"), id++).tracker(160, 2, false).build());
-		event.getRegistry().register(EntityEntryBuilder.create().entity(GeoExampleEntity.class).name("Example").id(new ResourceLocation(GeckoLib.ModID, "bike"), id++).tracker(160, 2, false).build());
+		event.getRegistry().register(EntityEntryBuilder.create().entity(GeoExampleEntity.class).name("Example").id(new ResourceLocation(GeckoLib.ModID, "example"), id++).tracker(160, 2, false).build());
 
 		/* Tile entities */
 		GameRegistry.registerTileEntity(BotariumTileEntity.class, new ResourceLocation(GeckoLib.ModID, "botariumtile"));
@@ -81,7 +78,9 @@ public class CommonListener
 	@SubscribeEvent
 	public void onRegisterSoundEvents(RegistryEvent.Register<SoundEvent> event)
 	{
-		SoundRegistry.JACK_MUSIC = new SoundEvent(new ResourceLocation(GeckoLib.ModID, "jack_music"));
+		ResourceLocation location = new ResourceLocation(GeckoLib.ModID, "jack_music");
+
+		SoundRegistry.JACK_MUSIC = new SoundEvent(location).setRegistryName(location);
 
 		event.getRegistry().register(SoundRegistry.JACK_MUSIC);
 	}

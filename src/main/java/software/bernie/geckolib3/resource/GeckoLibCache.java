@@ -1,13 +1,16 @@
 package software.bernie.geckolib3.resource;
 
 import com.eliotlash.molang.MolangParser;
+import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FileResourcePack;
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
@@ -137,6 +140,34 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 
 	private List<ResourceLocation> getLocations(IResourcePack pack, String folder, Predicate<String> predicate)
 	{
+		if (pack instanceof LegacyV2Adapter)
+		{
+			LegacyV2Adapter adapter = (LegacyV2Adapter) pack;
+			Field packField = null;
+
+			for (Field field : adapter.getClass().getDeclaredFields())
+			{
+				if (field.getType() == IResourcePack.class)
+				{
+					packField = field;
+
+					break;
+				}
+			}
+
+			if (packField != null)
+			{
+				packField.setAccessible(true);
+
+				try
+				{
+					return this.getLocations((IResourcePack) packField.get(adapter), folder, predicate);
+				}
+				catch (Exception e)
+				{}
+			}
+		}
+
 		List<ResourceLocation> locations = new ArrayList<ResourceLocation>();
 
 		if (pack instanceof FolderResourcePack)
@@ -157,7 +188,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 	{
 		Field fileField = null;
 
-		for (Field field : folderPack.getClass().getDeclaredFields())
+		for (Field field : AbstractResourcePack.class.getDeclaredFields())
 		{
 			if (field.getType() == File.class)
 			{
@@ -173,9 +204,15 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 
 			try
 			{
-				File file = (File) fileField.get(fileField);
+				File file = (File) fileField.get(folderPack);
+				Set<String> domains = folderPack.getResourceDomains();
 
-				for (String domain : folderPack.getResourceDomains())
+				if (folderPack instanceof FMLFolderResourcePack)
+				{
+					domains.add(((FMLFolderResourcePack) folderPack).getFMLContainer().getModId());
+				}
+
+				for (String domain : domains)
 				{
 					String prefix = "assets/" + domain + "/" + folder;
 
@@ -217,7 +254,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 	{
 		Field zipField = null;
 
-		for (Field field : filePack.getClass().getDeclaredFields())
+		for (Field field : AbstractResourcePack.class.getDeclaredFields())
 		{
 			if (field.getType() == ZipFile.class)
 			{
@@ -233,7 +270,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 
 			try
 			{
-				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(zipField), predicate, locations);
+				this.enumerateZipFile(filePack, folder, (ZipFile) zipField.get(filePack), predicate, locations);
 			}
 			catch (IllegalAccessException e)
 			{

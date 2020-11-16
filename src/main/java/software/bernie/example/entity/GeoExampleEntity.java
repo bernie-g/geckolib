@@ -26,8 +26,8 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable
 	{
 		super(worldIn);
 		this.ignoreFrustumCheck = true;
+		this.setSize(0.7F, 1.3F);
 	}
-
 
 	@Override
 	public void registerControllers(AnimationData data)
