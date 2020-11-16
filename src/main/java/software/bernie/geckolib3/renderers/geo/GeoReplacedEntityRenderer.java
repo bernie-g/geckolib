@@ -132,11 +132,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 		entityModelData.headPitch = -headPitch;
 		entityModelData.netHeadYaw = -netHeadYaw;
 
-		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
+		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks, !(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		if (modelProvider instanceof IAnimatableModel)
 		{
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
+			((IAnimatableModel<T>) modelProvider).setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
 		}
 
 		GlStateManager.pushMatrix();
@@ -165,7 +165,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	@Override
 	protected ResourceLocation getEntityTexture(EntityLivingBase entity)
 	{
-		return modelProvider.getTextureLocation(currentAnimatable);
+		return modelProvider.getTextureLocation(animatable);
 	}
 
 	@Override

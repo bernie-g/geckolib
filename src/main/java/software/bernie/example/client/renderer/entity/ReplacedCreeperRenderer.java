@@ -30,10 +30,10 @@ public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedC
 		GlStateManager.scale(f2, f3, f2);
 	}
 
-	@Override
+	/* @Override
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
 		CreeperEntity creeper = (CreeperEntity) livingEntityIn;
 		float f = creeper.getCreeperFlashIntensity(partialTicks);
 		return (int)(f * 10.0F) % 2 == 0 ? 0.0F : MathHelper.clamp(f, 0.5F, 1.0F);
-	}
+	} */
 }
