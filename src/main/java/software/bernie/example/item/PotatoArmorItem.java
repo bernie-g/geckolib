@@ -31,7 +31,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 	{
 		super(materialIn, renderIndexIn, slot);
 
-		this.setCreativeTab(GeckoLibMod.geckolibItemGroup);
+		this.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 	}
 
 	// Predicate runs every frame
@@ -64,7 +64,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 			List<Item> armorList = equipmentList.subList(2, 6);
 
 			//Make sure the player is wearing all the armor. If they are, continue playing the animation, otherwise stop
-			boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS.get(), ItemRegistry.POTATO_LEGGINGS.get(), ItemRegistry.POTATO_CHEST.get(), ItemRegistry.POTATO_HEAD.get()));
+			boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_HEAD));
 			return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
 		}
 		return PlayState.STOP;

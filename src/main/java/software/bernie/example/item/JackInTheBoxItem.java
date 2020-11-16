@@ -38,7 +38,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 	{
 		super();
 
-		this.setCreativeTab(GeckoLibMod.geckolibItemGroup);
+		this.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable
 		// As soon as that keyframe gets hit this method fires and it starts playing the sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music plays the box opening sound
 		EntityPlayerSP player = Minecraft.getMinecraft().player;
-		player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
+		player.playSound(SoundRegistry.JACK_MUSIC, 1, 1);
 	}
 
 	@Override
