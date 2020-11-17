@@ -59,4 +59,14 @@ public class BotariumBlock extends BlockDirectional implements ITileEntityProvid
 	{
 		return this.getDefaultState().withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer).getOpposite());
 	}
+
+	public boolean isOpaqueCube(IBlockState state)
+	{
+		return false;
+	}
+
+	public boolean isFullCube(IBlockState state)
+	{
+		return false;
+	}
 }

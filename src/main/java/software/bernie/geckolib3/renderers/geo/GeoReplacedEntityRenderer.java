@@ -65,6 +65,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	@Override
 	public void doRender(EntityLivingBase entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, z);
+
 		// TODO: entity.isPassenger() looks redundant here
 		boolean shouldSit = /* entity.isPassenger() && */ (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
@@ -153,8 +156,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 			}
 		}
 		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();
 
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		// super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
 	protected void preRenderCallback(EntityLivingBase entitylivingbaseIn, float partialTickTime)

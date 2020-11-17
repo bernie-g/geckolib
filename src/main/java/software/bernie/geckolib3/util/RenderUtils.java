@@ -46,17 +46,17 @@ public class RenderUtils
 	{
 		if (bone.getRotationZ() != 0.0F)
 		{
-			GlStateManager.rotate(bone.getRotationZ(), 0, 0, 1);
+			GlStateManager.rotate(bone.getRotationZ() / (float) Math.PI * 180, 0, 0, 1);
 		}
 
 		if (bone.getRotationY() != 0.0F)
 		{
-			GlStateManager.rotate(bone.getRotationY(), 0, 1, 0);
+			GlStateManager.rotate(bone.getRotationY() / (float) Math.PI * 180, 0, 1, 0);
 		}
 
 		if (bone.getRotationX() != 0.0F)
 		{
-			GlStateManager.rotate(bone.getRotationX(), 1, 0, 0);
+			GlStateManager.rotate(bone.getRotationX() / (float) Math.PI * 180, 1, 0, 0);
 		}
 	}
 

@@ -5,11 +5,14 @@ import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -54,7 +57,16 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 
+		int light = tile.getWorld().getCombinedLight(tile.getPos(), 0);
+		int lx = light % 65536;
+		int ly = light / 65536;
+
+		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		OpenGlHelper.setLightmapTextureCoords(GL11.GL_TEXTURE_2D, lx, ly);
+		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+
 		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, z);
 		GlStateManager.translate(0, 0.01f, 0);
 		GlStateManager.translate(0.5, 0, 0.5);
 

@@ -4,6 +4,7 @@ import com.eliotlash.mclib.utils.Interpolations;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
@@ -54,6 +55,8 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 	@Override
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks)
 	{
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(x, y, z);
 		// TODO: entity.isPassenger() looks redundant here
 		boolean shouldSit = /* entity.isPassenger() && */ (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
@@ -142,8 +145,9 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 			}
 		}
 		GlStateManager.popMatrix();
+		GlStateManager.popMatrix();
 
-		super.doRender(entity, x, y, z, entityYaw, partialTicks);
+		// super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
 

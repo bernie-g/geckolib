@@ -5,8 +5,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -56,6 +58,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 
 		manager.tick = (getCurrentTick() - manager.startTick);
+
 		double gameTick = manager.tick;
 		double deltaTicks = gameTick - lastGameTickTime;
 		seekTime += deltaTicks;
@@ -122,6 +125,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	{
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Minecraft minecraftInstance = Minecraft.getMinecraft();
+		float partialTick = minecraftInstance.getRenderPartialTicks();
 
 		parser.setValue("query.actor_count", minecraftInstance.world.loadedEntityList.size());
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getTotalWorldTime()));
@@ -129,9 +133,22 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		if (animatable instanceof Entity)
 		{
-			parser.setValue("query.distance_from_camera",
-					ActiveRenderInfo.getCameraPosition()
-							.distanceTo(((Entity) animatable).getPositionVector()));
+			Entity entity = (Entity) animatable;
+			Entity camera = minecraftInstance.getRenderViewEntity();
+
+			Vec3d entityCamera = new Vec3d(
+				camera.prevPosX + (camera.posX - camera.prevPosX) * partialTick,
+				camera.prevPosY + (camera.posY - camera.prevPosY) * partialTick,
+				camera.prevPosZ + (camera.posZ - camera.prevPosZ) * partialTick
+			);
+			Vec3d entityPosition = new Vec3d(
+				entity.prevPosX + (entity.posX - entity.prevPosX) * partialTick,
+				entity.prevPosY + (entity.posY - entity.prevPosY) * partialTick,
+				entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTick
+			);
+			double distance = entityCamera.add(ActiveRenderInfo.getCameraPosition()).distanceTo(entityPosition);
+
+			parser.setValue("query.distance_from_camera", distance);
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).onGround));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			//Should probably check specifically whether it's in rain?
@@ -161,8 +178,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public float getCurrentTick()
+	public double getCurrentTick()
 	{
-		return (float) (Minecraft.getMinecraft().getSystemTime() / 1000D * 20);
+		return Minecraft.getSystemTime() / 1000D * 20D;
 	}
 }

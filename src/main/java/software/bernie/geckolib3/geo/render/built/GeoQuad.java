@@ -58,11 +58,11 @@ public class GeoQuad
 		Vec3i normal = directionIn.getDirectionVec();
 		if (mirrorIn != null && mirrorIn)
 		{
-			this.normal = new Vec3i(-1 * normal.getX(), 1 * normal.getY(), 1 * normal.getZ());
+			this.normal = new Vec3i(-normal.getX(), normal.getY(), normal.getZ());
 		}
 		else
 		{
-			this.normal = directionIn.getDirectionVec();
+			this.normal = normal;
 		}
 	}
 

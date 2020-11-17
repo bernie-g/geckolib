@@ -79,6 +79,7 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 	@Override
 	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
+		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
 		this.render(ageInTicks);
 	}
 
@@ -129,6 +130,7 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 				throw new RuntimeException("Could not find an armor bone.", e);
 			}
 		}
+
 		Minecraft.getMinecraft().renderEngine.bindTexture(modelProvider.getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks);
 		render(model, currentArmorItem, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);

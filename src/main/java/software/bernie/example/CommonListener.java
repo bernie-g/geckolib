@@ -69,6 +69,8 @@ public class CommonListener
 		ItemRegistry.POTATO_LEGGINGS.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_leggings"));
 		ItemRegistry.POTATO_BOOTS.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_boots"));
 
+		event.getRegistry().register(ItemRegistry.JACK_IN_THE_BOX);
+
 		event.getRegistry().register(ItemRegistry.POTATO_HEAD);
 		event.getRegistry().register(ItemRegistry.POTATO_CHEST);
 		event.getRegistry().register(ItemRegistry.POTATO_LEGGINGS);

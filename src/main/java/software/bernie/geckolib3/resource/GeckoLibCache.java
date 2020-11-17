@@ -100,6 +100,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 				}
 				catch (Exception e)
 				{
+					e.printStackTrace();
 					GeckoLib.LOGGER.error("Error loading animation file \"" + location + "\"!", e);
 				}
 			}
@@ -112,6 +113,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 				}
 				catch (Exception e)
 				{
+					e.printStackTrace();
 					GeckoLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
 				}
 			}
@@ -215,8 +217,9 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 				for (String domain : domains)
 				{
 					String prefix = "assets/" + domain + "/" + folder;
+					File pathFile = new File(file, prefix);
 
-					this.enumerateFiles(folderPack, new File(file, prefix), predicate, locations, domain, folder);
+					this.enumerateFiles(folderPack, pathFile, predicate, locations, domain, folder);
 				}
 			}
 			catch (IllegalAccessException e)

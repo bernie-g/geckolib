@@ -22,6 +22,8 @@ public interface IGeoRenderer<T>
 {
 	default void render(GeoModel model, T animatable, float partialTicks, float red, float green, float blue, float alpha)
 	{
+		GlStateManager.disableCull();
+		GlStateManager.enableRescaleNormal();
 		renderEarly(animatable, partialTicks, red, green, blue, alpha);
 
 		renderLate(animatable, partialTicks, red, green, blue, alpha);
@@ -32,6 +34,8 @@ public interface IGeoRenderer<T>
 		}
 
 		renderAfter(animatable, partialTicks, red, green, blue, alpha);
+		GlStateManager.disableRescaleNormal();
+		GlStateManager.enableCull();
 	}
 
 	default void renderRecursively(GeoBone bone, float red, float green, float blue, float alpha)
@@ -75,20 +79,18 @@ public interface IGeoRenderer<T>
 		{
 			Vec3i normal = quad.normal;
 
-			/* ???
-			if (normal.getX() < 0)
+			/* if (normal.getX() < 0)
 			{
-				normal.mul(-1, 1, 1);
+				normal = new Vec3i(-normal.getX(), normal.getY(), normal.getZ());
 			}
 			if (normal.getY() < 0)
 			{
-				normal.mul(1, -1, 1);
+				normal = new Vec3i(normal.getX(), -normal.getY(), normal.getZ());
 			}
 			if (normal.getZ() < 0)
 			{
-				normal.mul(1, 1, -1);
-			}
-			*/
+				normal = new Vec3i(normal.getX(), normal.getY(), -normal.getZ());
+			} */
 
 			for (GeoVertex vertex : quad.vertices)
 			{
