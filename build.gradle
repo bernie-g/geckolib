@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
@@ -5,80 +7,53 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
-
-apply plugin: 'net.minecraftforge.gradle'
-// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'java'
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
+version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
-version = '2.0.0'
-group = 'software.bernie.geckolib' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = 'software.bernie.geckolib'
 archivesBaseName = 'forge-1.12.2-geckolib'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+
+configurations {
+    shade
+}
 
 minecraft {
-    // The mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   Snapshot are built nightly.
-    // stable_#            Stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // Simply re-run your setup task after changing the mappings to update your workspace.
-    //mappings channel: 'snapshot', version: '20171003-1.12'
-    mappings channel: 'snapshot', version: '20171003-1.12'
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
-
-    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
-    accessTransformer = file('src/main/resources/META-INF/geckolib_at.cfg')
-    // Default run configurations.
-    // These can be tweaked, removed, or duplicated as needed.
-    runs {
-        client {
-            workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-
-        server {
-
-            // Recommended logging data for a userdev environment
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
-            property 'forge.logging.console.level', 'debug'
-        }
-    }
+    version = "1.12.2-14.23.5.2799"
+    runDir = "run"
+    mappings = "snapshot_20171003"
+}
+repositories {
+    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven { url 'https://maven.enginehub.org/repo/' }
+    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile project(':geckolib-core')
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
 
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.8'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    shade project(':geckolib-core')
+    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
@@ -88,44 +63,94 @@ dependencies {
     }
 }
 
-// Example for how to get properties into the manifest for reading by the runtime..
-jar {
+shadowJar {
+    configurations = [project.configurations.shade]
     from sourceSets.main.allSource
+
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
+    classifier ''
+}
+
+
+reobf {
+    shadowJar {} // Reobfuscate the shadowed JAR
+}
+tasks.build.dependsOn reobfShadowJar
+publish.dependsOn('reobfJar')
+shadowJar.dependsOn('classes')
+jar.finalizedBy('reobfJar')
+
+jar {
     manifest {
         attributes([
-                "Specification-Title"     : "examplemod",
-                "Specification-Vendor"    : "examplemodsareus",
+                "FMLModType"              : "LIBRARY",
+                "Specification-Title"     : "GeckoLib",
+                "Specification-Vendor"    : "Gecko",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "examplemodsareus",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                "FMLAT"                   : "geckolib_at.cfg"
+                "Implementation-Vendor"   : "Gecko",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
+
+    exclude('software/bernie/example/**')
+    exclude('assets/**')
 }
 
-// Example configuration to allow publishing using the maven-publish task
-// This is the preferred method to reobfuscate your jar file
-jar.finalizedBy('reobfJar')
-// However if you are in a multi-project build, dev time needs unobfed jar files, so you can delay the obfuscation until publishing by doing
-//publish.dependsOn('reobfJar')
-
-task sourceJar(type: Jar) {
+task packageSources(type: ShadowJar, dependsOn: 'classes') {
+    configurations = [project.configurations.shade]
     from sourceSets.main.allSource
+    exclude('META-INF/**')
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
 }
 
 
+artifacts {
+    archives shadowJar
+    archives packageSources
+}
+
+afterEvaluate {
+    publish.dependsOn('reobfShadowJar')
+    publish.dependsOn('reobfJar')
+    publish.dependsOn('packageSources')
+    shadowJar.dependsOn(packageSources)
+    shadowJar.dependsOn('classes')
+}
+
+shadowJar.finalizedBy(reobfShadowJar)
+jar.finalizedBy(packageSources)
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact jar
+            artifact shadowJar
+            artifact packageSources
+            artifactId = project.archives_base_name
         }
     }
     repositories {
         maven {
             url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+publishing {
+    repositories {
+        maven {
+            url repsyUrl
+            credentials {
+                def envUsername = System.getenv("repsyUsername")
+                def envPassword = System.getenv("repsyPassword")
+                username = envUsername == null ? findProperty("repsyUsername") : envUsername
+                password = envPassword == null ? findProperty("repsyPassword") : envPassword
+            }
         }
     }
 }
