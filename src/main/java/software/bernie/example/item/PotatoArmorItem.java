@@ -1,11 +1,10 @@
 package software.bernie.example.item;
 
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IArmorMaterial;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import software.bernie.example.GeckoLibMod;
@@ -28,32 +27,34 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder)
+	public PotatoArmorItem(ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot slot)
 	{
-		super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
+		super(materialIn, renderIndexIn, slot);
+
+		this.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 	}
 
 	// Predicate runs every frame
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event)
 	{
 		//This is all the extradata this event carries. The livingentity is the entity that's wearing the armor. The itemstack and equipmentslottype are self explanatory.
-		List<EquipmentSlotType> slotData = event.getExtraDataOfType(EquipmentSlotType.class);
+		List<EntityEquipmentSlot> slotData = event.getExtraDataOfType(EntityEquipmentSlot.class);
 		List<ItemStack> stackData = event.getExtraDataOfType(ItemStack.class);
-		LivingEntity livingEntity = event.getExtraDataOfType(LivingEntity.class).get(0);
+		EntityLivingBase livingEntity = event.getExtraDataOfType(EntityLivingBase.class).get(0);
 
 		//Always loop the animation but later on in this method we'll decide whether or not to actually play it
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", true));
 
 		//If the living entity is an armorstand just play the animation nonstop
-		if (livingEntity instanceof ArmorStandEntity)
+		if (livingEntity instanceof EntityArmorStand)
 		{
 			return PlayState.CONTINUE;
 		}
 
 		//The entity is a player, so we want to only play if the player is wearing the full set of armor
-		else if (livingEntity instanceof ClientPlayerEntity)
+		else if (livingEntity instanceof EntityPlayerSP)
 		{
-			ClientPlayerEntity client = (ClientPlayerEntity) livingEntity;
+			EntityPlayerSP client = (EntityPlayerSP) livingEntity;
 
 			//Get all the equipment, aka the armor, currently held item, and offhand item
 			List<Item> equipmentList = new ArrayList<>();
@@ -63,7 +64,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable
 			List<Item> armorList = equipmentList.subList(2, 6);
 
 			//Make sure the player is wearing all the armor. If they are, continue playing the animation, otherwise stop
-			boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS.get(), ItemRegistry.POTATO_LEGGINGS.get(), ItemRegistry.POTATO_CHEST.get(), ItemRegistry.POTATO_HEAD.get()));
+			boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_HEAD));
 			return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
 		}
 		return PlayState.STOP;

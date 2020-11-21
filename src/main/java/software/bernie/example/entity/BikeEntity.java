@@ -1,14 +1,14 @@
 package software.bernie.example.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Hand;
+import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAgeable;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -19,7 +19,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable
+public class BikeEntity extends EntityAnimal implements IAnimatable
 {
 	private AnimationFactory factory = new AnimationFactory(this);
 
@@ -29,14 +29,15 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn)
+	public BikeEntity(World worldIn)
 	{
-		super(type, worldIn);
+		super(worldIn);
 		this.ignoreFrustumCheck = true;
+		this.setSize(0.5F, 0.6F);
 	}
 
 	@Override
-	public boolean processInteract(PlayerEntity player, Hand hand)
+	public boolean processInteract(EntityPlayer player, EnumHand hand)
 	{
 		if (!this.isBeingRidden())
 		{
@@ -47,18 +48,17 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn)
-	{
-	}
+	protected void playStepSound(BlockPos pos, Block blockIn)
+	{}
 
 	@Override
-	public void travel(Vec3d pos)
+	public void travel(float strafe, float vertical, float forward)
 	{
-		if (this.isAlive())
+		if (this.isEntityAlive())
 		{
 			if (this.isBeingRidden())
 			{
-				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
+				EntityLivingBase livingentity = (EntityLivingBase) this.getControllingPassenger();
 				this.rotationYaw = livingentity.rotationYaw;
 				this.prevRotationYaw = this.rotationYaw;
 				this.rotationPitch = livingentity.rotationPitch * 0.5F;
@@ -73,7 +73,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 				}
 
 				this.setAIMoveSpeed(0.3F);
-				super.travel(new Vec3d((double) f, pos.y, (double) f1));
+				super.travel(f, vertical, f1);
 			}
 		}
 	}
@@ -102,7 +102,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 
 	@Nullable
 	@Override
-	public AgeableEntity createChild(AgeableEntity ageable)
+	public EntityAgeable createChild(EntityAgeable ageable)
 	{
 		return null;
 	}

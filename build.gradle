@@ -7,11 +7,11 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
     }
 }
-apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -29,48 +29,9 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
-    runs {
-        client {
-            workingDirectory project.file('run')
-            property 'forge.logging.console.level', 'debug'
-            mods {
-                geckolib {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        server {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            property 'forge.logging.console.level', 'debug'
-
-            mods {
-                geckolib {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            property 'forge.logging.console.level', 'debug'
-
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
-
-            mods {
-                geckolib {
-                    source sourceSets.main
-                }
-            }
-        }
-    }
+    version = "1.12.2-14.23.5.2799"
+    runDir = "run"
+    mappings = "snapshot_20171003"
 }
 repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
@@ -79,7 +40,6 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2854'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
     compile project(':geckolib-core')
@@ -150,44 +110,28 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     classifier = 'sources'
 }
 
-task noToml(type: ShadowJar, dependsOn: 'classes') {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
-    exclude('META-INF/**')
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    classifier = 'no_toml'
-}
-
 
 artifacts {
     archives shadowJar
     archives packageSources
-    archives noToml
 }
 
 afterEvaluate {
     publish.dependsOn('reobfShadowJar')
     publish.dependsOn('reobfJar')
     publish.dependsOn('packageSources')
-    publish.dependsOn('noToml')
     shadowJar.dependsOn(packageSources)
-    shadowJar.dependsOn(noToml)
     shadowJar.dependsOn('classes')
 }
 
 shadowJar.finalizedBy(reobfShadowJar)
 jar.finalizedBy(packageSources)
-jar.finalizedBy(noToml)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
             artifact packageSources
-            artifact noToml
             artifactId = project.archives_base_name
         }
     }

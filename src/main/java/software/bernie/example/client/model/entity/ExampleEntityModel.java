@@ -1,6 +1,6 @@
 package software.bernie.example.client.model.entity;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -36,7 +36,7 @@ public class ExampleEntityModel extends AnimatedGeoModel
 		super.setLivingAnimations(entity, uniqueID, customPredicate);
 		IBone head = this.getAnimationProcessor().getBone("head");
 
-		LivingEntity entityIn = (LivingEntity) entity;
+		EntityLivingBase entityIn = (EntityLivingBase) entity;
 		EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
 		head.setRotationX(extraData.headPitch * ((float)Math.PI / 180F));
 		head.setRotationY(extraData.netHeadYaw * ((float)Math.PI / 180F));

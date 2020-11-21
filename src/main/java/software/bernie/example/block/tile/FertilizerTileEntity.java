@@ -29,12 +29,6 @@ public class FertilizerTileEntity extends TileEntity implements IAnimatable
 		return PlayState.CONTINUE;
 	}
 
-	public FertilizerTileEntity()
-	{
-		super(TileRegistry.FERTILIZER.get());
-	}
-
-
 	@Override
 	public void registerControllers(AnimationData data)
 	{

@@ -1,53 +1,72 @@
 package software.bernie.example.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.BlockDirectional;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.state.StateContainer;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockReader;
-import software.bernie.example.registry.TileRegistry;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import software.bernie.example.block.tile.BotariumTileEntity;
 
 import javax.annotation.Nullable;
 
-public class BotariumBlock extends DirectionalBlock
+public class BotariumBlock extends BlockDirectional implements ITileEntityProvider
 {
 	public BotariumBlock()
 	{
-		super(Properties.create(Material.ROCK).notSolid());
-	}
-
-	@Override
-	public boolean hasTileEntity(BlockState state)
-	{
-		return true;
+		super(Material.ROCK);
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world)
+	public TileEntity createNewTileEntity(World worldIn, int meta)
 	{
-		return TileRegistry.BOTARIUM_TILE.get().create();
+		return new BotariumTileEntity();
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state)
+	public EnumBlockRenderType getRenderType(IBlockState state)
 	{
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+		return EnumBlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
-	{
-		builder.add(FACING);
-	}
-
-	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context)
+	protected BlockStateContainer createBlockState()
 	{
-		return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite());
+		return new BlockStateContainer(this, new IProperty[] {FACING});
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		return (state.getValue(FACING)).getIndex();
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+	}
+
+	@Override
+	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+	{
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer).getOpposite());
+	}
+
+	public boolean isOpaqueCube(IBlockState state)
+	{
+		return false;
+	}
+
+	public boolean isFullCube(IBlockState state)
+	{
+		return false;
 	}
 }

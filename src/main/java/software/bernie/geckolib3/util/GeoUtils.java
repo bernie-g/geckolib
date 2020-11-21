@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.util;
 
-import net.minecraft.client.renderer.model.ModelRenderer;
+import net.minecraft.client.model.ModelRenderer;
 import software.bernie.geckolib3.core.processor.IBone;
 
 public class GeoUtils

@@ -1,6 +1,5 @@
 package software.bernie.geckolib3.geo.render;
 
-import net.minecraft.client.renderer.Vector3f;
 import org.apache.commons.lang3.ArrayUtils;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.Cube;
@@ -11,6 +10,8 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.util.VectorUtils;
+
+import javax.vecmath.Vector3f;
 
 public class GeoBuilder
 {
@@ -32,7 +33,8 @@ public class GeoBuilder
 		Bone rawBone = bone.selfBone;
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
 		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
-		rotation.mul(-1, -1, 1);
+		rotation.x *= -1;
+		rotation.y *= -1;
 
 		geoBone.mirror = rawBone.getMirror();
 		geoBone.dontRender = rawBone.getNeverRender();

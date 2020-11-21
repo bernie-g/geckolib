@@ -6,8 +6,8 @@
 package software.bernie.geckolib3.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
@@ -27,20 +27,22 @@ public class AnimationUtils
 	/**
 	 * Gets the renderer for an entity
 	 */
-	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity)
+	public static <T extends Entity> Render<T> getRenderer(T entity)
 	{
-		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
-		return (EntityRenderer<T>) renderManager.getRenderer(entity);
+		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+
+		return renderManager.getEntityRenderObject(entity);
 	}
 
 	public static <T extends Entity> GeoModelProvider getGeoModelForEntity(T entity)
 	{
-		EntityRenderer<T> entityRenderer = getRenderer(entity);
+		Render<T> entityRenderer = getRenderer(entity);
 
 		if (entityRenderer instanceof IGeoRenderer)
 		{
 			return ((IGeoRenderer<?>) entityRenderer).getGeoModelProvider();
 		}
+
 		return null;
 	}
 }

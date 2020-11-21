@@ -20,11 +20,6 @@ public class BotariumTileEntity extends TileEntity implements IAnimatable
 		return PlayState.CONTINUE;
 	}
 
-	public BotariumTileEntity()
-	{
-		super(TileRegistry.BOTARIUM_TILE.get());
-	}
-
 	@Override
 	public void registerControllers(AnimationData data)
 	{

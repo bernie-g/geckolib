@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.file;
 
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.geo.exception.GeoModelException;

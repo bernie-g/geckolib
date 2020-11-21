@@ -1,15 +1,13 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.BipedModel;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
+import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -26,15 +24,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel implements IGeoRenderer<T>
+public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extends ModelBiped implements IGeoRenderer<T>
 {
-	private static Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
+	private static Map<Class<? extends ItemArmor>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
 	static
 	{
 		AnimationController.addModelFetcher((IAnimatable object) ->
 		{
-			if (object instanceof ArmorItem)
+			if (object instanceof ItemArmor)
 			{
 				GeoArmorRenderer renderer = renderers.get(object.getClass());
 				return renderer == null ? null : renderer.getGeoModelProvider();
@@ -44,9 +42,9 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	private T currentArmorItem;
-	private LivingEntity entityLiving;
+	private EntityLivingBase entityLiving;
 	private ItemStack itemStack;
-	private EquipmentSlotType armorSlot;
+	private EntityEquipmentSlot armorSlot;
 
 	// Set these to the names of your armor's bones
 	public String headBone = "armorHead";
@@ -59,12 +57,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String leftBootBone = "armorLeftBoot";
 
 
-	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer renderer)
+	public static void registerArmorRenderer(Class<? extends ItemArmor> itemClass, GeoArmorRenderer renderer)
 	{
 		renderers.put(itemClass, renderer);
 	}
 
-	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item)
+	public static GeoArmorRenderer getRenderer(Class<? extends ItemArmor> item)
 	{
 		return renderers.get(item);
 	}
@@ -79,22 +77,23 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+	public void render(Entity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float scale)
 	{
-		this.render(0, matrixStackIn, bufferIn, packedLightIn);
+		this.setRotationAngles(limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch, scale, entityIn);
+		this.render(ageInTicks);
 	}
 
-	public void render(float partialTicks, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn)
+	public void render(float partialTicks)
 	{
-		stack.translate(0.0D, 1.501F, 0.0D);
-		stack.scale(-1.0F, -1.0F, 1.0F);
+		GlStateManager.translate(0.0D, 1.501F, 0.0D);
+		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false, Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
-		stack.push();
-		stack.translate(0, 0.01f, 0);
+		GlStateManager.pushMatrix();
+		GlStateManager.translate(0, 0.01f, 0);
 		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
 		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
 		if (this.swingProgress > 0.0F)
@@ -131,13 +130,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				throw new RuntimeException("Could not find an armor bone.", e);
 			}
 		}
-		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(currentArmorItem));
-		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn, modelProvider.getTextureLocation(currentArmorItem));
-		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
-		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -1.501F, 0.0D);
+
+		Minecraft.getMinecraft().renderEngine.bindTexture(modelProvider.getTextureLocation(currentArmorItem));
+		Color renderColor = getRenderColor(currentArmorItem, partialTicks);
+		render(model, currentArmorItem, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		GlStateManager.popMatrix();
+		GlStateManager.scale(-1.0F, -1.0F, 1.0F);
+		GlStateManager.translate(0.0D, -1.501F, 0.0D);
 	}
 
 	private void fitToBiped()
@@ -152,7 +151,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 		try
 		{
-			if (!(this.entityLiving instanceof ArmorStandEntity))
+			if (!(this.entityLiving instanceof EntityArmorStand))
 			{
 				GeoUtils.copyRotations(this.bipedHead, headBone);
 				GeoUtils.copyRotations(this.bipedBody, bodyBone);
@@ -185,7 +184,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	/**
 	 * Everything after this point needs to be called every frame before rendering
 	 */
-	public void setCurrentItem(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot)
+	public void setCurrentItem(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot)
 	{
 		this.entityLiving = entityLiving;
 		this.itemStack = itemStack;
@@ -193,17 +192,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.currentArmorItem = (T) itemStack.getItem();
 	}
 
-	public final GeoArmorRenderer applyEntityStats(BipedModel defaultArmor)
+	public final GeoArmorRenderer applyEntityStats(ModelBiped defaultArmor)
 	{
 		this.isChild = defaultArmor.isChild;
 		this.isSneak = defaultArmor.isSneak;
-		this.isSitting = defaultArmor.isSitting;
+		this.isRiding = defaultArmor.isRiding;
 		this.rightArmPose = defaultArmor.rightArmPose;
 		this.leftArmPose = defaultArmor.leftArmPose;
 		return this;
 	}
 
-	public GeoArmorRenderer applySlot(EquipmentSlotType slot)
+	public GeoArmorRenderer applySlot(EntityEquipmentSlot slot)
 	{
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
@@ -256,6 +255,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	@Override
 	public Integer getUniqueID(T animatable)
 	{
-		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(), itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUniqueID().toString());
+		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(), itemStack.hasTagCompound() ? itemStack.getTagCompound().toString() : 1, this.entityLiving.getUniqueID().toString());
 	}
 }

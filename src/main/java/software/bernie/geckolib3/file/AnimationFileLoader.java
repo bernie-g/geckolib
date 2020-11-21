@@ -4,9 +4,9 @@ import com.eliotlash.molang.MolangParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.util.JSONException;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.util.JsonException;
+import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib3.GeckoLib;
@@ -15,6 +15,7 @@ import software.bernie.geckolib3.util.json.JsonAnimationUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public class AnimationFileLoader
 				animation = JsonAnimationUtils.deserializeJsonToAnimation(JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
 			}
-			catch (JSONException e)
+			catch (JsonException e)
 			{
 				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
@@ -52,7 +53,7 @@ public class AnimationFileLoader
 	{
 		String content = getResourceAsString(location, manager);
 		Gson GSON = new Gson();
-		return JSONUtils.fromJson(GSON, content, JsonObject.class);
+		return JsonUtils.fromJson(GSON, new StringReader(content), JsonObject.class);
 	}
 
 
