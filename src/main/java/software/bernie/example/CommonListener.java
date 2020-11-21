@@ -1,20 +1,26 @@
 package software.bernie.example;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import software.bernie.example.block.BotariumBlock;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
+import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.item.JackInTheBoxItem;
@@ -85,5 +91,14 @@ public class CommonListener
 		SoundRegistry.JACK_MUSIC = new SoundEvent(location).setRegistryName(location);
 
 		event.getRegistry().register(SoundRegistry.JACK_MUSIC);
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onModelRegistry(ModelRegistryEvent event)
+	{
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0, new ModelResourceLocation(GeckoLib.ModID + ":jackintheboxitem.json", "inventory"));
+
+		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}
 }

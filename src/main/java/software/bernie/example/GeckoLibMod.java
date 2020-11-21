@@ -5,15 +5,12 @@
 
 package software.bernie.example;
 
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -22,7 +19,6 @@ import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
-import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.entity.BikeEntity;
@@ -77,14 +73,5 @@ public class GeckoLibMod
 		ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
 		renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
 		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer); */
-	}
-
-	@SideOnly(Side.CLIENT)
-	@Mod.EventHandler
-	public void registerItemRenderers(FMLInitializationEvent event)
-	{
-		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0, new ModelResourceLocation(GeckoLib.ModID + ":jackintheboxitem.json", "inventory"));
-
-		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}
 }
