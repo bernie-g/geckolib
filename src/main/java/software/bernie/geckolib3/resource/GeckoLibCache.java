@@ -257,7 +257,7 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 	{
 		Field zipField = null;
 
-		for (Field field : AbstractResourcePack.class.getDeclaredFields())
+		for (Field field : FileResourcePack.class.getDeclaredFields())
 		{
 			if (field.getType() == ZipFile.class)
 			{
@@ -293,11 +293,12 @@ public class GeckoLibCache implements IResourceManagerReloadListener
 
 			for (String domain : domains)
 			{
-				String path = "assets/" + domain + "/" + folder + "/";
+				String assets = "assets/" + domain + "/";
+				String path = assets + folder + "/";
 
-				if (name.startsWith(path) && predicate.test(name));
+				if (name.startsWith(path) && predicate.test(name))
 				{
-					locations.add(new ResourceLocation(domain, path.substring(path.length())));
+					locations.add(new ResourceLocation(domain, name.substring(assets.length())));
 				}
 			}
 		}
