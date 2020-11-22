@@ -59,7 +59,6 @@ public class GeckoLibMod
 
 	public GeckoLibMod()
 	{
-		GeckoLib.initialize();
 
 		MinecraftForge.EVENT_BUS.register(new CommonListener());
 	}
@@ -81,6 +80,7 @@ public class GeckoLibMod
 	@Mod.EventHandler
 	public void registerReplacedRenderers(FMLInitializationEvent event)
 	{
+		GeckoLib.initialize();
 		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 		ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
 		renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
