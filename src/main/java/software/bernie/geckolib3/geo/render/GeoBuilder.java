@@ -54,7 +54,7 @@ public class GeoBuilder
 		{
 			for (Cube cube : rawBone.getCubes())
 			{
-				geoBone.childCubes.add(GeoCube.createFromPojoCube(cube, properties, geoBone.inflate == null ? null : geoBone.inflate / 16));
+				geoBone.childCubes.add(GeoCube.createFromPojoCube(cube, properties, geoBone.inflate == null ? null : geoBone.inflate / 16, geoBone.mirror));
 			}
 		}
 
