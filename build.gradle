@@ -191,11 +191,6 @@ publishing {
             artifactId = project.archives_base_name
         }
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
 }
 publishing {
     repositories {
