@@ -112,6 +112,16 @@ public class MatrixStack
 		this.tempModelMatrix.setM22(z);
 
 		this.model.peek().mul(this.tempModelMatrix);
+
+		if (x < 0 || y < 0 || z < 0)
+		{
+			this.tempNormalMatrix.setIdentity();
+			this.tempNormalMatrix.setM00(x < 0 ? -1 : 1);
+			this.tempNormalMatrix.setM11(y < 0 ? -1 : 1);
+			this.tempNormalMatrix.setM22(z < 0 ? -1 : 1);
+
+			this.normal.peek().mul(this.tempNormalMatrix);
+		}
 	}
 
 	public void scale(GeoBone bone)
