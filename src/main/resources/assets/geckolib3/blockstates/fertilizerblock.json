@@ -1,0 +1,27 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "geckolib3:empty"
+  },
+  "variants": {
+    "inventory": [
+      {}
+    ],
+    "facing": {
+      "north": {
+        "y": 0
+      },
+      "south": {
+        "y": 180
+      },
+      "east": {
+        "y": 90
+      },
+      "west": {
+        "y": 270
+      },
+      "up": {},
+      "down": {}
+    }
+  }
+}
