@@ -112,6 +112,16 @@ public class MatrixStack
 		this.tempModelMatrix.setM22(z);
 
 		this.model.peek().mul(this.tempModelMatrix);
+
+		if (x < 0 || y < 0 || z < 0)
+		{
+			this.tempNormalMatrix.setIdentity();
+			this.tempNormalMatrix.setM00(x < 0 ? -1 : 1);
+			this.tempNormalMatrix.setM11(y < 0 ? -1 : 1);
+			this.tempNormalMatrix.setM22(z < 0 ? -1 : 1);
+
+			this.normal.peek().mul(this.tempNormalMatrix);
+		}
 	}
 
 	public void scale(GeoBone bone)
@@ -178,7 +188,7 @@ public class MatrixStack
 	public void rotate(GeoCube bone)
 	{
 		Vector3f rotation = bone.rotation;
-		Quaternion quat = new Quaternion(rotation.getX(), rotation.getY(), rotation.getZ(), 0);
+		Quaternion quat = this.fromAngles(rotation.getX(), rotation.getY(), rotation.getZ());
 
 		this.tempNormalMatrix.setIdentity();
 		this.tempModelMatrix.setIdentity();
@@ -215,6 +225,7 @@ public class MatrixStack
 		this.tempArray[15] = 1.0F;
 
 		this.tempModelMatrix.set(this.tempArray);
+		this.tempModelMatrix.transpose();
 
 		this.tempArray[0] = 1.0F - 2.0F * (yy + zz);
 		this.tempArray[1] = 2.0F * (xy + zw);
@@ -229,8 +240,26 @@ public class MatrixStack
 		this.tempArray[8] = 1.0F - 2.0F * (xx + yy);
 
 		this.tempNormalMatrix.set(this.tempArray);
+		this.tempNormalMatrix.transpose();
 
 		this.model.peek().mul(this.tempModelMatrix);
 		this.normal.peek().mul(this.tempNormalMatrix);
+	}
+
+	private Quaternion fromAngles(float x, float y, float z)
+	{
+		float sx = (float) Math.sin(0.5F * x);
+		float cx = (float) Math.cos(0.5F * x);
+		float sy = (float) Math.sin(0.5F * y);
+		float cy = (float) Math.cos(0.5F * y);
+		float sz = (float) Math.sin(0.5F * z);
+		float cz = (float) Math.cos(0.5F * z);
+
+		float ox = sx * cy * cz + cx * sy * sz;
+		float oy = cx * sy * cz - sx * cy * sz;
+		float oz = sx * sy * cz + cx * cy * sz;
+		float ow = cx * cy * cz - sx * sy * sz;
+
+		return new Quaternion(ox, oy, oz, ow);
 	}
 }
