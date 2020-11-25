@@ -113,7 +113,7 @@ public abstract class GeoArmorRenderer<T extends ItemArmor & IAnimatable> extend
 			IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 			try
 			{
-				headBone.setPositionY(headBone.getPositionY() - 5.35F);
+				headBone.setPositionY(headBone.getPositionY() - 1F);
 				bodyBone.setPositionZ(bodyBone.getPositionX() - 0.4F);
 				bodyBone.setPositionY(bodyBone.getPositionX() - 3.5F);
 				rightArmBone.setPositionY(bodyBone.getPositionX() - 3);

@@ -173,7 +173,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				float groundSpeed = MathHelper.sqrt((dx * dx) + (dz * dz));
 				parser.setValue("query.ground_speed", groundSpeed);
 
-				float yawSpeed = this.getYaw(livingEntity, (float) currentTick) - this.getYaw(livingEntity, (float) (currentTick - 0.1));
+				float yawSpeed = this.getYaw(livingEntity, Minecraft.getMinecraft().getRenderPartialTicks()) - this.getYaw(livingEntity, (float) (Minecraft.getMinecraft().getRenderPartialTicks() - 0.1));
 				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
