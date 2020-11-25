@@ -61,9 +61,11 @@ public interface IGeoRenderer<T>
 		{
 			for (GeoCube cube : bone.childCubes)
 			{
+				MATRIX_STACK.push();
 				GlStateManager.pushMatrix();
 				renderCube(builder, cube, red, green, blue, alpha);
 				GlStateManager.popMatrix();
+				MATRIX_STACK.pop();
 			}
 			for (GeoBone childBone : bone.childBones)
 			{
