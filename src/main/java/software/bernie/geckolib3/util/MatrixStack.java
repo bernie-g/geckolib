@@ -188,59 +188,28 @@ public class MatrixStack
 	public void rotate(GeoCube bone)
 	{
 		Vector3f rotation = bone.rotation;
-		Quaternion quat = this.fromAngles(rotation.getX(), rotation.getY(), rotation.getZ());
+		Matrix4f matrix4f = new Matrix4f();
+		Matrix3f matrix3f = new Matrix3f();
+
+		this.tempModelMatrix.setIdentity();
+		matrix4f.rotZ(rotation.getZ());
+		this.tempModelMatrix.mul(matrix4f);
+
+		matrix4f.rotY(rotation.getY());
+		this.tempModelMatrix.mul(matrix4f);
+
+		matrix4f.rotX(rotation.getX());
+		this.tempModelMatrix.mul(matrix4f);
 
 		this.tempNormalMatrix.setIdentity();
-		this.tempModelMatrix.setIdentity();
+		matrix3f.rotZ(rotation.getZ());
+		this.tempNormalMatrix.mul(matrix3f);
 
-		/* https://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToMatrix/index.htm */
-		float xx = quat.x * quat.x;
-		float xy = quat.x * quat.y;
-		float xz = quat.x * quat.z;
-		float xw = quat.x * quat.w;
-		float yy = quat.y * quat.y;
-		float yz = quat.y * quat.z;
-		float yw = quat.y * quat.w;
-		float zz = quat.z * quat.z;
-		float zw = quat.z * quat.w;
+		matrix3f.rotY(rotation.getY());
+		this.tempNormalMatrix.mul(matrix3f);
 
-		this.tempArray[0] = 1.0F - 2.0F * (yy + zz);
-		this.tempArray[1] = 2.0F * (xy + zw);
-		this.tempArray[2] = 2.0F * (xz - yw);
-		this.tempArray[3] = 0.0F;
-
-		this.tempArray[4] = 2.0F * (xy - zw);
-		this.tempArray[5] = 1.0F - 2.0F * (xx + zz);
-		this.tempArray[6] = 2.0F * (yz + xw);
-		this.tempArray[7] = 0.0F;
-
-		this.tempArray[8] = 2.0F * (xz + yw);
-		this.tempArray[9] = 2.0F * (yz - xw);
-		this.tempArray[10] = 1.0F - 2.0F * (xx + yy);
-		this.tempArray[11] = 0.0F;
-
-		this.tempArray[12] = 0.0F;
-		this.tempArray[13] = 0.0F;
-		this.tempArray[14] = 0.0F;
-		this.tempArray[15] = 1.0F;
-
-		this.tempModelMatrix.set(this.tempArray);
-		this.tempModelMatrix.transpose();
-
-		this.tempArray[0] = 1.0F - 2.0F * (yy + zz);
-		this.tempArray[1] = 2.0F * (xy + zw);
-		this.tempArray[2] = 2.0F * (xz - yw);
-
-		this.tempArray[3] = 2.0F * (xy - zw);
-		this.tempArray[4] = 1.0F - 2.0F * (xx + zz);
-		this.tempArray[5] = 2.0F * (yz + xw);
-
-		this.tempArray[6] = 2.0F * (xz + yw);
-		this.tempArray[7] = 2.0F * (yz - xw);
-		this.tempArray[8] = 1.0F - 2.0F * (xx + yy);
-
-		this.tempNormalMatrix.set(this.tempArray);
-		this.tempNormalMatrix.transpose();
+		matrix3f.rotX(rotation.getX());
+		this.tempNormalMatrix.mul(matrix3f);
 
 		this.model.peek().mul(this.tempModelMatrix);
 		this.normal.peek().mul(this.tempNormalMatrix);
