@@ -70,7 +70,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Tile
 		GlStateManager.translate(0, 0.01f, 0);
 		GlStateManager.translate(0.5, 0.5, 0.5);
 
-		Minecraft.getMinecraft().renderEngine.bindTexture(modelProvider.getTextureLocation(animatable));
+		Minecraft.getMinecraft().renderEngine.bindTexture(getTextureLocation(animatable));
 		Color renderColor = getRenderColor(animatable, 0f);
 		render(model, animatable, 0f, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		GlStateManager.popMatrix();

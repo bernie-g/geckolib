@@ -169,12 +169,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	@Override
 	protected ResourceLocation getEntityTexture(EntityLivingBase entity)
 	{
-		return modelProvider.getTextureLocation(animatable);
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(Object instance) {
-		return null;
+		return getTextureLocation(currentAnimatable);
 	}
 
 	@Override
