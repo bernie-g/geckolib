@@ -128,7 +128,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				throw new RuntimeException("Could not find an armor bone.", e);
 			}
 		}
-		MinecraftClient.getInstance().getTextureManager().bindTexture(modelProvider.getTextureLocation(currentArmorItem));
+		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn, getTextureLocation(currentArmorItem));
 		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn, OverlayTexture.DEFAULT_UV, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
