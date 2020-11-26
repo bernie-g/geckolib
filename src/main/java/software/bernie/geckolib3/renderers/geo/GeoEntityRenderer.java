@@ -152,7 +152,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public ResourceLocation getEntityTexture(T entity)
 	{
-		return modelProvider.getTextureLocation(entity);
+		return getTextureLocation(entity);
 	}
 
 	@Override

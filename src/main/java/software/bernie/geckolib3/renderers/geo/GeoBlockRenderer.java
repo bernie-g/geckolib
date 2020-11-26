@@ -64,9 +64,9 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 		rotateBlock(getFacing(tile), stack);
 
-		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(tile));
+		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn, modelProvider.getTextureLocation(tile));
+		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn, getTextureLocation(tile));
 		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
