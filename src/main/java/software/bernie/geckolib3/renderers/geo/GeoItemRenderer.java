@@ -76,9 +76,9 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);
 
-		Minecraft.getInstance().textureManager.bindTexture(modelProvider.getTextureLocation(animatable));
+		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(animatable));
 		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn, modelProvider.getTextureLocation(animatable));
+		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn, getTextureLocation(animatable));
 		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
