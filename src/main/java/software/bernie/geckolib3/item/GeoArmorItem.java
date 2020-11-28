@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.ArmorProvider;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
 
@@ -26,10 +27,10 @@ public abstract class GeoArmorItem extends ArmorItem implements ArmorProvider {
     }
 
     @Override
-    public String getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, String defaultTexture) {
+    public Identifier getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, Identifier defaultTexture) {
         Class<? extends ArmorItem> clazz = this.getClass();
         GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
-        return renderer.getTextureLocation((ArmorItem) stack.getItem()).toString();
+        return renderer.getTextureLocation((ArmorItem) stack.getItem());
     }
 
 }

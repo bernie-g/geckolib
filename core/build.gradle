@@ -6,6 +6,9 @@ def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
 archivesBaseName = project.archivesBaseName
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
 repositories {
     mavenCentral()
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
