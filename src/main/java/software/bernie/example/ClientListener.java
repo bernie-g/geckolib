@@ -37,7 +37,7 @@ public class ClientListener implements ClientModInitializer
 	@Override
 	public void onInitializeClient()
 	{
-		if (FabricLoader.INSTANCE.isDevelopmentEnvironment())
+		if (FabricLoader.INSTANCE.isDevelopmentEnvironment()  && !GeckoLibMod.DISABLE_IN_DEV)
 		{
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEO_EXAMPLE_ENTITY, (entityRenderDispatcher, context) -> new ExampleGeoRenderer(entityRenderDispatcher));
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY, (entityRenderDispatcher, context) -> new BikeGeoRenderer(entityRenderDispatcher));

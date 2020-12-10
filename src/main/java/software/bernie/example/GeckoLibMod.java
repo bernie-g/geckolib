@@ -27,7 +27,7 @@ public class GeckoLibMod implements ModInitializer
 	public void onInitialize()
 	{
 		GeckoLib.initialize();
-		if (FabricLoader.INSTANCE.isDevelopmentEnvironment())
+		if (FabricLoader.INSTANCE.isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV)
 		{
 			new EntityRegistry();
 			FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, EntityUtils.createGenericEntityAttributes());
