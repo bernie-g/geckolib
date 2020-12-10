@@ -76,6 +76,8 @@ repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -85,10 +87,10 @@ dependencies {
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
-
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
@@ -116,7 +118,7 @@ shadowJar {
 
 
 reobf {
-    shadowJar {} // Reobfuscate the shadowed JAR
+    shadowJar {}
 }
 tasks.build.dependsOn reobfShadowJar
 publish.dependsOn('reobfJar')
@@ -150,44 +152,27 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     classifier = 'sources'
 }
 
-task noToml(type: ShadowJar, dependsOn: 'classes') {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
-    exclude('META-INF/**')
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    classifier = 'no_toml'
-}
-
-
 artifacts {
     archives shadowJar
     archives packageSources
-    archives noToml
 }
 
 afterEvaluate {
     publish.dependsOn('reobfShadowJar')
     publish.dependsOn('reobfJar')
     publish.dependsOn('packageSources')
-    publish.dependsOn('noToml')
     shadowJar.dependsOn(packageSources)
-    shadowJar.dependsOn(noToml)
     shadowJar.dependsOn('classes')
 }
 
 shadowJar.finalizedBy(reobfShadowJar)
 jar.finalizedBy(packageSources)
-jar.finalizedBy(noToml)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
             artifact packageSources
-            artifact noToml
             artifactId = project.archives_base_name
         }
     }
