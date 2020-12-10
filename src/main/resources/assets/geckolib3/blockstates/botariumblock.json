@@ -1,27 +1,28 @@
 {
-  "forge_marker": 1,
-  "defaults": {
-    "model": "geckolib3:empty"
-  },
   "variants": {
-    "inventory": [
-      {}
-    ],
-    "facing": {
-      "north": {
-        "y": 0
-      },
-      "south": {
-        "y": 180
-      },
-      "east": {
-        "y": 90
-      },
-      "west": {
-        "y": 270
-      },
-      "up": {},
-      "down": {}
+    "facing=north": {
+      "y": 0,
+      "model": "geckolib3:box"
+    },
+    "facing=south": {
+      "y": 180,
+      "model": "geckolib3:box"
+    },
+    "facing=east": {
+      "y": 90,
+      "model": "geckolib3:box"
+    },
+    "facing=west": {
+      "y": 270,
+      "model": "geckolib3:box"
+    },
+    "facing=up": {
+      "y": 0,
+      "model": "geckolib3:box"
+    },
+    "facing=down": {
+      "y": 0,
+      "model": "geckolib3:box"
     }
   }
 }

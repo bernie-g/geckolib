@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class FertilizerBlock extends BlockDirectional implements ITileEntityProvider
 {
@@ -74,5 +75,12 @@ public class FertilizerBlock extends BlockDirectional implements ITileEntityProv
 	public boolean isFullCube(IBlockState state)
 	{
 		return false;
+	}
+
+	@Override
+	public void addInformation(ItemStack stack, World player, List<String> tooltip, ITooltipFlag advanced)
+	{
+		tooltip.add("Turn on rain to see the fertilizer model!");
+		super.addInformation(stack, player, tooltip, advanced);
 	}
 }
