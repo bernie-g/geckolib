@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.util;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.Vector3f;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -62,6 +63,9 @@ public class RenderUtils
 	public static void rotate(GeoCube bone, MatrixStack stack)
 	{
 		Vector3f rotation = bone.rotation;
-		stack.rotate(new Quaternion(rotation.getX(), rotation.getY(), rotation.getZ(), false));
+
+		stack.rotate(new Quaternion(0, 0, rotation.getZ(), false));
+		stack.rotate(new Quaternion(0, rotation.getY(), 0, false));
+		stack.rotate(new Quaternion(rotation.getX(), 0, 0, false));
 	}
 }
