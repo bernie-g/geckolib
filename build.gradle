@@ -95,7 +95,6 @@ dependencies {
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
@@ -111,15 +110,13 @@ shadowJar {
 
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
     classifier ''
 }
-
 
 reobf {
     shadowJar {}
 }
+
 tasks.build.dependsOn reobfShadowJar
 publish.dependsOn('reobfJar')
 shadowJar.dependsOn('classes')
@@ -138,15 +135,11 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
 }
 
 task packageSources(type: ShadowJar, dependsOn: 'classes') {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
-    exclude('META-INF/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
