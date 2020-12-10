@@ -40,7 +40,7 @@ public class ClientListener
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event)
 	{
-		if (!FMLEnvironment.production)
+		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV)
 		{
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);

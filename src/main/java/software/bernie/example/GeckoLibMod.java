@@ -24,20 +24,20 @@ import software.bernie.geckolib3.GeckoLib;
 public class GeckoLibMod
 {
 	public static ItemGroup geckolibItemGroup;
+	public static boolean DISABLE_IN_DEV = false;
 
 	public GeckoLibMod()
 	{
 		GeckoLib.initialize();
-		if (!FMLEnvironment.production)
+		if (!FMLEnvironment.production && !DISABLE_IN_DEV)
 		{
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-			bus.addListener(this::onCommonSetup);
 			EntityRegistry.ENTITIES.register(bus);
 			ItemRegistry.ITEMS.register(bus);
 			TileRegistry.TILES.register(bus);
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
-			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples")
+			geckolibItemGroup = new ItemGroup(0, "geckolib_examples")
 			{
 				@Override
 				public ItemStack createIcon()
@@ -45,36 +45,6 @@ public class GeckoLibMod
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
 				}
 			};
-
 		}
-
-	}
-
-	public static AttributeModifierMap createGenericEntityAttributes()
-	{
-		return AttributeModifierMap.func_233803_a_().
-				func_233814_a_(Attributes.field_233818_a_).
-				func_233814_a_(Attributes.field_233819_b_).
-				func_233814_a_(Attributes.field_233820_c_).
-				func_233814_a_(Attributes.field_233821_d_).
-				func_233814_a_(Attributes.field_233822_e_).
-				func_233814_a_(Attributes.field_233823_f_).
-				func_233814_a_(Attributes.field_233824_g_).
-				func_233814_a_(Attributes.field_233825_h_).
-				func_233814_a_(Attributes.field_233826_i_).
-				func_233814_a_(Attributes.field_233827_j_).
-				func_233814_a_(Attributes.field_233828_k_).
-				func_233814_a_(Attributes.field_233829_l_).
-				func_233814_a_(Attributes.field_233830_m_).
-				func_233814_a_(ForgeMod.SWIM_SPEED.get()).
-				func_233814_a_(ForgeMod.REACH_DISTANCE.get()).
-				func_233814_a_(ForgeMod.NAMETAG_DISTANCE.get()).
-				func_233814_a_(ForgeMod.ENTITY_GRAVITY.get()).func_233813_a_();
-	}
-
-	public void onCommonSetup(FMLCommonSetupEvent event)
-	{
-		GlobalEntityTypeAttributes.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), createGenericEntityAttributes());
-		GlobalEntityTypeAttributes.put(EntityRegistry.BIKE_ENTITY.get(), createGenericEntityAttributes());
 	}
 }
