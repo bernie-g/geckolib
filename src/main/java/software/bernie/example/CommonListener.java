@@ -97,7 +97,7 @@ public class CommonListener
 	@SideOnly(Side.CLIENT)
 	public void onModelRegistry(ModelRegistryEvent event)
 	{
-		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0, new ModelResourceLocation(GeckoLib.ModID + ":jackintheboxitem.json", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0, new ModelResourceLocation(GeckoLib.ModID + ":jackintheboxitem", "inventory"));
 
 		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}

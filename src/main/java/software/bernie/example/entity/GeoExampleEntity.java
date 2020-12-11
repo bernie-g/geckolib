@@ -18,8 +18,8 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
-		return PlayState.CONTINUE;
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.cocoloco.walk_keyframe", true));
+		return PlayState.STOP;
 	}
 
 	public GeoExampleEntity(World worldIn)

@@ -4,11 +4,14 @@ import com.eliotlash.molang.MolangParser;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.MinecraftForge;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.animation.AnimationTicker;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -32,6 +35,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
 
+
 	protected AnimatedGeoModel()
 	{
 		this.animationProcessor = new AnimationProcessor(this);
@@ -51,18 +55,21 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (manager.startTick == null)
+		AnimationData data = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		if (data.ticker == null)
 		{
-			manager.startTick = getCurrentTick();
+			AnimationTicker ticker = new AnimationTicker(data);
+			data.ticker = ticker;
+			MinecraftForge.EVENT_BUS.register(ticker);
+		}
+		if (!Minecraft.getMinecraft().isGamePaused() || data.shouldPlayWhilePaused)
+		{
+			seekTime = data.tick + Minecraft.getMinecraft().getRenderPartialTicks();
+		}
+		else {
+			seekTime = data.tick;
 		}
 
-		manager.tick = (getCurrentTick() - manager.startTick);
-
-		double gameTick = manager.tick;
-		double deltaTicks = gameTick - lastGameTickTime;
-		seekTime += deltaTicks;
-		lastGameTickTime = gameTick;
 		AnimationEvent<T> predicate;
 		if (customPredicate == null)
 		{
@@ -137,14 +144,14 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			Entity camera = minecraftInstance.getRenderViewEntity();
 
 			Vec3d entityCamera = new Vec3d(
-				camera.prevPosX + (camera.posX - camera.prevPosX) * partialTick,
-				camera.prevPosY + (camera.posY - camera.prevPosY) * partialTick,
-				camera.prevPosZ + (camera.posZ - camera.prevPosZ) * partialTick
+					camera.prevPosX + (camera.posX - camera.prevPosX) * partialTick,
+					camera.prevPosY + (camera.posY - camera.prevPosY) * partialTick,
+					camera.prevPosZ + (camera.posZ - camera.prevPosZ) * partialTick
 			);
 			Vec3d entityPosition = new Vec3d(
-				entity.prevPosX + (entity.posX - entity.prevPosX) * partialTick,
-				entity.prevPosY + (entity.posY - entity.prevPosY) * partialTick,
-				entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTick
+					entity.prevPosX + (entity.posX - entity.prevPosX) * partialTick,
+					entity.prevPosY + (entity.posY - entity.prevPosY) * partialTick,
+					entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTick
 			);
 			double distance = entityCamera.add(ActiveRenderInfo.getCameraPosition()).distanceTo(entityPosition);
 
@@ -166,7 +173,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				float groundSpeed = MathHelper.sqrt((dx * dx) + (dz * dz));
 				parser.setValue("query.ground_speed", groundSpeed);
 
-				float yawSpeed = this.getYaw(livingEntity, (float) currentTick) - this.getYaw(livingEntity, (float) (currentTick - 0.1));
+				float yawSpeed = this.getYaw(livingEntity, Minecraft.getMinecraft().getRenderPartialTicks()) - this.getYaw(livingEntity, (float) (Minecraft.getMinecraft().getRenderPartialTicks() - 0.1));
 				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
@@ -178,8 +185,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public double getCurrentTick()
+	public float getCurrentTick()
 	{
-		return Minecraft.getSystemTime() / 1000D * 20D;
+		return (float) (Minecraft.getSystemTime() / 50d);
 	}
 }

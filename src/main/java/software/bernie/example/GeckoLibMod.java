@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -39,6 +40,7 @@ import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 public class GeckoLibMod
 {
 	private static CreativeTabs geckolibItemGroup;
+	private boolean deobfuscatedEnvironment;
 
 	public static CreativeTabs getGeckolibItemGroup()
 	{
@@ -59,31 +61,40 @@ public class GeckoLibMod
 
 	public GeckoLibMod()
 	{
-		GeckoLib.initialize();
-
-		MinecraftForge.EVENT_BUS.register(new CommonListener());
+		deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
+		if (deobfuscatedEnvironment)
+		{
+			MinecraftForge.EVENT_BUS.register(new CommonListener());
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
 	public void registerRenderers(FMLPreInitializationEvent event)
 	{
-		RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
-		RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
+		if (deobfuscatedEnvironment)
+		{
+			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
 
-		GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
+			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(BotariumTileEntity.class, new BotariumTileRenderer());
-		ClientRegistry.bindTileEntitySpecialRenderer(FertilizerTileEntity.class, new FertilizerTileRenderer());
+			ClientRegistry.bindTileEntitySpecialRenderer(BotariumTileEntity.class, new BotariumTileRenderer());
+			ClientRegistry.bindTileEntitySpecialRenderer(FertilizerTileEntity.class, new FertilizerTileRenderer());
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
 	public void registerReplacedRenderers(FMLInitializationEvent event)
 	{
-		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-		ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
-		renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
-		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
+		if (deobfuscatedEnvironment)
+		{
+			GeckoLib.initialize();
+			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
+			renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
+			GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
+		}
 	}
 }
