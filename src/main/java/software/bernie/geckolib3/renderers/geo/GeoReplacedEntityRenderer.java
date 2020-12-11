@@ -273,4 +273,10 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 	{
 		return this.layerRenderers.add(layer);
 	}
+
+	@Override
+	public ResourceLocation getTextureLocation(Object instance)
+	{
+		return this.modelProvider.getTextureLocation(this.animatable);
+	}
 }
