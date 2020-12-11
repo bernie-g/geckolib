@@ -27,4 +27,5 @@ public class ItemRegistry
 	public static final RegistryObject<PotatoArmorItem> POTATO_LEGGINGS = ITEMS.register("potato_leggings", () -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.LEGS, new Item.Properties()));
 	public static final RegistryObject<PotatoArmorItem> POTATO_BOOTS = ITEMS.register("potato_boots", () -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.FEET, new Item.Properties()));
 
+	public static final RegistryObject<BlockItem> BAKEDBLOCK = ITEMS.register("bakedblock", () -> new BlockItem(BlockRegistry.BAKED_BLOCK.get(), new Item.Properties().group(GeckoLibMod.geckolibItemGroup)));
 }

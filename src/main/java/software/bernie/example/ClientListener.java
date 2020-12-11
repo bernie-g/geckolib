@@ -10,14 +10,17 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import software.bernie.example.block.baked.GeoModelLoader;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
@@ -55,6 +58,18 @@ public class ClientListener
 			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
 			renderManager.renderers.replace(EntityType.CREEPER, creeperRenderer);
 			GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
+
+			GeoModelLoader loader = new GeoModelLoader().register(
+				new ResourceLocation(GeckoLib.ModID, "block/bakedblock"),
+				new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json"),
+				new ResourceLocation(GeckoLib.ModID, "model/entity/bat")
+			).register(
+				new ResourceLocation(GeckoLib.ModID, "bakedblock"),
+				new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json"),
+				new ResourceLocation(GeckoLib.ModID, "model/entity/bat")
+			);
+
+			ModelLoaderRegistry.registerLoader(new ResourceLocation(GeckoLib.ModID, "bakedloader"), loader);
 		}
 	}
 }
