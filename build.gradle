@@ -76,6 +76,8 @@ repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -85,10 +87,11 @@ dependencies {
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
