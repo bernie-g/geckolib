@@ -20,7 +20,7 @@ def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
 group = 'software.bernie.geckolib'
-archivesBaseName = 'forge-1.16.3-geckolib'
+archivesBaseName = project.archives_base_name
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
@@ -80,8 +80,8 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.3-34.1.33'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
@@ -106,17 +106,14 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
-
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    exclude('software/bernie/geckolib/**')
     classifier ''
 }
 
 
 reobf {
     shadowJar {} // Reobfuscate the shadowed JAR
-    noToml {}
 }
 tasks.build.dependsOn reobfShadowJar
 publish.dependsOn('reobfJar')
@@ -135,9 +132,6 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-
-    exclude('software/bernie/example/**')
-    exclude('software/bernie/geckolib/**')
 }
 
 task packageSources(type: ShadowJar, dependsOn: 'classes') {
@@ -146,62 +140,30 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     exclude('META-INF/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    exclude('software/bernie/geckolib/**')
     classifier = 'sources'
 }
-
-task noToml(type: ShadowJar) {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.allJava
-    exclude('META-INF/**')
-    exclude('software/bernie/example/**')
-    exclude('assets/**')
-    exclude('software/bernie/geckolib/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    manifest {
-        attributes([
-                "FMLModType"              : "LIBRARY",
-                "Specification-Title"     : "GeckoLib",
-                "Specification-Vendor"    : "Gecko",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Gecko",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-    classifier = 'no_toml'
-}
-
-noToml.dependsOn(jar)
 
 artifacts {
     archives shadowJar
     archives packageSources
-    archives noToml
 }
 
 afterEvaluate {
     publish.dependsOn('reobfShadowJar')
     publish.dependsOn('reobfJar')
     publish.dependsOn('packageSources')
-    publish.dependsOn('noToml')
     shadowJar.dependsOn(packageSources)
-    shadowJar.dependsOn(noToml)
     shadowJar.dependsOn('classes')
 }
 
 shadowJar.finalizedBy(reobfShadowJar)
 jar.finalizedBy(packageSources)
-jar.finalizedBy(noToml)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             artifact shadowJar
             artifact packageSources
-            artifact noToml
             artifactId = project.archives_base_name
         }
     }
