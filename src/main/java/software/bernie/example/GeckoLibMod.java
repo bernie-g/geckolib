@@ -31,7 +31,7 @@ public class GeckoLibMod
 			TileRegistry.TILES.register(bus);
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
-			geckolibItemGroup = new ItemGroup(0, "geckolib_examples")
+			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples")
 			{
 				@Override
 				public ItemStack createIcon()
