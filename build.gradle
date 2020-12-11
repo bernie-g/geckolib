@@ -46,15 +46,15 @@ dependencies {
     // Actual dependencies
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     compile project(':geckolib-core')
 
     // Shaded dependencies
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     shade project(':geckolib-core')
 
     // Testing
@@ -74,7 +74,6 @@ shadowJar {
     duplicatesStrategy = 'exclude'
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    exclude('software/bernie/geckolib/**')
     classifier 'dev'
 }
 
@@ -90,8 +89,6 @@ jar {
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
-    exclude('software/bernie/example/**')
-    exclude('software/bernie/geckolib/**')
 }
 
 processResources {
