@@ -12,6 +12,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import software.bernie.example.GeckoLibMod;
 import software.bernie.example.block.tile.BotariumTileEntity;
 
 import javax.annotation.Nullable;
@@ -21,6 +22,7 @@ public class BotariumBlock extends BlockDirectional implements ITileEntityProvid
 	public BotariumBlock()
 	{
 		super(Material.ROCK);
+		this.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 	}
 
 	@Nullable
@@ -39,7 +41,7 @@ public class BotariumBlock extends BlockDirectional implements ITileEntityProvid
 	@Override
 	protected BlockStateContainer createBlockState()
 	{
-		return new BlockStateContainer(this, new IProperty[] {FACING});
+		return new BlockStateContainer(this, new IProperty[]{FACING});
 	}
 
 	@Override

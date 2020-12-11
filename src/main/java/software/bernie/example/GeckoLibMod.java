@@ -46,7 +46,7 @@ public class GeckoLibMod
 	{
 		if (geckolibItemGroup == null)
 		{
-			geckolibItemGroup = new CreativeTabs(0, "geckolib_examples")
+			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples")
 			{
 				@Override
 				public ItemStack getTabIconItem()

@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.registries.IForgeRegistry;
 import software.bernie.example.block.BotariumBlock;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.tile.BotariumTileEntity;
@@ -32,17 +34,21 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class CommonListener
 {
+	private static IForgeRegistry<Item> itemRegistry;
+	private static IForgeRegistry<Block> blockRegistry;
+
 	@SubscribeEvent
 	public void onRegisterBlocks(RegistryEvent.Register<Block> event)
 	{
+		blockRegistry = event.getRegistry();
 		BlockRegistry.BOTARIUM_BLOCK = new BotariumBlock();
 		BlockRegistry.FERTILIZER_BLOCK = new FertilizerBlock();
 
 		BlockRegistry.BOTARIUM_BLOCK.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 		BlockRegistry.FERTILIZER_BLOCK.setCreativeTab(GeckoLibMod.getGeckolibItemGroup());
 
-		event.getRegistry().register(BlockRegistry.BOTARIUM_BLOCK.setRegistryName(new ResourceLocation(GeckoLib.ModID, "botariumblock")));
-		event.getRegistry().register(BlockRegistry.FERTILIZER_BLOCK.setRegistryName(new ResourceLocation(GeckoLib.ModID, "fertilizerblock")));
+		registerBlock(BlockRegistry.BOTARIUM_BLOCK, "botariumblock");
+		registerBlock(BlockRegistry.FERTILIZER_BLOCK, "fertilizerblock");
 	}
 
 	@SubscribeEvent
@@ -61,26 +67,38 @@ public class CommonListener
 	@SubscribeEvent
 	public void onRegisterItems(RegistryEvent.Register<Item> event)
 	{
-		ItemRegistry.JACK_IN_THE_BOX = new JackInTheBoxItem();
+		itemRegistry = event.getRegistry();
+		ItemRegistry.JACK_IN_THE_BOX = registerItem(new JackInTheBoxItem(), "jackintheboxitem");
 
-		ItemRegistry.POTATO_HEAD = new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.HEAD);
-		ItemRegistry.POTATO_CHEST = new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.CHEST);
-		ItemRegistry.POTATO_LEGGINGS = new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.LEGS);
-		ItemRegistry.POTATO_BOOTS = new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.FEET);
+		ItemRegistry.POTATO_HEAD = registerItem(new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.HEAD), "potato_head");
+		ItemRegistry.POTATO_CHEST = registerItem(new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.CHEST), "potato_chest");
+		ItemRegistry.POTATO_LEGGINGS = registerItem(new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.LEGS), "potato_leggings");
+		ItemRegistry.POTATO_BOOTS = registerItem(new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.FEET), "potato_boots");
 
-		ItemRegistry.JACK_IN_THE_BOX.setRegistryName(new ResourceLocation(GeckoLib.ModID, "jackintheboxitem"));
+		ItemRegistry.BOTARIUM = registerItem(new ItemBlock(BlockRegistry.BOTARIUM_BLOCK), "botarium");
+		ItemRegistry.FERTILIZER = registerItem(new ItemBlock(BlockRegistry.FERTILIZER_BLOCK), "fertilizer");
+	}
 
-		ItemRegistry.POTATO_HEAD.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_head"));
-		ItemRegistry.POTATO_CHEST.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_chest"));
-		ItemRegistry.POTATO_LEGGINGS.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_leggings"));
-		ItemRegistry.POTATO_BOOTS.setRegistryName(new ResourceLocation(GeckoLib.ModID, "potato_boots"));
+	public static <T extends Item> T registerItem(T item, String name)
+	{
+		registerItem(item, new ResourceLocation(GeckoLib.ModID, name));
+		return item;
+	}
 
-		event.getRegistry().register(ItemRegistry.JACK_IN_THE_BOX);
+	public static <T extends Item> T registerItem(T item, ResourceLocation name)
+	{
+		itemRegistry.register(item.setRegistryName(name).setUnlocalizedName(name.toString().replace(":", ".")));
+		return item;
+	}
 
-		event.getRegistry().register(ItemRegistry.POTATO_HEAD);
-		event.getRegistry().register(ItemRegistry.POTATO_CHEST);
-		event.getRegistry().register(ItemRegistry.POTATO_LEGGINGS);
-		event.getRegistry().register(ItemRegistry.POTATO_BOOTS);
+	public static void registerBlock(Block block, String name)
+	{
+		registerBlock(block, new ResourceLocation(GeckoLib.ModID, name));
+	}
+
+	public static void registerBlock(Block block, ResourceLocation name)
+	{
+		blockRegistry.register(block.setRegistryName(name).setUnlocalizedName(name.toString().replace(":", ".")));
 	}
 
 	@SubscribeEvent
@@ -98,6 +116,12 @@ public class CommonListener
 	public void onModelRegistry(ModelRegistryEvent event)
 	{
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0, new ModelResourceLocation(GeckoLib.ModID + ":jackintheboxitem", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.BOTARIUM, 0, new ModelResourceLocation(GeckoLib.ModID + ":botarium", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.FERTILIZER, 0, new ModelResourceLocation(GeckoLib.ModID + ":fertilizer", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.POTATO_HEAD, 0, new ModelResourceLocation(GeckoLib.ModID + ":potato_head", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.POTATO_CHEST, 0, new ModelResourceLocation(GeckoLib.ModID + ":potato_chest", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.POTATO_LEGGINGS, 0, new ModelResourceLocation(GeckoLib.ModID + ":potato_leggings", "inventory"));
+		ModelLoader.setCustomModelResourceLocation(ItemRegistry.POTATO_BOOTS, 0, new ModelResourceLocation(GeckoLib.ModID + ":potato_boots", "inventory"));
 
 		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}
