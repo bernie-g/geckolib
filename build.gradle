@@ -82,8 +82,8 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
