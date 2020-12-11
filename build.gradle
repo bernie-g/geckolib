@@ -125,7 +125,6 @@ jar.finalizedBy('reobfJar')
 jar {
     manifest {
         attributes([
-                "FMLModType"              : "LIBRARY",
                 "Specification-Title"     : "GeckoLib",
                 "Specification-Vendor"    : "Gecko",
                 "Specification-Version"   : "1", // We are version 1 of ourselves
