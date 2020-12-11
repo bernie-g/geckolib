@@ -5,16 +5,10 @@
 
 package software.bernie.example;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
@@ -37,7 +31,7 @@ public class GeckoLibMod
 			TileRegistry.TILES.register(bus);
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
-			geckolibItemGroup = new ItemGroup(0, "geckolib_examples")
+			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples")
 			{
 				@Override
 				public ItemStack createIcon()
