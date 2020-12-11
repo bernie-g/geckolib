@@ -63,7 +63,7 @@ public class GeckoLibMod
 	public GeckoLibMod()
 	{
 		deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
-		if (deobfuscatedEnvironment)
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
 		{
 			MinecraftForge.EVENT_BUS.register(new CommonListener());
 		}
@@ -73,7 +73,7 @@ public class GeckoLibMod
 	@Mod.EventHandler
 	public void registerRenderers(FMLPreInitializationEvent event)
 	{
-		if (deobfuscatedEnvironment)
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
 		{
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
@@ -89,7 +89,7 @@ public class GeckoLibMod
 	@Mod.EventHandler
 	public void registerReplacedRenderers(FMLInitializationEvent event)
 	{
-		if (deobfuscatedEnvironment)
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
 		{
 			GeckoLib.initialize();
 			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
