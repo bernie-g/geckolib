@@ -72,8 +72,8 @@ public class GeoBakedModel implements IDynamicBakedModel
 
 				if (index == 0)
 				{
-					float iu = sprite.getInterpolatedU(u);
-					float iv = sprite.getInterpolatedV(v);
+					float iu = sprite.getInterpolatedU(u * 16);
+					float iv = sprite.getInterpolatedV(v * 16);
 
 					builder.put(i, iu, iv);
 				}
