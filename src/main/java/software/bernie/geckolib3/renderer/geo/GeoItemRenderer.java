@@ -1,7 +1,9 @@
 package software.bernie.geckolib3.renderer.geo;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -62,9 +64,22 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
         return modelProvider;
     }
 
+    //fixes the item lighting, ported from Forge to Fabric by Doom.
     @Override
     public void render(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int combinedLightIn, int combinedOverlayIn) {
-        this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
+        if (mode == ModelTransformation.Mode.GUI) {
+			RenderSystem.pushMatrix();
+			VertexConsumerProvider.Immediate irendertypebuffer$impl = MinecraftClient.getInstance().getBufferBuilders()
+					.getEntityVertexConsumers();
+			DiffuseLighting.disableGuiDepthLighting();
+			this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
+			irendertypebuffer$impl.draw();
+			RenderSystem.enableDepthTest();
+			DiffuseLighting.enableGuiDepthLighting();
+			RenderSystem.popMatrix();
+		} else {
+			this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
+		}
     }
 
     public void render(T animatable, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn, ItemStack itemStack) {
