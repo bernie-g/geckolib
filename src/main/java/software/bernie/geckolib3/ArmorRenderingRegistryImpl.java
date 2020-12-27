@@ -39,6 +39,6 @@ public final class ArmorRenderingRegistryImpl {
             }
         }
 
-        return null;
+        return defaultTexture;
     }
 }
