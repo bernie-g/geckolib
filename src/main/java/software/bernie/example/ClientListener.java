@@ -53,6 +53,7 @@ public class ClientListener
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
 
 			RenderTypeLookup.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.getCutout());
+			RenderTypeLookup.setRenderLayer(BlockRegistry.BAKED_BLOCK.get(), RenderType.getCutout());
 
 			EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
 			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);

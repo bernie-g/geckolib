@@ -79,7 +79,7 @@ public class GeoBakedModel implements IDynamicBakedModel
 				}
 				else if (index == 2)
 				{
-					builder.put(i, 0, 1);
+					builder.put(i, 0, 0);
 				}
 				else
 				{
