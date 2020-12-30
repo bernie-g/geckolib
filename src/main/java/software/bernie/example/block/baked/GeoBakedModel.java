@@ -245,7 +245,7 @@ public class GeoBakedModel implements IDynamicBakedModel
 	@Override
 	public boolean isAmbientOcclusion()
 	{
-		return true;
+		return false;
 	}
 
 	@Override
