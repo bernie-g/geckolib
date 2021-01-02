@@ -6,7 +6,7 @@
 package software.bernie.geckolib3;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.fabricmc.fabric.impl.resource.loader.ResourceManagerHelperImpl;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -25,7 +25,7 @@ public class GeckoLib {
 
     public static void initialize() {
         if (!hasInitialized) {
-            ResourceManagerHelperImpl.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
+        	ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new IdentifiableResourceReloadListener() {
                 @Override
                 public Identifier getFabricId() {
                     return new Identifier(GeckoLib.ModID, "models");
