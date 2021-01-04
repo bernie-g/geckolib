@@ -3,6 +3,7 @@ package software.bernie.geckolib3.renderers.geo;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.player.ClientPlayerEntity
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -145,6 +146,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			}
 		}
 		stack.pop();
+		
+		Minecraft minecraftClient = Minecraft.getInstance();
+		ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
+		boolean bl = !entity.isInvisibleToPlayer(clientPlayerEntity);
+		if (!bl) {
+			return;
+		} 
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
