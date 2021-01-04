@@ -19,9 +19,7 @@ public class GeckoLibMod implements ModInitializer
 {
 	public static boolean DISABLE_IN_DEV = false;
 	
-	public static ItemGroup geckolibItemGroup = FabricItemGroupBuilder.create(new Identifier(GeckoLib.ModID, "geckolib_examples"))
-			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
-			.build();
+	public static ItemGroup geckolibItemGroup;
 
 	@Override
 	public void onInitialize()
@@ -36,6 +34,9 @@ public class GeckoLibMod implements ModInitializer
 			new TileRegistry();
 			new BlockRegistry();
 			new SoundRegistry();
+			geckolibItemGroup = FabricItemGroupBuilder.create(new Identifier(GeckoLib.ModID, "geckolib_examples"))
+			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
+			.build();
 		}
 	}
 }
