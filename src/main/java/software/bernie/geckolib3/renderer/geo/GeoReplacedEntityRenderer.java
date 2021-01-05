@@ -65,12 +65,6 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	@Override
 	public void render(Entity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn) {
-		MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
-		boolean bl = !entityIn.isInvisibleTo(clientPlayerEntity);
-		if (!bl) {
-			return;
-		} 
 		this.render(entityIn, this.animatable, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
@@ -171,6 +165,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			}
 		}
 		stack.pop();
+		MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        	ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
+		if (entity.isInvisibleTo(clientPlayerEntity)) {
+			return;
+		} 
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
