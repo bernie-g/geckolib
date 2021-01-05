@@ -144,6 +144,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch);
 			}
 		}
+		Minecraft minecraftClient = Minecraft.getInstance();
+		ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
+		if (entity.isInvisibleToPlayer(clientPlayerEntity)) {
+			return;
+		} 
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
