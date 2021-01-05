@@ -146,11 +146,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
         stack.pop();
         
         MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
-		boolean bl = !entity.isInvisibleTo(clientPlayerEntity);
-		if (!bl) {
-			return;
-		} 
+        ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
+	if (entity.isInvisibleTo(clientPlayerEntity)) {
+		return;
+	} 
         super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
     }
 
