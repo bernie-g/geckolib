@@ -196,22 +196,22 @@ publishing {
     }
 }
 
-curseforge {
+if (file('key.properties').exists()) {
+    curseforge {
+        def curseProp = new Properties()
+        File secretPropsFile = file("key.properties")
+        curseProp.load(secretPropsFile.newInputStream())
 
-    def curseProp = new Properties()
-    File secretPropsFile = file("key.properties")
-    curseProp.load(secretPropsFile.newInputStream())
-
-    project {
-        apiKey = curseProp.getProperty('curseKey')
-        id = "388172"
-        releaseType = "release"
-        changelogType = 'text'
-        changelog = file('changelog.txt')
-        addGameVersion("1.16.4")
-        addGameVersion("1.16.5")
-        addGameVersion("Forge")
-        addGameVersion("Java 8")
-
+        project {
+            apiKey = curseProp.getProperty('curseKey')
+            id = "388172"
+            releaseType = "release"
+            changelogType = 'text'
+            changelog = file('changelog.txt')
+            addGameVersion("1.16.4")
+            addGameVersion("1.16.5")
+            addGameVersion("Forge")
+            addGameVersion("Java 8")
+        }
     }
 }
