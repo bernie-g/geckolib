@@ -2,6 +2,7 @@ package software.bernie.geckolib3.renderer.geo;
 
 import com.google.common.collect.Lists;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -164,6 +165,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			}
 		}
 		stack.pop();
+		MinecraftClient minecraftClient = MinecraftClient.getInstance();
+        	ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
+		if (entity.isInvisibleTo(clientPlayerEntity)) {
+			return;
+		} 
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
