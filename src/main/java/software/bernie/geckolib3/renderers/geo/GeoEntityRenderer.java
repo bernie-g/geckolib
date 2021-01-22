@@ -14,6 +14,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -59,6 +60,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
+		stack.push();
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -131,7 +133,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
-		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
@@ -241,6 +242,39 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	protected float getDeathMaxRotation(T entityLivingBaseIn)
 	{
 		return 90.0F;
+	}
+
+	protected boolean canRenderName(T entity) {
+		double d0 = this.renderManager.squareDistanceTo(entity);
+		float f = entity.isDiscrete() ? 32.0F : 64.0F;
+		if (d0 >= (double)(f * f)) {
+			return false;
+		} else {
+			Minecraft minecraft = Minecraft.getInstance();
+			ClientPlayerEntity clientplayerentity = minecraft.player;
+			boolean flag = !entity.isInvisibleToPlayer(clientplayerentity);
+			if (entity != clientplayerentity) {
+				Team team = entity.getTeam();
+				Team team1 = clientplayerentity.getTeam();
+				if (team != null) {
+					Team.Visible team$visible = team.getNameTagVisibility();
+					switch(team$visible) {
+						case ALWAYS:
+							return flag;
+						case NEVER:
+							return false;
+						case HIDE_FOR_OTHER_TEAMS:
+							return team1 == null ? flag : team.isSameTeam(team1) && (team.getSeeFriendlyInvisiblesEnabled() || flag);
+						case HIDE_FOR_OWN_TEAM:
+							return team1 == null ? flag : !team.isSameTeam(team1) && flag;
+						default:
+							return true;
+					}
+				}
+			}
+
+			return Minecraft.isGuiEnabled() && entity != minecraft.getRenderViewEntity() && flag && !entity.isBeingRidden();
+		}
 	}
 
 	/**
