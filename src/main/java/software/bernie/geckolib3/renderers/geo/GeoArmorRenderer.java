@@ -86,7 +86,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	public void render(float partialTicks, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn)
 	{
-		stack.translate(0.0D, 1.501F, 0.0D);
+		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
@@ -94,50 +94,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
 		stack.push();
-		stack.translate(0, 0.01f, 0);
-		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
-		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-		if (this.swingProgress > 0.0F)
-		{
-			rightArmBone.setScaleZ(1.25F);
-			rightArmBone.setScaleX(1.25F);
-			leftArmBone.setScaleZ(1.3F);
-			leftArmBone.setScaleX(1.05F);
-		}
-		if (isSneak)
-		{
-			IBone headBone = this.modelProvider.getBone(this.headBone);
-			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-			IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
-			IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
-			IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
-			IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
-			try
-			{
-				headBone.setPositionY(headBone.getPositionY() - 5.35F);
-				bodyBone.setPositionZ(bodyBone.getPositionX() - 0.4F);
-				bodyBone.setPositionY(bodyBone.getPositionX() - 3.5F);
-				rightArmBone.setPositionY(bodyBone.getPositionX() - 3);
-				rightArmBone.setPositionX(bodyBone.getPositionX() + 0.35F);
-				leftArmBone.setPositionY(bodyBone.getPositionX() - 3);
-				leftArmBone.setPositionX(bodyBone.getPositionX() - 0.35F);
-				rightLegBone.setPositionZ(bodyBone.getPositionX() + 4);
-				leftLegBone.setPositionZ(bodyBone.getPositionX() + 4);
-				rightBootBone.setPositionZ(bodyBone.getPositionX() + 4);
-				leftBootBone.setPositionZ(bodyBone.getPositionX() + 4);
-			}
-			catch (Exception e)
-			{
-				throw new RuntimeException("Could not find an armor bone.", e);
-			}
-		}
 		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn, getTextureLocation(currentArmorItem));
 		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -1.501F, 0.0D);
+		stack.translate(0.0D, -24 / 16F, 0.0D);
 	}
 
 	private void fitToBiped()
@@ -162,6 +125,33 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
 				GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
 				GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
+
+				headBone.setPositionX(this.bipedHead.rotationPointX);
+				headBone.setPositionY(-this.bipedHead.rotationPointY);
+				headBone.setPositionZ(this.bipedHead.rotationPointZ);
+				bodyBone.setPositionX(this.bipedBody.rotationPointX);
+				bodyBone.setPositionY(-this.bipedBody.rotationPointY);
+				bodyBone.setPositionZ(this.bipedBody.rotationPointZ);
+
+				rightArmBone.setPositionX(this.bipedRightArm.rotationPointX + 5);
+				rightArmBone.setPositionY(2 - this.bipedRightArm.rotationPointY);
+				rightArmBone.setPositionZ(this.bipedRightArm.rotationPointZ);
+				leftArmBone.setPositionX(this.bipedLeftArm.rotationPointX - 5);
+				leftArmBone.setPositionY(2 - this.bipedLeftArm.rotationPointY);
+				leftArmBone.setPositionZ(this.bipedLeftArm.rotationPointZ);
+
+				rightLegBone.setPositionX(this.bipedRightLeg.rotationPointX + 2);
+				rightLegBone.setPositionY(12 - this.bipedRightLeg.rotationPointY);
+				rightLegBone.setPositionZ(this.bipedRightLeg.rotationPointZ);
+				leftLegBone.setPositionX(this.bipedLeftLeg.rotationPointX - 2);
+				leftLegBone.setPositionY(12 - this.bipedLeftLeg.rotationPointY);
+				leftLegBone.setPositionZ(this.bipedLeftLeg.rotationPointZ);
+				rightBootBone.setPositionX(this.bipedRightLeg.rotationPointX + 2);
+				rightBootBone.setPositionY(12 - this.bipedRightLeg.rotationPointY);
+				rightBootBone.setPositionZ(this.bipedRightLeg.rotationPointZ);
+				leftBootBone.setPositionX(this.bipedLeftLeg.rotationPointX - 2);
+				leftBootBone.setPositionY(12 - this.bipedLeftLeg.rotationPointY);
+				leftBootBone.setPositionZ(this.bipedLeftLeg.rotationPointZ);
 			}
 		}
 		catch (Exception e)
