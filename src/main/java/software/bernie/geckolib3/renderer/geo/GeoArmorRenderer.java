@@ -159,6 +159,33 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				GeoUtils.copyRotations(this.leftLeg, leftLegBone);
 				GeoUtils.copyRotations(this.rightLeg, rightBootBone);
 				GeoUtils.copyRotations(this.leftLeg, leftBootBone);
+
+				headBone.setPositionX(this.head.pivotX);
+				headBone.setPositionY(-this.head.pivotY);
+				headBone.setPositionZ(this.head.pivotZ);
+				bodyBone.setPositionX(this.torso.pivotX);
+				bodyBone.setPositionY(-this.torso.pivotY);
+				bodyBone.setPositionZ(this.torso.pivotZ);
+
+				rightArmBone.setPositionX(this.rightArm.pivotX + 5);
+				rightArmBone.setPositionY(2 - this.rightArm.pivotY);
+				rightArmBone.setPositionZ(this.rightArm.pivotZ);
+				leftArmBone.setPositionX(this.leftArm.pivotX - 5);
+				leftArmBone.setPositionY(2 - this.leftArm.pivotY);
+				leftArmBone.setPositionZ(this.leftArm.pivotZ);
+
+				rightLegBone.setPositionX(this.rightLeg.pivotX + 2);
+				rightLegBone.setPositionY(12 - this.rightLeg.pivotY);
+				rightLegBone.setPositionZ(this.rightLeg.pivotZ);
+				leftLegBone.setPositionX(this.leftLeg.pivotX - 2);
+				leftLegBone.setPositionY(12 - this.leftLeg.pivotY);
+				leftLegBone.setPositionZ(this.leftLeg.pivotZ);
+				rightBootBone.setPositionX(this.rightLeg.pivotX + 2);
+				rightBootBone.setPositionY(12 - this.rightLeg.pivotY);
+				rightBootBone.setPositionZ(this.rightLeg.pivotZ);
+				leftBootBone.setPositionX(this.leftLeg.pivotX - 2);
+				leftBootBone.setPositionY(12 - this.leftLeg.pivotY);
+				leftBootBone.setPositionZ(this.leftLeg.pivotZ);
 			}
 		}
 		catch (Exception e)
