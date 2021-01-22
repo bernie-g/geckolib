@@ -1,7 +1,10 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.LivingRenderer;
@@ -34,13 +37,14 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable>
 
 	protected static <T extends LivingEntity> void renderModel(EntityModel<T> modelIn, ResourceLocation textureLocationIn, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entityIn, float red, float green, float blue)
 	{
-		if(modelIn instanceof IGeoRenderer){
-			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(((IGeoRenderer)modelIn).getRenderType(null,0,matrixStackIn,bufferIn,null,packedLightIn,textureLocationIn));
-			modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingRenderer.getPackedOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
-		}else {
-			IVertexBuilder ivertexbuilder = bufferIn.getBuffer(RenderType.getEntityCutoutNoCull(textureLocationIn));
-			modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingRenderer.getPackedOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
-		}
+		RenderType renderType = getRenderType(textureLocationIn);
+		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(renderType);
+		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingRenderer.getPackedOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
+	}
+
+	public static RenderType getRenderType(ResourceLocation textureLocation)
+	{
+		return RenderType.getEntityCutout(textureLocation);
 	}
 
 	public GeoModelProvider getEntityModel()
