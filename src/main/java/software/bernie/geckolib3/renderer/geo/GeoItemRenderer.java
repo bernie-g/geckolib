@@ -115,6 +115,6 @@ public class GeoItemRenderer<T extends Item & IAnimatable> implements IGeoRender
 
     @Override
     public Integer getUniqueID(T animatable) {
-        return Objects.hash(currentItemStack.getItem(), currentItemStack.getCount(), currentItemStack.hasTag() ? currentItemStack.getTag().toString() : 1);
+    	return Objects.hash(currentItemStack);
     }
 }

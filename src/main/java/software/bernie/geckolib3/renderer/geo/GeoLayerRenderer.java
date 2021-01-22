@@ -19,19 +19,28 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
         this.entityRenderer = entityRendererIn;
     }
 
-    protected static <T extends LivingEntity> void renderCopyCutoutModel(EntityModel<T> modelParentIn, EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue) {
-        if (!entityIn.isInvisible()) {
-            modelParentIn.copyStateTo(modelIn);
-            modelIn.animateModel(entityIn, limbSwing, limbSwingAmount, partialTicks);
-            modelIn.setAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-            renderCutoutModel(modelIn, textureLocationIn, matrixStackIn, bufferIn, packedLightIn, entityIn, red, green, blue);
-        }
-    }
+	protected static <T extends LivingEntity> void renderCopyModel(EntityModel<T> modelParentIn, EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue)
+	{
+		if (!entityIn.isInvisible())
+		{
+			modelParentIn.copyStateTo(modelIn);
+			modelIn.animateModel(entityIn, limbSwing, limbSwingAmount, partialTicks);
+			modelIn.setAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+			renderModel(modelIn, textureLocationIn, matrixStackIn, bufferIn, packedLightIn, entityIn, red, green, blue);
+		}
+	}
 
-    protected static <T extends LivingEntity> void renderCutoutModel(EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float red, float green, float blue) {
-        VertexConsumer ivertexbuilder = bufferIn.getBuffer(RenderLayer.getEntityCutoutNoCull(textureLocationIn));
-        modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
-    }
+	protected static <T extends LivingEntity> void renderModel(EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float red, float green, float blue)
+	{
+		RenderLayer renderType = getRenderType(textureLocationIn);
+		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
+		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
+	}
+
+	public static RenderLayer getRenderType(Identifier textureLocation)
+	{
+		return RenderLayer.getEntityCutout(textureLocation);
+	}
 
     public GeoModelProvider getEntityModel() {
         return this.entityRenderer.getGeoModelProvider();
