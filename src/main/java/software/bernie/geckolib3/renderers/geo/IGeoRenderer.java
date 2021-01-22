@@ -73,15 +73,16 @@ public interface IGeoRenderer<T>
 			Vector3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 
-			if (normal.getX() < 0)
+			/* Fix shading dark shading for flat cubes + compatibility wish Optifine shaders */
+			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0)
 			{
 				normal.mul(-1, 1, 1);
 			}
-			if (normal.getY() < 0)
+			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0)
 			{
 				normal.mul(1, -1, 1);
 			}
-			if (normal.getZ() < 0)
+			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0)
 			{
 				normal.mul(1, 1, -1);
 			}
