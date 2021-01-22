@@ -5,21 +5,25 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-public class EventKeyFrame<T> {
-    public boolean hasExecuted = false;
-    private final T eventData;
-    private final Double startTick;
+public class EventKeyFrame<T>
+{
+	private T eventData;
+	public boolean hasExecuted = false;
+	private Double startTick;
 
-    public EventKeyFrame(Double startTick, T eventData) {
-        this.startTick = startTick;
-        this.eventData = eventData;
-    }
+	public EventKeyFrame(Double startTick, T eventData)
+	{
+		this.startTick = startTick;
+		this.eventData = eventData;
+	}
 
-    public T getEventData() {
-        return eventData;
-    }
+	public T getEventData()
+	{
+		return eventData;
+	}
 
-    public Double getStartTick() {
-        return startTick;
-    }
+	public Double getStartTick()
+	{
+		return startTick;
+	}
 }

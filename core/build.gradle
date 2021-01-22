@@ -6,20 +6,30 @@ def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
 archivesBaseName = project.archivesBaseName
 
-sourceCompatibility = JavaVersion.VERSION_1_8
-targetCompatibility = JavaVersion.VERSION_1_8
-
 repositories {
     mavenCentral()
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
 }
 
 dependencies {
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.8'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.8'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
 }
 
-java {
+jar {
+    from sourceSets.main.allSource
+    manifest {
+        attributes([
+                "FMLModType"              : "LIBRARY",
+                "Specification-Title"     : "geckolib",
+                "Specification-Vendor"    : "geckolib",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : "${version}",
+                "Implementation-Vendor"   : "geckolib",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -42,11 +52,6 @@ publishing {
         mavenJava(MavenPublication) {
             artifact jar
             artifactId = project.archivesBaseName
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
         }
     }
 }

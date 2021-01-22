@@ -2,40 +2,49 @@ package software.bernie.geckolib3.core.processor;
 
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
-public interface IBone {
-    float getRotationX();
-    float getRotationY();
-    float getRotationZ();
+public interface IBone
+{
+	float getRotationX();
+	float getRotationY();
+	float getRotationZ();
 
-    void setRotationX(float value);
-    void setRotationY(float value);
-    void setRotationZ(float value);
+	float getPositionX();
+	float getPositionY();
+	float getPositionZ();
 
-    float getPositionX();
-    float getPositionY();
-    float getPositionZ();
+	float getScaleX();
+	float getScaleY();
+	float getScaleZ();
 
-    void setPositionX(float value);
-    void setPositionY(float value);
-    void setPositionZ(float value);
+	void setRotationX(float value);
+	void setRotationY(float value);
+	void setRotationZ(float value);
 
-    float getScaleX();
-    float getScaleY();
-    float getScaleZ();
+	void setPositionX(float value);
+	void setPositionY(float value);
+	void setPositionZ(float value);
 
-    void setScaleZ(float value);
-    void setScaleY(float value);
-    void setScaleX(float value);
+	void setScaleX(float value);
+	void setScaleY(float value);
+	void setScaleZ(float value);
 
-    boolean isHidden();
-    void setHidden(boolean hidden);
-    void setModelRendererName(String modelRendererName);
+	void setPivotX(float value);
+	void setPivotY(float value);
+	void setPivotZ(float value);
 
-    void saveInitialSnapshot();
-    BoneSnapshot getInitialSnapshot();
-    default BoneSnapshot saveSnapshot()
-    {
-        return new BoneSnapshot(this);
-    }
-    String getName();
+	float getPivotX();
+	float getPivotY();
+	float getPivotZ();
+
+	boolean isHidden();
+	void setHidden(boolean hidden);
+	void setModelRendererName(String modelRendererName);
+
+	void saveInitialSnapshot();
+	BoneSnapshot getInitialSnapshot();
+	default BoneSnapshot saveSnapshot()
+	{
+		return new BoneSnapshot(this);
+	}
+	String getName();
 }
