@@ -63,16 +63,19 @@ public interface IGeoRenderer<T> {
 			Vector3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 
-			if (normal.getX() < 0) {
+			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0)
+			{
 				normal.multiplyComponentwise(-1, 1, 1);
 			}
-			if (normal.getY() < 0) {
+			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0)
+			{
 				normal.multiplyComponentwise(1, -1, 1);
 			}
-			if (normal.getZ() < 0) {
+			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0)
+			{
 				normal.multiplyComponentwise(1, 1, -1);
 			}
-
+			
 			for (GeoVertex vertex : quad.vertices) {
 				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(), 1.0F);
 				vector4f.transform(matrix4f);
