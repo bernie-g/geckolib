@@ -15,6 +15,7 @@ import software.bernie.geckolib3.molang.MolangRegistrar;
 
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 
@@ -68,8 +69,8 @@ public class GeckoLibCache
 
 	public CompletableFuture<Void> resourceReload(IFutureReloadListener.IStage stage, IResourceManager resourceManager, IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor, Executor gameExecutor)
 	{
-		HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
-		HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
+		ConcurrentHashMap<ResourceLocation, AnimationFile> tempAnimations = new ConcurrentHashMap<>();
+		ConcurrentHashMap<ResourceLocation, GeoModel> tempModels = new ConcurrentHashMap<>();
 
 		try
 		{
@@ -90,8 +91,14 @@ public class GeckoLibCache
 					.toArray(x -> new CompletableFuture[x]);
 			CompletableFuture<Void> futures = CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x ->
 			{
-				animations = tempAnimations;
-				geoModels = tempModels;
+				//Retain our behavior of completely replacing the old model map on reload
+				HashMap<ResourceLocation, AnimationFile> hashAnim = new HashMap<>();
+				hashAnim.putAll(tempAnimations);
+				animations = hashAnim;
+
+				HashMap<ResourceLocation, GeoModel> hashModel = new HashMap<>();
+				hashModel.putAll(tempModels);
+				geoModels = hashModel;
 			}).thenCompose(stage::markCompleteAwaitingOthers);
 			return futures;
 		}
