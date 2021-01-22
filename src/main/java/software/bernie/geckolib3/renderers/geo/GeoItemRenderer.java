@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -58,9 +59,23 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		return modelProvider;
 	}
 
+	//fixes the item lighting
 	@Override
 	public void func_239207_a_(ItemStack itemStack, ItemCameraTransforms.TransformType p_239207_2_, MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int combinedLightIn, int p_239207_6_)
 	{
+		if (p_239207_2_ == ItemCameraTransforms.TransformType.GUI) {
+			RenderSystem.pushMatrix();
+			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().getRenderTypeBuffers()
+					.getBufferSource();
+			RenderHelper.setupGuiFlatDiffuseLighting();
+			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
+			irendertypebuffer$impl.finish();
+			RenderSystem.enableDepthTest();
+			RenderHelper.setupGui3DDiffuseLighting();
+			RenderSystem.popMatrix();
+		} else {
+			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
+		}
 		this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
 	}
 
