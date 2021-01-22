@@ -59,6 +59,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn)
 	{
+		stack.push();
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -131,7 +132,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
-		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
