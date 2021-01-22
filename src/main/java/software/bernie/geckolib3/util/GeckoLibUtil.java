@@ -10,7 +10,7 @@ public class GeckoLibUtil
 {
 	public static int getIDFromStack(ItemStack stack)
 	{
-		return Objects.hash(stack.getItem(), stack.getCount(), stack.hasTag() ? stack.getTag().toString() : 1);
+		return Objects.hash(stack);
 	}
 
 	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack, String controllerName)
