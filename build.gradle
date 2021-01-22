@@ -11,6 +11,7 @@ plugins {
     id 'fabric-loom' version '0.5-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '4.0.4'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -28,6 +29,9 @@ minecraft {
 repositories {
     mavenCentral()
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+	maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 configurations {
@@ -156,5 +160,37 @@ publishing {
                 password = envPassword == null ? findProperty("repsyPassword") : envPassword
             }
         }
+    }
+}
+
+curseforge {
+
+    def curseProp = new Properties()
+    File secretPropsFile = file("key.properties")
+    curseProp.load(secretPropsFile.newInputStream())
+
+    project {
+        apiKey = curseProp.getProperty('curseKey')
+        id = "398667"
+        releaseType = "release"
+        changelogType = 'text'
+        changelog = file('changelog.txt')
+        addGameVersion("1.16.4")
+        addGameVersion("1.16.5")
+        addGameVersion("Fabric")
+        addGameVersion("Java 8")
+
+        relations {
+            requiredDependency 'fabric-api'      
+        }
+        mainArtifact(remapJar)
+
+        afterEvaluate {
+            uploadTask.dependsOn("remapJar")
+        }
+    }
+    options {
+    	//debug = true
+        forgeGradleIntegration = false
     }
 }
