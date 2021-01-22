@@ -1,21 +1,24 @@
 package software.bernie.geckolib3.resource;
 
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import com.eliotlash.molang.MolangParser;
+
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.IFutureReloadListener;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.ArrayUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
-
-import java.util.HashMap;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 
 
 public class GeckoLibCache
@@ -68,8 +71,8 @@ public class GeckoLibCache
 
 	public CompletableFuture<Void> resourceReload(IFutureReloadListener.IStage stage, IResourceManager resourceManager, IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor, Executor gameExecutor)
 	{
-		HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
-		HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
+		ConcurrentHashMap<ResourceLocation, AnimationFile> tempAnimations = new ConcurrentHashMap<>();
+		ConcurrentHashMap<ResourceLocation, GeoModel> tempModels = new ConcurrentHashMap<>();
 
 		CompletableFuture[] animationFileFutures = resourceManager.getAllResourceLocations("animations", fileName -> fileName.endsWith(".json"))
 				.stream()
@@ -83,8 +86,14 @@ public class GeckoLibCache
 				.map(completable -> completable.thenAcceptAsync(resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
 				.toArray(x -> new CompletableFuture[x]);
 		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x -> {
-			animations = tempAnimations;
-			geoModels = tempModels;
+			//Retain our behavior of completely replacing the old model map on reload
+			HashMap<ResourceLocation, AnimationFile> hashAnim = new HashMap<>();
+			hashAnim.putAll(tempAnimations);
+			animations = hashAnim;
+
+			HashMap<ResourceLocation, GeoModel> hashModel = new HashMap<>();
+			hashModel.putAll(tempModels);
+			geoModels = hashModel;
 		}).thenCompose(stage::markCompleteAwaitingOthers);
 	}
 }
