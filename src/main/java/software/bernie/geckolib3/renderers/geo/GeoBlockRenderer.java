@@ -106,11 +106,11 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	private Direction getFacing(T tile)
 	{
 		BlockState blockState = tile.getBlockState();
-		if (blockState.func_235901_b_(HorizontalBlock.HORIZONTAL_FACING))
+		if (blockState.hasProperty(HorizontalBlock.HORIZONTAL_FACING))
 		{
 			return blockState.get(HorizontalBlock.HORIZONTAL_FACING);
 		}
-		else if (blockState.func_235901_b_(DirectionalBlock.FACING))
+		else if (blockState.hasProperty(DirectionalBlock.FACING))
 		{
 			return blockState.get(DirectionalBlock.FACING);
 		}

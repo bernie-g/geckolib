@@ -126,14 +126,14 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		parser.setValue("query.actor_count", minecraftInstance.world.getCountLoadedEntities());
 		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getDayTime()));
-		parser.setValue("query.moon_phase", minecraftInstance.world.func_242414_af());
+		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
 
 		if (animatable instanceof Entity)
 		{
 			parser.setValue("query.distance_from_camera",
 					minecraftInstance.gameRenderer.getActiveRenderInfo().getProjectedView()
 							.distanceTo(((Entity) animatable).getPositionVec()));
-			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).func_233570_aj_()));
+			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			//Should probably check specifically whether it's in rain?
 			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubbleColumn()));

@@ -17,8 +17,8 @@ public class CommonListener {
         if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
             event.enqueueWork(() -> {
                 // TODO: Update these with new mappings
-                GlobalEntityTypeAttributes.put(EntityRegistry.BIKE_ENTITY.get(), MobEntity.func_233666_p_().func_233815_a_(Attributes.field_233818_a_, 1.0D).func_233813_a_());
-                GlobalEntityTypeAttributes.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), MobEntity.func_233666_p_().func_233815_a_(Attributes.field_233818_a_, 1.0D).func_233813_a_());
+                GlobalEntityTypeAttributes.put(EntityRegistry.BIKE_ENTITY.get(), MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 1.0D).create());
+                GlobalEntityTypeAttributes.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 1.0D).create());
             });
         }
     }

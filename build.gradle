@@ -32,7 +32,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200514-1.16.3'
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
     runs {
         client {
             workingDirectory project.file('run')
