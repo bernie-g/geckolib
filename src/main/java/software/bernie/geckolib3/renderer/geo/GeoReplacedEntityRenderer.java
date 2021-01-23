@@ -161,25 +161,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
-//	protected boolean hasLabel(Entity entity) {
-//        if (entity != null) {
-//            double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
-//            float f = entity.isSneaking() ? 32.0F : 64.0F;
-//            if (d0 >= (double) (f * f)) {
-//                return false;
-//            } else {
-//                return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
-//            }
-//        } else {
-//            return false;
-//        }
-//    }
 
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
 		return 0.0F;
 	}
-
+	
 	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn,
 			float partialTickTime) {
 	}
