@@ -222,6 +222,17 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	}
 
+	@Override
+	protected boolean hasLabel(Entity entity) {
+		double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
+		float f = entity.isSneaking() ? 32.0F : 64.0F;
+		if (d0 >= (double) (f * f)) {
+			return false;
+		} else {
+			return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
+		}
+	}
+
 	protected boolean isVisible(LivingEntity livingEntityIn) {
 		return !livingEntityIn.isInvisible();
 	}

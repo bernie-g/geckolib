@@ -204,16 +204,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	@Override
 	protected boolean hasLabel(T entity) {
-		if (entity != null) {
-			double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
-			float f = entity.isSneaking() ? 32.0F : 64.0F;
-			if (d0 >= (double) (f * f)) {
-				return false;
-			} else {
-				return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
-			}
-		} else {
+		double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
+		float f = entity.isSneaking() ? 32.0F : 64.0F;
+		if (d0 >= (double) (f * f)) {
 			return false;
+		} else {
+			return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
 		}
 	}
 
