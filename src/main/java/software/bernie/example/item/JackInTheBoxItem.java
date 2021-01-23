@@ -9,7 +9,6 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -27,7 +26,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
     private String controllerName = "popupController";
 
     public JackInTheBoxItem(Settings properties) {
-        super(properties.group(GeckoLibMod.geckolibItemGroup));
+        super(properties);
     }
 
     private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {

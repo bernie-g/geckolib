@@ -163,7 +163,8 @@ publishing {
     }
 }
 
-curseforge {
+if (file('key.properties').exists()) {
+    curseforge {
 
     def curseProp = new Properties()
     File secretPropsFile = file("key.properties")
@@ -193,4 +194,5 @@ curseforge {
     	//debug = true
         forgeGradleIntegration = false
     }
+   }
 }

@@ -13,7 +13,7 @@
     "sources": "https://github.com/bernie-g/geckolib"
   },
 
-  "license": "CC0-1.0",
+  "license": "LGPL 3.0",
   "icon": "gecko.jpg",
   "environment": "*",
   "entrypoints": {

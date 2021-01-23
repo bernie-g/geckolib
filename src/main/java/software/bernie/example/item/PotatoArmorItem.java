@@ -26,7 +26,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
 
     public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Settings builder) {
-        super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
+        super(materialIn, slot, builder);
     }
 
     // Predicate runs every frame
