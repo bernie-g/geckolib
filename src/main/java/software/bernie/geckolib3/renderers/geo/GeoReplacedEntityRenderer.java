@@ -1,7 +1,15 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.awt.Color;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -14,6 +22,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -26,12 +35,6 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer
 {
@@ -86,6 +89,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
 		}
 
+		stack.push();
 		boolean shouldSit = entity.isPassenger() && (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -157,12 +161,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			((IAnimatableModel) modelProvider).setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
 		}
 
-		stack.push();
 		stack.translate(0, 0.01f, 0);
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+	    boolean invis = entity.isInvisibleToPlayer(Minecraft.getInstance().player);
+		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator())
 		{
@@ -172,14 +176,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			}
 		}
 		stack.pop();
-		Minecraft minecraftClient = Minecraft.getInstance();
-        	ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
-       		if (entity.isInvisibleToPlayer(clientPlayerEntity)) {
-            		return;
-        	} 
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-
+	
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks)
 	{
 		return 0.0F;
@@ -275,6 +274,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	protected float getDeathMaxRotation(LivingEntity entityLivingBaseIn)
 	{
 		return 90.0F;
+	}
+	
+	public boolean canRenderName(Entity entity) {
+		double d0 = this.renderManager.squareDistanceTo(entity);
+		float f = entity.isDiscrete() ? 32.0F : 64.0F;
+		if (d0 >= (double)(f * f)) {
+			return false;
+		} else {
+			return entity == this.renderManager.pointedEntity && entity.hasCustomName();
+		}
 	}
 
 	/**

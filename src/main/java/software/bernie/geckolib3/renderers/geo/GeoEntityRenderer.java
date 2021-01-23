@@ -1,7 +1,13 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.awt.Color;
+import java.util.Collections;
+import java.util.List;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -29,10 +35,6 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T>
 {
@@ -137,7 +139,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn, getEntityTexture(entity));
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+	    boolean invis = entity.isInvisibleToPlayer(Minecraft.getInstance().player);
+		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator())
 		{
@@ -147,14 +150,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			}
 		}
 		stack.pop();
-        	Minecraft minecraftClient = Minecraft.getInstance();
-            	ClientPlayerEntity clientPlayerEntity = minecraftClient.player;
-               	if (entity.isInvisibleToPlayer(clientPlayerEntity)) {
-                    return;
-            	} 
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-
 
 	@Override
 	public ResourceLocation getEntityTexture(T entity)
@@ -244,36 +241,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return 90.0F;
 	}
 
-	protected boolean canRenderName(T entity) {
+	public boolean renderLabelIfPresent(T entity) {
 		double d0 = this.renderManager.squareDistanceTo(entity);
 		float f = entity.isDiscrete() ? 32.0F : 64.0F;
 		if (d0 >= (double)(f * f)) {
 			return false;
 		} else {
-			Minecraft minecraft = Minecraft.getInstance();
-			ClientPlayerEntity clientplayerentity = minecraft.player;
-			boolean flag = !entity.isInvisibleToPlayer(clientplayerentity);
-			if (entity != clientplayerentity) {
-				Team team = entity.getTeam();
-				Team team1 = clientplayerentity.getTeam();
-				if (team != null) {
-					Team.Visible team$visible = team.getNameTagVisibility();
-					switch(team$visible) {
-						case ALWAYS:
-							return flag;
-						case NEVER:
-							return false;
-						case HIDE_FOR_OTHER_TEAMS:
-							return team1 == null ? flag : team.isSameTeam(team1) && (team.getSeeFriendlyInvisiblesEnabled() || flag);
-						case HIDE_FOR_OWN_TEAM:
-							return team1 == null ? flag : !team.isSameTeam(team1) && flag;
-						default:
-							return true;
-					}
-				}
-			}
-
-			return Minecraft.isGuiEnabled() && entity != minecraft.getRenderViewEntity() && flag && !entity.isBeingRidden();
+			return entity == this.renderManager.pointedEntity && entity.hasCustomName();
 		}
 	}
 
