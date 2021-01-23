@@ -46,10 +46,7 @@ public class ClientListener implements ClientModInitializer
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE, BotariumTileRenderer::new);
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER, FertilizerTileRenderer::new);
 
-			EntityRenderDispatcher renderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
-			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
-			EntityRendererRegistry.INSTANCE.register(EntityType.CREEPER, (entityRenderDispatcher, context) -> creeperRenderer);
-			GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
+			EntityRendererRegistry.INSTANCE.register(EntityType.CREEPER, (entityRenderDispatcher, context) -> new ReplacedCreeperRenderer(entityRenderDispatcher));
 
 			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
 		}
