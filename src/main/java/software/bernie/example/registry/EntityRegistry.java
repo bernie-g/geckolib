@@ -29,7 +29,7 @@ public class EntityRegistry
 			return EntityRegistryBuilder.<T>createBuilder(new Identifier(GeckoLib.ModID, name))
 					.entity(entity)
 					.category(SpawnGroup.CREATURE)
-					.dimensions(EntityDimensions.fixed(width, height))
+					.dimensions(EntityDimensions.changing(width, height))
 					.build();
 		}
 		return null;
