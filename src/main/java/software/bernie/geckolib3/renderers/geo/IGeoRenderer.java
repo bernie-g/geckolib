@@ -110,7 +110,7 @@ public interface IGeoRenderer<T>
 
 	default RenderType getRenderType(T animatable, float partialTicks, MatrixStack stack, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
 	{
-		return RenderType.getEntityCutout(textureLocation);
+		return RenderType.getEntityCutoutNoCull(textureLocation);
 	}
 
 	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack, @Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn)
