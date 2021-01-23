@@ -7,10 +7,8 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -21,8 +19,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.scoreboard.AbstractTeam;
-import net.minecraft.scoreboard.AbstractTeam.VisibilityRule;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -205,20 +201,21 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 
 	}
-	
-//	protected boolean hasLabel(Entity entity) {
-//  if (entity != null) {
-//      double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
-//      float f = entity.isSneaking() ? 32.0F : 64.0F;
-//      if (d0 >= (double) (f * f)) {
-//          return false;
-//      } else {
-//          return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
-//      }
-//  } else {
-//      return false;
-//  }
-//}
+
+	@Override
+	protected boolean hasLabel(T entity) {
+		if (entity != null) {
+			double d0 = this.dispatcher.getSquaredDistanceToCamera(entity);
+			float f = entity.isSneaking() ? 32.0F : 64.0F;
+			if (d0 >= (double) (f * f)) {
+				return false;
+			} else {
+				return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
+			}
+		} else {
+			return false;
+		}
+	}
 
 	protected boolean isVisible(T livingEntityIn) {
 		return !livingEntityIn.isInvisible();

@@ -1,8 +1,5 @@
-V3.0.4
+V3.0.5
 
-- Fixed Armor rotations properly #McHorse
-- Fixed BoxUVs and Normals #McHorse
-- Hopefully fixed random missing model crash. #BaileyH
-- GeoLayerRenderer now has a getRenderType method for setting RenderType. #AzureDoom
-- Fixed Animation Singleton sync on items. #grillo78
-- Fixed Entities not going invisible. #AzureDoom
+- Fixed Armor rotations again #McHorse
+- Fixed the invisible crash on glowing mobs, glowing mobs will now go invisible and glow wih their outline. #AzureDoom
+- Fixed Entities using GeoEntityRenderer not having name plates when named. #Paspartout/AzureDoom
