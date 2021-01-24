@@ -12,9 +12,9 @@ import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity>
 {
-	public BikeGeoRenderer(EntityRenderDispatcher renderManager)
+	public BikeGeoRenderer(EntityRenderDispatcher renderDispatcher)
 	{
-		super(renderManager, new BikeModel());
+		super(renderDispatcher, new BikeModel());
 	}
 
 	@Override

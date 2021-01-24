@@ -77,7 +77,7 @@ public class EntityRegistryBuilder<E extends Entity> {
     }
 
     public EntityType<E> build() {
-        EntityType.Builder<E> entityBuilder = EntityType.Builder.create(this.entityFactory, this.category).setDimensions(this.dimensions.height, this.dimensions.width);
+        EntityType.Builder<E> entityBuilder = EntityType.Builder.create(this.entityFactory, this.category).setDimensions(this.dimensions.width, this.dimensions.height);
         if (fireImmune) {
             entityBuilder.makeFireImmune();
         }

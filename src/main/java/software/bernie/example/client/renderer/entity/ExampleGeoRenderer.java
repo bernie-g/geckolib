@@ -12,8 +12,8 @@ import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
-    public ExampleGeoRenderer(EntityRenderDispatcher renderManager) {
-        super(renderManager, new ExampleEntityModel());
+    public ExampleGeoRenderer(EntityRenderDispatcher renderDispatcher) {
+        super(renderDispatcher, new ExampleEntityModel());
     }
 
     @Override

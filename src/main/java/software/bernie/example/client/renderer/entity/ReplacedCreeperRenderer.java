@@ -14,6 +14,7 @@ public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedC
 	public ReplacedCreeperRenderer(EntityRenderDispatcher renderManager)
 	{
 		super(renderManager, new ReplacedCreeperModel(), new ReplacedCreeperEntity());
+		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, this);
 	}
 
 	@Override
