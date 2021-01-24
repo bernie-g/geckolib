@@ -1,5 +1,4 @@
-V3.0.5
+V3.0.6
 
-- Fixed Armor rotations again #McHorse
-- Fixed the invisible crash on glowing mobs, glowing mobs will now go invisible and glow wih their outline. #AzureDoom
-- Fixed Entities using GeoEntityRenderer not having name plates when named. #Paspartout/AzureDoom
+- Fixed Entities using GeoReplacedEntityRenderer not having name plates when named. #Paspartout
+- Fixed Geckolib Example entities hitboxes. #Paspartout
