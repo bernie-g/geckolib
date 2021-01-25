@@ -1,7 +1,3 @@
-v3.0.2
+v3.0.3
 
-- Fixed Armor rotations again #McHorse
-- Fixed Geckolib Example entities not having Attributes #Paspartout
-- Fixed Nameplates not showing on custom named mobs. #Paspartout/AzureDoom
-- Fixed the invisible crash on glowing mobs, glowing mobs will now go invisible and glow wih their outline. #AzureDoom
-- Updated to Latest Forge mappings. 
+- Fixed Geckolib Armor and Entity rendering when used with Patchouli books. 
