@@ -18,8 +18,15 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
 	{
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.cocoloco.walk_keyframe", true));
-		return PlayState.STOP;
+		if (((EntityCreature) event.getAnimatable()).world.isRaining())
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.magmaspider.attack", true));
+		}
+		else
+		{
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.magmaspider.run", true));
+		}
+		return PlayState.CONTINUE;
 	}
 
 	public GeoExampleEntity(World worldIn)
@@ -32,7 +39,7 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable
 	@Override
 	public void registerControllers(AnimationData data)
 	{
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+		data.addAnimationController(new AnimationController(this, "controller", 50, this::predicate));
 	}
 
 	@Override

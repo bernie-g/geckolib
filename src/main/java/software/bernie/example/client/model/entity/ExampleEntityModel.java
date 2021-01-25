@@ -14,19 +14,19 @@ public class ExampleEntityModel extends AnimatedGeoModel
 	@Override
 	public ResourceLocation getAnimationFileLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "animations/cocoloco.animation.json");
+		return new ResourceLocation(GeckoLib.ModID, "animations/magma_spider.animation.json");
 	}
 
 	@Override
 	public ResourceLocation getModelLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "geo/cocoloco.geo.json");
+		return new ResourceLocation(GeckoLib.ModID, "geo/magma_spider.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(Object entity)
 	{
-		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/cocoloco.png");
+		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/magma_spider.png");
 	}
 
 
