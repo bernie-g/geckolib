@@ -79,6 +79,7 @@ repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+    maven { url 'https://maven.blamejared.com' }
     maven {
         name = "CurseForge"
         url = "https://minecraft.curseforge.com/api/maven/"
@@ -100,6 +101,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
+	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
 
     shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'

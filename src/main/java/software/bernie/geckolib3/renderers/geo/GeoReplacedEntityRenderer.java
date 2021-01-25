@@ -28,6 +28,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.ModList;
+import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -174,6 +176,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			{
 				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, f2, f6);
 			}
+		}
+		if (ModList.get().isLoaded("patchouli")) {
+			PatchouliCompat.patchouliLoaded(stack);
 		}
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
