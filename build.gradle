@@ -93,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.3-34.1.33'
+    minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     compile project(':geckolib-core')
