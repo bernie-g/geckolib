@@ -1,3 +1,4 @@
-V3.0.7
+V3.0.8
 
-- Fixed Geckolib Armor and Entity rendering when used with Patchouli books. 
+- Fixed GeoLayerRender using EntityModel instead of GeoModelProvider #GeoModelProvider
+- Fixed Molang Transition bug #Gecko
