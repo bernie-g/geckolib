@@ -7,6 +7,7 @@ package software.bernie.geckolib3.core.controller;
 
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
+import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.*;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -325,7 +326,7 @@ public class AnimationController<T extends IAnimatable>
 	 * @param modelRendererList      The list of all AnimatedModelRender's
 	 * @param boneSnapshotCollection The bone snapshot collection
 	 */
-	public void process(double tick, AnimationEvent event, List<IBone> modelRendererList, HashMap<IBone, BoneSnapshot> boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
+	public void process(double tick, AnimationEvent event, List<IBone> modelRendererList, HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser, boolean crashWhenCantFindBone)
 	{
 		if (currentAnimation != null)
 		{
@@ -397,7 +398,7 @@ public class AnimationController<T extends IAnimatable>
 			}
 			if (currentAnimation != null)
 			{
-				setAnimTime(parser, 0 );
+				setAnimTime(parser, 0);
 				for (BoneAnimation boneAnimation : currentAnimation.boneAnimations)
 				{
 					BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
@@ -425,23 +426,32 @@ public class AnimationController<T extends IAnimatable>
 					// Adding the initial positions of the upcoming animation, so the model transitions to the initial state of the new animation
 					if (!rotationKeyFrames.xKeyFrames.isEmpty())
 					{
-						boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX, rotationKeyFrames.xKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY, rotationKeyFrames.yKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ, rotationKeyFrames.zKeyFrames.get(0).getStartValue().get()));
+						AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, 0, true, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, Axis.Z);
+						boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueX - initialSnapshot.rotationValueX, xPoint.animationStartValue));
+						boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueY - initialSnapshot.rotationValueY, yPoint.animationStartValue));
+						boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ, zPoint.animationStartValue));
 					}
 
 					if (!positionKeyFrames.xKeyFrames.isEmpty())
 					{
-						boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetX, positionKeyFrames.xKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetY, positionKeyFrames.yKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetZ, positionKeyFrames.zKeyFrames.get(0).getStartValue().get()));
+						AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, true, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, true, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, true, Axis.Z);
+						boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetX, xPoint.animationStartValue));
+						boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetY, yPoint.animationStartValue));
+						boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
 					}
 
 					if (!scaleKeyFrames.xKeyFrames.isEmpty())
 					{
-						boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueX, scaleKeyFrames.xKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueY, scaleKeyFrames.yKeyFrames.get(0).getStartValue().get()));
-						boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueZ, scaleKeyFrames.zKeyFrames.get(0).getStartValue().get()));
+						AnimationPoint xPoint = getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, 0, true, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, 0, true, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, 0, true, Axis.Z);
+						boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueX, xPoint.animationStartValue));
+						boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueY, yPoint.animationStartValue));
+						boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks, boneSnapshot.scaleValueZ, zPoint.animationStartValue));
 					}
 				}
 			}
@@ -479,15 +489,15 @@ public class AnimationController<T extends IAnimatable>
 	}
 
 	// At the beginning of a new transition, save a snapshot of the model's rotation, position, and scale values as the initial value to lerp from
-	private void saveSnapshotsForAnimation(Animation animation, HashMap<IBone, BoneSnapshot> boneSnapshotCollection)
+	private void saveSnapshotsForAnimation(Animation animation, HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection)
 	{
-		for (BoneSnapshot snapshot : boneSnapshotCollection.values())
+		for (Pair<IBone, BoneSnapshot> snapshot : boneSnapshotCollection.values())
 		{
 			if (animation != null && animation.boneAnimations != null)
 			{
-				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.name)))
+				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.getLeft().getName())))
 				{
-					this.boneSnapshots.put(snapshot.name, new BoneSnapshot(snapshot));
+					this.boneSnapshots.put(snapshot.getLeft().getName(), new BoneSnapshot(snapshot.getRight()));
 				}
 			}
 		}
@@ -543,6 +553,7 @@ public class AnimationController<T extends IAnimatable>
 					continue;
 				}
 			}
+
 			VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
 			VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
 			VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;

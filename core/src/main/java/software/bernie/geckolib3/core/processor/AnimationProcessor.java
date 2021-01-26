@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.core.processor;
 
 import com.eliotlash.molang.MolangParser;
+import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -45,7 +46,7 @@ public class AnimationProcessor<T extends IAnimatable>
 		// Store the current value of each bone rotation/position/scale
 		updateBoneSnapshots(manager.getBoneSnapshotCollection());
 
-		HashMap<IBone, BoneSnapshot> boneSnapshots = manager.getBoneSnapshotCollection();
+		HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
 
 		for (AnimationController<T> controller : manager.getAnimationControllers().values())
 		{
@@ -67,7 +68,7 @@ public class AnimationProcessor<T extends IAnimatable>
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values())
 			{
 				IBone bone = boneAnimation.bone;
-				BoneSnapshot snapshot = boneSnapshots.get(bone);
+				BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
 				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 
 				AnimationPoint rXPoint = boneAnimation.rotationXQueue.poll();
@@ -100,7 +101,6 @@ public class AnimationProcessor<T extends IAnimatable>
 					snapshot.rotationValueY = bone.getRotationY();
 					snapshot.rotationValueZ = bone.getRotationZ();
 					snapshot.isCurrentlyRunningRotationAnimation = true;
-
 					dirtyTracker.hasRotationChanged = true;
 				}
 
@@ -147,7 +147,7 @@ public class AnimationProcessor<T extends IAnimatable>
 		{
 			IBone model = tracker.getValue().model;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
-			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getValue().model);
+			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getKey()).getRight();
 			if (saveSnapshot == null)
 			{
 				if (crashWhenCantFindBone)
@@ -246,13 +246,13 @@ public class AnimationProcessor<T extends IAnimatable>
 		return tracker;
 	}
 
-	private void updateBoneSnapshots(HashMap<IBone, BoneSnapshot> boneSnapshotCollection)
+	private void updateBoneSnapshots(HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection)
 	{
 		for (IBone bone : modelRendererList)
 		{
-			if (!boneSnapshotCollection.containsKey(bone))
+			if (!boneSnapshotCollection.containsKey(bone.getName()))
 			{
-				boneSnapshotCollection.put(bone, new BoneSnapshot(bone.getInitialSnapshot()));
+				boneSnapshotCollection.put(bone.getName(), Pair.of(bone, new BoneSnapshot(bone.getInitialSnapshot())));
 			}
 		}
 	}

@@ -7,6 +7,8 @@ package software.bernie.geckolib3.core.snapshot;
 
 import software.bernie.geckolib3.core.processor.IBone;
 
+import java.util.Objects;
+
 public class BoneSnapshot
 {
 	public BoneSnapshot(IBone modelRenderer)
@@ -93,4 +95,24 @@ public class BoneSnapshot
 	public boolean isCurrentlyRunningPositionAnimation = true;
 	public boolean isCurrentlyRunningScaleAnimation = true;
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o)
+		{
+			return true;
+		}
+		if (o == null || getClass() != o.getClass())
+		{
+			return false;
+		}
+		BoneSnapshot that = (BoneSnapshot) o;
+		return name.equals(that.name);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return name.hashCode();
+	}
 }

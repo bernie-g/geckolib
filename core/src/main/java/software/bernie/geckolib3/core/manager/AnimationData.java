@@ -5,6 +5,7 @@
 
 package software.bernie.geckolib3.core.manager;
 
+import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 
 public class AnimationData
 {
-	private HashMap<IBone, BoneSnapshot> boneSnapshotCollection;
+	private HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection;
 	private HashMap<String, AnimationController> animationControllers = new HashMap<>();
 	public float tick;
 	public boolean isFirstTick = true;
@@ -42,12 +43,12 @@ public class AnimationData
 		return this.animationControllers.put(value.getName(), value);
 	}
 
-	public HashMap<IBone, BoneSnapshot> getBoneSnapshotCollection()
+	public HashMap<String, Pair<IBone, BoneSnapshot>> getBoneSnapshotCollection()
 	{
 		return boneSnapshotCollection;
 	}
 
-	public void setBoneSnapshotCollection(HashMap<IBone, BoneSnapshot> boneSnapshotCollection)
+	public void setBoneSnapshotCollection(HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection)
 	{
 		this.boneSnapshotCollection = boneSnapshotCollection;
 	}
