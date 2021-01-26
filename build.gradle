@@ -37,6 +37,8 @@ minecraft {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
+            //For Mixin in other mods / Patchouli
+            property 'mixin.env.disableRefMap', 'true'
             mods {
                 geckolib {
                     source sourceSets.main
@@ -48,6 +50,9 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            
+            //For Mixin in other mods / Patchouli
+            property 'mixin.env.disableRefMap', 'true'
 
             property 'forge.logging.console.level', 'debug'
 
@@ -62,6 +67,9 @@ minecraft {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            
+            //For Mixin in other mods / Patchouli
+            property 'mixin.env.disableRefMap', 'true'
 
             property 'forge.logging.console.level', 'debug'
 
@@ -101,8 +109,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
-	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
+    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
+    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48:api")
 
     shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
