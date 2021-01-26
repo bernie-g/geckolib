@@ -19,7 +19,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
         this.entityRenderer = entityRendererIn;
     }
 
-	protected static <T extends LivingEntity> void renderCopyModel(EntityModel<T> modelParentIn, EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue)
+	protected static <T extends LivingEntity & IAnimatable> void renderCopyModel(EntityModel<T> modelParentIn, EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue)
 	{
 		if (!entityIn.isInvisible())
 		{
@@ -30,7 +30,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		}
 	}
 
-	protected static <T extends LivingEntity> void renderModel(EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float red, float green, float blue)
+	protected static <T extends LivingEntity & IAnimatable> void renderModel(EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float red, float green, float blue)
 	{
 		RenderLayer renderType = getRenderType(textureLocationIn);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
