@@ -220,7 +220,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return 90.0F;
 	}
 
-	public boolean renderLabelIfPresent(T entity) {
+	@Override
+	public boolean canRenderName(T entity) {
 		double d0 = this.renderManager.squareDistanceTo(entity);
 		float f = entity.isDiscrete() ? 32.0F : 64.0F;
 		if (d0 >= (double) (f * f)) {

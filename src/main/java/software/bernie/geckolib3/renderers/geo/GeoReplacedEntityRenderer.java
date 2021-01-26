@@ -281,6 +281,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return 90.0F;
 	}
 	
+	@Override
 	public boolean canRenderName(Entity entity) {
 		double d0 = this.renderManager.squareDistanceTo(entity);
 		float f = entity.isDiscrete() ? 32.0F : 64.0F;
