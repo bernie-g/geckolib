@@ -39,11 +39,6 @@ jobs:
       env:
         repsyUsername: ${{ secrets.repsyUsername }}
         repsyPassword: ${{ secrets.repsyPassword }}
-    - name: Publish Snapshot to Repsy
-      run: ./gradlew --info publish
-      env:
-        repsyUsername: ${{ secrets.repsyUsername }}
-        repsyPassword: ${{ secrets.repsyPassword }}
     - name: Zip Test Results
       if: ${{ always() }}
       run: |
