@@ -8,6 +8,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -50,17 +51,21 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (manager.startTick == null)
+		AnimationData data = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		if (data.ticker == null)
 		{
-			manager.startTick = getCurrentTick();
+			data.ticker = new AnimationTicker(data);
+			MinecraftForge.EVENT_BUS.register(data.ticker);
 		}
 
-		manager.tick = (getCurrentTick() - manager.startTick);
-		double gameTick = manager.tick;
-		double deltaTicks = gameTick - lastGameTickTime;
-		seekTime += deltaTicks;
-		lastGameTickTime = gameTick;
+		if (!Minecraft.getInstance().isGamePaused() || data.shouldPlayWhilePaused)
+		{
+			seekTime = data.tick + Minecraft.getInstance().getRenderPartialTicks();
+		}
+		else {
+			seekTime = data.tick;
+		}
+
 		AnimationEvent<T> predicate;
 		if (customPredicate == null)
 		{
