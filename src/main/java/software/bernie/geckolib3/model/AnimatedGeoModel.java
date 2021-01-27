@@ -49,11 +49,13 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
             manager.startTick = getCurrentTick();
         }
 
-        manager.tick = (getCurrentTick() - manager.startTick);
-        double gameTick = manager.tick;
-        double deltaTicks = gameTick - lastGameTickTime;
-        seekTime += deltaTicks;
-        lastGameTickTime = gameTick;
+        if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
+            manager.tick = (getCurrentTick() - manager.startTick);
+            double gameTick = manager.tick;
+            double deltaTicks = gameTick - lastGameTickTime;
+            seekTime += deltaTicks;
+            lastGameTickTime = gameTick;
+        }
 
         AnimationEvent<T> predicate;
         if (customPredicate == null) {
@@ -140,8 +142,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
     }
 
     @Override
-    public float getCurrentTick()
+    public double getCurrentTick()
     {
-        return (float) (GlfwUtil.getTime() * 20);
+        return GlfwUtil.getTime() * 20;
     }
 }
