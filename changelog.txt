@@ -1,4 +1,6 @@
-v3.0.4
+v3.0.6
 
-- Fixed GeoLayerRender using EntityModel instead of GeoModelProvider #GeoModelProvider
-- Fixed Molang Transition bug #Gecko
+- Updated Geckolib core for random stuttering fix. #Paspartout
+- Switch to double precision to fix random stuttering. Implement pause. #Paspartout
+- Fixed workflow to build checks correctly. #Paspartout/AzureDoom
+- Updated Botarium for z-fighting fix, closes #87.
