@@ -14,7 +14,6 @@ import net.minecraft.util.Identifier;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.util.EntityRegistryBuilder;
 
 public class EntityRegistry
 {

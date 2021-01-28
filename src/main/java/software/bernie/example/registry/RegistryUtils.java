@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.util;
+package software.bernie.example.registry;
 
 import net.fabricmc.loader.FabricLoader;
 import net.minecraft.block.*;

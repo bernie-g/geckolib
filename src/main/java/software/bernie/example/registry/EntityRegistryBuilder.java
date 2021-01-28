@@ -3,7 +3,7 @@
 // (powered by Fernflower decompiler)
 //
 
-package software.bernie.geckolib3.util;
+package software.bernie.example.registry;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.Entity;
