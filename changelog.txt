@@ -1,3 +1,6 @@
-V3.0.9
+V3.0.12
 
-- Fixed Patchouli being required, used wrong method in build. #AzureDoom
+- Updated Geckolib core for random stuttering fix. #Paspartout
+- Switch to double precision to fix random stuttering. Implement pause. #Paspartout
+- Fixed workflow to build checks correctly. #Paspartout/AzureDoom
+- Updated Botarium for z-fighting fix, closes #87.
