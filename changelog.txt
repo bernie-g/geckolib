@@ -1,6 +1,5 @@
-V3.0.12
+V3.0.14
 
-- Updated Geckolib core for random stuttering fix. #Paspartout
-- Switch to double precision to fix random stuttering. Implement pause. #Paspartout
-- Fixed workflow to build checks correctly. #Paspartout/AzureDoom
-- Updated Botarium for z-fighting fix, closes #87.
+- Updated Botarium for z-fighting fix. #AzureDoom
+- Fixed Botarium not haivng the correct rendering. #AzureDoom
+- Fixed bottom face being flipped in BoxUV, re-enable culling. #Paspartout
