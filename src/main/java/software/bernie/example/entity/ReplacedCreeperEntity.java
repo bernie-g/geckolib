@@ -20,7 +20,7 @@ public class ReplacedCreeperEntity implements IAnimatable
 
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event)
 	{
-		if (!(event.getLimbSwingAmount() > -0.15F && event.getLimbSwingAmount() < 0.15F))
+		if (event.isMoving())
 		{
 			event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_walk", true));
 		}

@@ -4,9 +4,9 @@
   "version": "${version}",
 
   "name": "Geckolib",
-  "description": "Geckolib is an entity animation loader for Java Edition, which lets you export bedrock animations and play them automatically.",
+  "description": "Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically. You can export bedrock animations from blockbench and apply them to entities with GeckoLib. Geckolib also supports sound keyframes, particle keyframes, and custom events. The library is currently available on Forge 1.12, 1.15, 1.16, and Fabric 1.16.",
   "authors": [
-    "Gecko, special thanks to Eliot for helping me port to fabric"
+    "Gecko, Eliot, AzureDoom"
   ],
   "contact": {
     "homepage": "https://github.com/bernie-g/geckolib",
@@ -14,7 +14,7 @@
   },
 
   "license": "LGPL 3.0",
-  "icon": "gecko.jpg",
+  "icon": "geckolib.png",
   "environment": "*",
   "entrypoints": {
     "main": [
