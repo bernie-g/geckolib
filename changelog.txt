@@ -1,4 +1,6 @@
-v3.0.7
+v3.0.8
 
-- Updated Botarium for z-fighting fix. #AzureDoom
-- Fixed bottom face being flipped in BoxUV, re-enable culling. #Paspartout
+- Fixed NBT Items resetting the animation on them. #AzureDoom
+- Updatd Core to fix tick resetting bug. #AzureDoom
+- Updated logo being shipped with jar #AzureDoom
+- Changed name of build jar. #AzureDoom
