@@ -24,12 +24,12 @@ displayURL="http://geckolib.com/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="geckolib.png" #optional
 # A text field displayed in the mod UI
-credits="Gecko, Eliot" #optional
+credits="Gecko, Eliot, AzureDoom" #optional
 # A text field displayed in the mod UI
-authors="Gecko, Eliot" #optional
+authors="Gecko, Eliot, AzureDoom" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-GeckoLib is an animation engine for modders. It supports forward-kinematic animations and renders bedrock entity geo models.'''
+Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically. You can export bedrock animations from blockbench and apply them to entities with GeckoLib. Geckolib also supports sound keyframes, particle keyframes, and custom events. The library is currently available on Forge 1.12, 1.15, 1.16, and Fabric 1.16.'''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.geckolib]] #optional
     # the modid of the dependency
