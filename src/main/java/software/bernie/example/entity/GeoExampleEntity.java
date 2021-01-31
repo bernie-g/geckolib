@@ -1,7 +1,9 @@
 package software.bernie.example.entity;
 
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -33,4 +35,10 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable {
     public AnimationFactory getFactory() {
         return this.factory;
     }
+
+	@Override
+	protected void initGoals() {
+		this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+		super.initGoals();
+	}
 }
