@@ -1,6 +1,7 @@
 buildscript {
     repositories {
         jcenter()
+    	maven { url  = 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
@@ -13,6 +14,9 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '4.0.4'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -33,6 +37,7 @@ repositories {
 	maven {
         url = "https://www.cursemaven.com"
     }
+    maven { url  = 'https://plugins.gradle.org/m2/' }
 }
 
 configurations {
@@ -150,6 +155,7 @@ publishing {
         }
     }
 }
+
 publishing {
     repositories {
         maven {
@@ -161,6 +167,22 @@ publishing {
                 password = envPassword == null ? findProperty("repsyPassword") : envPassword
             }
         }
+    }
+}
+
+processResources {
+	doLast {
+        def jsonMinifyStart = System.currentTimeMillis()
+        def jsonMinified = 0
+        def jsonBytesSaved = 0
+        fileTree(dir: outputs.files.asPath, include: '**/*.json').each { 
+            File file = it
+            jsonMinified++
+            def oldLength = file.length()
+            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+            jsonBytesSaved += oldLength - file.length()
+        }
+        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
 }
 
