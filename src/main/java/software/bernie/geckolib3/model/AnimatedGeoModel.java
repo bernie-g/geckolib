@@ -90,7 +90,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
     public GeoModel getModel(Identifier location) {
         GeoModel model = super.getModel(location);
         if (model == null) {
-            throw new GeoModelException(location, "Could not find model.");
+            throw new GeoModelException(location, "Could not find model. If you are getting this with a built mod, please just restart your game.");
         }
         if (model != currentModel) {
             this.animationProcessor.clearModelRendererList();
