@@ -29,7 +29,6 @@ public class ExampleEntityModel extends AnimatedGeoModel
 		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
 	}
 
-
 	@Override
 	public void setLivingAnimations(IAnimatable entity, Integer uniqueID, AnimationEvent customPredicate)
 	{
