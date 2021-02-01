@@ -1,7 +1,3 @@
-V3.0.16
+V3.0.17
 
-- Fixed setLivingAnimations not working. #AzureDoom
-- Fixed missing goal from Bat Example. #AzureDoom
-- Improved error message from missing model crash. #AzureDoom
-- Updated the Itemstack with nbt fix becAUsE I hAd AN EXtRa if chEck. #AzureDoom
-- Compressed textures and minified jsons in built jars. #AzureDoom
+- Moved caching fullying to ConcurrentHashMap to hopefuly fix the missing model crashes. #AzureDoom
