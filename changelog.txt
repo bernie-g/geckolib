@@ -1,6 +1,5 @@
-v3.0.8
+v3.0.9
 
-- Fixed NBT Items resetting the animation on them. #AzureDoom
-- Updatd Core to fix tick resetting bug. #AzureDoom
-- Updated logo being shipped with jar #AzureDoom
-- Changed name of build jar. #AzureDoom
+- Improved error message from missing model crash. #AzureDoom
+- Updated the Itemstack with nbt fix becAUsE I hAd AN EXtRa if chEck. #AzureDoom
+- Compressed textures and minified jsons in built jars. #AzureDoom
