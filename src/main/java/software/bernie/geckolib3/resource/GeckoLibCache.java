@@ -28,7 +28,7 @@ public class GeckoLibCache
 
 	public final MolangParser parser = new MolangParser();
 
-	public HashMap<ResourceLocation, AnimationFile> getAnimations()
+	public ConcurrentHashMap<ResourceLocation, AnimationFile> getAnimations()
 	{
 		if(!GeckoLib.hasInitialized)
 		{
@@ -37,7 +37,7 @@ public class GeckoLibCache
 		return animations;
 	}
 
-	public HashMap<ResourceLocation, GeoModel> getGeoModels()
+	public ConcurrentHashMap<ResourceLocation, GeoModel> getGeoModels()
 	{
 		if(!GeckoLib.hasInitialized)
 		{
@@ -46,8 +46,8 @@ public class GeckoLibCache
 		return geoModels;
 	}
 
-	private HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
-	private HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+	private ConcurrentHashMap<ResourceLocation, AnimationFile> animations = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<ResourceLocation, GeoModel> geoModels = new ConcurrentHashMap<>();
 
 	protected GeckoLibCache()
 	{
@@ -92,11 +92,11 @@ public class GeckoLibCache
 			CompletableFuture<Void> futures = CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x ->
 			{
 				//Retain our behavior of completely replacing the old model map on reload
-				HashMap<ResourceLocation, AnimationFile> hashAnim = new HashMap<>();
+				ConcurrentHashMap<ResourceLocation, AnimationFile> hashAnim = new ConcurrentHashMap<>();
 				hashAnim.putAll(tempAnimations);
 				animations = hashAnim;
 
-				HashMap<ResourceLocation, GeoModel> hashModel = new HashMap<>();
+				ConcurrentHashMap<ResourceLocation, GeoModel> hashModel = new ConcurrentHashMap<>();
 				hashModel.putAll(tempModels);
 				geoModels = hashModel;
 			}).thenCompose(stage::markCompleteAwaitingOthers);
