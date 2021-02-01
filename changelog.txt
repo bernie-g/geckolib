@@ -2,4 +2,4 @@ v3.0.9
 
 - Improved error message from missing model crash. #AzureDoom
 - Updated the Itemstack with nbt fix becAUsE I hAd AN EXtRa if chEck. #AzureDoom
-- Compressed textures and minified jsons in built jars. #AzureDoom
+- Compressed textures and mi
