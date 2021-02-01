@@ -99,6 +99,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	@Override
 	public Integer getUniqueID(T animatable)
 	{
-		return (currentItemStack.hasTag() ? (Objects.hash(currentItemStack.hasTag() ? currentItemStack.getTag().toString() : 1)) : Objects.hash(currentItemStack));
+		return currentItemStack.hasTag() ? 1 : Objects.hash(currentItemStack);
 	}
 }
