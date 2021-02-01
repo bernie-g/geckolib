@@ -1,5 +1,3 @@
-v3.0.9
+v3.0.10
 
-- Improved error message from missing model crash. #AzureDoom
-- Updated the Itemstack with nbt fix becAUsE I hAd AN EXtRa if chEck. #AzureDoom
-- Compressed textures and minified jsons in built jars. #AzureDoom
+- Moved caching fullying to ConcurrentHashMap to hopefuly fix the missing model crashes. #AzureDoom
