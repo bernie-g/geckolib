@@ -84,12 +84,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		float f = MathHelper.lerpAngleDegrees(partialTicks, entity.prevBodyYaw, entity.bodyYaw);
 		float f1 = MathHelper.lerpAngleDegrees(partialTicks, entity.prevHeadYaw, entity.headYaw);
-		float f2 = f1 - f;
+		float netHeadYaw = f1 - f;
 		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
 			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
 			f = MathHelper.lerpAngleDegrees(partialTicks, livingentity.prevBodyYaw, livingentity.bodyYaw);
-			f2 = f1 - f;
-			float f3 = MathHelper.wrapDegrees(f2);
+			netHeadYaw = f1 - f;
+			float f3 = MathHelper.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F) {
 				f3 = -85.0F;
 			}
@@ -103,10 +103,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				f += f3 * 0.2F;
 			}
 
-			f2 = f1 - f;
+			netHeadYaw = f1 - f;
 		}
 
-		float f6 = MathHelper.lerp(partialTicks, entity.prevPitch, entity.pitch);
+		float headPitch = MathHelper.lerp(partialTicks, entity.prevPitch, entity.pitch);
 		if (entity.getPose() == EntityPose.SLEEPING) {
 			Direction direction = entity.getSleepingDirection();
 			if (direction != null) {
@@ -117,21 +117,24 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		float f7 = this.handleRotationFloat(entity, partialTicks);
 		this.applyRotations(entity, stack, f7, f, partialTicks);
 
-		float limbSwingAmount = 0.0F;
+		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
 		if (!shouldSit && entity.isAlive()) {
-			limbSwingAmount = MathHelper.lerp(partialTicks, entity.lastLimbDistance, entity.limbDistance);
+			lastLimbDistance = MathHelper.lerp(partialTicks, entity.lastLimbDistance, entity.limbDistance);
 			limbSwing = entity.limbAngle - entity.limbDistance * (1.0F - partialTicks);
 			if (entity.isBaby()) {
 				limbSwing *= 3.0F;
 			}
 
-			if (limbSwingAmount > 1.0F) {
-				limbSwingAmount = 1.0F;
+			if (lastLimbDistance > 1.0F) {
+				lastLimbDistance = 1.0F;
 			}
 		}
-		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks,
-				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
+		entityModelData.headPitch = -headPitch;
+		entityModelData.netHeadYaw = -netHeadYaw;
+
+		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, lastLimbDistance, partialTicks,
+				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
@@ -149,8 +152,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks,
-						f7, f2, f6);
+				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, lastLimbDistance, partialTicks,
+						f7, netHeadYaw, headPitch);
 			}
 		}
 		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
