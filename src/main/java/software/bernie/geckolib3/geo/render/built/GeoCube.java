@@ -146,7 +146,7 @@ public class GeoCube {
 			quadNorth = new GeoQuad(new GeoVertex[]{P3, P7, P5, P1}, new double[] {UV[0] + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.NORTH);
 			quadSouth = new GeoQuad(new GeoVertex[]{P8, P4, P2, P6},  new double[] {UV[0] + UVSize.z + UVSize.x + UVSize.z, UV[1] + UVSize.z}, new double[] {UVSize.x, UVSize.y}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.SOUTH);
 			quadUp = new GeoQuad(new GeoVertex[]{P4, P8, P7, P3}, new double[] {UV[0] + UVSize.z, UV[1]}, new double[] {UVSize.x, UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.UP);
-			quadDown = new GeoQuad(new GeoVertex[]{P1, P5, P6, P2}, new double[] {UV[0] + UVSize.z + UVSize.x + UVSize.x, UV[1] + UVSize.z}, new double[] {-UVSize.x, -UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.DOWN);
+			quadDown = new GeoQuad(new GeoVertex[]{P1, P5, P6, P2}, new double[] {UV[0] + UVSize.z + UVSize.x, UV[1] + UVSize.z}, new double[] {UVSize.x, -UVSize.z}, textureWidth, textureHeight, cubeIn.getMirror(), Direction.DOWN);
 
 			if(cubeIn.getMirror() == Boolean.TRUE || mirror == Boolean.TRUE)
 			{
