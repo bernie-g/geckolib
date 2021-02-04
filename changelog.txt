@@ -1,3 +1,4 @@
-v3.0.10
+v3.0.12
 
-- Moved caching fullying to ConcurrentHashMap to hopefuly fix the missing model crashes. #AzureDoom
+- Updated Bike Entity texture to help test faces. #Paspartout
+- Here is another shotgun attempt at fixing the crash #BaileyH
