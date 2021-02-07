@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -18,6 +19,8 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerModelPart;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -47,6 +50,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	private final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
+
+	public ItemStack mainHand;
+	public ItemStack offHand;
+	public ItemStack helmet;
+	public ItemStack chestplate;
+	public ItemStack leggings;
+	public ItemStack boots;
+	public IRenderTypeBuffer rtb;
+	public ResourceLocation whTexture;
 
 	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
@@ -144,6 +156,22 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+	}
+
+	@Override
+	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
+			IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+			float partialTicks) {
+		this.mainHand = animatable.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
+		this.offHand = animatable.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
+		this.helmet = animatable.getItemStackFromSlot(EquipmentSlotType.HEAD);
+		this.chestplate = animatable.getItemStackFromSlot(EquipmentSlotType.CHEST);
+		this.leggings = animatable.getItemStackFromSlot(EquipmentSlotType.LEGS);
+		this.boots = animatable.getItemStackFromSlot(EquipmentSlotType.FEET);
+		this.rtb = renderTypeBuffer;
+		this.whTexture = this.getTextureLocation(animatable);
+		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, partialTicks);
 	}
 
 	@Override
