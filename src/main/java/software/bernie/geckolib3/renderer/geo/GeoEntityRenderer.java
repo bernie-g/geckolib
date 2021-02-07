@@ -10,6 +10,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -18,8 +19,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
@@ -48,6 +51,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 	private final AnimatedGeoModel<T> modelProvider;
+
+	public ItemStack mainHand;
+	public ItemStack offHand;
+	public ItemStack helmet;
+	public ItemStack chestplate;
+	public ItemStack leggings;
+	public ItemStack boots;
+	public VertexConsumerProvider rtb;
+	public Identifier whTexture;
 
 	protected GeoEntityRenderer(EntityRenderDispatcher renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
@@ -161,6 +173,22 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+	}
+
+	@Override
+	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+			float partialTicks) {
+		this.mainHand = animatable.getEquippedStack(EquipmentSlot.MAINHAND);
+		this.offHand = animatable.getEquippedStack(EquipmentSlot.OFFHAND);
+		this.helmet = animatable.getEquippedStack(EquipmentSlot.HEAD);
+		this.chestplate = animatable.getEquippedStack(EquipmentSlot.CHEST);
+		this.leggings = animatable.getEquippedStack(EquipmentSlot.LEGS);
+		this.boots = animatable.getEquippedStack(EquipmentSlot.FEET);
+		this.rtb = renderTypeBuffer;
+		this.whTexture = this.getTextureLocation(animatable);
+		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, partialTicks);
 	}
 
 	@Override
