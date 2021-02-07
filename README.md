@@ -1,4 +1,4 @@
-![geckkolib](https://i.softwarelocker.net/geckolib.png)
+![geckkolib](https://i.imgur.com/aVpTA3m.png)
 
 GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge and Fabric. 
 
