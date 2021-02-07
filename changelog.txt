@@ -1,4 +1,3 @@
-v3.0.12
+v3.0.13
 
-- Updated Bike Entity texture to help test faces. #Paspartout
-- Here is another shotgun attempt at fixing the crash #BaileyH
+- Added default support for rendering items on entities. https://geckolib.com/en/latest/3.0.0/misc/ #AzureDoom
