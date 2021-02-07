@@ -21,18 +21,15 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable
-{
+public class BikeEntity extends AnimalEntity implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn)
-	{
+	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
 		this.ignoreCameraFrustum = true;
 	}
@@ -54,7 +51,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	public void travel(Vec3d pos) {
 		if (this.isAlive()) {
 			if (this.hasPassengers()) {
-				LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
+				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
 				this.yaw = livingentity.yaw;
 				this.prevYaw = this.yaw;
 				this.pitch = livingentity.pitch * 0.5F;
@@ -84,14 +81,12 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	public void registerControllers(AnimationData data)
-	{
+	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 

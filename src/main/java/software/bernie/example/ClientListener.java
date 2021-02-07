@@ -27,22 +27,22 @@ import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
-public class ClientListener implements ClientModInitializer
-{
+public class ClientListener implements ClientModInitializer {
 
 	@Override
-	public void onInitializeClient()
-	{
-		if (FabricLoader.INSTANCE.isDevelopmentEnvironment()  && !GeckoLibMod.DISABLE_IN_DEV)
-		{
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEO_EXAMPLE_ENTITY, (entityRenderDispatcher, context) -> new ExampleGeoRenderer(entityRenderDispatcher));
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY, (entityRenderDispatcher, context) -> new BikeGeoRenderer(entityRenderDispatcher));
+	public void onInitializeClient() {
+		if (FabricLoader.INSTANCE.isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
+			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEO_EXAMPLE_ENTITY,
+					(entityRenderDispatcher, context) -> new ExampleGeoRenderer(entityRenderDispatcher));
+			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY,
+					(entityRenderDispatcher, context) -> new BikeGeoRenderer(entityRenderDispatcher));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE, BotariumTileRenderer::new);
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER, FertilizerTileRenderer::new);
 
-			EntityRendererRegistry.INSTANCE.register(EntityType.CREEPER, (entityRenderDispatcher, context) -> new ReplacedCreeperRenderer(entityRenderDispatcher));
+			EntityRendererRegistry.INSTANCE.register(EntityType.CREEPER,
+					(entityRenderDispatcher, context) -> new ReplacedCreeperRenderer(entityRenderDispatcher));
 
 			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
 		}

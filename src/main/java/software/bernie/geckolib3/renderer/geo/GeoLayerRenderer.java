@@ -13,16 +13,18 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
-    private final IGeoRenderer<T> entityRenderer;
+	private final IGeoRenderer<T> entityRenderer;
 
-    public GeoLayerRenderer(IGeoRenderer<T> entityRendererIn) {
-        this.entityRenderer = entityRendererIn;
-    }
+	public GeoLayerRenderer(IGeoRenderer<T> entityRendererIn) {
+		this.entityRenderer = entityRendererIn;
+	}
 
-	protected static <T extends LivingEntity & IAnimatable> void renderCopyModel(EntityModel<T> modelParentIn, EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green, float blue)
-	{
-		if (!entityIn.isInvisible())
-		{
+	protected static <T extends LivingEntity & IAnimatable> void renderCopyModel(EntityModel<T> modelParentIn,
+			EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn,
+			VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount,
+			float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green,
+			float blue) {
+		if (!entityIn.isInvisible()) {
 			modelParentIn.copyStateTo(modelIn);
 			modelIn.animateModel(entityIn, limbSwing, limbSwingAmount, partialTicks);
 			modelIn.setAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
@@ -30,25 +32,28 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		}
 	}
 
-	protected static <T extends LivingEntity & IAnimatable> void renderModel(EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float red, float green, float blue)
-	{
+	protected static <T extends LivingEntity & IAnimatable> void renderModel(EntityModel<T> modelIn,
+			Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+			T entityIn, float red, float green, float blue) {
 		RenderLayer renderType = getRenderType(textureLocationIn);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
-		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
+		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F),
+				red, green, blue, 1.0F);
 	}
 
-	public static RenderLayer getRenderType(Identifier textureLocation)
-	{
+	public static RenderLayer getRenderType(Identifier textureLocation) {
 		return RenderLayer.getEntityCutout(textureLocation);
 	}
 
-    public GeoModelProvider getEntityModel() {
-        return this.entityRenderer.getGeoModelProvider();
-    }
+	public GeoModelProvider getEntityModel() {
+		return this.entityRenderer.getGeoModelProvider();
+	}
 
-    protected Identifier getEntityTexture(T entityIn) {
-        return this.entityRenderer.getTextureLocation(entityIn);
-    }
+	protected Identifier getEntityTexture(T entityIn) {
+		return this.entityRenderer.getTextureLocation(entityIn);
+	}
 
-    public abstract void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch);
+	public abstract void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+			T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
+			float netHeadYaw, float headPitch);
 }

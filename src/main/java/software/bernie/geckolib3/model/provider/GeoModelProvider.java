@@ -5,15 +5,15 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public abstract class GeoModelProvider<T> {
-    public double seekTime;
-    public double lastGameTickTime;
-    public boolean shouldCrashOnMissing = false;
+	public double seekTime;
+	public double lastGameTickTime;
+	public boolean shouldCrashOnMissing = false;
 
-    public GeoModel getModel(Identifier location) {
-        return GeckoLibCache.getInstance().getGeoModels().get(location);
-    }
+	public GeoModel getModel(Identifier location) {
+		return GeckoLibCache.getInstance().getGeoModels().get(location);
+	}
 
-    public abstract Identifier getModelLocation(T object);
+	public abstract Identifier getModelLocation(T object);
 
-    public abstract Identifier getTextureLocation(T object);
+	public abstract Identifier getTextureLocation(T object);
 }

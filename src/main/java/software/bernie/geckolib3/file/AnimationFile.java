@@ -6,17 +6,17 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class AnimationFile {
-    private final HashMap<String, Animation> animations = new HashMap<>();
+	private final HashMap<String, Animation> animations = new HashMap<>();
 
-    public Animation getAnimation(String name) {
-        return animations.get(name);
-    }
+	public Animation getAnimation(String name) {
+		return animations.get(name);
+	}
 
-	public Collection<Animation> getAllAnimations()
-	{
+	public Collection<Animation> getAllAnimations() {
 		return this.animations.values();
 	}
-    public void putAnimation(String name, Animation animation) {
-        this.animations.put(name, animation);
-    }
+
+	public void putAnimation(String name, Animation animation) {
+		this.animations.put(name, animation);
+	}
 }

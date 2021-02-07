@@ -19,28 +19,26 @@ import software.bernie.example.registry.SoundRegistry;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
-public class GeckoLibMod implements ModInitializer
-{
+public class GeckoLibMod implements ModInitializer {
 	public static boolean DISABLE_IN_DEV = false;
 	boolean isDevelopmentEnvironment = FabricLoader.getInstance().isDevelopmentEnvironment();
 	public static ItemGroup geckolibItemGroup;
 
 	@Override
-	public void onInitialize()
-	{
+	public void onInitialize() {
 		GeckoLib.initialize();
-		if (isDevelopmentEnvironment && !GeckoLibMod.DISABLE_IN_DEV)
-		{
+		if (isDevelopmentEnvironment && !GeckoLibMod.DISABLE_IN_DEV) {
 			new EntityRegistry();
-			FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, EntityUtils.createGenericEntityAttributes());
-			FabricDefaultAttributeRegistry.register(EntityRegistry.BIKE_ENTITY, EntityUtils.createGenericEntityAttributes());
+			FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY,
+					EntityUtils.createGenericEntityAttributes());
+			FabricDefaultAttributeRegistry.register(EntityRegistry.BIKE_ENTITY,
+					EntityUtils.createGenericEntityAttributes());
 			new ItemRegistry();
 			new TileRegistry();
 			new BlockRegistry();
 			new SoundRegistry();
 			geckolibItemGroup = FabricItemGroupBuilder.create(new Identifier(GeckoLib.ModID, "geckolib_examples"))
-					.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
-					.build();
+					.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX)).build();
 		}
 	}
 }

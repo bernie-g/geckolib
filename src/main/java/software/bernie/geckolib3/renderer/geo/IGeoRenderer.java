@@ -16,20 +16,26 @@ import software.bernie.geckolib3.util.RenderUtils;
 import java.awt.*;
 
 public interface IGeoRenderer<T> {
-	default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
 
 		if (renderTypeBuffer != null) {
 			vertexBuilder = renderTypeBuffer.getBuffer(type);
 		}
-		renderLate(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		//Render all top level bones
+		renderLate(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
+		// Render all top level bones
 		for (GeoBone group : model.topLevelBones) {
-			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue,
+					alpha);
 		}
 	}
 
-	default void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+	default void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		stack.push();
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
@@ -48,11 +54,11 @@ public interface IGeoRenderer<T> {
 			}
 		}
 
-
 		stack.pop();
 	}
 
-	default void renderCube(GeoCube cube, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+	default void renderCube(GeoCube cube, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		RenderUtils.moveToPivot(cube, stack);
 		RenderUtils.rotate(cube, stack);
 		RenderUtils.moveBackFromPivot(cube, stack);
@@ -63,23 +69,23 @@ public interface IGeoRenderer<T> {
 			Vector3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 
-			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0)
-			{
+			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0) {
 				normal.multiplyComponentwise(-1, 1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0)
-			{
+			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0) {
 				normal.multiplyComponentwise(1, -1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0)
-			{
+			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0) {
 				normal.multiplyComponentwise(1, 1, -1);
 			}
-			
+
 			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(), 1.0F);
+				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
+						1.0F);
 				vector4f.transform(matrix4f);
-				bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha, vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(), normal.getZ());
+				bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
+						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
+						normal.getZ());
 			}
 		}
 	}
@@ -88,17 +94,24 @@ public interface IGeoRenderer<T> {
 
 	Identifier getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float ticks,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+	default void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+			float partialTicks) {
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+	default void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+			float partialTicks) {
 	}
 
-	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
+	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			Identifier textureLocation) {
 		return RenderLayer.getEntityCutout(textureLocation);
 	}
 
-	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,  VertexConsumerProvider renderTypeBuffer,  VertexConsumer vertexBuilder, int packedLightIn) {
+	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn) {
 		return new Color(255, 255, 255, 255);
 	}
 

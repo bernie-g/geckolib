@@ -6,15 +6,13 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import java.util.Objects;
 
-public class GeckoLibUtil
-{
-	public static int getIDFromStack(ItemStack stack)
-	{
+public class GeckoLibUtil {
+	public static int getIDFromStack(ItemStack stack) {
 		return stack.hasTag() ? 1 : Objects.hash(stack);
 	}
 
-	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack, String controllerName)
-	{
+	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,
+			String controllerName) {
 		return factory.getOrCreateAnimationData(getIDFromStack(stack)).getAnimationControllers().get(controllerName);
 	}
 }

@@ -12,13 +12,15 @@ import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.renderer.geo.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
-    public ExampleGeoRenderer(EntityRenderDispatcher renderDispatcher) {
-        super(renderDispatcher, new ExampleEntityModel());
-    }
+	public ExampleGeoRenderer(EntityRenderDispatcher renderDispatcher) {
+		super(renderDispatcher, new ExampleEntityModel());
+	}
 
-    @Override
-    public RenderLayer getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack, @Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
-        return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
-    }
+	@Override
+	public RenderLayer getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack,
+			@Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder,
+			int packedLightIn, Identifier textureLocation) {
+		return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
+	}
 
 }

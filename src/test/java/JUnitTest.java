@@ -1,4 +1,3 @@
-public class JUnitTest
-{
+public class JUnitTest {
 
 }

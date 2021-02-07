@@ -11,14 +11,14 @@ import software.bernie.geckolib3.renderer.geo.GeoReplacedEntityRenderer;
 
 public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedCreeperEntity> {
 
-	public ReplacedCreeperRenderer(EntityRenderDispatcher renderManager)
-	{
+	public ReplacedCreeperRenderer(EntityRenderDispatcher renderManager) {
 		super(renderManager, new ReplacedCreeperModel(), new ReplacedCreeperEntity());
 		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, this);
 	}
 
 	@Override
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn, float partialTickTime) {
+	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn,
+			float partialTickTime) {
 		CreeperEntity creeper = (CreeperEntity) entitylivingbaseIn;
 		float f = creeper.getClientFuseTime(partialTickTime);
 		float f1 = 1.0F + MathHelper.sin(f * 100.0F) * f * 0.01F;
@@ -34,6 +34,6 @@ public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedC
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
 		CreeperEntity creeper = (CreeperEntity) livingEntityIn;
 		float f = creeper.getClientFuseTime(partialTicks);
-		return (int)(f * 10.0F) % 2 == 0 ? 0.0F : MathHelper.clamp(f, 0.5F, 1.0F);
+		return (int) (f * 10.0F) % 2 == 0 ? 0.0F : MathHelper.clamp(f, 0.5F, 1.0F);
 	}
 }
