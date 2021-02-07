@@ -13,17 +13,15 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 import javax.annotation.Nullable;
 
-public abstract class GeoArmorItem extends ArmorItem
-{
-	public GeoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder)
-	{
+public abstract class GeoArmorItem extends ArmorItem {
+	public GeoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
 		super(materialIn, slot, builder);
 	}
 
 	@OnlyIn(Dist.CLIENT)
 	@Override
-	public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot, A _default)
-	{
+	public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
+			EquipmentSlotType armorSlot, A _default) {
 		Class<? extends ArmorItem> clazz = this.getClass();
 		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
 		renderer.applyEntityStats(_default).applySlot(armorSlot);

@@ -10,16 +10,15 @@ import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
-public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity>
-{
-	public ExampleGeoRenderer(EntityRendererManager renderManager)
-	{
+public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
+	public ExampleGeoRenderer(EntityRendererManager renderManager) {
 		super(renderManager, new ExampleEntityModel());
 	}
 
 	@Override
-	public RenderType getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
-	{
+	public RenderType getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack,
+			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
 		return RenderType.getEntityTranslucent(getTextureLocation(animatable));
 	}
 }

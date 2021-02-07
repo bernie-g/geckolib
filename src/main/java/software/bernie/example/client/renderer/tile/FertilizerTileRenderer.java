@@ -10,16 +10,15 @@ import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.model.tile.FertilizerModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
-public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntity>
-{
-	public FertilizerTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn)
-	{
+public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntity> {
+	public FertilizerTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn, new FertilizerModel());
 	}
 
 	@Override
-	public RenderType getRenderType(FertilizerTileEntity animatable, float partialTicks, MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
-	{
+	public RenderType getRenderType(FertilizerTileEntity animatable, float partialTicks, MatrixStack stack,
+			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
 		return RenderType.getEntityTranslucent(getTextureLocation(animatable));
 	}
 }

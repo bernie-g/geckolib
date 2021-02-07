@@ -20,23 +20,18 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable
-{
+public class BikeEntity extends AnimalEntity implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn)
-	{
+	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
 		this.ignoreFrustumCheck = true;
 	}
-
-
 
 	@Override
 	public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
@@ -55,7 +50,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	public void travel(Vector3d pos) {
 		if (this.isAlive()) {
 			if (this.isBeingRidden()) {
-				LivingEntity livingentity = (LivingEntity)this.getControllingPassenger();
+				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
 				this.rotationYaw = livingentity.rotationYaw;
 				this.prevRotationYaw = this.rotationYaw;
 				this.rotationPitch = livingentity.rotationPitch * 0.5F;
@@ -69,7 +64,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 				}
 
 				this.setAIMoveSpeed(0.3F);
-				super.travel(new Vector3d((double)f, pos.y, (double)f1));
+				super.travel(new Vector3d((double) f, pos.y, (double) f1));
 			}
 		}
 	}
@@ -85,23 +80,18 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	public void registerControllers(AnimationData data)
-	{
+	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 
-
 	@Override
-	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_)
-	{
+	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		return null;
 	}
-
 
 }

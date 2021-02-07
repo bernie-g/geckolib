@@ -2,54 +2,42 @@ package software.bernie.geckolib3.model;
 
 import org.junit.jupiter.api.Test;
 
-class AnimatedEntityModelTest
-{
+class AnimatedEntityModelTest {
 
 	@Test
-	void getAnimationFileLocation()
-	{
+	void getAnimationFileLocation() {
 	}
 
 	@Test
-	void onResourceManagerReload()
-	{
+	void onResourceManagerReload() {
 	}
 
 	@Test
-	void getAnimationFile()
-	{
+	void getAnimationFile() {
 	}
 
 	@Test
-	void setAnimationFile()
-	{
+	void setAnimationFile() {
 	}
 
 	@Test
-	void getBone()
-	{
+	void getBone() {
 	}
 
 	@Test
-	void registerModelRenderer()
-	{
+	void registerModelRenderer() {
 	}
 
 	@Test
-	void getAnimationByName()
-	{
+	void getAnimationByName() {
 	}
 
 	@Test
-	void setRotationAngle()
-	{
+	void setRotationAngle() {
 	}
 
 	@Test
-	void setLivingAnimations()
-	{
+	void setLivingAnimations() {
 	}
-
-
 
 }

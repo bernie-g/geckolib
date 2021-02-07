@@ -10,40 +10,33 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class FertilizerTileEntity extends TileEntity implements IAnimatable
-{
+public class FertilizerTileEntity extends TileEntity implements IAnimatable {
 	private final AnimationFactory manager = new AnimationFactory(this);
 
-	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
+	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		AnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
-		if (event.getAnimatable().getWorld().isRaining())
-		{
-			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true).addAnimation("fertilizer.animation.idle", true));
-		}
-		else
-		{
-			controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true).addAnimation("Botarium.anim.idle", true));
+		if (event.getAnimatable().getWorld().isRaining()) {
+			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true)
+					.addAnimation("fertilizer.animation.idle", true));
+		} else {
+			controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true)
+					.addAnimation("Botarium.anim.idle", true));
 		}
 		return PlayState.CONTINUE;
 	}
 
-	public FertilizerTileEntity()
-	{
+	public FertilizerTileEntity() {
 		super(TileRegistry.FERTILIZER.get());
 	}
 
-
 	@Override
-	public void registerControllers(AnimationData data)
-	{
+	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.manager;
 	}
 }

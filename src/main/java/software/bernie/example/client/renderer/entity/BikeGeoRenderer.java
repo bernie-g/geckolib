@@ -10,16 +10,15 @@ import software.bernie.example.client.model.entity.BikeModel;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
-public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity>
-{
-	public BikeGeoRenderer(EntityRendererManager renderManager)
-	{
+public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity> {
+	public BikeGeoRenderer(EntityRendererManager renderManager) {
 		super(renderManager, new BikeModel());
 	}
 
 	@Override
-	public RenderType getRenderType(BikeEntity animatable, float partialTicks, MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
-	{
+	public RenderType getRenderType(BikeEntity animatable, float partialTicks, MatrixStack stack,
+			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
 		return RenderType.getEntityTranslucent(getTextureLocation(animatable));
 	}
 }
