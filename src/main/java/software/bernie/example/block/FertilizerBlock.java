@@ -18,47 +18,40 @@ import software.bernie.example.registry.TileRegistry;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FertilizerBlock extends DirectionalBlock
-{
-	public FertilizerBlock()
-	{
+public class FertilizerBlock extends DirectionalBlock {
+	public FertilizerBlock() {
 		super(Properties.create(Material.ROCK).notSolid());
 	}
 
 	@Override
-	public boolean hasTileEntity(BlockState state)
-	{
+	public boolean hasTileEntity(BlockState state) {
 		return true;
 	}
 
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world)
-	{
+	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
 		return TileRegistry.FERTILIZER.get().create();
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state)
-	{
+	public BlockRenderType getRenderType(BlockState state) {
 		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder)
-	{
+	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context)
-	{
+	public BlockState getStateForPlacement(BlockItemUseContext context) {
 		return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn)
-	{
+	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip,
+			ITooltipFlag flagIn) {
 		tooltip.add(new StringTextComponent("Turn on rain to see the fertilizer model!"));
 		super.addInformation(stack, worldIn, tooltip, flagIn);
 	}

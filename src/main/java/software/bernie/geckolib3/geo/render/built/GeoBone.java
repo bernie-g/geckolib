@@ -6,8 +6,7 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GeoBone implements IBone
-{
+public class GeoBone implements IBone {
 	public GeoBone parent;
 
 	public List<GeoBone> childBones = new ArrayList<>();
@@ -20,7 +19,8 @@ public class GeoBone implements IBone
 	public Double inflate;
 	public Boolean dontRender;
 	public boolean isHidden;
-	//I still have no idea what this field does, but its in the json file so ¯\_(ツ)_/¯
+	// I still have no idea what this field does, but its in the json file so
+	// ¯\_(ツ)_/¯
 	public Boolean reset;
 
 	private float scaleX = 1;
@@ -40,187 +40,156 @@ public class GeoBone implements IBone
 	private float rotateZ;
 
 	@Override
-	public void setModelRendererName(String modelRendererName)
-	{
+	public void setModelRendererName(String modelRendererName) {
 		this.name = modelRendererName;
 	}
 
 	@Override
-	public void saveInitialSnapshot()
-	{
-		if (this.initialSnapshot == null)
-		{
+	public void saveInitialSnapshot() {
+		if (this.initialSnapshot == null) {
 			this.initialSnapshot = new BoneSnapshot(this, true);
 		}
 	}
 
 	@Override
-	public BoneSnapshot getInitialSnapshot()
-	{
+	public BoneSnapshot getInitialSnapshot() {
 		return this.initialSnapshot;
 	}
 
 	@Override
-	public String getName()
-	{
+	public String getName() {
 		return this.name;
 	}
 
 	// Boilerplate code incoming
 
 	@Override
-	public float getRotationX()
-	{
+	public float getRotationX() {
 		return rotateX;
 	}
 
 	@Override
-	public float getRotationY()
-	{
+	public float getRotationY() {
 		return rotateY;
 	}
 
 	@Override
-	public float getRotationZ()
-	{
+	public float getRotationZ() {
 		return rotateZ;
 	}
 
 	@Override
-	public float getPositionX()
-	{
+	public float getPositionX() {
 		return positionX;
 	}
 
 	@Override
-	public float getPositionY()
-	{
+	public float getPositionY() {
 		return positionY;
 	}
 
 	@Override
-	public float getPositionZ()
-	{
+	public float getPositionZ() {
 		return positionZ;
 	}
 
 	@Override
-	public float getScaleX()
-	{
+	public float getScaleX() {
 		return scaleX;
 	}
 
 	@Override
-	public float getScaleY()
-	{
+	public float getScaleY() {
 		return scaleY;
 	}
 
 	@Override
-	public float getScaleZ()
-	{
+	public float getScaleZ() {
 		return scaleZ;
 	}
 
 	@Override
-	public void setRotationX(float value)
-	{
+	public void setRotationX(float value) {
 		this.rotateX = value;
 	}
 
 	@Override
-	public void setRotationY(float value)
-	{
+	public void setRotationY(float value) {
 		this.rotateY = value;
 	}
 
 	@Override
-	public void setRotationZ(float value)
-	{
+	public void setRotationZ(float value) {
 		this.rotateZ = value;
 	}
 
 	@Override
-	public void setPositionX(float value)
-	{
+	public void setPositionX(float value) {
 		this.positionX = value;
 	}
 
 	@Override
-	public void setPositionY(float value)
-	{
+	public void setPositionY(float value) {
 		this.positionY = value;
 	}
 
 	@Override
-	public void setPositionZ(float value)
-	{
+	public void setPositionZ(float value) {
 		this.positionZ = value;
 	}
 
 	@Override
-	public void setScaleX(float value)
-	{
+	public void setScaleX(float value) {
 		this.scaleX = value;
 	}
 
 	@Override
-	public void setScaleY(float value)
-	{
+	public void setScaleY(float value) {
 		this.scaleY = value;
 	}
 
 	@Override
-	public void setScaleZ(float value)
-	{
+	public void setScaleZ(float value) {
 		this.scaleZ = value;
 	}
 
 	@Override
-	public boolean isHidden()
-	{
+	public boolean isHidden() {
 		return this.isHidden;
 	}
 
 	@Override
-	public void setHidden(boolean hidden)
-	{
+	public void setHidden(boolean hidden) {
 		this.isHidden = hidden;
 	}
 
 	@Override
-	public void setPivotX(float value)
-	{
+	public void setPivotX(float value) {
 		this.rotationPointX = value;
 	}
 
 	@Override
-	public void setPivotY(float value)
-	{
+	public void setPivotY(float value) {
 		this.rotationPointY = value;
 	}
 
 	@Override
-	public void setPivotZ(float value)
-	{
+	public void setPivotZ(float value) {
 		this.rotationPointZ = value;
 	}
 
 	@Override
-	public float getPivotX()
-	{
+	public float getPivotX() {
 		return this.rotationPointX;
 	}
 
 	@Override
-	public float getPivotY()
-	{
+	public float getPivotY() {
 		return this.rotationPointY;
 	}
 
 	@Override
-	public float getPivotZ()
-	{
+	public float getPivotZ() {
 		return this.rotationPointZ;
 	}
 }

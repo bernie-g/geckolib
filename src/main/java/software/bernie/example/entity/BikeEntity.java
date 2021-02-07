@@ -19,27 +19,22 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable
-{
+public class BikeEntity extends AnimalEntity implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn)
-	{
+	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
 		this.ignoreFrustumCheck = true;
 	}
 
 	@Override
-	public boolean processInteract(PlayerEntity player, Hand hand)
-	{
-		if (!this.isBeingRidden())
-		{
+	public boolean processInteract(PlayerEntity player, Hand hand) {
+		if (!this.isBeingRidden()) {
 			player.startRiding(this);
 			return super.processInteract(player, hand);
 		}
@@ -47,17 +42,13 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn)
-	{
+	protected void playStepSound(BlockPos pos, BlockState blockIn) {
 	}
 
 	@Override
-	public void travel(Vec3d pos)
-	{
-		if (this.isAlive())
-		{
-			if (this.isBeingRidden())
-			{
+	public void travel(Vec3d pos) {
+		if (this.isAlive()) {
+			if (this.isBeingRidden()) {
 				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
 				this.rotationYaw = livingentity.rotationYaw;
 				this.prevRotationYaw = this.rotationYaw;
@@ -67,8 +58,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 				this.rotationYawHead = this.renderYawOffset;
 				float f = livingentity.moveStrafing * 0.5F;
 				float f1 = livingentity.moveForward;
-				if (f1 <= 0.0F)
-				{
+				if (f1 <= 0.0F) {
 					f1 *= 0.25F;
 				}
 
@@ -89,21 +79,18 @@ public class BikeEntity extends AnimalEntity implements IAnimatable
 	}
 
 	@Override
-	public void registerControllers(AnimationData data)
-	{
+	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 
 	@Nullable
 	@Override
-	public AgeableEntity createChild(AgeableEntity ageable)
-	{
+	public AgeableEntity createChild(AgeableEntity ageable) {
 		return null;
 	}
 }

@@ -34,15 +34,13 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.MOD)
-public class ClientListener
-{
+public class ClientListener {
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void registerRenderers(final FMLClientSetupEvent event)
-	{
-		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV)
-		{
-			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
+	public static void registerRenderers(final FMLClientSetupEvent event) {
+		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
+			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(),
+					ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
 
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());

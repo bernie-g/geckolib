@@ -8,23 +8,19 @@ import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class BotariumModel extends AnimatedGeoModel
-{
+public class BotariumModel extends AnimatedGeoModel {
 	@Override
-	public ResourceLocation getAnimationFileLocation(Object entity)
-	{
+	public ResourceLocation getAnimationFileLocation(Object entity) {
 		return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(Object animatable)
-	{
+	public ResourceLocation getModelLocation(Object animatable) {
 		return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(Object entity)
-	{
+	public ResourceLocation getTextureLocation(Object entity) {
 		return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
 	}
 }

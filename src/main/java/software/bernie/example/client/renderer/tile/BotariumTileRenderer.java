@@ -10,16 +10,15 @@ import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.client.model.tile.BotariumModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
-public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity>
-{
-	public BotariumTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn)
-	{
+public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity> {
+	public BotariumTileRenderer(TileEntityRendererDispatcher rendererDispatcherIn) {
 		super(rendererDispatcherIn, new BotariumModel());
 	}
 
 	@Override
-	public RenderType getRenderType(BotariumTileEntity animatable, float partialTicks, MatrixStack stack, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, ResourceLocation textureLocation)
-	{
+	public RenderType getRenderType(BotariumTileEntity animatable, float partialTicks, MatrixStack stack,
+			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
 		return RenderType.getEntityTranslucent(getTextureLocation(animatable));
 	}
 }
