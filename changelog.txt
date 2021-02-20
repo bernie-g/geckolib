@@ -1,4 +1,4 @@
 V3.0.21
 
 - Armor anchor fix ported from McHorses patch #AzureDoom
-- Fixed Item Tab #ʏummy/AzureDoom
+- Fixed Item Tab #yummy
