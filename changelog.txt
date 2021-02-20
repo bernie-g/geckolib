@@ -1,3 +1,4 @@
-V3.0.20
+V3.0.21
 
-- Added default support for rendering items on entities. https://geckolib.com/en/latest/3.0.0/misc/ #AzureDoom
+- Armor anchor fix ported from McHorses patch #AzureDoom
+- Fixed Item Tab #ʏummy/AzureDoom
