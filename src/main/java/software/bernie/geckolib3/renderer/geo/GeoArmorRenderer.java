@@ -78,7 +78,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 1.501F, 0.0D);
+		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
@@ -87,38 +87,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
 		stack.push();
-		stack.translate(0, 0.01f, 0);
-		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
-		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-		if (this.handSwingProgress > 0.0F) {
-			rightArmBone.setScaleZ(1.25F);
-			rightArmBone.setScaleX(1.25F);
-			leftArmBone.setScaleZ(1.3F);
-			leftArmBone.setScaleX(1.05F);
-		}
-		if (sneaking) {
-			IBone headBone = this.modelProvider.getBone(this.headBone);
-			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-			IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
-			IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
-			IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
-			IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
-			try {
-				headBone.setPositionY(headBone.getPositionY() - 5.35F);
-				bodyBone.setPositionZ(bodyBone.getPositionX() - 0.4F);
-				bodyBone.setPositionY(headBone.getPositionX() - 3.5F);
-				rightArmBone.setPositionY(bodyBone.getPositionX() - 3);
-				rightArmBone.setPositionX(bodyBone.getPositionX() + 0.35F);
-				leftArmBone.setPositionY(bodyBone.getPositionX() - 3);
-				leftArmBone.setPositionX(bodyBone.getPositionX() - 0.35F);
-				rightLegBone.setPositionZ(bodyBone.getPositionX() + 4);
-				leftLegBone.setPositionZ(bodyBone.getPositionX() + 4);
-				rightBootBone.setPositionZ(bodyBone.getPositionX() + 4);
-				leftBootBone.setPositionZ(bodyBone.getPositionX() + 4);
-			} catch (Exception e) {
-				throw new RuntimeException("Could not find an armor bone.", e);
-			}
-		}
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
