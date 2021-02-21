@@ -1,3 +1,4 @@
-v3.0.13
+v3.0.14
 
-- Added default support for rendering items on entities. https://geckolib.com/en/latest/3.0.0/misc/ #AzureDoom
+- Fixed animation issues with mobs that use variant models/animations. #AzureDoom
+- Fixed Potato Armor not playing in server. #Icosider
