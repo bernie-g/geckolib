@@ -147,13 +147,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, lastLimbDistance, partialTicks,
 				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
 		stack.translate(0, 0.01f, 0);
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entity));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTexture(entity));
@@ -173,6 +173,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+	}
+	
+	@Override
+	public Integer getUniqueID(T animatable) {
+		return animatable.getEntityId();
 	}
 
 	@Override
