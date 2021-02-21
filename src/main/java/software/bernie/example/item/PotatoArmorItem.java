@@ -1,8 +1,12 @@
 package software.bernie.example.item;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
@@ -17,10 +21,6 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 //This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
@@ -50,12 +50,12 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 
 		// The entity is a player, so we want to only play if the player is wearing the
 		// full set of armor
-		else if (livingEntity instanceof ClientPlayerEntity) {
-			ClientPlayerEntity client = (ClientPlayerEntity) livingEntity;
+		else if (livingEntity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) livingEntity;
 
 			// Get all the equipment, aka the armor, currently held item, and offhand item
 			List<Item> equipmentList = new ArrayList<>();
-			client.getEquipmentAndArmor().forEach((x) -> equipmentList.add(x.getItem()));
+			player.getEquipmentAndArmor().forEach((x) -> equipmentList.add(x.getItem()));
 
 			// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
 			// contains the 4 armor slots
