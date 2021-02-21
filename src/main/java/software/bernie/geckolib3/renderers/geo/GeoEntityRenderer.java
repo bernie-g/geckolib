@@ -158,6 +158,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
+	
+	@Override
+	public Integer getUniqueID(T animatable) {
+		return animatable.getEntityId();
+	}
 
 	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
