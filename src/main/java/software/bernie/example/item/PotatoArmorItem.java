@@ -4,6 +4,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
 import software.bernie.example.GeckoLibMod;
@@ -47,12 +48,12 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 
 		// The entity is a player, so we want to only play if the player is wearing the
 		// full set of armor
-		else if (livingEntity instanceof ClientPlayerEntity) {
-			ClientPlayerEntity client = (ClientPlayerEntity) livingEntity;
+		else if (livingEntity instanceof PlayerEntity) {
+			PlayerEntity player = (PlayerEntity) livingEntity;
 
 			// Get all the equipment, aka the armor, currently held item, and offhand item
 			List<Item> equipmentList = new ArrayList<>();
-			client.getItemsEquipped().forEach((x) -> equipmentList.add(x.getItem()));
+			player.getItemsEquipped().forEach((x) -> equipmentList.add(x.getItem()));
 
 			// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
 			// contains the 4 armor slots
