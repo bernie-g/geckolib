@@ -1,4 +1,4 @@
-V3.0.21
+V3.0.22
 
-- Armor anchor fix ported from McHorses patch #AzureDoom
-- Fixed Item Tab #yummy
+- Fixed animation issues with mobs that use variant models/animations. #AzureDoom
+- Fixed Potato Armor not playing in server. #Icosider
