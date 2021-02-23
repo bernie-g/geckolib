@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import org.lwjgl.opengl.GL11;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -62,7 +60,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		int ly = light / 65536;
 
 		GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-		OpenGlHelper.setLightmapTextureCoords(GL11.GL_TEXTURE_2D, lx, ly);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lx, ly);
 		GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
 		GlStateManager.pushMatrix();
