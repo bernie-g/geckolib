@@ -43,7 +43,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof Entity) {
-				return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity) object);
+				return (IAnimatableModel<?>) AnimationUtils.getGeoModelForEntity((Entity) object);
 			}
 			return null;
 		});
@@ -129,7 +129,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		entityModelData.headPitch = -headPitch;
 		entityModelData.netHeadYaw = -netHeadYaw;
 
-		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks,
+		AnimationEvent<T> predicate = new AnimationEvent<T>(entity, limbSwing, limbSwingAmount, partialTicks,
 				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel) {
@@ -186,7 +186,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	@Override
-	public GeoModelProvider getGeoModelProvider() {
+	public GeoModelProvider<T> getGeoModelProvider() {
 		return this.modelProvider;
 	}
 

@@ -1,6 +1,11 @@
 package software.bernie.geckolib3.model;
 
+import java.util.Collections;
+
+import javax.annotation.Nullable;
+
 import com.eliotlash.molang.MolangParser;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.NativeUtil;
 import net.minecraft.entity.Entity;
@@ -15,16 +20,14 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
 import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.geo.exception.GeoModelException;
+import software.bernie.geckolib3.file.AnimationFile;
+import software.bernie.geckolib3.geo.exception.GeckoLibException;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
-
-import javax.annotation.Nullable;
-import java.util.Collections;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
@@ -86,15 +89,20 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable) {
-		return GeckoLibCache.getInstance().getAnimations().get(this.getAnimationFileLocation((T) animatable))
-				.getAnimation(name);
+		AnimationFile animation = GeckoLibCache.getInstance().getAnimations()
+				.get(this.getAnimationFileLocation((T) animatable));
+		if (animation == null) {
+			throw new GeckoLibException(this.getAnimationFileLocation((T) animatable),
+					"Could not find animation file. Please double check name.");
+		}
+		return animation.getAnimation(name);
 	}
 
 	@Override
 	public GeoModel getModel(ResourceLocation location) {
 		GeoModel model = super.getModel(location);
 		if (model == null) {
-			throw new GeoModelException(location,
+			throw new GeckoLibException(location,
 					"Could not find model. If you are getting this with a built mod, please just restart your game.");
 		}
 		if (model != currentModel) {
