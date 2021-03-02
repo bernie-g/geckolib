@@ -1,4 +1,3 @@
-V3.0.22
+V3.0.23
 
-- Fixed animation issues with mobs that use variant models/animations. #AzureDoom
-- Fixed Potato Armor not playing in server. #Icosider
+- Added a helpful error message when animation file is missing. #AzureDoom

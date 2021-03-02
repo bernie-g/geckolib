@@ -3,7 +3,7 @@ package software.bernie.geckolib3.file;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.geo.exception.GeoModelException;
+import software.bernie.geckolib3.geo.exception.GeckoLibException;
 import software.bernie.geckolib3.geo.raw.pojo.Converter;
 import software.bernie.geckolib3.geo.raw.pojo.FormatVersion;
 import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
@@ -19,7 +19,7 @@ public class GeoModelLoader {
 			RawGeoModel rawModel = Converter
 					.fromJsonString(AnimationFileLoader.getResourceAsString(location, resourceManager));
 			if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
-				throw new GeoModelException(location, "Wrong geometry json version, expected 1.12.0");
+				throw new GeckoLibException(location, "Wrong geometry json version, expected 1.12.0");
 			}
 
 			// Parse the flat list of bones into a raw hierarchical tree of "BoneGroup"s
