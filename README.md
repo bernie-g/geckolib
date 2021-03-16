@@ -11,7 +11,7 @@ GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D 
 Please see the [Getting Started guide](https://geckolib.com/en/latest/documentation/) for detailed installation instructions per modding framework.
 
 ## Documentation
-GeckoLib provides detailed documentation in the form of a [Wiki](https://geckolib.com/en/latest/documentation/) and [Javadocs](http://geckolib.bernie.software/javadocs/). GeckoLib is currently available for Forge 1.12, 1.15, 1.16 and Fabric 1.15 and 1.16.
+GeckoLib provides detailed documentation in the form of a [Wiki](https://geckolib.com/en/latest/3.0.0/). GeckoLib is currently available for Forge 1.12, 1.15, 1.16 and Fabric 1.15 and 1.16.
 
 ## Support
 If you have questions or need help getting up and running with questions, feel free to [join our discord](https://discord.gg/MNQcKxB)!
