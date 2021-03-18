@@ -69,7 +69,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	@Override
 	public void render(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStackIn,
 			VertexConsumerProvider bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		if (mode == ModelTransformation.Mode.GUI) {
+		if (mode == ModelTransformation.Mode.GUI) { //look here
 			RenderSystem.pushMatrix();
 			VertexConsumerProvider.Immediate irendertypebuffer$impl = MinecraftClient.getInstance().getBufferBuilders()
 					.getEntityVertexConsumers();
