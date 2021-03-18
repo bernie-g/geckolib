@@ -69,7 +69,8 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	@Override
 	public void render(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStackIn,
 			VertexConsumerProvider bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		if (mode == ModelTransformation.Mode.GUI) { //look here
+		/* For some reason this is unnecessary on fabric
+		if (mode == ModelTransformation.Mode.GUI) {
 			RenderSystem.pushMatrix();
 			VertexConsumerProvider.Immediate irendertypebuffer$impl = MinecraftClient.getInstance().getBufferBuilders()
 					.getEntityVertexConsumers();
@@ -79,7 +80,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 			RenderSystem.enableDepthTest();
 			DiffuseLighting.enableGuiDepthLighting();
 			RenderSystem.popMatrix();
-		} else {
+		} else */{
 			this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
 		}
 	}
