@@ -51,6 +51,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
 
 	public void render(T tile, float partialTicks, MatrixStack stack, VertexConsumerProvider bufferIn,
 			int packedLightIn) {
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.push();
 		stack.translate(0, 0.01f, 0);
@@ -59,7 +60,6 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
 		rotateBlock(getFacing(tile), stack);
 
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(tile));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(tile));
