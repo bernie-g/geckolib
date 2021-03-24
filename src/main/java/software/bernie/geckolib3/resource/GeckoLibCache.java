@@ -66,14 +66,14 @@ public class GeckoLibCache {
 				.map(location -> CompletableFuture.supplyAsync(() -> location))
 				.map(completable -> completable.thenAcceptAsync(resource -> tempAnimations.put(resource,
 						animationLoader.loadAllAnimations(parser, resource, resourceManager))))
-				.toArray(CompletableFuture[]::new);
+				.toArray(x -> new CompletableFuture[x]);
 
 		CompletableFuture[] geoModelFutures = resourceManager
 				.findResources("geo", fileName -> fileName.endsWith(".json")).stream()
 				.map(location -> CompletableFuture.supplyAsync(() -> location))
 				.map(completable -> completable.thenAcceptAsync(
 						resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
-				.toArray(CompletableFuture[]::new);
+				.toArray(x -> new CompletableFuture[x]);
 		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x -> {
 			// Retain our behavior of completely replacing the old model map on reload
 			ConcurrentHashMap<Identifier, AnimationFile> hashAnim = new ConcurrentHashMap<>();
