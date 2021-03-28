@@ -151,8 +151,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		boolean invis = entity.isInvisibleTo(MinecraftClient.getInstance().player);
 		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
 				getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
-				(float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getGreen() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
+				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer layerRenderer : this.layerRenderers) {
