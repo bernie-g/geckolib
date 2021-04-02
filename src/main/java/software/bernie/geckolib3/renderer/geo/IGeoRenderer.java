@@ -66,6 +66,9 @@ public interface IGeoRenderer<T> {
 		Matrix4f matrix4f = stack.peek().getModel();
 
 		for (GeoQuad quad : cube.quads) {
+			if (quad == null) {
+				continue;
+			}
 			Vector3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 

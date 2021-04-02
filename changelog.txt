@@ -1,3 +1,4 @@
-V3.0.27
+V3.0.28
 
-- Fix renderColor's blue/green being flipped (#113) - Denim
+- Added a new GeoRenderer, GeoProjectilesRenderer, simply make your entity face east in BlockBench for it render correctly. - AzureDoom
+- Ported UV Face Nullcheck - AzureDoom
