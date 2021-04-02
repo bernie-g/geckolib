@@ -72,7 +72,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		} else {
 			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
 		}
-		this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
 	}
 
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn,
