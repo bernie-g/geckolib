@@ -1,3 +1,3 @@
-v3.0.17
+v3.0.19
 
-- Added a new GeoRenderer, GeoProjectilesRenderer, simply make your entity face east in BlockBench for it render correctly. - AzureDoom
+- Fixes the double render on Items. - LakMoore

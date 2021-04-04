@@ -1,15 +1,18 @@
 package software.bernie.geckolib3.resource;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
-
-import org.apache.commons.lang3.ArrayUtils;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener;
+import net.minecraft.resources.IFutureReloadListener.IStage;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
@@ -27,22 +30,22 @@ public class GeckoLibCache {
 
 	public final MolangParser parser = new MolangParser();
 
-	public ConcurrentHashMap<ResourceLocation, AnimationFile> getAnimations() {
+	public Map<ResourceLocation, AnimationFile> getAnimations() {
 		if (!GeckoLib.hasInitialized) {
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 		}
 		return animations;
 	}
 
-	public ConcurrentHashMap<ResourceLocation, GeoModel> getGeoModels() {
+	public Map<ResourceLocation, GeoModel> getGeoModels() {
 		if (!GeckoLib.hasInitialized) {
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 		}
 		return geoModels;
 	}
 
-	private ConcurrentHashMap<ResourceLocation, AnimationFile> animations = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<ResourceLocation, GeoModel> geoModels = new ConcurrentHashMap<>();
+	private Map<ResourceLocation, AnimationFile> animations = Collections.emptyMap();
+	private Map<ResourceLocation, GeoModel> geoModels = Collections.emptyMap();
 
 	protected GeckoLibCache() {
 		this.animationLoader = new AnimationFileLoader();
@@ -58,34 +61,44 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> resourceReload(IFutureReloadListener.IStage stage, IResourceManager resourceManager,
+	public CompletableFuture<Void> reload(IStage stage, IResourceManager resourceManager,
 			IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
-		ConcurrentHashMap<ResourceLocation, AnimationFile> tempAnimations = new ConcurrentHashMap<>();
-		ConcurrentHashMap<ResourceLocation, GeoModel> tempModels = new ConcurrentHashMap<>();
+		Map<ResourceLocation, AnimationFile> animations = new HashMap<>();
+		Map<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
+				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
+				loadResources(backgroundExecutor, resourceManager, "geo",
+						resource -> modelLoader.loadModel(resourceManager, resource), geoModels::put))
+				.thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync(empty -> {
+					this.animations = animations;
+					this.geoModels = geoModels;
+				}, gameExecutor);
+	}
 
-		CompletableFuture[] animationFileFutures = resourceManager
-				.getAllResourceLocations("animations", fileName -> fileName.endsWith(".json")).stream()
-				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(resource -> tempAnimations.put(resource,
-						animationLoader.loadAllAnimations(parser, resource, resourceManager))))
-				.toArray(x -> new CompletableFuture[x]);
+	private static <T> CompletableFuture<Void> loadResources(Executor executor, IResourceManager resourceManager,
+			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
+		return CompletableFuture.supplyAsync(
+				() -> resourceManager.getAllResourceLocations(type, fileName -> fileName.endsWith(".json")), executor)
+				.thenApplyAsync(resources -> {
+					Map<ResourceLocation, CompletableFuture<T>> tasks = new HashMap<>();
 
-		CompletableFuture[] geoModelFutures = resourceManager
-				.getAllResourceLocations("geo", fileName -> fileName.endsWith(".json")).stream()
-				.map(location -> CompletableFuture.supplyAsync(() -> location))
-				.map(completable -> completable.thenAcceptAsync(
-						resource -> tempModels.put(resource, modelLoader.loadModel(resourceManager, resource))))
-				.toArray(x -> new CompletableFuture[x]);
-		return CompletableFuture.allOf(ArrayUtils.addAll(animationFileFutures, geoModelFutures)).thenAccept(x -> {
-			// Retain our behavior of completely replacing the old model map on reload
-			ConcurrentHashMap<ResourceLocation, AnimationFile> hashAnim = new ConcurrentHashMap<>();
-			hashAnim.putAll(tempAnimations);
-			animations = hashAnim;
+					for (ResourceLocation resource : resources) {
+						CompletableFuture<T> existing = tasks.put(resource,
+								CompletableFuture.supplyAsync(() -> loader.apply(resource), executor));
 
-			ConcurrentHashMap<ResourceLocation, GeoModel> hashModel = new ConcurrentHashMap<>();
-			hashModel.putAll(tempModels);
-			geoModels = hashModel;
-		}).thenCompose(stage::markCompleteAwaitingOthers);
+						if (existing != null) {// Possibly if this matters, the last one will win
+							System.err.println("Duplicate resource for " + resource);
+							existing.cancel(false);
+						}
+					}
+
+					return tasks;
+				}, executor).thenAcceptAsync(tasks -> {
+					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
+						// Shouldn't be any duplicates as they are caught above
+						map.accept(entry.getKey(), entry.getValue().join());
+					}
+				}, executor);
 	}
 }
