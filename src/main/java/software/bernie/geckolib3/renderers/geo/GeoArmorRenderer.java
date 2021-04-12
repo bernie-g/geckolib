@@ -47,7 +47,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private ItemStack itemStack;
 	private EquipmentSlotType armorSlot;
 
-	// Set these to the names of your armor's bones
+	// Set these to the names of your armor's bones, or null if you aren't using them
 	public String headBone = "armorHead";
 	public String bodyBone = "armorBody";
 	public String rightArmBone = "armorRightArm";
@@ -62,7 +62,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item) {
-		return renderers.get(item);
+		final GeoArmorRenderer renderer = renderers.get(item);
+		if (renderer == null) {
+			throw new IllegalArgumentException("Renderer not registered for item " + item);
+		}
+		return renderer;
 	}
 
 	private final AnimatedGeoModel<T> modelProvider;
@@ -103,55 +107,69 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		stack.translate(0.0D, -24 / 16F, 0.0D);
 	}
 
-	private void fitToBiped() {
-		IBone headBone = this.modelProvider.getBone(this.headBone);
-		IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
-		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-		IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
-		IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
-		IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
-		IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
-		try {
-			if (!(this.entityLiving instanceof ArmorStandEntity)) {
+	protected void fitToBiped() {
+		if (!(this.entityLiving instanceof ArmorStandEntity)) {
+			if (this.headBone != null) {
+				IBone headBone = this.modelProvider.getBone(this.headBone);
 				GeoUtils.copyRotations(this.bipedHead, headBone);
-				GeoUtils.copyRotations(this.bipedBody, bodyBone);
-				GeoUtils.copyRotations(this.bipedRightArm, rightArmBone);
-				GeoUtils.copyRotations(this.bipedLeftArm, leftArmBone);
-				GeoUtils.copyRotations(this.bipedRightLeg, rightLegBone);
-				GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
-				GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
-				GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
-
 				headBone.setPositionX(this.bipedHead.rotationPointX);
 				headBone.setPositionY(-this.bipedHead.rotationPointY);
 				headBone.setPositionZ(this.bipedHead.rotationPointZ);
+			}
+
+			if (this.bodyBone != null) {
+				IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
+				GeoUtils.copyRotations(this.bipedBody, bodyBone);
 				bodyBone.setPositionX(this.bipedBody.rotationPointX);
 				bodyBone.setPositionY(-this.bipedBody.rotationPointY);
 				bodyBone.setPositionZ(this.bipedBody.rotationPointZ);
+			}
 
+			if (this.rightArmBone != null) {
+				IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
+				GeoUtils.copyRotations(this.bipedRightArm, rightArmBone);
 				rightArmBone.setPositionX(this.bipedRightArm.rotationPointX + 5);
 				rightArmBone.setPositionY(2 - this.bipedRightArm.rotationPointY);
 				rightArmBone.setPositionZ(this.bipedRightArm.rotationPointZ);
+			}
+
+			if (this.leftArmBone != null) {
+				IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
+				GeoUtils.copyRotations(this.bipedLeftArm, leftArmBone);
 				leftArmBone.setPositionX(this.bipedLeftArm.rotationPointX - 5);
 				leftArmBone.setPositionY(2 - this.bipedLeftArm.rotationPointY);
 				leftArmBone.setPositionZ(this.bipedLeftArm.rotationPointZ);
+			}
 
+			if (this.rightLegBone != null) {
+				IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
+				GeoUtils.copyRotations(this.bipedRightLeg, rightLegBone);
 				rightLegBone.setPositionX(this.bipedRightLeg.rotationPointX + 2);
 				rightLegBone.setPositionY(12 - this.bipedRightLeg.rotationPointY);
 				rightLegBone.setPositionZ(this.bipedRightLeg.rotationPointZ);
+				if (this.rightBootBone != null) {
+					IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
+					GeoUtils.copyRotations(this.bipedRightLeg, rightBootBone);
+					rightBootBone.setPositionX(this.bipedRightLeg.rotationPointX + 2);
+					rightBootBone.setPositionY(12 - this.bipedRightLeg.rotationPointY);
+					rightBootBone.setPositionZ(this.bipedRightLeg.rotationPointZ);
+				}
+			}
+
+			if (this.leftLegBone != null) {
+				IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
+				GeoUtils.copyRotations(this.bipedLeftLeg, leftLegBone);
 				leftLegBone.setPositionX(this.bipedLeftLeg.rotationPointX - 2);
 				leftLegBone.setPositionY(12 - this.bipedLeftLeg.rotationPointY);
 				leftLegBone.setPositionZ(this.bipedLeftLeg.rotationPointZ);
-				rightBootBone.setPositionX(this.bipedRightLeg.rotationPointX + 2);
-				rightBootBone.setPositionY(12 - this.bipedRightLeg.rotationPointY);
-				rightBootBone.setPositionZ(this.bipedRightLeg.rotationPointZ);
-				leftBootBone.setPositionX(this.bipedLeftLeg.rotationPointX - 2);
-				leftBootBone.setPositionY(12 - this.bipedLeftLeg.rotationPointY);
-				leftBootBone.setPositionZ(this.bipedLeftLeg.rotationPointZ);
+				if (this.leftBootBone != null) {
+					IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
+					GeoUtils.copyRotations(this.bipedLeftLeg, leftBootBone);
+					leftBootBone.setPositionX(this.bipedLeftLeg.rotationPointX - 2);
+					leftBootBone.setPositionY(12 - this.bipedLeftLeg.rotationPointY);
+					leftBootBone.setPositionZ(this.bipedLeftLeg.rotationPointZ);
+				}
 			}
-		} catch (Exception e) {
-			throw new RuntimeException("Could not find an armor bone.", e);
 		}
 	}
 
@@ -168,11 +186,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	/**
 	 * Everything after this point needs to be called every frame before rendering
 	 */
-	public void setCurrentItem(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlotType armorSlot) {
+	public GeoArmorRenderer setCurrentItem(LivingEntity entityLiving, ItemStack itemStack,
+		   EquipmentSlotType armorSlot) {
 		this.entityLiving = entityLiving;
 		this.itemStack = itemStack;
 		this.armorSlot = armorSlot;
 		this.currentArmorItem = (T) itemStack.getItem();
+		return this;
 	}
 
 	public final GeoArmorRenderer applyEntityStats(BipedModel defaultArmor) {
@@ -187,46 +207,43 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
-		IBone headBone = this.modelProvider.getBone(this.headBone);
-		IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-		IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
-		IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-		IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
-		IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
-		IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
-		IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
-		try {
-			headBone.setHidden(true);
-			bodyBone.setHidden(true);
-			rightArmBone.setHidden(true);
-			leftArmBone.setHidden(true);
-			rightLegBone.setHidden(true);
-			leftLegBone.setHidden(true);
-			rightBootBone.setHidden(true);
-			leftBootBone.setHidden(true);
+		IBone headBone = this.getAndHideBone(this.headBone);
+		IBone bodyBone = this.getAndHideBone(this.bodyBone);
+		IBone rightArmBone = this.getAndHideBone(this.rightArmBone);
+		IBone leftArmBone = this.getAndHideBone(this.leftArmBone);
+		IBone rightLegBone = this.getAndHideBone(this.rightLegBone);
+		IBone leftLegBone = this.getAndHideBone(this.leftLegBone);
+		IBone rightBootBone = this.getAndHideBone(this.rightBootBone);
+		IBone leftBootBone = this.getAndHideBone(this.leftBootBone);
 
-			switch (slot) {
+		switch (slot) {
 			case HEAD:
-				headBone.setHidden(false);
+				if (headBone != null) headBone.setHidden(false);
 				break;
 			case CHEST:
-				bodyBone.setHidden(false);
-				rightArmBone.setHidden(false);
-				leftArmBone.setHidden(false);
+				if (bodyBone != null) bodyBone.setHidden(false);
+				if (rightArmBone != null) rightArmBone.setHidden(false);
+				if (leftArmBone != null) leftArmBone.setHidden(false);
 				break;
 			case LEGS:
-				rightLegBone.setHidden(false);
-				leftLegBone.setHidden(false);
+				if (rightLegBone != null) rightLegBone.setHidden(false);
+				if (leftLegBone != null) leftLegBone.setHidden(false);
 				break;
 			case FEET:
-				rightBootBone.setHidden(false);
-				leftBootBone.setHidden(false);
+				if (rightBootBone != null) rightBootBone.setHidden(false);
+				if (leftBootBone != null) leftBootBone.setHidden(false);
 				break;
-			}
-		} catch (Exception e) {
-			throw new RuntimeException("Could not find an armor bone.", e);
 		}
 		return this;
+	}
+
+	protected IBone getAndHideBone(String boneName) {
+		if (boneName != null) {
+			final IBone bone = this.modelProvider.getBone(boneName);
+			bone.setHidden(true);
+			return bone;
+		}
+		return null;
 	}
 
 	@Override
