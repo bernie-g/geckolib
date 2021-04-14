@@ -16,7 +16,7 @@ public class FertilizerTileEntity extends TileEntity implements IAnimatable {
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		AnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
-		if (event.getAnimatable().getWorld().isRaining()) {
+		if (event.getAnimatable().getLevel().isRaining()) {
 			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true)
 					.addAnimation("fertilizer.animation.idle", true));
 		} else {

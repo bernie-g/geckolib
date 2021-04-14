@@ -49,7 +49,7 @@ public class GeoQuad {
 		// only god knows what this does, but eliot told me it generates a normal vector
 		// which helps the game do lighting properly or something idk i didnt pay
 		// attention in physics we were in remote learning gimme a break
-		this.normal = directionIn.toVector3f();
+		this.normal = directionIn.step();
 		if (mirrorIn != null && mirrorIn) {
 			this.normal.mul(-1.0F, 1.0F, 1.0F);
 		}

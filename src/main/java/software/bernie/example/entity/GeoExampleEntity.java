@@ -23,7 +23,7 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable {
 
 	public GeoExampleEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.ignoreFrustumCheck = true;
+		this.noCulling = true;
 	}
 
 	@Override

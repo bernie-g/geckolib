@@ -8,7 +8,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
@@ -36,13 +36,14 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'snapshot', version: '20201028-1.16.3'
+    mappings channel:"official", version:"1.16.5"
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.console.level', 'debug'
             //For Mixin in other mods / Patchouli
-            property 'mixin.env.disableRefMap', 'true'
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 geckolib {
                     source sourceSets.main
@@ -52,14 +53,10 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            
-            //For Mixin in other mods / Patchouli
-            property 'mixin.env.disableRefMap', 'true'
-
             property 'forge.logging.console.level', 'debug'
-
+            //For Mixin in other mods / Patchouli
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 geckolib {
                     source sourceSets.main
@@ -69,16 +66,11 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            
             //For Mixin in other mods / Patchouli
-            property 'mixin.env.disableRefMap', 'true'
-
-            property 'forge.logging.console.level', 'debug'
-
+            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
             args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
-
             mods {
                 geckolib {
                     source sourceSets.main
@@ -105,7 +97,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.4-35.1.37'
+    minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
     compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
     compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     compile project(':geckolib-core')

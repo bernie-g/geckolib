@@ -21,6 +21,6 @@ public class VectorUtils {
 	}
 
 	public static Vector3d convertFloatToDouble(Vector3f vector) {
-		return new Vector3d(vector.getX(), vector.getY(), vector.getZ());
+		return new Vector3d(vector.x(), vector.y(), vector.z());
 	}
 }

@@ -28,6 +28,6 @@ public class EntityRegistry {
 			Class<T> entityClass, float width, float height) {
 		String name = entityClass.getSimpleName().toLowerCase();
 		return ENTITIES.register(name,
-				() -> EntityType.Builder.create(entity, EntityClassification.CREATURE).size(width, height).build(name));
+				() -> EntityType.Builder.of(entity, EntityClassification.CREATURE).sized(width, height).build(name));
 	}
 }

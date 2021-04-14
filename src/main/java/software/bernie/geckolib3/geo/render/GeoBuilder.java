@@ -37,13 +37,13 @@ public class GeoBuilder {
 		geoBone.parent = parent;
 		geoBone.setModelRendererName(rawBone.getName());
 
-		geoBone.setRotationX((float) Math.toRadians(rotation.getX()));
-		geoBone.setRotationY((float) Math.toRadians(rotation.getY()));
-		geoBone.setRotationZ((float) Math.toRadians(rotation.getZ()));
+		geoBone.setRotationX((float) Math.toRadians(rotation.x()));
+		geoBone.setRotationY((float) Math.toRadians(rotation.y()));
+		geoBone.setRotationZ((float) Math.toRadians(rotation.z()));
 
-		geoBone.rotationPointX = -pivot.getX();
-		geoBone.rotationPointY = pivot.getY();
-		geoBone.rotationPointZ = pivot.getZ();
+		geoBone.rotationPointX = -pivot.x();
+		geoBone.rotationPointY = pivot.y();
+		geoBone.rotationPointZ = pivot.z();
 
 		if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
 			for (Cube cube : rawBone.getCubes()) {

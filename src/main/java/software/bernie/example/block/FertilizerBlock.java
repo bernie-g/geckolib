@@ -18,9 +18,11 @@ import software.bernie.example.registry.TileRegistry;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class FertilizerBlock extends DirectionalBlock {
 	public FertilizerBlock() {
-		super(Properties.create(Material.ROCK).notSolid());
+		super(Properties.of(Material.STONE).noOcclusion());
 	}
 
 	@Override
@@ -35,24 +37,24 @@ public class FertilizerBlock extends DirectionalBlock {
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
+	public BlockRenderType getRenderShape(BlockState state) {
 		return BlockRenderType.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockItemUseContext context) {
-		return this.getDefaultState().with(FACING, context.getNearestLookingDirection().getOpposite());
+		return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
-	public void addInformation(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip,
+	public void appendHoverText(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip,
 			ITooltipFlag flagIn) {
 		tooltip.add(new StringTextComponent("Turn on rain to see the fertilizer model!"));
-		super.addInformation(stack, worldIn, tooltip, flagIn);
+		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 }

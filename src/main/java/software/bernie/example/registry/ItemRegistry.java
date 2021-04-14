@@ -18,10 +18,10 @@ public class ItemRegistry {
 
 	public static final RegistryObject<BlockItem> BOTARIUM_ITEM = ITEMS.register("botarium",
 			() -> new BlockItem(BlockRegistry.BOTARIUM_BLOCK.get(),
-					new Item.Properties().group(GeckoLibMod.geckolibItemGroup)));
+					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
 	public static final RegistryObject<BlockItem> FERTILIZER_ITEM = ITEMS.register("fertilizer",
 			() -> new BlockItem(BlockRegistry.FERTILIZER_BLOCK.get(),
-					new Item.Properties().group(GeckoLibMod.geckolibItemGroup)));
+					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
 
 	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jackintheboxitem",
 			() -> new JackInTheBoxItem(new Item.Properties().setISTER(() -> JackInTheBoxRenderer::new)));

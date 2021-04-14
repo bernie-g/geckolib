@@ -70,7 +70,7 @@ public class GeckoLibCache {
 				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",
 						resource -> modelLoader.loadModel(resourceManager, resource), geoModels::put))
-				.thenCompose(stage::markCompleteAwaitingOthers).thenAcceptAsync(empty -> {
+				.thenCompose(stage::wait).thenAcceptAsync(empty -> {
 					this.animations = animations;
 					this.geoModels = geoModels;
 				}, gameExecutor);
@@ -79,7 +79,7 @@ public class GeckoLibCache {
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, IResourceManager resourceManager,
 			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
-				() -> resourceManager.getAllResourceLocations(type, fileName -> fileName.endsWith(".json")), executor)
+				() -> resourceManager.listResources(type, fileName -> fileName.endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new HashMap<>();
 

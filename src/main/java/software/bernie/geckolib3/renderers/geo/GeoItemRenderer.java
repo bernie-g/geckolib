@@ -57,17 +57,17 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 
 	// fixes the item lighting
 	@Override
-	public void func_239207_a_(ItemStack itemStack, ItemCameraTransforms.TransformType p_239207_2_,
+	public void renderByItem(ItemStack itemStack, ItemCameraTransforms.TransformType p_239207_2_,
 			MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int combinedLightIn, int p_239207_6_) {
 		if (p_239207_2_ == ItemCameraTransforms.TransformType.GUI) {
 			RenderSystem.pushMatrix();
-			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().getRenderTypeBuffers()
-					.getBufferSource();
-			RenderHelper.setupGuiFlatDiffuseLighting();
+			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
+					.bufferSource();
+			RenderHelper.setupForFlatItems();
 			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
-			irendertypebuffer$impl.finish();
+			irendertypebuffer$impl.endBatch();
 			RenderSystem.enableDepthTest();
-			RenderHelper.setupGui3DDiffuseLighting();
+			RenderHelper.setupFor3DItems();
 			RenderSystem.popMatrix();
 		} else {
 			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
@@ -78,26 +78,26 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getRenderPartialTicks(),
+		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
 				false, Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
-		stack.push();
+		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);
 
-		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(animatable));
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(animatable));
 		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(animatable));
 		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
+		stack.popPose();
 	}
 
 	protected RenderType getRenderType(T tile, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn,
 			ResourceLocation textureLocation) {
-		return RenderType.getEntityCutoutNoCull(textureLocation);
+		return RenderType.entityCutoutNoCull(textureLocation);
 	}
 
 	protected Color getRenderColor(T tile, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {

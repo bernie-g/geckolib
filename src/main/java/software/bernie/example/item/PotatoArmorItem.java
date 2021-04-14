@@ -23,11 +23,13 @@ import java.util.Arrays;
 import java.util.List;
 
 //This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
+import net.minecraft.item.Item.Properties;
+
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
 	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
-		super(materialIn, slot, builder.group(GeckoLibMod.geckolibItemGroup));
+		super(materialIn, slot, builder.tab(GeckoLibMod.geckolibItemGroup));
 	}
 
 	// Predicate runs every frame
@@ -55,7 +57,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 
 			// Get all the equipment, aka the armor, currently held item, and offhand item
 			List<Item> equipmentList = new ArrayList<>();
-			player.getEquipmentAndArmor().forEach((x) -> equipmentList.add(x.getItem()));
+			player.getAllSlots().forEach((x) -> equipmentList.add(x.getItem()));
 
 			// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
 			// contains the 4 armor slots

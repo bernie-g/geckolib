@@ -30,16 +30,16 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 
 	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.ignoreFrustumCheck = true;
+		this.noCulling = true;
 	}
 
 	@Override
-	public ActionResultType func_230254_b_(PlayerEntity player, Hand hand) {
-		if (!this.isBeingRidden()) {
+	public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+		if (!this.isVehicle()) {
 			player.startRiding(this);
-			return super.func_230254_b_(player, hand);
+			return super.mobInteract(player, hand);
 		}
-		return super.func_230254_b_(player, hand);
+		return super.mobInteract(player, hand);
 	}
 
 	@Override
@@ -49,21 +49,21 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	@Override
 	public void travel(Vector3d pos) {
 		if (this.isAlive()) {
-			if (this.isBeingRidden()) {
+			if (this.isVehicle()) {
 				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
-				this.rotationYaw = livingentity.rotationYaw;
-				this.prevRotationYaw = this.rotationYaw;
-				this.rotationPitch = livingentity.rotationPitch * 0.5F;
-				this.setRotation(this.rotationYaw, this.rotationPitch);
-				this.renderYawOffset = this.rotationYaw;
-				this.rotationYawHead = this.renderYawOffset;
-				float f = livingentity.moveStrafing * 0.5F;
-				float f1 = livingentity.moveForward;
+				this.yRot = livingentity.yRot;
+				this.yRotO = this.yRot;
+				this.xRot = livingentity.xRot * 0.5F;
+				this.setRot(this.yRot, this.xRot);
+				this.yBodyRot = this.yRot;
+				this.yHeadRot = this.yBodyRot;
+				float f = livingentity.xxa * 0.5F;
+				float f1 = livingentity.zza;
 				if (f1 <= 0.0F) {
 					f1 *= 0.25F;
 				}
 
-				this.setAIMoveSpeed(0.3F);
+				this.setSpeed(0.3F);
 				super.travel(new Vector3d((double) f, pos.y, (double) f1));
 			}
 		}
@@ -75,7 +75,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public boolean canBeSteered() {
+	public boolean canBeControlledByRider() {
 		return true;
 	}
 
@@ -90,7 +90,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public AgeableEntity func_241840_a(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+	public AgeableEntity getBreedOffspring(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
 		return null;
 	}
 

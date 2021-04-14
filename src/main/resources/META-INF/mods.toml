@@ -40,7 +40,7 @@ Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, whi
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[34,)" #mandatory
+    versionRange="[36.1.1,)" 
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER

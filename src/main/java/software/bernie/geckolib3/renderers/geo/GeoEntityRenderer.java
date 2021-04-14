@@ -69,20 +69,20 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn,
 			int packedLightIn) {
-		stack.push();
+		stack.pushPose();
 		boolean shouldSit = entity.isPassenger()
-				&& (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
+				&& (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
-		entityModelData.isChild = entity.isChild();
+		entityModelData.isChild = entity.isBaby();
 
-		float f = MathHelper.interpolateAngle(partialTicks, entity.prevRenderYawOffset, entity.renderYawOffset);
-		float f1 = MathHelper.interpolateAngle(partialTicks, entity.prevRotationYawHead, entity.rotationYawHead);
+		float f = MathHelper.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+		float f1 = MathHelper.rotLerp(partialTicks, entity.yHeadRotO, entity.yHeadRot);
 		float netHeadYaw = f1 - f;
-		if (shouldSit && entity.getRidingEntity() instanceof LivingEntity) {
-			LivingEntity livingentity = (LivingEntity) entity.getRidingEntity();
-			f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset,
-					livingentity.renderYawOffset);
+		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
+			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
+			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO,
+					livingentity.yBodyRot);
 			netHeadYaw = f1 - f;
 			float f3 = MathHelper.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F) {
@@ -101,13 +101,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			netHeadYaw = f1 - f;
 		}
 
-		float headPitch = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+		float headPitch = MathHelper.lerp(partialTicks, entity.xRotO, entity.xRot);
 		if (entity.getPose() == Pose.SLEEPING) {
-			Direction direction = entity.getBedDirection();
+			Direction direction = entity.getBedOrientation();
 			if (direction != null) {
 				float f4 = entity.getEyeHeight(Pose.STANDING) - 0.1F;
-				stack.translate((double) ((float) (-direction.getXOffset()) * f4), 0.0D,
-						(double) ((float) (-direction.getZOffset()) * f4));
+				stack.translate((double) ((float) (-direction.getStepX()) * f4), 0.0D,
+						(double) ((float) (-direction.getStepZ()) * f4));
 			}
 		}
 		float f7 = this.handleRotationFloat(entity, partialTicks);
@@ -116,9 +116,9 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		float limbSwingAmount = 0.0F;
 		float limbSwing = 0.0F;
 		if (!shouldSit && entity.isAlive()) {
-			limbSwingAmount = MathHelper.lerp(partialTicks, entity.prevLimbSwingAmount, entity.limbSwingAmount);
-			limbSwing = entity.limbSwing - entity.limbSwingAmount * (1.0F - partialTicks);
-			if (entity.isChild()) {
+			limbSwingAmount = MathHelper.lerp(partialTicks, entity.animationSpeedOld, entity.animationSpeed);
+			limbSwing = entity.animationPosition - entity.animationSpeed * (1.0F - partialTicks);
+			if (entity.isBaby()) {
 				limbSwing *= 3.0F;
 			}
 
@@ -137,11 +137,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 
 		stack.translate(0, 0.01f, 0);
-		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(entity));
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
-				getEntityTexture(entity));
-		boolean invis = entity.isInvisibleToPlayer(Minecraft.getInstance().player);
+				getTextureLocation(entity));
+		boolean invis = entity.isInvisibleTo(Minecraft.getInstance().player);
 		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
 				getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
@@ -155,34 +155,29 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		if (ModList.get().isLoaded("patchouli")) {
 			PatchouliCompat.patchouliLoaded(stack);
 		}
-		stack.pop();
+		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 	
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getEntityId();
+		return animatable.getId();
 	}
 
 	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
 			IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
-		this.mainHand = animatable.getItemStackFromSlot(EquipmentSlotType.MAINHAND);
-		this.offHand = animatable.getItemStackFromSlot(EquipmentSlotType.OFFHAND);
-		this.helmet = animatable.getItemStackFromSlot(EquipmentSlotType.HEAD);
-		this.chestplate = animatable.getItemStackFromSlot(EquipmentSlotType.CHEST);
-		this.leggings = animatable.getItemStackFromSlot(EquipmentSlotType.LEGS);
-		this.boots = animatable.getItemStackFromSlot(EquipmentSlotType.FEET);
+		this.mainHand = animatable.getItemBySlot(EquipmentSlotType.MAINHAND);
+		this.offHand = animatable.getItemBySlot(EquipmentSlotType.OFFHAND);
+		this.helmet = animatable.getItemBySlot(EquipmentSlotType.HEAD);
+		this.chestplate = animatable.getItemBySlot(EquipmentSlotType.CHEST);
+		this.leggings = animatable.getItemBySlot(EquipmentSlotType.LEGS);
+		this.boots = animatable.getItemBySlot(EquipmentSlotType.FEET);
 		this.rtb = renderTypeBuffer;
 		this.whTexture = this.getTextureLocation(animatable);
 		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, partialTicks);
-	}
-
-	@Override
-	public ResourceLocation getEntityTexture(T entity) {
-		return getTextureLocation(entity);
 	}
 
 	@Override
@@ -191,15 +186,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn) {
-		return OverlayTexture.getPackedUV(OverlayTexture.getU(uIn),
-				OverlayTexture.getV(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));
+		return OverlayTexture.pack(OverlayTexture.u(uIn),
+				OverlayTexture.v(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));
 	}
 
 	protected void applyRotations(T entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw,
 			float partialTicks) {
 		Pose pose = entityLiving.getPose();
 		if (pose != Pose.SLEEPING) {
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
 		}
 
 		if (entityLiving.deathTime > 0) {
@@ -209,23 +204,23 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				f = 1.0F;
 			}
 
-			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
-		} else if (entityLiving.isSpinAttacking()) {
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.rotationPitch));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
+		} else if (entityLiving.isAutoSpinAttack()) {
+			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.xRot));
 			matrixStackIn
-					.rotate(Vector3f.YP.rotationDegrees(((float) entityLiving.ticksExisted + partialTicks) * -75.0F));
+					.mulPose(Vector3f.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
 		} else if (pose == Pose.SLEEPING) {
-			Direction direction = entityLiving.getBedDirection();
+			Direction direction = entityLiving.getBedOrientation();
 			float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f1));
-			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(270.0F));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
 		} else if (entityLiving.hasCustomName() || entityLiving instanceof PlayerEntity) {
-			String s = TextFormatting.getTextWithoutFormattingCodes(entityLiving.getName().getString());
+			String s = TextFormatting.stripFormatting(entityLiving.getName().getString());
 			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof PlayerEntity)
-					|| ((PlayerEntity) entityLiving).isWearing(PlayerModelPart.CAPE))) {
-				matrixStackIn.translate(0.0D, (double) (entityLiving.getHeight() + 0.1F), 0.0D);
-				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+					|| ((PlayerEntity) entityLiving).isModelPartShown(PlayerModelPart.CAPE))) {
+				matrixStackIn.translate(0.0D, (double) (entityLiving.getBbHeight() + 0.1F), 0.0D);
+				matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
 			}
 		}
 
@@ -255,13 +250,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	@Override
-	public boolean canRenderName(T entity) {
-		double d0 = this.renderManager.squareDistanceTo(entity);
+	public boolean shouldShowName(T entity) {
+		double d0 = this.entityRenderDispatcher.distanceToSqr(entity);
 		float f = entity.isDiscrete() ? 32.0F : 64.0F;
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.renderManager.pointedEntity && entity.hasCustomName();
+			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName();
 		}
 	}
 
@@ -270,14 +265,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	 * : entity, partialTickTime
 	 */
 	protected float getSwingProgress(T livingBase, float partialTickTime) {
-		return livingBase.getSwingProgress(partialTickTime);
+		return livingBase.getAttackAnim(partialTickTime);
 	}
 
 	/**
 	 * Defines what float the third param in setRotationAngles of ModelBase is
 	 */
 	protected float handleRotationFloat(T livingBase, float partialTicks) {
-		return (float) livingBase.ticksExisted + partialTicks;
+		return (float) livingBase.tickCount + partialTicks;
 	}
 
 	@Override

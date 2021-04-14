@@ -37,14 +37,14 @@ public class GeoCube {
 		Vector3d origin = VectorUtils.fromArray(cubeIn.getOrigin());
 		origin = new Vector3d(-(origin.x + size.x) / 16, origin.y / 16, origin.z / 16);
 
-		size = size.mul(0.0625f, 0.0625, 0.0625f);
+		size = size.multiply(0.0625f, 0.0625, 0.0625f);
 
 		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
 		rotation.mul(-1, -1, 1);
 
-		rotation.setX((float) Math.toRadians(rotation.getX()));
-		rotation.setY((float) Math.toRadians(rotation.getY()));
-		rotation.setZ((float) Math.toRadians(rotation.getZ()));
+		rotation.setX((float) Math.toRadians(rotation.x()));
+		rotation.setY((float) Math.toRadians(rotation.y()));
+		rotation.setZ((float) Math.toRadians(rotation.z()));
 
 		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
 		pivot.mul(-1, 1, 1);

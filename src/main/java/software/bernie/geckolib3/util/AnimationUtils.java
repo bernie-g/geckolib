@@ -25,7 +25,7 @@ public class AnimationUtils {
 	 * Gets the renderer for an entity
 	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity) {
-		EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
+		EntityRendererManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 

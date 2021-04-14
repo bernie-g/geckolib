@@ -13,7 +13,7 @@ public class ResourceListener {
 			}
 			IReloadableResourceManager reloadable = (IReloadableResourceManager) Minecraft.getInstance()
 					.getResourceManager();
-			reloadable.addReloadListener(GeckoLibCache.getInstance()::reload);
+			reloadable.registerReloadListener(GeckoLibCache.getInstance()::reload);
 		} else {
 			GeckoLib.LOGGER.warn(
 					"Minecraft.getInstance() was null, could not register reload listeners. Ignore if datagenning.");

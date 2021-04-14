@@ -36,7 +36,7 @@ public interface IGeoRenderer<T> {
 
 	default void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		stack.push();
+		stack.pushPose();
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
 		RenderUtils.rotate(bone, stack);
@@ -45,16 +45,16 @@ public interface IGeoRenderer<T> {
 
 		if (!bone.isHidden) {
 			for (GeoCube cube : bone.childCubes) {
-				stack.push();
+				stack.pushPose();
 				renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-				stack.pop();
+				stack.popPose();
 			}
 			for (GeoBone childBone : bone.childBones) {
 				renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 			}
 		}
 
-		stack.pop();
+		stack.popPose();
 	}
 
 	default void renderCube(GeoCube cube, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
@@ -62,8 +62,8 @@ public interface IGeoRenderer<T> {
 		RenderUtils.moveToPivot(cube, stack);
 		RenderUtils.rotate(cube, stack);
 		RenderUtils.moveBackFromPivot(cube, stack);
-		Matrix3f matrix3f = stack.getLast().getNormal();
-		Matrix4f matrix4f = stack.getLast().getMatrix();
+		Matrix3f matrix3f = stack.last().normal();
+		Matrix4f matrix4f = stack.last().pose();
 
 		for (GeoQuad quad : cube.quads) {
 			if (quad == null) {
@@ -75,23 +75,23 @@ public interface IGeoRenderer<T> {
 			/*
 			 * Fix shading dark shading for flat cubes + compatibility wish Optifine shaders
 			 */
-			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0) {
+			if ((cube.size.y() == 0 || cube.size.z() == 0) && normal.x() < 0) {
 				normal.mul(-1, 1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0) {
+			if ((cube.size.x() == 0 || cube.size.z() == 0) && normal.y() < 0) {
 				normal.mul(1, -1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0) {
+			if ((cube.size.x() == 0 || cube.size.y() == 0) && normal.z() < 0) {
 				normal.mul(1, 1, -1);
 			}
 
 			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
+				Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
 						1.0F);
 				vector4f.transform(matrix4f);
-				bufferIn.addVertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
-						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
-						normal.getZ());
+				bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
+						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
+						normal.z());
 			}
 		}
 	}
@@ -113,7 +113,7 @@ public interface IGeoRenderer<T> {
 	default RenderType getRenderType(T animatable, float partialTicks, MatrixStack stack,
 			@Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
 			ResourceLocation textureLocation) {
-		return RenderType.getEntityCutout(textureLocation);
+		return RenderType.entityCutout(textureLocation);
 	}
 
 	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,

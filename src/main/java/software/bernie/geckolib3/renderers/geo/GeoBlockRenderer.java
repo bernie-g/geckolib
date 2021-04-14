@@ -52,20 +52,20 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
-		stack.push();
+		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
 
 		rotateBlock(getFacing(tile), stack);
 
-		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(tile));
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(tile));
 		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
+		stack.popPose();
 	}
 
 	@Override
@@ -76,32 +76,32 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	protected void rotateBlock(Direction facing, MatrixStack stack) {
 		switch (facing) {
 		case SOUTH:
-			stack.rotate(Vector3f.YP.rotationDegrees(180));
+			stack.mulPose(Vector3f.YP.rotationDegrees(180));
 			break;
 		case WEST:
-			stack.rotate(Vector3f.YP.rotationDegrees(90));
+			stack.mulPose(Vector3f.YP.rotationDegrees(90));
 			break;
 		case NORTH:
-			stack.rotate(Vector3f.YP.rotationDegrees(0));
+			stack.mulPose(Vector3f.YP.rotationDegrees(0));
 			break;
 		case EAST:
-			stack.rotate(Vector3f.YP.rotationDegrees(270));
+			stack.mulPose(Vector3f.YP.rotationDegrees(270));
 			break;
 		case UP:
-			stack.rotate(Vector3f.XP.rotationDegrees(90));
+			stack.mulPose(Vector3f.XP.rotationDegrees(90));
 			break;
 		case DOWN:
-			stack.rotate(Vector3f.XN.rotationDegrees(90));
+			stack.mulPose(Vector3f.XN.rotationDegrees(90));
 			break;
 		}
 	}
 
 	private Direction getFacing(T tile) {
 		BlockState blockState = tile.getBlockState();
-		if (blockState.hasProperty(HorizontalBlock.HORIZONTAL_FACING)) {
-			return blockState.get(HorizontalBlock.HORIZONTAL_FACING);
+		if (blockState.hasProperty(HorizontalBlock.FACING)) {
+			return blockState.getValue(HorizontalBlock.FACING);
 		} else if (blockState.hasProperty(DirectionalBlock.FACING)) {
-			return blockState.get(DirectionalBlock.FACING);
+			return blockState.getValue(DirectionalBlock.FACING);
 		} else {
 			return Direction.NORTH;
 		}

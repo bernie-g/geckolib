@@ -13,11 +13,14 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Properties;
+
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
 		super(materialIn, slot, builder);
 	}
 
+	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,

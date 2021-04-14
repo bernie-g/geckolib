@@ -19,6 +19,6 @@ public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity> {
 	public RenderType getRenderType(BotariumTileEntity animatable, float partialTicks, MatrixStack stack,
 			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
 			ResourceLocation textureLocation) {
-		return RenderType.getEntityTranslucent(getTextureLocation(animatable));
+		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

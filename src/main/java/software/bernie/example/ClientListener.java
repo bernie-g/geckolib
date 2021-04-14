@@ -47,9 +47,9 @@ public class ClientListener {
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
 
-			RenderTypeLookup.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.getCutout());
+			RenderTypeLookup.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.cutout());
 
-			EntityRendererManager renderManager = Minecraft.getInstance().getRenderManager();
+			EntityRendererManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
 			renderManager.renderers.replace(EntityType.CREEPER, creeperRenderer);
 			GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);

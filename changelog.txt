@@ -1,3 +1,4 @@
-v3.0.19
+v3.0.30
 
-- Fixes the double render on Items. - LakMoore
+- Improve GeoArmorRenderer to allow single armor peices. #DenimRed
+- Updated the Library to 1.16.5 and official mappings, there is no reason to still be using 1.16.5, update if you want support. #AzureDoom

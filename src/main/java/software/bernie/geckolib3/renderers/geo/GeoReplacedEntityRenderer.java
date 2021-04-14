@@ -81,22 +81,22 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
 		}
 
-		stack.push();
+		stack.pushPose();
 		boolean shouldSit = entity.isPassenger()
-				&& (entity.getRidingEntity() != null && entity.getRidingEntity().shouldRiderSit());
+				&& (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
-		entityModelData.isChild = entityLiving.isChild();
+		entityModelData.isChild = entityLiving.isBaby();
 
-		float f = MathHelper.interpolateAngle(partialTicks, entityLiving.prevRenderYawOffset,
-				entityLiving.renderYawOffset);
-		float f1 = MathHelper.interpolateAngle(partialTicks, entityLiving.prevRotationYawHead,
-				entityLiving.rotationYawHead);
+		float f = MathHelper.rotLerp(partialTicks, entityLiving.yBodyRotO,
+				entityLiving.yBodyRot);
+		float f1 = MathHelper.rotLerp(partialTicks, entityLiving.yHeadRotO,
+				entityLiving.yHeadRot);
 		float f2 = f1 - f;
-		if (shouldSit && entity.getRidingEntity() instanceof LivingEntity) {
-			LivingEntity livingentity = (LivingEntity) entity.getRidingEntity();
-			f = MathHelper.interpolateAngle(partialTicks, livingentity.prevRenderYawOffset,
-					livingentity.renderYawOffset);
+		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
+			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
+			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO,
+					livingentity.yBodyRot);
 			f2 = f1 - f;
 			float f3 = MathHelper.wrapDegrees(f2);
 			if (f3 < -85.0F) {
@@ -115,13 +115,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			f2 = f1 - f;
 		}
 
-		float f6 = MathHelper.lerp(partialTicks, entity.prevRotationPitch, entity.rotationPitch);
+		float f6 = MathHelper.lerp(partialTicks, entity.xRotO, entity.xRot);
 		if (entity.getPose() == Pose.SLEEPING) {
-			Direction direction = entityLiving.getBedDirection();
+			Direction direction = entityLiving.getBedOrientation();
 			if (direction != null) {
 				float f4 = entity.getEyeHeight(Pose.STANDING) - 0.1F;
-				stack.translate((double) ((float) (-direction.getXOffset()) * f4), 0.0D,
-						(double) ((float) (-direction.getZOffset()) * f4));
+				stack.translate((double) ((float) (-direction.getStepX()) * f4), 0.0D,
+						(double) ((float) (-direction.getStepZ()) * f4));
 			}
 		}
 		float f7 = this.handleRotationFloat(entityLiving, partialTicks);
@@ -131,10 +131,10 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		float limbSwingAmount = 0.0F;
 		float limbSwing = 0.0F;
 		if (!shouldSit && entity.isAlive()) {
-			limbSwingAmount = MathHelper.lerp(partialTicks, entityLiving.prevLimbSwingAmount,
-					entityLiving.limbSwingAmount);
-			limbSwing = entityLiving.limbSwing - entityLiving.limbSwingAmount * (1.0F - partialTicks);
-			if (entityLiving.isChild()) {
+			limbSwingAmount = MathHelper.lerp(partialTicks, entityLiving.animationSpeedOld,
+					entityLiving.animationSpeed);
+			limbSwing = entityLiving.animationPosition - entityLiving.animationSpeed * (1.0F - partialTicks);
+			if (entityLiving.isBaby()) {
 				limbSwing *= 3.0F;
 			}
 
@@ -151,11 +151,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 
 		stack.translate(0, 0.01f, 0);
-		Minecraft.getInstance().textureManager.bindTexture(getEntityTexture(entity));
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(entity));
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
-				getEntityTexture(entity));
-		boolean invis = entity.isInvisibleToPlayer(Minecraft.getInstance().player);
+				getTextureLocation(entity));
+		boolean invis = entity.isInvisibleTo(Minecraft.getInstance().player);
 		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
 				getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
@@ -170,7 +170,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		if (ModList.get().isLoaded("patchouli")) {
 			PatchouliCompat.patchouliLoaded(stack);
 		}
-		stack.pop();
+		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
@@ -183,7 +183,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@Override
-	public ResourceLocation getEntityTexture(Entity entity) {
+	public ResourceLocation getTextureLocation(Entity entity) {
 		return getTextureLocation(currentAnimatable);
 	}
 
@@ -193,15 +193,15 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn) {
-		return OverlayTexture.getPackedUV(OverlayTexture.getU(uIn),
-				OverlayTexture.getV(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));
+		return OverlayTexture.pack(OverlayTexture.u(uIn),
+				OverlayTexture.v(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));
 	}
 
 	protected void applyRotations(LivingEntity entityLiving, MatrixStack matrixStackIn, float ageInTicks,
 			float rotationYaw, float partialTicks) {
 		Pose pose = entityLiving.getPose();
 		if (pose != Pose.SLEEPING) {
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
 		}
 
 		if (entityLiving.deathTime > 0) {
@@ -211,23 +211,23 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				f = 1.0F;
 			}
 
-			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
-		} else if (entityLiving.isSpinAttacking()) {
-			matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.rotationPitch));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
+		} else if (entityLiving.isAutoSpinAttack()) {
+			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.xRot));
 			matrixStackIn
-					.rotate(Vector3f.YP.rotationDegrees(((float) entityLiving.ticksExisted + partialTicks) * -75.0F));
+					.mulPose(Vector3f.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
 		} else if (pose == Pose.SLEEPING) {
-			Direction direction = entityLiving.getBedDirection();
+			Direction direction = entityLiving.getBedOrientation();
 			float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(f1));
-			matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
-			matrixStackIn.rotate(Vector3f.YP.rotationDegrees(270.0F));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
+			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
+			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
 		} else if (entityLiving.hasCustomName() || entityLiving instanceof PlayerEntity) {
-			String s = TextFormatting.getTextWithoutFormattingCodes(entityLiving.getName().getString());
+			String s = TextFormatting.stripFormatting(entityLiving.getName().getString());
 			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof PlayerEntity)
-					|| ((PlayerEntity) entityLiving).isWearing(PlayerModelPart.CAPE))) {
-				matrixStackIn.translate(0.0D, (double) (entityLiving.getHeight() + 0.1F), 0.0D);
-				matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(180.0F));
+					|| ((PlayerEntity) entityLiving).isModelPartShown(PlayerModelPart.CAPE))) {
+				matrixStackIn.translate(0.0D, (double) (entityLiving.getBbHeight() + 0.1F), 0.0D);
+				matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
 			}
 		}
 
@@ -257,13 +257,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@Override
-	public boolean canRenderName(Entity entity) {
-		double d0 = this.renderManager.squareDistanceTo(entity);
+	public boolean shouldShowName(Entity entity) {
+		double d0 = this.entityRenderDispatcher.distanceToSqr(entity);
 		float f = entity.isDiscrete() ? 32.0F : 64.0F;
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.renderManager.pointedEntity && entity.hasCustomName();
+			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName();
 		}
 	}
 
@@ -272,14 +272,14 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	 * : entity, partialTickTime
 	 */
 	protected float getSwingProgress(LivingEntity livingBase, float partialTickTime) {
-		return livingBase.getSwingProgress(partialTickTime);
+		return livingBase.getAttackAnim(partialTickTime);
 	}
 
 	/**
 	 * Defines what float the third param in setRotationAngles of ModelBase is
 	 */
 	protected float handleRotationFloat(LivingEntity livingBase, float partialTicks) {
-		return (float) livingBase.ticksExisted + partialTicks;
+		return (float) livingBase.tickCount + partialTicks;
 	}
 
 	@Override

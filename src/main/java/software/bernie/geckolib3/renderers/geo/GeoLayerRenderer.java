@@ -38,11 +38,11 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		RenderType renderType = getRenderType(textureLocationIn);
 		IVertexBuilder ivertexbuilder = bufferIn.getBuffer(renderType);
 		renderer.render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, ivertexbuilder,
-				packedLightIn, LivingRenderer.getPackedOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
+				packedLightIn, LivingRenderer.getOverlayCoords(entityIn, 0.0F), red, green, blue, 1.0F);
 	}
 
 	public static RenderType getRenderType(ResourceLocation textureLocation) {
-		return RenderType.getEntityCutout(textureLocation);
+		return RenderType.entityCutout(textureLocation);
 	}
 
 	public GeoModelProvider getEntityModel() {

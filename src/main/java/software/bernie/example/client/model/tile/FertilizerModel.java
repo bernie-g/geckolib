@@ -12,7 +12,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 	@Override
 	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable) {
-		if (animatable.getWorld().isRaining()) {
+		if (animatable.getLevel().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
 		} else {
 			return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
@@ -21,7 +21,7 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 
 	@Override
 	public ResourceLocation getModelLocation(FertilizerTileEntity animatable) {
-		if (animatable.getWorld().isRaining()) {
+		if (animatable.getLevel().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
 		} else {
 			return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
@@ -30,7 +30,7 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 
 	@Override
 	public ResourceLocation getTextureLocation(FertilizerTileEntity entity) {
-		if (entity.getWorld().isRaining()) {
+		if (entity.getLevel().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID + ":textures/block/fertilizer.png");
 		} else {
 			return new ResourceLocation(GeckoLib.ModID + ":textures/block/botarium.png");

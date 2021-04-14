@@ -48,12 +48,12 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
-		matrixStackIn.push();
-		matrixStackIn.rotate(Vector3f.YP.rotationDegrees(
-				MathHelper.lerp(partialTicks, entityIn.prevRotationYaw, entityIn.rotationYaw) - 90.0F));
-		matrixStackIn.rotate(Vector3f.ZP
-				.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.prevRotationPitch, entityIn.rotationPitch)));
-		Minecraft.getInstance().textureManager.bindTexture(getTextureLocation(entityIn));
+		matrixStackIn.pushPose();
+		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(
+				MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot) - 90.0F));
+		matrixStackIn.mulPose(Vector3f.ZP
+				.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
 				getTextureLocation(entityIn));
@@ -70,12 +70,12 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
 		}
-		matrixStackIn.pop();
+		matrixStackIn.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	public static int getPackedOverlay(Entity livingEntityIn, float uIn) {
-		return OverlayTexture.getPackedUV(OverlayTexture.getU(uIn), OverlayTexture.getV(false));
+		return OverlayTexture.pack(OverlayTexture.u(uIn), OverlayTexture.v(false));
 	}
 
 	@Override
@@ -86,11 +86,6 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	@Override
 	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureLocation(instance);
-	}
-
-	@Override
-	public ResourceLocation getEntityTexture(T entity) {
-		return getTextureLocation(entity);
 	}
 
 }

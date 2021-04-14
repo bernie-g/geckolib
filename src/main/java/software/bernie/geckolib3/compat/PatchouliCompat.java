@@ -12,16 +12,16 @@ public class PatchouliCompat {
 
 	public static void patchouliLoaded(MatrixStack matrixStackIn) {
 		Class<GuiBook> patchouli = GuiBook.class;
-		boolean screen = Minecraft.getInstance().ingameGUI.equals(patchouli);
+		boolean screen = Minecraft.getInstance().gui.equals(patchouli);
 		if (screen) {
-			matrixStackIn.push();
-			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().getRenderTypeBuffers()
-					.getBufferSource();
-			RenderHelper.setupGuiFlatDiffuseLighting();
-			irendertypebuffer$impl.finish();
+			matrixStackIn.pushPose();
+			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
+					.bufferSource();
+			RenderHelper.setupForFlatItems();
+			irendertypebuffer$impl.endBatch();
 			RenderSystem.enableDepthTest();
-			RenderHelper.setupGui3DDiffuseLighting();
-			matrixStackIn.pop();
+			RenderHelper.setupFor3DItems();
+			matrixStackIn.popPose();
 		}
 	}
 }

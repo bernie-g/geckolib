@@ -30,7 +30,7 @@ public class GeckoLibMod {
 			SoundRegistry.SOUNDS.register(bus);
 			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples") {
 				@Override
-				public ItemStack createIcon() {
+				public ItemStack makeIcon() {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
 				}
 			};

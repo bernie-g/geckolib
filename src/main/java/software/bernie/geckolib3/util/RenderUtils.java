@@ -9,12 +9,12 @@ import software.bernie.geckolib3.geo.render.built.GeoCube;
 public class RenderUtils {
 	public static void moveToPivot(GeoCube cube, MatrixStack stack) {
 		Vector3f pivot = cube.pivot;
-		stack.translate(pivot.getX() / 16, pivot.getY() / 16, pivot.getZ() / 16);
+		stack.translate(pivot.x() / 16, pivot.y() / 16, pivot.z() / 16);
 	}
 
 	public static void moveBackFromPivot(GeoCube cube, MatrixStack stack) {
 		Vector3f pivot = cube.pivot;
-		stack.translate(-pivot.getX() / 16, -pivot.getY() / 16, -pivot.getZ() / 16);
+		stack.translate(-pivot.x() / 16, -pivot.y() / 16, -pivot.z() / 16);
 	}
 
 	public static void moveToPivot(GeoBone bone, MatrixStack stack) {
@@ -35,23 +35,23 @@ public class RenderUtils {
 
 	public static void rotate(GeoBone bone, MatrixStack stack) {
 		if (bone.getRotationZ() != 0.0F) {
-			stack.rotate(Vector3f.ZP.rotation(bone.getRotationZ()));
+			stack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
 		}
 
 		if (bone.getRotationY() != 0.0F) {
-			stack.rotate(Vector3f.YP.rotation(bone.getRotationY()));
+			stack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
 		}
 
 		if (bone.getRotationX() != 0.0F) {
-			stack.rotate(Vector3f.XP.rotation(bone.getRotationX()));
+			stack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
 		}
 	}
 
 	public static void rotate(GeoCube bone, MatrixStack stack) {
 		Vector3f rotation = bone.rotation;
 
-		stack.rotate(new Quaternion(0, 0, rotation.getZ(), false));
-		stack.rotate(new Quaternion(0, rotation.getY(), 0, false));
-		stack.rotate(new Quaternion(rotation.getX(), 0, 0, false));
+		stack.mulPose(new Quaternion(0, 0, rotation.z(), false));
+		stack.mulPose(new Quaternion(0, rotation.y(), 0, false));
+		stack.mulPose(new Quaternion(rotation.x(), 0, 0, false));
 	}
 }
