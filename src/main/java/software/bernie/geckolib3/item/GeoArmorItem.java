@@ -17,19 +17,18 @@ public abstract class GeoArmorItem extends ArmorItem implements ArmorProvider {
 		super(materialIn, slot, builder);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Environment(EnvType.CLIENT)
 	public BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 			EquipmentSlot armorSlot, BipedEntityModel<LivingEntity> _default) {
-		Class<? extends ArmorItem> clazz = this.getClass();
-		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
-		renderer.applyEntityStats(_default).applySlot(armorSlot);
-		renderer.setCurrentItem(entityLiving, itemStack, armorSlot);
-		return renderer;
+		return GeoArmorRenderer.getRenderer(this.getClass()).applyEntityStats(_default).applySlot(armorSlot)
+				.setCurrentItem(entityLiving, itemStack, armorSlot);
 	}
 
 	@Override
 	public Identifier getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
 			Identifier defaultTexture) {
+
 		Class<? extends ArmorItem> clazz = this.getClass();
 		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
 		return renderer.getTextureLocation((ArmorItem) stack.getItem());
