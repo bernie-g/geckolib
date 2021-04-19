@@ -1,3 +1,3 @@
-V3.0.30
+v3.0.31
 
-- Improve GeoArmorRenderer to allow single armor peices. #DenimRed
+- Fixed items with tags always returning a value of 1, causing all stacks to play the animation. #DenimRed/AzureDoom
