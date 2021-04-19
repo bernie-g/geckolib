@@ -3,7 +3,6 @@ package software.bernie.geckolib3.renderer.geo;
 import java.awt.Color;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -110,6 +109,6 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return currentItemStack.hasTag() ? 1 : Objects.hash(currentItemStack);
+		return currentItemStack.hashCode();
 	}
 }
