@@ -105,8 +105,8 @@ dependencies {
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
-    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48")
-    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-48:api")
+	compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
+    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
 	
     shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
