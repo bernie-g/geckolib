@@ -2,7 +2,6 @@ package software.bernie.geckolib3.renderers.geo;
 
 import java.awt.Color;
 import java.util.Collections;
-import java.util.Objects;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -111,6 +110,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return currentItemStack.hasTag() ? 1 : Objects.hash(currentItemStack);
+		return currentItemStack.hashCode();
 	}
 }
