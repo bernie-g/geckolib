@@ -23,10 +23,9 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.item.IAnimatableItem;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class JackInTheBoxItem extends Item implements IAnimatableItem {
+public class JackInTheBoxItem extends Item implements IAnimatable {
 	private static final String CONTROLLER_NAME = "popupController";
 	private AnimationFactory factory = new AnimationFactory(this);
 
@@ -70,7 +69,7 @@ public class JackInTheBoxItem extends Item implements IAnimatableItem {
 	@Override
 	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
 		if (!world.isClientSide) {
-			GeckoLibUtil.ensureIdExists(this, stack, (ServerWorld) world);
+			GeckoLibUtil.ensureStackIDExists(stack, (ServerWorld) world);
 		}
 	}
 
@@ -82,7 +81,7 @@ public class JackInTheBoxItem extends Item implements IAnimatableItem {
 
 			// Always use GeckoLibUtil to get animationcontrollers when you don't have
 			// access to an AnimationEvent
-			AnimationController controller = GeckoLibUtil.getController(this.factory, this.getId(stack), CONTROLLER_NAME);
+			AnimationController controller = GeckoLibUtil.getControllerForStack(this.factory, stack, CONTROLLER_NAME);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
 				player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);
