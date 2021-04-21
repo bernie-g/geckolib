@@ -70,7 +70,8 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
 
-            args 'nogui'
+            // Uncomment this to run the server without the GUI
+            //args 'nogui'
 
             mods {
                 geckolib {
