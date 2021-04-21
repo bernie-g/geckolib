@@ -23,15 +23,23 @@ public class GeckoLibUtil {
         return null;
     }
 
-    public static void ensureStackIDExists(ItemStack stack, ServerWorld world) {
-        if (getIDFromStack(stack) == null) {
+    public static Integer ensureStackIDExists(ItemStack stack, ServerWorld world) {
+        Integer id = getIDFromStack(stack);
+        if (id == null) {
             final int nextId = GeckoLibIdTracker.from(world).getNextId(ITEM);
             stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, nextId);
+            id = nextId;
         }
+        return id;
     }
 
     public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,
                                                             String controllerName) {
-        return factory.getOrCreateAnimationData(getIDFromStack(stack)).getAnimationControllers().get(controllerName);
+        return getControllerForID(factory, getIDFromStack(stack), controllerName);
+    }
+
+    public static AnimationController getControllerForID(AnimationFactory factory, Integer id,
+                                                            String controllerName) {
+        return factory.getOrCreateAnimationData(id).getAnimationControllers().get(controllerName);
     }
 }

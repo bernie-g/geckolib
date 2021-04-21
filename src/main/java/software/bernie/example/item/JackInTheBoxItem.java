@@ -11,8 +11,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.PacketDistributor;
 
 import software.bernie.example.GeckoLibMod;
+import software.bernie.example.network.GeckoLibModNetwork;
+import software.bernie.example.network.messages.TriggerJackInTheBoxMsg;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -52,13 +55,15 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 	}
 
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
-		// The animation for the jackinthebox has a sound keyframe at time 0:00.
+		// The animation for the JackInTheBoxItem has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
 		ClientPlayerEntity player = Minecraft.getInstance().player;
-		player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
+		if (player != null) {
+			player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
+		}
 	}
 
 	@Override
@@ -67,32 +72,36 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 	}
 
 	@Override
-	public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
 		if (!world.isClientSide) {
-			GeckoLibUtil.ensureStackIDExists(stack, (ServerWorld) world);
+			// Gets the item that the player is holding, should be a JackInTheBoxItem
+			final ItemStack stack = player.getItemInHand(hand);
+			// This must be called on the server before an item is animated on clients
+			final Integer id = GeckoLibUtil.ensureStackIDExists(stack, (ServerWorld) world);
+			// Tell all nearby clients to trigger this JackInTheBoxItem
+			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
+			final TriggerJackInTheBoxMsg message = new TriggerJackInTheBoxMsg(id);
+			GeckoLibModNetwork.getChannel().send(target, message);
 		}
+		return super.use(world, player, hand);
 	}
 
-	@Override
-	public ActionResult<ItemStack> use(World worldIn, PlayerEntity player, Hand hand) {
-		if (worldIn.isClientSide) {
-			// Gets the item that the player is holding, should be a JackInTheBox
-			ItemStack stack = player.getItemInHand(hand);
+	public void doClientAnimation(int id) {
+		// Always use GeckoLibUtil to get AnimationControllers when you don't have
+		// access to an AnimationEvent
+		AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
-			// Always use GeckoLibUtil to get animationcontrollers when you don't have
-			// access to an AnimationEvent
-			AnimationController controller = GeckoLibUtil.getControllerForStack(this.factory, stack, CONTROLLER_NAME);
-
-			if (controller.getAnimationState() == AnimationState.Stopped) {
+		if (controller.getAnimationState() == AnimationState.Stopped) {
+			final ClientPlayerEntity player = Minecraft.getInstance().player;
+			if (player != null) {
 				player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);
-				// If you don't do this, the popup animation will only play once because the
-				// animation will be cached.
-				controller.markNeedsReload();
-				// Set the animation to open the jackinthebox which will start playing music and
-				// eventually do the actual animation. Also sets it to not loop
-				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 			}
+			// If you don't do this, the popup animation will only play once because the
+			// animation will be cached.
+			controller.markNeedsReload();
+			// Set the animation to open the JackInTheBoxItem which will start playing music and
+			// eventually do the actual animation. Also sets it to not loop
+			controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 		}
-		return super.use(worldIn, player, hand);
 	}
 }
