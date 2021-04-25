@@ -13,6 +13,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
 import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.network.GeckoLibNetwork;
 
 @Mod(GeckoLib.ModID)
 public class GeckoLibMod {
@@ -21,6 +22,7 @@ public class GeckoLibMod {
 
 	public GeckoLibMod() {
 		GeckoLib.initialize();
+		GeckoLibNetwork.initialize();
 		if (!FMLEnvironment.production && !DISABLE_IN_DEV) {
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 			EntityRegistry.ENTITIES.register(bus);
