@@ -9,6 +9,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
@@ -20,11 +21,15 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.network.GeckoLibNetwork;
+import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class JackInTheBoxItem extends Item implements IAnimatable {
+public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
+
+	private static final String CONTROLLER_NAME = "popupController";
+	private static final int ANIM_OPEN = 0;
 	public AnimationFactory factory = new AnimationFactory(this);
-	private String controllerName = "popupController";
 
 	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
 		// Not setting an animation here as that's handled in onItemRightClick
@@ -33,11 +38,12 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 
 	public JackInTheBoxItem(Properties properties) {
 		super(properties.group(GeckoLibMod.geckolibItemGroup));
+		GeckoLibNetwork.registerSyncable(this);
 	}
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController controller = new AnimationController(this, controllerName, 20, this::predicate);
+		AnimationController controller = new AnimationController(this, CONTROLLER_NAME, 20, this::predicate);
 
 		// Registering a sound listener just makes it so when any sound keyframe is hit
 		// the method will be called.
@@ -66,24 +72,36 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, PlayerEntity player, Hand hand) {
 		if (!worldIn.isRemote) {
-			return super.onItemRightClick(worldIn, player, hand);
-		}
-		// Gets the item that the player is holding, should be a JackInTheBox
-		ItemStack stack = player.getHeldItem(hand);
-
-		// Always use GeckoLibUtil to get animationcontrollers when you don't have
-		// access to an AnimationEvent
-		AnimationController controller = GeckoLibUtil.getControllerForStack(this.factory, stack, controllerName);
-
-		if (controller.getAnimationState() == AnimationState.Stopped) {
-			player.sendStatusMessage(new StringTextComponent("Opening the jack in the box!"), true);
-			// If you don't do this, the popup animation will only play once because the
-			// animation will be cached.
-			controller.markNeedsReload();
-			// Set the animation to open the jackinthebox which will start playing music and
-			// eventually do the actual animation. Also sets it to not loop
-			controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
+			// Gets the item that the player is holding, should be a JackInTheBoxItem
+			final ItemStack stack = player.getHeldItem(hand);
+			final int id = GeckoLibUtil.getIDFromStack(stack);
+			// Tell all nearby clients to trigger this JackInTheBoxItem
+			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
+			GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
 		}
 		return super.onItemRightClick(worldIn, player, hand);
+	}
+
+	@Override
+	public void onAnimationSync(int id, int state) {
+		if (state == ANIM_OPEN) {
+			// Always use GeckoLibUtil to get AnimationControllers when you don't have
+			// access to an AnimationEvent
+			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
+
+			if (controller.getAnimationState() == AnimationState.Stopped) {
+				final ClientPlayerEntity player = Minecraft.getInstance().player;
+				if (player != null) {
+					player.sendStatusMessage(new StringTextComponent("Opening the jack in the box!"), true);
+				}
+				// If you don't do this, the popup animation will only play once because the
+				// animation will be cached.
+				controller.markNeedsReload();
+				// Set the animation to open the JackInTheBoxItem which will start playing music
+				// and
+				// eventually do the actual animation. Also sets it to not loop
+				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
+			}
+		}
 	}
 }
