@@ -2,7 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven { url = 'https://maven.minecraftforge.net/' }
 		maven { url  = 'https://plugins.gradle.org/m2/' }
         jcenter()
         mavenCentral()
@@ -39,10 +39,12 @@ minecraft {
     mappings channel:"official", version:"1.16.5"
     runs {
         client {
-            workingDirectory project.file('run')
+            workingDirectory project.file('runs/' + name)
+            singleInstance true
+            taskName 'Client'
+
             property 'forge.logging.console.level', 'debug'
-            //For Mixin in other mods / Patchouli
-            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
             mods {
                 geckolib {
@@ -51,12 +53,25 @@ minecraft {
             }
         }
 
+        clientAlt {
+            parent minecraft.runs.client
+            workingDirectory project.file('runs/' + name)
+            taskName 'ClientAlt'
+            args '--username', 'Alt'
+        }
+
         server {
-            workingDirectory project.file('run')
+            workingDirectory project.file('runs/' + name)
+            singleInstance true
+            taskName 'Server'
+
             property 'forge.logging.console.level', 'debug'
-            //For Mixin in other mods / Patchouli
-            properties 'mixin.env.remapRefMap': 'true'
+            property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+
+            // Uncomment this to run the server without the GUI
+            //args 'nogui'
+
             mods {
                 geckolib {
                     source sourceSets.main
@@ -65,12 +80,16 @@ minecraft {
         }
 
         data {
-            workingDirectory project.file('run')
-            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-            //For Mixin in other mods / Patchouli
-            properties 'mixin.env.remapRefMap': 'true'
+            workingDirectory project.file('runs/' + name)
+            singleInstance true
+            taskName 'Data'
+
+            property 'forge.logging.console.level', 'debug'
+            property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+
+            args '--mod', 'geckolib3', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+
             mods {
                 geckolib {
                     source sourceSets.main

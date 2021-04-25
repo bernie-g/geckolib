@@ -1,16 +1,24 @@
 package software.bernie.geckolib3.util;
 
 import net.minecraft.item.ItemStack;
+
+import java.util.Objects;
+
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 public class GeckoLibUtil {
 	public static int getIDFromStack(ItemStack stack) {
-		return stack.hashCode();
+		return Objects.hash(stack.getItem().getRegistryName(), stack.getTag(), stack.getCount());
 	}
 
 	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,
 			String controllerName) {
-		return factory.getOrCreateAnimationData(getIDFromStack(stack)).getAnimationControllers().get(controllerName);
+		return getControllerForID(factory, getIDFromStack(stack), controllerName);
+	}
+
+	public static AnimationController getControllerForID(AnimationFactory factory, Integer id,
+			String controllerName) {
+		return factory.getOrCreateAnimationData(id).getAnimationControllers().get(controllerName);
 	}
 }

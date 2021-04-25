@@ -21,6 +21,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends ItemStackTileEntityRenderer
 		implements IGeoRenderer<T> {
@@ -110,6 +111,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return currentItemStack.hashCode();
+		return GeckoLibUtil.getIDFromStack(currentItemStack);
 	}
 }
