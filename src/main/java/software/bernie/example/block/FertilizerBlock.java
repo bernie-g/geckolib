@@ -8,6 +8,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.example.registry.TileRegistry;
@@ -34,13 +35,14 @@ public class FertilizerBlock extends FacingBlock implements BlockEntityProvider 
 	}
 
 	@Override
-	public BlockEntity createBlockEntity(BlockView world) {
-		return TileRegistry.FERTILIZER.instantiate();
-	}
-
-	@Override
 	public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
 		tooltip.add(new LiteralText("Turn on rain to see the fertilizer model!"));
 		super.appendTooltip(stack, world, tooltip, options);
 	}
+
+    @Nullable
+    @Override
+    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+        return TileRegistry.FERTILIZER.instantiate(pos, state);
+    }
 }

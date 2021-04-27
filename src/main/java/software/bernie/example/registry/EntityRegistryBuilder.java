@@ -11,6 +11,7 @@ import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EntityType.EntityFactory;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.Item.Settings;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
@@ -92,7 +93,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 
 		if (this.hasEgg) {
 			RegistryUtils.registerItem(
-					new SpawnEggItem(entityType, this.primaryColor, this.secondaryColor,
+					new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor, this.secondaryColor,
 							(new Settings()).group(ItemGroup.MISC)),
 					new Identifier(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
 		}

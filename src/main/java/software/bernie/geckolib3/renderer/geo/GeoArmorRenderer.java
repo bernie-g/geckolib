@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -58,8 +59,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private ItemStack itemStack;
 	private EquipmentSlot armorSlot;
 
-	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
-		super(1);
+	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider, ModelPart root) {
+		super(root);
 		this.modelProvider = modelProvider;
 	}
 
@@ -118,10 +119,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 			if (this.bodyBone != null) {
 				IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-				GeoUtils.copyRotations(this.torso, bodyBone);
-				bodyBone.setPositionX(this.torso.pivotX);
-				bodyBone.setPositionY(-this.torso.pivotY);
-				bodyBone.setPositionZ(this.torso.pivotZ);
+				GeoUtils.copyRotations(this.body, bodyBone);
+				bodyBone.setPositionX(this.body.pivotX);
+				bodyBone.setPositionY(-this.body.pivotY);
+				bodyBone.setPositionZ(this.body.pivotZ);
 			}
 			if (this.rightArmBone != null) {
 				IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);

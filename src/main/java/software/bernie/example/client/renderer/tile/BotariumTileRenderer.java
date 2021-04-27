@@ -11,8 +11,8 @@ import software.bernie.example.client.model.tile.BotariumModel;
 import software.bernie.geckolib3.renderer.geo.GeoBlockRenderer;
 
 public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity> {
-	public BotariumTileRenderer(BlockEntityRenderDispatcher rendererDispatcherIn) {
-		super(rendererDispatcherIn, new BotariumModel());
+	public BotariumTileRenderer() {
+		super(new BotariumModel());
 	}
 
 	@Override

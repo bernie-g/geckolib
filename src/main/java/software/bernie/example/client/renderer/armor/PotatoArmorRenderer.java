@@ -1,12 +1,13 @@
 package software.bernie.example.client.renderer.armor;
 
+import net.minecraft.client.model.ModelPart;
 import software.bernie.example.client.model.armor.PotatoArmorModel;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
 
 public class PotatoArmorRenderer extends GeoArmorRenderer<PotatoArmorItem> {
-	public PotatoArmorRenderer() {
-		super(new PotatoArmorModel());
+	public PotatoArmorRenderer(ModelPart root) {
+		super(new PotatoArmorModel(), root);
 
 		// These values are what each bone name is in blockbench. So if your head bone
 		// is named "bone545", make sure to do this.headBone = "bone545";

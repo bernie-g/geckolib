@@ -1,21 +1,8 @@
 package software.bernie.geckolib3.resource;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
-import org.apache.commons.lang3.ArrayUtils;
-
 import com.eliotlash.molang.MolangParser;
-
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import software.bernie.geckolib3.GeckoLib;
@@ -24,6 +11,15 @@ import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class GeckoLibCache {
 	private Map<Identifier, AnimationFile> animations = Collections.emptyMap();
@@ -61,9 +57,9 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> reload(ResourceReloadListener.Synchronizer stage, ResourceManager resourceManager,
-			Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor) {
+	public CompletableFuture<Void> reload(ResourceReloader.Synchronizer stage, ResourceManager resourceManager,
+                                          Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
+                                          Executor gameExecutor) {
 		Map<Identifier, AnimationFile> animations = new HashMap<>();
 		Map<Identifier, GeoModel> geoModels = new HashMap<>();
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
