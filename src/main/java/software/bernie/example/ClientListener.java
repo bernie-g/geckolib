@@ -9,7 +9,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
-import net.fabricmc.loader.FabricLoader;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.entity.EntityType;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
@@ -24,6 +24,7 @@ import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.TileRegistry;
+import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.renderer.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderer.geo.GeoItemRenderer;
 
@@ -31,7 +32,8 @@ public class ClientListener implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		if (FabricLoader.INSTANCE.isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
+		GeckoLibNetwork.registerClientPackets();
+		if (FabricLoader.getInstance().isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEO_EXAMPLE_ENTITY,
 					(entityRenderDispatcher, context) -> new ExampleGeoRenderer(entityRenderDispatcher));
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY,
