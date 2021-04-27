@@ -1,6 +1,9 @@
 package software.bernie.geckolib3.network;
 
 import io.netty.buffer.Unpooled;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -15,6 +18,12 @@ import java.util.function.Supplier;
 public class GeckoLibNetwork {
     private static final Map<String, Supplier<ISyncable>> SYNCABLES = new HashMap<>();
     public static final Identifier SYNCABLE = new Identifier(GeckoLib.ModID,"syncable");
+
+    public static void registerClientPackets() {
+
+        // Server --> Client
+        ClientPlayNetworking.registerGlobalReceiver(SYNCABLE,new S2CSyncAnimationMsg());
+    }
 
     public static void syncAnimation(PlayerEntity target, ISyncable syncable, int id, int state) {
         if (target.world.isClient) {
