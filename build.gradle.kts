@@ -4,7 +4,7 @@ plugins {
     id("com.matthewprenger.cursegradle") version "1.4.0"
 }
 
-val snapshotVersion: String = System.getenv("GITHUB_RUN_NUMBER")
+val snapshotVersion: String? = System.getenv("GITHUB_RUN_NUMBER")
 
 group = property("maven_group")!!
 version = "SNAPSHOT-$snapshotVersion"
