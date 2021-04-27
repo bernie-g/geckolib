@@ -1,35 +1,20 @@
 plugins {
     id("fabric-loom") version "0.7-SNAPSHOT"
     id("maven-publish")
+    id("com.matthewprenger.cursegradle") version "1.4.0"
 }
 
-group = "software.bernie.geckolib"
+val snapshotVersion: String = System.getenv("GITHUB_RUN_NUMBER")
+
+group = property("maven_group")!!
+version = "SNAPSHOT-$snapshotVersion"
 
 repositories {
     mavenCentral()
 
     maven {
-        name = "Fabric"
-        url = uri("https://maven.fabricmc.net/")
-    }
-
-    maven {
-        name = "Shedaniel's Maven"
-        url = uri("https://maven.shedaniel.me/")
-    }
-
-    maven {
         name = "Curseforge Maven"
         url = uri("https://www.cursemaven.com")
-    }
-
-    maven {
-        name = "TerraformersMC"
-        url = uri("https://maven.terraformersmc.com/")
-    }
-
-    maven {
-        url = uri("gcs://devan-maven")
     }
 
     maven {
@@ -79,12 +64,6 @@ tasks.withType<JavaCompile> {
     }
 }
 
-tasks.processResources {
-    filesMatching("fabric.mod.json") {
-        expand("version" to project.version)
-    }
-}
-
 tasks.remapJar {
     doLast {
         input.get().asFile.delete()
@@ -114,6 +93,30 @@ configure<PublishingExtension> {
                     credentials {
                         username = project.property("maven_username") as String
                         password = project.property("maven_password") as String
+                    }
+                }
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri("file:///${project.projectDir}/mcmodsrepo")
+            }
+        }
+
+        repositories {
+            maven {
+                url = uri(property("repsyUrl") as String)
+                credentials {
+                    val envUsername: String? = System.getenv("repsyUsername")
+                    val envPassword: String? = System.getenv("repsyPassword")
+
+                    if(envUsername != null) {
+                        username = property("repsyUsername") as String?
+                        username = property("repsyPassword") as String?
+                    } else {
+                        username = envUsername
+                        password = envPassword
                     }
                 }
             }
