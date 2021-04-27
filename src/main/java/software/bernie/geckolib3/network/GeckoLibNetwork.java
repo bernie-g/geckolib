@@ -30,7 +30,7 @@ public class GeckoLibNetwork {
     }
 
     public static void syncAnimation(PlayerEntity target, ISyncable syncable, int id, int state) {
-        if (!target.world.isClient) {
+        if (target.world.isClient) {
             throw new IllegalArgumentException("Only the server can request animation syncs!");
         }
         final String key = syncable.getSyncKey();

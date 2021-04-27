@@ -1,10 +1,12 @@
 package software.bernie.example.item;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -71,24 +73,13 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			// Gets the item that the player is holding, should be a JackInTheBoxItem
 			final ItemStack stack = user.getStackInHand(hand);
 			final int id = GeckoLibUtil.getIDFromStack(stack);
+
+			GeckoLibNetwork.syncAnimation(user, this, id, ANIM_OPEN);
+
 			// Tell all nearby clients to trigger this JackInTheBoxItem
-			GeckoLibNetwork.syncAnimation(user, this, id,ANIM_OPEN);
-		}
-		// Gets the item that the player is holding, should be a JackInTheBox
-		ItemStack stack = user.getStackInHand(hand);
-
-		// Always use GeckoLibUtil to get animationcontrollers when you don't have
-		// access to an AnimationEvent
-		AnimationController controller = GeckoLibUtil.getControllerForStack(this.factory, stack, controllerName);
-
-		if (controller.getAnimationState() == AnimationState.Stopped) {
-			user.sendMessage(new LiteralText("Opening the jack in the box!"), true);
-			// If you don't do this, the popup animation will only play once because the
-			// animation will be cached.
-			controller.markNeedsReload();
-			// Set the animation to open the jackinthebox which will start playing music and
-			// eventually do the actual animation. Also sets it to not loop
-			controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
+			for (PlayerEntity otherPlayer : PlayerLookup.tracking(user)) {
+				GeckoLibNetwork.syncAnimation(otherPlayer, this, id, ANIM_OPEN);
+			}
 		}
 		return super.use(world, user, hand);
 	}
