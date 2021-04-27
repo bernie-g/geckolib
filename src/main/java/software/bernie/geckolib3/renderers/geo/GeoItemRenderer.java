@@ -60,7 +60,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	public void renderByItem(ItemStack itemStack, ItemCameraTransforms.TransformType p_239207_2_,
 			MatrixStack matrixStack, IRenderTypeBuffer bufferIn, int combinedLightIn, int p_239207_6_) {
 		if (p_239207_2_ == ItemCameraTransforms.TransformType.GUI) {
-			RenderSystem.pushMatrix();
+			matrixStack.pushPose();
 			IRenderTypeBuffer.Impl irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
 					.bufferSource();
 			RenderHelper.setupForFlatItems();
@@ -68,7 +68,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 			irendertypebuffer$impl.endBatch();
 			RenderSystem.enableDepthTest();
 			RenderHelper.setupFor3DItems();
-			RenderSystem.popMatrix();
+			matrixStack.popPose();
 		} else {
 			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
 		}

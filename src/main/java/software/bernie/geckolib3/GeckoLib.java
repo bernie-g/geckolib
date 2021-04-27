@@ -1,9 +1,11 @@
 package software.bernie.geckolib3;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
+import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.resource.ResourceListener;
 
 public class GeckoLib {
@@ -21,5 +23,6 @@ public class GeckoLib {
 			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ResourceListener::registerReloadListener);
 		}
 		hasInitialized = true;
+		GeckoLibNetwork.initialize();
 	}
 }
