@@ -13,8 +13,6 @@ import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import software.bernie.example.GeckoLibMod;
-import software.bernie.example.network.GeckoLibModNetwork;
-import software.bernie.example.network.messages.TriggerJackInTheBoxMsg;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -83,8 +81,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			final Integer id = GeckoLibUtil.ensureStackIDExists(stack, (ServerWorld) world);
 			// Tell all nearby clients to trigger this JackInTheBoxItem
 			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
-			final TriggerJackInTheBoxMsg message = new TriggerJackInTheBoxMsg(id);
-			GeckoLibModNetwork.getChannel().send(target, message);
+			GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
 		}
 		return super.use(world, player, hand);
 	}
@@ -109,9 +106,5 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 			}
 		}
-	}
-
-	public void doClientAnimation(int id) {
-		this.onAnimationSync(id, ANIM_OPEN);
 	}
 }

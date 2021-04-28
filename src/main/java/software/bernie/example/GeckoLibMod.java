@@ -12,7 +12,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
-import software.bernie.example.network.GeckoLibModNetwork;
 import software.bernie.example.registry.*;
 import software.bernie.geckolib3.GeckoLib;
 
@@ -36,7 +35,6 @@ public class GeckoLibMod {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());
 				}
 			};
-			GeckoLibModNetwork.register();
 		}
 	}
 }
