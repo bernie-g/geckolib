@@ -7,7 +7,11 @@ plugins {
 val snapshotVersion: String? = System.getenv("GITHUB_RUN_NUMBER")
 
 group = property("maven_group")!!
-version = "SNAPSHOT-$snapshotVersion"
+version = property("mod_version")!!
+
+if(snapshotVersion != null) {
+    version = "SNAPSHOT-$snapshotVersion"
+}
 
 repositories {
     mavenCentral()
