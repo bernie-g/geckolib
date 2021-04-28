@@ -77,8 +77,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		if (!world.isClientSide) {
 			// Gets the item that the player is holding, should be a JackInTheBoxItem
 			final ItemStack stack = player.getItemInHand(hand);
-			// This must be called on the server before an item is animated on clients
-			final Integer id = GeckoLibUtil.ensureStackIDExists(stack, (ServerWorld) world);
+			final int id = GeckoLibUtil.getIDFromStack(stack);
 			// Tell all nearby clients to trigger this JackInTheBoxItem
 			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
 			GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
