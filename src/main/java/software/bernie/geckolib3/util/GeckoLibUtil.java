@@ -44,6 +44,31 @@ public class GeckoLibUtil {
     }
 
     /**
+     * Convenience method that combines the effects of both
+     * {@linkplain #getIDFromStack} and {@linkplain #writeIDToStack}.
+     * <p>
+     * Will always return a unique ID that's stored in the stack's NBT data.
+     */
+    public static int guaranteeIDForStack(ItemStack stack, ServerWorld world) {
+        if (!stackHasIDTag(stack)) {
+            final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
+            stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
+            return id;
+        } else {
+            return stack.getTag().getInt(GECKO_LIB_ID_NBT);
+        }
+    }
+
+    /**
+     * Removes the unique ID from the given stack, if present.
+     */
+    public static void removeIDFromStack(ItemStack stack) {
+        if (stackHasIDTag(stack)) {
+            stack.getTag().remove(GECKO_LIB_ID_NBT);
+        }
+    }
+
+    /**
      * Returns true if the stack has an ID stored in its NBT data.
      */
     public static boolean stackHasIDTag(ItemStack stack) {
