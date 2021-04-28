@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net/' }
-		maven { url  = 'https://plugins.gradle.org/m2/' }
+		maven { url = 'https://plugins.gradle.org/m2/' }
         jcenter()
         mavenCentral()
     }
@@ -46,6 +46,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 geckolib {
                     source sourceSets.main
@@ -98,6 +99,7 @@ minecraft {
         }
     }
 }
+
 repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }

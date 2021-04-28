@@ -15,6 +15,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRender;
@@ -62,7 +63,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 					worldIn.addFreshEntity(abstractarrowentity);
 				}
 				if (!worldIn.isClientSide) {
-					final int id = GeckoLibUtil.getIDFromStack(stack);
+					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerWorld) worldIn);
 					final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF
 							.with(() -> playerentity);
 					GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);

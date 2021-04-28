@@ -9,6 +9,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import software.bernie.example.GeckoLibMod;
@@ -37,7 +38,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
-		// Not setting an animation here as that's handled in onItemRightClick
+		// Not setting an animation here as that's handled below
 		return PlayState.CONTINUE;
 	}
 
@@ -55,13 +56,15 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
-		// The animation for the jackinthebox has a sound keyframe at time 0:00.
+		// The animation for the JackInTheBoxItem has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
 		ClientPlayerEntity player = Minecraft.getInstance().player;
-		player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
+		if (player != null) {
+			player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
+		}
 	}
 
 	@Override
