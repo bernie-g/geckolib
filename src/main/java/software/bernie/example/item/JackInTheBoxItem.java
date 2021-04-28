@@ -2,7 +2,6 @@ package software.bernie.example.item;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -26,14 +25,18 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.network.GeckoLibNetwork;
+import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class JackInTheBoxItem extends Item implements IAnimatable {
+public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	private static final String CONTROLLER_NAME = "popupController";
-	private AnimationFactory factory = new AnimationFactory(this);
+	private static final int ANIM_OPEN = 0;
+	public AnimationFactory factory = new AnimationFactory(this);
 
 	public JackInTheBoxItem(Properties properties) {
 		super(properties.tab(GeckoLibMod.geckolibItemGroup));
+		GeckoLibNetwork.registerSyncable(this);
 	}
 
 	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
@@ -86,22 +89,29 @@ public class JackInTheBoxItem extends Item implements IAnimatable {
 		return super.use(world, player, hand);
 	}
 
-	public void doClientAnimation(int id) {
-		// Always use GeckoLibUtil to get AnimationControllers when you don't have
-		// access to an AnimationEvent
-		AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
+	@Override
+	public void onAnimationSync(int id, int state) {
+		if (state == ANIM_OPEN) {
+			// Always use GeckoLibUtil to get AnimationControllers when you don't have
+			// access to an AnimationEvent
+			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
-		if (controller.getAnimationState() == AnimationState.Stopped) {
-			final ClientPlayerEntity player = Minecraft.getInstance().player;
-			if (player != null) {
-				player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);
+			if (controller.getAnimationState() == AnimationState.Stopped) {
+				final ClientPlayerEntity player = Minecraft.getInstance().player;
+				if (player != null) {
+					player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);
+				}
+				// If you don't do this, the popup animation will only play once because the
+				// animation will be cached.
+				controller.markNeedsReload();
+				// Set the animation to open the JackInTheBoxItem which will start playing music and
+				// eventually do the actual animation. Also sets it to not loop
+				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 			}
-			// If you don't do this, the popup animation will only play once because the
-			// animation will be cached.
-			controller.markNeedsReload();
-			// Set the animation to open the JackInTheBoxItem which will start playing music and
-			// eventually do the actual animation. Also sets it to not loop
-			controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 		}
+	}
+
+	public void doClientAnimation(int id) {
+		this.onAnimationSync(id, ANIM_OPEN);
 	}
 }
