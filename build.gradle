@@ -114,6 +114,9 @@ repositories {
         name = "jitpack"
         url "https://jitpack.io"
     }
+    maven {
+    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
+    }
     mavenCentral()
 }
 
@@ -213,14 +216,18 @@ publishing {
 publishing {
     repositories {
         maven {
-            url repsyUrl
-            credentials {
-                def envUsername = System.getenv("repsyUsername")
-                def envPassword = System.getenv("repsyPassword")
-                username = envUsername == null ? findProperty("repsyUsername") : envUsername
-                password = envPassword == null ? findProperty("repsyPassword") : envPassword
-            }
-        }
+	      name = "cloudsmith"
+	      url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      def releasesRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      def snapshotsRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+	      credentials {
+                def envUsername = System.getenv("cloudUsername")
+                def envPassword = System.getenv("cloudPassword")
+                username = envUsername == null ? findProperty("cloudUsername") : envUsername
+                password = envPassword == null ? findProperty("cloudPassword") : envPassword
+	      }
+	    }
     }
 }
 
