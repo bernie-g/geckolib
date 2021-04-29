@@ -6,7 +6,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -41,7 +40,9 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController<JackInTheBoxItem> controller = new AnimationController(this, controllerName, 20, this::predicate);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		AnimationController<JackInTheBoxItem> controller = new AnimationController(this, controllerName, 20,
+				this::predicate);
 
 		// Registering a sound listener just makes it so when any sound keyframe is hit
 		// the method will be called.
@@ -73,9 +74,6 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			// Gets the item that the player is holding, should be a JackInTheBoxItem
 			final ItemStack stack = user.getStackInHand(hand);
 			final int id = GeckoLibUtil.getIDFromStack(stack);
-
-			GeckoLibNetwork.syncAnimation(user, this, id, ANIM_OPEN);
-
 			// Tell all nearby clients to trigger this JackInTheBoxItem
 			for (PlayerEntity otherPlayer : PlayerLookup.tracking(user)) {
 				GeckoLibNetwork.syncAnimation(otherPlayer, this, id, ANIM_OPEN);
@@ -89,6 +87,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		if (state == ANIM_OPEN) {
 			// Always use GeckoLibUtil to get AnimationControllers when you don't have
 			// access to an AnimationEvent
+			@SuppressWarnings("rawtypes")
 			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, controllerName);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
@@ -99,7 +98,8 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.
 				controller.markNeedsReload();
-				// Set the animation to open the JackInTheBoxItem which will start playing music and
+				// Set the animation to open the JackInTheBoxItem which will start playing music
+				// and
 				// eventually do the actual animation. Also sets it to not loop
 				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 			}

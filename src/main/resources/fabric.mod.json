@@ -21,7 +21,8 @@
       "software.bernie.example.GeckoLibMod"
     ],
     "client": [
-      "software.bernie.example.ClientListener"
+      "software.bernie.example.ClientListener",
+      "software.bernie.geckolib3.network.ClientPackets"
     ]
   },
   "mixins": [
