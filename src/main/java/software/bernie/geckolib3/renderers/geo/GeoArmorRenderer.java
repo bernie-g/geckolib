@@ -43,10 +43,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		});
 	}
 
-	private T currentArmorItem;
-	private LivingEntity entityLiving;
-	private ItemStack itemStack;
-	private EquipmentSlotType armorSlot;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlotType armorSlot;
 
 	// Set these to the names of your armor's bones, or null if you aren't using
 	// them
