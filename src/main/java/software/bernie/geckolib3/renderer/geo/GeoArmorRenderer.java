@@ -53,10 +53,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String leftLegBone = "armorLeftLeg";
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
-	private T currentArmorItem;
-	private LivingEntity entityLiving;
-	private ItemStack itemStack;
-	private EquipmentSlot armorSlot;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlot armorSlot;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		super(1);
