@@ -10,7 +10,7 @@ loaderVersion="[34,)" #mandatory This is typically bumped every Minecraft versio
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="https://github.com/bernie-g/geckolib/issues" #optional
 # A list of mods - how many allowed here is determined by the individual mod loader
-license="LGPL 3.0"
+license="MIT"
 
 
 [[mods]] #mandatory
