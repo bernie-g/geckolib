@@ -24,4 +24,4 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 If you'd like to help support us, feel free to donate to our [patreon](https://www.patreon.com/geckosmods). The patreon is also where we post major announcements about the future of GeckoLib. We post smaller announcements in our discord.
 
 ## License
-[LGPL 3.0](https://www.gnu.org/licenses/lgpl-3.0.html)
+[MIT](https://opensource.org/licenses/MIT)
