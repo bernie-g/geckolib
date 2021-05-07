@@ -159,7 +159,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				leftLegBone.setPositionY(12 - this.leftLeg.pivotY);
 				leftLegBone.setPositionZ(this.leftLeg.pivotZ);
 				if (this.leftBootBone != null) {
-					IBone leftBootBone = this.modelProvider.getBone(this.rightBootBone);
+					IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 					GeoUtils.copyRotations(this.leftLeg, leftBootBone);
 					leftBootBone.setPositionX(this.leftLeg.pivotX - 2);
 					leftBootBone.setPositionY(12 - this.leftLeg.pivotY);
