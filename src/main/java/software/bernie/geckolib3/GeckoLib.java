@@ -21,8 +21,8 @@ public class GeckoLib {
 	synchronized public static void initialize() {
 		if (!hasInitialized) {
 			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ResourceListener::registerReloadListener);
+			GeckoLibNetwork.initialize();
 		}
 		hasInitialized = true;
-		GeckoLibNetwork.initialize();
 	}
 }
