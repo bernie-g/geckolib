@@ -9,7 +9,8 @@
     "Gecko, Eliot, AzureDoom"
   ],
   "contact": {
-    "homepage": "https://github.com/bernie-g/geckolib",
+    "homepage": "https://github.com/bernie-g/geckolib",,
+	"issues": "https://github.com/bernie-g/geckolib/issues",
     "sources": "https://github.com/bernie-g/geckolib"
   },
 
