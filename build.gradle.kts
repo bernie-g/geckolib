@@ -1,7 +1,10 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     id("fabric-loom") version "0.7-SNAPSHOT"
     id("maven-publish")
     id("com.matthewprenger.cursegradle") version "1.4.0"
+    id("com.github.johnrengelman.shadow") version "4.0.4"
 }
 
 val snapshotVersion: String? = System.getenv("GITHUB_RUN_NUMBER")
@@ -30,6 +33,8 @@ repositories {
     }
 }
 
+val shade by configurations.creating
+
 dependencies {
     minecraft("net.minecraft", "minecraft", "21w16a")
     mappings("net.fabricmc", "yarn", "21w16a+build.12", classifier = "v2")
@@ -42,8 +47,19 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", "2.9.0")
     implementation("com.eliotlash.molang:molang:SNAPSHOT.12")
     implementation("com.eliotlash.mclib:mclib:SNAPSHOT.12")
-
     implementation(project(":geckolib-core"))
+
+    // Shaded dependencies
+    shade("com.fasterxml.jackson.core", "jackson-databind", "2.9.0")
+    shade("com.fasterxml.jackson.datatype", "jackson-datatype-jsr310", "2.9.0")
+    shade("com.eliotlash.molang:molang:SNAPSHOT.12")
+    shade("com.eliotlash.mclib:mclib:SNAPSHOT.12")
+    shade(project(":geckolib-core"))
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.6.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.2")
+
 }
 
 loom {
@@ -69,8 +85,30 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.remapJar {
+    input.set(shadowJar.archiveFile)
     doLast {
         input.get().asFile.delete()
+    }
+}
+
+tasks.withType(ShadowJar::class.java) {
+        configurations = listOf(shade)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from(sourceSets.main.name) {
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+        relocate("com.eliotlash", "software.bernie.shadowed.eliotlash")
+        relocate("com.fasterxml", "software.bernie.shadowed.fasterxml")
+        classifier = "dev"
+    }
+
+val shadowJar: ShadowJar by tasks {
+
+}
+
+artifacts {
+    withGroovyBuilder {
+        "archives"(shadowJar)
     }
 }
 
