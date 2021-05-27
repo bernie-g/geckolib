@@ -21,13 +21,13 @@ If you have questions or need help getting up and running with questions, feel f
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## Sponsor Us
-If you'd like to help support us, feel free to donate to our [patreon](https://www.patreon.com/geckosmods). The patreon is also where we post major announcements about the future of GeckoLib. We post smaller announcements in our discord.
+If you'd like to help support us, feel free to donate to our [patreon](https://www.patreon.com/geckosmods).
 
 ## License
 [MIT](https://opensource.org/licenses/MIT)
 
 ## Acknowledgments
 
-YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/index.jsp) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/index.jsp), innovative and intelligent tools for profiling Java and .NET applications.
+YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of [YourKit Java Profiler]( https://www.yourkit.com/java/profiler/) and [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), innovative and intelligent tools for profiling Java and .NET applications.
 
 [![YourKit](https://www.yourkit.com/images/yklogo.png)](https://www.yourkit.com/)
