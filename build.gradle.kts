@@ -77,10 +77,10 @@ tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
 
     if (JavaVersion.current().isJava9Compatible) {
-        options.release.set(8)
+        options.release.set(16)
     } else {
-        sourceCompatibility = "8"
-        targetCompatibility = "8"
+        sourceCompatibility = "16"
+        targetCompatibility = "16"
     }
 }
 
