@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.world.storage;
 
+import java.util.Iterator;
+
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.nbt.NbtCompound;
@@ -22,12 +24,14 @@ public class GeckoLibIdTracker extends PersistentState {
 				GeckoLibIdTracker::new, NAME);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static GeckoLibIdTracker fromNbt(NbtCompound nbt) {
 		GeckoLibIdTracker idCountsState = new GeckoLibIdTracker();
-		idCountsState.usedIds.clear();
-		for (String key : nbt.getKeys()) {
-			if (nbt.contains(key, 99)) {
-				idCountsState.usedIds.put(key, nbt.getInt(key));
+		Iterator var2 = nbt.getKeys().iterator();
+		while (var2.hasNext()) {
+			String string = (String) var2.next();
+			if (nbt.contains(string, 99)) {
+				idCountsState.usedIds.put(string, nbt.getInt(string));
 			}
 		}
 		return idCountsState;
