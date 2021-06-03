@@ -39,6 +39,7 @@ public class JsonKeyFrameUtils {
 
 		for (int i = 0; i < element.size(); i++) {
 			Map.Entry<String, JsonElement> keyframe = element.get(i);
+			if(keyframe.getKey().equals("easing") || keyframe.getKey().equals("easingArgs")) continue;
 			Map.Entry<String, JsonElement> previousKeyFrame = i == 0 ? null : element.get(i - 1);
 
 			Double previousKeyFrameLocation = previousKeyFrame == null ? 0
