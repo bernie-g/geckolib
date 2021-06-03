@@ -1,3 +1,3 @@
-v3.0.32
+v3.0.33
 
-- backported ISyncable methods.
+- Fixed issue with single-keyframe channels with easings not getting loaded properly - Gecko
