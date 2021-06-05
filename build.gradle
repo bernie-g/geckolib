@@ -57,7 +57,7 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     //modCompileOnly "vazkii.patchouli:Patchouli:1.16.4-48-FABRIC"	
-    modImplementation "com.terraformersmc:modmenu:2.0.0-beta.5"
+    modCompileOnly "com.terraformersmc:modmenu:2.0.0-beta.5"
 
 
     // Actual dependencies
