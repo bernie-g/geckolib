@@ -50,7 +50,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has it's own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(this.getUniqueID(entity));
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		if (manager.startTick == null) {
 			manager.startTick = getCurrentTick();
 		}
@@ -73,13 +73,9 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		predicate.animationTick = seekTime;
 		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
 		if (!this.animationProcessor.getModelRendererList().isEmpty()) {
-			animationProcessor.tickAnimation(entity, this.getUniqueID(entity), seekTime, predicate, GeckoLibCache.getInstance().parser,
+			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser,
 					shouldCrashOnMissing);
 		}
-	}
-
-	public Integer getUniqueID(T animatable) {
-		return animatable.hashCode();
 	}
 
 	@Override
@@ -129,8 +125,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
 		if (animatable instanceof Entity) {
-			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera()
-					.getPosition().distanceTo(((Entity) animatable).position()));
+			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera().getPosition()
+					.distanceTo(((Entity) animatable).position()));
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			// Should probably check specifically whether it's in rain?
