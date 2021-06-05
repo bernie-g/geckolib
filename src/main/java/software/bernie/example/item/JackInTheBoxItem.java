@@ -6,6 +6,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
@@ -72,10 +73,8 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	@Override
 	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
 		if (!world.isClient) {
-			// Gets the item that the player is holding, should be a JackInTheBoxItem
-			final ItemStack stack = user.getStackInHand(hand);
-			final int id = GeckoLibUtil.getIDFromStack(stack);
-			// Tell all nearby clients to trigger this JackInTheBoxItem
+			final int id = GeckoLibUtil.guaranteeIDForStack(user.getStackInHand(hand), (ServerWorld) world);
+			GeckoLibNetwork.syncAnimation(user, this, id, ANIM_OPEN);
 			for (PlayerEntity otherPlayer : PlayerLookup.tracking(user)) {
 				GeckoLibNetwork.syncAnimation(otherPlayer, this, id, ANIM_OPEN);
 			}
