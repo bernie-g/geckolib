@@ -2,7 +2,6 @@ package software.bernie.example.block.tile;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.math.BlockPos;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -21,7 +20,7 @@ public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
     }
 
     private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		AnimationController controller = event.getController();
+		AnimationController<?> controller = event.getController();
 		controller.transitionLengthTicks = 0;
 		if (event.getAnimatable().getWorld().isRaining()) {
 			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true)
@@ -35,7 +34,8 @@ public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+		data.addAnimationController(
+				new AnimationController<FertilizerTileEntity>(this, "controller", 0, this::predicate));
 	}
 
 	@Override

@@ -78,6 +78,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 		return this;
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	public EntityType<E> build() {
 		EntityType.Builder<E> entityBuilder = EntityType.Builder.create(this.entityFactory, this.category)
 				.setDimensions(this.dimensions.width, this.dimensions.height);
@@ -86,15 +87,16 @@ public class EntityRegistryBuilder<E extends Entity> {
 		}
 		if (this.alwaysUpdateVelocity && this.updateIntervalTicks != 0 & this.trackingDistance != 0) {
 			FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions)
-					.trackable(this.trackingDistance, this.updateIntervalTicks, this.alwaysUpdateVelocity).build();
+					.trackRangeBlocks(this.trackingDistance).trackedUpdateRate(this.updateIntervalTicks)
+					.forceTrackedVelocityUpdates(this.alwaysUpdateVelocity).build();
 		}
 
 		EntityType<E> entityType = Registry.register(Registry.ENTITY_TYPE, name, entityBuilder.build(name.getPath()));
 
 		if (this.hasEgg) {
 			RegistryUtils.registerItem(
-					new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor, this.secondaryColor,
-							(new Settings()).group(ItemGroup.MISC)),
+					new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor,
+							this.secondaryColor, (new Settings()).group(ItemGroup.MISC)),
 					new Identifier(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
 		}
 

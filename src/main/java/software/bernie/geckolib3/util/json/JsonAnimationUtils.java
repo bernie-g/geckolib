@@ -5,10 +5,22 @@
 
 package software.bernie.geckolib3.util.json;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import net.minecraft.client.gl.ShaderParseException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
@@ -16,8 +28,6 @@ import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.util.AnimationUtils;
-
-import java.util.*;
 
 /**
  * Helper for parsing the bedrock json animation format and finding certain
@@ -57,6 +67,7 @@ public class JsonAnimationUtils {
 	 *         sure why the format stores the times as a string) and the JsonElement
 	 *         is the object, which has all the rotation keyframes.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Set<Map.Entry<String, JsonElement>> getRotationKeyFrames(JsonObject json) {
 		JsonElement rotationObject = json.get("rotation");
 		if (rotationObject.isJsonArray()) {
@@ -79,6 +90,7 @@ public class JsonAnimationUtils {
 	 *         sure why the format stores the times as a string) and the JsonElement
 	 *         is the object, which has all the position keyframes.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Set<Map.Entry<String, JsonElement>> getPositionKeyFrames(JsonObject json) {
 		JsonElement positionObject = json.get("position");
 		if (positionObject.isJsonArray()) {
@@ -101,6 +113,7 @@ public class JsonAnimationUtils {
 	 *         sure why the format stores the times as a string) and the JsonElement
 	 *         is the object, which has all the scale keyframes.
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Set<Map.Entry<String, JsonElement>> getScaleKeyFrames(JsonObject json) {
 		JsonElement scaleObject = json.get("scale");
 		if (scaleObject.isJsonArray()) {
@@ -169,6 +182,7 @@ public class JsonAnimationUtils {
 	 * @return the animation
 	 * @throws ShaderParseException the json exception
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName)
 			throws ShaderParseException {
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
@@ -199,6 +213,7 @@ public class JsonAnimationUtils {
 	 * @throws IllegalStateException Throws this exception if the JSON is formatted
 	 *                               incorrectly
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element, MolangParser parser)
 			throws ClassCastException, IllegalStateException {
 		Animation animation = new Animation();
@@ -301,6 +316,7 @@ public class JsonAnimationUtils {
 		return longestLength == 0 ? Double.MAX_VALUE : longestLength;
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	static List<IValue> convertJsonArrayToList(JsonArray array) {
 		return new Gson().fromJson(array, ArrayList.class);
 	}

@@ -4,6 +4,7 @@ import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
+@SuppressWarnings("rawtypes")
 public class ReplacedCreeperModel extends AnimatedGeoModel {
 	@Override
 	public Identifier getModelLocation(Object object) {

@@ -45,6 +45,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		return RenderLayer.getEntityCutout(textureLocation);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public GeoModelProvider getEntityModel() {
 		return this.entityRenderer.getGeoModelProvider();
 	}

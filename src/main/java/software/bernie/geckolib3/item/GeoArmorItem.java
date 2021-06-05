@@ -25,6 +25,7 @@ public abstract class GeoArmorItem extends ArmorItem implements ArmorProvider {
 				.setCurrentItem(entityLiving, itemStack, armorSlot);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Identifier getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
 			Identifier defaultTexture) {

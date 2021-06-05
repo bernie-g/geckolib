@@ -29,6 +29,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
+@SuppressWarnings("rawtypes")
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedEntityModel
 		implements IGeoRenderer<T> {
 	private static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
@@ -82,6 +83,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.render(0, matrixStackIn, bufferIn, packedLightIn);
 	}
 
+	@SuppressWarnings("unchecked")
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
@@ -183,6 +185,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	/**
 	 * Everything after this point needs to be called every frame before rendering
 	 */
+	@SuppressWarnings("unchecked")
 	public GeoArmorRenderer setCurrentItem(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot) {
 		this.entityLiving = entityLiving;
 		this.itemStack = itemStack;
@@ -191,6 +194,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
+	@SuppressWarnings("unchecked")
 	public final GeoArmorRenderer applyEntityStats(BipedEntityModel defaultArmor) {
 		this.child = defaultArmor.child;
 		this.sneaking = defaultArmor.sneaking;
@@ -200,6 +204,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 

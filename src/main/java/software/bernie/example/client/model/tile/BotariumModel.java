@@ -5,22 +5,23 @@
 package software.bernie.example.client.model.tile;
 
 import net.minecraft.util.Identifier;
+import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class BotariumModel extends AnimatedGeoModel {
+public class BotariumModel extends AnimatedGeoModel<BotariumTileEntity> {
 	@Override
-	public Identifier getAnimationFileLocation(Object entity) {
+	public Identifier getAnimationFileLocation(BotariumTileEntity entity) {
 		return new Identifier(GeckoLib.ModID, "animations/botarium.animation.json");
 	}
 
 	@Override
-	public Identifier getModelLocation(Object animatable) {
+	public Identifier getModelLocation(BotariumTileEntity animatable) {
 		return new Identifier(GeckoLib.ModID, "geo/botarium.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(Object entity) {
+	public Identifier getTextureLocation(BotariumTileEntity entity) {
 		return new Identifier(GeckoLib.ModID, "textures/block/botarium.png");
 	}
 }

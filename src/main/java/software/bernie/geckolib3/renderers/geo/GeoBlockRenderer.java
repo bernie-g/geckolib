@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.awt.Color;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FacingBlock;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -8,7 +10,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
@@ -19,15 +20,15 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-import java.awt.*;
-
+@SuppressWarnings("rawtypes")
 public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
-        implements IGeoRenderer<T>, BlockEntityRenderer {
+		implements IGeoRenderer<T>, BlockEntityRenderer {
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof BlockEntity) {
 				BlockEntity tile = (BlockEntity) object;
-				BlockEntityRenderer<BlockEntity> renderer = MinecraftClient.getInstance().getBlockEntityRenderDispatcher().get(tile);
+				BlockEntityRenderer<BlockEntity> renderer = MinecraftClient.getInstance()
+						.getBlockEntityRenderDispatcher().get(tile);
 				if (renderer instanceof GeoBlockRenderer) {
 					return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -42,6 +43,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		this.modelProvider = modelProvider;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void render(BlockEntity tile, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {

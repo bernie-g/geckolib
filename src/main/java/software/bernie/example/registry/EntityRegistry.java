@@ -5,7 +5,7 @@
 
 package software.bernie.example.registry;
 
-import net.fabricmc.loader.FabricLoader;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
@@ -22,7 +22,7 @@ public class EntityRegistry {
 
 	public static <T extends Entity> EntityType<T> buildEntity(EntityType.EntityFactory<T> entity, Class<T> entityClass,
 			float width, float height) {
-		if (FabricLoader.INSTANCE.isDevelopmentEnvironment()) {
+		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 			String name = entityClass.getSimpleName().toLowerCase();
 			return EntityRegistryBuilder.<T>createBuilder(new Identifier(GeckoLib.ModID, name)).entity(entity)
 					.category(SpawnGroup.CREATURE).dimensions(EntityDimensions.changing(width, height)).build();

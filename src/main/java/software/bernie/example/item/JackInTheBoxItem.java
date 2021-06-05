@@ -53,6 +53,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		data.addAnimationController(controller);
 	}
 
+	@SuppressWarnings("resource")
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
 		// The animation for the jackinthebox has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
@@ -82,6 +83,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		return super.use(world, user, hand);
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void onAnimationSync(int id, int state) {
 		if (state == ANIM_OPEN) {
