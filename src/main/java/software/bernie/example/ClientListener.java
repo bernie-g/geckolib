@@ -38,7 +38,7 @@ public class ClientListener implements ClientModInitializer {
 					(context) -> new BikeGeoRenderer(context));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
-//			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
+			//GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer(null));
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE, (BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER, (BlockEntityRendererFactory.Context rendererDispatcherIn) -> new FertilizerTileRenderer());
 
