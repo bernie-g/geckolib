@@ -11,7 +11,6 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.PacketDistributor;
-
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
@@ -77,7 +76,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		if (!world.isClientSide) {
 			// Gets the item that the player is holding, should be a JackInTheBoxItem
 			final ItemStack stack = player.getItemInHand(hand);
-			final int id = GeckoLibUtil.getIDFromStack(stack);
+			final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerWorld) world);
 			// Tell all nearby clients to trigger this JackInTheBoxItem
 			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
 			GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
@@ -100,7 +99,8 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.
 				controller.markNeedsReload();
-				// Set the animation to open the JackInTheBoxItem which will start playing music and
+				// Set the animation to open the JackInTheBoxItem which will start playing music
+				// and
 				// eventually do the actual animation. Also sets it to not loop
 				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
 			}

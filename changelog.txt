@@ -1,3 +1,6 @@
-v3.0.39
+v3.0.40
 
-- Fixed issues with animations not playing on items. 
+- Moved JackInTheBoxItem to the proper way of syncing animations, as the Pistol way is the only one to work 1.17 so it will make porting easier. 
+- Updated JavaDoc of GeckoLib#initialize() with the fix for shadowing. 
+
+If you are planning using Items with animations, I do not recommend shadowing unless you plan recreating the packet system used in Geckolib in your mod as shadowing and running another copy of Geckolib will crash if GeckoLib#initialize() is called in the shadowed mod.
