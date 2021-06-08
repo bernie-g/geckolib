@@ -8,12 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
+import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.ArmorStandEntity;
@@ -27,12 +28,13 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.GeoArmorRendererFactory;
 import software.bernie.geckolib3.util.GeoUtils;
 
 @SuppressWarnings("rawtypes")
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedEntityModel
 		implements IGeoRenderer<T> {
-	private static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
+	public static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -60,13 +62,15 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private ItemStack itemStack;
 	private EquipmentSlot armorSlot;
 
-	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider, ModelPart root) {
-		super(root);
+	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider, GeoArmorRendererFactory.Context ctx,
+			EntityModelLayer layer) {
+		super(ctx.getPart(layer));
 		this.modelProvider = modelProvider;
 	}
 
-	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer renderer) {
-		renderers.put(itemClass, renderer);
+	public static <E extends Entity> void registerArmorRenderer(Class<? extends ArmorItem> itemClass,
+			GeoArmorRendererFactory<E> renderer) {
+		renderers.put(itemClass, (GeoArmorRenderer) renderer);
 	}
 
 	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item) {

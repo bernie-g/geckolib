@@ -207,7 +207,7 @@ if (file('key.properties').exists()) {
     project {
         apiKey = curseProp.getProperty('curseKey')
         id = "398667"
-        releaseType = "alpha"
+        releaseType = "beta"
         changelogType = 'text'
         changelog = file('changelog.txt')
         addGameVersion("1.17")

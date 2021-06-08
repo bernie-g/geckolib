@@ -1,3 +1,5 @@
-v3.0.3
+v3.0.4
 
-- Items now syncing correctly.
+***PLEASE NOTE ARMOR IS STILL NOT FIXED***
+
+- Pushing 1.17 beta build out.

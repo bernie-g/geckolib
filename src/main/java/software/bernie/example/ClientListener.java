@@ -28,7 +28,7 @@ import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
 public class ClientListener implements ClientModInitializer {
 
-	@SuppressWarnings({ "unchecked"})
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public void onInitializeClient() {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
@@ -37,8 +37,8 @@ public class ClientListener implements ClientModInitializer {
 					(context) -> new BikeGeoRenderer(context));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
-			// GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new
-			// PotatoArmorRenderer(null));
+//			GeoArmorRendererRegistry.INSTANCE.register(PotatoArmorItem.class,
+//					(context) -> new PotatoArmorRenderer(context));
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER,
