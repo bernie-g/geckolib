@@ -1,5 +1,5 @@
-v3.0.4
+v3.0.5
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Pushing 1.17 beta build out.
+- Fixed vanilla armor crashing when trying to render.
