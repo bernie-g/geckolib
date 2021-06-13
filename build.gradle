@@ -206,7 +206,7 @@ if (file('key.properties').exists()) {
 
     project {
         apiKey = curseProp.getProperty('curseKey')
-        id = "398667"
+        id = "388172"
         releaseType = "beta"
         changelogType = 'text'
         changelog = file('changelog.txt')
@@ -217,7 +217,9 @@ if (file('key.properties').exists()) {
         relations {
             requiredDependency 'fabric-api'      
         }
-        mainArtifact(remapJar)
+        mainArtifact(remapJar) {
+      		displayName = "[FABRIC] Geckolib ${project.minecraft_version}"
+    	}
 
         afterEvaluate {
             uploadTask.dependsOn("remapJar")

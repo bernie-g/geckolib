@@ -2,4 +2,4 @@ v3.0.5
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Fixed vanilla armor crashing when trying to render.
+- Geckolib 1.17 has now been moved to the main page, thanks to CurseForge supporting per file modloader marking.
