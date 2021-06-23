@@ -3,7 +3,7 @@
 GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge and Fabric. 
 
 ## Installation
-[![curseforge](http://cf.way2muchnoise.eu/versions/geckolib.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
+[![curseforge](http://cf.way2muchnoise.eu/versions/388172.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
 ![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.15)
 <a href="https://cla-assistant.io/bernie-g/geckolib"><img src="https://cla-assistant.io/readme/badge/bernie-g/geckolib" alt="CLA assistant" /></a>
 [![Newest Maven Snapshot](https://img.shields.io/maven-metadata/v?label=newest%20snapshot&metadataUrl=https%3A%2F%2Frepo.repsy.io%2Fmvn%2Fgandiber%2Fgeckolib%2Fsoftware%2Fbernie%2Fgeckolib%2Fforge-1.15.2-geckolib%2Fmaven-metadata.xml)](https://repo.repsy.io/mvn/gandiber/geckolib/software/bernie/geckolib/forge-1.15.2-geckolib/)
