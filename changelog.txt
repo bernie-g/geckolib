@@ -1,5 +1,5 @@
-v3.0.5
+v3.0.6
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Geckolib 1.17 has now been moved to the main page, thanks to CurseForge supporting per file modloader marking.
+- Readded Patchouli compat for Geckolib entities in books.
