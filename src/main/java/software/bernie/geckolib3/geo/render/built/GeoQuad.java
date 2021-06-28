@@ -1,10 +1,10 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 
 public class GeoQuad {
-	public final Vector3f normal;
+	public final Vec3f normal;
 	public GeoVertex[] vertices;
 	public Direction direction;
 

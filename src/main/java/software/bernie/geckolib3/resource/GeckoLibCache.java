@@ -10,12 +10,12 @@ import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
+import net.minecraft.resource.ResourceReloader;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import software.bernie.geckolib3.GeckoLib;
@@ -61,9 +61,9 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> reload(ResourceReloadListener.Synchronizer stage, ResourceManager resourceManager,
-			Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor) {
+	public CompletableFuture<Void> reload(ResourceReloader.Synchronizer stage, ResourceManager resourceManager,
+										  Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
+										  Executor gameExecutor) {
 		Map<Identifier, AnimationFile> animations = new HashMap<>();
 		Map<Identifier, GeoModel> geoModels = new HashMap<>();
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
