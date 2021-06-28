@@ -10,10 +10,10 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -48,9 +48,9 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 			VertexConsumerProvider bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		matrixStackIn.push();
-		matrixStackIn.multiply(Vector3f.POSITIVE_Y
+		matrixStackIn.multiply(Vec3f.POSITIVE_Y
 				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevYaw, entityIn.yaw) - 90.0F));
-		matrixStackIn.multiply(Vector3f.POSITIVE_Z
+		matrixStackIn.multiply(Vec3f.POSITIVE_Z
 				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevPitch, entityIn.pitch)));
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);

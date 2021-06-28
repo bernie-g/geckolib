@@ -11,9 +11,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.BlockEntityRenderDispatcher;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -77,22 +77,22 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
 	protected void rotateBlock(Direction facing, MatrixStack stack) {
 		switch (facing) {
 		case SOUTH:
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180));
+			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
 			break;
 		case WEST:
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(90));
+			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90));
 			break;
 		case NORTH:
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(0));
+			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(0));
 			break;
 		case EAST:
-			stack.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270));
+			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(270));
 			break;
 		case UP:
-			stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90));
+			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
 			break;
 		case DOWN:
-			stack.multiply(Vector3f.NEGATIVE_X.getDegreesQuaternion(90));
+			stack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(90));
 			break;
 		}
 	}

@@ -1,16 +1,16 @@
 package software.bernie.geckolib3.geo.render.built;
 
 import net.minecraft.client.util.math.Vector3d;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.geo.raw.pojo.*;
 import software.bernie.geckolib3.util.VectorUtils;
 
 public class GeoCube {
 	public GeoQuad[] quads = new GeoQuad[6];
-	public Vector3f pivot;
-	public Vector3f rotation;
-	public Vector3f size = new Vector3f();
+	public Vec3f pivot;
+	public Vec3f rotation;
+	public Vec3f size = new Vec3f();
 	public double inflate;
 	public Boolean mirror;
 
@@ -52,13 +52,13 @@ public class GeoCube {
 		if (size.z == 0) {
 			size.z = 0f;
 		}
-		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
+		Vec3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
 		rotation.multiplyComponentwise(-1, -1, 1);
 
 		rotation.set((float) Math.toRadians(rotation.getX()), (float) Math.toRadians(rotation.getY()),
 				(float) Math.toRadians(rotation.getZ()));
 
-		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
+		Vec3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
 		pivot.multiplyComponentwise(-1, 1, 1);
 
 		cube.pivot = pivot;

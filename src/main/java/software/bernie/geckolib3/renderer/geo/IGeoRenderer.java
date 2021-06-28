@@ -4,11 +4,11 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
-import net.minecraft.client.util.math.Vector4f;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.Vector4f;
 import software.bernie.geckolib3.geo.render.built.*;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -69,7 +69,7 @@ public interface IGeoRenderer<T> {
 			if (quad == null) {
 				continue;
 			}
-			Vector3f normal = quad.normal.copy();
+			Vec3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 
 			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0) {

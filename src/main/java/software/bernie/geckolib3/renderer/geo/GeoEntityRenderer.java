@@ -16,7 +16,6 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.PlayerModelPart;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EquipmentSlot;
@@ -27,6 +26,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -174,7 +174,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
+
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return animatable.getEntityId();
@@ -210,7 +210,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			float partialTicks) {
 		EntityPose pose = entityLiving.getPose();
 		if (pose != EntityPose.SLEEPING) {
-			matrixStackIn.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(180.0F - rotationYaw));
+			matrixStackIn.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F - rotationYaw));
 		}
 
 		if (entityLiving.deathTime > 0) {
@@ -221,23 +221,23 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			}
 
 			matrixStackIn
-					.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(f * this.getDeathMaxRotation(entityLiving)));
+					.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(f * this.getDeathMaxRotation(entityLiving)));
 		} else if (entityLiving.isUsingRiptide()) {
-			matrixStackIn.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.pitch));
+			matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.pitch));
 			matrixStackIn.multiply(
-					Vector3f.POSITIVE_Y.getDegreesQuaternion(((float) entityLiving.age + partialTicks) * -75.0F));
+					Vec3f.POSITIVE_Y.getDegreesQuaternion(((float) entityLiving.age + partialTicks) * -75.0F));
 		} else if (pose == EntityPose.SLEEPING) {
 			Direction direction = entityLiving.getSleepingDirection();
 			float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-			matrixStackIn.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(f1));
-			matrixStackIn.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(this.getDeathMaxRotation(entityLiving)));
-			matrixStackIn.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion(270.0F));
+			matrixStackIn.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(f1));
+			matrixStackIn.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(this.getDeathMaxRotation(entityLiving)));
+			matrixStackIn.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(270.0F));
 		} else if (entityLiving.hasCustomName() || entityLiving instanceof PlayerEntity) {
 			String s = Formatting.strip(entityLiving.getName().getString());
 			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof PlayerEntity)
 					|| ((PlayerEntity) entityLiving).isPartVisible(PlayerModelPart.CAPE))) {
 				matrixStackIn.translate(0.0D, entityLiving.getHeight() + 0.1F, 0.0D);
-				matrixStackIn.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+				matrixStackIn.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
 			}
 		}
 
