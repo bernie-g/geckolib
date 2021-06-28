@@ -16,7 +16,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceReloadListener;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import software.bernie.geckolib3.GeckoLib;
