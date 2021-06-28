@@ -2,7 +2,7 @@ package software.bernie.geckolib3.world.storage;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 
@@ -22,7 +22,7 @@ public class GeckoLibIdTracker extends PersistentState {
 	}
 
 	@Override
-	public void fromTag(CompoundTag tag) {
+	public void fromTag(NbtCompound tag) {
 		this.usedIds.clear();
 		for (String key : tag.getKeys()) {
 			if (tag.contains(key, 99)) {
@@ -32,7 +32,7 @@ public class GeckoLibIdTracker extends PersistentState {
 	}
 
 	@Override
-	public CompoundTag toTag(CompoundTag tag) {
+	public NbtCompound writeNbt(NbtCompound tag) {
 		for (Object2IntMap.Entry<String> id : this.usedIds.object2IntEntrySet()) {
 			tag.putInt(id.getKey(), id.getIntValue());
 		}
