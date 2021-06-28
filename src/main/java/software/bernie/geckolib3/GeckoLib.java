@@ -8,6 +8,7 @@ package software.bernie.geckolib3;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
+import net.minecraft.resource.ResourceReloader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,9 +35,9 @@ public class GeckoLib {
 						}
 
 						@Override
-						public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager,
-								Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor,
-								Executor applyExecutor) {
+						public CompletableFuture<Void> reload(ResourceReloader.Synchronizer synchronizer, ResourceManager manager,
+															  Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor,
+															  Executor applyExecutor) {
 							return GeckoLibCache.getInstance().reload(synchronizer, manager, prepareProfiler,
 									applyProfiler, prepareExecutor, applyExecutor);
 						}
