@@ -6,7 +6,6 @@ pluginManagement {
         }
         gradlePluginPortal()
         mavenCentral()
-        jcenter()
     }
 }
 rootProject.name = 'geckolib'
