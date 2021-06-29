@@ -118,10 +118,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 			if (this.bodyBone != null) {
 				IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-				GeoUtils.copyRotations(this.torso, bodyBone);
-				bodyBone.setPositionX(this.torso.pivotX);
-				bodyBone.setPositionY(-this.torso.pivotY);
-				bodyBone.setPositionZ(this.torso.pivotZ);
+				GeoUtils.copyRotations(this.body, bodyBone);
+				bodyBone.setPositionX(this.body.pivotX);
+				bodyBone.setPositionY(-this.body.pivotY);
+				bodyBone.setPositionZ(this.body.pivotZ);
 			}
 			if (this.rightArmBone != null) {
 				IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
