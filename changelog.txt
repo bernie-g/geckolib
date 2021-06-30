@@ -1,5 +1,5 @@
-v3.0.6
+v3.0.8
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Readded Patchouli compat for Geckolib entities in books.
+- Fixed GeoLayerRenderer still using Java models.

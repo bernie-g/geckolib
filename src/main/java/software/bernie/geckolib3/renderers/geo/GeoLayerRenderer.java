@@ -4,13 +4,14 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.util.AnimationUtils;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 	private final IGeoRenderer<T> entityRenderer;
@@ -19,26 +20,26 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		this.entityRenderer = entityRendererIn;
 	}
 
-	protected static <T extends LivingEntity & IAnimatable> void renderCopyModel(EntityModel<T> modelParentIn,
-			EntityModel<T> modelIn, Identifier textureLocationIn, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing, float limbSwingAmount,
-			float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red, float green,
-			float blue) {
+	protected static <T extends LivingEntity & IAnimatable> void renderCopyModel(GeoModelProvider<T> modelParentIn,
+			Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+			T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch,
+			float partialTicks, float red, float green, float blue) {
 		if (!entityIn.isInvisible()) {
-			modelParentIn.copyStateTo(modelIn);
-			modelIn.animateModel(entityIn, limbSwing, limbSwingAmount, partialTicks);
-			modelIn.setAngles(entityIn, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
-			renderModel(modelIn, textureLocationIn, matrixStackIn, bufferIn, packedLightIn, entityIn, red, green, blue);
+			renderModel(modelParentIn, textureLocationIn, matrixStackIn, bufferIn, packedLightIn, entityIn,
+					partialTicks, red, green, blue);
 		}
 	}
 
-	protected static <T extends LivingEntity & IAnimatable> void renderModel(EntityModel<T> modelIn,
+	protected static <T extends LivingEntity & IAnimatable> void renderModel(GeoModelProvider<T> modelProviderIn,
 			Identifier textureLocationIn, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
-			T entityIn, float red, float green, float blue) {
+			T entityIn, float partialTicks, float red, float green, float blue) {
+		GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelLocation(entityIn));
+		@SuppressWarnings("unchecked")
+		IGeoRenderer<T> renderer = (IGeoRenderer<T>) AnimationUtils.getRenderer(entityIn);
 		RenderLayer renderType = getRenderType(textureLocationIn);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
-		modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F),
-				red, green, blue, 1.0F);
+		renderer.render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, ivertexbuilder,
+				packedLightIn, LivingEntityRenderer.getOverlay(entityIn, 0.0F), red, green, blue, 1.0F);
 	}
 
 	public static RenderLayer getRenderType(Identifier textureLocation) {
