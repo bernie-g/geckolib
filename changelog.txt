@@ -1,5 +1,5 @@
-v3.0.8
+v3.0.9
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Fixed GeoLayerRenderer still using Java models.
+- Small change because Fabric is to stupid to remap things.

@@ -262,6 +262,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
-				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUuid().toString());
+				itemStack.hasNbt() ? itemStack.getNbt().toString() : 1, this.entityLiving.getUuid().toString());
 	}
 }

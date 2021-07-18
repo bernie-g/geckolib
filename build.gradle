@@ -211,7 +211,7 @@ if (file('key.properties').exists()) {
         releaseType = "beta"
         changelogType = 'text'
         changelog = file('changelog.txt')
-        addGameVersion("1.17")
+        addGameVersion("1.17.1")
         addGameVersion("Fabric")
         addGameVersion("Java 16")
 

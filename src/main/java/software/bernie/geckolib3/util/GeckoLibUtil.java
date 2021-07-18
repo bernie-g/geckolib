@@ -21,9 +21,9 @@ public class GeckoLibUtil {
 	 */
 	public static int getIDFromStack(ItemStack stack) {
 		if (stackHasIDTag(stack)) {
-			return stack.getTag().getInt(GECKO_LIB_ID_NBT);
+			return stack.getNbt().getInt(GECKO_LIB_ID_NBT);
 		}
-		return Objects.hash(stack.getItem().getTranslationKey(), stack.getTag(), stack.getCount());
+		return Objects.hash(stack.getItem().getTranslationKey(), stack.getNbt(), stack.getCount());
 	}
 
 	/**
@@ -36,7 +36,7 @@ public class GeckoLibUtil {
 	public static void writeIDToStack(ItemStack stack, ServerWorld world) {
 		if (!stackHasIDTag(stack)) {
 			final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
-			stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
+			stack.getOrCreateNbt().putInt(GECKO_LIB_ID_NBT, id);
 		}
 	}
 
@@ -49,10 +49,10 @@ public class GeckoLibUtil {
 	public static int guaranteeIDForStack(ItemStack stack, ServerWorld world) {
 		if (!stackHasIDTag(stack)) {
 			final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
-			stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
+			stack.getOrCreateNbt().putInt(GECKO_LIB_ID_NBT, id);
 			return id;
 		} else {
-			return stack.getTag().getInt(GECKO_LIB_ID_NBT);
+			return stack.getNbt().getInt(GECKO_LIB_ID_NBT);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class GeckoLibUtil {
 	 */
 	public static void removeIDFromStack(ItemStack stack) {
 		if (stackHasIDTag(stack)) {
-			stack.getTag().remove(GECKO_LIB_ID_NBT);
+			stack.getNbt().remove(GECKO_LIB_ID_NBT);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class GeckoLibUtil {
 	 * Returns true if the stack has an ID stored in its NBT data.
 	 */
 	public static boolean stackHasIDTag(ItemStack stack) {
-		return stack.hasTag() && stack.getTag().contains(GECKO_LIB_ID_NBT, 3);
+		return stack.hasNbt() && stack.getNbt().contains(GECKO_LIB_ID_NBT, 3);
 	}
 
 	@SuppressWarnings("rawtypes")
