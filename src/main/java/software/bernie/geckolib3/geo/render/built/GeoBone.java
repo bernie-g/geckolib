@@ -3,6 +3,7 @@ package software.bernie.geckolib3.geo.render.built;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,8 @@ public class GeoBone implements IBone {
 	private float rotateX;
 	private float rotateY;
 	private float rotateZ;
+
+	public Object extraData;
 
 	@Override
 	public void setModelRendererName(String modelRendererName) {
