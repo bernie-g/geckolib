@@ -12,50 +12,67 @@ import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.util.VectorUtils;
 
-public class GeoBuilder {
-	public static GeoModel constructGeoModel(RawGeometryTree geometryTree) {
-		GeoModel model = new GeoModel();
-		model.properties = geometryTree.properties;
-		for (RawBoneGroup rawBone : geometryTree.topLevelBones.values()) {
-			model.topLevelBones.add(constructBone(rawBone, geometryTree.properties, null));
-		}
-		return model;
-	}
+import java.util.HashMap;
+import java.util.Map;
 
-	private static GeoBone constructBone(RawBoneGroup bone, ModelProperties properties, GeoBone parent) {
-		GeoBone geoBone = new GeoBone();
+public class GeoBuilder implements IGeoBuilder {
+    private static Map<String, IGeoBuilder> moddedGeoBuilders = new HashMap<>();
+    private static IGeoBuilder defaultBuilder = new GeoBuilder();
 
-		Bone rawBone = bone.selfBone;
-		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
-		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
-		rotation.mul(-1, -1, 1);
+    public static void registerGeoBuilder(String modID, IGeoBuilder builder) {
+        moddedGeoBuilders.put(modID, builder);
+    }
 
-		geoBone.mirror = rawBone.getMirror();
-		geoBone.dontRender = rawBone.getNeverRender();
-		geoBone.reset = rawBone.getReset();
-		geoBone.inflate = rawBone.getInflate();
-		geoBone.parent = parent;
-		geoBone.setModelRendererName(rawBone.getName());
+    public static IGeoBuilder getGeoBuilder(String modID) {
+        IGeoBuilder builder = moddedGeoBuilders.get(modID);
+        return builder == null ? defaultBuilder : builder;
+    }
 
-		geoBone.setRotationX((float) Math.toRadians(rotation.x()));
-		geoBone.setRotationY((float) Math.toRadians(rotation.y()));
-		geoBone.setRotationZ((float) Math.toRadians(rotation.z()));
+    @Override
+    public GeoModel constructGeoModel(RawGeometryTree geometryTree) {
+        GeoModel model = new GeoModel();
+        model.properties = geometryTree.properties;
+        for (RawBoneGroup rawBone : geometryTree.topLevelBones.values()) {
+            model.topLevelBones.add(this.constructBone(rawBone, geometryTree.properties, null));
+        }
+        return model;
+    }
 
-		geoBone.rotationPointX = -pivot.x();
-		geoBone.rotationPointY = pivot.y();
-		geoBone.rotationPointZ = pivot.z();
+    @Override
+    public GeoBone constructBone(RawBoneGroup bone, ModelProperties properties, GeoBone parent) {
+        GeoBone geoBone = new GeoBone();
 
-		if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
-			for (Cube cube : rawBone.getCubes()) {
-				geoBone.childCubes.add(GeoCube.createFromPojoCube(cube, properties,
-						geoBone.inflate == null ? null : geoBone.inflate / 16, geoBone.mirror));
-			}
-		}
+        Bone rawBone = bone.selfBone;
+        Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
+        Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
+        rotation.mul(-1, -1, 1);
 
-		for (RawBoneGroup child : bone.children.values()) {
-			geoBone.childBones.add(constructBone(child, properties, geoBone));
-		}
+        geoBone.mirror = rawBone.getMirror();
+        geoBone.dontRender = rawBone.getNeverRender();
+        geoBone.reset = rawBone.getReset();
+        geoBone.inflate = rawBone.getInflate();
+        geoBone.parent = parent;
+        geoBone.setModelRendererName(rawBone.getName());
 
-		return geoBone;
-	}
+        geoBone.setRotationX((float) Math.toRadians(rotation.x()));
+        geoBone.setRotationY((float) Math.toRadians(rotation.y()));
+        geoBone.setRotationZ((float) Math.toRadians(rotation.z()));
+
+        geoBone.rotationPointX = -pivot.x();
+        geoBone.rotationPointY = pivot.y();
+        geoBone.rotationPointZ = pivot.z();
+
+        if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
+            for (Cube cube : rawBone.getCubes()) {
+                geoBone.childCubes.add(GeoCube.createFromPojoCube(cube, properties,
+                        geoBone.inflate == null ? null : geoBone.inflate / 16, geoBone.mirror));
+            }
+        }
+
+        for (RawBoneGroup child : bone.children.values()) {
+            geoBone.childBones.add(constructBone(child, properties, geoBone));
+        }
+
+        return geoBone;
+    }
 }

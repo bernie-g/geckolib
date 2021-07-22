@@ -27,7 +27,7 @@ public class GeoModelLoader {
 
 			// Build the quads and cubes from the raw tree into a built and ready to be
 			// rendered GeoModel
-			return GeoBuilder.constructGeoModel(rawGeometryTree);
+			return GeoBuilder.getGeoBuilder(location.getNamespace()).constructGeoModel(rawGeometryTree);
 		} catch (Exception e) {
 			GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
 			throw (new RuntimeException(e));
