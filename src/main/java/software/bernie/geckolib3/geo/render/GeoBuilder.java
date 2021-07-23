@@ -1,7 +1,11 @@
 package software.bernie.geckolib3.geo.render;
 
-import net.minecraft.util.math.Vec3f;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang3.ArrayUtils;
+
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.Cube;
 import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
@@ -12,17 +16,32 @@ import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.util.VectorUtils;
 
-public class GeoBuilder {
-	public static GeoModel constructGeoModel(RawGeometryTree geometryTree) {
+public class GeoBuilder implements IGeoBuilder {
+
+	private static Map<String, IGeoBuilder> moddedGeoBuilders = new HashMap<>();
+	private static IGeoBuilder defaultBuilder = new GeoBuilder();
+
+	public static void registerGeoBuilder(String modID, IGeoBuilder builder) {
+		moddedGeoBuilders.put(modID, builder);
+	}
+
+	public static IGeoBuilder getGeoBuilder(String modID) {
+		IGeoBuilder builder = moddedGeoBuilders.get(modID);
+		return builder == null ? defaultBuilder : builder;
+	}
+
+	@Override
+	public GeoModel constructGeoModel(RawGeometryTree geometryTree) {
 		GeoModel model = new GeoModel();
 		model.properties = geometryTree.properties;
 		for (RawBoneGroup rawBone : geometryTree.topLevelBones.values()) {
-			model.topLevelBones.add(constructBone(rawBone, geometryTree.properties, null));
+			model.topLevelBones.add(this.constructBone(rawBone, geometryTree.properties, null));
 		}
 		return model;
 	}
 
-	private static GeoBone constructBone(RawBoneGroup bone, ModelProperties properties, GeoBone parent) {
+	@Override
+	public GeoBone constructBone(RawBoneGroup bone, ModelProperties properties, GeoBone parent) {
 		GeoBone geoBone = new GeoBone();
 
 		Bone rawBone = bone.selfBone;
