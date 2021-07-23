@@ -1,5 +1,5 @@
-v3.0.9
+v3.0.10
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Small change because Fabric is to stupid to remap things.
+- Network redone so it shouldn't crash if another mod shadows Geckolib.
