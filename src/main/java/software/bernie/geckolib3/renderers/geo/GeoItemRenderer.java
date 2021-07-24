@@ -95,15 +95,6 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		stack.popPose();
 	}
 
-	protected RenderType getRenderType(T tile, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn,
-			ResourceLocation textureLocation) {
-		return RenderType.entityCutoutNoCull(textureLocation);
-	}
-
-	protected Color getRenderColor(T tile, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {
-		return new Color(255, 255, 255, 255);
-	}
-
 	@Override
 	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureLocation(instance);
