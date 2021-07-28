@@ -16,6 +16,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -30,7 +31,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 				BlockEntityRenderer<BlockEntity> renderer = MinecraftClient.getInstance()
 						.getBlockEntityRenderDispatcher().get(tile);
 				if (renderer instanceof GeoBlockRenderer) {
-					return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
 			}
 			return null;

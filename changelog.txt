@@ -1,5 +1,7 @@
-v3.0.10
+v3.0.11
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Network redone so it shouldn't crash if another mod shadows Geckolib.
+- Ported Projectile color fix from Forge 1.16 - AzureDoom
+- Ported GeoItemRender clean up from Forge 1.16 - AzureDoom
+- Updated core - AzureDoom

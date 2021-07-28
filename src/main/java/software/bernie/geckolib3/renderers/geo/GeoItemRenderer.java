@@ -9,7 +9,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.model.json.ModelTransformation;
 import net.minecraft.client.util.math.MatrixStack;
@@ -90,19 +89,6 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
-	}
-
-	@Override
-	public RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			Identifier textureLocation) {
-		return RenderLayer.getEntityCutoutNoCull(textureLocation);
-	}
-
-	@Override
-	public Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn) {
-		return new Color(255, 255, 255, 255);
 	}
 
 	@Override
