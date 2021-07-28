@@ -30,7 +30,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof Entity) {
-				return (IAnimatableModel<?>) AnimationUtils.getGeoModelForEntity((Entity) object);
+				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
 			}
 			return null;
 		});
@@ -58,7 +58,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 				getTexture(entityIn));
 		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
 				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 				(float) renderColor.getAlpha() / 255);
 
 		float lastLimbDistance = 0.0F;
