@@ -1,3 +1,5 @@
-v3.0.42
+v3.0.43
 
-- Introduced IGeoBuilder for bones - Gecko
+- Fixed switched green and blue colors in GeoProjectilesRender (#161) - mcpecommander
+- Removed unnecessary methods from GeoItemRender. (#160) - mcpecommander
+- Updated core - AzureDoom
