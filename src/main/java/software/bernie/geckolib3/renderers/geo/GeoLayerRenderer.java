@@ -48,6 +48,10 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 	public GeoModelProvider getEntityModel() {
 		return this.entityRenderer.getGeoModelProvider();
 	}
+	
+	public IGeoRenderer<T> getRenderer(){
+		return this.entityRenderer;
+	}
 
 	protected ResourceLocation getEntityTexture(T entityIn) {
 		return this.entityRenderer.getTextureLocation(entityIn);
