@@ -18,11 +18,11 @@ public class RenderUtils {
 	}
 
 	public static void moveToPivot(GeoBone bone, MatrixStack stack) {
-		stack.translate(bone.rotationPointX / 16, bone.rotationPointY / 16, bone.rotationPointZ / 16);
+		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPivotZ() / 16);
 	}
 
 	public static void moveBackFromPivot(GeoBone bone, MatrixStack stack) {
-		stack.translate(-bone.rotationPointX / 16, -bone.rotationPointY / 16, -bone.rotationPointZ / 16);
+		stack.translate(-bone.getPivotX() / 16, -bone.getPivotY() / 16, -bone.getPivotZ() / 16);
 	}
 
 	public static void scale(GeoBone bone, MatrixStack stack) {

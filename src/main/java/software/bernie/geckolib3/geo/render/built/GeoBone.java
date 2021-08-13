@@ -31,15 +31,17 @@ public class GeoBone implements IBone {
 	private float positionY;
 	private float positionZ;
 
-	public float rotationPointX;
-	public float rotationPointY;
-	public float rotationPointZ;
+	private float rotationPointX;
+	private float rotationPointY;
+	private float rotationPointZ;
 
 	private float rotateX;
 	private float rotateY;
 	private float rotateZ;
 
 	public Object extraData;
+
+	private boolean dirty = false;
 
 	@Override
 	public void setModelRendererName(String modelRendererName) {
@@ -112,46 +114,55 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setRotationX(float value) {
+		if(this.rotateX != value) this.dirty = true;
 		this.rotateX = value;
 	}
 
 	@Override
 	public void setRotationY(float value) {
+		if(this.rotateY != value) this.dirty = true;
 		this.rotateY = value;
 	}
 
 	@Override
 	public void setRotationZ(float value) {
+		if(this.rotateZ != value) this.dirty = true;
 		this.rotateZ = value;
 	}
 
 	@Override
 	public void setPositionX(float value) {
+		if(this.positionX != value) this.dirty = true;
 		this.positionX = value;
 	}
 
 	@Override
 	public void setPositionY(float value) {
+		if(this.positionY != value) this.dirty = true;
 		this.positionY = value;
 	}
 
 	@Override
 	public void setPositionZ(float value) {
+		if(this.positionZ != value) this.dirty = true;
 		this.positionZ = value;
 	}
 
 	@Override
 	public void setScaleX(float value) {
+		if(this.scaleX != value) this.dirty = true;
 		this.scaleX = value;
 	}
 
 	@Override
 	public void setScaleY(float value) {
+		if(this.scaleY != value) this.dirty = true;
 		this.scaleY = value;
 	}
 
 	@Override
 	public void setScaleZ(float value) {
+		if(this.scaleZ != value) this.dirty = true;
 		this.scaleZ = value;
 	}
 
@@ -162,21 +173,25 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setHidden(boolean hidden) {
+		if(this.isHidden != hidden) this.dirty = true;
 		this.isHidden = hidden;
 	}
 
 	@Override
 	public void setPivotX(float value) {
+		if(this.rotationPointX != value) this.dirty = true;
 		this.rotationPointX = value;
 	}
 
 	@Override
 	public void setPivotY(float value) {
+		if(this.rotationPointY != value) this.dirty = true;
 		this.rotationPointY = value;
 	}
 
 	@Override
 	public void setPivotZ(float value) {
+		if(this.rotationPointZ != value) this.dirty = true;
 		this.rotationPointZ = value;
 	}
 
@@ -193,5 +208,10 @@ public class GeoBone implements IBone {
 	@Override
 	public float getPivotZ() {
 		return this.rotationPointZ;
+	}
+
+	@Override
+	public boolean isDirty() {
+		return false;
 	}
 }
