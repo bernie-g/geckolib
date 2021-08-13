@@ -28,7 +28,7 @@ public class GeoModelLoader
 			RawGeometryTree rawGeometryTree = RawGeometryTree.parseHierarchy(rawModel, location);
 
 			//Build the quads and cubes from the raw tree into a built and ready to be rendered GeoModel
-			return GeoBuilder.constructGeoModel(rawGeometryTree);
+			return GeoBuilder.getGeoBuilder(location.getResourceDomain()).constructGeoModel(rawGeometryTree);
 		}
 		catch (Exception e)
 		{

@@ -38,6 +38,8 @@ public class GeoBone implements IBone
 	private float rotateX;
 	private float rotateY;
 	private float rotateZ;
+	
+	public Object extraData;
 
 	@Override
 	public void setModelRendererName(String modelRendererName)
