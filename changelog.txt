@@ -1,5 +1,4 @@
-v3.0.43
+v3.0.44
 
-- Fixed switched green and blue colors in GeoProjectilesRender (#161) - mcpecommander
-- Removed unnecessary methods from GeoItemRender. (#160) - mcpecommander
-- Updated core - AzureDoom
+- Use FMLEnvironment #noeppi-noeppi
+- Geo Layer Getter #mcpecommander
