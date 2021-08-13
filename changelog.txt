@@ -1,5 +1,3 @@
-v3.0.45
+v3.0.46
 
-- Ported Projectile color fix from Forge 1.16 - AzureDoom
-- Ported GeoItemRender clean up from Forge 1.16 - AzureDoom
-- Updated core - AzureDoom
+- Geo Layer Getter #mcpecommander
