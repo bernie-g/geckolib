@@ -214,4 +214,9 @@ public class GeoBone implements IBone {
 	public boolean isDirty() {
 		return false;
 	}
+
+	@Override
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
 }
