@@ -21,7 +21,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-@SuppressWarnings("rawtypes")
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		implements IGeoRenderer<T>, BlockEntityRenderer {
 	static {
@@ -44,7 +44,6 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		this.modelProvider = modelProvider;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void render(BlockEntity tile, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
