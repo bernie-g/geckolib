@@ -1,7 +1,5 @@
-v3.0.11
+3.0.12
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Ported Projectile color fix from Forge 1.16 - AzureDoom
-- Ported GeoItemRender clean up from Forge 1.16 - AzureDoom
-- Updated core - AzureDoom
+- Geo Layer Getter #mcpecommander
