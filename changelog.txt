@@ -1,4 +1,3 @@
-v3.0.44
+v3.0.45
 
-- Use FMLEnvironment #noeppi-noeppi
-- Geo Layer Getter #mcpecommander
+- GeoLayerRenderer cleanup #EterDelta
