@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.util;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.server.level.ServerLevel;
 
 import java.util.Objects;
 
@@ -36,7 +36,7 @@ public class GeckoLibUtil {
      * Only use on items with a max stack size of one, or if you know what
      * you're doing.
      */
-    public static void writeIDToStack(ItemStack stack, ServerWorld world) {
+    public static void writeIDToStack(ItemStack stack, ServerLevel world) {
         if (!stackHasIDTag(stack)) {
             final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
             stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
@@ -49,7 +49,7 @@ public class GeckoLibUtil {
      * <p>
      * Will always return a unique ID that's stored in the stack's NBT data.
      */
-    public static int guaranteeIDForStack(ItemStack stack, ServerWorld world) {
+    public static int guaranteeIDForStack(ItemStack stack, ServerLevel world) {
         if (!stackHasIDTag(stack)) {
             final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
             stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);

@@ -1,8 +1,8 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
 import software.bernie.geckolib3.geo.raw.pojo.*;
 import software.bernie.geckolib3.util.VectorUtils;
 
@@ -33,9 +33,9 @@ public class GeoCube {
 		float textureHeight = properties.getTextureHeight().floatValue();
 		float textureWidth = properties.getTextureWidth().floatValue();
 
-		Vector3d size = VectorUtils.fromArray(cubeIn.getSize());
-		Vector3d origin = VectorUtils.fromArray(cubeIn.getOrigin());
-		origin = new Vector3d(-(origin.x + size.x) / 16, origin.y / 16, origin.z / 16);
+		Vec3 size = VectorUtils.fromArray(cubeIn.getSize());
+		Vec3 origin = VectorUtils.fromArray(cubeIn.getOrigin());
+		origin = new Vec3(-(origin.x + size.x) / 16, origin.y / 16, origin.z / 16);
 
 		size = size.multiply(0.0625f, 0.0625, 0.0625f);
 
@@ -144,8 +144,8 @@ public class GeoCube {
 			}
 		} else {
 			double[] UV = cubeIn.getUv().boxUVCoords;
-			Vector3d UVSize = VectorUtils.fromArray(cubeIn.getSize());
-			UVSize = new Vector3d(Math.floor(UVSize.x), Math.floor(UVSize.y), Math.floor(UVSize.z));
+			Vec3 UVSize = VectorUtils.fromArray(cubeIn.getSize());
+			UVSize = new Vec3(Math.floor(UVSize.x), Math.floor(UVSize.y), Math.floor(UVSize.z));
 
 			quadWest = new GeoQuad(new GeoVertex[] { P4, P3, P1, P2 },
 					new double[] { UV[0] + UVSize.z + UVSize.x, UV[1] + UVSize.z }, new double[] { UVSize.z, UVSize.y },

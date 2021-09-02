@@ -4,10 +4,10 @@ import com.eliotlash.molang.MolangParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.client.util.JSONException;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.ChainedJsonException;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class AnimationFileLoader {
 
-	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, IResourceManager manager) {
+	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
 		AnimationFile animationFile = new AnimationFile();
 		JsonObject jsonRepresentation = loadFile(location, manager);
 		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
@@ -31,7 +31,7 @@ public class AnimationFileLoader {
 				animation = JsonAnimationUtils.deserializeJsonToAnimation(
 						JsonAnimationUtils.getAnimation(jsonRepresentation, animationName), parser);
 				animationFile.putAnimation(animationName, animation);
-			} catch (JSONException e) {
+			} catch (ChainedJsonException e) {
 				GeckoLib.LOGGER.error("Could not load animation: {}", animationName, e);
 				throw new RuntimeException(e);
 			}
@@ -42,13 +42,13 @@ public class AnimationFileLoader {
 	/**
 	 * Internal method for handling reloads of animation files. Do not override.
 	 */
-	private JsonObject loadFile(ResourceLocation location, IResourceManager manager) {
+	private JsonObject loadFile(ResourceLocation location, ResourceManager manager) {
 		String content = getResourceAsString(location, manager);
 		Gson GSON = new Gson();
-		return JSONUtils.fromJson(GSON, content, JsonObject.class);
+		return GsonHelper.fromJson(GSON, content, JsonObject.class);
 	}
 
-	public static String getResourceAsString(ResourceLocation location, IResourceManager manager) {
+	public static String getResourceAsString(ResourceLocation location, ResourceManager manager) {
 		try (InputStream inputStream = manager.getResource(location).getInputStream()) {
 			return IOUtils.toString(inputStream);
 		} catch (Exception e) {

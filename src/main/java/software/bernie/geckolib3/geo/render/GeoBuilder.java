@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.geo.render;
 
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Vector3f;
 import org.apache.commons.lang3.ArrayUtils;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.Cube;

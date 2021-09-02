@@ -8,8 +8,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
@@ -19,6 +19,13 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+
+configurations.all {
+    resolutionStrategy {
+        force 'cpw.mods:securejarhandler:0.9.50'
+    }
+}
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -29,14 +36,17 @@ version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshot
 group = 'software.bernie.geckolib'
 archivesBaseName = project.archives_base_name
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 configurations {
+    library
     shade
+    implementation.extendsFrom library
+    shade.extendsFrom library
 }
 
 minecraft {
-    mappings channel:"official", version:"1.16.5"
+    mappings channel: 'official', version: '1.17.1'
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -100,6 +110,12 @@ minecraft {
     }
 }
 
+minecraft.runs.all {
+    lazyToken('minecraft_classpath') {
+        configurations.library.copyRecursive().resolve().collect { it.absolutePath }.join(File.pathSeparator)
+    }
+}
+
 repositories {
     maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }
@@ -121,17 +137,16 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
-    compile project(':geckolib-core')
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.51'
+    library 'com.eliotlash.molang:molang:SNAPSHOT.12'
+    library 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    library project(':geckolib-core')
+    library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-	compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
-    compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
-	
+	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
+
     shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     shade project(':geckolib-core')

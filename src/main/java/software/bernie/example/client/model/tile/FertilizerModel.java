@@ -4,7 +4,7 @@
 // Blockbench plugin created by Gecko
 package software.bernie.example.client.model.tile;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.model.provider;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IAnimatableModelProvider<E> {
 	/**

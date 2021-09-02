@@ -1,12 +1,12 @@
 package software.bernie.example.item;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -23,12 +23,12 @@ import java.util.Arrays;
 import java.util.List;
 
 //This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
+	public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
 		super(materialIn, slot, builder.tab(GeckoLibMod.geckolibItemGroup));
 	}
 
@@ -37,7 +37,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 		// This is all the extradata this event carries. The livingentity is the entity
 		// that's wearing the armor. The itemstack and equipmentslottype are self
 		// explanatory.
-		List<EquipmentSlotType> slotData = event.getExtraDataOfType(EquipmentSlotType.class);
+		List<EquipmentSlot> slotData = event.getExtraDataOfType(EquipmentSlot.class);
 		List<ItemStack> stackData = event.getExtraDataOfType(ItemStack.class);
 		LivingEntity livingEntity = event.getExtraDataOfType(LivingEntity.class).get(0);
 
@@ -46,14 +46,14 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", true));
 
 		// If the living entity is an armorstand just play the animation nonstop
-		if (livingEntity instanceof ArmorStandEntity) {
+		if (livingEntity instanceof ArmorStand) {
 			return PlayState.CONTINUE;
 		}
 
 		// The entity is a player, so we want to only play if the player is wearing the
 		// full set of armor
-		else if (livingEntity instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) livingEntity;
+		else if (livingEntity instanceof Player) {
+			Player player = (Player) livingEntity;
 
 			// Get all the equipment, aka the armor, currently held item, and offhand item
 			List<Item> equipmentList = new ArrayList<>();

@@ -5,8 +5,8 @@
 
 package software.bernie.example;
 
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -17,7 +17,7 @@ import software.bernie.geckolib3.GeckoLib;
 
 @Mod(GeckoLib.ModID)
 public class GeckoLibMod {
-	public static ItemGroup geckolibItemGroup;
+	public static CreativeModeTab geckolibItemGroup;
 	public static boolean DISABLE_IN_DEV = false;
 
 	public GeckoLibMod() {
@@ -29,7 +29,7 @@ public class GeckoLibMod {
 			TileRegistry.TILES.register(bus);
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
-			geckolibItemGroup = new ItemGroup(ItemGroup.getGroupCountSafe(), "geckolib_examples") {
+			geckolibItemGroup = new CreativeModeTab(CreativeModeTab.getGroupCountSafe(), "geckolib_examples") {
 				@Override
 				public ItemStack makeIcon() {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());

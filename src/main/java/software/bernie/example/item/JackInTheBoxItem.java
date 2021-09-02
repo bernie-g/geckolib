@@ -1,17 +1,20 @@
 package software.bernie.example.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
+import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -26,6 +29,10 @@ import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import net.minecraft.world.item.Item.Properties;
+
+import java.util.function.Consumer;
+
 public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	private static final String CONTROLLER_NAME = "popupController";
 	private static final int ANIM_OPEN = 0;
@@ -34,6 +41,19 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	public JackInTheBoxItem(Properties properties) {
 		super(properties.tab(GeckoLibMod.geckolibItemGroup));
 		GeckoLibNetwork.registerSyncable(this);
+	}
+
+	@Override
+	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+		super.initializeClient(consumer);
+		consumer.accept(new IItemRenderProperties() {
+			private final BlockEntityWithoutLevelRenderer renderer = new JackInTheBoxRenderer();
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+				return renderer;
+			}
+		});
 	}
 
 	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
@@ -60,7 +80,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
-		ClientPlayerEntity player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
 			player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
 		}
@@ -72,11 +92,11 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		if (!world.isClientSide) {
 			// Gets the item that the player is holding, should be a JackInTheBoxItem
 			final ItemStack stack = player.getItemInHand(hand);
-			final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerWorld) world);
+			final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerLevel) world);
 			// Tell all nearby clients to trigger this JackInTheBoxItem
 			final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player);
 			GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
@@ -92,9 +112,9 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
-				final ClientPlayerEntity player = Minecraft.getInstance().player;
+				final LocalPlayer player = Minecraft.getInstance().player;
 				if (player != null) {
-					player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);
+					player.displayClientMessage(new TextComponent("Opening the jack in the box!"), true);
 				}
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.

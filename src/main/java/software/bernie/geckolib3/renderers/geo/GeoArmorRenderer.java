@@ -6,19 +6,21 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -29,7 +31,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
-public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
+public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends HumanoidModel
 		implements IGeoRenderer<T> {
 	private static Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
@@ -46,7 +48,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	protected T currentArmorItem;
 	protected LivingEntity entityLiving;
 	protected ItemStack itemStack;
-	protected EquipmentSlotType armorSlot;
+	protected EquipmentSlot armorSlot;
 
 	// Set these to the names of your armor's bones, or null if you aren't using
 	// them
@@ -74,17 +76,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private final AnimatedGeoModel<T> modelProvider;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
-		super(1);
+		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 		this.modelProvider = modelProvider;
 	}
 
 	@Override
-	public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
+	public void renderToBuffer(PoseStack matrixStackIn, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
 			float red, float green, float blue, float alpha) {
 		this.render(0, matrixStackIn, bufferIn, packedLightIn);
 	}
 
-	public void render(float partialTicks, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn) {
+	public void render(float partialTicks, PoseStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
@@ -94,7 +96,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.fitToBiped();
 		stack.pushPose();
-		Minecraft.getInstance().textureManager.bind(getTextureLocation(currentArmorItem));
+		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
 				getTextureLocation(currentArmorItem));
@@ -110,7 +112,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	protected void fitToBiped() {
-		if (!(this.entityLiving instanceof ArmorStandEntity)) {
+		if (!(this.entityLiving instanceof ArmorStand)) {
 			if (this.headBone != null) {
 				IBone headBone = this.modelProvider.getBone(this.headBone);
 				GeoUtils.copyRotations(this.head, headBone);
@@ -189,7 +191,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	 * Everything after this point needs to be called every frame before rendering
 	 */
 	public GeoArmorRenderer setCurrentItem(LivingEntity entityLiving, ItemStack itemStack,
-			EquipmentSlotType armorSlot) {
+			EquipmentSlot armorSlot) {
 		this.entityLiving = entityLiving;
 		this.itemStack = itemStack;
 		this.armorSlot = armorSlot;
@@ -197,7 +199,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
-	public final GeoArmorRenderer applyEntityStats(BipedModel defaultArmor) {
+	public final GeoArmorRenderer applyEntityStats(HumanoidModel defaultArmor) {
 		this.young = defaultArmor.young;
 		this.crouching = defaultArmor.crouching;
 		this.riding = defaultArmor.riding;
@@ -206,7 +208,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
-	public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
+	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		IBone headBone = this.getAndHideBone(this.headBone);

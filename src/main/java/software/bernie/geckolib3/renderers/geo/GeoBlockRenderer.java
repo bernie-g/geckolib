@@ -1,19 +1,21 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.HorizontalBlock;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -22,13 +24,13 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 import java.awt.*;
 
-public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntityRenderer
-		implements IGeoRenderer<T> {
+public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
+		implements IGeoRenderer<T>, BlockEntityRenderer {
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof TileEntity) {
-				TileEntity tile = (TileEntity) object;
-				TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tile);
+			if (object instanceof BlockEntity) {
+				BlockEntity tile = (BlockEntity) object;
+				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tile);
 				if (renderer instanceof GeoBlockRenderer) {
 					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -39,18 +41,17 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	public GeoBlockRenderer(TileEntityRendererDispatcher rendererDispatcherIn, AnimatedGeoModel<T> modelProvider) {
-		super(rendererDispatcherIn);
+	public GeoBlockRenderer(BlockEntityRendererProvider.Context rendererDispatcherIn, AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
 	}
 
 	@Override
-	public void render(TileEntity tile, float partialTicks, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn,
+	public void render(BlockEntity tile, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
 		this.render((T) tile, partialTicks, matrixStackIn, bufferIn, combinedLightIn);
 	}
 
-	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(T tile, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.pushPose();
@@ -59,7 +60,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 		rotateBlock(getFacing(tile), stack);
 
-		Minecraft.getInstance().textureManager.bind(getTextureLocation(tile));
+		RenderSystem.setShaderTexture(0, getTextureLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(tile));
@@ -74,7 +75,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		return this.modelProvider;
 	}
 
-	protected void rotateBlock(Direction facing, MatrixStack stack) {
+	protected void rotateBlock(Direction facing, PoseStack stack) {
 		switch (facing) {
 		case SOUTH:
 			stack.mulPose(Vector3f.YP.rotationDegrees(180));
@@ -99,8 +100,8 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 
 	private Direction getFacing(T tile) {
 		BlockState blockState = tile.getBlockState();
-		if (blockState.hasProperty(HorizontalBlock.FACING)) {
-			return blockState.getValue(HorizontalBlock.FACING);
+		if (blockState.hasProperty(HorizontalDirectionalBlock.FACING)) {
+			return blockState.getValue(HorizontalDirectionalBlock.FACING);
 		} else if (blockState.hasProperty(DirectionalBlock.FACING)) {
 			return blockState.getValue(DirectionalBlock.FACING);
 		} else {

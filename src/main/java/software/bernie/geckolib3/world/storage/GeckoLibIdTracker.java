@@ -1,42 +1,42 @@
 package software.bernie.geckolib3.world.storage;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraft.world.storage.WorldSavedData;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.saveddata.SavedData;
 
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 // This stores a small amount of NBT data with each world in order to track the last
 // free IDs for various tasks (such as animation data ids for items)
-public class GeckoLibIdTracker extends WorldSavedData {
+public class GeckoLibIdTracker extends SavedData {
     private static final String NAME = "geckolib_ids";
     private final Object2IntMap<String> usedIds = new Object2IntOpenHashMap<>();
 
     public GeckoLibIdTracker() {
-        super(NAME);
         this.usedIds.defaultReturnValue(-1);
     }
 
-    public static GeckoLibIdTracker from(ServerWorld world) {
+    public static GeckoLibIdTracker from(ServerLevel world) {
         return world.getServer()
                 .overworld()
                 .getDataStorage()
-                .computeIfAbsent(GeckoLibIdTracker::new, NAME);
+                .computeIfAbsent(GeckoLibIdTracker::load, GeckoLibIdTracker::new, NAME);
     }
 
-    @Override
-    public void load(CompoundNBT tag) {
-        this.usedIds.clear();
+    public static GeckoLibIdTracker load(CompoundTag tag) {
+        GeckoLibIdTracker tracker = new GeckoLibIdTracker();
+        tracker.usedIds.clear();
         for(String key : tag.getAllKeys()) {
             if (tag.contains(key, 99)) {
-                this.usedIds.put(key, tag.getInt(key));
+                tracker.usedIds.put(key, tag.getInt(key));
             }
         }
+        return tracker;
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         for(Object2IntMap.Entry<String> id : this.usedIds.object2IntEntrySet()) {
             tag.putInt(id.getKey(), id.getIntValue());
         }
