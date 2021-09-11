@@ -1,5 +1,5 @@
-3.0.13
+3.0.0
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- GeoLayerRenderer cleanup #EterDelta
+- First Release for the latest 1.18 snapshot
