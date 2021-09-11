@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-    id 'fabric-loom' version '0.8-SNAPSHOT'
+    id 'fabric-loom' version '0.9-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.0.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
@@ -41,9 +41,7 @@ repositories {
     	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
     }
     maven { url  = 'https://plugins.gradle.org/m2/' }
-	maven {	
-		url = 'https://maven.terraformersmc.com/'
-	}
+    maven { url "https://maven.shedaniel.me/" }
 }
 
 configurations {
@@ -56,10 +54,6 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modCompileOnly ("vazkii.patchouli:Patchouli:1.17-55-FABRIC-SNAPSHOT") {
-        exclude(group: "net.fabricmc.fabric-api")
-    }
-	//modCompileOnly 'curse.maven:RATS-431787:3360105'
 
     // Actual dependencies
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
@@ -109,16 +103,16 @@ jar {
     }
 }
 
-minecraft {
-	accessWidener "src/main/resources/geckolib.aw"
-}
-
 processResources {
     inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
 		expand "version": project.version
 	}
+}
+
+loom {
+	accessWidenerPath = file("src/main/resources/geckolib.aw")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -211,7 +205,7 @@ if (file('key.properties').exists()) {
         releaseType = "beta"
         changelogType = 'text'
         changelog = file('changelog.txt')
-        addGameVersion("1.17.1")
+        addGameVersion("1.18-Snapshot")
         addGameVersion("Fabric")
         addGameVersion("Java 16")
 
