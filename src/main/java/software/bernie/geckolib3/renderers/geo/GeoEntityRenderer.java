@@ -120,7 +120,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			netHeadYaw = f1 - f;
 		}
 
-		float headPitch = MathHelper.lerp(partialTicks, entity.prevPitch, entity.pitch);
+		float headPitch = MathHelper.lerp(partialTicks, entity.prevPitch, entity.getPitch());
 		if (entity.getPose() == EntityPose.SLEEPING) {
 			Direction direction = entity.getSleepingDirection();
 			if (direction != null) {
@@ -224,7 +224,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 			matrixStackIn.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(f * this.getDeathMaxRotation(entityLiving)));
 		} else if (entityLiving.isUsingRiptide()) {
-			matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.pitch));
+			matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.getPitch()));
 			matrixStackIn.multiply(
 					Vec3f.POSITIVE_Y.getDegreesQuaternion(((float) entityLiving.age + partialTicks) * -75.0F));
 		} else if (pose == EntityPose.SLEEPING) {

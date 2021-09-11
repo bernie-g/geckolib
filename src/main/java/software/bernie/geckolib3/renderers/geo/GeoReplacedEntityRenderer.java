@@ -113,7 +113,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			f2 = f1 - f;
 		}
 
-		float f6 = MathHelper.lerp(partialTicks, entity.prevPitch, entity.pitch);
+		float f6 = MathHelper.lerp(partialTicks, entity.prevPitch, entity.getPitch());
 		if (entity.getPose() == EntityPose.SLEEPING) {
 			Direction direction = entityLiving.getSleepingDirection();
 			if (direction != null) {
@@ -209,7 +209,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			matrixStackIn
 					.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(f * this.getDeathMaxRotation(entityLiving)));
 		} else if (entityLiving.isUsingRiptide()) {
-			matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.pitch));
+			matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F - entityLiving.getPitch()));
 			matrixStackIn.multiply(
 					Vec3f.POSITIVE_Y.getDegreesQuaternion(((float) entityLiving.age + partialTicks) * -75.0F));
 		} else if (pose == EntityPose.SLEEPING) {

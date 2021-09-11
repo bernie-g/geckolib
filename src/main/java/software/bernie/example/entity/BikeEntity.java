@@ -53,11 +53,11 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 		if (this.isAlive()) {
 			if (this.hasPassengers()) {
 				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
-				this.yaw = livingentity.yaw;
-				this.prevYaw = this.yaw;
-				this.pitch = livingentity.pitch * 0.5F;
-				this.setRotation(this.yaw, this.pitch);
-				this.bodyYaw = this.yaw;
+				this.yaw = livingentity.getYaw();
+				this.prevYaw = this.getYaw();
+				this.pitch = livingentity.getPitch() * 0.5F;
+				this.setRotation(this.getYaw(), this.getPitch());
+				this.bodyYaw = this.getYaw();
 				this.headYaw = this.bodyYaw;
 				float f = livingentity.sidewaysSpeed * 0.5F;
 				float f1 = livingentity.forwardSpeed;

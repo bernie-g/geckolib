@@ -112,10 +112,10 @@ public class ClientListener implements ClientModInitializer {
 			buf.writeDouble(entity.getX());
 			buf.writeDouble(entity.getY());
 			buf.writeDouble(entity.getZ());
-			buf.writeByte(MathHelper.floor(entity.pitch * 256.0F / 360.0F));
-			buf.writeByte(MathHelper.floor(entity.yaw * 256.0F / 360.0F));
-			buf.writeFloat(entity.pitch);
-			buf.writeFloat(entity.yaw);
+			buf.writeByte(MathHelper.floor(entity.getPitch() * 256.0F / 360.0F));
+			buf.writeByte(MathHelper.floor(entity.getYaw() * 256.0F / 360.0F));
+			buf.writeFloat(entity.getPitch());
+			buf.writeFloat(entity.getYaw());
 			return ServerPlayNetworking.createS2CPacket(ID, buf);
 		}
 

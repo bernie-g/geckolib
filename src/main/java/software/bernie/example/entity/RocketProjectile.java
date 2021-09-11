@@ -130,8 +130,8 @@ public class RocketProjectile extends PersistentProjectileEntity implements IAni
 			double f = vec3d.horizontalLength();
 			this.yaw = (float) (MathHelper.atan2(vec3d.x, vec3d.z) * 57.2957763671875D);
 			this.pitch = (float) (MathHelper.atan2(vec3d.y, (double) f) * 57.2957763671875D);
-			this.prevYaw = this.yaw;
-			this.prevPitch = this.pitch;
+			this.prevYaw = this.getYaw();
+			this.prevPitch = this.getPitch();
 		}
 		if (this.age >= 100) {
 			this.remove(Entity.RemovalReason.DISCARDED);
@@ -185,8 +185,8 @@ public class RocketProjectile extends PersistentProjectileEntity implements IAni
 				this.yaw = (float) (MathHelper.atan2(d, g) * 57.2957763671875D);
 			}
 			this.pitch = (float) (MathHelper.atan2(e, (double) l) * 57.2957763671875D);
-			this.pitch = updateRotation(this.prevPitch, this.pitch);
-			this.yaw = updateRotation(this.prevYaw, this.yaw);
+			this.pitch = updateRotation(this.prevPitch, this.getPitch());
+			this.yaw = updateRotation(this.prevYaw, this.getYaw());
 			float m = 0.99F;
 
 			this.setVelocity(vec3d.multiply((double) m));
