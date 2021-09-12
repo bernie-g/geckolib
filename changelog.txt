@@ -1,5 +1,5 @@
-3.0.13
+3.0.14
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- GeoLayerRenderer cleanup #EterDelta
+- Fixes publishing artifacts -Draylar 
