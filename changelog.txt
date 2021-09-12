@@ -1,3 +1,3 @@
-v3.0.0
+v3.0.1
 
-- Port by Chappie
+- fixed crash NoClassDefFound (#179) - Chappie
