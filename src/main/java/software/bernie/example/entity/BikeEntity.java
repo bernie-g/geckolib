@@ -1,15 +1,15 @@
 package software.bernie.example.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ActionResultType;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -20,21 +20,23 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable {
-	private AnimationFactory factory = new AnimationFactory(this);
+import net.minecraft.world.entity.*;
+
+public class BikeEntity extends Animal implements IAnimatable {
+	private final AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
+	public BikeEntity(EntityType<? extends Animal> type, Level worldIn) {
 		super(type, worldIn);
 		this.noCulling = true;
 	}
 
 	@Override
-	public ActionResultType mobInteract(PlayerEntity player, Hand hand) {
+	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!this.isVehicle()) {
 			player.startRiding(this);
 			return super.mobInteract(player, hand);
@@ -47,15 +49,15 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public void travel(Vector3d pos) {
+	public void travel(Vec3 pos) {
 		if (this.isAlive()) {
 			if (this.isVehicle()) {
 				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
-				this.yRot = livingentity.yRot;
-				this.yRotO = this.yRot;
-				this.xRot = livingentity.xRot * 0.5F;
-				this.setRot(this.yRot, this.xRot);
-				this.yBodyRot = this.yRot;
+				this.setYRot(livingentity.getYRot());
+				this.yRotO = this.getYRot();
+				this.setXRot(livingentity.getXRot() * 0.5F);
+				this.setRot(this.getYRot(), this.getXRot());
+				this.yBodyRot = this.getYRot();
 				this.yHeadRot = this.yBodyRot;
 				float f = livingentity.xxa * 0.5F;
 				float f1 = livingentity.zza;
@@ -64,7 +66,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 				}
 
 				this.setSpeed(0.3F);
-				super.travel(new Vector3d((double) f, pos.y, (double) f1));
+				super.travel(new Vec3((double) f, pos.y, (double) f1));
 			}
 		}
 	}
@@ -90,7 +92,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public AgeableEntity getBreedOffspring(ServerWorld p_241840_1_, AgeableEntity p_241840_2_) {
+	public AgeableMob getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
 		return null;
 	}
 

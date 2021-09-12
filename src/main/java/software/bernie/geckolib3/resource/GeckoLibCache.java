@@ -11,10 +11,10 @@ import java.util.function.Function;
 
 import com.eliotlash.molang.MolangParser;
 
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IFutureReloadListener.IStage;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
@@ -61,8 +61,8 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> reload(IStage stage, IResourceManager resourceManager,
-			IProfiler preparationsProfiler, IProfiler reloadProfiler, Executor backgroundExecutor,
+	public CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
+			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
 		Map<ResourceLocation, AnimationFile> animations = new HashMap<>();
 		Map<ResourceLocation, GeoModel> geoModels = new HashMap<>();
@@ -76,7 +76,7 @@ public class GeckoLibCache {
 				}, gameExecutor);
 	}
 
-	private static <T> CompletableFuture<Void> loadResources(Executor executor, IResourceManager resourceManager,
+	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
 				() -> resourceManager.listResources(type, fileName -> fileName.endsWith(".json")), executor)

@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.file;
 
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.geo.exception.GeckoLibException;
 import software.bernie.geckolib3.geo.raw.pojo.Converter;
@@ -12,7 +12,7 @@ import software.bernie.geckolib3.geo.render.GeoBuilder;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 
 public class GeoModelLoader {
-	public GeoModel loadModel(IResourceManager resourceManager, ResourceLocation location) {
+	public GeoModel loadModel(ResourceManager resourceManager, ResourceLocation location) {
 		try {
 			// Deserialize from json into basic json objects, bones are still stored as a
 			// flat list

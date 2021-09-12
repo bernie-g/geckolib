@@ -7,12 +7,12 @@ import javax.annotation.Nullable;
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.NativeUtil;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
+import com.mojang.blaze3d.Blaze3D;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -141,8 +141,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				// Doesn't work for some reason?
 				parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
 
-				Vector3d velocity = livingEntity.getDeltaMovement();
-				float groundSpeed = MathHelper.sqrt((velocity.x * velocity.x) + (velocity.z * velocity.z));
+				Vec3 velocity = livingEntity.getDeltaMovement();
+				float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				parser.setValue("query.ground_speed", groundSpeed);
 
 				float yawSpeed = livingEntity.getViewYRot((float) currentTick)
@@ -154,6 +154,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public double getCurrentTick() {
-		return NativeUtil.getTime() * 20;
+		return Blaze3D.getTime() * 20;
 	}
 }

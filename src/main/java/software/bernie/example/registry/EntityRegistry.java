@@ -5,10 +5,10 @@
 
 package software.bernie.example.registry;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityClassification;
-import net.minecraft.entity.EntityType;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.EntityType;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.entity.BikeEntity;
@@ -24,10 +24,10 @@ public class EntityRegistry {
 	public static final RegistryObject<EntityType<BikeEntity>> BIKE_ENTITY = buildEntity(BikeEntity::new,
 			BikeEntity.class, 0.5f, 0.6F);
 
-	public static <T extends Entity> RegistryObject<EntityType<T>> buildEntity(EntityType.IFactory<T> entity,
+	public static <T extends Entity> RegistryObject<EntityType<T>> buildEntity(EntityType.EntityFactory<T> entity,
 			Class<T> entityClass, float width, float height) {
 		String name = entityClass.getSimpleName().toLowerCase();
 		return ENTITIES.register(name,
-				() -> EntityType.Builder.of(entity, EntityClassification.CREATURE).sized(width, height).build(name));
+				() -> EntityType.Builder.of(entity, MobCategory.CREATURE).sized(width, height).build(name));
 	}
 }

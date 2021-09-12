@@ -1,10 +1,10 @@
 package software.bernie.example.registry;
 
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraftforge.fml.RegistryObject;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.fmllegacy.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.GeckoLibMod;
@@ -25,17 +25,17 @@ public class ItemRegistry {
 					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
 
 	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jackintheboxitem",
-			() -> new JackInTheBoxItem(new Item.Properties().setISTER(() -> JackInTheBoxRenderer::new)));
+			() -> new JackInTheBoxItem(new Item.Properties()));
 
 	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());
 
 	public static final RegistryObject<PotatoArmorItem> POTATO_HEAD = ITEMS.register("potato_head",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.HEAD, new Item.Properties()));
+			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.HEAD, new Item.Properties()));
 	public static final RegistryObject<PotatoArmorItem> POTATO_CHEST = ITEMS.register("potato_chest",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.CHEST, new Item.Properties()));
+			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.CHEST, new Item.Properties()));
 	public static final RegistryObject<PotatoArmorItem> POTATO_LEGGINGS = ITEMS.register("potato_leggings",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.LEGS, new Item.Properties()));
+			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties()));
 	public static final RegistryObject<PotatoArmorItem> POTATO_BOOTS = ITEMS.register("potato_boots",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.FEET, new Item.Properties()));
+			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties()));
 
 }

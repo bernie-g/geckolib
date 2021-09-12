@@ -1,60 +1,57 @@
 package software.bernie.example.block;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DirectionalBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.BlockGetter;
 import software.bernie.example.registry.TileRegistry;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.block.AbstractBlock.Properties;
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
-public class FertilizerBlock extends DirectionalBlock {
+public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	public FertilizerBlock() {
 		super(Properties.of(Material.STONE).noOcclusion());
 	}
 
-	@Override
-	public boolean hasTileEntity(BlockState state) {
-		return true;
-	}
-
 	@Nullable
 	@Override
-	public TileEntity createTileEntity(BlockState state, IBlockReader world) {
-		return TileRegistry.FERTILIZER.get().create();
+	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+		return TileRegistry.FERTILIZER.get().create(blockPos, blockState);
 	}
 
 	@Override
-	public BlockRenderType getRenderShape(BlockState state) {
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Nullable
 	@Override
-	public BlockState getStateForPlacement(BlockItemUseContext context) {
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, IBlockReader worldIn, List<ITextComponent> tooltip,
-			ITooltipFlag flagIn) {
-		tooltip.add(new StringTextComponent("Turn on rain to see the fertilizer model!"));
+	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip,
+			TooltipFlag flagIn) {
+		tooltip.add(new TextComponent("Turn on rain to see the fertilizer model!"));
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 }

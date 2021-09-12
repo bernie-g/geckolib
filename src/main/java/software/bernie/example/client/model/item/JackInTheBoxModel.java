@@ -1,6 +1,6 @@
 package software.bernie.example.client.model.item;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;

@@ -9,7 +9,7 @@ import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
-import net.minecraft.client.util.JSONException;
+import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
@@ -156,9 +156,9 @@ public class JsonAnimationUtils {
 	}
 
 	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key)
-			throws JSONException {
+			throws ChainedJsonException {
 		return json.stream().filter(x -> x.getKey().equals(key)).findFirst()
-				.orElseThrow(() -> new JSONException("Could not find key: " + key)).getValue();
+				.orElseThrow(() -> new ChainedJsonException("Could not find key: " + key)).getValue();
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class JsonAnimationUtils {
 	 * @throws JSONException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName)
-			throws JSONException {
+			throws ChainedJsonException {
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
 	}
 

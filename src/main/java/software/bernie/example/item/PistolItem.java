@@ -1,23 +1,28 @@
 package software.bernie.example.item;
 
 import java.util.List;
+import java.util.function.Consumer;
 
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.UseAction;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
+import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -38,21 +43,33 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	public static final int ANIM_OPEN = 0;
 
 	public PistolItem() {
-		super(new Item.Properties().tab(GeckoLibMod.geckolibItemGroup).stacksTo(1).durability(201)
-				.setISTER(() -> PistolRender::new));
+		super(new Item.Properties().tab(GeckoLibMod.geckolibItemGroup).stacksTo(1).durability(201));
 		GeckoLibNetwork.registerSyncable(this);
 	}
 
 	@Override
-	public void releaseUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int timeLeft) {
-		if (entityLiving instanceof PlayerEntity) {
-			PlayerEntity playerentity = (PlayerEntity) entityLiving;
+	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+		super.initializeClient(consumer);
+		consumer.accept(new IItemRenderProperties() {
+			private final BlockEntityWithoutLevelRenderer renderer = new PistolRender();
+
+			@Override
+			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+				return renderer;
+			}
+		});
+	}
+
+	@Override
+	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
+		if (entityLiving instanceof Player) {
+			Player playerentity = (Player) entityLiving;
 			if (stack.getDamageValue() < (stack.getMaxDamage() - 1)) {
 				playerentity.getCooldowns().addCooldown(this, 5);
 				if (!worldIn.isClientSide) {
-					ArrowEntity abstractarrowentity = createArrow(worldIn, stack, playerentity);
+					Arrow abstractarrowentity = createArrow(worldIn, stack, playerentity);
 					abstractarrowentity = customeArrow(abstractarrowentity);
-					abstractarrowentity.shootFromRotation(playerentity, playerentity.xRot, playerentity.yRot, 0.0F,
+					abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(), 0.0F,
 							1.0F * 3.0F, 1.0F);
 
 					abstractarrowentity.setBaseDamage(2.5);
@@ -63,7 +80,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 					worldIn.addFreshEntity(abstractarrowentity);
 				}
 				if (!worldIn.isClientSide) {
-					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerWorld) worldIn);
+					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerLevel) worldIn);
 					final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF
 							.with(() -> playerentity);
 					GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
@@ -72,8 +89,8 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 		}
 	}
 
-	public ArrowEntity createArrow(World worldIn, ItemStack stack, LivingEntity shooter) {
-		ArrowEntity arrowentity = new ArrowEntity(worldIn, shooter);
+	public Arrow createArrow(Level worldIn, ItemStack stack, LivingEntity shooter) {
+		Arrow arrowentity = new Arrow(worldIn, shooter);
 		return arrowentity;
 	}
 
@@ -88,11 +105,11 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public UseAction getUseAnimation(ItemStack stack) {
-		return UseAction.BOW;
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.BOW;
 	}
 
-	public ArrowEntity customeArrow(ArrowEntity arrow) {
+	public Arrow customeArrow(Arrow arrow) {
 		return arrow;
 	}
 
@@ -123,10 +140,10 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public ActionResult<ItemStack> use(World world, PlayerEntity player, Hand hand) {
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
 		ItemStack itemstack = player.getItemInHand(hand);
 		player.startUsingItem(hand);
-		return ActionResult.consume(itemstack);
+		return InteractionResultHolder.consume(itemstack);
 	}
 
 	@Override
@@ -140,9 +157,9 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, World worldIn, List<ITextComponent> tooltip, ITooltipFlag flagIn) {
-		tooltip.add(new TranslationTextComponent(
+	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
+		tooltip.add(new TranslatableComponent(
 				"Ammo: " + (stack.getMaxDamage() - stack.getDamageValue() - 1) + " / " + (stack.getMaxDamage() - 1))
-						.withStyle(TextFormatting.ITALIC));
+						.withStyle(ChatFormatting.ITALIC));
 	}
 }

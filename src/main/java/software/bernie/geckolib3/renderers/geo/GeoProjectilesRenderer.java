@@ -3,18 +3,20 @@ package software.bernie.geckolib3.renderers.geo;
 import java.awt.Color;
 import java.util.Collections;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import com.mojang.math.Vector3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -25,13 +27,13 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 
-public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
-		implements IGeoRenderer<T> {
+@SuppressWarnings("unchecked")
+public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T> {
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof Entity) {
-				return (IAnimatableModel<?>) AnimationUtils.getGeoModelForEntity((Entity) object);
+				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
 			}
 			return null;
 		});
@@ -39,27 +41,27 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	protected GeoProjectilesRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
+	protected GeoProjectilesRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}
 
 	@Override
-	public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			IRenderTypeBuffer bufferIn, int packedLightIn) {
+	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		matrixStackIn.pushPose();
 		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(
-				MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot) - 90.0F));
+				Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
 		matrixStackIn.mulPose(Vector3f.ZP
-				.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
-		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
+				.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+		RenderSystem.setShaderTexture(0, getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
 				getTextureLocation(entityIn));
 		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
 				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 				(float) renderColor.getAlpha() / 255);
 
 		float lastLimbDistance = 0.0F;

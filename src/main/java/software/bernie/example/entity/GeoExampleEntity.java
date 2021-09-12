@@ -1,10 +1,10 @@
 package software.bernie.example.entity;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.LookAtGoal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -13,7 +13,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends CreatureEntity implements IAnimatable {
+public class GeoExampleEntity extends PathfinderMob implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
@@ -21,7 +21,7 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable {
 		return PlayState.CONTINUE;
 	}
 
-	public GeoExampleEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
+	public GeoExampleEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {
 		super(type, worldIn);
 		this.noCulling = true;
 	}
@@ -38,7 +38,7 @@ public class GeoExampleEntity extends CreatureEntity implements IAnimatable {
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		super.registerGoals();
 	}
 }

@@ -1,3 +1,4 @@
-v3.0.42
+v3.0.44
 
-- Introduced IGeoBuilder for bones - Gecko
+- Use FMLEnvironment #noeppi-noeppi
+- Geo Layer Getter #mcpecommander
