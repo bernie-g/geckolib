@@ -271,7 +271,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-            addGameVersion("1.16.5")
+            addGameVersion("1.17.1")
             addGameVersion("Forge")
             addGameVersion("Java 8")
         }
