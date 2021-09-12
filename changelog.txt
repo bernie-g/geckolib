@@ -1,5 +1,5 @@
-3.0.0
+3.0.1
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- First Release for the latest 1.18 snapshot
+- Fixes publishing artifacts -Draylar 
