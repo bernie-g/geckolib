@@ -137,15 +137,12 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.51'
+    minecraft 'net.minecraftforge:forge:1.17.1-37.0.58'
     library 'com.eliotlash.molang:molang:SNAPSHOT.12'
     library 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
     library project(':geckolib-core')
     library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-
-	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
 
     shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
