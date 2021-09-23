@@ -82,7 +82,7 @@ dependencies {
 
 shadowJar {
     configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
+    from sourceSets.main.output
     duplicatesStrategy = 'exclude'
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
@@ -123,11 +123,6 @@ tasks.withType(JavaCompile) {
 	}
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-    from sourceSets.main.allSource
-    classifier = 'sources'
-}
-
 java {
 	withSourcesJar()
 }
@@ -142,14 +137,25 @@ jar {
 
 remapJar {
     dependsOn(shadowJar)
-    input.set(shadowJar.archivePath)
+    input = shadowJar.archivePath
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact shadowJar
-            artifact sourcesJar
+            artifact(jar) {
+                // Main dependency, in intermediary
+                builtBy remapJar
+            }
+            artifact(shadowJar) {
+                // Old dependency, only works with Yarn names
+                classifier = 'dev'
+            }
+            artifact(sourcesJar) {
+                // Sources, in intermediary
+                builtBy remapSourcesJar
+                classifier = 'sources'
+            }
             artifactId = project.archives_base_name
         }
     }
