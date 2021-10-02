@@ -1,5 +1,5 @@
-3.0.4
+3.0.5
 
 ***PLEASE NOTE ARMOR IS STILL NOT FIXED***
 
-- Use remapped jars for publishing to maven - SizableShrimp 
+- Updated for 21w39a
