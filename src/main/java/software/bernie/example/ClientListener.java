@@ -29,6 +29,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
+import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
@@ -42,6 +43,7 @@ import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
 @SuppressWarnings("deprecation")
@@ -56,8 +58,8 @@ public class ClientListener implements ClientModInitializer {
 					(context) -> new BikeGeoRenderer(context));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
-//			GeoArmorRendererRegistry.INSTANCE.register(PotatoArmorItem.class,
-//					(context) -> new PotatoArmorRenderer(context));
+			GeoArmorRenderer.registerArmorRenderer(new PotatoArmorRenderer(), ItemRegistry.POTATO_HEAD,
+					ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_BOOTS);
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.ROCKET, (ctx) -> new RocketRender(ctx));
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());

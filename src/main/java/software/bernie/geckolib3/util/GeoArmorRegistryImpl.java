@@ -11,8 +11,7 @@ public class GeoArmorRegistryImpl implements GeoArmorRendererRegistry {
 	private static BiConsumer<Class<? extends ArmorItem>, GeoArmorRendererFactory<?>> handler = (type, function) -> map
 			.put(type, function);
 
-	public <T extends Entity> void register(Class<? extends ArmorItem> entityType,
-			GeoArmorRendererFactory<T> factory) {
+	public <T extends Entity> void register(Class<? extends ArmorItem> entityType, GeoArmorRendererFactory<T> factory) {
 		handler.accept(entityType, factory);
 	}
 
