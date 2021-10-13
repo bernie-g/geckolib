@@ -7,8 +7,8 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.util.GeoArmorRendererFactory;
 
 public class PotatoArmorRenderer extends GeoArmorRenderer<PotatoArmorItem> {
-	public PotatoArmorRenderer(GeoArmorRendererFactory.Context ctx, EntityModelLayer layer) {
-		super(new PotatoArmorModel(), ctx, layer);
+	public PotatoArmorRenderer() {
+		super(new PotatoArmorModel());
 
 		// These values are what each bone name is in blockbench. So if your head bone
 		// is named "bone545", make sure to do this.headBone = "bone545";

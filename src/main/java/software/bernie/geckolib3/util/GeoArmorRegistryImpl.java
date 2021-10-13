@@ -3,6 +3,8 @@ package software.bernie.geckolib3.util;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
+import software.bernie.geckolib3.ArmorRenderingRegistryImpl;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ArmorItem;
 
