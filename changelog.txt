@@ -1,3 +1,3 @@
-v3.0.46
+v3.0.47
 
-- Updated Core
+- Fixed issue with com.fasterxml dupes.

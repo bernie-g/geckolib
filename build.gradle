@@ -151,6 +151,7 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
+    exclude('META-INF/services/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
