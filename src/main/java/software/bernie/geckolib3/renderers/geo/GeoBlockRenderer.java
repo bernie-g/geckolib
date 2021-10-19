@@ -1,6 +1,9 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
 import net.minecraft.block.HorizontalBlock;
@@ -15,11 +18,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-
-import java.awt.*;
 
 public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntityRenderer
 		implements IGeoRenderer<T> {
@@ -29,7 +31,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 				TileEntity tile = (TileEntity) object;
 				TileEntityRenderer<TileEntity> renderer = TileEntityRendererDispatcher.instance.getRenderer(tile);
 				if (renderer instanceof GeoBlockRenderer) {
-					return ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
+					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
 			}
 			return null;

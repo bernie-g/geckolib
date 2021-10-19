@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -29,7 +30,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 				Item item = (Item) object;
 				ItemStackTileEntityRenderer renderer = item.getItemStackTileEntityRenderer();
 				if (renderer instanceof GeoItemRenderer) {
-					return ((GeoItemRenderer<?>) renderer).getGeoModelProvider();
+					return (IAnimatableModel<Object>) ((GeoItemRenderer<?>) renderer).getGeoModelProvider();
 				}
 			}
 			return null;

@@ -43,7 +43,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof Entity) {
-				return (IAnimatableModel<?>) AnimationUtils.getGeoModelForEntity((Entity) object);
+				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
 			}
 			return null;
 		});
@@ -158,7 +158,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.pop();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
+
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return animatable.getEntityId();
