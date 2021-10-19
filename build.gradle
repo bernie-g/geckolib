@@ -58,15 +58,15 @@ dependencies {
     // Actual dependencies
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    implementation 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    implementation 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    implementation 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    implementation 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     implementation project(':geckolib-core')
 
     // Shaded dependencies
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     shade project(':geckolib-core')
 
     // Testing
