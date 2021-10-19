@@ -138,16 +138,16 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
-    library 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    library 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    library 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    library 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
     library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
