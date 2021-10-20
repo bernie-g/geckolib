@@ -41,7 +41,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 		{
 			if (object instanceof Entity)
 			{
-				return (IAnimatableModel) AnimationUtils.getGeoModelForEntity((Entity) object);
+				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
 			}
 			return null;
 		});
