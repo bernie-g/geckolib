@@ -46,15 +46,15 @@ repositories {
 }
 
 dependencies {
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    compile 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.12'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.12'
+    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
+    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
@@ -72,6 +72,7 @@ dependencies {
 shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
+	exclude('META-INF/services/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
