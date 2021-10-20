@@ -148,7 +148,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 			RenderHurtColor.unset();
 		}
 
-		if (entity instanceof EntityPlayer && !((EntityPlayer) entity).isSpectator())
+		if (!(entity instanceof EntityPlayer) || (entity instanceof EntityPlayer && !((EntityPlayer) entity).isSpectator()))
 		{
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers)
 			{
