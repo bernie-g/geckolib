@@ -39,8 +39,9 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
 	{
 		this.render(entityIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
 	}
-
-	public GeoModelProvider getEntityModel()
+	
+	@SuppressWarnings("unchecked")
+	public GeoModelProvider<T> getEntityModel()
 	{
 		return this.entityRenderer.getGeoModelProvider();
 	}

@@ -1,5 +1,3 @@
-v3.0.0-beta.9
+v3.0.1
 
-- Updated Core
-- Fixed shadow with com.fasterxml
-- Fix for render layers being hardcoded to players - DerToaster98
+- Fixed GeoLayerRenderer#getEntityModel
