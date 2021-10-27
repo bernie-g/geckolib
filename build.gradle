@@ -218,9 +218,7 @@ if (file('key.properties').exists()) {
         relations {
             requiredDependency 'fabric-api'      
         }
-        mainArtifact(remapJar) {
-      		displayName = "[FABRIC] Geckolib ${project.minecraft_version}"
-    	}
+        mainArtifact(remapJar)
 
         afterEvaluate {
             uploadTask.dependsOn("remapJar")

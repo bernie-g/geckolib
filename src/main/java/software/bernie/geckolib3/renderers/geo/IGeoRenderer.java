@@ -62,8 +62,8 @@ public interface IGeoRenderer<T> {
 		RenderUtils.moveToPivot(cube, stack);
 		RenderUtils.rotate(cube, stack);
 		RenderUtils.moveBackFromPivot(cube, stack);
-		Matrix3f matrix3f = stack.peek().getNormal();
-		Matrix4f matrix4f = stack.peek().getModel();
+		Matrix3f matrix3f = stack.peek().getNormalMatrix();
+		Matrix4f matrix4f = stack.peek().getPositionMatrix();
 
 		for (GeoQuad quad : cube.quads) {
 			if (quad == null) {
