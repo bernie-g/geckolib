@@ -1,3 +1,4 @@
-v3.0.5
+v3.0.6
 
-- Fixed GeoLayerRenderer#getEntityModel
+- Updated Core so animations play off screen
+- New AnimatedTickingGeoModel for better ticking entities. Requires IAnimationTickable interface on your entities.
