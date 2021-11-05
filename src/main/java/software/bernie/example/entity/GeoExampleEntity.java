@@ -5,6 +5,7 @@ import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -12,7 +13,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends EntityCreature implements IAnimatable
+public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAnimationTickable
 {
 	private AnimationFactory factory = new AnimationFactory(this);
 
@@ -53,5 +54,14 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable
 	{
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		super.initEntityAI();
+	}
+
+	@Override
+	public int tickTimer() {
+		return ticksExisted;
+	}
+
+	@Override
+	public void tick() {		
 	}
 }
