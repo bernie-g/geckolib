@@ -7,9 +7,10 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
-public class ExampleEntityModel extends AnimatedGeoModel
+public class ExampleEntityModel extends AnimatedTickingGeoModel
 {
 	@Override
 	public ResourceLocation getAnimationFileLocation(Object entity)
