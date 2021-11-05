@@ -9,6 +9,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath "com.wynprice.cursemaven:CurseMaven:2.1.5"
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
@@ -19,6 +20,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: "com.wynprice.cursemaven"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -117,6 +119,7 @@ repositories {
     maven {
     	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
     }
+    maven { url = "https://maven.theillusivec4.top/" }
     mavenCentral()
 }
 
@@ -131,6 +134,9 @@ dependencies {
 
 	compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
     compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1:api")
+    compile fg.deobf("curse.maven:Doom-368765:3507200")
 	
     shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
     shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
