@@ -25,7 +25,7 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAn
 		}
 		else
 		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.magmaspider.run", true));
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
 		}
 		return PlayState.CONTINUE;
 	}
@@ -62,6 +62,7 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAn
 	}
 
 	@Override
-	public void tick() {		
+	public void tick() {
+		super.onUpdate();
 	}
 }

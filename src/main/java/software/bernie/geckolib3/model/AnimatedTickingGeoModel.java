@@ -25,11 +25,11 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		if (manager.startTick == null) {
-			manager.startTick = (double) (entity.tickTimer() + Minecraft.getMinecraft().getFrameTimer().getIndex());
+			manager.startTick = (double) (entity.tickTimer() + Minecraft.getMinecraft().getRenderPartialTicks());
 		}
 
 		if (!Minecraft.getMinecraft().isGamePaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = (entity.tickTimer() + Minecraft.getMinecraft().getFrameTimer().getIndex());
+			manager.tick = (entity.tickTimer() + Minecraft.getMinecraft().getRenderPartialTicks());
 			double gameTick = manager.tick;
 			double deltaTicks = gameTick - lastGameTickTime;
 			seekTime += deltaTicks;
