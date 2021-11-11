@@ -80,7 +80,7 @@ minecraft {
     }
 }
 repositories {
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
     maven { url 'https://maven.blamejared.com' }
@@ -101,8 +101,8 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.15.2-31.2.36'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    compile 'com.eliotlash.molang:molang:18'
+    compile 'com.eliotlash.mclib:mclib:18'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
@@ -111,8 +111,8 @@ dependencies {
     compile fg.deobf("vazkii.patchouli:Patchouli:1.15.2-1.2-35.2")
     compile fg.deobf("vazkii.patchouli:Patchouli:1.15.2-1.2-35.2:api")
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
