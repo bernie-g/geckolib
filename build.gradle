@@ -32,7 +32,7 @@ minecraft {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url 'https://maven.blamejared.com' }
 	maven {
         url = "https://www.cursemaven.com"
@@ -58,15 +58,15 @@ dependencies {
     // Actual dependencies
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    implementation(include('com.eliotlash.molang:molang:SNAPSHOT.17'))
-    implementation(include('com.eliotlash.mclib:mclib:SNAPSHOT.17'))
+    implementation(include('com.eliotlash.molang:molang:18'))
+    implementation(include('com.eliotlash.mclib:mclib:18'))
     implementation project(':geckolib-core')
 
     // Shaded dependencies
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
     shade project(':geckolib-core')
 
     // Testing
@@ -141,19 +141,7 @@ remapJar {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(jar) {
-                // Main dependency, in intermediary
-                builtBy remapJar
-            }
-            artifact(shadowJar) {
-                // Old dependency, only works with Yarn names
-                classifier = 'dev'
-            }
-            artifact(sourcesJar) {
-                // Sources, in intermediary
-                builtBy remapSourcesJar
-                classifier = 'sources'
-            }
+			from components.java
             artifactId = project.archives_base_name
         }
     }
