@@ -38,23 +38,22 @@ minecraft {
     mappings = "snapshot_20171003"
 }
 repositories {
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
     maven { url 'https://maven.enginehub.org/repo/' }
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     jcenter()
     mavenCentral()
 }
 
 dependencies {
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    compile 'com.eliotlash.molang:molang:18'
+    compile 'com.eliotlash.mclib:mclib:18'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
