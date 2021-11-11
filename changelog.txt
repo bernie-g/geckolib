@@ -1,3 +1,3 @@
-3.0.15
+3.0.16
 
-- Moved all libs to Cloudsmith
+- Updated to 1.18 Prerelease 1
