@@ -117,7 +117,7 @@ minecraft.runs.all {
 }
 
 repositories {
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
     maven { url 'https://maven.blamejared.com' }
@@ -138,16 +138,16 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
-    library 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    library 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    library 'com.eliotlash.molang:molang:18'
+    library 'com.eliotlash.mclib:mclib:18'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
     library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
