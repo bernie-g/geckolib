@@ -251,7 +251,7 @@ public class JsonAnimationUtils
 		{
 			for (Map.Entry<String, JsonElement> keyFrame : customInstructionKeyFrames)
 			{
-				animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, convertJsonArrayToList(keyFrame.getValue().getAsJsonArray())));
+				animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20, keyFrame.getValue().getAsString()));
 			}
 		}
 
