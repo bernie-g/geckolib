@@ -1,3 +1,3 @@
-v3.0.9
+v3.0.10
 
-- Fixes Non-Array Custom Instruction Keyframes Causing Crash #155
+- Fixes #197
