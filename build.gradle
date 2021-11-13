@@ -136,7 +136,7 @@ dependencies {
     compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1")
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1:api")
-    compile fg.deobf("curse.maven:Doom-368765:3507200")
+    compile fg.deobf("curse.maven:mAa-406360:3517907")
 	
     shade 'com.eliotlash.molang:molang:18'
     shade 'com.eliotlash.mclib:mclib:18'
