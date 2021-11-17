@@ -17,16 +17,8 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAn
 {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
-		if (((EntityCreature) event.getAnimatable()).world.isRaining())
-		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.magmaspider.attack", true));
-		}
-		else
-		{
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
-		}
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
 		return PlayState.CONTINUE;
 	}
 
