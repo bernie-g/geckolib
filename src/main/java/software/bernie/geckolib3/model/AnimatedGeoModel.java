@@ -55,7 +55,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationData data = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		AnimationData data = entity.getFactory().getOrCreateAnimationData(this.getUniqueID(entity));
 		if (data.ticker == null)
 		{
 			AnimationTicker ticker = new AnimationTicker(data);
@@ -84,8 +84,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
 		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
-			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+			animationProcessor.tickAnimation(entity, this.getUniqueID(entity), seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
+	}
+	
+	public Integer getUniqueID(T animatable) {
+		return animatable.hashCode();
 	}
 
 	@Override
