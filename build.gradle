@@ -18,8 +18,8 @@ plugins {
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
@@ -117,8 +117,7 @@ loom {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = "UTF-8"
-	it.options.release = 16
+    it.options.release = 17
 }
 
 artifacts {
@@ -201,7 +200,7 @@ if (file('key.properties').exists()) {
         changelog = file('changelog.txt')
         addGameVersion("1.18-Snapshot")
         addGameVersion("Fabric")
-        addGameVersion("Java 16")
+        addGameVersion("Java 17")
 
         relations {
             requiredDependency 'fabric-api'      
