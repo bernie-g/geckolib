@@ -25,7 +25,7 @@
 		]
 	},
 	"mixins": [
-		"fabric.mixins.json"
+		"geckolib3.mixins.json"
 	],
 	"accessWidener": "geckolib.aw",
 	"depends": {
