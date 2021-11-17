@@ -1,3 +1,4 @@
-v3.0.8
+v3.0.9
 
-- Fixes #197
+- Entities playing the same animation fix (#199) - SleepL1
+- Updated core for non-looping animations
