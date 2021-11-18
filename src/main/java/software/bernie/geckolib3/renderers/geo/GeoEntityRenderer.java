@@ -163,7 +163,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getId();
+		return animatable.getUUID().hashCode();
 	}
 
 	@Override
