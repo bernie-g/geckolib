@@ -1,3 +1,5 @@
-3.0.19
+3.0.20
 
-- Updated to latest Pre-Release 2, along with using Java 17 which is required by Minecraft now.
+- Updated to latest Pre-Release 4
+- Updated core for non-looping animations
+- Fixes Entities playing the same animation after rejoining world. - SleepL1

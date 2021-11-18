@@ -4,14 +4,14 @@ buildscript {
     	maven { url  = 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
-        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
     }
 }
 
 plugins {
-    id 'fabric-loom' version '0.10.54'
+    id 'fabric-loom' version '0.10-SNAPSHOT'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
