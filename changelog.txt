@@ -1,4 +1,3 @@
-v3.0.9
+v3.0.10
 
-- Entities playing the same animation fix (#199) - SleepL1
-- Updated core for non-looping animations
+- Fixes Entities playing the same animation after rejoining world. - SleepL1

@@ -216,7 +216,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getEntityId();
+		return animatable.getUniqueID().hashCode();
 	}
 
 	protected float getDeathMaxRotation(T entityLivingBaseIn) {
