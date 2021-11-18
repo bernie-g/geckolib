@@ -55,12 +55,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate)
 	{
 		// Each animation has it's own collection of animations (called the EntityAnimationManager), which allows for multiple independent animations
-		AnimationData data = entity.getFactory().getOrCreateAnimationData(this.getUniqueID(entity));
+		AnimationData data = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		if (data.ticker == null)
 		{
 			AnimationTicker ticker = new AnimationTicker(data);
 			data.ticker = ticker;
-			MinecraftForge.EVENT_BUS.register(ticker);
+			MinecraftForge.EVENT_BUS.register(ticker); 	
 		}
 		if (!Minecraft.getMinecraft().isGamePaused() || data.shouldPlayWhilePaused)
 		{
@@ -69,27 +69,17 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		else {
 			seekTime = data.tick;
 		}
-
-		AnimationEvent<T> predicate;
-		if (customPredicate == null)
-		{
-			predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
-		}
-		else
-		{
-			predicate = customPredicate;
+		
+		if(customPredicate == null) {
+			customPredicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
 		}
 
-		predicate.animationTick = seekTime;
-		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
+		customPredicate.animationTick = seekTime;
+		animationProcessor.preAnimationSetup(customPredicate.getAnimatable(), seekTime);
 		if (!this.animationProcessor.getModelRendererList().isEmpty())
 		{
-			animationProcessor.tickAnimation(entity, this.getUniqueID(entity), seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+			animationProcessor.tickAnimation(entity, uniqueID, seekTime, customPredicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
-	}
-	
-	public Integer getUniqueID(T animatable) {
-		return animatable.hashCode();
 	}
 
 	@Override

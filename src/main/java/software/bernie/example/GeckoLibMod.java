@@ -17,6 +17,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import software.bernie.example.block.tile.BotariumTileEntity;
@@ -33,6 +34,7 @@ import software.bernie.example.entity.ReplacedCreeperEntity;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 
@@ -82,6 +84,14 @@ public class GeckoLibMod
 
 			ClientRegistry.bindTileEntitySpecialRenderer(BotariumTileEntity.class, new BotariumTileRenderer());
 			ClientRegistry.bindTileEntitySpecialRenderer(FertilizerTileEntity.class, new FertilizerTileRenderer());
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	@Mod.EventHandler
+	public void unloadWorld(PlayerLoggedOutEvent e) {
+		if(!e.player.world.isRemote) {
+			AnimationFactory.animationDataMap.clear();
 		}
 	}
 
