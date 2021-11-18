@@ -1,3 +1,3 @@
-v3.0.43
+v3.0.44
 
-- Updated core for non-looping animations
+- Fixes Entities playing the same animation after rejoining world. - SleepL1
