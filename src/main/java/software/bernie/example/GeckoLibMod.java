@@ -36,9 +36,8 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 
-@Mod(modid = GeckoLib.ModID)
-public class GeckoLibMod
-{
+@Mod(modid = GeckoLib.ModID, version = GeckoLib.VERSION)
+public class GeckoLibMod {
 	public static boolean DISABLE_IN_DEV = false;
 	private static CreativeTabs geckolibItemGroup;
 	private boolean deobfuscatedEnvironment;
