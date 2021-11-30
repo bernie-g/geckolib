@@ -23,6 +23,7 @@ import java.util.*;
  * Helper for parsing the bedrock json animation format and finding certain
  * elements
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonAnimationUtils {
 	/**
 	 * Gets the "animations" object as a set of maps consisting of the name of the
@@ -199,7 +200,6 @@ public class JsonAnimationUtils {
 	 * @throws IllegalStateException Throws this exception if the JSON is formatted
 	 *                               incorrectly
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element, MolangParser parser)
 			throws ClassCastException, IllegalStateException {
 		Animation animation = new Animation();

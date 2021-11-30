@@ -19,6 +19,7 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 		return !this.getAnimationProcessor().getModelRendererList().isEmpty();
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has it's own collection of animations (called the

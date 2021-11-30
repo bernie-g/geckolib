@@ -8,26 +8,25 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Vector3f;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.fml.ModList;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -40,6 +39,7 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 
+@SuppressWarnings("unchecked")
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T>
 		implements IGeoRenderer<T> {
 	static {
@@ -68,6 +68,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.modelProvider = modelProvider;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
 			int packedLightIn) {
@@ -83,8 +84,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		float netHeadYaw = f1 - f;
 		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
 			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
-			f = Mth.rotLerp(partialTicks, livingentity.yBodyRotO,
-					livingentity.yBodyRot);
+			f = Mth.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
 			netHeadYaw = f1 - f;
 			float f3 = Mth.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F) {
@@ -160,7 +160,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
+
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUUID().hashCode();

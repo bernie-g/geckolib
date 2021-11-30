@@ -1,26 +1,25 @@
 package software.bernie.example.block;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.material.Material;
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.world.level.BlockGetter;
-import software.bernie.example.registry.TileRegistry;
-
-import javax.annotation.Nullable;
 import java.util.List;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+import javax.annotation.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Material;
+import software.bernie.example.registry.TileRegistry;
 
 public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	public FertilizerBlock() {
@@ -49,8 +48,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip,
-			TooltipFlag flagIn) {
+	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
 		tooltip.add(new TextComponent("Turn on rain to see the fertilizer model!"));
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}

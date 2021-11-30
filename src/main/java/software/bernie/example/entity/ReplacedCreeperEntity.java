@@ -11,6 +11,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class ReplacedCreeperEntity implements IAnimatable {
 	AnimationFactory factory = new AnimationFactory(this);
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));

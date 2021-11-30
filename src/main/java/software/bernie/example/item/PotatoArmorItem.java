@@ -1,9 +1,13 @@
 package software.bernie.example.item;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,13 +22,6 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-//This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
-import net.minecraft.world.item.Item.Properties;
-
 public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
@@ -33,6 +30,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 	}
 
 	// Predicate runs every frame
+	@SuppressWarnings("unused")
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
 		// This is all the extradata this event carries. The livingentity is the entity
 		// that's wearing the armor. The itemstack and equipmentslottype are self
@@ -75,6 +73,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 
 	// All you need to do here is add your animation controllers to the
 	// AnimationData
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));

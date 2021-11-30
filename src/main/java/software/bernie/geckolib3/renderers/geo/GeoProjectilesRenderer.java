@@ -5,18 +5,16 @@ import java.util.Collections;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
+import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -28,7 +26,8 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 
 @SuppressWarnings("unchecked")
-public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T> implements IGeoRenderer<T> {
+public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
+		implements IGeoRenderer<T> {
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -51,10 +50,9 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 			MultiBufferSource bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		matrixStackIn.pushPose();
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(
-				Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
-		matrixStackIn.mulPose(Vector3f.ZP
-				.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+		matrixStackIn.mulPose(
+				Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
+		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 		RenderSystem.setShaderTexture(0, getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,

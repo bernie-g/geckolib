@@ -21,12 +21,6 @@ apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
-configurations.all {
-    resolutionStrategy {
-        force 'cpw.mods:securejarhandler:0.9.50'
-    }
-}
-
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
@@ -36,7 +30,7 @@ version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshot
 group = 'software.bernie.geckolib'
 archivesBaseName = project.archives_base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 configurations {
     library
@@ -46,7 +40,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'official', version: '1.18'
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -137,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
+    minecraft 'net.minecraftforge:forge:1.18-38.0.1'
     library 'com.eliotlash.molang:molang:18'
     library 'com.eliotlash.mclib:mclib:18'
     library(project(':geckolib-core')) {
@@ -276,9 +270,9 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-            addGameVersion("1.17.1")
+            addGameVersion("1.18")
             addGameVersion("Forge")
-            addGameVersion("Java 8")
+            addGameVersion("Java 17")
         }
     }
 }

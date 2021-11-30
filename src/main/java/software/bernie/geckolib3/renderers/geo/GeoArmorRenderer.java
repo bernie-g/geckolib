@@ -31,6 +31,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends HumanoidModel
 		implements IGeoRenderer<T> {
 	private static Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
@@ -208,6 +209,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 

@@ -15,6 +15,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class BotariumTileEntity extends BlockEntity implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
+	@SuppressWarnings("unchecked")
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true));
@@ -25,6 +26,7 @@ public class BotariumTileEntity extends BlockEntity implements IAnimatable {
 		super(TileRegistry.BOTARIUM_TILE.get(), pos, state);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));

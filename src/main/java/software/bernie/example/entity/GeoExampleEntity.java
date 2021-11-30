@@ -29,7 +29,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+		data.addAnimationController(new AnimationController<GeoExampleEntity>(this, "controller", 0, this::predicate));
 	}
 
 	@Override

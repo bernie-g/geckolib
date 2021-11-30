@@ -1,18 +1,20 @@
 package software.bernie.example.item;
 
+import java.util.function.Consumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.IItemRenderProperties;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
@@ -28,10 +30,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
-
-import net.minecraft.world.item.Item.Properties;
-
-import java.util.function.Consumer;
 
 public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	private static final String CONTROLLER_NAME = "popupController";
@@ -61,6 +59,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		return PlayState.CONTINUE;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		AnimationController controller = new AnimationController(this, CONTROLLER_NAME, 20, this::predicate);
@@ -74,6 +73,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		data.addAnimationController(controller);
 	}
 
+	@SuppressWarnings("resource")
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
 		// The animation for the JackInTheBoxItem has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
@@ -104,6 +104,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		return super.use(world, player, hand);
 	}
 
+	@SuppressWarnings({ "rawtypes", "resource" })
 	@Override
 	public void onAnimationSync(int id, int state) {
 		if (state == ANIM_OPEN) {

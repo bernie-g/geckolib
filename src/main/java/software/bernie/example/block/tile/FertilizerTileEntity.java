@@ -15,6 +15,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
 	private final AnimationFactory manager = new AnimationFactory(this);
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		AnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
@@ -32,6 +33,7 @@ public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
 		super(TileRegistry.FERTILIZER.get(), pos, state);
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));

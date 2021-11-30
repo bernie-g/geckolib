@@ -9,24 +9,23 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
-import com.mojang.math.Vector3f;
-import net.minecraft.ChatFormatting;
 import net.minecraftforge.fml.ModList;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -37,6 +36,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	private final AnimatedGeoModel<IAnimatable> modelProvider;
 	private final T animatable;
@@ -51,7 +51,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		});
 	}
 
-	protected GeoReplacedEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
+	protected GeoReplacedEntityRenderer(EntityRendererProvider.Context renderManager,
+			AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 		this.animatable = animatable;
@@ -70,6 +71,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		this.render(entityIn, this.animatable, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
+	@SuppressWarnings("resource")
 	public void render(Entity entity, IAnimatable animatable, float entityYaw, float partialTicks, PoseStack stack,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		this.currentAnimatable = animatable;
@@ -87,15 +89,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		entityModelData.isSitting = shouldSit;
 		entityModelData.isChild = entityLiving.isBaby();
 
-		float f = Mth.rotLerp(partialTicks, entityLiving.yBodyRotO,
-				entityLiving.yBodyRot);
-		float f1 = Mth.rotLerp(partialTicks, entityLiving.yHeadRotO,
-				entityLiving.yHeadRot);
+		float f = Mth.rotLerp(partialTicks, entityLiving.yBodyRotO, entityLiving.yBodyRot);
+		float f1 = Mth.rotLerp(partialTicks, entityLiving.yHeadRotO, entityLiving.yHeadRot);
 		float f2 = f1 - f;
 		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
 			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
-			f = Mth.rotLerp(partialTicks, livingentity.yBodyRotO,
-					livingentity.yBodyRot);
+			f = Mth.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
 			f2 = f1 - f;
 			float f3 = Mth.wrapDegrees(f2);
 			if (f3 < -85.0F) {
@@ -129,8 +128,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		float limbSwingAmount = 0.0F;
 		float limbSwing = 0.0F;
 		if (!shouldSit && entity.isAlive()) {
-			limbSwingAmount = Mth.lerp(partialTicks, entityLiving.animationSpeedOld,
-					entityLiving.animationSpeed);
+			limbSwingAmount = Mth.lerp(partialTicks, entityLiving.animationSpeedOld, entityLiving.animationSpeed);
 			limbSwing = entityLiving.animationPosition - entityLiving.animationSpeed * (1.0F - partialTicks);
 			if (entityLiving.isBaby()) {
 				limbSwing *= 3.0F;
@@ -176,8 +174,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return 0.0F;
 	}
 
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, PoseStack matrixStackIn,
-			float partialTickTime) {
+	protected void preRenderCallback(LivingEntity entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
 	}
 
 	@Override

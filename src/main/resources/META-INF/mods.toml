@@ -1,54 +1,27 @@
-# This is an example mods.toml file. It contains the data relating to the loading mods.
-# There are several mandatory fields (#mandatory), and many more that are optional (#optional).
-# The overall format is standard TOML format, v0.5.0.
-# Note that there are a couple of TOML lists in this file.
-# Find more information on toml format here:  https://github.com/toml-lang/toml
-# The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
-modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
-loaderVersion="[37,)" #mandatory This is typically bumped every Minecraft version by Forge. See our download page for lists of versions.
-# A URL to refer people to when problems occur with this mod
-issueTrackerURL="https://github.com/bernie-g/geckolib/issues" #optional
-# A list of mods - how many allowed here is determined by the individual mod loader
+modLoader="javafml"
+loaderVersion="[38,)"
+issueTrackerURL="https://github.com/bernie-g/geckolib/issues"
 license="MIT"
-
-
-[[mods]] #mandatory
-# The modid of the mod
-modId="geckolib3" #mandatory
-# The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="${file.jarVersion}" #mandatory
- # A display name for the mod
-displayName="GeckoLib" #mandatory
-# A URL to query for updates for this mod. See the JSON update specification <here>
-#updateJSONURL="http://myurl.me/" #optional
-# A URL for the "homepage" for this mod, displayed in the mod UI
-displayURL="http://geckolib.com/" #optional
-# A file name (in the root of the mod JAR) containing a logo for display
-logoFile="geckolib.png" #optional
-# A text field displayed in the mod UI
-credits="Gecko, Eliot, AzureDoom" #optional
-# A text field displayed in the mod UI
-authors="Gecko, Eliot, AzureDoom, Chappie, " #optional
-# The description text for the mod (multi line!) (#mandatory)
+[[mods]]
+modId="geckolib3"
+version="${file.jarVersion}" 
+displayName="GeckoLib"
+displayURL="http://geckolib.com/"
+logoFile="geckolib.png" 
+credits="Gecko, Eliot, AzureDoom" 
+authors="Gecko, Eliot, AzureDoom, Chappie"
 description='''
-Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically. You can export bedrock animations from blockbench and apply them to entities with GeckoLib. Geckolib also supports sound keyframes, particle keyframes, and custom events. The library is currently available on Forge 1.12, 1.15, 1.16, and Fabric 1.16.'''
-# A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
-[[dependencies.geckolib3]] #optional
-    # the modid of the dependency
-    modId="forge" #mandatory
-    # Does this dependency have to exist - if not, ordering below must be specified
-    mandatory=true #mandatory
-    # The version range of the dependency
-    versionRange="[37.0,)"
-    # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically. You can export bedrock animations from blockbench and apply them to entities with GeckoLib. Geckolib also supports sound keyframes, particle keyframes, and custom events. The library is currently available on Forge 1.12, 1.15, 1.16, and Fabric 1.16.
+'''
+[[dependencies.geckolib3]]
+    modId="forge"
+    mandatory=true 
+    versionRange="[38.0,)"
     ordering="NONE"
-    # Side this dependency is applied on - BOTH, CLIENT or SERVER
     side="BOTH"
-# Here's another dependency
 [[dependencies.geckolib3]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.17, 1.18)"
+    versionRange="[1.18, 1.19)"
     ordering="NONE"
     side="BOTH"

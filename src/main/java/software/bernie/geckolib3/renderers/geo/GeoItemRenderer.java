@@ -27,6 +27,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+@SuppressWarnings("unchecked")
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends BlockEntityWithoutLevelRenderer
 		implements IGeoRenderer<T> {
 	// Register a model fetcher for this renderer
@@ -83,6 +84,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void render(T animatable, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn,
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;

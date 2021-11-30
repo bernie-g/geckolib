@@ -1,36 +1,38 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.awt.Color;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.DirectionalBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import com.mojang.math.Vector3f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-import java.awt.*;
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		implements IGeoRenderer<T>, BlockEntityRenderer {
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof BlockEntity) {
 				BlockEntity tile = (BlockEntity) object;
-				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(tile);
+				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher()
+						.getRenderer(tile);
 				if (renderer instanceof GeoBlockRenderer) {
 					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -41,7 +43,8 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	public GeoBlockRenderer(BlockEntityRendererProvider.Context rendererDispatcherIn, AnimatedGeoModel<T> modelProvider) {
+	public GeoBlockRenderer(BlockEntityRendererProvider.Context rendererDispatcherIn,
+			AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
 	}
 
