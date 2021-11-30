@@ -1,5 +1,3 @@
-3.0.20
+3.0.21
 
-- Updated to latest Pre-Release 4
-- Updated core for non-looping animations
-- Fixes Entities playing the same animation after rejoining world. - SleepL1
+- 1.18 full release!

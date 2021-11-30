@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        jcenter()
     	maven { url  = 'https://plugins.gradle.org/m2/' }
     }
     dependencies {
@@ -70,9 +69,9 @@ dependencies {
     shade project(':geckolib-core')
 
     // Testing
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     test {
         useJUnitPlatform()
@@ -195,7 +194,7 @@ if (file('key.properties').exists()) {
     project {
         apiKey = curseProp.getProperty('curseKey')
         id = "388172"
-        releaseType = "beta"
+        releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
         addGameVersion("1.18-Snapshot")
