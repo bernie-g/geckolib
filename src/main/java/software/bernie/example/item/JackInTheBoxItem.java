@@ -12,7 +12,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.level.Level;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.client.IItemRenderProperties;
-import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;

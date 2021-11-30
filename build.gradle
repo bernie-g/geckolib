@@ -13,19 +13,13 @@ buildscript {
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
-
-configurations.all {
-    resolutionStrategy {
-        force 'cpw.mods:securejarhandler:0.9.50'
-    }
-}
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -36,7 +30,7 @@ version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshot
 group = 'software.bernie.geckolib'
 archivesBaseName = project.archives_base_name
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 configurations {
     library
@@ -46,7 +40,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.17.1'
+    mappings channel: 'official', version: '1.18'
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -137,7 +131,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.17.1-37.0.59'
+    minecraft 'net.minecraftforge:forge:1.18-38.0.0'
     library 'com.eliotlash.molang:molang:18'
     library 'com.eliotlash.mclib:mclib:18'
     library(project(':geckolib-core')) {

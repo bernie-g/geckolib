@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.util;
 
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.server.level.ServerLevel;
 
@@ -9,7 +10,6 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
 
-import static net.minecraftforge.common.util.Constants.NBT.TAG_INT;
 import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
 
 public class GeckoLibUtil {
@@ -72,7 +72,7 @@ public class GeckoLibUtil {
      * Returns true if the stack has an ID stored in its NBT data.
      */
     public static boolean stackHasIDTag(ItemStack stack) {
-        return stack.hasTag() && stack.getTag().contains(GECKO_LIB_ID_NBT, TAG_INT);
+        return stack.hasTag() && stack.getTag().contains(GECKO_LIB_ID_NBT, Tag.TAG_INT);
     }
 
     public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,
