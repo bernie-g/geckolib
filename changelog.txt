@@ -1,3 +1,4 @@
-v3.0.1
+v3.0.3
 
-- Core update
+- Updated to 1.18.1
+- Adds -forge back into the file name.
