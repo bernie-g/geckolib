@@ -1,0 +1,30 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.model.new": {
+			"loop": true,
+			"animation_length": 9.411,
+			"bones": {
+				"bone2": {
+					"rotation": ["temp.bodytilt", 0, "0;temp.speed = 1000;temp.wingspeed = (math.sin(query.anim_time * temp.speed)*70)+30;temp.bodybb = math.sin(query.anim_time * temp.speed);temp.bodytilt = (math.sin(query.anim_time * temp.speed/2)*5)-2;temp.bodysway = (math.sin(query.anim_time*400));"],
+					"position": ["temp.bodysway", "temp.bodybb", 0]
+				},
+				"bone": {
+					"rotation": [0, 0, "-temp.wingspeed"]
+				},
+				"bone4": {
+					"rotation": ["temp.bodytilt/2", 0, 0]
+				},
+				"bone5": {
+					"rotation": ["temp.bodytilt/2", 0, 0]
+				},
+				"bone6": {
+					"rotation": ["temp.bodybb/1.5", 0, 0]
+				},
+				"bone13": {
+					"rotation": [0, 0, "temp.wingspeed"]
+				}
+			}
+		}
+	}
+}

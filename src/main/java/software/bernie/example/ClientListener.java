@@ -11,8 +11,8 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.EntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
 import net.fabricmc.fabric.api.network.PacketContext;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -32,6 +32,7 @@ import net.minecraft.util.registry.Registry;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
+import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.entity.RocketRender;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
@@ -53,20 +54,21 @@ public class ClientListener implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEO_EXAMPLE_ENTITY, ExampleGeoRenderer::new);
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY,
+			EntityRendererRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, ExampleGeoRenderer::new);
+			EntityRendererRegistry.register(EntityRegistry.GEOLAYERENTITY, LERenderer::new);
+			EntityRendererRegistry.register(EntityRegistry.BIKE_ENTITY,
 					(context) -> new BikeGeoRenderer(context));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
 			GeoArmorRenderer.registerArmorRenderer(new PotatoArmorRenderer(), ItemRegistry.POTATO_HEAD,
 					ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_BOOTS);
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.ROCKET, (ctx) -> new RocketRender(ctx));
-			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.BOTARIUM_TILE,
+			EntityRendererRegistry.register(EntityRegistry.ROCKET, (ctx) -> new RocketRender(ctx));
+			BlockEntityRendererRegistry.register(TileRegistry.BOTARIUM_TILE,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());
-			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER,
+			BlockEntityRendererRegistry.register(TileRegistry.FERTILIZER,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new FertilizerTileRenderer());
 
-			EntityRendererRegistry.INSTANCE.register(EntityType.CREEPER, (ctx) -> new ReplacedCreeperRenderer(ctx));
+			EntityRendererRegistry.register(EntityType.CREEPER, (ctx) -> new ReplacedCreeperRenderer(ctx));
 
 			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
 			ClientSidePacketRegistry.INSTANCE.register(EntityPacket.ID, (ctx, buf) -> {
