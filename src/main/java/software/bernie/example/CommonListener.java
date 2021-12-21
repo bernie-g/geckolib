@@ -22,9 +22,11 @@ import software.bernie.example.block.BotariumBlock;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.tile.BotariumTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
+import software.bernie.example.client.renderer.entity.GeoExampleEntityLayerRenderer;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.example.entity.GeoExampleEntityLayer;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
@@ -58,7 +60,8 @@ public class CommonListener
 
 		event.getRegistry().register(EntityEntryBuilder.create().entity(BikeEntity.class).name("Bike").id(new ResourceLocation(GeckoLib.ModID, "bike"), id++).tracker(160, 2, false).build());
 		event.getRegistry().register(EntityEntryBuilder.create().entity(GeoExampleEntity.class).name("Example").id(new ResourceLocation(GeckoLib.ModID, "example"), id++).tracker(160, 2, false).build());
-
+		event.getRegistry().register(EntityEntryBuilder.create().entity(GeoExampleEntityLayer.class).name("ExampleLayer").id(new ResourceLocation(GeckoLib.ModID, "examplelayer"), id++).tracker(160, 2, false).build());
+		
 		/* Tile entities */
 		GameRegistry.registerTileEntity(BotariumTileEntity.class, new ResourceLocation(GeckoLib.ModID, "botariumtile"));
 		GameRegistry.registerTileEntity(FertilizerTileEntity.class, new ResourceLocation(GeckoLib.ModID, "fertilizertile"));

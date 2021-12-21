@@ -7,10 +7,11 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import java.awt.*;
 
 public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable> implements LayerRenderer<T>
 {
-	private final IGeoRenderer<T> entityRenderer;
+	protected final IGeoRenderer<T> entityRenderer;
 
 	public GeoLayerRenderer(IGeoRenderer<T> entityRendererIn)
 	{
@@ -37,7 +38,10 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
 	@Override
 	public void doRenderLayer(T entityIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, float scaleIn)
 	{
-		this.render(entityIn, limbSwing, limbSwingAmount, partialTicks, ageInTicks, netHeadYaw, headPitch);
+	}
+	
+	public IGeoRenderer<T> getRenderer(){
+		return this.entityRenderer;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -51,5 +55,5 @@ public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable>
 		return this.entityRenderer.getTextureLocation(entityIn);
 	}
 
-	public abstract void render(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch);
+	public abstract void render(T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch, Color renderColor);
 }

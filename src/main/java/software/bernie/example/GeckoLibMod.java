@@ -24,11 +24,13 @@ import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
+import software.bernie.example.client.renderer.entity.GeoExampleEntityLayerRenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.example.entity.GeoExampleEntityLayer;
 import software.bernie.example.entity.ReplacedCreeperEntity;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.ItemRegistry;
@@ -74,6 +76,7 @@ public class GeckoLibMod {
 	{
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
 		{
+			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class, GeoExampleEntityLayerRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
 

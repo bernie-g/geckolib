@@ -29,7 +29,6 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 
 import java.awt.*;
-import java.nio.FloatBuffer;
 import java.util.Collections;
 import java.util.List;
 
@@ -131,21 +130,19 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
 		render(model, entity, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f,
 				(float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
+		
+		if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
+			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
+				layerRenderer.render(entity, limbSwing, limbSwingAmount, partialTicks, limbSwing, netHeadYaw, headPitch, renderColor);
+			}
+		}
+		
 		if (flag) {
 			RenderHurtColor.unset();
 		}
 
-		if (!(entity instanceof EntityPlayer)
-				|| (entity instanceof EntityPlayer && !((EntityPlayer) entity).isSpectator())) {
-			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-				layerRenderer.doRenderLayer(entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch,
-						1 / 16F);
-			}
-		}
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
-
-		// super.doRender(entity, x, y, z, entityYaw, partialTicks);
 	}
 
 	@Override
