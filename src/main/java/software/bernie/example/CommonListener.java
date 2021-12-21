@@ -18,6 +18,8 @@ public class CommonListener {
 					MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 1.0D).build());
 			event.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(),
 					MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 1.0D).build());
+			event.put(EntityRegistry.GEOLAYERENTITY.get(), MobEntity.createMobAttributes()
+					.add(Attributes.MAX_HEALTH, 1.0D).add(Attributes.MOVEMENT_SPEED, 0.25f).build());
 		}
 	}
 }
