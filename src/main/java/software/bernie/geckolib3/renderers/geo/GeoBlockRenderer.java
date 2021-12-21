@@ -74,6 +74,11 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	@Override
+	public Integer getUniqueID(T animatable) {
+		return animatable.getBlockPos().hashCode();
+	}
+
+	@Override
 	public AnimatedGeoModel<T> getGeoModelProvider() {
 		return this.modelProvider;
 	}
