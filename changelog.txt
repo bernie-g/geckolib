@@ -1,4 +1,4 @@
-v3.0.13
+v3.0.14
 
-- Added Layer Example
-- Minor fixes
+- Updates Core
+- Makes Entity and Geo Replaced main methods public.

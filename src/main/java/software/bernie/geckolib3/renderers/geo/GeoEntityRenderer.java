@@ -46,7 +46,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 	private final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
-	protected GeoEntityRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider) {
+	public GeoEntityRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}
