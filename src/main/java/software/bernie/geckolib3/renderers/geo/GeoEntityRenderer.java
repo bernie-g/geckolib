@@ -61,7 +61,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public IRenderTypeBuffer rtb;
 	public ResourceLocation whTexture;
 
-	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
+	public GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}

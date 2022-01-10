@@ -50,7 +50,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		});
 	}
 
-	protected GeoReplacedEntityRenderer(EntityRendererManager renderManager,
+	public GeoReplacedEntityRenderer(EntityRendererManager renderManager,
 			AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
