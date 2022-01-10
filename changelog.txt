@@ -1,4 +1,4 @@
-v3.0.3
+v3.0.4
 
-- Updated to 1.18.1
-- Adds -forge back into the file name.
+- Updates Core
+- Makes Entity, Projectiles and Geo Replaced main methods public.
