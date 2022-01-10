@@ -1,3 +1,4 @@
-3.0.23
+3.0.24
 
-- Bump to 1.18.1
+- Updates Core
+- Makes Entity, Projectiles and Geo Replaced main methods public.
