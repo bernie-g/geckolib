@@ -1,4 +1,3 @@
-v3.0.14
+v3.0.15
 
-- Updates Core
-- Makes Entity and Geo Replaced main methods public.
+- Updates Core - Syllient
