@@ -1,4 +1,3 @@
-3.0.24
+3.0.25
 
-- Updates Core
-- Makes Entity, Projectiles and Geo Replaced main methods public.
+- Updates Core - Syllient
