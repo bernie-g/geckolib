@@ -1,3 +1,3 @@
-3.0.25
+3.0.26
 
-- Updates Core - Syllient
+- Fixes issue with layer animations mob using lerp wrong.
