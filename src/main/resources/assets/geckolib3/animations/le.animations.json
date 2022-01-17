@@ -59,23 +59,11 @@
 						"vector": ["Math.cos(query.anim_time * 360) * -17", 0, 0]
 					},
 					"position": {
-						"0.0": {
-							"vector": [0, "Math.lerp(-0.2)", 0],
-							"easing": "easeInOutQuad"
-						},
 						"0.25": {
 							"vector": [0, 0, 0]
 						},
 						"0.5": {
 							"vector": [0, 0, 0]
-						},
-						"0.75": {
-							"vector": [0, "Math.lerp(0.8)", 0],
-							"easing": "easeOutQuad"
-						},
-						"1.0": {
-							"vector": [0, "Math.lerp(-0.2)", 0],
-							"easing": "easeInOutQuad"
 						}
 					}
 				},
@@ -86,14 +74,6 @@
 					"position": {
 						"0.0": {
 							"vector": [0, 0, 0]
-						},
-						"0.25": {
-							"vector": [0, "Math.lerp(0.8)", 0],
-							"easing": "easeOutQuad"
-						},
-						"0.5": {
-							"vector": [0, "Math.lerp(-0.2)", 0],
-							"easing": "easeInOutQuad"
 						},
 						"0.75": {
 							"vector": [0, 0, 0]
