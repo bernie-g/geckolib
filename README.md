@@ -4,14 +4,13 @@ GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D 
 
 ## Installation
 [![curseforge](http://cf.way2muchnoise.eu/versions/388172.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
-![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.15)
-<a href="https://cla-assistant.io/bernie-g/geckolib"><img src="https://cla-assistant.io/readme/badge/bernie-g/geckolib" alt="CLA assistant" /></a>
-[![Newest Maven Snapshot](https://img.shields.io/maven-metadata/v?label=newest%20snapshot&metadataUrl=https%3A%2F%2Frepo.repsy.io%2Fmvn%2Fgandiber%2Fgeckolib%2Fsoftware%2Fbernie%2Fgeckolib%2Fforge-1.15.2-geckolib%2Fmaven-metadata.xml)](https://repo.repsy.io/mvn/gandiber/geckolib/software/bernie/geckolib/forge-1.15.2-geckolib/)
+![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.18)
+[![Latest version of 'geckolib-1.18-forge' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/geckolib3/geckolib/maven/geckolib-forge-1.16.5/latest/a=noarch;xg=software.bernie.geckolib/?render=true&show_latest=true)](https://cloudsmith.io/~geckolib3/repos/geckolib/packages/detail/maven/geckolib-forge-1.16.5/latest/a=noarch;xg=software.bernie.geckolib/)
 
-Please see the [Getting Started guide](https://geckolib.com/en/latest/3.0.0/) for detailed installation instructions per modding framework.
+Please see the [Getting Started guide](https://github.com/bernie-g/geckolib/wiki/Getting-Started) for detailed installation instructions per modding framework.
 
 ## Documentation
-GeckoLib provides detailed documentation in the form of a [Wiki](https://geckolib.com/en/latest/3.0.0/). GeckoLib is currently available for Forge 1.12, 1.15, 1.16 and Fabric 1.15 and 1.16.
+GeckoLib provides detailed documentation in the form of a [Wiki](https://github.com/bernie-g/geckolib/wiki). GeckoLib is currently available for Forge 1.12, 1.15, 1.16, 1.17, and 1.18 and Fabric 1.16, 1.17, and 1.18.
 
 ## Support
 If you have questions or need help getting up and running with questions, feel free to [join our discord](https://discord.gg/MNQcKxB)!
