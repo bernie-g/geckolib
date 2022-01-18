@@ -1,3 +1,3 @@
-3.0.26
+3.0.27
 
-- Fixes issue with layer animations mob using lerp wrong.
+- GeoReplaced missing EntityModelData head pitch/yaw added.

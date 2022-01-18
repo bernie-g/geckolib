@@ -138,6 +138,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				limbSwingAmount = 1.0F;
 			}
 		}
+		
+		entityModelData.headPitch = -f6;
+		entityModelData.netHeadYaw = -f2;
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks,
 				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel) {
