@@ -142,6 +142,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				limbSwingAmount = 1.0F;
 			}
 		}
+		
+		entityModelData.headPitch = -f6;
+		entityModelData.netHeadYaw = -f2;
 
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks,
