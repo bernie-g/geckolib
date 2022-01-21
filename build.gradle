@@ -103,23 +103,14 @@ minecraft {
 }
 
 repositories {
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-    maven { url 'https://maven.enginehub.org/repo/' }
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-    maven { url 'https://maven.blamejared.com' }
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    jcenter()
-	maven {
-        name = "jitpack"
-        url "https://jitpack.io"
-    }
-    maven {
-    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
-    }
-    maven { url = "https://maven.theillusivec4.top/" }
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+    maven { url "https://maven.enginehub.org/repo/" }
+	maven { url "https://cfa2.cursemaven.com" }
+    maven { url "https://maven.blamejared.com" }
+    maven { url "https://minecraft.curseforge.com/api/maven/" }
+	maven { url "https://jitpack.io" }
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
+    maven { url "https://maven.theillusivec4.top/" }
     mavenCentral()
 }
 
