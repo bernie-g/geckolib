@@ -117,6 +117,7 @@ repositories {
     maven { url "https://minecraft.curseforge.com/api/maven/" }
     maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
 	maven { url "https://cfa2.cursemaven.com" }
+    maven { url "https://plugins.gradle.org/m2/" }
     mavenCentral()
 }
 
