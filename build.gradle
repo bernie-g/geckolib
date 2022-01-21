@@ -33,13 +33,9 @@ repositories {
     mavenCentral()
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url 'https://maven.blamejared.com' }
-	maven {
-        url = "https://www.cursemaven.com"
-    }
-    maven {
-    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
-    }
-    maven { url  = 'https://plugins.gradle.org/m2/' }
+	maven { url "https://cfa2.cursemaven.com" }
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
+    maven { url "https://plugins.gradle.org/m2/" }
     maven { url "https://maven.shedaniel.me/" }
 }
 
