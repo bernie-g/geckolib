@@ -2,8 +2,8 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 buildscript {
     repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-		maven { url = 'https://plugins.gradle.org/m2/' }
+        maven { url = "https://maven.minecraftforge.net/" }
+		maven { url = "https://plugins.gradle.org/m2/" }
         jcenter()
         mavenCentral()
     }
@@ -19,7 +19,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
-apply from: 'https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -111,22 +111,12 @@ minecraft.runs.all {
 }
 
 repositories {
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-    maven { url 'https://maven.enginehub.org/repo/' }
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-    maven { url 'https://maven.blamejared.com' }
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    jcenter()
-	maven {
-        name = "jitpack"
-        url "https://jitpack.io"
-    }
-    maven {
-    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
-    }
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+    maven { url "https://maven.enginehub.org/repo/" }
+    maven { url "https://maven.blamejared.com" }
+    maven { url "https://minecraft.curseforge.com/api/maven/" }
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
+	maven { url "https://cfa2.cursemaven.com" }
     mavenCentral()
 }
 
