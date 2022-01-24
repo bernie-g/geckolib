@@ -1,3 +1,3 @@
-v3.0.16
+v3.0.17
 
-- Fixes issue with layer animations mob using lerp wrong.
+- Allows changing animation speed in the predicte with setAniamtionSpeed. - s3xi
