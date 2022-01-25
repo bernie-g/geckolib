@@ -1,3 +1,4 @@
-3.0.28
+3.0.30
 
-- Allows changing animation speed in the predicte with setAniamtionSpeed. - s3xi
+- Fixes Keyframes repeating - ayloncarrijo
+- Fixed issue with core.
