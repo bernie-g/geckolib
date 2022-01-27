@@ -7,12 +7,12 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
@@ -32,11 +32,20 @@ configurations {
     shade
 }
 
+
 minecraft {
-    version = "1.12.2-14.23.5.2799"
-    runDir = "run"
-    mappings = "snapshot_20171003"
+    mappings channel: 'snapshot', version: '20171003-1.12'
+    runs {
+        client {
+            workingDirectory project.file('run')
+        }
+
+        server {
+            workingDirectory project.file('server')
+        }
+    }
 }
+
 repositories {
     maven { url 'https://maven.enginehub.org/repo/' }
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
@@ -46,6 +55,7 @@ repositories {
 }
 
 dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
     compile 'com.eliotlash.molang:molang:18'
     compile 'com.eliotlash.mclib:mclib:18'
     compile project(':geckolib-core')
