@@ -1,4 +1,4 @@
-v3.0.63
+v3.0.64
 
-- Fixes Keyframes repeating - ayloncarrijo
-- Fixed issue with core.
+- Core Version Bump
+- Replaces AWT Color with Core Color code.
