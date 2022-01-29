@@ -1,19 +1,25 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.*;
-import net.minecraft.resources.ResourceLocation;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-import software.bernie.geckolib3.geo.render.built.*;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.GeoQuad;
+import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
-
-import javax.annotation.Nullable;
-import java.awt.*;
 
 public interface IGeoRenderer<T> {
 	default void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
@@ -119,7 +125,7 @@ public interface IGeoRenderer<T> {
 
 	default Color getRenderColor(T animatable, float partialTicks, PoseStack stack,
 			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn) {
-		return new Color(255, 255, 255, 255);
+		return Color.ofRGBA(255, 255, 255, 255);
 	}
 
 	default Integer getUniqueID(T animatable) {
