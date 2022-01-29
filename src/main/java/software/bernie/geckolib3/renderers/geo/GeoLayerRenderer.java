@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
-import java.awt.*;
 
 public abstract class GeoLayerRenderer<T extends EntityLivingBase & IAnimatable> implements LayerRenderer<T>
 {

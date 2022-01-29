@@ -1,11 +1,16 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.vecmath.Vector3f;
+import javax.vecmath.Vector4f;
+
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
@@ -13,10 +18,6 @@ import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.MatrixStack;
-
-import javax.vecmath.Vector3f;
-import javax.vecmath.Vector4f;
-import java.awt.*;
 
 public interface IGeoRenderer<T>
 {
@@ -131,7 +132,7 @@ public interface IGeoRenderer<T>
 
 	default Color getRenderColor(T animatable, float partialTicks)
 	{
-		return new Color(255, 255, 255, 255);
+		return Color.ofRGBA(255, 255, 255, 255);
 	}
 
 	default Integer getUniqueID(T animatable)

@@ -1,5 +1,8 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.util.Collections;
+import java.util.Objects;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
@@ -10,12 +13,9 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.Objects;
 
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends TileEntityItemStackRenderer implements IGeoRenderer<T>
 {
