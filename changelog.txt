@@ -1,3 +1,3 @@
-v3.0.20
+v3.0.21
 
-Stupid Forge 1.12.2 version stuff
+- Fixes issues with Custom Instruction Keyframes
