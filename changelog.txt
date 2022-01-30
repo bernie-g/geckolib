@@ -1,4 +1,3 @@
-v3.0.64
+v3.0.65
 
-- Core Version Bump
-- Replaces AWT Color with Core Color code.
+- Fixes issues with Custom Instruction Keyframes
