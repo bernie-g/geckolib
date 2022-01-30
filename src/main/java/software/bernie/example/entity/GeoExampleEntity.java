@@ -1,18 +1,23 @@
 package software.bernie.example.entity;
 
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
@@ -46,7 +51,17 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<GeoExampleEntity>(this, "controller", 0, this::predicate));
+		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0, this::predicate);
+		controller.registerCustomInstructionListener(this::customListener);
+		data.addAnimationController(controller);
+	}
+
+	@SuppressWarnings("resource")
+	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
+		final ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		if (player != null) {
+			player.sendMessage(new LiteralText("KeyFraming"), true);
+		}
 	}
 
 	@Override
