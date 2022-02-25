@@ -120,7 +120,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			netHeadYaw = f1 - f;
 		}
 
-		float headPitch = MathHelper.lerp(partialTicks, entity.prevPitch, entity.getPitch());
+		float headPitch = MathHelper.lerp(partialTicks, entity.getPitch(), entity.getPitch());
 		if (entity.getPose() == EntityPose.SLEEPING) {
 			Direction direction = entity.getSleepingDirection();
 			if (direction != null) {
