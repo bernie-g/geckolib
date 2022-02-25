@@ -5,7 +5,6 @@ import java.util.Collections;
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.util.GlfwUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
@@ -153,10 +152,5 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
-	}
-
-	@Override
-	public double getCurrentTick() {
-		return GlfwUtil.getTime() * 20;
 	}
 }
