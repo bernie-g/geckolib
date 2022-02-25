@@ -1,3 +1,4 @@
-3.0.32
+3.0.33
 
-- Fixes issues with Custom Instruction Keyframes
+- Fixes ticking systems with Replay mod - Gecko
+- Fxies head rotations.
