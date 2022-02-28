@@ -8,7 +8,7 @@ buildscript {
 }
 
 plugins {
-    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'fabric-loom' version '0.11-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
@@ -24,10 +24,6 @@ archivesBaseName = project.archives_base_name
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 group = project.maven_group
-
-
-minecraft {
-}
 
 repositories {
     mavenCentral()
@@ -129,7 +125,7 @@ jar {
 
 remapJar {
     dependsOn(shadowJar)
-    input = shadowJar.archivePath
+    inputFile = shadowJar.archiveFile
 }
 
 publishing {
@@ -193,7 +189,7 @@ if (file('key.properties').exists()) {
         releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
-        addGameVersion("1.18.1")
+        addGameVersion("1.18.2")
         addGameVersion("Fabric")
         addGameVersion("Java 17")
 

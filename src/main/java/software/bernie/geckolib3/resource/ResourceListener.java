@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.resource;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.resource.ReloadableResourceManagerImpl;
 import software.bernie.geckolib3.GeckoLib;
 
 public class ResourceListener {
@@ -11,7 +11,7 @@ public class ResourceListener {
 				throw new RuntimeException(
 						"GeckoLib was initialized too early! If you are on fabric, please read the wiki on when to initialize!");
 			}
-			ReloadableResourceManager reloadable = (ReloadableResourceManager) MinecraftClient.getInstance()
+			ReloadableResourceManagerImpl reloadable = (ReloadableResourceManagerImpl) MinecraftClient.getInstance()
 					.getResourceManager();
 			reloadable.registerReloader(GeckoLibCache.getInstance()::reload);
 		} else {
