@@ -1,3 +1,3 @@
-v3.0.11
+v3.0.12
 
-- Fixes issues with Custom Instruction Keyframes
+- Updated for 1.18.2
