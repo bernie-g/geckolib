@@ -23,13 +23,11 @@ public abstract class GeoArmorItem extends ArmorItem {
 	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
 		super.initializeClient(consumer);
 		consumer.accept(new IItemRenderProperties() {
-
-			@SuppressWarnings("unchecked")
 			@Override
-			public <A extends HumanoidModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
-					EquipmentSlot armorSlot, A _default) {
-				return (A) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass()).applyEntityStats(_default)
-						.applySlot(armorSlot).setCurrentItem(entityLiving, itemStack, armorSlot);
+			public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
+					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
+				return (HumanoidModel<?>) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass()).applyEntityStats(_default)
+				.applySlot(armorSlot).setCurrentItem(entityLiving, itemStack, armorSlot);
 			}
 		});
 	}

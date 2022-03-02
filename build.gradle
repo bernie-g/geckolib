@@ -40,7 +40,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.1'
+    mappings channel: 'official', version: '1.18.2'
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -122,7 +122,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.1-39.0.0'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.0.0'
     library 'com.eliotlash.molang:molang:18'
     library 'com.eliotlash.mclib:mclib:18'
     library(project(':geckolib-core')) {
@@ -261,7 +261,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-        	addGameVersion("1.18.1")
+        	addGameVersion("1.18.2")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
