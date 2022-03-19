@@ -1,3 +1,4 @@
-3.0.35
+3.0.0
 
-- 1.18.2 Release!
+- Updates Geckolib to 22w11a
+- Updates get model/animation/texture methods to fix Mojmappings issue.
