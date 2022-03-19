@@ -8,17 +8,17 @@ import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 public class LEModel extends AnimatedTickingGeoModel<LEEntity> {
 
 	@Override
-	public Identifier getModelLocation(LEEntity object) {
+	public Identifier getModelResource(LEEntity object) {
 		return new Identifier(GeckoLib.ModID, "geo/le.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(LEEntity object) {
+	public Identifier getTextureResource(LEEntity object) {
 		return new Identifier(GeckoLib.ModID, "textures/entity/le.png");
 	}
 
 	@Override
-	public Identifier getAnimationFileLocation(LEEntity animatable) {
+	public Identifier getAnimationResource(LEEntity animatable) {
 		return new Identifier(GeckoLib.ModID, "animations/le.animations.json");
 	}
 

@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PotatoArmorModel extends AnimatedGeoModel<PotatoArmorItem> {
 	@Override
-	public Identifier getModelLocation(PotatoArmorItem object) {
+	public Identifier getModelResource(PotatoArmorItem object) {
 		return new Identifier(GeckoLib.ModID, "geo/potato_armor.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(PotatoArmorItem object) {
+	public Identifier getTextureResource(PotatoArmorItem object) {
 		return new Identifier(GeckoLib.ModID, "textures/item/potato_armor.png");
 	}
 
 	@Override
-	public Identifier getAnimationFileLocation(PotatoArmorItem animatable) {
+	public Identifier getAnimationResource(PotatoArmorItem animatable) {
 		return new Identifier(GeckoLib.ModID, "animations/potato_armor.animation.json");
 	}
 }

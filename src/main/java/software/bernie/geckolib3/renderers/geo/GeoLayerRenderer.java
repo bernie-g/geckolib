@@ -32,7 +32,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 	protected void renderModel(GeoModelProvider<T> modelProviderIn, Identifier textureLocationIn,
 			MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn,
 			float partialTicks, float red, float green, float blue) {
-		GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelLocation(entityIn));
+		GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelResource(entityIn));
 		RenderLayer renderType = getRenderType(textureLocationIn);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
 		this.getRenderer().render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, ivertexbuilder,
@@ -53,7 +53,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 	}
 
 	protected Identifier getEntityTexture(T entityIn) {
-		return this.entityRenderer.getTextureLocation(entityIn);
+		return this.entityRenderer.getTextureResource(entityIn);
 	}
 
 	public abstract void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,

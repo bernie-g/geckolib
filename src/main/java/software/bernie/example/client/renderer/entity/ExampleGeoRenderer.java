@@ -21,7 +21,7 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	public RenderLayer getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack,
 			@Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder,
 			int packedLightIn, Identifier textureLocation) {
-		return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
+		return RenderLayer.getEntityTranslucent(this.getTextureResource(animatable));
 	}
 
 }

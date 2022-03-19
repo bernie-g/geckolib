@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class BikeModel extends AnimatedGeoModel<BikeEntity> {
 	@Override
-	public Identifier getAnimationFileLocation(BikeEntity entity) {
+	public Identifier getAnimationResource(BikeEntity entity) {
 		return new Identifier(GeckoLib.ModID, "animations/bike.animation.json");
 	}
 
 	@Override
-	public Identifier getModelLocation(BikeEntity entity) {
+	public Identifier getModelResource(BikeEntity entity) {
 		return new Identifier(GeckoLib.ModID, "geo/bike.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(BikeEntity entity) {
+	public Identifier getTextureResource(BikeEntity entity) {
 		return new Identifier(GeckoLib.ModID, "textures/model/entity/bike.png");
 	}
 }

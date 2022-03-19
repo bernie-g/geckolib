@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 @SuppressWarnings("rawtypes")
 public class ReplacedCreeperModel extends AnimatedGeoModel {
 	@Override
-	public Identifier getModelLocation(Object object) {
+	public Identifier getModelResource(Object object) {
 		return new Identifier(GeckoLib.ModID, "geo/creeper.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(Object object) {
+	public Identifier getTextureResource(Object object) {
 		return new Identifier(GeckoLib.ModID, "textures/model/entity/creeper.png");
 	}
 
 	@Override
-	public Identifier getAnimationFileLocation(Object animatable) {
+	public Identifier getAnimationResource(Object animatable) {
 		return new Identifier(GeckoLib.ModID, "animations/creeper.animation.json");
 	}
 }

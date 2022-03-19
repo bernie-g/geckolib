@@ -51,7 +51,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 
 	public void render(T tile, float partialTicks, MatrixStack stack, VertexConsumerProvider bufferIn,
 			int packedLightIn) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.push();
 		stack.translate(0, 0.01f, 0);
@@ -59,10 +59,10 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 
 		rotateBlock(getFacing(tile), stack);
 
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(tile));
+		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureResource(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
-				getTextureLocation(tile));
+				getTextureResource(tile));
 		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.DEFAULT_UV,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
@@ -114,7 +114,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	@Override
-	public Identifier getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+	public Identifier getTextureResource(T instance) {
+		return this.modelProvider.getTextureResource(instance);
 	}
 }

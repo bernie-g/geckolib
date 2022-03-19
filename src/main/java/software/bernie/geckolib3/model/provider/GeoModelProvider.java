@@ -13,7 +13,7 @@ public abstract class GeoModelProvider<T> {
 		return GeckoLibCache.getInstance().getGeoModels().get(location);
 	}
 
-	public abstract Identifier getModelLocation(T object);
+	public abstract Identifier getModelResource(T object);
 
-	public abstract Identifier getTextureLocation(T object);
+	public abstract Identifier getTextureResource(T object);
 }

@@ -149,7 +149,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 		stack.translate(0, 0.01f, 0);
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entity));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(animatable));
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTexture(entity));
@@ -182,7 +182,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	@Override
 	public Identifier getTexture(Entity entity) {
-		return getTextureLocation(currentAnimatable);
+		return getTextureResource(currentAnimatable);
 	}
 
 	@Override
@@ -282,8 +282,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@Override
-	public Identifier getTextureLocation(Object instance) {
-		return this.modelProvider.getTextureLocation((IAnimatable) instance);
+	public Identifier getTextureResource(Object instance) {
+		return this.modelProvider.getTextureResource((IAnimatable) instance);
 	}
 
 	public final boolean addLayer(GeoLayerRenderer<? extends LivingEntity> layer) {

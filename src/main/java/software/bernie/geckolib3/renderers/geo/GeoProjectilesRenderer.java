@@ -47,7 +47,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	@Override
 	public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
 			VertexConsumerProvider bufferIn, int packedLightIn) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(entityIn));
 		matrixStackIn.push();
 		matrixStackIn.multiply(Vec3f.POSITIVE_Y
 				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevYaw, entityIn.getYaw()) - 90.0F));
@@ -85,13 +85,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public Identifier getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+	public Identifier getTextureResource(T instance) {
+		return this.modelProvider.getTextureResource(instance);
 	}
 
 	@Override
 	public Identifier getTexture(T entity) {
-		return getTextureLocation(entity);
+		return getTextureResource(entity);
 	}
 
 }

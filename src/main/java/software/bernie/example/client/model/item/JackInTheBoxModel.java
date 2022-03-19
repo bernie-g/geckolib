@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class JackInTheBoxModel extends AnimatedGeoModel<JackInTheBoxItem> {
 	@Override
-	public Identifier getModelLocation(JackInTheBoxItem object) {
+	public Identifier getModelResource(JackInTheBoxItem object) {
 		return new Identifier(GeckoLib.ModID, "geo/jack.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(JackInTheBoxItem object) {
+	public Identifier getTextureResource(JackInTheBoxItem object) {
 		return new Identifier(GeckoLib.ModID, "textures/item/jack.png");
 	}
 
 	@Override
-	public Identifier getAnimationFileLocation(JackInTheBoxItem animatable) {
+	public Identifier getAnimationResource(JackInTheBoxItem animatable) {
 		return new Identifier(GeckoLib.ModID, "animations/jackinthebox.animation.json");
 	}
 }

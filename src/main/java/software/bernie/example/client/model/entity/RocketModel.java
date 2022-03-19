@@ -7,17 +7,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class RocketModel extends AnimatedGeoModel<RocketProjectile> {
 	@Override
-	public Identifier getModelLocation(RocketProjectile object) {
+	public Identifier getModelResource(RocketProjectile object) {
 		return new Identifier(GeckoLib.ModID, "geo/rocket.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureLocation(RocketProjectile object) {
+	public Identifier getTextureResource(RocketProjectile object) {
 		return new Identifier(GeckoLib.ModID, "textures/entity/projectiles/rocket.png");
 	}
 
 	@Override
-	public Identifier getAnimationFileLocation(RocketProjectile animatable) {
+	public Identifier getAnimationResource(RocketProjectile animatable) {
 		return new Identifier(GeckoLib.ModID, "animations/rocket.animation.json");
 	}
 
