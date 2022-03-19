@@ -76,12 +76,12 @@ public class GeckoLibCache {
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String type, Function<Identifier, T> loader, BiConsumer<Identifier, T> map) {
 		return CompletableFuture
-				.supplyAsync(() -> resourceManager.findResources(type, fileName -> fileName.endsWith(".json")),
+				.supplyAsync(() -> resourceManager.findResources(type, fileName -> fileName.toString().endsWith(".json")),
 						executor)
 				.thenApplyAsync(resources -> {
 					Map<Identifier, CompletableFuture<T>> tasks = new HashMap<>();
 
-					for (Identifier resource : resources) {
+					for (Identifier resource : resources.keySet()) {
 						CompletableFuture<T> existing = tasks.put(resource,
 								CompletableFuture.supplyAsync(() -> loader.apply(resource), executor));
 
