@@ -1,4 +1,4 @@
 3.0.0
 
-- Updates Geckolib to 22w11a
-- Updates get model/animation/texture methods to fix Mojmappings issue.
+- Updates Geckolib to 22w12a
+- Updated BikeEntity to 22w12a changes
