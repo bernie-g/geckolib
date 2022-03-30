@@ -1,6 +1,5 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -31,6 +30,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -52,32 +52,18 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		REPEATED
 	}
 
-	//TODO: Replace with AT, couldn't get that to work sadly so i used reflect instead
-	protected static Field FIELD_CUBES = null;
 	static final String FIELD_NAME_CUBES_OBF = "field_78804_l ";
 	static final String FIELD_NAME_CUBES_DEOBF = "cubes";
+	static final String[] CUBES_FIELD_NAMES = new String[] {FIELD_NAME_CUBES_OBF, FIELD_NAME_CUBES_DEOBF};
 	
-	static {
-		try {
-			FIELD_CUBES = ModelRenderer.class.getDeclaredField(FIELD_NAME_CUBES_OBF);
-		} catch (NoSuchFieldException e) {
-			try {
-				FIELD_CUBES = ModelRenderer.class.getDeclaredField(FIELD_NAME_CUBES_DEOBF);
-			} catch (NoSuchFieldException e1) {
-				e1.printStackTrace();
-			} catch (SecurityException e1) {
-				e1.printStackTrace();
-			}
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		}
-		if(FIELD_CUBES != null) {
-			FIELD_CUBES.setAccessible(true);
-		}
-	}
 	
 	protected float widthScale;
 	protected float heightScale;
+	
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	public final Function<T, ResourceLocation> TEXTURE_GETTER;
 	public final Function<T, ResourceLocation> MODEL_ID_GETTER;
@@ -101,11 +87,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.widthScale = widthScale;
 		this.heightScale = heightScale;
 	}
-
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
-	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	// Entrypoint for rendering, calls everything else
 	@Override
@@ -158,27 +139,24 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
 
+	//TODO: Replace with AT; that is cleaner
 	@Nullable
 	protected ObjectList<ModelRenderer.ModelBox> accessCubesOf(ModelRenderer mr) {
-		if(FIELD_CUBES == null) {
-			return null;
-		}
-		try {
-			Object o = FIELD_CUBES.get(mr);
-			try {
-				@SuppressWarnings("unchecked")
-				ObjectList<ModelRenderer.ModelBox> ret = (ObjectList<ModelRenderer.ModelBox>) o;
-				return ret;
-			} catch(ClassCastException cce) {
-				cce.printStackTrace();
+		Object obj = ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, mr, FIELD_NAME_CUBES_OBF);
+		if(obj == null) {
+			obj = ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, mr, FIELD_NAME_CUBES_DEOBF);
+			if(obj == null) {
 				return null;
 			}
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
 		}
-		return null;
+		try {
+			@SuppressWarnings("unchecked")
+			ObjectList<ModelRenderer.ModelBox> ret = (ObjectList<ModelRenderer.ModelBox>) obj;
+			return ret;
+		} catch(ClassCastException cce) {
+			cce.printStackTrace();
+			return null;
+		}
 	}
 	
 	@Override
