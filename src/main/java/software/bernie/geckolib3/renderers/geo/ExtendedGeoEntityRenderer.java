@@ -154,10 +154,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		boolean customTextureMarker = this.currentModelRenderCycle == EModelRenderCycle.INITIAL && this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered) != null;
+		ResourceLocation tfb = this.currentModelRenderCycle == EModelRenderCycle.INITIAL ? null : this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
+		boolean customTextureMarker = tfb != null;
 		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
 		if (customTextureMarker) {
-			currentTexture = this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
+			currentTexture = tfb;
 			this.bindTexture(currentTexture);
 		}
 		if (this.currentModelRenderCycle == EModelRenderCycle.INITIAL) {
