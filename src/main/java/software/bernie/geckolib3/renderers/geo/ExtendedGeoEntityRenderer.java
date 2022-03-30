@@ -34,6 +34,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
@@ -203,43 +204,42 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						ObjectList<ModelRenderer.ModelBox> cubeList = accessCubesOf(sourceLimb);
 						if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
 							// IMPORTANT: The first cube is used to define the armor part!!
-							bone.childCubes.stream().findFirst().ifPresent((firstCube) -> {
-								final float targetSizeX = firstCube.size.x();
-								final float targetSizeY = firstCube.size.y();
-								final float targetSizeZ = firstCube.size.z();
-								final ModelBox armorCube = cubeList.get(0);
-								float scaleX = targetSizeX / Math.abs(armorCube.maxX - armorCube.minX);
-								float scaleY = targetSizeY / Math.abs(armorCube.maxY - armorCube.minY);
-								float scaleZ = targetSizeZ / Math.abs(armorCube.maxZ - armorCube.minZ);
+							GeoCube firstCube = bone.childCubes.get(0);
+							final float targetSizeX = firstCube.size.x();
+							final float targetSizeY = firstCube.size.y();
+							final float targetSizeZ = firstCube.size.z();
+							final ModelBox armorCube = cubeList.get(0);
+							float scaleX = targetSizeX / Math.abs(armorCube.maxX - armorCube.minX);
+							float scaleY = targetSizeY / Math.abs(armorCube.maxY - armorCube.minY);
+							float scaleZ = targetSizeZ / Math.abs(armorCube.maxZ - armorCube.minZ);
 
-								sourceLimb.setPos(-bone.getPivotX(), -bone.getPivotY(), bone.getPivotZ());
-								sourceLimb.xRot = -bone.getRotationX();
-								sourceLimb.yRot = -bone.getRotationY();
-								sourceLimb.zRot = bone.getRotationZ();
-								stack.scale(-1, -1, 1);
+							sourceLimb.setPos(-bone.getPivotX(), -bone.getPivotY(), bone.getPivotZ());
+							sourceLimb.xRot = -bone.getRotationX();
+							sourceLimb.yRot = -bone.getRotationY();
+							sourceLimb.zRot = bone.getRotationZ();
+							stack.scale(-1, -1, 1);
 
-								stack.pushPose();
+							stack.pushPose();
 
-								stack.scale(scaleX, scaleY, scaleZ);
+							stack.scale(scaleX, scaleY, scaleZ);
 
-								ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone, boneSlot, null);
-								this.bindTexture(armorResource);
+							ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone, boneSlot, null);
+							this.bindTexture(armorResource);
 
-								if (armorItem instanceof IDyeableArmorItem) {
-									int i = ((net.minecraft.item.IDyeableArmorItem) armorItem).getColor(armorForBone);
-									float r = (float) (i >> 16 & 255) / 255.0F;
-									float g = (float) (i >> 8 & 255) / 255.0F;
-									float b = (float) (i & 255) / 255.0F;
-									
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1, armorForBone, armorResource);
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone, getArmorResource(currentEntityBeingRendered, armorForBone, boneSlot, "overlay"));
-								} else {
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone, armorResource);
-								}
+							if (armorItem instanceof IDyeableArmorItem) {
+								int i = ((net.minecraft.item.IDyeableArmorItem) armorItem).getColor(armorForBone);
+								float r = (float) (i >> 16 & 255) / 255.0F;
+								float g = (float) (i >> 8 & 255) / 255.0F;
+								float b = (float) (i & 255) / 255.0F;
+								
+								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1, armorForBone, armorResource);
+								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone, getArmorResource(currentEntityBeingRendered, armorForBone, boneSlot, "overlay"));
+							} else {
+								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone, armorResource);
+							}
 
-								stack.popPose();
+							stack.popPose();
 
-							});
 							this.bindTexture(currentTexture);
 							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 						}
