@@ -268,6 +268,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	/*
 	 * Return null, if the entity's texture is used
+	 * ALso doesn't work yet, or, well, i haven't tested it, so, maybe it works...
 	 */
 	@Nullable
 	protected abstract ResourceLocation getTextureForBone(String boneName, T currentEntity);
