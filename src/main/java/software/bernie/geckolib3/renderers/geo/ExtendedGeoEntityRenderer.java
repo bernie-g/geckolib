@@ -1,7 +1,6 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
@@ -65,9 +64,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 */
 	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	public final Function<T, ResourceLocation> TEXTURE_GETTER;
-	public final Function<T, ResourceLocation> MODEL_ID_GETTER;
-
 	protected ExtendedGeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);
 	}
@@ -79,9 +75,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected ExtendedGeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider, float widthScale, float heightScale, float shadowSize) {
 		super(renderManager, modelProvider);
-
-		this.MODEL_ID_GETTER = modelProvider::getModelLocation;
-		this.TEXTURE_GETTER = modelProvider::getTextureLocation;
 
 		this.shadowRadius = shadowSize;
 		this.widthScale = widthScale;
@@ -124,7 +117,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	@Override
 	public ResourceLocation getTextureLocation(T entity) {
-		return this.TEXTURE_GETTER.apply(entity);
+		return this.modelProvider.getTextureLocation(entity);
 	}
 
 	private T currentEntityBeingRendered;
