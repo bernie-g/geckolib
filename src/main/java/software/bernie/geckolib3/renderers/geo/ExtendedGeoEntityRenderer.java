@@ -29,7 +29,6 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
@@ -51,11 +50,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		REPEATED
 	}
 
-	static final String FIELD_NAME_CUBES_OBF = "field_78804_l ";
-	static final String FIELD_NAME_CUBES_DEOBF = "cubes";
-	static final String[] CUBES_FIELD_NAMES = new String[] {FIELD_NAME_CUBES_OBF, FIELD_NAME_CUBES_DEOBF};
-	
-	
 	protected float widthScale;
 	protected float heightScale;
 	
@@ -132,26 +126,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
 
-	//TODO: Replace with AT; that is cleaner
-	@Nullable
-	protected ObjectList<ModelRenderer.ModelBox> accessCubesOf(ModelRenderer mr) {
-		Object obj = ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, mr, FIELD_NAME_CUBES_OBF);
-		if(obj == null) {
-			obj = ObfuscationReflectionHelper.getPrivateValue(ModelRenderer.class, mr, FIELD_NAME_CUBES_DEOBF);
-			if(obj == null) {
-				return null;
-			}
-		}
-		try {
-			@SuppressWarnings("unchecked")
-			ObjectList<ModelRenderer.ModelBox> ret = (ObjectList<ModelRenderer.ModelBox>) obj;
-			return ret;
-		} catch(ClassCastException cce) {
-			cce.printStackTrace();
-			return null;
-		}
-	}
-	
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 		ResourceLocation tfb = this.currentModelRenderCycle == EModelRenderCycle.INITIAL ? null : this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
@@ -173,7 +147,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					final BipedModel armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered, armorForBone, boneSlot, boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER : DEFAULT_BIPED_ARMOR_MODEL_OUTER);
 					if (armorModel != null) {
 						ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-						ObjectList<ModelRenderer.ModelBox> cubeList = accessCubesOf(sourceLimb);
+						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
 						if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
 							// IMPORTANT: The first cube is used to define the armor part!!
 							GeoCube firstCube = bone.childCubes.get(0);
