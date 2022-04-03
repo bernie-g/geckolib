@@ -14,22 +14,21 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends CreatureEntity implements IAnimatable, IAnimationTickable {
+public class LEEntity extends CreatureEntity implements IAnimatable, IAnimationTickable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.geoLayerEntity.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public GeoExampleEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
+	public LEEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.noCulling = true;
 	}
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+		data.addAnimationController(new AnimationController<LEEntity>(this, "controller", 5, this::predicate));
 	}
 
 	@Override

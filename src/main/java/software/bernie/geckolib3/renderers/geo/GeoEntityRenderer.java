@@ -1,6 +1,5 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import java.awt.Color;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
@@ -61,7 +61,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public IRenderTypeBuffer rtb;
 	public ResourceLocation whTexture;
 
-	protected GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
+	public GeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}
@@ -161,7 +161,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getId();
+		return animatable.getUUID().hashCode();
 	}
 
 	@Override

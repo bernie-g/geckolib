@@ -14,6 +14,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.example.entity.LEEntity;
 import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
@@ -27,6 +28,9 @@ public class EntityRegistry {
 	
 	public static final RegistryObject<EntityType<ExtendedRendererEntity>> EXTENDED_RENDERER_EXAMPLE = buildEntity(
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F);
+
+	public static final RegistryObject<EntityType<LEEntity>> GEOLAYERENTITY = buildEntity(LEEntity::new,
+			LEEntity.class, 0.45F,1.0F);
 
 	public static <T extends Entity> RegistryObject<EntityType<T>> buildEntity(EntityType.IFactory<T> entity,
 			Class<T> entityClass, float width, float height) {
