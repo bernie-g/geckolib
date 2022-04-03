@@ -112,15 +112,15 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	@Override
 	protected EquipmentSlotType getEquipmentSlotForArmorBone(String boneName, ExtendedRendererEntity currentEntity) {
 		switch (boneName) {
-		//case "armorBipedLeftFoot":
+		case "armorBipedLeftFoot":
 		case "armorBipedRightFoot":
-		//case "armorBipedLeftFoot2":
+		case "armorBipedLeftFoot2":
 		case "armorBipedRightFoot2":
 			return EquipmentSlotType.FEET;
 		case "armorBipedLeftLeg":
-		//case "armorBipedRightLeg":
+		case "armorBipedRightLeg":
 		case "armorBipedLeftLeg2":
-		//case "armorBipedRightLeg2":
+		case "armorBipedRightLeg2":
 			return EquipmentSlotType.LEGS;
 		case "armorBipedRightArm":
 			return !currentEntity.isLeftHanded() ? EquipmentSlotType.MAINHAND : EquipmentSlotType.OFFHAND;
@@ -138,15 +138,15 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	@Override
 	protected ModelRenderer getArmorPartForBone(String name, BipedModel armorModel) {
 		switch (name) {
-		//case "armorBipedLeftFoot":
+		case "armorBipedLeftFoot":
 		case "armorBipedLeftLeg":
-		//case "armorBipedLeftFoot2":
+		case "armorBipedLeftFoot2":
 		case "armorBipedLeftLeg2":
 			return armorModel.leftLeg;
 		case "armorBipedRightFoot":
-		//case "armorBipedRightLeg":
+		case "armorBipedRightLeg":
 		case "armorBipedRightFoot2":
-		//case "armorBipedRightLeg2":
+		case "armorBipedRightLeg2":
 			return armorModel.rightLeg;
 		case "armorBipedRightArm":
 			return armorModel.rightArm;
