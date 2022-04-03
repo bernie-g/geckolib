@@ -12,6 +12,7 @@ import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.entity.BikeEntity;
+import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.GeckoLib;
 
@@ -23,6 +24,9 @@ public class EntityRegistry {
 			GeoExampleEntity::new, GeoExampleEntity.class, .7F, 1.3F);
 	public static final RegistryObject<EntityType<BikeEntity>> BIKE_ENTITY = buildEntity(BikeEntity::new,
 			BikeEntity.class, 0.5f, 0.6F);
+	
+	public static final RegistryObject<EntityType<ExtendedRendererEntity>> EXTENDED_RENDERER_EXAMPLE = buildEntity(
+			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F);
 
 	public static <T extends Entity> RegistryObject<EntityType<T>> buildEntity(EntityType.IFactory<T> entity,
 			Class<T> entityClass, float width, float height) {
