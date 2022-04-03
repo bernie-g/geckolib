@@ -49,7 +49,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		});
 	}
 
-	private final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 
 	public ItemStack mainHand;
