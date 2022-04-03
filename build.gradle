@@ -9,6 +9,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath "com.wynprice.cursemaven:CurseMaven:2.1.5"
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
@@ -19,6 +20,7 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: "com.wynprice.cursemaven"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
@@ -106,29 +108,22 @@ minecraft {
 }
 
 repositories {
-    maven { url 'https://repo.repsy.io/mvn/fadookie/particleman' }
-    maven { url 'https://maven.enginehub.org/repo/' }
-    maven { url 'https://repo.repsy.io/mvn/gandiber/geckolib' }
-    maven { url 'https://maven.blamejared.com' }
-    maven {
-        name = "CurseForge"
-        url = "https://minecraft.curseforge.com/api/maven/"
-    }
-    jcenter()
-	maven {
-        name = "jitpack"
-        url "https://jitpack.io"
-    }
-    maven {
-    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
-    }
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+    maven { url "https://maven.enginehub.org/repo/" }
+	maven { url "https://cfa2.cursemaven.com" }
+    maven { url "https://maven.blamejared.com" }
+    maven { url "https://minecraft.curseforge.com/api/maven/" }
+	maven { url "https://jitpack.io" }
+    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
+    maven { url "https://maven.theillusivec4.top/" }
+    maven { url "https://plugins.gradle.org/m2/" }
     mavenCentral()
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
-    compile 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    compile 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    compile 'com.eliotlash.molang:molang:18'
+    compile 'com.eliotlash.mclib:mclib:18'
     compile project(':geckolib-core')
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
@@ -136,9 +131,12 @@ dependencies {
 
 	compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50:api")
     compile fg.deobf("vazkii.patchouli:Patchouli:1.16.4-50")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1")
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:1.16.5-4.0.5.1:api")
+    compile fg.deobf("curse.maven:mAa-406360:3574985")
 	
-    shade 'com.eliotlash.molang:molang:SNAPSHOT.17'
-    shade 'com.eliotlash.mclib:mclib:SNAPSHOT.17'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
