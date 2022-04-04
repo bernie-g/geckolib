@@ -1,4 +1,4 @@
 3.0.0
 
-- Updates Geckolib to 22w12a
-- Updated BikeEntity to 22w12a changes
+- Added ExtendedGeoEntityRender that adds in a template for rendering and items on Geckolib mobs. Doesn't support Geckolib Armors at this time.
+- Cleaned up of some parts.
