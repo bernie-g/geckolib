@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.item;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -11,16 +13,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.item.Item.Properties;
-
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
 		super(materialIn, slot, builder);
 	}
 
-	@SuppressWarnings("unchecked")
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,

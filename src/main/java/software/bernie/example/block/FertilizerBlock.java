@@ -1,5 +1,9 @@
 package software.bernie.example.block;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -14,11 +18,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.IBlockReader;
 import software.bernie.example.registry.TileRegistry;
-
-import javax.annotation.Nullable;
-import java.util.List;
-
-import net.minecraft.block.AbstractBlock.Properties;
 
 public class FertilizerBlock extends DirectionalBlock {
 	public FertilizerBlock() {

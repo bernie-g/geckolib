@@ -21,11 +21,14 @@ import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID, "textures/entity/extendedrendererentity.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID, "geo/extendedrendererentity.geo.json");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
+			"textures/entity/extendedrendererentity.png");
+	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
+			"geo/extendedrendererentity.geo.json");
 
 	public ExampleExtendedRendererEntityRenderer(EntityRendererManager renderManager) {
-		super(renderManager, new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "testentity"));
+		super(renderManager,
+				new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "testentity"));
 	}
 
 	@Override
@@ -54,49 +57,50 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity, IBone bone) {
-		if(item == this.mainHand || item == this.offHand) {
+	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName,
+			ExtendedRendererEntity currentEntity, IBone bone) {
+		if (item == this.mainHand || item == this.offHand) {
 			stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
 			boolean shieldFlag = item.isShield(currentEntity) || item.getItem() instanceof ShieldItem;
-			if(item == this.mainHand) {
-				if(shieldFlag) {
+			if (item == this.mainHand) {
+				if (shieldFlag) {
 					stack.translate(0.0, 0.125, -0.25);
 				} else {
-					
+
 				}
 			} else {
-				if(shieldFlag) {
+				if (shieldFlag) {
 					stack.translate(0, 0.125, 0.25);
 					stack.mulPose(Vector3f.YP.rotationDegrees(180));
 				} else {
-					
+
 				}
-					
-				
+
 			}
-			//stack.mulPose(Vector3f.YP.rotationDegrees(180));
-			
-			//stack.scale(0.75F, 0.75F, 0.75F);
+			// stack.mulPose(Vector3f.YP.rotationDegrees(180));
+
+			// stack.scale(0.75F, 0.75F, 0.75F);
 		}
 	}
 
 	@Override
-	protected void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity, IBone bone) {
+	protected void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName,
+			ExtendedRendererEntity currentEntity, IBone bone) {
 
 	}
 
 	@Override
 	protected ItemStack getArmorForBone(String boneName, ExtendedRendererEntity currentEntity) {
 		switch (boneName) {
-		//case "armorBipedLeftFoot":
+		// case "armorBipedLeftFoot":
 		case "armorBipedRightFoot":
-		//case "armorBipedLeftFoot2":
+			// case "armorBipedLeftFoot2":
 		case "armorBipedRightFoot2":
 			return boots;
 		case "armorBipedLeftLeg":
-		//case "armorBipedRightLeg":
+			// case "armorBipedRightLeg":
 		case "armorBipedLeftLeg2":
-		//case "armorBipedRightLeg2":
+			// case "armorBipedRightLeg2":
 			return leggings;
 		case "armorBipedBody":
 		case "armorBipedRightArm":
@@ -136,7 +140,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected ModelRenderer getArmorPartForBone(String name, BipedModel armorModel) {
+	protected ModelRenderer getArmorPartForBone(String name, BipedModel<?> armorModel) {
 		switch (name) {
 		case "armorBipedLeftFoot":
 		case "armorBipedLeftLeg":
@@ -177,8 +181,8 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch(boneName) {
-		default: 
+		switch (boneName) {
+		default:
 			return null;
 		}
 	}

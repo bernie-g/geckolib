@@ -24,6 +24,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends ItemStackTileEntityRenderer
 		implements IGeoRenderer<T> {
 	// Register a model fetcher for this renderer

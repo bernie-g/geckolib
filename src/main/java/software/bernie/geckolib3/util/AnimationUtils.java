@@ -24,11 +24,13 @@ public class AnimationUtils {
 	/**
 	 * Gets the renderer for an entity
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity) {
 		EntityRendererManager renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static <T extends Entity> GeoModelProvider getGeoModelForEntity(T entity) {
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
 

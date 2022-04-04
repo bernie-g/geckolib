@@ -5,10 +5,22 @@
 
 package software.bernie.geckolib3.util.json;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import net.minecraft.client.util.JSONException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
@@ -17,12 +29,11 @@ import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.util.AnimationUtils;
 
-import java.util.*;
-
 /**
  * Helper for parsing the bedrock json animation format and finding certain
  * elements
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonAnimationUtils {
 	/**
 	 * Gets the "animations" object as a set of maps consisting of the name of the
@@ -199,7 +210,6 @@ public class JsonAnimationUtils {
 	 * @throws IllegalStateException Throws this exception if the JSON is formatted
 	 *                               incorrectly
 	 */
-	@SuppressWarnings("unchecked")
 	public static Animation deserializeJsonToAnimation(Map.Entry<String, JsonElement> element, MolangParser parser)
 			throws ClassCastException, IllegalStateException {
 		Animation animation = new Animation();

@@ -29,6 +29,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
 		implements IGeoRenderer<T> {
 	private static Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
@@ -109,7 +110,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		stack.translate(0.0D, -24 / 16F, 0.0D);
 	}
 
-	protected void fitToBiped() {
+	public void fitToBiped() {
 		if (!(this.entityLiving instanceof ArmorStandEntity)) {
 			if (this.headBone != null) {
 				IBone headBone = this.modelProvider.getBone(this.headBone);
@@ -206,6 +207,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	public GeoArmorRenderer applySlot(EquipmentSlotType slot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 

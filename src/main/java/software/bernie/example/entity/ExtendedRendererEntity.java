@@ -190,6 +190,7 @@ public class ExtendedRendererEntity extends CreatureEntity implements IAnimatabl
 	private static final String ANIM_NAME_FIREARM_POSE_LEFT = ANIM_NAME_PREFIX + "arms.left.firearm";
 	private static final String ANIM_NAME_FIREARM_POSE_RIGHT = ANIM_NAME_PREFIX + "arms.right.firearm";
 
+	@SuppressWarnings("unused")
 	private static final String ANIM_NAME_GREATSWORD_POSE = ANIM_NAME_PREFIX + "arms.greatsword";
 
 	private <E extends IAnimatable> Optional<PlayState> performTwoHandedLogicPerHand(ItemStack itemStack, boolean leftHanded, AnimationEvent<E> event) {
@@ -214,6 +215,7 @@ public class ExtendedRendererEntity extends CreatureEntity implements IAnimatabl
 		return Optional.empty();
 	}
 
+	@SuppressWarnings("unused")
 	private static final String ANIM_NAME_GREATSWORD_SWING = ANIM_NAME_PREFIX + "arms.attack-greatsword";
 	private static final String ANIM_NAME_SPEAR_SWING = ANIM_NAME_PREFIX + "arms.attack-spear";
 

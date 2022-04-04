@@ -1,5 +1,7 @@
 package software.bernie.example.block;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -10,10 +12,6 @@ import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockReader;
 import software.bernie.example.registry.TileRegistry;
-
-import javax.annotation.Nullable;
-
-import net.minecraft.block.AbstractBlock.Properties;
 
 public class BotariumBlock extends DirectionalBlock {
 	public BotariumBlock() {

@@ -43,7 +43,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController controller = new AnimationController(this, CONTROLLER_NAME, 20, this::predicate);
+		AnimationController<JackInTheBoxItem> controller = new AnimationController<JackInTheBoxItem>(this, CONTROLLER_NAME, 20, this::predicate);
 
 		// Registering a sound listener just makes it so when any sound keyframe is hit
 		// the method will be called.
@@ -89,7 +89,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		if (state == ANIM_OPEN) {
 			// Always use GeckoLibUtil to get AnimationControllers when you don't have
 			// access to an AnimationEvent
-			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
+			final AnimationController<?> controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
 				final ClientPlayerEntity player = Minecraft.getInstance().player;
