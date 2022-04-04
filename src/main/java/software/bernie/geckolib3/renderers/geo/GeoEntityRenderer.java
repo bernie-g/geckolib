@@ -51,7 +51,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
-	private final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> modelProvider;
 
 	public ItemStack mainHand;
 	public ItemStack offHand;
