@@ -41,6 +41,7 @@ configurations {
 
 minecraft {
     mappings channel: 'official', version: '1.18.2'
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -122,7 +123,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.0.0'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.0.19'
     library 'com.eliotlash.molang:molang:18'
     library 'com.eliotlash.mclib:mclib:18'
     library(project(':geckolib-core')) {

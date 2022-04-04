@@ -16,6 +16,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
+import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
@@ -37,6 +38,7 @@ public class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
+			event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
 
 			event.registerBlockEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
 			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
