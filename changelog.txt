@@ -1,4 +1,3 @@
 3.0.0
 
-- Added ExtendedGeoEntityRender that adds in a template for rendering and items on Geckolib mobs. Doesn't support Geckolib Armors at this time.
-- Cleaned up of some parts.
+- Port to 22w15a
