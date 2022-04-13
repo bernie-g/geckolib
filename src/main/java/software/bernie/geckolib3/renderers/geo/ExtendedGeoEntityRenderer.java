@@ -227,9 +227,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					if (boneItem != null) {
 						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 
-						MinecraftClient.getInstance().getHeldItemRenderer().renderItem(currentEntityBeingRendered, boneItem,
+						MinecraftClient.getInstance().getItemRenderer().renderItem(currentEntityBeingRendered, boneItem,
 								this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack, rtb,
-								packedLightIn);
+								null, packedLightIn, packedOverlayIn, packedOverlayIn);
 
 						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 					}
