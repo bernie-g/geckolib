@@ -171,20 +171,29 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 							final float targetSizeX = firstCube.size.getX();
 							final float targetSizeY = firstCube.size.getY();
 							final float targetSizeZ = firstCube.size.getZ();
-							final Cuboid armorCube = cubeList.get(0);
-							float scaleX = targetSizeX / Math.abs(armorCube.maxX - armorCube.minX);
-							float scaleY = targetSizeY / Math.abs(armorCube.maxY - armorCube.minY);
-							float scaleZ = targetSizeZ / Math.abs(armorCube.maxZ - armorCube.minZ);
 
-							sourceLimb.setPivot(-bone.getPivotX(), -bone.getPivotY(), bone.getPivotZ());
+							final Cuboid armorCube = cubeList.get(0);
+							final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+							final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+							final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+
+							float scaleX = targetSizeX / sourceSizeX;
+							float scaleY = targetSizeY / sourceSizeY;
+							float scaleZ = targetSizeZ / sourceSizeZ;
+
+							// Modify position to move point to correct location, otherwise it will be off
+							// when the sizes are different
+							sourceLimb.setPivot(-(bone.getPivotX() + sourceSizeX - targetSizeX),
+									-(bone.getPivotY() + sourceSizeY - targetSizeY),
+									(bone.getPivotZ() + sourceSizeZ - targetSizeZ));
+
 							sourceLimb.pitch = -bone.getRotationX();
 							sourceLimb.yaw = -bone.getRotationY();
 							sourceLimb.roll = bone.getRotationZ();
+							stack.scale(scaleX, scaleY, scaleZ);
 							stack.scale(-1, -1, 1);
 
 							stack.push();
-
-							stack.scale(scaleX, scaleY, scaleZ);
 
 							Identifier armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
 									boneSlot, null);
@@ -227,9 +236,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					if (boneItem != null) {
 						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 
-						MinecraftClient.getInstance().getHeldItemRenderer().renderItem(currentEntityBeingRendered, boneItem,
-								this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack, rtb,
-								packedLightIn);
+						MinecraftClient.getInstance().getHeldItemRenderer().renderItem(currentEntityBeingRendered,
+								boneItem, this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack,
+								rtb, packedLightIn);
 
 						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 					}
