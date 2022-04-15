@@ -172,23 +172,32 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 							if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
 								// IMPORTANT: The first cube is used to define the armor part!!
 								GeoCube firstCube = bone.childCubes.get(0);
+								final ModelBox armorCube = cubeList.get(0);
+								
 								final float targetSizeX = firstCube.size.x();
 								final float targetSizeY = firstCube.size.y();
 								final float targetSizeZ = firstCube.size.z();
-								final ModelBox armorCube = cubeList.get(0);
-								float scaleX = targetSizeX / Math.abs(armorCube.maxX - armorCube.minX);
-								float scaleY = targetSizeY / Math.abs(armorCube.maxY - armorCube.minY);
-								float scaleZ = targetSizeZ / Math.abs(armorCube.maxZ - armorCube.minZ);
+								
+								final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+								final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+								final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+								
+								float scaleX = targetSizeX / sourceSizeX;
+								float scaleY = targetSizeY / sourceSizeY;
+								float scaleZ = targetSizeZ / sourceSizeZ;
 
-								sourceLimb.setPos(-bone.getPivotX(), -bone.getPivotY(), bone.getPivotZ());
+								//Modify position to move point to correct location, otherwise it will be off when the sizes are different
+								sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX), -(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
+								
 								sourceLimb.xRot = -bone.getRotationX();
 								sourceLimb.yRot = -bone.getRotationY();
 								sourceLimb.zRot = bone.getRotationZ();
+								
+								stack.scale(scaleX, scaleY, scaleZ);
+								
 								stack.scale(-1, -1, 1);
 
 								stack.pushPose();
-
-								stack.scale(scaleX, scaleY, scaleZ);
 
 								ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
 										armorForBone, boneSlot, null);
