@@ -1,4 +1,3 @@
-v3.0.13
+v3.0.14
 
-- Added ExtendedGeoEntityRender that adds in a template for rendering and items on Geckolib mobs. Doesn't support Geckolib Armors at this time. - DerToaster
-- Cleaned up of some parts.
+- fix armor at wrong position when bones have different sizes #241 - DerToaster
