@@ -1,0 +1,12 @@
+{
+  "itemGroup.geckolib_examples": "Примеры Geckolib",
+
+  "item.geckolib3.potato_head": "Картофельный бронешлем",
+  "item.geckolib3.potato_chest": "Картофельный броненагрудник",
+  "item.geckolib3.potato_leggings": "Картофельные бронепоножи",
+  "item.geckolib3.potato_boots": "Картофельные бронеботинки",
+  "item.geckolib3.jackintheboxitem": "Джек в коробочке",
+  "item.geckolib3.pistol": "Пистолет",
+  "block.geckolib3.botariumblock": "Ботарий",
+  "block.geckolib3.fertilizerblock": "Удобрение"
+}
