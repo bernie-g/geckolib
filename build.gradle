@@ -10,6 +10,7 @@ buildscript {
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
         classpath "com.wynprice.cursemaven:CurseMaven:2.1.5"
+        classpath group: 'gradle.plugin.com.modrinth.minotaur', name: 'Minotaur', version: '2.+'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
     }
@@ -24,6 +25,7 @@ apply plugin: "com.wynprice.cursemaven"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import com.modrinth.minotaur.TaskModrinthUpload
 
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
@@ -249,6 +251,22 @@ processResources {
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
+}
+
+if (file('key.properties').exists()) {
+	modrinth {
+		def modrinthProp = new Properties()
+		File secretPropsFile = file("key.properties")
+		modrinthProp.load(secretPropsFile.newInputStream())
+		
+		token = modrinthProp.getProperty('modrinthKey')
+		projectId = 'E5H4km4c' 
+		versionNumber = project.mod_version 
+		versionName = 'Geckolib Fabric 1.16.5'
+		uploadFile = remapJar 
+		gameVersions = ['1.16.5']
+		loaders = ['forge']
+	}
 }
 
 if (file('key.properties').exists()) {
