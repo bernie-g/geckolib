@@ -11,6 +11,7 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+        classpath group: 'gradle.plugin.com.modrinth.minotaur', name: 'Minotaur', version: '2.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -23,6 +24,7 @@ apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remappe
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import com.modrinth.minotaur.TaskModrinthUpload
 
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
@@ -248,6 +250,22 @@ processResources {
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
+}
+
+if (file('key.properties').exists()) {
+	modrinth {
+		def modrinthProp = new Properties()
+		File secretPropsFile = file("key.properties")
+		modrinthProp.load(secretPropsFile.newInputStream())
+		
+		token = modrinthProp.getProperty('modrinthKey')
+		projectId = 'E5H4km4c' 
+		versionNumber = project.mod_version 
+		versionName = 'Geckolib Fabric 1.12.2'
+		uploadFile = remapJar 
+		gameVersions = ['1.18.2']
+		loaders = ['forge']
+	}
 }
 
 if (file('key.properties').exists()) {
