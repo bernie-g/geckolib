@@ -12,10 +12,12 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
+	id "com.modrinth.minotaur" version "2.+"
 }
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import com.modrinth.minotaur.dependencies.ModDependency
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -174,6 +176,25 @@ processResources {
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
+}
+
+if (file('key.properties').exists()) {
+	modrinth {
+		def modrinthProp = new Properties()
+		File secretPropsFile = file("key.properties")
+		modrinthProp.load(secretPropsFile.newInputStream())
+		
+		token = modrinthProp.getProperty('modrinthKey')
+		projectId = 'E5H4km4c' 
+		versionNumber = project.mod_version 
+		versionName = 'Geckolib Fabric 22w16b'
+		uploadFile = remapJar 
+		gameVersions = ['22w16b']
+		loaders = ['fabric']
+		dependencies = [ 
+            new ModDependency("P7dR8mSH", "required") 
+		]
+	}
 }
 
 if (file('key.properties').exists()) {
