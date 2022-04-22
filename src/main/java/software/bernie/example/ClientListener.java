@@ -96,7 +96,7 @@ public class ClientListener implements ClientModInitializer {
 				Entity entity = type.create(world);
 				if (entity != null) {
 					entity.updatePosition(x, y, z);
-					entity.updateTrackedPosition(x, y, z);
+					entity.method_43391(x, y, z);
 					entity.setPitch(pitch);
 					entity.setYaw(yaw);
 					entity.setId(entityID);

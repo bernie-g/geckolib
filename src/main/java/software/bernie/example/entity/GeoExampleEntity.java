@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAtEntityGoal;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -59,7 +59,7 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
 		final ClientPlayerEntity player = MinecraftClient.getInstance().player;
 		if (player != null) {
-			player.sendMessage(new LiteralText("KeyFraming"), true);
+			player.sendMessage(Text.literal("KeyFraming"), true);
 		}
 	}
 

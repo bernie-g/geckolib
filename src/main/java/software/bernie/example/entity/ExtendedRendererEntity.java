@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.network.Packet;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.UseAction;
@@ -260,7 +260,6 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 		return EntityPacket.createPacket(this);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	protected ActionResult interactMob(PlayerEntity pPlayer, Hand pHand) {
 		ItemStack item = pPlayer.getStackInHand(pHand);
@@ -272,7 +271,7 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 				this.setStackInHand(pHand, item);
 			}
 			pPlayer.sendSystemMessage(
-					new LiteralText("Equipped item: " + item.getItem().getRegistryEntry().toString() + "!"),
+					Text.literal("Equipped item: " + item.getItem().getName().toString() + "!"),
 					this.getUuid());
 			return ActionResult.SUCCESS;
 		}

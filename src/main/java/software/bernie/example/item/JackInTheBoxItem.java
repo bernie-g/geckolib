@@ -7,7 +7,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
@@ -94,7 +94,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			if (controller.getAnimationState() == AnimationState.Stopped) {
 				final ClientPlayerEntity player = MinecraftClient.getInstance().player;
 				if (player != null) {
-					player.sendMessage(new LiteralText("Opening the jack in the box!"), true);
+					player.sendMessage(Text.literal("Opening the jack in the box!"), true);
 				}
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.
