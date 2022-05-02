@@ -178,6 +178,11 @@ processResources {
     }
 }
 
+task publishToModSites {
+    publishToModSites.dependsOn modrinth
+    publishToModSites.dependsOn curseforge
+}
+
 if (file('key.properties').exists()) {
 	modrinth {
 		def modrinthProp = new Properties()
@@ -189,6 +194,7 @@ if (file('key.properties').exists()) {
 		versionNumber = project.mod_version 
 		versionName = 'Geckolib Fabric 1.18.2'
 		uploadFile = remapJar 
+		changelog = rootProject.file("changelog.txt").text
 		gameVersions = ['1.18.2']
 		loaders = ['fabric']
 		dependencies = [ 
