@@ -10,7 +10,7 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
-        classpath group: 'gradle.plugin.com.modrinth.minotaur', name: 'Minotaur', version: '2.+'
+        classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -19,10 +19,11 @@ apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
+apply plugin: "com.modrinth.minotaur"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
-import com.modrinth.minotaur.TaskModrinthUpload
+import com.modrinth.minotaur.dependencies.ModDependency
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
 version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
 
@@ -197,8 +198,8 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = 'E5H4km4c' 
 		versionNumber = project.mod_version 
-		versionName = 'Geckolib Fabric 1.12.2'
-		uploadFile = remapJar 
+		versionName = 'Geckolib Forge 1.12.2'
+		uploadFile = jar 
 		gameVersions = ['1.12.2']
 		loaders = ['forge']
 	}
