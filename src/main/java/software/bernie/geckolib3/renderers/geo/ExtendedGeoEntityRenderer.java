@@ -145,6 +145,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
+	
+	protected abstract boolean isArmorBone(final GeoBone bone);
 
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
@@ -161,7 +163,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			stack.pushPose();
 
 			// Render armor
-			if (bone.getName().startsWith("armor")) {
+			if (this.isArmorBone(bone)) {
 				final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
 				final EquipmentSlotType boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(),
 						currentEntityBeingRendered);
@@ -179,30 +181,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 							ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
 							if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
 								// IMPORTANT: The first cube is used to define the armor part!!
-								GeoCube firstCube = bone.childCubes.get(0);
-								final ModelBox armorCube = cubeList.get(0);
-								
-								final float targetSizeX = firstCube.size.x();
-								final float targetSizeY = firstCube.size.y();
-								final float targetSizeZ = firstCube.size.z();
-								
-								final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
-								final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
-								final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
-								
-								float scaleX = targetSizeX / sourceSizeX;
-								float scaleY = targetSizeY / sourceSizeY;
-								float scaleZ = targetSizeZ / sourceSizeZ;
-
-								//Modify position to move point to correct location, otherwise it will be off when the sizes are different
-								sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX), -(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
-								
-								sourceLimb.xRot = -bone.getRotationX();
-								sourceLimb.yRot = -bone.getRotationY();
-								sourceLimb.zRot = bone.getRotationZ();
-								
-								stack.scale(scaleX, scaleY, scaleZ);
-								
+								this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
 								stack.scale(-1, -1, 1);
 
 								stack.pushPose();
@@ -211,21 +190,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 										armorForBone, boneSlot, null);
 								this.bindTexture(armorResource);
 
-								if (armorItem instanceof IDyeableArmorItem) {
-									int i = ((net.minecraft.item.IDyeableArmorItem) armorItem).getColor(armorForBone);
-									float r = (float) (i >> 16 & 255) / 255.0F;
-									float g = (float) (i >> 8 & 255) / 255.0F;
-									float b = (float) (i & 255) / 255.0F;
-
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1,
-											armorForBone, armorResource);
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
-											armorForBone, getArmorResource(currentEntityBeingRendered, armorForBone,
-													boneSlot, "overlay"));
-								} else {
-									renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
-											armorForBone, armorResource);
-								}
+								this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
 
 								stack.popPose();
 
@@ -279,6 +244,50 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		if (customTextureMarker) {
 			this.bindTexture(this.getTextureLocation(this.currentEntityBeingRendered));
 		}
+	}
+
+	protected void renderArmorOfItem(ArmorItem armorItem, ItemStack armorForBone, EquipmentSlotType boneSlot, ResourceLocation armorResource, ModelRenderer sourceLimb, MatrixStack stack, int packedLightIn, int packedOverlayIn) {
+		if (armorItem instanceof IDyeableArmorItem) {
+			int i = ((net.minecraft.item.IDyeableArmorItem) armorItem).getColor(armorForBone);
+			float r = (float) (i >> 16 & 255) / 255.0F;
+			float g = (float) (i >> 8 & 255) / 255.0F;
+			float b = (float) (i & 255) / 255.0F;
+
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1,
+					armorForBone, armorResource);
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
+					armorForBone, getArmorResource(currentEntityBeingRendered, armorForBone,
+							boneSlot, "overlay"));
+		} else {
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
+					armorForBone, armorResource);
+		}
+	}
+
+	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack) {
+		GeoCube firstCube = bone.childCubes.get(0);
+		final ModelBox armorCube = cubeList.get(0);
+		
+		final float targetSizeX = firstCube.size.x();
+		final float targetSizeY = firstCube.size.y();
+		final float targetSizeZ = firstCube.size.z();
+		
+		final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+		final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+		final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+		
+		float scaleX = targetSizeX / sourceSizeX;
+		float scaleY = targetSizeY / sourceSizeY;
+		float scaleZ = targetSizeZ / sourceSizeZ;
+
+		//Modify position to move point to correct location, otherwise it will be off when the sizes are different
+		sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX), -(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
+		
+		sourceLimb.xRot = -bone.getRotationX();
+		sourceLimb.yRot = -bone.getRotationY();
+		sourceLimb.zRot = bone.getRotationZ();
+		
+		stack.scale(scaleX, scaleY, scaleZ);
 	}
 
 	// Internal use only. Basically renders the passed "part" of the armor model on
