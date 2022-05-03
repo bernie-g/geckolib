@@ -50,7 +50,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
 	static enum EModelRenderCycle {
-		INITIAL, REPEATED
+		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
 
 	protected float widthScale;
@@ -60,6 +60,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	
+	protected EModelRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	protected void setCurrentModelRenderCycle(EModelRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
 
 	protected ExtendedGeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);
@@ -82,7 +90,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn,
 			int packedLightIn) {
-		this.currentModelRenderCycle = EModelRenderCycle.INITIAL;
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
@@ -93,7 +101,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			float red, float green, float blue, float alpha) {
 		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		this.currentModelRenderCycle = EModelRenderCycle.REPEATED;
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
 	protected float getWidthScale(T entity) {
@@ -111,7 +119,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.rtb = renderTypeBuffer;
 		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn,
 				red, green, blue, partialTicks);
-		if (this.currentModelRenderCycle == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
 			float width = this.getWidthScale(animatable);
 			float height = this.getHeightScale(animatable);
 			stackIn.scale(width, height, width);
@@ -141,7 +149,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		ResourceLocation tfb = this.currentModelRenderCycle == EModelRenderCycle.INITIAL ? null
+		ResourceLocation tfb = this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
 		boolean customTextureMarker = tfb != null;
 		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
@@ -149,7 +157,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			currentTexture = tfb;
 			this.bindTexture(currentTexture);
 		}
-		if (this.currentModelRenderCycle == EModelRenderCycle.INITIAL) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.pushPose();
 
 			// Render armor
