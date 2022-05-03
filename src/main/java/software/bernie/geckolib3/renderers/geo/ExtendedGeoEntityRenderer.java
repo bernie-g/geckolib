@@ -164,55 +164,15 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 			// Render armor
 			if (this.isArmorBone(bone)) {
-				final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
-				final EquipmentSlotType boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(),
-						currentEntityBeingRendered);
-				if (armorForBone != null && armorForBone.getItem() instanceof ArmorItem
-						&& armorForBone.getItem() instanceof ArmorItem
-						&& !(armorForBone.getItem() instanceof GeoArmorItem) && boneSlot != null) {
-					if (!(armorForBone.getItem() instanceof GeoArmorItem)) {
-						final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
-						final BipedModel<?> armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered,
-								armorForBone, boneSlot,
-								boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
-										: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
-						if (armorModel != null) {
-							ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-							ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
-							if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
-								// IMPORTANT: The first cube is used to define the armor part!!
-								this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
-								stack.scale(-1, -1, 1);
-
-								stack.pushPose();
-
-								ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
-										armorForBone, boneSlot, null);
-								this.bindTexture(armorResource);
-
-								this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
-
-								stack.popPose();
-
-								this.bindTexture(currentTexture);
-								bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
-							}
-						}
-					} else if (armorForBone.getItem() instanceof GeoArmorItem) {
-					}
-				}
+				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
 			} else {
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
 				if (boneItem != null || boneBlock != null) {
 
 					stack.pushPose();
-					// First, let's move our render position to the pivot point...
-					stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPositionZ() / 16);
-
-					stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
-					stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
-					stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
+					
+					this.moveAndRotateMatrixToMatchBone(stack, bone);
 
 					if (boneItem != null) {
 						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
@@ -243,6 +203,55 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 		if (customTextureMarker) {
 			this.bindTexture(this.getTextureLocation(this.currentEntityBeingRendered));
+		}
+	}
+
+	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
+		// First, let's move our render position to the pivot point...
+		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPositionZ() / 16);
+
+		stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
+		stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
+		stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
+	}
+
+	protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, ResourceLocation currentTexture) {
+		final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
+		final EquipmentSlotType boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(),
+				currentEntityBeingRendered);
+		if (armorForBone != null && armorForBone.getItem() instanceof ArmorItem
+				&& armorForBone.getItem() instanceof ArmorItem
+				&& !(armorForBone.getItem() instanceof GeoArmorItem) && boneSlot != null) {
+			if (!(armorForBone.getItem() instanceof GeoArmorItem)) {
+				final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
+				final BipedModel<?> armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered,
+						armorForBone, boneSlot,
+						boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
+								: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
+				if (armorModel != null) {
+					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
+					ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+					if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
+						// IMPORTANT: The first cube is used to define the armor part!!
+						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+						stack.scale(-1, -1, 1);
+
+						stack.pushPose();
+
+						ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
+								armorForBone, boneSlot, null);
+						this.bindTexture(armorResource);
+
+						this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
+
+						stack.popPose();
+
+						this.bindTexture(currentTexture);
+						bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+					}
+				}
+			} else if (armorForBone.getItem() instanceof GeoArmorItem) {
+			}
 		}
 	}
 
