@@ -1,4 +1,3 @@
-v3.0.66
+v3.0.68
 
-- Added ExtendedGeoEntityRender that adds in a template for rendering and items on Geckolib mobs. Doesn't support Geckolib Armors at this time.
-- Cleaned up of some parts.
+- Updates Core with Color Presets - mcpecommander

@@ -163,6 +163,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			stack.pushPose();
 
 			// Render armor
+
 			if (this.isArmorBone(bone)) {
 				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
 			} else {
