@@ -5,30 +5,14 @@
 
 package software.bernie.example;
 
-import java.util.UUID;
-
-import io.netty.buffer.Unpooled;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
-import net.fabricmc.fabric.api.network.PacketContext;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.fabric.impl.blockrenderlayer.BlockRenderLayerMapImpl;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
@@ -43,11 +27,9 @@ import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.TileRegistry;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoItemRenderer;
 
-@SuppressWarnings("deprecation")
 public class ClientListener implements ClientModInitializer {
 
 	@SuppressWarnings({ "unchecked" })
@@ -71,61 +53,6 @@ public class ClientListener implements ClientModInitializer {
 			EntityRendererRegistry.register(EntityType.CREEPER, (ctx) -> new ReplacedCreeperRenderer(ctx));
 
 			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
-			ClientSidePacketRegistry.INSTANCE.register(EntityPacket.ID, (ctx, buf) -> {
-				EntityPacketOnClient.onPacket(ctx, buf);
-			});
 		}
-	}
-
-	public class EntityPacketOnClient {
-		@Environment(EnvType.CLIENT)
-		public static void onPacket(PacketContext context, PacketByteBuf byteBuf) {
-			EntityType<?> type = Registry.ENTITY_TYPE.get(byteBuf.readVarInt());
-			UUID entityUUID = byteBuf.readUuid();
-			int entityID = byteBuf.readVarInt();
-			double x = byteBuf.readDouble();
-			double y = byteBuf.readDouble();
-			double z = byteBuf.readDouble();
-			float pitch = (byteBuf.readByte() * 360) / 256.0F;
-			float yaw = (byteBuf.readByte() * 360) / 256.0F;
-			context.getTaskQueue().execute(() -> {
-				@SuppressWarnings("resource")
-				ClientWorld world = MinecraftClient.getInstance().world;
-				Entity entity = type.create(world);
-				if (entity != null) {
-					entity.updatePosition(x, y, z);
-					entity.method_43391(x, y, z);
-					entity.setPitch(pitch);
-					entity.setYaw(yaw);
-					entity.setId(entityID);
-					entity.setUuid(entityUUID);
-					world.addEntity(entityID, entity);
-				}
-			});
-		}
-	}
-
-	public class EntityPacket {
-		public static final Identifier ID = new Identifier(GeckoLib.ModID, "spawn_entity");
-
-		public static Packet<?> createPacket(Entity entity) {
-			PacketByteBuf buf = createBuffer();
-			buf.writeVarInt(Registry.ENTITY_TYPE.getRawId(entity.getType()));
-			buf.writeUuid(entity.getUuid());
-			buf.writeVarInt(entity.getId());
-			buf.writeDouble(entity.getX());
-			buf.writeDouble(entity.getY());
-			buf.writeDouble(entity.getZ());
-			buf.writeByte(MathHelper.floor(entity.getPitch() * 256.0F / 360.0F));
-			buf.writeByte(MathHelper.floor(entity.getYaw() * 256.0F / 360.0F));
-			buf.writeFloat(entity.getPitch());
-			buf.writeFloat(entity.getYaw());
-			return ServerPlayNetworking.createS2CPacket(ID, buf);
-		}
-
-		private static PacketByteBuf createBuffer() {
-			return new PacketByteBuf(Unpooled.buffer());
-		}
-
 	}
 }

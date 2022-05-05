@@ -11,13 +11,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.RangedWeaponItem;
 import net.minecraft.item.ShieldItem;
-import net.minecraft.network.Packet;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
-import software.bernie.example.ClientListener.EntityPacket;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -256,11 +254,6 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	}
 
 	@Override
-	public Packet<?> createSpawnPacket() {
-		return EntityPacket.createPacket(this);
-	}
-
-	@Override
 	protected ActionResult interactMob(PlayerEntity pPlayer, Hand pHand) {
 		ItemStack item = pPlayer.getStackInHand(pHand);
 		if (item != null && !item.isEmpty() && !this.world.isClient()) {
@@ -270,9 +263,7 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 			} else {
 				this.setStackInHand(pHand, item);
 			}
-			pPlayer.sendSystemMessage(
-					Text.literal("Equipped item: " + item.getItem().getName().toString() + "!"),
-					this.getUuid());
+			pPlayer.sendMessage(Text.literal("Equipped item: " + item.getItem().getName().toString() + "!"));
 			return ActionResult.SUCCESS;
 		}
 		return super.interactMob(pPlayer, pHand);
