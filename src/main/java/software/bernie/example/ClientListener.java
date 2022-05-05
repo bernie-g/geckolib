@@ -35,7 +35,6 @@ import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEnt
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
-import software.bernie.example.client.renderer.entity.RocketRender;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
@@ -64,7 +63,6 @@ public class ClientListener implements ClientModInitializer {
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
 			GeoArmorRenderer.registerArmorRenderer(new PotatoArmorRenderer(), ItemRegistry.POTATO_HEAD,
 					ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_BOOTS);
-			EntityRendererRegistry.register(EntityRegistry.ROCKET, (ctx) -> new RocketRender(ctx));
 			BlockEntityRendererRegistry.register(TileRegistry.BOTARIUM_TILE,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());
 			BlockEntityRendererRegistry.register(TileRegistry.FERTILIZER,
