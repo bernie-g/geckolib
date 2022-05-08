@@ -48,7 +48,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
 	static enum EModelRenderCycle {
-		INITIAL, REPEATED
+		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
 
 	protected float widthScale;
@@ -58,6 +58,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+
+	protected EModelRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	protected void setCurrentModelRenderCycle(EModelRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
 
 	protected ExtendedGeoEntityRenderer(EntityRendererFactory.Context renderManager,
 			AnimatedGeoModel<T> modelProvider) {
@@ -80,7 +88,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
 			VertexConsumerProvider bufferIn, int packedLightIn) {
-		this.currentModelRenderCycle = EModelRenderCycle.INITIAL;
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
@@ -91,7 +99,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		this.currentModelRenderCycle = EModelRenderCycle.REPEATED;
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
 	protected float getWidthScale(T entity) {
@@ -109,7 +117,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.rtb = renderTypeBuffer;
 		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn,
 				red, green, blue, partialTicks);
-		if (this.currentModelRenderCycle == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
 			float width = this.getWidthScale(animatable);
 			float height = this.getHeightScale(animatable);
 			stackIn.scale(width, height, width);
@@ -138,10 +146,102 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected final BipedEntityModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedEntityModel<LivingEntity>(
 			MinecraftClient.getInstance().getEntityModelLoader().getModelPart(EntityModelLayers.PLAYER_OUTER_ARMOR));
 
+	protected abstract boolean isArmorBone(final GeoBone bone);
+
+	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
+		// First, let's move our render position to the pivot point...
+		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPositionZ() / 16);
+
+		stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(bone.getRotationX()));
+		stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(bone.getRotationY()));
+		stack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(bone.getRotationZ()));
+	}
+
+	protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn,
+			int packedLightIn, int packedOverlayIn, Identifier currentTexture) {
+		final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
+		final EquipmentSlot boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(), currentEntityBeingRendered);
+		if (armorForBone != null && armorForBone.getItem() instanceof ArmorItem
+				&& armorForBone.getItem() instanceof ArmorItem && boneSlot != null) {
+			final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
+			final BipedEntityModel<?> armorModel = (BipedEntityModel<?>) ArmorRenderingRegistryImpl
+					.getArmorModel(currentEntityBeingRendered, armorForBone, boneSlot,
+							boneSlot == EquipmentSlot.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
+									: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
+			if (armorModel != null) {
+				ModelPart sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
+				List<Cuboid> cubeList = sourceLimb.cuboids;
+				if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
+					// IMPORTANT: The first cube is used to define the armor part!!
+					this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+					stack.scale(-1, -1, 1);
+
+					stack.push();
+
+					Identifier armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
+							boneSlot, null);
+					this.bindTexture(armorResource);
+
+					this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack,
+							packedLightIn, packedOverlayIn);
+
+					stack.pop();
+
+					this.bindTexture(currentTexture);
+					bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(currentTexture));
+				}
+			}
+		}
+	}
+
+	protected void renderArmorOfItem(ArmorItem armorItem, ItemStack armorForBone, EquipmentSlot boneSlot,
+			Identifier armorResource, ModelPart sourceLimb, MatrixStack stack, int packedLightIn, int packedOverlayIn) {
+		if (armorItem instanceof DyeableArmorItem) {
+			int i = ((DyeableArmorItem) armorItem).getColor(armorForBone);
+			float r = (float) (i >> 16 & 255) / 255.0F;
+			float g = (float) (i >> 8 & 255) / 255.0F;
+			float b = (float) (i & 255) / 255.0F;
+
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1, armorForBone, armorResource);
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone,
+					getArmorResource(currentEntityBeingRendered, armorForBone, boneSlot, "overlay"));
+		} else {
+			renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1, armorForBone, armorResource);
+		}
+	}
+
+	protected void prepareArmorPositionAndScale(GeoBone bone, List<Cuboid> cubeList, ModelPart sourceLimb,
+			MatrixStack stack) {
+		GeoCube firstCube = bone.childCubes.get(0);
+		final Cuboid armorCube = cubeList.get(0);
+		final float targetSizeX = firstCube.size.getX();
+		final float targetSizeY = firstCube.size.getY();
+		final float targetSizeZ = firstCube.size.getZ();
+
+		final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+		final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+		final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+
+		float scaleX = targetSizeX / sourceSizeX;
+		float scaleY = targetSizeY / sourceSizeY;
+		float scaleZ = targetSizeZ / sourceSizeZ;
+
+		// Modify position to move point to correct location, otherwise it will be off
+		// when the sizes are different
+		sourceLimb.setPivot(-(bone.getPivotX() + sourceSizeX - targetSizeX),
+				-(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
+
+		sourceLimb.pitch = -bone.getRotationX();
+		sourceLimb.yaw = -bone.getRotationY();
+		sourceLimb.roll = bone.getRotationZ();
+
+		stack.scale(scaleX, scaleY, scaleZ);
+	}
+
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		Identifier tfb = this.currentModelRenderCycle == EModelRenderCycle.INITIAL ? null
+		Identifier tfb = this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
 		boolean customTextureMarker = tfb != null;
 		Identifier currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
@@ -149,79 +249,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			currentTexture = tfb;
 			this.bindTexture(currentTexture);
 		}
-		if (this.currentModelRenderCycle == EModelRenderCycle.INITIAL) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.push();
 			// Render armor
-			if (bone.getName().startsWith("armor")) {
-				final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
-				final EquipmentSlot boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(),
-						currentEntityBeingRendered);
-				if (armorForBone != null && armorForBone.getItem() instanceof ArmorItem && boneSlot != null) {
-					final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
-					final BipedEntityModel<?> armorModel = (BipedEntityModel<?>) ArmorRenderingRegistryImpl
-							.getArmorModel(currentEntityBeingRendered, armorForBone, boneSlot,
-									boneSlot == EquipmentSlot.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
-											: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
-					if (armorModel != null) {
-						ModelPart sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-						List<Cuboid> cubeList = sourceLimb.cuboids;
-						if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
-							// IMPORTANT: The first cube is used to define the armor part!!
-							GeoCube firstCube = bone.childCubes.get(0);
-							final float targetSizeX = firstCube.size.getX();
-							final float targetSizeY = firstCube.size.getY();
-							final float targetSizeZ = firstCube.size.getZ();
 
-							final Cuboid armorCube = cubeList.get(0);
-							final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
-							final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
-							final float sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
-
-							float scaleX = targetSizeX / sourceSizeX;
-							float scaleY = targetSizeY / sourceSizeY;
-							float scaleZ = targetSizeZ / sourceSizeZ;
-
-							// Modify position to move point to correct location, otherwise it will be off
-							// when the sizes are different
-							sourceLimb.setPivot(-(bone.getPivotX() + sourceSizeX - targetSizeX),
-									-(bone.getPivotY() + sourceSizeY - targetSizeY),
-									(bone.getPivotZ() + sourceSizeZ - targetSizeZ));
-
-							sourceLimb.pitch = -bone.getRotationX();
-							sourceLimb.yaw = -bone.getRotationY();
-							sourceLimb.roll = bone.getRotationZ();
-							stack.scale(scaleX, scaleY, scaleZ);
-							stack.scale(-1, -1, 1);
-
-							stack.push();
-
-							Identifier armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
-									boneSlot, null);
-							this.bindTexture(armorResource);
-
-							if (armorItem instanceof DyeableArmorItem) {
-								int i = ((DyeableArmorItem) armorItem).getColor(armorForBone);
-								float r = (float) (i >> 16 & 255) / 255.0F;
-								float g = (float) (i >> 8 & 255) / 255.0F;
-								float b = (float) (i & 255) / 255.0F;
-
-								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, r, g, b, 1,
-										armorForBone, armorResource);
-								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
-										armorForBone, getArmorResource(currentEntityBeingRendered, armorForBone,
-												boneSlot, "overlay"));
-							} else {
-								renderArmorPart(stack, sourceLimb, packedLightIn, packedOverlayIn, 1, 1, 1, 1,
-										armorForBone, armorResource);
-							}
-
-							stack.pop();
-
-							this.bindTexture(currentTexture);
-							bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(currentTexture));
-						}
-					}
-				}
+			if (this.isArmorBone(bone)) {
+				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
 			} else {
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
