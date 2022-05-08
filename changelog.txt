@@ -1,4 +1,3 @@
-3.0.3
+3.0.4
 
-- Ports 1.16 ExtendedGeoEntity Changes by DerToaster98
-- Ported to 22w18a
+- Disables Rendering if invisible instead of changing Alpha
