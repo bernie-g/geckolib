@@ -125,15 +125,18 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
 		boolean flag = this.setDoRenderBrightness(entity, partialTicks);
 
-		render(model, entity, partialTicks, (float) renderColor.getRed() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getAlpha() / 255);
-		
+		if (!entity.isInvisibleToPlayer(Minecraft.getMinecraft().player))
+			render(model, entity, partialTicks, (float) renderColor.getRed() / 255f,
+					(float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f,
+					(float) renderColor.getAlpha() / 255);
+
 		if (!(entity instanceof EntityPlayer) || !((EntityPlayer) entity).isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-				layerRenderer.render(entity, limbSwing, limbSwingAmount, partialTicks, limbSwing, netHeadYaw, headPitch, renderColor);
+				layerRenderer.render(entity, limbSwing, limbSwingAmount, partialTicks, limbSwing, netHeadYaw, headPitch,
+						renderColor);
 			}
 		}
-		
+
 		if (flag) {
 			RenderHurtColor.unset();
 		}
