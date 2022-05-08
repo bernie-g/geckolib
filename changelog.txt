@@ -1,3 +1,4 @@
-3.0.2
+3.0.3
 
-- Updates Core with Color Presets - mcpecommander
+- Ports 1.16 ExtendedGeoEntity Changes by DerToaster98
+- Ported to 22w18a

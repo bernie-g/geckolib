@@ -16,6 +16,7 @@ import software.bernie.example.client.model.entity.ExampleExtendedRendererEntity
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
@@ -184,6 +185,11 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 		default:
 			return null;
 		}
+	}
+	
+	@Override
+	protected boolean isArmorBone(GeoBone bone) {
+		return bone.getName().startsWith("armor");
 	}
 
 }
