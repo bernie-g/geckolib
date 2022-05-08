@@ -50,8 +50,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		});
 	}
 
-	public GeoReplacedEntityRenderer(EntityRendererManager renderManager,
-			AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
+	public GeoReplacedEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<IAnimatable> modelProvider,
+			T animatable) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 		this.animatable = animatable;
@@ -89,15 +89,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		entityModelData.isSitting = shouldSit;
 		entityModelData.isChild = entityLiving.isBaby();
 
-		float f = MathHelper.rotLerp(partialTicks, entityLiving.yBodyRotO,
-				entityLiving.yBodyRot);
-		float f1 = MathHelper.rotLerp(partialTicks, entityLiving.yHeadRotO,
-				entityLiving.yHeadRot);
+		float f = MathHelper.rotLerp(partialTicks, entityLiving.yBodyRotO, entityLiving.yBodyRot);
+		float f1 = MathHelper.rotLerp(partialTicks, entityLiving.yHeadRotO, entityLiving.yHeadRot);
 		float f2 = f1 - f;
 		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
 			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
-			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO,
-					livingentity.yBodyRot);
+			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
 			f2 = f1 - f;
 			float f3 = MathHelper.wrapDegrees(f2);
 			if (f3 < -85.0F) {
@@ -143,7 +140,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				limbSwingAmount = 1.0F;
 			}
 		}
-		
+
 		entityModelData.headPitch = -f6;
 		entityModelData.netHeadYaw = -f2;
 
@@ -159,11 +156,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(entity));
-		boolean invis = entity.isInvisibleTo(Minecraft.getInstance().player);
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
+		if (!entity.isInvisibleTo(Minecraft.getInstance().player))
+			render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
+					getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
+					(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+					(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer layerRenderer : this.layerRenderers) {

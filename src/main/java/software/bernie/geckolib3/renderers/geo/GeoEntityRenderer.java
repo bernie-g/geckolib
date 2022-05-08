@@ -82,8 +82,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		float netHeadYaw = f1 - f;
 		if (shouldSit && entity.getVehicle() instanceof LivingEntity) {
 			LivingEntity livingentity = (LivingEntity) entity.getVehicle();
-			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO,
-					livingentity.yBodyRot);
+			f = MathHelper.rotLerp(partialTicks, livingentity.yBodyRotO, livingentity.yBodyRot);
 			netHeadYaw = f1 - f;
 			float f3 = MathHelper.wrapDegrees(netHeadYaw);
 			if (f3 < -85.0F) {
@@ -142,10 +141,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(entity));
-		boolean invis = entity.isInvisibleTo(Minecraft.getInstance().player);
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-				getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
+		if (!entity.isInvisibleTo(Minecraft.getInstance().player))
+			render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
+					getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
+					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+					(float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
@@ -159,7 +159,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
+
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUUID().hashCode();
