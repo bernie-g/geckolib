@@ -20,6 +20,6 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	public RenderType getRenderType(GeoExampleEntity animatable, float partialTicks, PoseStack stack,
 			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			ResourceLocation textureLocation) {
-		return RenderType.entityTranslucent(getTextureLocation(animatable));
+		return RenderType.entityCutout(getTextureLocation(animatable));
 	}
 }
