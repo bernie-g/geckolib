@@ -153,11 +153,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTexture(entity));
-		boolean invis = entity.isInvisibleTo(MinecraftClient.getInstance().player);
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
+		if (!entity.isInvisibleTo(MinecraftClient.getInstance().player))
+			render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
+					getPackedOverlay(entityLiving, 0), (float) renderColor.getRed() / 255f,
+					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+					(float) renderColor.getAlpha() / 255);
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer layerRenderer : this.layerRenderers) {
