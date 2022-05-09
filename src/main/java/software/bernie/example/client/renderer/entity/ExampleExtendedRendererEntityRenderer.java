@@ -180,9 +180,14 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	protected void postRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
 	}
 
+	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
+			"textures/entity/extendedrendererentity_cape.png");
+	
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
 		switch (boneName) {
+		case "bipedCape":
+			return CAPE_TEXTURE;
 		default:
 			return null;
 		}

@@ -141,23 +141,33 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		super.renderLate(animatable, stackIn, ticks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red,
 				green, blue, partialTicks);
 		this.currentEntityBeingRendered = animatable;
+		this.currentVertexBuilderInUse = bufferIn;
+		this.currentPartialTicks = partialTicks;
 	}
 
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
 	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
 	
 	protected abstract boolean isArmorBone(final GeoBone bone);
-
+	
+	private IVertexBuilder currentVertexBuilderInUse;
+	private float currentPartialTicks;
+	
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		ResourceLocation tfb = this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL ? null
+		ResourceLocation tfb = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
 		boolean customTextureMarker = tfb != null;
 		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
 		if (customTextureMarker) {
 			currentTexture = tfb;
 			this.bindTexture(currentTexture);
+			
+			if(this.rtb != null) {
+				RenderType rt = this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, currentTexture);
+				bufferIn = this.rtb.getBuffer(rt);
+			}
 		}
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.pushPose();
@@ -199,12 +209,21 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			}
 			stack.popPose();
 		}
+		//reset buffer
+		if (customTextureMarker) {
+			bufferIn = this.currentVertexBuilderInUse;
+		}
 
 		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
 		if (customTextureMarker) {
 			this.bindTexture(this.getTextureLocation(this.currentEntityBeingRendered));
 		}
+	}
+
+	private RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2, MatrixStack stack, IVertexBuilder bufferIn, IRenderTypeBuffer currentRenderTypeBufferInUse2, int packedLightIn,
+			ResourceLocation currentTexture) {
+		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack, currentRenderTypeBufferInUse2, bufferIn, packedLightIn, currentTexture);
 	}
 
 	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
