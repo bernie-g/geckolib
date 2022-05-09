@@ -19,7 +19,7 @@ public class GeoBone implements IBone {
 	public Double inflate;
 	public Boolean dontRender;
 	public boolean isHidden;
-	public boolean areCubesHidden;
+	public boolean areCubesHidden = false;
 	public boolean hideChildBonesToo;
 	// I still have no idea what this field does, but its in the json file so
 	// ¯\_(ツ)_/¯
