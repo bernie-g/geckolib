@@ -19,6 +19,8 @@ public class GeoBone implements IBone {
 	public Double inflate;
 	public Boolean dontRender;
 	public boolean isHidden;
+	public boolean areCubesHidden;
+	public boolean hideChildBonesToo;
 	// I still have no idea what this field does, but its in the json file so
 	// ¯\_(ツ)_/¯
 	public Boolean reset;
@@ -162,7 +164,7 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setHidden(boolean hidden) {
-		this.isHidden = hidden;
+		this.setHidden(hidden, hidden);
 	}
 
 	@Override
@@ -193,5 +195,26 @@ public class GeoBone implements IBone {
 	@Override
 	public float getPivotZ() {
 		return this.rotationPointZ;
+	}
+
+	@Override
+	public boolean cubesAreHidden() {
+		return areCubesHidden;
+	}
+
+	@Override
+	public boolean childBonesAreHiddenToo() {
+		return hideChildBonesToo;
+	}
+
+	@Override
+	public void setCubesHidden(boolean hidden) {
+		this.areCubesHidden = hidden;
+	}
+
+	@Override
+	public void setHidden(boolean selfHidden, boolean skipChildRendering) {
+		this.isHidden = selfHidden;
+		this.hideChildBonesToo = skipChildRendering;
 	}
 }
