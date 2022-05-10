@@ -15,6 +15,7 @@ import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
+import software.bernie.example.entity.RocketProjectile;
 import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
@@ -26,6 +27,8 @@ public class EntityRegistry {
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F, SpawnGroup.CREATURE);
 	public static final EntityType<LEEntity> GEOLAYERENTITY = buildEntity(LEEntity::new, LEEntity.class, 0.45F, 1.0F,
 			SpawnGroup.CREATURE);
+	public static EntityType<RocketProjectile> ROCKET = buildEntity(RocketProjectile::new, RocketProjectile.class, 0.5F,
+			0.5F, SpawnGroup.MISC);
 
 	public static <T extends Entity> EntityType<T> buildEntity(EntityType.EntityFactory<T> entity, Class<T> entityClass,
 			float width, float height, SpawnGroup group) {

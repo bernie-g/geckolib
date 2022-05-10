@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
@@ -16,6 +15,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import software.bernie.example.entity.RocketProjectile;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -47,9 +47,9 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 			if (stack.getDamage() < (stack.getMaxDamage() - 1)) {
 				playerentity.getItemCooldownManager().set(this, 5);
 				if (!worldIn.isClient) {
-					ArrowEntity abstractarrowentity = createArrow(worldIn, stack, playerentity);
+					RocketProjectile abstractarrowentity = createArrow(worldIn, stack, playerentity);
 					abstractarrowentity.setVelocity(playerentity, playerentity.getPitch(), playerentity.getYaw(), 0.0F,
-							1.0F * 3.0F, 1.0F);
+							0.25F * 3.0F, 1.0F);
 					abstractarrowentity.refreshPositionAndAngles(entityLiving.getX(), entityLiving.getBodyY(0.95),
 							entityLiving.getZ(), 0, 0);
 
@@ -71,8 +71,8 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 		}
 	}
 
-	public ArrowEntity createArrow(World worldIn, ItemStack stack, LivingEntity shooter) {
-		ArrowEntity arrowentity = new ArrowEntity(worldIn, shooter);
+	public RocketProjectile createArrow(World worldIn, ItemStack stack, LivingEntity shooter) {
+		RocketProjectile arrowentity = new RocketProjectile(worldIn, shooter);
 		return arrowentity;
 	}
 
@@ -91,7 +91,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 		return UseAction.BOW;
 	}
 
-	public ArrowEntity customeArrow(ArrowEntity arrow) {
+	public RocketProjectile customeArrow(RocketProjectile arrow) {
 		return arrow;
 	}
 
@@ -141,7 +141,8 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	@Override
 	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
 		tooltip.add(Text
-				.literal("Ammo: " + (stack.getMaxDamage() - stack.getDamage() - 1) + " / " + (stack.getMaxDamage() - 1))
+				.translatable(
+						"Ammo: " + (stack.getMaxDamage() - stack.getDamage() - 1) + " / " + (stack.getMaxDamage() - 1))
 				.formatted(Formatting.ITALIC));
 	}
 }
