@@ -13,7 +13,8 @@ public class ReplacedCreeperEntity implements IAnimatable {
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
+		data.addAnimationController(
+				new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
 	}
 
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {
