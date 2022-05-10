@@ -1,3 +1,5 @@
-v3.0.23
+v3.0.24
 
-- Disables Rendering if invisible instead of changing Alpha
+- Ports DerToaster changes for hiding bones
+- Updates Core for GeoBone methods needed hiding bones.
+- Fixes log spam regarding the botarium and fertilizer block item models. 

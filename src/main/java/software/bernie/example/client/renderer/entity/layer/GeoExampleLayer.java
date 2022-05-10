@@ -1,4 +1,4 @@
-package software.bernie.example.client.layer;
+package software.bernie.example.client.renderer.entity.layer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;

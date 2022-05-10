@@ -4,8 +4,7 @@ import net.minecraft.item.Item;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PotatoArmorItem;
 
-public class ItemRegistry
-{
+public class ItemRegistry {
 	public static JackInTheBoxItem JACK_IN_THE_BOX;
 
 	public static PotatoArmorItem POTATO_HEAD;

@@ -1,5 +1,7 @@
 package software.bernie.example.entity;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -17,30 +19,23 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-import javax.annotation.Nullable;
-
-public class BikeEntity extends EntityAnimal implements IAnimatable
-{
+public class BikeEntity extends EntityAnimal implements IAnimatable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(World worldIn)
-	{
+	public BikeEntity(World worldIn) {
 		super(worldIn);
 		this.ignoreFrustumCheck = true;
 		this.setSize(0.5F, 0.6F);
 	}
 
 	@Override
-	public boolean processInteract(EntityPlayer player, EnumHand hand)
-	{
-		if (!this.isBeingRidden())
-		{
+	public boolean processInteract(EntityPlayer player, EnumHand hand) {
+		if (!this.isBeingRidden()) {
 			player.startRiding(this);
 			return super.processInteract(player, hand);
 		}
@@ -48,16 +43,13 @@ public class BikeEntity extends EntityAnimal implements IAnimatable
 	}
 
 	@Override
-	protected void playStepSound(BlockPos pos, Block blockIn)
-	{}
+	protected void playStepSound(BlockPos pos, Block blockIn) {
+	}
 
 	@Override
-	public void travel(float strafe, float vertical, float forward)
-	{
-		if (this.isEntityAlive())
-		{
-			if (this.isBeingRidden())
-			{
+	public void travel(float strafe, float vertical, float forward) {
+		if (this.isEntityAlive()) {
+			if (this.isBeingRidden()) {
 				EntityLivingBase livingentity = (EntityLivingBase) this.getControllingPassenger();
 				this.rotationYaw = livingentity.rotationYaw;
 				this.prevRotationYaw = this.rotationYaw;
@@ -67,8 +59,7 @@ public class BikeEntity extends EntityAnimal implements IAnimatable
 				this.rotationYawHead = this.renderYawOffset;
 				float f = livingentity.moveStrafing * 0.5F;
 				float f1 = livingentity.moveForward;
-				if (f1 <= 0.0F)
-				{
+				if (f1 <= 0.0F) {
 					f1 *= 0.25F;
 				}
 
@@ -89,21 +80,18 @@ public class BikeEntity extends EntityAnimal implements IAnimatable
 	}
 
 	@Override
-	public void registerControllers(AnimationData data)
-	{
-		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));
+	public void registerControllers(AnimationData data) {
+		data.addAnimationController(new AnimationController<BikeEntity>(this, "controller", 0, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 
 	@Nullable
 	@Override
-	public EntityAgeable createChild(EntityAgeable ageable)
-	{
+	public EntityAgeable createChild(EntityAgeable ageable) {
 		return null;
 	}
 }

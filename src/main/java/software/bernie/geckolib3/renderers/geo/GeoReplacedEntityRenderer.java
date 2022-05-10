@@ -30,6 +30,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends Render<EntityLivingBase>
 		implements IGeoRenderer {
 	private final AnimatedGeoModel<T> modelProvider;
@@ -209,6 +210,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends R
 		return !livingEntityIn.isInvisible();
 	}
 
+	@SuppressWarnings("unused")
 	private static float getFacingAngle(EnumFacing facingIn) {
 		switch (facingIn) {
 		case SOUTH:

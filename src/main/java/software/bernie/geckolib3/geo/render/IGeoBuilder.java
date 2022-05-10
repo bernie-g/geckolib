@@ -7,9 +7,9 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 
 public interface IGeoBuilder {
-	
+
 	GeoModel constructGeoModel(RawGeometryTree geometryTree);
-	
+
 	GeoBone constructBone(RawBoneGroup bone, ModelProperties properties, GeoBone parent);
 
 }

@@ -1,6 +1,5 @@
 package software.bernie.example.registry;
 
-public class TileRegistry
-{
+public class TileRegistry {
 	// ...
 }

@@ -24,7 +24,7 @@ import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
-import software.bernie.example.client.renderer.entity.GeoExampleEntityLayerRenderer;
+import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
@@ -44,15 +44,11 @@ public class GeckoLibMod {
 	private static CreativeTabs geckolibItemGroup;
 	private boolean deobfuscatedEnvironment;
 
-	public static CreativeTabs getGeckolibItemGroup()
-	{
-		if (geckolibItemGroup == null)
-		{
-			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples")
-			{
+	public static CreativeTabs getGeckolibItemGroup() {
+		if (geckolibItemGroup == null) {
+			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples") {
 				@Override
-				public ItemStack getTabIconItem()
-				{
+				public ItemStack getTabIconItem() {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX);
 				}
 			};
@@ -61,22 +57,19 @@ public class GeckoLibMod {
 		return geckolibItemGroup;
 	}
 
-	public GeckoLibMod()
-	{
+	public GeckoLibMod() {
 		deobfuscatedEnvironment = (Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
-		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
-		{
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
 			MinecraftForge.EVENT_BUS.register(new CommonListener());
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
-	public void registerRenderers(FMLPreInitializationEvent event)
-	{
-		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
-		{
-			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class, GeoExampleEntityLayerRenderer::new);
+	public void registerRenderers(FMLPreInitializationEvent event) {
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
+			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class,
+					LERenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
 
@@ -89,10 +82,8 @@ public class GeckoLibMod {
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
-	public void registerReplacedRenderers(FMLInitializationEvent event)
-	{
-		if (deobfuscatedEnvironment && !DISABLE_IN_DEV)
-		{
+	public void registerReplacedRenderers(FMLInitializationEvent event) {
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
 			GeckoLib.initialize();
 			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);

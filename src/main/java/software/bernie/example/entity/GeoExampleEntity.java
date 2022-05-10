@@ -13,8 +13,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAnimationTickable
-{
+public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAnimationTickable {
 	private AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
@@ -22,28 +21,24 @@ public class GeoExampleEntity extends EntityCreature implements IAnimatable, IAn
 		return PlayState.CONTINUE;
 	}
 
-	public GeoExampleEntity(World worldIn)
-	{
+	public GeoExampleEntity(World worldIn) {
 		super(worldIn);
 		this.ignoreFrustumCheck = true;
 		this.setSize(0.7F, 1.3F);
 	}
 
 	@Override
-	public void registerControllers(AnimationData data)
-	{
-		data.addAnimationController(new AnimationController(this, "controller", 50, this::predicate));
+	public void registerControllers(AnimationData data) {
+		data.addAnimationController(new AnimationController<GeoExampleEntity>(this, "controller", 50, this::predicate));
 	}
 
 	@Override
-	public AnimationFactory getFactory()
-	{
+	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 
 	@Override
-	protected void initEntityAI()
-	{
+	protected void initEntityAI() {
 		this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		super.initEntityAI();
 	}

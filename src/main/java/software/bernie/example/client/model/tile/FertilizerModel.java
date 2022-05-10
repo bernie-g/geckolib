@@ -9,43 +9,30 @@ import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity>
-{
+public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 	@Override
-	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable)
-	{
-		if(animatable.getWorld().isRaining())
-		{
+	public ResourceLocation getAnimationFileLocation(FertilizerTileEntity animatable) {
+		if (animatable.getWorld().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
-		}
-		else
-		{
+		} else {
 			return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
 		}
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(FertilizerTileEntity animatable)
-	{
-		if(animatable.getWorld().isRaining())
-		{
+	public ResourceLocation getModelLocation(FertilizerTileEntity animatable) {
+		if (animatable.getWorld().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
-		}
-		else
-		{
+		} else {
 			return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
 		}
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(FertilizerTileEntity entity)
-	{
-		if(entity.getWorld().isRaining())
-		{
+	public ResourceLocation getTextureLocation(FertilizerTileEntity entity) {
+		if (entity.getWorld().isRaining()) {
 			return new ResourceLocation(GeckoLib.ModID, "textures/block/fertilizer.png");
-		}
-		else
-		{
+		} else {
 			return new ResourceLocation(GeckoLib.ModID, "textures/block/botarium.png");
 		}
 	}
