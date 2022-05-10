@@ -1,5 +1,3 @@
-3.0.41
+3.0.42
 
-- Ports DerToaster changes for hiding bones and texture per bone via code shown in the ExampleExtendedEntity (no plugin or BB support for this currently)
-- Updates Core for GeoBone methods needed hiding bones.
-- Fixes log spam regarding the botarium and fertilizer block item models. 
+- Using proper packet system for Rocket Entity for the example mod.
