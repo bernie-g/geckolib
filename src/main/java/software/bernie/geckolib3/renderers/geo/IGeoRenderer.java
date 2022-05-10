@@ -46,12 +46,16 @@ public interface IGeoRenderer<T> {
 		RenderUtils.scale(bone, stack);
 		RenderUtils.moveBackFromPivot(bone, stack);
 
-		if (!bone.isHidden) {
+		if (!bone.isHidden()) {
 			for (GeoCube cube : bone.childCubes) {
 				stack.push();
-				renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				if (!bone.cubesAreHidden()) {
+					renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				}
 				stack.pop();
 			}
+		}
+		if (!bone.childBonesAreHiddenToo()) {
 			for (GeoBone childBone : bone.childBones) {
 				renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 			}
