@@ -11,7 +11,6 @@ buildscript {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
-        classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -21,17 +20,13 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle"
-apply plugin: "com.modrinth.minotaur"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
-import com.modrinth.minotaur.dependencies.ModDependency
 
-def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
-version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
-
-group = 'software.bernie.geckolib'
 archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -251,28 +246,6 @@ processResources {
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
-}
-
-task publishToModSites {
-    publishToModSites.dependsOn modrinth
-    publishToModSites.dependsOn curseforge
-}
-
-if (file('key.properties').exists()) {
-	modrinth {
-		def modrinthProp = new Properties()
-		File secretPropsFile = file("key.properties")
-		modrinthProp.load(secretPropsFile.newInputStream())
-		
-		token = modrinthProp.getProperty('modrinthKey')
-		projectId = 'E5H4km4c' 
-		versionNumber = project.mod_version 
-		versionName = 'Geckolib Forge 1.18.2'
-		uploadFile = jar 
-		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.18.2']
-		loaders = ['forge']
-	}
 }
 
 if (file('key.properties').exists()) {
