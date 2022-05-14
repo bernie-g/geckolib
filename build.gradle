@@ -22,11 +22,9 @@ apply plugin: 'com.matthewprenger.cursegradle'
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 
-def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
-version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
-
-group = 'software.bernie.geckolib'
-archivesBaseName = 'geckolib-forge-1.12.2'
+version = project.mod_version
+group = project.maven_group
+archivesBaseName = project.archives_base_name
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
