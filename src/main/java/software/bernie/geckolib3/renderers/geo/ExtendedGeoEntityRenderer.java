@@ -121,7 +121,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	
 	//Yes, this is necessary to be done after everything else, otherwise it will mess up the texture cause the rendertypebuffer will be modified
 	protected void renderHeads(MatrixStack stack, IRenderTypeBuffer buffer, int packedLightIn) {
-		do {
+		while(!this.HEAD_QUEUE.isEmpty()) {
 			Tuple<GeoBone, ItemStack> entry = this.HEAD_QUEUE.poll();
 			
 			GeoBone bone = entry.getA();
@@ -144,12 +144,26 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	            	 }
 	             }
             }
-            stack.scale(1.1875F, 1.1875F, 1.1875F);
+			float sx = 1;
+			float sy = 1;
+			float sz = 1;
+			try {
+				GeoCube firstCube = bone.childCubes.get(0);
+				if(firstCube != null) {
+					//Calculate scale in relation to a vanilla head (8x8x8 units)
+					sx = firstCube.size.x() / 8;
+					sy = firstCube.size.y() / 8;
+					sz = firstCube.size.z() / 8;
+				}
+			} catch(IndexOutOfBoundsException ioobe) {
+				//Ignore
+			}
+            stack.scale(1.1875F * sx, 1.1875F * sy, 1.1875F * sz);
             stack.translate(-0.5, 0, -0.5);
             SkullTileEntityRenderer.renderSkull((Direction)null, 0.0F, ((AbstractSkullBlock)((BlockItem)itemStack.getItem()).getBlock()).getType(), skullOwnerProfile, 0F /* limbswing, controls rotation*/, stack, buffer, packedLightIn);
             stack.popPose();
 			
-		} while(!this.HEAD_QUEUE.isEmpty());
+		};
 	}
 
 	protected float getWidthScale(T entity) {
