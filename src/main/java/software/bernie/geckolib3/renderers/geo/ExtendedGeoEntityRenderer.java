@@ -299,7 +299,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		//Armor and geo armor
 		if (armorForBone != null && boneSlot != null) {
 			//Standard armor
-			if (armorForBone.getItem() instanceof ArmorItem) {
+			if (armorForBone.getItem() instanceof ArmorItem && !(armorForBone.getItem() instanceof GeoArmorItem)) {
 				final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
 				final BipedModel<?> armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered,
 						armorForBone, boneSlot,
