@@ -328,7 +328,34 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			}
 			//Geo Armor
 			else if (armorForBone.getItem() instanceof GeoArmorItem) {
-				//TODO
+				final GeoArmorItem armorItem = (GeoArmorItem) armorForBone.getItem();
+				final BipedModel<?> armorModel = armorItem.getArmorModel(this.currentEntityBeingRendered, armorForBone, boneSlot, boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
+								: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
+				if (armorModel != null) {
+					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
+					ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+					if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
+						// IMPORTANT: The first cube is used to define the armor part!!
+						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+						stack.scale(-1, -1, 1);
+
+						stack.pushPose();
+
+						GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass());
+						geoArmorRenderer.applySlot(boneSlot);
+						geoArmorRenderer.fitToBiped();
+						
+						IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
+								armorForBone.hasFoil());
+						
+						geoArmorRenderer.render(0, stack, ivb, packedLightIn);
+						
+
+						stack.popPose();
+
+						bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+					}
+				}
 			}
 			//Head blocks
 			else if(armorForBone.getItem() instanceof BlockItem && ((BlockItem)armorForBone.getItem()).getBlock() instanceof AbstractSkullBlock) {
