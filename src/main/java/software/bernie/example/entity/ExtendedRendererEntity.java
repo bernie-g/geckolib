@@ -2,11 +2,14 @@ package software.bernie.example.entity;
 
 import java.util.Optional;
 
+import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.LookAtGoal;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ShieldItem;
@@ -248,6 +251,9 @@ public class ExtendedRendererEntity extends CreatureEntity implements IAnimatabl
 			if(item.getItem() instanceof ArmorItem) {
 				ArmorItem ai = (ArmorItem) item.getItem();
 				this.setItemSlot(ai.getSlot(), item);
+			}
+			else if(item.getItem() instanceof BlockItem && ((BlockItem)item.getItem()).getBlock() instanceof AbstractSkullBlock) {
+				this.setItemSlot(EquipmentSlotType.HEAD, item);
 			}
 			else if(item.getItem().getEquipmentSlot(item) != null) {
 				this.setItemSlot(item.getItem().getEquipmentSlot(item), item);
