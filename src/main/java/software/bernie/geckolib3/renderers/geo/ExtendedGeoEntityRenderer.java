@@ -348,7 +348,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
 								armorForBone.hasFoil());
 						
-						geoArmorRenderer.render(0, stack, ivb, packedLightIn);
+						geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
 						
 
 						stack.popPose();
