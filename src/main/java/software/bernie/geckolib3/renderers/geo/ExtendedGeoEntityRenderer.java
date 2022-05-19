@@ -426,7 +426,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected void renderBlock(MatrixStack matrixStack, IRenderTypeBuffer rtb, int packedLightIn,
 			BlockState iBlockState) {
-		// TODO: Re-implement, doesn't do anyhting yet
+		// TODO: Re-implement, doesn't do anything yet
 	}
 
 	/*
