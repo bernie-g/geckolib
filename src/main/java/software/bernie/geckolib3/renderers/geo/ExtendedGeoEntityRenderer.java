@@ -307,22 +307,24 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 								: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
 				if (armorModel != null) {
 					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-					ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
-					if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
-						// IMPORTANT: The first cube is used to define the armor part!!
-						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
-						stack.scale(-1, -1, 1);
+					if (sourceLimb != null) {
+						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+						if (cubeList != null && !cubeList.isEmpty()) {
+							// IMPORTANT: The first cube is used to define the armor part!!
+							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+							stack.scale(-1, -1, 1);
 
-						stack.pushPose();
+							stack.pushPose();
 
-						ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
-								armorForBone, boneSlot, null);
+							ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
+									armorForBone, boneSlot, null);
 
-						this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
+							this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
 
-						stack.popPose();
+							stack.popPose();
 
-						bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+						}
 					}
 				}
 			}
@@ -333,27 +335,29 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 								: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
 				if (armorModel != null) {
 					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-					ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
-					if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
-						// IMPORTANT: The first cube is used to define the armor part!!
-						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
-						stack.scale(-1, -1, 1);
+					if (sourceLimb != null) {
+						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+						if (cubeList != null && !cubeList.isEmpty()) {
+							// IMPORTANT: The first cube is used to define the armor part!!
+							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+							stack.scale(-1, -1, 1);
 
-						stack.pushPose();
+							stack.pushPose();
 
-						GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass());
-						geoArmorRenderer.applySlot(boneSlot);
-						geoArmorRenderer.fitToBiped();
-						
-						IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
-								armorForBone.hasFoil());
-						
-						geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
-						
+							GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass());
+							geoArmorRenderer.applySlot(boneSlot);
+							geoArmorRenderer.fitToBiped();
 
-						stack.popPose();
+							IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
+									armorForBone.hasFoil());
 
-						bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+							geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
+
+
+							stack.popPose();
+
+							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+						}
 					}
 				}
 			}
