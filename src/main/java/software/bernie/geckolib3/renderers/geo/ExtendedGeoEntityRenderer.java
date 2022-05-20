@@ -236,7 +236,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			// Render armor
 
 			if (this.isArmorBone(bone)) {
+				stack.pushPose();
 				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
+				stack.popPose();
 			} else {
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
@@ -339,7 +341,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
 						if (cubeList != null && !cubeList.isEmpty()) {
 							// IMPORTANT: The first cube is used to define the armor part!!
-							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true);
 							stack.scale(-1, -1, 1);
 
 							stack.pushPose();
@@ -385,8 +387,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					armorForBone, armorResource);
 		}
 	}
-
+	
 	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack) {
+		prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, false);
+	}
+
+	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack, boolean recursive) {
 		GeoCube firstCube = bone.childCubes.get(0);
 		final ModelBox armorCube = cubeList.get(0);
 		
@@ -405,9 +411,25 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		//Modify position to move point to correct location, otherwise it will be off when the sizes are different
 		sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX), -(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
 		
-		sourceLimb.xRot = -bone.getRotationX();
-		sourceLimb.yRot = -bone.getRotationY();
-		sourceLimb.zRot = bone.getRotationZ();
+		if(!recursive) {
+			sourceLimb.xRot = -bone.getRotationX();
+			sourceLimb.yRot = -bone.getRotationY();
+			sourceLimb.zRot = bone.getRotationZ();
+		} else {
+			float xRot = bone.getRotationX();
+			float yRot = bone.getRotationY();
+			float zRot = bone.getRotationZ();
+			GeoBone tmpBone = bone.parent;
+			while(tmpBone != null) {
+				xRot += tmpBone.getRotationX();
+				yRot += tmpBone.getRotationY();
+				zRot += tmpBone.getRotationZ();
+				tmpBone = tmpBone.parent;
+			}
+			sourceLimb.xRot = xRot;
+			sourceLimb.yRot = yRot;
+			sourceLimb.zRot = zRot;
+		}
 		
 		stack.scale(scaleX, scaleY, scaleZ);
 	}
