@@ -39,6 +39,7 @@ import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -341,14 +342,68 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
 						if (cubeList != null && !cubeList.isEmpty()) {
 							// IMPORTANT: The first cube is used to define the armor part!!
-							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true);
 							stack.scale(-1, -1, 1);
+							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true, boneSlot == EquipmentSlotType.CHEST);
 
 							stack.pushPose();
 
 							GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass());
+							/*String limbIdent = "";
+							
+							if(sourceLimb == armorModel.head) {
+								limbIdent = geoArmorRenderer.headBone;
+								
+							} else if(sourceLimb == armorModel.body) {
+								limbIdent = geoArmorRenderer.bodyBone;
+								
+							} else if(sourceLimb == armorModel.leftArm) {
+								limbIdent = geoArmorRenderer.leftArmBone;
+								
+							} else if(sourceLimb == armorModel.leftLeg) {
+								if(boneSlot == EquipmentSlotType.FEET) {
+									limbIdent = geoArmorRenderer.leftBootBone;
+								} else {
+									limbIdent = geoArmorRenderer.leftLegBone;
+								}
+								
+							} else if(sourceLimb == armorModel.rightArm) {
+								limbIdent = geoArmorRenderer.rightArmBone;
+								
+							} else if(sourceLimb == armorModel.rightLeg) {
+								if(boneSlot == EquipmentSlotType.FEET) {
+									limbIdent = geoArmorRenderer.rightBootBone;
+								} else {
+									limbIdent = geoArmorRenderer.rightLegBone;
+								}
+							}
+							
+							
+							IBone geoArmorBone = geoArmorRenderer.getGeoModelProvider().getBone(limbIdent);
+							
+							float rotX = bone.getRotationX();
+							float rotY = bone.getRotationY();
+							float rotZ = bone.getRotationZ();
+							while (bone.parent != null) {
+								bone = bone.parent;
+								
+								rotX += bone.getRotationX();
+								rotY += bone.getRotationY();
+								rotZ += bone.getRotationZ();
+							}
+							
+							//rotX = -(float) Math.toRadians(rotX);
+							//rotY = -(float) Math.toRadians(rotY);
+							//rotZ = (float) Math.toRadians(rotZ);
+							
+							//geoArmorBone.setPositionX(bone.getPositionX());
+							//geoArmorBone.setPositionY(bone.getPositionY());
+							//geoArmorBone.setPositionZ(bone.getPositionZ());
+							
+							geoArmorBone.setRotationX(rotX);
+							geoArmorBone.setRotationY(rotY);
+							geoArmorBone.setRotationZ(rotZ);*/
+							
 							geoArmorRenderer.applySlot(boneSlot);
-							geoArmorRenderer.fitToBiped();
 
 							IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
 									armorForBone.hasFoil());
@@ -389,10 +444,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 	
 	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack) {
-		prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, false);
+		prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, false, false);
 	}
 
-	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack, boolean recursive) {
+	protected void prepareArmorPositionAndScale(GeoBone bone, ObjectList<ModelBox> cubeList, ModelRenderer sourceLimb, MatrixStack stack, boolean geoArmor, boolean modMatrixRot) {
 		GeoCube firstCube = bone.childCubes.get(0);
 		final ModelBox armorCube = cubeList.get(0);
 		
@@ -411,24 +466,35 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		//Modify position to move point to correct location, otherwise it will be off when the sizes are different
 		sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX), -(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
 		
-		if(!recursive) {
+		if(!geoArmor) {
 			sourceLimb.xRot = -bone.getRotationX();
 			sourceLimb.yRot = -bone.getRotationY();
 			sourceLimb.zRot = bone.getRotationZ();
 		} else {
-			float xRot = bone.getRotationX();
-			float yRot = bone.getRotationY();
+			float xRot = -bone.getRotationX();
+			float yRot = -bone.getRotationY();
 			float zRot = bone.getRotationZ();
 			GeoBone tmpBone = bone.parent;
 			while(tmpBone != null) {
-				xRot += tmpBone.getRotationX();
-				yRot += tmpBone.getRotationY();
+				xRot -= tmpBone.getRotationX();
+				yRot -= tmpBone.getRotationY();
 				zRot += tmpBone.getRotationZ();
 				tmpBone = tmpBone.parent;
 			}
-			sourceLimb.xRot = xRot;
-			sourceLimb.yRot = yRot;
-			sourceLimb.zRot = zRot;
+			
+			if(modMatrixRot) {
+				xRot = (float) Math.toRadians(xRot);
+				yRot = (float) Math.toRadians(yRot);
+				zRot = (float) Math.toRadians(zRot);
+				
+				stack.mulPose(new Quaternion(0, 0, zRot, false));
+				stack.mulPose(new Quaternion(0, yRot, 0, false));
+				stack.mulPose(new Quaternion(xRot, 0, 0, false));
+			} else {
+				sourceLimb.xRot = xRot;
+				sourceLimb.yRot = yRot;
+				sourceLimb.zRot = zRot;
+			}
 		}
 		
 		stack.scale(scaleX, scaleY, scaleZ);
