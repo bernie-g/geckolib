@@ -23,7 +23,7 @@ public abstract class GeoArmorItem extends ArmorItem {
 	@Override
 	public <A extends BipedModel<?>> A getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 			EquipmentSlotType armorSlot, A _default) {
-		return (A) GeoArmorRenderer.getRenderer(this.getClass())
+		return (A) GeoArmorRenderer.getRenderer(this.getClass(), entityLiving)
 				.applyEntityStats(_default)
 				.applySlot(armorSlot)
 				.setCurrentItem(entityLiving, itemStack, armorSlot);
@@ -33,7 +33,7 @@ public abstract class GeoArmorItem extends ArmorItem {
 	@Override
 	public final String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlotType slot, String type) {
 		Class<? extends ArmorItem> clazz = this.getClass();
-		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
+		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz, entity);
 		return renderer.getTextureLocation((ArmorItem) stack.getItem()).toString();
 	}
 }

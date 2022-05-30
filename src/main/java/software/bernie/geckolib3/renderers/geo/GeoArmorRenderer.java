@@ -1,9 +1,13 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -12,12 +16,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -28,18 +36,34 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
+@EventBusSubscriber
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
 		implements IGeoRenderer<T> {
-	private static Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
+	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
+	
+	private static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
 
-	static {
+	{
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof ArmorItem) {
-				GeoArmorRenderer renderer = renderers.get(object.getClass());
+				GeoArmorRenderer renderer = this;
 				return renderer == null ? null : renderer.getGeoModelProvider();
 			}
 			return null;
+		});
+	}
+	
+	@SubscribeEvent
+	public static void onEntityRemoved(EntityLeaveWorldEvent event) {
+		if(event.getEntity() == null) {
+			return;
+		}
+		if(event.getEntity().getUUID() == null) {
+			return;
+		}
+		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
+			instances.remove(event.getEntity().getUUID());
 		});
 	}
 
@@ -59,16 +83,56 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
-	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer renderer) {
-		renderers.put(itemClass, renderer);
+	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer instance) {
+		for(Constructor<?> c : instance.getClass().getConstructors()) {
+			if(c.getParameterCount() == 0) {
+				registerArmorRenderer(itemClass, new Supplier<GeoArmorRenderer>() {
+					
+					@Override
+					public GeoArmorRenderer get() {
+						try {
+							return (GeoArmorRenderer)c.newInstance();
+						} catch (InstantiationException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						}
+						return null;
+					}
+				});
+			}
+		}
 	}
-
-	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item) {
-		final GeoArmorRenderer renderer = renderers.get(item);
-		if (renderer == null) {
+	
+	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, Supplier<GeoArmorRenderer> rendererConstructor) {
+		CONSTRUCTORS.put(itemClass, rendererConstructor);
+		LIVING_ENTITY_RENDERERS.put(itemClass, new ConcurrentHashMap<>());
+	}
+	
+	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer) {
+		return getRenderer(item, wearer, false);
+	}
+	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer, boolean forExtendedEntity) {
+		final Map<UUID, GeoArmorRenderer<?>> renderers = LIVING_ENTITY_RENDERERS.putIfAbsent(item, new ConcurrentHashMap<>());
+		if(renderers != null) {
+			GeoArmorRenderer renderer = renderers.getOrDefault(wearer.getUUID(), null);
+			if(renderer == null) {
+				renderer = CONSTRUCTORS.get(item).get();
+				if(renderer != null) {
+					renderers.put(wearer.getUUID(), renderer);
+				}
+			}
+			if (renderer == null) {
+				throw new IllegalArgumentException("Renderer not registered for item " + item);
+			}
+			return renderer;
+		} else {
 			throw new IllegalArgumentException("Renderer not registered for item " + item);
 		}
-		return renderer;
 	}
 
 	private final AnimatedGeoModel<T> modelProvider;

@@ -334,7 +334,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			//Geo Armor
 			else if (armorForBone.getItem() instanceof GeoArmorItem) {
 				final GeoArmorItem armorItem = (GeoArmorItem) armorForBone.getItem();
-				final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass());
+				@SuppressWarnings("unchecked")
+				final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered);
 				final BipedModel<?> armorModel = (BipedModel<?>) geoArmorRenderer;
 				
 				if (armorModel != null) {
@@ -406,7 +407,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 							geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
 							geoArmorRenderer.applySlot(boneSlot);
 
-							IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)), false,
+							IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered).getTextureLocation(armorItem)), false,
 									armorForBone.hasFoil());
 
 							geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
