@@ -301,121 +301,122 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				currentEntityBeingRendered);
 		//Armor and geo armor
 		if (armorForBone != null && boneSlot != null) {
-			//Standard armor
-			if (armorForBone.getItem() instanceof ArmorItem && !(armorForBone.getItem() instanceof GeoArmorItem)) {
+			//Geo armor
+			if(armorForBone.getItem() instanceof ArmorItem) {
 				final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
-				final BipedModel<?> armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered,
-						armorForBone, boneSlot,
-						boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
-								: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
-				if (armorModel != null) {
-					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-					if (sourceLimb != null) {
-						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
-						if (cubeList != null && !cubeList.isEmpty()) {
-							// IMPORTANT: The first cube is used to define the armor part!!
-							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
-							stack.scale(-1, -1, 1);
+				if (armorForBone.getItem() instanceof IAnimatable) {
+					@SuppressWarnings("unchecked")
+					final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered);
+					final BipedModel<?> armorModel = (BipedModel<?>) geoArmorRenderer;
+					
+					if (armorModel != null) {
+						ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
+						if (sourceLimb != null) {
+							ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+							if (cubeList != null && !cubeList.isEmpty()) {
+								// IMPORTANT: The first cube is used to define the armor part!!
+								stack.scale(-1, -1, 1);
+								stack.pushPose();
+								
+								this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true, boneSlot == EquipmentSlotType.CHEST);
 
-							stack.pushPose();
+								/*String limbIdent = "";
+								
+								if(sourceLimb == armorModel.head) {
+									limbIdent = geoArmorRenderer.headBone;
+									
+								} else if(sourceLimb == armorModel.body) {
+									limbIdent = geoArmorRenderer.bodyBone;
+									
+								} else if(sourceLimb == armorModel.leftArm) {
+									limbIdent = geoArmorRenderer.leftArmBone;
+									
+								} else if(sourceLimb == armorModel.leftLeg) {
+									if(boneSlot == EquipmentSlotType.FEET) {
+										limbIdent = geoArmorRenderer.leftBootBone;
+									} else {
+										limbIdent = geoArmorRenderer.leftLegBone;
+									}
+									
+								} else if(sourceLimb == armorModel.rightArm) {
+									limbIdent = geoArmorRenderer.rightArmBone;
+									
+								} else if(sourceLimb == armorModel.rightLeg) {
+									if(boneSlot == EquipmentSlotType.FEET) {
+										limbIdent = geoArmorRenderer.rightBootBone;
+									} else {
+										limbIdent = geoArmorRenderer.rightLegBone;
+									}
+								}
+								
+								
+								IBone geoArmorBone = geoArmorRenderer.getGeoModelProvider().getBone(limbIdent);
+								
+								float rotX = bone.getRotationX();
+								float rotY = bone.getRotationY();
+								float rotZ = bone.getRotationZ();
+								while (bone.parent != null) {
+									bone = bone.parent;
+									
+									rotX += bone.getRotationX();
+									rotY += bone.getRotationY();
+									rotZ += bone.getRotationZ();
+								}
+								
+								//rotX = -(float) Math.toRadians(rotX);
+								//rotY = -(float) Math.toRadians(rotY);
+								//rotZ = (float) Math.toRadians(rotZ);
+								
+								//geoArmorBone.setPositionX(bone.getPositionX());
+								//geoArmorBone.setPositionY(bone.getPositionY());
+								//geoArmorBone.setPositionZ(bone.getPositionZ());
+								
+								geoArmorBone.setRotationX(rotX);
+								geoArmorBone.setRotationY(rotY);
+								geoArmorBone.setRotationZ(rotZ);*/
+								
+								geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
+								geoArmorRenderer.applySlot(boneSlot);
 
-							ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
-									armorForBone, boneSlot, null);
+								IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered).getTextureLocation(armorItem)), false,
+										armorForBone.hasFoil());
 
-							this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
+								geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
 
-							stack.popPose();
 
-							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+								stack.popPose();
+
+								bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+							}
 						}
 					}
 				}
-			}
-			//Geo Armor
-			else if (armorForBone.getItem() instanceof GeoArmorItem) {
-				final GeoArmorItem armorItem = (GeoArmorItem) armorForBone.getItem();
-				@SuppressWarnings("unchecked")
-				final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered);
-				final BipedModel<?> armorModel = (BipedModel<?>) geoArmorRenderer;
-				
-				if (armorModel != null) {
-					ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-					if (sourceLimb != null) {
-						ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
-						if (cubeList != null && !cubeList.isEmpty()) {
-							// IMPORTANT: The first cube is used to define the armor part!!
-							stack.scale(-1, -1, 1);
-							stack.pushPose();
-							
-							this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true, boneSlot == EquipmentSlotType.CHEST);
+				//Normal Armor
+				else {
+					final BipedModel<?> armorModel = ForgeHooksClient.getArmorModel(currentEntityBeingRendered,
+							armorForBone, boneSlot,
+							boneSlot == EquipmentSlotType.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER
+									: DEFAULT_BIPED_ARMOR_MODEL_OUTER);
+					if (armorModel != null) {
+						ModelRenderer sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
+						if (sourceLimb != null) {
+							ObjectList<ModelRenderer.ModelBox> cubeList = sourceLimb.cubes;
+							if (cubeList != null && !cubeList.isEmpty()) {
+								// IMPORTANT: The first cube is used to define the armor part!!
+								this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
+								stack.scale(-1, -1, 1);
 
-							/*String limbIdent = "";
-							
-							if(sourceLimb == armorModel.head) {
-								limbIdent = geoArmorRenderer.headBone;
-								
-							} else if(sourceLimb == armorModel.body) {
-								limbIdent = geoArmorRenderer.bodyBone;
-								
-							} else if(sourceLimb == armorModel.leftArm) {
-								limbIdent = geoArmorRenderer.leftArmBone;
-								
-							} else if(sourceLimb == armorModel.leftLeg) {
-								if(boneSlot == EquipmentSlotType.FEET) {
-									limbIdent = geoArmorRenderer.leftBootBone;
-								} else {
-									limbIdent = geoArmorRenderer.leftLegBone;
-								}
-								
-							} else if(sourceLimb == armorModel.rightArm) {
-								limbIdent = geoArmorRenderer.rightArmBone;
-								
-							} else if(sourceLimb == armorModel.rightLeg) {
-								if(boneSlot == EquipmentSlotType.FEET) {
-									limbIdent = geoArmorRenderer.rightBootBone;
-								} else {
-									limbIdent = geoArmorRenderer.rightLegBone;
-								}
+								stack.pushPose();
+
+								ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered,
+										armorForBone, boneSlot, null);
+
+								this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack, packedLightIn, packedOverlayIn);
+
+								stack.popPose();
+
+								bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 							}
-							
-							
-							IBone geoArmorBone = geoArmorRenderer.getGeoModelProvider().getBone(limbIdent);
-							
-							float rotX = bone.getRotationX();
-							float rotY = bone.getRotationY();
-							float rotZ = bone.getRotationZ();
-							while (bone.parent != null) {
-								bone = bone.parent;
-								
-								rotX += bone.getRotationX();
-								rotY += bone.getRotationY();
-								rotZ += bone.getRotationZ();
-							}
-							
-							//rotX = -(float) Math.toRadians(rotX);
-							//rotY = -(float) Math.toRadians(rotY);
-							//rotZ = (float) Math.toRadians(rotZ);
-							
-							//geoArmorBone.setPositionX(bone.getPositionX());
-							//geoArmorBone.setPositionY(bone.getPositionY());
-							//geoArmorBone.setPositionZ(bone.getPositionZ());
-							
-							geoArmorBone.setRotationX(rotX);
-							geoArmorBone.setRotationY(rotY);
-							geoArmorBone.setRotationZ(rotZ);*/
-							
-							geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
-							geoArmorRenderer.applySlot(boneSlot);
-
-							IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(GeoArmorRenderer.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered).getTextureLocation(armorItem)), false,
-									armorForBone.hasFoil());
-
-							geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
-
-
-							stack.popPose();
-
-							bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 						}
 					}
 				}
