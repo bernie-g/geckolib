@@ -43,10 +43,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
 	
 	private static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
+	
+	private Class<? extends ArmorItem> assignedItemClass = null;
 
 	{
 		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof ArmorItem) {
+			if (object instanceof ArmorItem && object.getClass() == this.assignedItemClass) {
 				GeoArmorRenderer renderer = this;
 				return renderer == null ? null : renderer.getGeoModelProvider();
 			}
@@ -122,7 +124,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			GeoArmorRenderer renderer = renderers.getOrDefault(wearer.getUUID(), null);
 			if(renderer == null) {
 				renderer = CONSTRUCTORS.get(item).get();
+				
 				if(renderer != null) {
+					renderer.assignedItemClass = item;
+				
 					renderers.put(wearer.getUUID(), renderer);
 				}
 			}
