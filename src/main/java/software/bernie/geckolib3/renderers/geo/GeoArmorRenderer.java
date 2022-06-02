@@ -28,7 +28,9 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.controller.AnimationController.ModelFetcher;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.util.Color;
@@ -39,7 +41,7 @@ import software.bernie.geckolib3.util.GeoUtils;
 @EventBusSubscriber
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
-		implements IGeoRenderer<T> {
+		implements IGeoRenderer<T>, ModelFetcher<T> {
 	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
 	
 	private static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
@@ -47,13 +49,16 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private Class<? extends ArmorItem> assignedItemClass = null;
 
 	{
-		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof ArmorItem && object.getClass() == this.assignedItemClass) {
-				GeoArmorRenderer renderer = this;
-				return renderer == null ? null : renderer.getGeoModelProvider();
-			}
-			return null;
-		});
+		AnimationController.addModelFetcher(this);
+	}
+	
+	@Override
+	@Nullable
+	public IAnimatableModel<T> apply(IAnimatable t) {
+		if(t instanceof ArmorItem && t.getClass() == this.assignedItemClass) {
+			return this.getGeoModelProvider();
+		}
+		return null;
 	}
 	
 	@SubscribeEvent
@@ -67,6 +72,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
 			instances.remove(event.getEntity().getUUID());
 		});
+		//@AzureDoom: Uncomment this line when merging and once the core change is in
+		//AnimationController.removeModelFetcher(this);
 	}
 
 	protected T currentArmorItem;
