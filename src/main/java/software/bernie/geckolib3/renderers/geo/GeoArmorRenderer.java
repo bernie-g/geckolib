@@ -17,7 +17,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -109,6 +108,35 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		this.render(matrices, vertexConsumers, light);
 	}
 
+	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
+		stack.translate(0.0D, 24 / 16F, 0.0D);
+		stack.scale(-1.0F, -1.0F, 1.0F);
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
+
+		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
+				MinecraftClient.getInstance().getTickDelta(), false,
+				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
+		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
+
+		this.fitToBiped();
+		this.applySlot(armorSlot);
+		stack.push();
+		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureResource(currentArmorItem));
+		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
+		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
+				getTextureResource(currentArmorItem));
+		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn,
+				OverlayTexture.DEFAULT_UV, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+
+		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
+			PatchouliCompat.patchouliLoaded(stack);
+		}
+		stack.pop();
+		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, -1.501F, 0.0D);
+	}
+
 	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
@@ -120,7 +148,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 
 		this.fitToBiped();
-		this.applySlot();
+		this.applySlot(armorSlot);
 		stack.push();
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureResource(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, 0, stack, bufferIn, null, packedLightIn);
@@ -139,64 +167,62 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	private void fitToBiped() {
-		if (!(this.entityLiving instanceof ArmorStandEntity)) {
-			if (this.headBone != null) {
-				IBone headBone = this.modelProvider.getBone(this.headBone);
-				GeoUtils.copyRotations(baseModel.head, headBone);
-				headBone.setPositionX(baseModel.head.pivotX);
-				headBone.setPositionY(-baseModel.head.pivotY);
-				headBone.setPositionZ(baseModel.head.pivotZ);
-			}
+		if (this.headBone != null) {
+			IBone headBone = this.modelProvider.getBone(this.headBone);
+			GeoUtils.copyRotations(baseModel.head, headBone);
+			headBone.setPositionX(baseModel.head.pivotX);
+			headBone.setPositionY(-baseModel.head.pivotY);
+			headBone.setPositionZ(baseModel.head.pivotZ);
+		}
 
-			if (this.bodyBone != null) {
-				IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
-				GeoUtils.copyRotations(baseModel.body, bodyBone);
-				bodyBone.setPositionX(baseModel.body.pivotX);
-				bodyBone.setPositionY(-baseModel.body.pivotY);
-				bodyBone.setPositionZ(baseModel.body.pivotZ);
-			}
-			if (this.rightArmBone != null) {
-				IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
-				GeoUtils.copyRotations(baseModel.rightArm, rightArmBone);
-				rightArmBone.setPositionX(baseModel.rightArm.pivotX + 5);
-				rightArmBone.setPositionY(2 - baseModel.rightArm.pivotY);
-				rightArmBone.setPositionZ(baseModel.rightArm.pivotZ);
-			}
+		if (this.bodyBone != null) {
+			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
+			GeoUtils.copyRotations(baseModel.body, bodyBone);
+			bodyBone.setPositionX(baseModel.body.pivotX);
+			bodyBone.setPositionY(-baseModel.body.pivotY);
+			bodyBone.setPositionZ(baseModel.body.pivotZ);
+		}
+		if (this.rightArmBone != null) {
+			IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
+			GeoUtils.copyRotations(baseModel.rightArm, rightArmBone);
+			rightArmBone.setPositionX(baseModel.rightArm.pivotX + 5);
+			rightArmBone.setPositionY(2 - baseModel.rightArm.pivotY);
+			rightArmBone.setPositionZ(baseModel.rightArm.pivotZ);
+		}
 
-			if (this.leftArmBone != null) {
-				IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
-				GeoUtils.copyRotations(baseModel.leftArm, leftArmBone);
-				leftArmBone.setPositionX(baseModel.leftArm.pivotX - 5);
-				leftArmBone.setPositionY(2 - baseModel.leftArm.pivotY);
-				leftArmBone.setPositionZ(baseModel.leftArm.pivotZ);
+		if (this.leftArmBone != null) {
+			IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
+			GeoUtils.copyRotations(baseModel.leftArm, leftArmBone);
+			leftArmBone.setPositionX(baseModel.leftArm.pivotX - 5);
+			leftArmBone.setPositionY(2 - baseModel.leftArm.pivotY);
+			leftArmBone.setPositionZ(baseModel.leftArm.pivotZ);
+		}
+		if (this.rightLegBone != null) {
+			IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
+			GeoUtils.copyRotations(baseModel.rightLeg, rightLegBone);
+			rightLegBone.setPositionX(baseModel.rightLeg.pivotX + 2);
+			rightLegBone.setPositionY(12 - baseModel.rightLeg.pivotY);
+			rightLegBone.setPositionZ(baseModel.rightLeg.pivotZ);
+			if (this.rightBootBone != null) {
+				IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
+				GeoUtils.copyRotations(baseModel.rightLeg, rightBootBone);
+				rightBootBone.setPositionX(baseModel.rightLeg.pivotX + 2);
+				rightBootBone.setPositionY(12 - baseModel.rightLeg.pivotY);
+				rightBootBone.setPositionZ(baseModel.rightLeg.pivotZ);
 			}
-			if (this.rightLegBone != null) {
-				IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
-				GeoUtils.copyRotations(baseModel.rightLeg, rightLegBone);
-				rightLegBone.setPositionX(baseModel.rightLeg.pivotX + 2);
-				rightLegBone.setPositionY(12 - baseModel.rightLeg.pivotY);
-				rightLegBone.setPositionZ(baseModel.rightLeg.pivotZ);
-				if (this.rightBootBone != null) {
-					IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
-					GeoUtils.copyRotations(baseModel.rightLeg, rightBootBone);
-					rightBootBone.setPositionX(baseModel.rightLeg.pivotX + 2);
-					rightBootBone.setPositionY(12 - baseModel.rightLeg.pivotY);
-					rightBootBone.setPositionZ(baseModel.rightLeg.pivotZ);
-				}
-			}
-			if (this.leftLegBone != null) {
-				IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
-				GeoUtils.copyRotations(baseModel.leftLeg, leftLegBone);
-				leftLegBone.setPositionX(baseModel.leftLeg.pivotX - 2);
-				leftLegBone.setPositionY(12 - baseModel.leftLeg.pivotY);
-				leftLegBone.setPositionZ(baseModel.leftLeg.pivotZ);
-				if (this.leftBootBone != null) {
-					IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
-					GeoUtils.copyRotations(baseModel.leftLeg, leftBootBone);
-					leftBootBone.setPositionX(baseModel.leftLeg.pivotX - 2);
-					leftBootBone.setPositionY(12 - baseModel.leftLeg.pivotY);
-					leftBootBone.setPositionZ(baseModel.leftLeg.pivotZ);
-				}
+		}
+		if (this.leftLegBone != null) {
+			IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
+			GeoUtils.copyRotations(baseModel.leftLeg, leftLegBone);
+			leftLegBone.setPositionX(baseModel.leftLeg.pivotX - 2);
+			leftLegBone.setPositionY(12 - baseModel.leftLeg.pivotY);
+			leftLegBone.setPositionZ(baseModel.leftLeg.pivotZ);
+			if (this.leftBootBone != null) {
+				IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
+				GeoUtils.copyRotations(baseModel.leftLeg, leftBootBone);
+				leftBootBone.setPositionX(baseModel.leftLeg.pivotX - 2);
+				leftBootBone.setPositionY(12 - baseModel.leftLeg.pivotY);
+				leftBootBone.setPositionZ(baseModel.leftLeg.pivotZ);
 			}
 		}
 	}
@@ -226,7 +252,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	public GeoArmorRenderer<T> applySlot() {
+	public GeoArmorRenderer<T> applySlot(EquipmentSlot boneSlot) {
 		modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		IBone headBone = this.getAndHideBone(this.headBone);
@@ -238,7 +264,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		IBone rightBootBone = this.getAndHideBone(this.rightBootBone);
 		IBone leftBootBone = this.getAndHideBone(this.leftBootBone);
 
-		switch (armorSlot) {
+		switch (boneSlot) {
 		case HEAD:
 			if (headBone != null)
 				headBone.setHidden(false);

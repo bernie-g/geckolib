@@ -105,14 +105,14 @@ public interface IGeoRenderer<T> {
 
 	Identifier getTextureResource(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float partialTicks) {
+	default void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+	default void renderLate(T animatable, MatrixStack stackIn, float partialTicks, VertexConsumerProvider renderTypeBuffer,
 			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float partialTicks) {
+			float alpha) {
 	}
 
 	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,

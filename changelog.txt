@@ -1,3 +1,5 @@
-3.0.6
+3.1.0
 
-- Example Rocket Projectile back and using proper packet for it's entity for the example.
+- Head rendering support and WIP Geo Armor Support for ExtendedGeoRender - DerToaster
+- Updates Core.
+- Potato Armor example replaced by Wolf Armor, created by  Spectral Studios
