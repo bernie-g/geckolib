@@ -72,8 +72,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			return;
 		}
 		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
-			AnimationController.removeModelFetcher(instances.get(event.getEntity().getUUID()));
-			instances.remove(event.getEntity().getUUID());
+			if(instances.containsKey(event.getEntity().getUUID())) {
+				ModelFetcher<?> beGone = instances.get(event.getEntity().getUUID());
+				AnimationController.removeModelFetcher(beGone);
+				instances.remove(event.getEntity().getUUID());
+			}
 		});
 	}
 
