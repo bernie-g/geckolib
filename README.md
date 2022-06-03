@@ -1,16 +1,16 @@
 ![geckkolib](https://i.imgur.com/aVpTA3m.png)
 
-GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge and Fabric. 
+GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge, Fabric and Quilt. 
 
 ## Installation
 [![curseforge](http://cf.way2muchnoise.eu/versions/388172.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
-![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.12)
-[![Latest version of 'geckolib-forge-1.12.2' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/geckolib3/geckolib/maven/geckolib-forge-1.12.2/latest/a=noarch;xg=software.bernie.geckolib/?render=true&show_latest=true)](https://cloudsmith.io/~geckolib3/repos/geckolib/packages/detail/maven/geckolib-forge-1.12.2/latest/a=noarch;xg=software.bernie.geckolib/)
+![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.18)
+[![Latest version of 'geckolib-1.18-forge' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/geckolib3/geckolib/maven/geckolib-1.18-forge/latest/a=noarch;xg=software.bernie.geckolib/?render=true&show_latest=true)](https://cloudsmith.io/~geckolib3/repos/geckolib/packages/detail/maven/geckolib-1.18-forge/latest/a=noarch;xg=software.bernie.geckolib/)
 
 Please see the [Getting Started guide](https://github.com/bernie-g/geckolib/wiki/Getting-Started) for detailed installation instructions per modding framework.
 
 ## Documentation
-GeckoLib provides detailed documentation in the form of a [Wiki](https://github.com/bernie-g/geckolib/wiki). GeckoLib is currently available for Forge 1.12, 1.15, 1.16, 1.17, and 1.18 and Fabric 1.16, 1.17, and 1.18.
+GeckoLib provides detailed documentation in the form of a [Wiki](https://github.com/bernie-g/geckolib/wiki). GeckoLib is currently available for Forge 1.12/1.15/1.16/1.17/1.18, Fabric 1.16/1.17/1.18/1.19, and Quilt 1.18.
 
 ## Support
 If you have questions or need help getting up and running with questions, feel free to [join our discord](https://discord.gg/MNQcKxB)!
