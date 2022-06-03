@@ -6,8 +6,8 @@ import java.util.List;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.inventory.EquipmentSlotType.Group;
 import net.minecraft.item.IArmorMaterial;
 import net.minecraft.item.Item;
 import software.bernie.example.GeckoLibMod;
@@ -44,27 +44,24 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 			return PlayState.CONTINUE;
 		}
 
-		// The entity is a player, so we want to only play if the player is wearing the
-		// full set of armor
-		else if (livingEntity instanceof PlayerEntity) {
-			PlayerEntity player = (PlayerEntity) livingEntity;
 
-			// Get all the equipment, aka the armor, currently held item, and offhand item
-			List<Item> equipmentList = new ArrayList<>();
-			player.getAllSlots().forEach((x) -> equipmentList.add(x.getItem()));
-
-			// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
-			// contains the 4 armor slots
-			List<Item> armorList = equipmentList.subList(2, 6);
-
-			// Make sure the player is wearing all the armor. If they are, continue playing
-			// the animation, otherwise stop
-			boolean isWearingAll = armorList
-					.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS.get(), ItemRegistry.POTATO_LEGGINGS.get(),
-							ItemRegistry.POTATO_CHEST.get(), ItemRegistry.POTATO_HEAD.get()));
-			return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
+		// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
+		// contains the 4 armor slots
+		List<Item> armorList = new ArrayList<>(4);
+		for(EquipmentSlotType slot : EquipmentSlotType.values()) {
+			if(slot.getType() == Group.ARMOR) {
+				if(livingEntity.getItemBySlot(slot) != null) {
+					armorList.add(livingEntity.getItemBySlot(slot).getItem());
+				}
+			}
 		}
-		return PlayState.STOP;
+
+		// Make sure the player is wearing all the armor. If they are, continue playing
+		// the animation, otherwise stop
+		boolean isWearingAll = armorList
+				.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS.get(), ItemRegistry.POTATO_LEGGINGS.get(),
+						ItemRegistry.POTATO_CHEST.get(), ItemRegistry.POTATO_HEAD.get()));
+		return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
 	}
 
 	// All you need to do here is add your animation controllers to the

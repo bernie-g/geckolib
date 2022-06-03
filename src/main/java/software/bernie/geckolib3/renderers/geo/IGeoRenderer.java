@@ -111,14 +111,14 @@ public interface IGeoRenderer<T> {
 
 	ResourceLocation getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float ticks,
+	default void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
 			@Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
+	default void renderLate(T animatable, MatrixStack stackIn, float partialTicks, IRenderTypeBuffer renderTypeBuffer,
 			IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float partialTicks) {
+			float alpha) {
 	}
 
 	default RenderType getRenderType(T animatable, float partialTicks, MatrixStack stack,

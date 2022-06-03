@@ -93,15 +93,15 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	@Override
 	protected ItemStack getArmorForBone(String boneName, ExtendedRendererEntity currentEntity) {
 		switch (boneName) {
-		// case "armorBipedLeftFoot":
+		case "armorBipedLeftFoot":
 		case "armorBipedRightFoot":
-			// case "armorBipedLeftFoot2":
+		case "armorBipedLeftFoot2":
 		case "armorBipedRightFoot2":
 			return boots;
 		case "armorBipedLeftLeg":
-			// case "armorBipedRightLeg":
+		case "armorBipedRightLeg":
 		case "armorBipedLeftLeg2":
-			// case "armorBipedRightLeg2":
+		case "armorBipedRightLeg2":
 			return leggings;
 		case "armorBipedBody":
 		case "armorBipedRightArm":
