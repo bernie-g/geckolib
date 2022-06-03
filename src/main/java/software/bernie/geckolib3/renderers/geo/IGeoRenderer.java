@@ -96,12 +96,10 @@ public interface IGeoRenderer<T> {
 			}
 
 			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
-						1.0F);
+				Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0F);
 				vector4f.transform(matrix4f);
-				bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
-						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
-						normal.z());
+				bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.textureU,
+						vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(), normal.z());
 			}
 		}
 	}
@@ -111,14 +109,14 @@ public interface IGeoRenderer<T> {
 
 	ResourceLocation getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, PoseStack stackIn, float ticks,
+	default void renderEarly(T animatable, PoseStack stackIn, float partialTicks,
 			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float partialTicks) {
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 	}
 
 	default void renderLate(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float partialTicks) {
+			float alpha) {
 	}
 
 	default RenderType getRenderType(T animatable, float partialTicks, PoseStack stack,

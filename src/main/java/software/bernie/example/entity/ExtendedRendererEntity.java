@@ -7,16 +7,19 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ProjectileWeaponItem;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -269,6 +272,9 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 				this.setItemSlot(ai.getSlot(), item);
 			} else if (item.getItem().getEquipmentSlot(item) != null) {
 				this.setItemSlot(item.getItem().getEquipmentSlot(item), item);
+			} else if (item.getItem() instanceof BlockItem
+					&& ((BlockItem) item.getItem()).getBlock() instanceof AbstractSkullBlock) {
+				this.setItemSlot(EquipmentSlot.HEAD, item);
 			} else {
 				this.setItemInHand(pHand, item);
 			}
