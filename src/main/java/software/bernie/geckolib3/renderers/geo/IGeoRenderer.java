@@ -114,7 +114,7 @@ public interface IGeoRenderer<T> {
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 	}
 
-	default void renderLate(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
+	default void renderLate(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
 	}

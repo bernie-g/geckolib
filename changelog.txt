@@ -1,5 +1,5 @@
-v3.0.18
+v3.0.19
 
-- Ports DerToaster changes for hiding bones and texture per bone via code shown in the ExampleExtendedEntity (no plugin or BB support for this currently)
-- Updates Core for GeoBone methods needed hiding bones.
-- Fixes log spam regarding the botarium and fertilizer block item models. 
+- Head rendering support and WIP Geo Armor Support for ExtendedGeoRender - DerToaster
+- Updates Core.
+- Potato Armor example replaced by Wolf Armor, created by  Spectral Studios

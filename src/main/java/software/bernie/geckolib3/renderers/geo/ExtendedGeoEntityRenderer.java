@@ -68,7 +68,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 @OnlyIn(Dist.CLIENT)
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
-	static enum EModelRenderCycle {
+	public static enum EModelRenderCycle {
 		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
 
@@ -109,8 +109,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			int packedLightIn) {
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-		// Now, render the heads
-		this.renderHeads(stack, bufferIn, packedLightIn);
 	}
 
 	// Yes, this is necessary to be done after everything else, otherwise it will
@@ -160,7 +158,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					.getType();
 			SkullModelBase skullmodelbase = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(skullblock$type);
 			RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, skullOwnerProfile);
-			SkullBlockRenderer.renderSkull((Direction) null, 0.0F, 0.0F, stack, buffer, packedLightIn, skullmodelbase, rendertype);
+			SkullBlockRenderer.renderSkull((Direction) null, 0, 0, stack, buffer, packedLightIn, skullmodelbase, rendertype);
 			stack.popPose();
 
 		}
@@ -175,6 +173,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		// Now, render the heads
+		this.renderHeads(matrixStackIn, renderTypeBuffer, packedLightIn);
 	}
 
 	protected float getWidthScale(T entity) {
