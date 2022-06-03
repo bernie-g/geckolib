@@ -64,7 +64,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 @OnlyIn(Dist.CLIENT)
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
-	static enum EModelRenderCycle {
+	public static enum EModelRenderCycle {
 		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
 
