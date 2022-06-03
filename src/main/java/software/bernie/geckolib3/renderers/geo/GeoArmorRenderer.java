@@ -33,7 +33,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
+public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
 	public static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
@@ -109,6 +109,35 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		this.render(matrices, vertexConsumers, light);
 	}
 
+	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
+		stack.translate(0.0D, 24 / 16F, 0.0D);
+		stack.scale(-1.0F, -1.0F, 1.0F);
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
+
+		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
+				MinecraftClient.getInstance().getTickDelta(), false,
+				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
+		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
+
+		this.fitToBiped();
+		this.applySlot(armorSlot);
+		stack.push();
+		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
+		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
+		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
+				getTextureLocation(currentArmorItem));
+		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn, OverlayTexture.DEFAULT_UV,
+				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+
+		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
+			PatchouliCompat.patchouliLoaded(stack);
+		}
+		stack.pop();
+		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, -1.501F, 0.0D);
+	}
+
 	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
@@ -120,7 +149,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 
 		this.fitToBiped();
-		this.applySlot();
+		this.applySlot(armorSlot);
 		stack.push();
 		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, 0, stack, bufferIn, null, packedLightIn);
@@ -226,7 +255,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	@SuppressWarnings("incomplete-switch")
-	public GeoArmorRenderer<T> applySlot() {
+	public GeoArmorRenderer<T> applySlot(EquipmentSlot boneSlot) {
 		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		IBone headBone = this.getAndHideBone(this.headBone);
@@ -238,7 +267,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		IBone rightBootBone = this.getAndHideBone(this.rightBootBone);
 		IBone leftBootBone = this.getAndHideBone(this.leftBootBone);
 
-		switch (armorSlot) {
+		switch (boneSlot) {
 		case HEAD:
 			if (headBone != null)
 				headBone.setHidden(false);

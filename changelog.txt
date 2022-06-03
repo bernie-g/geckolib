@@ -1,3 +1,5 @@
-3.0.42
+3.0.43
 
-- Using proper packet system for Rocket Entity for the example mod.
+- Head rendering support and WIP Geo Armor Support for ExtendedGeoRender - DerToaster
+- Updates Core.
+- Potato Armor example replaced by Wolf Armor, created by  Spectral Studios
