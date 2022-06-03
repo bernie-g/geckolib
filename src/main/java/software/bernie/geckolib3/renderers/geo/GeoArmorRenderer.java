@@ -72,9 +72,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			return;
 		}
 		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
-			//@AzureDoom: Uncomment this line when merging and once the core change is in
-			//AnimationController.removeModelFetcher(instances.get(event.getEntity().getUUID()));
-			
+			AnimationController.removeModelFetcher(instances.get(event.getEntity().getUUID()));
 			instances.remove(event.getEntity().getUUID());
 		});
 	}
