@@ -1,5 +1,4 @@
-v3.0.24
+v3.0.25
 
-- Ports DerToaster changes for hiding bones
-- Updates Core for GeoBone methods needed hiding bones.
-- Fixes log spam regarding the botarium and fertilizer block item models. 
+- Updates Core.
+- Potato Armor example replaced by Wolf Armor, created by  Spectral Studios
