@@ -24,10 +24,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -40,44 +37,26 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
-@EventBusSubscriber
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
 		implements IGeoRenderer<T>, ModelFetcher<T> {
 	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
-	
-	private static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
-	
+
+	public static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
+
 	private Class<? extends ArmorItem> assignedItemClass = null;
 
 	{
 		AnimationController.addModelFetcher(this);
 	}
-	
+
 	@Override
 	@Nullable
 	public IAnimatableModel<T> apply(IAnimatable t) {
-		if(t instanceof ArmorItem && t.getClass() == this.assignedItemClass) {
+		if (t instanceof ArmorItem && t.getClass() == this.assignedItemClass) {
 			return this.getGeoModelProvider();
 		}
 		return null;
-	}
-	
-	@SubscribeEvent
-	public static void onEntityRemoved(EntityLeaveWorldEvent event) {
-		if(event.getEntity() == null) {
-			return;
-		}
-		if(event.getEntity().getUUID() == null) {
-			return;
-		}
-		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
-			if(instances.containsKey(event.getEntity().getUUID())) {
-				ModelFetcher<?> beGone = instances.get(event.getEntity().getUUID());
-				AnimationController.removeModelFetcher(beGone);
-				instances.remove(event.getEntity().getUUID());
-			}
-		});
 	}
 
 	protected T currentArmorItem;
@@ -97,14 +76,14 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String leftBootBone = "armorLeftBoot";
 
 	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer instance) {
-		for(Constructor<?> c : instance.getClass().getConstructors()) {
-			if(c.getParameterCount() == 0) {
+		for (Constructor<?> c : instance.getClass().getConstructors()) {
+			if (c.getParameterCount() == 0) {
 				registerArmorRenderer(itemClass, new Supplier<GeoArmorRenderer>() {
-					
+
 					@Override
 					public GeoArmorRenderer get() {
 						try {
-							return (GeoArmorRenderer)c.newInstance();
+							return (GeoArmorRenderer) c.newInstance();
 						} catch (InstantiationException e) {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
@@ -120,25 +99,29 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			}
 		}
 	}
-	
-	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, Supplier<GeoArmorRenderer> rendererConstructor) {
+
+	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass,
+			Supplier<GeoArmorRenderer> rendererConstructor) {
 		CONSTRUCTORS.put(itemClass, rendererConstructor);
 		LIVING_ENTITY_RENDERERS.put(itemClass, new ConcurrentHashMap<>());
 	}
-	
+
 	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer) {
 		return getRenderer(item, wearer, false);
 	}
-	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer, boolean forExtendedEntity) {
-		final Map<UUID, GeoArmorRenderer<?>> renderers = LIVING_ENTITY_RENDERERS.putIfAbsent(item, new ConcurrentHashMap<>());
-		if(renderers != null) {
+
+	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer,
+			boolean forExtendedEntity) {
+		final Map<UUID, GeoArmorRenderer<?>> renderers = LIVING_ENTITY_RENDERERS.putIfAbsent(item,
+				new ConcurrentHashMap<>());
+		if (renderers != null) {
 			GeoArmorRenderer renderer = renderers.getOrDefault(wearer.getUUID(), null);
-			if(renderer == null) {
+			if (renderer == null) {
 				renderer = CONSTRUCTORS.get(item).get();
-				
-				if(renderer != null) {
+
+				if (renderer != null) {
 					renderer.assignedItemClass = item;
-				
+
 					renderers.put(wearer.getUUID(), renderer);
 				}
 			}
@@ -159,8 +142,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	@Override
-	public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
+	public void renderToBuffer(MatrixStack matrixStackIn, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		this.render(0, matrixStackIn, bufferIn, packedLightIn);
 	}
 
