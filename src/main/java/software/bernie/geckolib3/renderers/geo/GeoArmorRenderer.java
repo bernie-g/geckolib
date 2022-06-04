@@ -26,10 +26,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -42,14 +39,13 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
-@EventBusSubscriber
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends HumanoidModel
 		implements IGeoRenderer<T>, ModelFetcher<T> {
-	
+
 	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
 
-	private static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
+	public static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
 
 	private Class<? extends ArmorItem> assignedItemClass = null;
 
@@ -144,23 +140,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 		this.modelProvider = modelProvider;
-	}
-
-	@SubscribeEvent
-	public static void onEntityRemoved(EntityLeaveWorldEvent event) {
-		if (event.getEntity() == null) {
-			return;
-		}
-		if (event.getEntity().getUUID() == null) {
-			return;
-		}
-		LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
-			if(instances.containsKey(event.getEntity().getUUID())) {
-				ModelFetcher<?> beGone = instances.get(event.getEntity().getUUID());
-				AnimationController.removeModelFetcher(beGone);
-				instances.remove(event.getEntity().getUUID());
-			}
-		});
 	}
 
 	@Override
