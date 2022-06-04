@@ -9,11 +9,11 @@
       "model": "geckolib3:block/box"
     },
     "facing=east": {
-      "y": 90,
+      "y": 180,
       "model": "geckolib3:block/box"
     },
     "facing=west": {
-      "y": 270,
+      "y": 180,
       "model": "geckolib3:block/box"
     },
     "facing=up": {

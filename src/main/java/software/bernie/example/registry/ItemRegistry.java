@@ -31,8 +31,8 @@ public class ItemRegistry {
 					new Item.Settings().group(geckolibItemGroup)));
 	public static final PotatoArmorItem POTATO_BOOTS = RegistryUtils.registerItem("potato_boots", new PotatoArmorItem(
 			ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Settings().group(geckolibItemGroup)));
-	public static final BlockItem BOTARIUM = RegistryUtils.registerItem("botarium",
-			new BlockItem(BlockRegistry.BOTARIUM_BLOCK, new Item.Settings().group(geckolibItemGroup)));
+	public static final BlockItem HABITAT = RegistryUtils.registerItem("habitat",
+			new BlockItem(BlockRegistry.HABITAT_BLOCK, new Item.Settings().group(geckolibItemGroup)));
 	public static final BlockItem FERTILIZER = RegistryUtils.registerItem("fertilizer",
 			new BlockItem(BlockRegistry.FERTILIZER_BLOCK, new Item.Settings().group(geckolibItemGroup)));
 }
