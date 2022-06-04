@@ -151,7 +151,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public void render(float partialTicks, PoseStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
@@ -244,7 +244,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	@Override
 	public ResourceLocation getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+		return this.modelProvider.getTextureResource(instance);
 	}
 
 	/**
@@ -269,7 +269,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	@SuppressWarnings("incomplete-switch")
 	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
-		modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
+		modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		IBone headBone = this.getAndHideBone(this.headBone);
 		IBone bodyBone = this.getAndHideBone(this.bodyBone);

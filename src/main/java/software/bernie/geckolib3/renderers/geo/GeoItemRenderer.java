@@ -88,7 +88,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	public void render(T animatable, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn,
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(animatable));
 		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
 				false, Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
@@ -108,7 +108,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 
 	@Override
 	public ResourceLocation getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+		return this.modelProvider.getTextureResource(instance);
 	}
 
 	@Override

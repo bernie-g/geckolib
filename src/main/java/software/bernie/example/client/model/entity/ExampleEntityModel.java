@@ -11,17 +11,17 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity> {
 	@Override
-	public ResourceLocation getAnimationFileLocation(GeoExampleEntity entity) {
+	public ResourceLocation getAnimationResource(GeoExampleEntity entity) {
 		return new ResourceLocation(GeckoLib.ModID, "animations/bat.animation.json");
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(GeoExampleEntity entity) {
+	public ResourceLocation getModelResource(GeoExampleEntity entity) {
 		return new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(GeoExampleEntity entity) {
+	public ResourceLocation getTextureResource(GeoExampleEntity entity) {
 		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
 	}
 

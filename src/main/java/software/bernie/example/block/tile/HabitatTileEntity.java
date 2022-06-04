@@ -12,7 +12,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class BotariumTileEntity extends BlockEntity implements IAnimatable {
+public class HabitatTileEntity extends BlockEntity implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
 	@SuppressWarnings("unchecked")
@@ -22,8 +22,8 @@ public class BotariumTileEntity extends BlockEntity implements IAnimatable {
 		return PlayState.CONTINUE;
 	}
 
-	public BotariumTileEntity(BlockPos pos, BlockState state) {
-		super(TileRegistry.BOTARIUM_TILE.get(), pos, state);
+	public HabitatTileEntity(BlockPos pos, BlockState state) {
+		super(TileRegistry.HABITAT_TILE.get(), pos, state);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

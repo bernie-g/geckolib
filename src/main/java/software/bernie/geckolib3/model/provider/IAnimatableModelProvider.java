@@ -9,5 +9,5 @@ public interface IAnimatableModelProvider<E> {
 	 *
 	 * @return the animation file location
 	 */
-	ResourceLocation getAnimationFileLocation(E animatable);
+	ResourceLocation getAnimationResource(E animatable);
 }

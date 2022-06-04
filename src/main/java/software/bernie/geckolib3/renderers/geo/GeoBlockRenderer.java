@@ -54,7 +54,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	public void render(T tile, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
@@ -118,6 +118,6 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 
 	@Override
 	public ResourceLocation getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+		return this.modelProvider.getTextureResource(instance);
 	}
 }

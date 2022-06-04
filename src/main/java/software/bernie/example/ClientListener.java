@@ -20,7 +20,7 @@ import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEnt
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
-import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
+import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
@@ -40,7 +40,7 @@ public class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
 			event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
 
-			event.registerBlockEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
+			event.registerBlockEntityRenderer(TileRegistry.HABITAT_TILE.get(), HabitatTileRenderer::new);
 			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
 
 			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
@@ -57,7 +57,7 @@ public class ClientListener {
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
 		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
-			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.BOTARIUM_BLOCK.get(), RenderType.cutout());
+			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.HABITAT_BLOCK.get(), RenderType.translucent());
 		}
 	}
 }

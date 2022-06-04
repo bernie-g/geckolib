@@ -142,7 +142,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		entityModelData.headPitch = -f6;
 		entityModelData.netHeadYaw = -f2;
 
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
+		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(animatable));
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks,
 				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel) {
@@ -281,7 +281,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	@Override
 	public ResourceLocation getTextureLocation(Object instance) {
-		return this.modelProvider.getTextureLocation((IAnimatable) instance);
+		return this.modelProvider.getTextureResource((IAnimatable) instance);
 	}
 
 	public final boolean addLayer(GeoLayerRenderer<? extends LivingEntity> layer) {

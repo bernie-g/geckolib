@@ -23,17 +23,17 @@ public class ExampleExtendedRendererEntityModel<T extends LivingEntity & IAnimat
 	}
 
 	@Override
-	public ResourceLocation getAnimationFileLocation(T animatable) {
+	public ResourceLocation getAnimationResource(T animatable) {
 		return ANIMATION_RESLOC;
 	}
 
 	@Override
-	public ResourceLocation getModelLocation(T object) {
+	public ResourceLocation getModelResource(T object) {
 		return MODEL_RESLOC;
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(T object) {
+	public ResourceLocation getTextureResource(T object) {
 		return TEXTURE_DEFAULT;
 	}
 

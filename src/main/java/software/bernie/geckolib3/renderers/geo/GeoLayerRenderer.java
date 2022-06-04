@@ -32,7 +32,7 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 			ResourceLocation textureLocationIn, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 			int packedLightIn, T entityIn, float partialTicks, float red, float green, float blue) {
 		if (entityIn instanceof LivingEntity) {
-			GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelLocation(entityIn));
+			GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelResource(entityIn));
 			RenderType renderType = this.getRenderType(textureLocationIn);
 			VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
 

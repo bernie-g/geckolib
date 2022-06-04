@@ -201,7 +201,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	@Override
 	public ResourceLocation getTextureLocation(T entity) {
-		return this.modelProvider.getTextureLocation(entity);
+		return this.modelProvider.getTextureResource(entity);
 	}
 
 	private T currentEntityBeingRendered;

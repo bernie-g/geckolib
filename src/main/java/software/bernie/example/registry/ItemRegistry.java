@@ -16,8 +16,8 @@ import software.bernie.geckolib3.GeckoLib;
 public class ItemRegistry {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.ModID);
 
-	public static final RegistryObject<BlockItem> BOTARIUM_ITEM = ITEMS.register("botarium",
-			() -> new BlockItem(BlockRegistry.BOTARIUM_BLOCK.get(),
+	public static final RegistryObject<BlockItem> HABITAT = ITEMS.register("habitat",
+			() -> new BlockItem(BlockRegistry.HABITAT_BLOCK.get(),
 					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
 	public static final RegistryObject<BlockItem> FERTILIZER_ITEM = ITEMS.register("fertilizer",
 			() -> new BlockItem(BlockRegistry.FERTILIZER_BLOCK.get(),
