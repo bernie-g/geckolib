@@ -1,10 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
 
 buildscript {
     repositories {
         maven { url = "https://maven.minecraftforge.net/" }
 		maven { url = "https://plugins.gradle.org/m2/" }
         maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         jcenter()
         mavenCentral()
     }
@@ -24,9 +27,6 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle"
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
@@ -41,8 +41,8 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
-	//mappings channel: 'parchment', version: '2022.05.22-1.18.2'
+    //mappings channel: 'official', version: '1.18.2'
+	mappings channel: 'parchment', version: '2022.05.22-1.18.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
