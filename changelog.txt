@@ -1,4 +1,3 @@
-v3.0.25
+v3.0.26
 
-- Updates Core.
-- Potato Armor example replaced by Wolf Armor, created by  Spectral Studios
+- Addes check to GeoEntityRender and GeoReplacedEntityRenderer for a Mob Entity to render lease if leashed. - HellionGames for code and suggestion for workaround.
