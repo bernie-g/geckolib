@@ -24,7 +24,7 @@ public class GeckoLibUtil {
 		if (stackHasIDTag(stack)) {
 			return stack.getTag().getInt(GECKO_LIB_ID_NBT);
 		}
-		return Objects.hash(stack.getItem().getRegistryName(), stack.getTag(), stack.getCount());
+		return Objects.hash(stack.getItem().toString(), stack.getTag(), stack.getCount());
 	}
 
 	/**

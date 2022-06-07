@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -115,7 +115,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			if (controller.getAnimationState() == AnimationState.Stopped) {
 				final LocalPlayer player = Minecraft.getInstance().player;
 				if (player != null) {
-					player.displayClientMessage(new TextComponent("Opening the jack in the box!"), true);
+					player.displayClientMessage(Component.literal("Opening the jack in the box!"), true);
 				}
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.

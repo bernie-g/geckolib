@@ -156,9 +156,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			stack.translate(-0.5, 0, -0.5);
 			SkullBlock.Type skullblock$type = ((AbstractSkullBlock) ((BlockItem) itemStack.getItem()).getBlock())
 					.getType();
-			SkullModelBase skullmodelbase = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(skullblock$type);
+			SkullModelBase skullmodelbase = SkullBlockRenderer
+					.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(skullblock$type);
 			RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, skullOwnerProfile);
-			SkullBlockRenderer.renderSkull((Direction) null, 0, 0, stack, buffer, packedLightIn, skullmodelbase, rendertype);
+			SkullBlockRenderer.renderSkull((Direction) null, 0, 0, stack, buffer, packedLightIn, skullmodelbase,
+					rendertype);
 			stack.popPose();
 
 		}
@@ -426,15 +428,15 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				if (boneItem != null || boneBlock != null) {
 
 					stack.pushPose();
-					
+
 					this.moveAndRotateMatrixToMatchBone(stack, bone);
 
 					if (boneItem != null) {
 						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 
-						Minecraft.getInstance().getItemInHandRenderer().renderItem(currentEntityBeingRendered, boneItem,
-								this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack, rtb,
-								packedLightIn);
+						Minecraft.getInstance().getItemRenderer().renderStatic(currentEntityBeingRendered, boneItem,
+								this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack, rtb, null,
+								packedLightIn, packedLightIn, packedOverlayIn);
 
 						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 					}

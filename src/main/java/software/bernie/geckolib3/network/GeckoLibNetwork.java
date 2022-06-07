@@ -11,8 +11,6 @@ import net.minecraftforge.network.NetworkInstance;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
-import net.minecraftforge.registries.ForgeRegistryEntry;
-import net.minecraftforge.registries.IRegistryDelegate;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.network.messages.SyncAnimationMsg;
 
@@ -61,11 +59,9 @@ public class GeckoLibNetwork {
 		return delegate == null ? null : delegate.get();
 	}
 
-	public static <E extends ForgeRegistryEntry<E>, T extends ForgeRegistryEntry<E> & ISyncable> void registerSyncable(
-			T entry) {
-		final IRegistryDelegate<?> delegate = entry.delegate;
+	public static void registerSyncable(ISyncable entry) {
 		final String key = entry.getSyncKey();
-		if (SYNCABLES.putIfAbsent(key, () -> (ISyncable) delegate.get()) != null) {
+		if (SYNCABLES.putIfAbsent(key, () -> entry) != null) {
 			throw new IllegalArgumentException("Syncable already registered for " + key);
 		}
 		GeckoLib.LOGGER.debug("Registered syncable for " + key);

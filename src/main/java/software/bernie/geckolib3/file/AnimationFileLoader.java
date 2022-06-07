@@ -1,23 +1,25 @@
 package software.bernie.geckolib3.file;
 
-import com.eliotlash.molang.MolangParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import net.minecraft.server.ChainedJsonException;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.resources.ResourceLocation;
-import org.apache.commons.io.IOUtils;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.util.json.JsonAnimationUtils;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+
+import com.eliotlash.molang.MolangParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.ChainedJsonException;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.GsonHelper;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.util.json.JsonAnimationUtils;
 
 public class AnimationFileLoader {
 
@@ -50,7 +52,7 @@ public class AnimationFileLoader {
 	}
 
 	public static String getResourceAsString(ResourceLocation location, ResourceManager manager) {
-		try (InputStream inputStream = manager.getResource(location).getInputStream()) {
+		try (InputStream inputStream = manager.getResourceOrThrow(location).open()) {
 			return IOUtils.toString(inputStream, Charset.defaultCharset());
 		} catch (Exception e) {
 			String message = "Couldn't load " + location;

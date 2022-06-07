@@ -2,7 +2,7 @@ package software.bernie.example.entity;
 
 import java.util.Optional;
 
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -278,9 +278,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 			} else {
 				this.setItemInHand(pHand, item);
 			}
-			pPlayer.sendMessage(
-					new TextComponent("Equipped item: " + item.getItem().getRegistryName().toString() + "!"),
-					this.getUUID());
+			pPlayer.sendSystemMessage(Component.literal("Equipped item: " + item.getHoverName().toString() + "!"));
 			return InteractionResult.SUCCESS;
 		}
 		return super.mobInteract(pPlayer, pHand);

@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -49,7 +48,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 
 	@Override
 	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(new TextComponent("Turn on rain to see the fertilizer model!"));
+		tooltip.add(Component.literal("Turn on rain to see the fertilizer model!"));
 		super.appendHoverText(stack, worldIn, tooltip, flagIn);
 	}
 }

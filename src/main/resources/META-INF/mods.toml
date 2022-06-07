@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[40,)"
+loaderVersion="[41,)"
 issueTrackerURL="https://github.com/bernie-g/geckolib/issues"
 license="MIT"
 [[mods]]
@@ -16,12 +16,12 @@ Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, whi
 [[dependencies.geckolib3]]
     modId="forge"
     mandatory=true 
-    versionRange="[40.0,)"
+    versionRange="[41.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.geckolib3]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18, 1.19)"
+    versionRange="[1.19,)"
     ordering="NONE"
     side="BOTH"

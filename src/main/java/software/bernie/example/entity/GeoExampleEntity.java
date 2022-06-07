@@ -2,7 +2,7 @@ package software.bernie.example.entity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -33,7 +33,8 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0, this::predicate);
+		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0,
+				this::predicate);
 		controller.registerCustomInstructionListener(this::customListener);
 		data.addAnimationController(controller);
 	}
@@ -42,7 +43,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
 		final LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			player.displayClientMessage(new TextComponent("KeyFraming"), true);
+			player.displayClientMessage(Component.literal("KeyFraming"), true);
 		}
 	}
 

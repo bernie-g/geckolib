@@ -18,7 +18,7 @@ public class HabitatTileEntity extends BlockEntity implements IAnimatable {
 	@SuppressWarnings("unchecked")
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.gecko_habitat.idle", true));
 		return PlayState.CONTINUE;
 	}
 

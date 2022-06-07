@@ -78,7 +78,7 @@ public class BikeEntity extends Animal implements IAnimatable {
 	}
 
 	@Override
-	public boolean canBeControlledByRider() {
+	public boolean isControlledByLocalInstance() {
 		return true;
 	}
 
