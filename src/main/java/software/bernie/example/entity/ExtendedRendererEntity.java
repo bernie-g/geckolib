@@ -21,6 +21,7 @@ import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraftforge.network.NetworkHooks;
+import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -278,7 +279,8 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 			} else {
 				this.setItemInHand(pHand, item);
 			}
-			pPlayer.sendSystemMessage(Component.literal("Equipped item: " + item.getHoverName().toString() + "!"));
+			pPlayer.sendSystemMessage(Component
+					.literal("Equipped item: " + ForgeRegistries.ITEMS.getKey(item.getItem()).toString() + "!"));
 			return InteractionResult.SUCCESS;
 		}
 		return super.mobInteract(pPlayer, pHand);
