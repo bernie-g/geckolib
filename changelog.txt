@@ -1,3 +1,3 @@
-3.1.1
+3.1.2
 
-- Core Update to fix rotation bug. No changes should be needed for 99% of mods. 
+- Revert Core Update. 
