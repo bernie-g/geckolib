@@ -66,6 +66,9 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 @OnlyIn(Dist.CLIENT)
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
+	/*
+	 * Allows the end user to introduce custom render cycles
+	 */
 	public static interface IRenderCycle {
 		public String name();
 	}
@@ -88,7 +91,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		return this.currentModelRenderCycle;
 	}
 
-	protected void setCurrentModelRenderCycle(EModelRenderCycle currentModelRenderCycle) {
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
