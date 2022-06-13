@@ -16,6 +16,7 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.block.AbstractSkullBlock;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -26,6 +27,7 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.model.ModelRenderer.ModelBox;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -484,7 +486,15 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected void renderBlock(MatrixStack matrixStack, IRenderTypeBuffer rtb, int packedLightIn,
 			BlockState iBlockState) {
-		// TODO: Re-implement, doesn't do anything yet
+		if(iBlockState.getRenderShape() != BlockRenderType.MODEL) {
+			return;
+		}
+		matrixStack.pushPose();
+		matrixStack.translate(-0.25F, -0.25F, -0.25F);
+		matrixStack.scale(0.5F, 0.5F, 0.5F);
+
+		Minecraft.getInstance().getBlockRenderer().renderBlock(iBlockState, matrixStack, rtb, packedLightIn, OverlayTexture.NO_OVERLAY, null);
+		matrixStack.popPose();
 	}
 
 	/*
