@@ -53,6 +53,7 @@ import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.RenderUtils;
 
 /**
  * @author DerToaster98 Copyright (c) 30.03.2022 Developed by DerToaster98
@@ -260,6 +261,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				if (boneItem != null || boneBlock != null) {
 
 					stack.pushPose();
+					
+					RenderUtils.translate(bone, stack);
+					RenderUtils.moveToPivot(bone, stack);
+					RenderUtils.rotate(bone, stack);
+					RenderUtils.scale(bone, stack);
+					RenderUtils.moveBackFromPivot(bone, stack);
 
 					this.moveAndRotateMatrixToMatchBone(stack, bone);
 

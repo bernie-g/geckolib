@@ -81,6 +81,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			// stack.mulPose(Vector3f.YP.rotationDegrees(180));
 
 			// stack.scale(0.75F, 0.75F, 0.75F);
+			
 		}
 	}
 
