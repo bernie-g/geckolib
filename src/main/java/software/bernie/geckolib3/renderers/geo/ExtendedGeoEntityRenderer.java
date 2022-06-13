@@ -66,7 +66,11 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 @OnlyIn(Dist.CLIENT)
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
-	public static enum EModelRenderCycle {
+	public static interface IRenderCycle {
+		public String name();
+	}
+	
+	public static enum EModelRenderCycle implements IRenderCycle {
 		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
 
@@ -78,9 +82,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
-	private EModelRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	protected EModelRenderCycle getCurrentModelRenderCycle() {
+	protected IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
