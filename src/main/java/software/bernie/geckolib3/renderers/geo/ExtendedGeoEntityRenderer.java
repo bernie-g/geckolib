@@ -259,9 +259,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					if (boneItem != null) {
 						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 
-						Minecraft.getInstance().getItemInHandRenderer().renderItem(currentEntityBeingRendered, boneItem,
-								this.getCameraTransformForItemAtBone(boneItem, bone.getName()), false, stack, rtb,
-								packedLightIn);
+						this.renderItemStack(stack, this.rtb, packedLightIn, boneItem, bone.getName());
 
 						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 					}
@@ -288,7 +286,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
 
-	private RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
+	protected void renderItemStack(MatrixStack stack, IRenderTypeBuffer rtb, int packedLightIn, ItemStack boneItem, String boneName) {
+		Minecraft.getInstance().getItemInHandRenderer().renderItem(currentEntityBeingRendered, boneItem,
+				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb,
+				packedLightIn);
+	}
+
+	protected RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
 			MatrixStack stack, IVertexBuilder bufferIn, IRenderTypeBuffer currentRenderTypeBufferInUse2,
 			int packedLightIn, ResourceLocation currentTexture) {
 		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack,
