@@ -155,8 +155,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks,
-						f7, netHeadYaw, headPitch);
+				this.renderLayer(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7, netHeadYaw, headPitch, bufferIn, layerRenderer);
 			}
 		}
 		if (entity instanceof MobEntity) {
@@ -170,6 +169,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+	}
+
+	protected void renderLayer(MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn, T entity, float limbSwing, float limbSwingAmount, float partialTicks, float rotFloat, float netHeadYaw, float headPitch, IRenderTypeBuffer bufferIn2,
+			GeoLayerRenderer<T> layerRenderer) {
+		layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks,
+				rotFloat, netHeadYaw, headPitch);
 	}
 
 	@Override
