@@ -264,11 +264,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 					}
 					if (boneBlock != null) {
-						this.preRenderBlock(boneBlock, bone.getName(), this.currentEntityBeingRendered);
+						this.preRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
 
 						this.renderBlock(stack, this.rtb, packedLightIn, boneBlock);
 
-						this.postRenderBlock(boneBlock, bone.getName(), this.currentEntityBeingRendered);
+						this.postRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
 					}
 
 					stack.popPose();
@@ -504,12 +504,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected abstract void preRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, T currentEntity,
 			IBone bone);
 
-	protected abstract void preRenderBlock(BlockState block, String boneName, T currentEntity);
+	protected abstract void preRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, T currentEntity);
 
 	protected abstract void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, T currentEntity,
 			IBone bone);
 
-	protected abstract void postRenderBlock(BlockState block, String boneName, T currentEntity);
+	protected abstract void postRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, T currentEntity);
 
 	/*
 	 * Return null, if there is no armor on this bone
