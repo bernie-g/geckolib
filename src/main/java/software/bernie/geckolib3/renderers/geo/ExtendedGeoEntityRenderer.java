@@ -259,32 +259,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
 				if (boneItem != null || boneBlock != null) {
-
 					stack.pushPose();
-					
-					RenderUtils.translate(bone, stack);
-					RenderUtils.moveToPivot(bone, stack);
-					RenderUtils.rotate(bone, stack);
-					RenderUtils.scale(bone, stack);
-					RenderUtils.moveBackFromPivot(bone, stack);
-
-					this.moveAndRotateMatrixToMatchBone(stack, bone);
-
-					if (boneItem != null) {
-						this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
-
-						this.renderItemStack(stack, this.rtb, packedLightIn, boneItem, bone.getName());
-
-						this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
-					}
-					if (boneBlock != null) {
-						this.preRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
-
-						this.renderBlock(stack, this.rtb, packedLightIn, boneBlock);
-
-						this.postRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
-					}
-
+					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn);
 					stack.popPose();
 
 					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
@@ -300,6 +276,40 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
 
+	protected void handleItemAndBlockBoneRendering(MatrixStack stack, GeoBone bone, @Nullable ItemStack boneItem, @Nullable BlockState boneBlock, int packedLightIn) {
+		RenderUtils.translate(bone, stack);
+		RenderUtils.moveToPivot(bone, stack);
+		RenderUtils.rotate(bone, stack);
+		RenderUtils.scale(bone, stack);
+		RenderUtils.moveBackFromPivot(bone, stack);
+
+		this.moveAndRotateMatrixToMatchBone(stack, bone);
+
+		if (boneItem != null) {
+			this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
+
+			this.renderItemStack(stack, this.rtb, packedLightIn, boneItem, bone.getName());
+
+			this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
+		}
+		if (boneBlock != null) {
+			this.preRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
+
+			this.renderBlock(stack, this.rtb, packedLightIn, boneBlock);
+
+			this.postRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
+		}
+	}
+	
+	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
+		// First, let's move our render position to the pivot point...
+		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPivotZ() / 16);
+
+		stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
+		stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
+		stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
+	}
+
 	protected void renderItemStack(MatrixStack stack, IRenderTypeBuffer rtb, int packedLightIn, ItemStack boneItem, String boneName) {
 		Minecraft.getInstance().getItemInHandRenderer().renderItem(currentEntityBeingRendered, boneItem,
 				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb,
@@ -311,15 +321,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			int packedLightIn, ResourceLocation currentTexture) {
 		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack,
 				currentRenderTypeBufferInUse2, bufferIn, packedLightIn, currentTexture);
-	}
-
-	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
-		// First, let's move our render position to the pivot point...
-		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPivotZ() / 16);
-
-		stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
-		stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
-		stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
 	}
 
 	protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn,
