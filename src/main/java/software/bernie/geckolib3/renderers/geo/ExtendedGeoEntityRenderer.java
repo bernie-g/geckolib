@@ -268,12 +268,20 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			}
 			stack.popPose();
 		}
+		this.customBoneSpecificRenderingHook(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, customTextureMarker, currentTexture);
 		// reset buffer
 		if (customTextureMarker) {
 			bufferIn = this.currentVertexBuilderInUse;
 		}
 
 		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+	
+	/*
+	 * Gets called after armor and item rendering but in every render cycle. This serves as a hook for modders to include their own bone specific rendering
+	 */
+	protected void customBoneSpecificRenderingHook(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha, boolean customTextureMarker, ResourceLocation currentTexture) {
+		
 	}
 
 	protected void handleItemAndBlockBoneRendering(MatrixStack stack, GeoBone bone, @Nullable ItemStack boneItem, @Nullable BlockState boneBlock, int packedLightIn) {
