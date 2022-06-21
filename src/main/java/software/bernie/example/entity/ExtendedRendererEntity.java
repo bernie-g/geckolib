@@ -89,9 +89,21 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 				new AnimationController<>(this, "controller_twohanded_pose", 10, this::predicateTwoHandedPose));
 		data.addAnimationController(
 				new AnimationController<>(this, "controller_twohanded", 10, this::predicateTwoHandedSwing));
+		// Spin hands
+		// data.addAnimationController(new AnimationController<>(this,
+		// "controller_spin_hands", 0, this::predicateSpinHands));
 	}
 
 	private static final String ANIM_NAME_PREFIX = "animation.biped.";
+
+	private static final String ANIM_NAME_SPIN_HANDS = ANIM_NAME_PREFIX + "spin_hands";
+
+	private <E extends IAnimatable> PlayState predicateSpinHands(AnimationEvent<E> event) {
+		if (event.getController().getCurrentAnimation() == null) {
+			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPIN_HANDS, true));
+		}
+		return PlayState.CONTINUE;
+	}
 
 	private static final String ANIM_NAME_IDLE = ANIM_NAME_PREFIX + "idle";
 
@@ -276,8 +288,7 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 			} else {
 				this.setStackInHand(pHand, item);
 			}
-			pPlayer.sendSystemMessage(
-					new LiteralText("Equipped item: " + item.getItem().getTranslationKey() + "!"),
+			pPlayer.sendSystemMessage(new LiteralText("Equipped item: " + item.getItem().getTranslationKey() + "!"),
 					this.getUuid());
 			return ActionResult.SUCCESS;
 		}

@@ -171,12 +171,14 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void preRenderBlock(MatrixStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 
 	}
 
 	@Override
-	protected void postRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void postRenderBlock(MatrixStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 	}
 
 	protected final Identifier CAPE_TEXTURE = new Identifier(GeckoLib.ModID,
