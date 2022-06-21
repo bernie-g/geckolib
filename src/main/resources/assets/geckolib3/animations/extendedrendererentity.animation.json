@@ -472,6 +472,23 @@
 					}
 				}
 			}
+		},
+		"animation.biped.spin_hands": {
+			"animation_length": 1.04,
+			"bones": {
+				"bipedHandLeft": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"1.04": [0, 360, 0]
+					}
+				},
+				"bipedHandRight": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"1.04": [0, 360, 0]
+					}
+				}
+			}
 		}
 	},
 	"geckolib_format_version": 2

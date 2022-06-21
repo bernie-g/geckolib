@@ -27,8 +27,8 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			"geo/extendedrendererentity.geo.json");
 
 	public ExampleExtendedRendererEntityRenderer(EntityRendererFactory.Context renderManager) {
-		super(renderManager,
-				new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "extendedrendererentity"));
+		super(renderManager, new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE,
+				"extendedrendererentity"));
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity,
-			IBone bone) {
+	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName,
+			ExtendedRendererEntity currentEntity, IBone bone) {
 		if (item == this.mainHand || item == this.offHand) {
 			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
 			boolean shieldFlag = item.getItem() instanceof ShieldItem;
@@ -171,12 +171,14 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void preRenderBlock(MatrixStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 
 	}
 
 	@Override
-	protected void postRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void postRenderBlock(MatrixStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 	}
 
 	protected final Identifier CAPE_TEXTURE = new Identifier(GeckoLib.ModID,
@@ -191,7 +193,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected boolean isArmorBone(GeoBone bone) {
 		return bone.getName().startsWith("armor");
