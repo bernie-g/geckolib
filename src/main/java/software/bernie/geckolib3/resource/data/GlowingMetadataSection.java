@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * Originally developed for chocolate quest repoured
  */
 public class GlowingMetadataSection {
-	
+
 	@FunctionalInterface
 	public interface BiIntConsumer {
 

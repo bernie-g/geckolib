@@ -31,18 +31,19 @@ import net.minecraftforge.fml.loading.FMLPaths;
  * 
  * Originally developed for chocolate quest repoured
  */
-public abstract class AbstractTexture extends Texture {
+public abstract class GeoAbstractTexture extends Texture {
 
 	protected static final Logger LOGGER = LogManager.getLogger();
 	protected final ResourceLocation originalLocation;
 	protected final ResourceLocation location;
 
-	protected AbstractTexture(ResourceLocation originalLocation, ResourceLocation location) {
+	protected GeoAbstractTexture(ResourceLocation originalLocation, ResourceLocation location) {
 		this.originalLocation = originalLocation;
 		this.location = location;
 	}
 
-	protected static ResourceLocation get(ResourceLocation originalLocation, String appendix, BiFunction<ResourceLocation, ResourceLocation, Texture> constructor) {
+	protected static ResourceLocation get(ResourceLocation originalLocation, String appendix,
+			BiFunction<ResourceLocation, ResourceLocation, Texture> constructor) {
 		if (!RenderSystem.isOnRenderThreadOrInit()) {
 			throw new IllegalThreadStateException();
 		}
@@ -83,9 +84,10 @@ public abstract class AbstractTexture extends Texture {
 		NativeImage newImage;
 		boolean updateOriginal;
 		try (IResource iresource = resourceManager.getResource(originalLocation)) {
-			originalImage = originalTexture instanceof DynamicTexture ? ((DynamicTexture) originalTexture).getPixels() : NativeImage.read(iresource.getInputStream());
+			originalImage = originalTexture instanceof DynamicTexture ? ((DynamicTexture) originalTexture).getPixels()
+					: NativeImage.read(iresource.getInputStream());
 			newImage = new NativeImage(originalImage.getWidth(), originalImage.getHeight(), true);
-			
+
 			try {
 				textureMetadata = iresource.getMetadata(TextureMetadataSection.SERIALIZER);
 			} catch (RuntimeException e) {
@@ -98,11 +100,11 @@ public abstract class AbstractTexture extends Texture {
 		boolean blur = textureMetadata != null && textureMetadata.isBlur();
 		boolean clamp = textureMetadata != null && textureMetadata.isClamp();
 
-		if(!FMLEnvironment.production) {
+		if (!FMLEnvironment.production) {
 			debugWriteGeneratedImageToDisk(originalImage, originalLocation);
 			debugWriteGeneratedImageToDisk(newImage, this.location);
 		}
-		
+
 		if (!RenderSystem.isOnRenderThreadOrInit()) {
 			RenderSystem.recordRenderCall(() -> {
 				uploadSimple(this.getId(), newImage, blur, clamp);
@@ -131,25 +133,25 @@ public abstract class AbstractTexture extends Texture {
 	private final void debugWriteGeneratedImageToDisk(NativeImage newImage, ResourceLocation id) {
 		try {
 			File file = new File(FMLPaths.GAMEDIR.get().toFile(), "autoglow-gen");
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.mkdirs();
-			}
-			else if(!file.isDirectory()) {
+			} else if (!file.isDirectory()) {
 				file.delete();
 				file.mkdirs();
 			}
 			file = new File(file, id.getPath().replace('/', '#'));
-			if(!file.exists()) {
+			if (!file.exists()) {
 				file.createNewFile();
 			}
 			newImage.writeToFile(file);
-		} catch(IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	/**
-	 * @return true to indicate that the original texture was changed and should be updated.
+	 * @return true to indicate that the original texture was changed and should be
+	 *         updated.
 	 */
 	protected abstract boolean onLoadTexture(IResource resource, NativeImage originalImage, NativeImage newImage);
 
