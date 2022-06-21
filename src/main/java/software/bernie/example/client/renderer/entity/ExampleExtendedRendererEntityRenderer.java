@@ -22,11 +22,14 @@ import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID, "textures/entity/extendedrendererentity.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID, "geo/extendedrendererentity.geo.json");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
+			"textures/entity/extendedrendererentity.png");
+	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
+			"geo/extendedrendererentity.geo.json");
 
 	public ExampleExtendedRendererEntityRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "testentity"));
+		super(renderManager,
+				new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "testentity"));
 	}
 
 	@Override
@@ -55,34 +58,35 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderItem(PoseStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity, IBone bone) {
-		if(item == this.mainHand || item == this.offHand) {
+	protected void preRenderItem(PoseStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity,
+			IBone bone) {
+		if (item == this.mainHand || item == this.offHand) {
 			stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
 			boolean shieldFlag = item.getItem() instanceof ShieldItem;
-			if(item == this.mainHand) {
-				if(shieldFlag) {
+			if (item == this.mainHand) {
+				if (shieldFlag) {
 					stack.translate(0.0, 0.125, -0.25);
 				} else {
-					
+
 				}
 			} else {
-				if(shieldFlag) {
+				if (shieldFlag) {
 					stack.translate(0, 0.125, 0.25);
 					stack.mulPose(Vector3f.YP.rotationDegrees(180));
 				} else {
-					
+
 				}
-					
-				
+
 			}
-			//stack.mulPose(Vector3f.YP.rotationDegrees(180));
-			
-			//stack.scale(0.75F, 0.75F, 0.75F);
+			// stack.mulPose(Vector3f.YP.rotationDegrees(180));
+
+			// stack.scale(0.75F, 0.75F, 0.75F);
 		}
 	}
 
 	@Override
-	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity, IBone bone) {
+	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName,
+			ExtendedRendererEntity currentEntity, IBone bone) {
 
 	}
 
@@ -168,12 +172,14 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void preRenderBlock(PoseStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 
 	}
 
 	@Override
-	protected void postRenderBlock(BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
+	protected void postRenderBlock(PoseStack stack, BlockState block, String boneName,
+			ExtendedRendererEntity currentEntity) {
 	}
 
 	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
@@ -181,14 +187,14 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch(boneName) {
+		switch (boneName) {
 		case "bipedCape":
 			return CAPE_TEXTURE;
-		default: 
+		default:
 			return null;
 		}
 	}
-	
+
 	@Override
 	protected boolean isArmorBone(GeoBone bone) {
 		return bone.getName().startsWith("armor");
