@@ -2,6 +2,7 @@ package software.bernie.geckolib3.renderers.texture;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 
@@ -79,26 +80,17 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 			throw new IOException("Failed loading original texture: " + this.originalLocation, e);
 		}
 
-		NativeImage originalImage;
-		TextureMetadataSection textureMetadata = null;
-		NativeImage newImage;
-		boolean updateOriginal;
-		try (Resource iresource = resourceManager.getResource(originalLocation)) {
-			originalImage = originalTexture instanceof DynamicTexture ? ((DynamicTexture) originalTexture).getPixels()
-					: NativeImage.read(iresource.getInputStream());
-			newImage = new NativeImage(originalImage.getWidth(), originalImage.getHeight(), true);
+		NativeImage originalImage = originalTexture instanceof DynamicTexture
+				? ((DynamicTexture) originalTexture).getPixels()
+				: NativeImage.read(resourceManager.getResource(location).get().open());
+		Optional<TextureMetadataSection> textureMetadata = resourceManager.getResource(originalLocation).get()
+				.metadata().getSection(TextureMetadataSection.SERIALIZER);
+		NativeImage newImage = new NativeImage(originalImage.getWidth(), originalImage.getHeight(), true);
+		boolean updateOriginal = this.onLoadTexture(resourceManager.getResource(originalLocation).get(), originalImage,
+				newImage);
 
-			try {
-				textureMetadata = iresource.getMetadata(TextureMetadataSection.SERIALIZER);
-			} catch (RuntimeException e) {
-				LOGGER.warn("Failed reading metadata of: {}", location, e);
-			}
-
-			updateOriginal = this.onLoadTexture(iresource, originalImage, newImage);
-		}
-
-		boolean blur = textureMetadata != null && textureMetadata.isBlur();
-		boolean clamp = textureMetadata != null && textureMetadata.isClamp();
+		boolean blur = textureMetadata != null && textureMetadata.get().isBlur();
+		boolean clamp = textureMetadata != null && textureMetadata.get().isClamp();
 
 		if (!FMLEnvironment.production) {
 			debugWriteGeneratedImageToDisk(originalImage, originalLocation);

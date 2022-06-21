@@ -1,12 +1,14 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
@@ -39,11 +41,14 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
+import software.bernie.geckolib3.util.RenderUtils;
 
 @SuppressWarnings("unchecked")
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T>
@@ -59,6 +64,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
+	private Matrix4f renderEarlyMat = new Matrix4f();
 
 	public ItemStack mainHand;
 	public ItemStack offHand;
@@ -157,8 +163,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
-				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks,
-						f7, netHeadYaw, headPitch);
+				this.renderLayer(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7,
+						netHeadYaw, headPitch, bufferIn, layerRenderer);
 			}
 		}
 		if (entity instanceof Mob) {
@@ -174,6 +180,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
+	protected void renderLayer(PoseStack stack, MultiBufferSource bufferIn, int packedLightIn, T entity,
+			float limbSwing, float limbSwingAmount, float partialTicks, float rotFloat, float netHeadYaw,
+			float headPitch, MultiBufferSource bufferIn2, GeoLayerRenderer<T> layerRenderer) {
+		layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, rotFloat,
+				netHeadYaw, headPitch);
+	}
+
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUUID().hashCode();
@@ -183,6 +196,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public void renderEarly(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
+		renderEarlyMat = stackIn.last().pose().copy();
 		this.mainHand = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offHand = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmet = animatable.getItemBySlot(EquipmentSlot.HEAD);
@@ -193,6 +207,56 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.whTexture = this.getTextureLocation(animatable);
 		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, partialTicks);
+	}
+
+	@Override
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		stack.pushPose();
+		boolean rotOverride = bone.rotMat != null;
+		RenderUtils.translate(bone, stack);
+		RenderUtils.moveToPivot(bone, stack);
+		if (rotOverride) {
+			stack.last().pose().multiply(bone.rotMat);
+			stack.last().normal().mul(new Matrix3f(bone.rotMat));
+		} else {
+			RenderUtils.rotate(bone, stack);
+		}
+		RenderUtils.scale(bone, stack);
+		if (bone.isTrackingXform()) {
+			PoseStack.Pose entry = stack.last();
+			Matrix4f matBone = entry.pose().copy();
+			bone.setWorldSpaceXform(matBone.copy());
+
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			matBone.multiplyBackward(renderEarlyMatInvert);
+			bone.setModelSpaceXform(matBone);
+		}
+		RenderUtils.moveBackFromPivot(bone, stack);
+
+		if (!bone.isHidden) {
+			Iterator<?> var10 = bone.childCubes.iterator();
+
+			while (var10.hasNext()) {
+				GeoCube cube = (GeoCube) var10.next();
+				stack.pushPose();
+				this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				stack.popPose();
+			}
+
+			var10 = bone.childBones.iterator();
+
+			while (var10.hasNext()) {
+				GeoBone childBone = (GeoBone) var10.next();
+				this.renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+						alpha);
+			}
+		}
+
+		stack.popPose();
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
 	}
 
 	@Override

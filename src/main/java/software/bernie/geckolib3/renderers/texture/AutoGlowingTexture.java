@@ -1,5 +1,8 @@
 package software.bernie.geckolib3.renderers.texture;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import com.mojang.blaze3d.platform.NativeImage;
 
 import net.minecraft.resources.ResourceLocation;
@@ -25,17 +28,17 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 	@Override
 	protected boolean onLoadTexture(Resource resource, NativeImage originalImage, NativeImage newImage) {
-		GlowingMetadataSection glowingMetadata = null;
+		Optional<GlowingMetadataSection> glowingMetadata = null;
 		try {
-			glowingMetadata = resource.getMetadata(GlowingMetadataSection.SERIALIZER);
-		} catch (RuntimeException e) {
+			glowingMetadata = resource.metadata().getSection(GlowingMetadataSection.SERIALIZER);
+		} catch (IOException e) {
 			LOGGER.warn("Failed reading glowing metadata of: {}", location, e);
 		}
 
 		if (glowingMetadata == null || glowingMetadata.isEmpty()) {
 			return false;
 		}
-		glowingMetadata.getGlowingSections().forEach(section -> section.forEach((x, y) -> {
+		glowingMetadata.get().getGlowingSections().forEach(section -> section.forEach((x, y) -> {
 			newImage.setPixelRGBA(x, y, originalImage.getPixelRGBA(x, y));
 
 			// Remove it from the original
