@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -438,7 +439,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				if (boneItem != null || boneBlock != null) {
 
 					stack.pushPose();
-					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn);
+					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn,
+							packedOverlayIn);
 					stack.popPose();
 
 					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
@@ -466,7 +468,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	protected void handleItemAndBlockBoneRendering(PoseStack stack, GeoBone bone, @Nullable ItemStack boneItem,
-			@Nullable BlockState boneBlock, int packedLightIn) {
+			@Nullable BlockState boneBlock, int packedLightIn, int packedOverlayIn) {
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
 		RenderUtils.rotate(bone, stack);
@@ -495,7 +497,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			String boneName) {
 		Minecraft.getInstance().getItemRenderer().renderStatic(currentEntityBeingRendered, boneItem,
 				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb, null, packedLightIn,
-				packedLightIn, packedLightIn);
+				LivingEntityRenderer.getOverlayCoords(currentEntityBeingRendered, 0.0F), currentEntityBeingRendered.getId());
 	}
 
 	protected RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
@@ -529,7 +531,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		matrixStack.pushPose();
 		matrixStack.translate(-0.25F, -0.25F, -0.25F);
 		matrixStack.scale(0.5F, 0.5F, 0.5F);
-
 		Minecraft.getInstance().getBlockRenderer().renderSingleBlock(iBlockState, matrixStack, rtb, packedLightIn,
 				OverlayTexture.NO_OVERLAY, null);
 		matrixStack.popPose();
