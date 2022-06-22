@@ -26,6 +26,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
 import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.item.ItemRenderer;
@@ -456,7 +457,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			String boneName) {
 		MinecraftClient.getInstance().getItemRenderer().renderItem(currentEntityBeingRendered, boneItem,
 				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb, null, packedLightIn,
-				packedLightIn, packedLightIn);
+				LivingEntityRenderer.getOverlay(currentEntityBeingRendered, 0.0F), currentEntityBeingRendered.getId());
 	}
 
 	private RenderLayer getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
