@@ -12,7 +12,7 @@ import software.bernie.geckolib3.resource.data.GlowingMetadataSection;
  * 
  * Originally developed for chocolate quest repoured
  */
-public class AutoGlowingTexture extends AbstractTexture {
+public class AutoGlowingTexture extends GeoAbstractTexture {
 
 	public AutoGlowingTexture(ResourceLocation originalLocation, ResourceLocation location) {
 		super(originalLocation, location);
