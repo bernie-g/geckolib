@@ -1,5 +1,4 @@
-v3.1.4
+v3.1.5
 
-- Emissive/Glow Layer support now added. Please see https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer - DerToaster.
-- ExtendedGeoEntityRender now supports rendering blocks on the entity. - DerToaster
-- GeoBone#getModelPosition() & GeoBone#getWorldPosition() support added to get the model postion and in-world positions from a bone. Useful for rendering things at a bones in-world location for example. - BobMowzie
+- fix wrong access modifiers - DerToaster
+- Missing Layer added

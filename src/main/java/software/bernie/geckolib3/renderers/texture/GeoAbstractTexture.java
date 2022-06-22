@@ -56,7 +56,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		return location;
 	}
 
-	protected static ResourceLocation appendBeforeEnding(ResourceLocation location, String suffix) {
+	public static ResourceLocation appendBeforeEnding(ResourceLocation location, String suffix) {
 		String path = location.getPath();
 		int i = path.lastIndexOf('.');
 		return new ResourceLocation(location.getNamespace(), path.substring(0, i) + suffix + path.substring(i));
@@ -147,7 +147,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	 */
 	protected abstract boolean onLoadTexture(Resource resource, NativeImage originalImage, NativeImage newImage);
 
-	private static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
+	protected static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
 		TextureUtil.prepareImage(texture, 0, image.getWidth(), image.getHeight());
 		image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), blur, clamp, false, true);
 	}
