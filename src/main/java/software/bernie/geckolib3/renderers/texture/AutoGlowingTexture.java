@@ -37,7 +37,9 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		}
 		glowingMetadata.getGlowingSections().forEach(section -> section.forEach((x, y) -> {
 			newImage.setPixelRGBA(x, y, originalImage.getPixelRGBA(x, y));
-
+			//For debug purposes
+			//newImage.setPixelRGBA(x, y, 0);
+			
 			// Remove it from the original
 			originalImage.setPixelRGBA(x, y, 0);
 		}));
