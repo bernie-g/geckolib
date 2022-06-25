@@ -94,4 +94,9 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		return getTextureLocation(entity);
 	}
 
+	@Override
+	public Integer getUniqueID(T animatable) {
+		return animatable.getUuid().hashCode();
+	}
+
 }
