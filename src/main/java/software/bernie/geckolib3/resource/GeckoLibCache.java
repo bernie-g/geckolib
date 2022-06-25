@@ -11,10 +11,10 @@ import java.util.function.Function;
 
 import com.eliotlash.molang.MolangParser;
 
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.profiling.ProfilerFiller;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
@@ -78,8 +78,9 @@ public class GeckoLibCache {
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
-		return CompletableFuture.supplyAsync(
-				() -> resourceManager.listResources(type, fileName -> fileName.endsWith(".json")), executor)
+		return CompletableFuture
+				.supplyAsync(() -> resourceManager.listResources(type, fileName -> fileName.endsWith(".json")),
+						executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new HashMap<>();
 
