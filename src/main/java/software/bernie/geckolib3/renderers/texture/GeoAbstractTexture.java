@@ -16,6 +16,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
@@ -50,9 +51,12 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		}
 		ResourceLocation location = appendBeforeEnding(originalLocation, appendix);
 		TextureManager texManager = Minecraft.getInstance().getTextureManager();
-		// Necessary, some time after 1.16 this was changed. Method with just the location will try to create a new simpletexture fromt aht which will fail here
-		// Overload with second param (default value) will just call getOrDefault() on the internal map
-		if (texManager.getTexture(location, null) == null) {
+		// Necessary, some time after 1.16 this was changed. Method with just the
+		// location will try to create a new simpletexture fromt aht which will fail
+		// here
+		// Overload with second param (default value) will just call getOrDefault() on
+		// the internal map
+		if (texManager.getTexture(location, MissingTextureAtlasSprite.getTexture()) == null) {
 			texManager.register(location, constructor.apply(originalLocation, location));
 		}
 		return location;

@@ -88,4 +88,9 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		return this.modelProvider.getTextureResource(instance);
 	}
 
+	@Override
+	public Integer getUniqueID(T animatable) {
+		return animatable.getUUID().hashCode();
+	}
+
 }

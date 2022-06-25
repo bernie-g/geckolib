@@ -1,4 +1,3 @@
-v3.1.5
+v3.1.6
 
-- fix wrong access modifiers - DerToaster
-- Missing Layer added
+- Fixed double render issue causing massive FPS drops.
