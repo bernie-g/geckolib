@@ -16,6 +16,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.metadata.TextureResourceMetadata;
 import net.minecraft.client.texture.AbstractTexture;
+import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.ResourceTexture;
@@ -49,7 +50,12 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		}
 		Identifier location = appendBeforeEnding(originalLocation, appendix);
 		TextureManager texManager = MinecraftClient.getInstance().getTextureManager();
-		if (texManager.getTexture(location) == null) {
+		// Necessary, some time after 1.16 this was changed. Method with just the
+		// location will try to create a new simpletexture fromt aht which will fail
+		// here
+		// Overload with second param (default value) will just call getOrDefault() on
+		// the internal map
+		if (texManager.getOrDefault(location, MissingSprite.getMissingSpriteTexture()) == null) {
 			texManager.registerTexture(location, constructor.apply(originalLocation, location));
 		}
 		return location;

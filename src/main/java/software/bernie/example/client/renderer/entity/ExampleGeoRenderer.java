@@ -11,10 +11,13 @@ import net.minecraft.util.Identifier;
 import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderers.geo.layer.LayerGlowingAreasGeo;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	public ExampleGeoRenderer(EntityRendererFactory.Context ctx) {
 		super(ctx, new ExampleEntityModel());
+		this.addLayer(new LayerGlowingAreasGeo<GeoExampleEntity>(this, modelProvider::getTextureResource,
+				modelProvider::getModelResource, RenderLayer::getEyes));
 	}
 
 	@Override

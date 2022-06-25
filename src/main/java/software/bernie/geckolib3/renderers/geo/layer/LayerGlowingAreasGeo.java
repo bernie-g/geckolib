@@ -7,6 +7,8 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
+import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
+import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
