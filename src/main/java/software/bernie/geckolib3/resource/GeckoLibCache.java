@@ -87,7 +87,6 @@ public class GeckoLibCache {
 					for (ResourceLocation resource : resources) {
 						CompletableFuture<T> existing = tasks.put(resource,
 								CompletableFuture.supplyAsync(() -> loader.apply(resource), executor));
-
 						if (existing != null) {// Possibly if this matters, the last one will win
 							System.err.println("Duplicate resource for " + resource);
 							existing.cancel(false);
@@ -98,7 +97,11 @@ public class GeckoLibCache {
 				}, executor).thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
 						// Shouldn't be any duplicates as they are caught above
-						map.accept(entry.getKey(), entry.getValue().join());
+						// Skips moreplayermodels and customnpc namespaces as they use an animation
+						// folder as well
+						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels")
+								|| !entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
+							map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
 	}
