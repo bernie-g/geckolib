@@ -100,7 +100,7 @@ public class GeckoLibCache {
 						// Skips moreplayermodels and customnpc namespaces as they use an animation
 						// folder as well
 						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels")
-								|| !entry.getKey().getNamespace().equalsIgnoreCase("customnpc"))
+								|| !entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
 							map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
