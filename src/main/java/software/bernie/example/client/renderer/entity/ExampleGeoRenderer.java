@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.geckolib3.renderers.GeoRenderType;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.layer.LayerGlowingAreasGeo;
 
@@ -16,7 +17,7 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	public ExampleGeoRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new ExampleEntityModel());
 		this.addLayer(new LayerGlowingAreasGeo<GeoExampleEntity>(this, modelProvider::getTextureResource,
-				modelProvider::getModelResource, RenderType::eyes));
+				modelProvider::getModelResource, GeoRenderType::emissive));
 	}
 
 	@Override
