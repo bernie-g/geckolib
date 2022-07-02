@@ -1,3 +1,3 @@
-v3.0.27
+v3.0.28
 
-- Fixed double render issue causing massive FPS drops.
+- Skips customnpc and moreplayermodels namespaces due to use of animations folder in those mods in 1.18+
