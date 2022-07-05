@@ -1,0 +1,12 @@
+{
+  "itemGroup.geckolib_examples": "Geckolib Examples",
+
+  "item.geckolib3.potato_head": "Картопляний шолом",
+  "item.geckolib3.potato_chest": "Картопляний нагрудник",
+  "item.geckolib3.potato_leggings": "Картопляні наголінники",
+  "item.geckolib3.potato_boots": "Картопляні чоботи",
+  "item.geckolib3.jackintheboxitem": "Джек-стрибунець",
+  "item.geckolib3.pistol": "Пістолет",
+  "block.geckolib3.botariumblock": "Ботарій",
+  "block.geckolib3.fertilizerblock": "Удобрювач"
+}
