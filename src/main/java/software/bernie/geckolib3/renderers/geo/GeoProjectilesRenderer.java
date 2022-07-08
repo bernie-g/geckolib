@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -90,7 +91,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getUUID().hashCode();
+		return UUID.randomUUID().hashCode();
 	}
 
 }
