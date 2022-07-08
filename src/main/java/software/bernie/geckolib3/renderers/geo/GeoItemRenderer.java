@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.RenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -35,7 +35,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof Item) {
 				Item item = (Item) object;
-				BlockEntityWithoutLevelRenderer renderer = RenderProperties.get(item).getItemStackRenderer();
+				BlockEntityWithoutLevelRenderer renderer = IClientItemExtensions.of(item).getCustomRenderer();
 				if (renderer instanceof GeoItemRenderer) {
 					return (IAnimatableModel<Object>) ((GeoItemRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -48,10 +48,12 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	protected ItemStack currentItemStack;
 
 	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider) {
-		this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels(), modelProvider);
+		this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels(),
+				modelProvider);
 	}
 
-	public GeoItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet, AnimatedGeoModel<T> modelProvider) {
+	public GeoItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet,
+			AnimatedGeoModel<T> modelProvider) {
 		super(dispatcher, modelSet);
 		this.modelProvider = modelProvider;
 	}
@@ -67,8 +69,8 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 
 	// fixes the item lighting
 	@Override
-	public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType p_239207_2_,
-			PoseStack matrixStack, MultiBufferSource bufferIn, int combinedLightIn, int p_239207_6_) {
+	public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType p_239207_2_, PoseStack matrixStack,
+			MultiBufferSource bufferIn, int combinedLightIn, int p_239207_6_) {
 		if (p_239207_2_ == ItemTransforms.TransformType.GUI) {
 			matrixStack.pushPose();
 			MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
@@ -89,8 +91,8 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(animatable));
-		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
-				false, Collections.singletonList(itemStack));
+		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(), false,
+				Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		stack.pushPose();
 		stack.translate(0, 0.01f, 0);

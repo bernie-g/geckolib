@@ -523,6 +523,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Nullable
 	protected abstract ResourceLocation getTextureForBone(String boneName, T currentEntity);
 
+	@SuppressWarnings("deprecation")
 	protected void renderBlock(PoseStack matrixStack, MultiBufferSource rtb, int packedLightIn,
 			BlockState iBlockState) {
 		if (iBlockState.getRenderShape() != RenderShape.MODEL) {
@@ -532,7 +533,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		matrixStack.translate(-0.25F, -0.25F, -0.25F);
 		matrixStack.scale(0.5F, 0.5F, 0.5F);
 		Minecraft.getInstance().getBlockRenderer().renderSingleBlock(iBlockState, matrixStack, rtb, packedLightIn,
-				OverlayTexture.NO_OVERLAY, null);
+				OverlayTexture.NO_OVERLAY);
 		matrixStack.popPose();
 	}
 

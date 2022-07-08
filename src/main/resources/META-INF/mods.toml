@@ -16,7 +16,7 @@ Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, whi
 [[dependencies.geckolib3]]
     modId="forge"
     mandatory=true 
-    versionRange="[41.0,)"
+    versionRange="[41.0.64,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.geckolib3]]

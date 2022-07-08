@@ -17,7 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.client.IItemRenderProperties;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRender;
@@ -45,13 +45,13 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public void initializeClient(Consumer<IItemRenderProperties> consumer) {
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		super.initializeClient(consumer);
-		consumer.accept(new IItemRenderProperties() {
+		consumer.accept(new IClientItemExtensions() {
 			private final BlockEntityWithoutLevelRenderer renderer = new PistolRender();
 
 			@Override
-			public BlockEntityWithoutLevelRenderer getItemStackRenderer() {
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				return renderer;
 			}
 		});
