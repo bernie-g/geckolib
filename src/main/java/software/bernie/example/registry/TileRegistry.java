@@ -10,7 +10,7 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class TileRegistry {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
-			.create(ForgeRegistries.BLOCK_ENTITIES, GeckoLib.ModID);
+			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, GeckoLib.ModID);
 
 	public static final RegistryObject<BlockEntityType<HabitatTileEntity>> HABITAT_TILE = TILES
 			.register("habitattile", () -> BlockEntityType.Builder

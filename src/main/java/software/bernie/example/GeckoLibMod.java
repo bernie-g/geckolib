@@ -7,7 +7,7 @@ package software.bernie.example;
 
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.event.entity.EntityLeaveWorldEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -50,14 +50,14 @@ public class GeckoLibMod {
 
 	@SuppressWarnings("resource")
 	@SubscribeEvent
-	public static void onEntityRemoved(EntityLeaveWorldEvent event) {
+	public static void onEntityRemoved(EntityLeaveLevelEvent event) {
 		if (event.getEntity() == null) {
 			return;
 		}
 		if (event.getEntity().getUUID() == null) {
 			return;
 		}
-		if (event.getWorld().isClientSide)
+		if (event.getLevel().isClientSide)
 			GeoArmorRenderer.LIVING_ENTITY_RENDERERS.values().forEach(instances -> {
 				if (instances.containsKey(event.getEntity().getUUID())) {
 					ModelFetcher<?> beGone = instances.get(event.getEntity().getUUID());
