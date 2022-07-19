@@ -1,3 +1,9 @@
-3.0.50
+3.0.51
 
-- Fixed double render issue causing massive FPS drops.
+- Update Core
+- Updated Armor Render
+- Tweaked Entity Render
+- Updated Leash Code - sharffffff
+- Ticking Tweak
+- Tweaked Projectiles Render
+- Update Credits
