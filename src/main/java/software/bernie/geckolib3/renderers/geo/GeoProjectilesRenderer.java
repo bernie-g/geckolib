@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
+import java.util.UUID;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -50,10 +51,10 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 			IRenderTypeBuffer bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
 		matrixStackIn.pushPose();
-		matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(
-				MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot) - 90.0F));
-		matrixStackIn.mulPose(Vector3f.ZP
-				.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
+		matrixStackIn.mulPose(
+				Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot) - 90.0F));
+		matrixStackIn
+				.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
 		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
 		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
@@ -91,7 +92,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getUUID().hashCode();
+		return UUID.randomUUID().hashCode();
 	}
 
 }
