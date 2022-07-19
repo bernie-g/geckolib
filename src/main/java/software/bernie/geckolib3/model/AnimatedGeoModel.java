@@ -5,13 +5,13 @@ import java.util.Collections;
 import javax.annotation.Nullable;
 
 import com.eliotlash.molang.MolangParser;
+import com.mojang.blaze3d.Blaze3D;
 
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.Blaze3D;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -68,7 +68,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		AnimationEvent<T> predicate;
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
+					Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
