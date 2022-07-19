@@ -7,6 +7,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexBuilderUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -154,8 +155,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(entity));
 		if (!entity.isInvisibleTo(Minecraft.getInstance().player))
-			render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-					getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
+			render(model, entity, partialTicks, renderType, stack, bufferIn,
+					VertexBuilderUtils.create(bufferIn.getBuffer(RenderType.entityGlintDirect()),
+							bufferIn.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)))),
+					packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
 					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
 
