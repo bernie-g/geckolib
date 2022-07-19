@@ -8,6 +8,7 @@ import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
@@ -156,8 +157,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		RenderType renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(entity));
 		if (!entity.isInvisibleTo(Minecraft.getInstance().player))
-			render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-					getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
+			render(model, entity, partialTicks, renderType, stack, bufferIn,
+					VertexMultiConsumer.create(bufferIn.getBuffer(RenderType.entityGlintDirect()),
+							bufferIn.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)))),
+					packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
 					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
 
