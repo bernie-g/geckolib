@@ -1,3 +1,10 @@
-v3.0.28
+v3.0.29
 
-- Skips customnpc and moreplayermodels namespaces due to use of animations folder in those mods in 1.18+
+- Update GeoArmor Item.
+- Update Core
+- Tweaked Entity Render
+- Updated Leash Code - sharffffff
+- Ticking Tweak
+- Tweaked Projectiles Render
+- Update Credits
+- Fixes MPM and CustomNPCS
