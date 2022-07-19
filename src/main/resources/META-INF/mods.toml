@@ -8,8 +8,8 @@ version="${file.jarVersion}"
 displayName="GeckoLib"
 displayURL="http://geckolib.com/"
 logoFile="geckolib.png" 
-credits="Gecko, Eliot, AzureDoom" 
-authors="Gecko, Eliot, AzureDoom, Chappie"
+credits="Gecko, Eliot, AzureDoom, DerToaster" 
+authors="Gecko, Eliot, AzureDoom, Chappie, DerToaster"
 description='''
 Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically. You can export bedrock animations from blockbench and apply them to entities with GeckoLib. Geckolib also supports sound keyframes, particle keyframes, and custom events. The library is currently available on Forge 1.12, 1.15, 1.16, and Fabric 1.16.
 '''
