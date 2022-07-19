@@ -52,21 +52,21 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has it's own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
-		AnimationData data = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (data.ticker == null) {
-			AnimationTicker ticker = new AnimationTicker(data);
-			data.ticker = ticker;
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		if (manager.ticker == null) {
+			AnimationTicker ticker = new AnimationTicker(manager);
+			manager.ticker = ticker;
 			MinecraftForge.EVENT_BUS.register(ticker);
 		}
-		if (!Minecraft.getMinecraft().isGamePaused() || data.shouldPlayWhilePaused) {
-			seekTime = data.tick + Minecraft.getMinecraft().getRenderPartialTicks();
+		if (!Minecraft.getMinecraft().isGamePaused() || manager.shouldPlayWhilePaused) {
+			seekTime = manager.tick + Minecraft.getMinecraft().getRenderPartialTicks();
 		} else {
-			seekTime = data.tick;
+			seekTime = manager.tick;
 		}
 
 		AnimationEvent<T> predicate;
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
