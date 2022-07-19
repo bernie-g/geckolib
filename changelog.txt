@@ -1,3 +1,8 @@
-v3.1.9
+v3.1.10
 
-- Requires at least Forge 41.0.98. If you want a stable system, use Fabric. Don't have to deal with this bullshit there.
+- Update GeoArmor Item.
+- Update Core
+- Tweaked Entity Render
+- Updated Leash Code - sharffffff
+- Ticking Tweak
+- Update Credits
