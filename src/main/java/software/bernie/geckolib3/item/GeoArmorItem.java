@@ -30,8 +30,8 @@ public abstract class GeoArmorItem extends ArmorItem {
 			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack,
 					EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
 				return (HumanoidModel<?>) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass(), livingEntity)
-						.applyEntityStats(original).applySlot(equipmentSlot)
-						.setCurrentItem(livingEntity, itemStack, equipmentSlot);
+						.applyEntityStats(original).setCurrentItem(livingEntity, itemStack, equipmentSlot)
+						.applySlot(equipmentSlot);
 			}
 		});
 	}
