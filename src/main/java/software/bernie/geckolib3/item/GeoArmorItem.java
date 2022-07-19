@@ -25,8 +25,8 @@ public abstract class GeoArmorItem extends ItemArmor {
 			ModelBiped _default) {
 		Class<? extends ItemArmor> clazz = this.getClass();
 		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz);
-		renderer.applyEntityStats(_default).applySlot(armorSlot);
 		renderer.setCurrentItem(entityLiving, itemStack, armorSlot);
+		renderer.applyEntityStats(_default).applySlot(armorSlot);
 		return renderer;
 	}
 
