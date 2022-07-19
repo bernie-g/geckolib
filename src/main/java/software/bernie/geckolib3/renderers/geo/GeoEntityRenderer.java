@@ -364,64 +364,58 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	private <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
 			IRenderTypeBuffer buffer, E leashHolder) {
+		int u;
 		poseStack.pushPose();
-		Vector3d vec3 = leashHolder.getRopeHoldPosition(partialTicks);
-		double d0 = (double) (MathHelper.lerp(partialTicks, entity.yBodyRot, entity.yBodyRotO)
-				* ((float) Math.PI / 180F)) + (Math.PI / 2D);
-		Vector3d vec31 = entity.getLeashOffset();
-		double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;
-		double d2 = Math.sin(d0) * vec31.z - Math.cos(d0) * vec31.x;
-		double d3 = MathHelper.lerp(partialTicks, entity.xo, entity.getX()) + d1;
-		double d4 = MathHelper.lerp(partialTicks, entity.yo, entity.getY()) + vec31.y;
-		double d5 = MathHelper.lerp(partialTicks, entity.zo, entity.getZ()) + d2;
-		poseStack.translate(d1, vec31.y, d2);
-		float f = (float) (vec3.x - d3);
-		float f1 = (float) (vec3.y - d4);
-		float f2 = (float) (vec3.z - d5);
-		IVertexBuilder vertexconsumer = buffer.getBuffer(RenderType.leash());
+		Vector3d vec3d = leashHolder.getRopeHoldPosition(partialTicks);
+		double d = (double) (MathHelper.lerp(partialTicks, entity.yBodyRot, entity.yBodyRotO) * ((float) Math.PI / 180))
+				+ 1.5707963267948966;
+		Vector3d vec3d2 = ((Entity) entity).getLeashOffset();
+		double e = Math.cos(d) * vec3d2.z + Math.sin(d) * vec3d2.x;
+		double f = Math.sin(d) * vec3d2.z - Math.cos(d) * vec3d2.x;
+		double g = MathHelper.lerp(partialTicks, entity.xo, entity.getX()) + e;
+		double h = MathHelper.lerp(partialTicks, entity.yo, entity.getY()) + vec3d2.y;
+		double i = MathHelper.lerp(partialTicks, entity.zo, entity.getZ()) + f;
+		poseStack.translate(e, vec3d2.y, f);
+		float j = (float) (vec3d.x - g);
+		float k = (float) (vec3d.y - h);
+		float l = (float) (vec3d.z - i);
+		IVertexBuilder vertexConsumer = buffer.getBuffer(RenderType.leash());
 		Matrix4f matrix4f = poseStack.last().pose();
-		float f4 = MathHelper.fastInvSqrt(f * f + f2 * f2) * 0.025F / 2.0F;
-		float f5 = f2 * f4;
-		float f6 = f * f4;
-		BlockPos blockpos = new BlockPos(entity.getEyePosition(partialTicks));
-		BlockPos blockpos1 = new BlockPos(leashHolder.getEyePosition(partialTicks));
-		int i = this.getBlockLightLevel(entity, blockpos);
-		int j = this.getLeashHolderBlockLightLevel(leashHolder, blockpos1);
-		int k = entity.level.getBrightness(LightType.SKY, blockpos);
-		int l = entity.level.getBrightness(LightType.SKY, blockpos1);
-
-		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+		float n = MathHelper.fastInvSqrt(j * j + l * l) * 0.025f / 2.0f;
+		float o = l * n;
+		float p = j * n;
+		BlockPos blockPos = new BlockPos(entity.getEyePosition(partialTicks));
+		BlockPos blockPos2 = new BlockPos(leashHolder.getEyePosition(partialTicks));
+		int q = this.getBlockLightLevel(entity, blockPos);
+		int r = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightType.BLOCK, blockPos2);
+		int s = entity.level.getBrightness(LightType.SKY, blockPos);
+		int t = entity.level.getBrightness(LightType.SKY, blockPos2);
+		for (u = 0; u <= 24; ++u) {
+			GeoEntityRenderer.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.025f, o, p, u,
+					false);
 		}
-
-		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+		for (u = 24; u >= 0; --u) {
+			GeoEntityRenderer.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.0f, o, p, u,
+					true);
 		}
-
 		poseStack.popPose();
 	}
 
-	private int getLeashHolderBlockLightLevel(Entity leashHolder, BlockPos pos) {
-		return leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightType.BLOCK, pos);
-	}
-
-	private static void addVertexPair(IVertexBuilder vertexConsumer, Matrix4f matrix, float xDiff, float yDiff,
-			float zDiff, int entityLightLevel, int holderLightLevel, int entitySkyLight, int holderSkyLight,
-			float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
-		float f = (float) p_174321_ / 24.0F;
-		int i = (int) MathHelper.lerp(f, (float) entityLightLevel, (float) holderLightLevel);
-		int j = (int) MathHelper.lerp(f, (float) entitySkyLight, (float) holderSkyLight);
-		int k = LightTexture.pack(i, j);
-		float f1 = p_174321_ % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
-		float f2 = 0.5F * f1;
-		float f3 = 0.4F * f1;
-		float f4 = 0.3F * f1;
-		float f5 = xDiff * f;
-		float f6 = yDiff > 0.0F ? yDiff * f * f : yDiff - yDiff * (1.0F - f) * (1.0F - f);
-		float f7 = zDiff * f;
-		vertexConsumer.vertex(matrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).color(f2, f3, f4, 1.0F).uv2(k)
-				.endVertex();
-		vertexConsumer.vertex(matrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_)
-				.color(f2, f3, f4, 1.0F).uv2(k).endVertex();
+	private static void renderLeashPiece(IVertexBuilder vertexConsumer, Matrix4f positionMatrix, float f, float g,
+			float h, int leashedEntityBlockLight, int holdingEntityBlockLight, int leashedEntitySkyLight,
+			int holdingEntitySkyLight, float i, float j, float k, float l, int pieceIndex, boolean isLeashKnot) {
+		float m = (float) pieceIndex / 24.0f;
+		int n = (int) MathHelper.lerp(m, leashedEntityBlockLight, holdingEntityBlockLight);
+		int o = (int) MathHelper.lerp(m, leashedEntitySkyLight, holdingEntitySkyLight);
+		int p = LightTexture.pack(n, o);
+		float q = pieceIndex % 2 == (isLeashKnot ? 1 : 0) ? 0.7f : 1.0f;
+		float r = 0.5f * q;
+		float s = 0.4f * q;
+		float t = 0.3f * q;
+		float u = f * m;
+		float v = g > 0.0f ? g * m * m : g - g * (1.0f - m) * (1.0f - m);
+		float w = h * m;
+		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).uv2(p).endVertex();
+		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).uv2(p).endVertex();
 	}
 }
