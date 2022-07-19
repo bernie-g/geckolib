@@ -7,7 +7,7 @@
     "mcversion": "${mcversion}",
     "url": "http://berniesoftware.com/",
     "updateUrl": "",
-    "authorList": ["Gecko, Eliot, AzureDoom, McHorse"],
+    "authorList": ["Gecko, Eliot, AzureDoom, McHorse, DerToaster"],
     "credits": "",
     "logoFile": "geckolib.png",
     "screenshots": [],
