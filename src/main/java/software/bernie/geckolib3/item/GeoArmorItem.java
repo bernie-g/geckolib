@@ -26,8 +26,9 @@ public abstract class GeoArmorItem extends ArmorItem {
 			@Override
 			public HumanoidModel<?> getArmorModel(LivingEntity entityLiving, ItemStack itemStack,
 					EquipmentSlot armorSlot, HumanoidModel<?> _default) {
-				return (HumanoidModel<?>) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass(), entityLiving).applyEntityStats(_default)
-				.applySlot(armorSlot).setCurrentItem(entityLiving, itemStack, armorSlot);
+				return (HumanoidModel<?>) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass(), entityLiving)
+						.applyEntityStats(_default).setCurrentItem(entityLiving, itemStack, armorSlot)
+						.applySlot(armorSlot);
 			}
 		});
 	}
