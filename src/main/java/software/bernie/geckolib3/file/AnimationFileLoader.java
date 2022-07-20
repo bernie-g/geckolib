@@ -23,6 +23,7 @@ public class AnimationFileLoader {
 
 	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
 		AnimationFile animationFile = new AnimationFile();
+		GeckoLib.LOGGER.debug("Attempting to load animation file {}...", location.toString());
 		JsonObject jsonRepresentation = loadFile(location, manager);
 		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
 		for (Map.Entry<String, JsonElement> entry : entrySet) {
@@ -37,6 +38,7 @@ public class AnimationFileLoader {
 				throw new RuntimeException(e);
 			}
 		}
+		GeckoLib.LOGGER.debug("Animation file {} processed", location.toString());
 		return animationFile;
 	}
 
