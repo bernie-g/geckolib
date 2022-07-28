@@ -1,8 +1,4 @@
-v3.1.10
+v3.1.11
 
-- Update GeoArmor Item.
-- Update Core
-- Tweaked Entity Render
-- Updated Leash Code - sharffffff
-- Ticking Tweak
-- Update Credits
+- Fix GeoProjectilesRender Lag
+- Fix GeoProjectilesRender Animation issues

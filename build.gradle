@@ -150,6 +150,7 @@ dependencies {
     test {
         useJUnitPlatform()
     }
+    implementation fg.deobf("curse.maven:advent-311054:3894434")
 }
 
 shadowJar {
@@ -265,6 +266,7 @@ if (file('key.properties').exists()) {
             changelogType = 'text'
             changelog = file('changelog.txt')
         	addGameVersion("1.19")
+        	addGameVersion("1.19.1")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
