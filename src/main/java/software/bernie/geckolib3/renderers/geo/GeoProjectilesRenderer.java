@@ -1,7 +1,6 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
-import java.util.UUID;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
@@ -55,14 +54,6 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		matrixStackIn.multiply(Vec3f.POSITIVE_Z
 				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevPitch, entityIn.getPitch())));
 		matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(45.0F));
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entityIn));
-		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
-				getTexture(entityIn));
-		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getAlpha() / 255);
 
 		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
@@ -72,6 +63,14 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
 		}
+		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entityIn));
+		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
+		RenderLayer renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
+				getTexture(entityIn));
+		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
+				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+				(float) renderColor.getAlpha() / 255);
 		matrixStackIn.pop();
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
@@ -97,7 +96,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return UUID.randomUUID().hashCode();
+		return animatable.getUuid().hashCode();
 	}
 
 }
