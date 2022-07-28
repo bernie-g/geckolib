@@ -1,7 +1,6 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
-import java.util.UUID;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
 
@@ -55,14 +54,6 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 				Vector3f.YP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.yRotO, entityIn.yRot) - 90.0F));
 		matrixStackIn
 				.mulPose(Vector3f.ZP.rotationDegrees(MathHelper.lerp(partialTicks, entityIn.xRotO, entityIn.xRot)));
-		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
-		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
-				getTextureLocation(entityIn));
-		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getAlpha() / 255);
 
 		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
@@ -72,6 +63,14 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
 		}
+		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
+		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
+		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
+				getTextureLocation(entityIn));
+		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
+				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+				(float) renderColor.getAlpha() / 255);
 		matrixStackIn.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
@@ -92,7 +91,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return UUID.randomUUID().hashCode();
+		return animatable.getUUID().hashCode();
 	}
 
 }
