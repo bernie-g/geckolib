@@ -1,9 +1,4 @@
-3.0.51
+3.0.52
 
-- Update Core
-- Updated Armor Render
-- Tweaked Entity Render
-- Updated Leash Code - sharffffff
-- Ticking Tweak
-- Tweaked Projectiles Render
-- Update Credits
+- Fix GeoProjectilesRender Lag
+- Fix GeoProjectilesRender Animation issues
