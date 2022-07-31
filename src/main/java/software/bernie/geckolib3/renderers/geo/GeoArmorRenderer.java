@@ -27,6 +27,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -101,6 +102,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 					}
 				});
 			} else {
+				GeckoLib.LOGGER.error("Registration of armor renderer for item class {} failed cause the renderer class {} does not feature a zero-args constructor!", itemClass.getName(), instance.getClass().getName());
 				throw new IllegalArgumentException("If you still use the registration using instances, please give it a no-args constructor!");
 			}
 		}
