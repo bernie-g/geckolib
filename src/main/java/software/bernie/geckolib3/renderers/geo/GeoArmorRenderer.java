@@ -25,6 +25,7 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -75,6 +76,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
+	@Deprecated()
 	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer instance) {
 		for (Constructor<?> c : instance.getClass().getConstructors()) {
 			if (c.getParameterCount() == 0) {
@@ -96,6 +98,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 						return null;
 					}
 				});
+			} else {
+				GeckoLib.LOGGER.error(
+						"Registration of armor renderer for item class {} failed cause the renderer class {} does not feature a zero-args constructor!",
+						itemClass.getName(), instance.getClass().getName());
+				throw new IllegalArgumentException(
+						"If you still use the registration using instances, please give it a no-args constructor!");
 			}
 		}
 	}

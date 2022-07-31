@@ -1,4 +1,3 @@
-v3.0.83
+v3.0.84
 
-- Fix GeoProjectilesRender Lag
-- Fix GeoProjectilesRender Animation issues
+- Deprecated old registerArmorRenderer method in GeoArmorRenderer and updated example code. - DerToaster/AzureDoom

@@ -47,8 +47,8 @@ public class ClientListener {
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
 
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
-			
-			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
+
+			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, () -> new PotatoArmorRenderer());
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.BOTARIUM_TILE.get(), BotariumTileRenderer::new);
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
 
