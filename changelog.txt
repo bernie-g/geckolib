@@ -1,10 +1,4 @@
-v3.0.29
+v3.0.30
 
-- Update GeoArmor Item.
-- Update Core
-- Tweaked Entity Render
-- Updated Leash Code - sharffffff
-- Ticking Tweak
-- Tweaked Projectiles Render
-- Update Credits
-- Fixes MPM and CustomNPCS
+- Fix GeoProjectilesRender Lag
+- Fix GeoProjectilesRender Animation issues
