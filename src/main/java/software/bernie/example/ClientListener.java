@@ -50,7 +50,7 @@ public class ClientListener {
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
 		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
-			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
+			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, () -> new PotatoArmorRenderer());
 		}
 	}
 

@@ -79,7 +79,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
-	@Deprecated(since = "PLease use the method that takes in the supplier, this is only present for legacy support")
+	@Deprecated(since = "Please use the method that takes in the supplier, this is only present for legacy support")
 	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer instance) {
 		for (Constructor<?> c : instance.getClass().getConstructors()) {
 			if (c.getParameterCount() == 0) {
@@ -102,7 +102,9 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 					}
 				});
 			} else {
-				GeckoLib.LOGGER.error("Registration of armor renderer for item class {} failed cause the renderer class {} does not feature a zero-args constructor!", itemClass.getName(), instance.getClass().getName());
+				GeckoLib.LOGGER.error(
+						"Registration of armor renderer for item class {} failed cause the renderer class {} does not feature a zero-args constructor!",
+						itemClass.getName(), instance.getClass().getName());
 				throw new IllegalArgumentException("If you still use the registration using instances, please give it a no-args constructor!");
 			}
 		}
