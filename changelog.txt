@@ -1,4 +1,4 @@
-3.1.8
+3.1.9
 
-- Fix GeoProjectilesRender Lag
-- Fix GeoProjectilesRender Animation issues
+- Fix GeoEntityRenderer render buffers - EterDelta
+- Reenable Patchouli fix.

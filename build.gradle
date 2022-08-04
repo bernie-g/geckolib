@@ -73,6 +73,7 @@ dependencies {
         useJUnitPlatform()
     }
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+	modImplementation "curse.maven:Patchouli-393236:3866269"
 }
 
 shadowJar {
