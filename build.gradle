@@ -150,7 +150,7 @@ dependencies {
     test {
         useJUnitPlatform()
     }
-    implementation fg.deobf("curse.maven:advent-311054:3894434")
+    implementation fg.deobf("curse.maven:Patchouli-306770:3877555")
 }
 
 shadowJar {
