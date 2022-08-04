@@ -1,4 +1,5 @@
-3.1.9
+3.1.10
 
-- Fix GeoEntityRenderer render buffers - EterDelta
-- Reenable Patchouli fix.
+- Fix Patchouli Gradle issue. 
+- Lead render fix - Dominik
+- renderLeash public now.

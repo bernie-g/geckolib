@@ -14,6 +14,7 @@ import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexConsumers;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.PlayerModelPart;
@@ -91,6 +92,12 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 
 		stack.push();
+		if (entity instanceof MobEntity) {
+			Entity leashHolder = ((MobEntity) entity).getHoldingEntity();
+			if (leashHolder != null) {
+				this.renderLeash(((MobEntity) entity), partialTicks, stack, bufferIn, leashHolder);
+			}
+		}
 		boolean shouldSit = entity.hasVehicle() && (entity.getVehicle() != null);
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -160,22 +167,21 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		Color renderColor = getRenderColor(animatable, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTexture(entity));
-		boolean invis = entity.isInvisibleTo(MinecraftClient.getInstance().player);
-		render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, invis ? 0.0F : (float) renderColor.getAlpha() / 255);
+		if (!entity.isInvisibleTo(MinecraftClient.getInstance().player)) {
+			VertexConsumer glintBuffer = bufferIn.getBuffer(RenderLayer.getDirectEntityGlint());
+			VertexConsumer translucentBuffer = bufferIn
+					.getBuffer(RenderLayer.getEntityTranslucentCull(getTextureResource(entity)));
+			render(model, entity, partialTicks, renderType, stack, bufferIn,
+					glintBuffer != translucentBuffer ? VertexConsumers.union(glintBuffer, translucentBuffer) : null,
+					packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
+					(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+					(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		}
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer layerRenderer : this.layerRenderers) {
 				layerRenderer.render(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks,
 						f7, f2, f6);
-			}
-		}
-		if (entity instanceof MobEntity) {
-			Entity leashHolder = ((MobEntity) entity).getHoldingEntity();
-			if (leashHolder != null) {
-				this.renderLeash(((MobEntity) entity), partialTicks, stack, bufferIn, leashHolder);
 			}
 		}
 		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
@@ -302,66 +308,60 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return this.layerRenderers.add(layer);
 	}
 
-	private <E extends Entity> void renderLeash(MobEntity entity, float partialTicks, MatrixStack poseStack,
+	public <E extends Entity> void renderLeash(MobEntity entity, float partialTicks, MatrixStack poseStack,
 			VertexConsumerProvider buffer, E leashHolder) {
+		int u;
 		poseStack.push();
-		Vec3d vec3 = leashHolder.getLeashPos(partialTicks);
-		double d0 = (double) (MathHelper.lerp(partialTicks, ((MobEntity) entity).bodyYaw,
-				((MobEntity) entity).prevBodyYaw) * ((float) Math.PI / 180F)) + (Math.PI / 2D);
-		Vec3d vec31 = ((MobEntity) entity).getLeashOffset();
-		double d1 = Math.cos(d0) * vec31.z + Math.sin(d0) * vec31.x;
-		double d2 = Math.sin(d0) * vec31.z - Math.cos(d0) * vec31.x;
-		double d3 = MathHelper.lerp(partialTicks, ((MobEntity) entity).prevX, ((MobEntity) entity).getX()) + d1;
-		double d4 = MathHelper.lerp(partialTicks, ((MobEntity) entity).prevY, ((MobEntity) entity).getY()) + vec31.y;
-		double d5 = MathHelper.lerp(partialTicks, ((MobEntity) entity).prevZ, ((MobEntity) entity).getZ()) + d2;
-		poseStack.translate(d1, vec31.y, d2);
-		float f = (float) (vec3.x - d3);
-		float f1 = (float) (vec3.y - d4);
-		float f2 = (float) (vec3.z - d5);
-		VertexConsumer vertexconsumer = buffer.getBuffer(RenderLayer.getLeash());
+		Vec3d vec3d = leashHolder.getLeashPos(partialTicks);
+		double d = (double) (MathHelper.lerp(partialTicks, entity.bodyYaw, entity.prevBodyYaw)
+				* ((float) Math.PI / 180)) + 1.5707963267948966;
+		Vec3d vec3d2 = ((Entity) entity).getLeashOffset();
+		double e = Math.cos(d) * vec3d2.z + Math.sin(d) * vec3d2.x;
+		double f = Math.sin(d) * vec3d2.z - Math.cos(d) * vec3d2.x;
+		double g = MathHelper.lerp(partialTicks, entity.prevX, entity.getX()) + e;
+		double h = MathHelper.lerp(partialTicks, entity.prevY, entity.getY()) + vec3d2.y;
+		double i = MathHelper.lerp(partialTicks, entity.prevZ, entity.getZ()) + f;
+		poseStack.translate(e, vec3d2.y, f);
+		float j = (float) (vec3d.x - g);
+		float k = (float) (vec3d.y - h);
+		float l = (float) (vec3d.z - i);
+		VertexConsumer vertexConsumer = buffer.getBuffer(RenderLayer.getLeash());
 		Matrix4f matrix4f = poseStack.peek().getPositionMatrix();
-		float f4 = MathHelper.fastInverseSqrt(f * f + f2 * f2) * 0.025F / 2.0F;
-		float f5 = f2 * f4;
-		float f6 = f * f4;
-		BlockPos blockpos = new BlockPos(((MobEntity) entity).getCameraPosVec(partialTicks));
-		BlockPos blockpos1 = new BlockPos(leashHolder.getCameraPosVec(partialTicks));
-		int i = this.getBlockLight(((MobEntity) entity), blockpos);
-		int j = this.getLeashHolderBlockLightLevel(leashHolder, blockpos1);
-		int k = ((MobEntity) entity).world.getLightLevel(LightType.SKY, blockpos);
-		int l = ((MobEntity) entity).world.getLightLevel(LightType.SKY, blockpos1);
-
-		for (int i1 = 0; i1 <= 24; ++i1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.025F, f5, f6, i1, false);
+		float n = MathHelper.fastInverseSqrt(j * j + l * l) * 0.025f / 2.0f;
+		float o = l * n;
+		float p = j * n;
+		BlockPos blockPos = new BlockPos(entity.getCameraPosVec(partialTicks));
+		BlockPos blockPos2 = new BlockPos(leashHolder.getCameraPosVec(partialTicks));
+		int q = this.getBlockLight(entity, blockPos);
+		int r = leashHolder.isOnFire() ? 15 : leashHolder.world.getLightLevel(LightType.BLOCK, blockPos2);
+		int s = entity.world.getLightLevel(LightType.SKY, blockPos);
+		int t = entity.world.getLightLevel(LightType.SKY, blockPos2);
+		for (u = 0; u <= 24; ++u) {
+			GeoReplacedEntityRenderer.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.025f, o, p, u,
+					false);
 		}
-
-		for (int j1 = 24; j1 >= 0; --j1) {
-			addVertexPair(vertexconsumer, matrix4f, f, f1, f2, i, j, k, l, 0.025F, 0.0F, f5, f6, j1, true);
+		for (u = 24; u >= 0; --u) {
+			GeoReplacedEntityRenderer.renderLeashPiece(vertexConsumer, matrix4f, j, k, l, q, r, s, t, 0.025f, 0.0f, o, p, u,
+					true);
 		}
-
 		poseStack.pop();
 	}
 
-	private int getLeashHolderBlockLightLevel(Entity leashHolder, BlockPos pos) {
-		return leashHolder.isOnFire() ? 15 : leashHolder.world.getLightLevel(LightType.BLOCK, pos);
-	}
-
-	private static void addVertexPair(VertexConsumer vertexConsumer, Matrix4f matrix, float xDiff, float yDiff,
-			float zDiff, int entityLightLevel, int holderLightLevel, int entitySkyLight, int holderSkyLight,
-			float p_174317_, float p_174318_, float p_174319_, float p_174320_, int p_174321_, boolean p_174322_) {
-		float f = (float) p_174321_ / 24.0F;
-		int i = (int) MathHelper.lerp(f, (float) entityLightLevel, (float) holderLightLevel);
-		int j = (int) MathHelper.lerp(f, (float) entitySkyLight, (float) holderSkyLight);
-		int k = LightmapTextureManager.pack(i, j);
-		float f1 = p_174321_ % 2 == (p_174322_ ? 1 : 0) ? 0.7F : 1.0F;
-		float f2 = 0.5F * f1;
-		float f3 = 0.4F * f1;
-		float f4 = 0.3F * f1;
-		float f5 = xDiff * f;
-		float f6 = yDiff > 0.0F ? yDiff * f * f : yDiff - yDiff * (1.0F - f) * (1.0F - f);
-		float f7 = zDiff * f;
-		vertexConsumer.vertex(matrix, f5 - p_174319_, f6 + p_174318_, f7 + p_174320_).color(f2, f3, f4, 1.0F).light(k)
-				.next();
-		vertexConsumer.vertex(matrix, f5 + p_174319_, f6 + p_174317_ - p_174318_, f7 - p_174320_)
-				.color(f2, f3, f4, 1.0F).light(k).next();
+	private static void renderLeashPiece(VertexConsumer vertexConsumer, Matrix4f positionMatrix, float f, float g,
+			float h, int leashedEntityBlockLight, int holdingEntityBlockLight, int leashedEntitySkyLight,
+			int holdingEntitySkyLight, float i, float j, float k, float l, int pieceIndex, boolean isLeashKnot) {
+		float m = (float) pieceIndex / 24.0f;
+		int n = (int) MathHelper.lerp(m, leashedEntityBlockLight, holdingEntityBlockLight);
+		int o = (int) MathHelper.lerp(m, leashedEntitySkyLight, holdingEntitySkyLight);
+		int p = LightmapTextureManager.pack(n, o);
+		float q = pieceIndex % 2 == (isLeashKnot ? 1 : 0) ? 0.7f : 1.0f;
+		float r = 0.5f * q;
+		float s = 0.4f * q;
+		float t = 0.3f * q;
+		float u = f * m;
+		float v = g > 0.0f ? g * m * m : g - g * (1.0f - m) * (1.0f - m);
+		float w = h * m;
+		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).light(p).next();
+		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).light(p).next();
 	}
 }
