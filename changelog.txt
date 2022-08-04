@@ -1,3 +1,4 @@
-v3.0.31
+v3.0.32
 
-- Deprecated old registerArmorRenderer method in GeoArmorRenderer and updated example code. - DerToaster/AzureDoom
+- Fix GeoEntityRenderer render buffers - EterDelta
+- Reenable Patchouli fix.

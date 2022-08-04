@@ -158,20 +158,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				getTextureLocation(entity));
 		if (!entity.isInvisibleTo(Minecraft.getInstance().player)) {
 			VertexConsumer glintBuffer = bufferIn.getBuffer(RenderType.entityGlintDirect());
-			VertexConsumer translucentBuffer = bufferIn.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)));
-
-			if (glintBuffer != translucentBuffer) {
-				render(model, entity, partialTicks, renderType, stack, bufferIn,
-						VertexMultiConsumer.create(glintBuffer, translucentBuffer),
-						packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
-						(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-						(float) renderColor.getAlpha() / 255);
-			} else {
-				render(model, entity, partialTicks, renderType, stack, bufferIn, null, packedLightIn,
-						getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
-						(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-						(float) renderColor.getAlpha() / 255);
-			}
+			VertexConsumer translucentBuffer = bufferIn
+					.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)));
+			render(model, entity, partialTicks, renderType, stack, bufferIn,
+					glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer)
+							: null,
+					packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
+					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+					(float) renderColor.getAlpha() / 255);
 		}
 
 		if (!entity.isSpectator()) {

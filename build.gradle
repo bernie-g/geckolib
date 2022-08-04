@@ -150,6 +150,7 @@ dependencies {
     test {
         useJUnitPlatform()
     }
+    implementation fg.deobf("curse.maven:Patchouli-306770:3846086")
 }
 
 shadowJar {
