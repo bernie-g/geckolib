@@ -86,6 +86,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public void render(T entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
 			int packedLightIn) {
 		stack.pushPose();
+		if (entity instanceof Mob) {
+			Entity leashHolder = ((Mob) entity).getLeashHolder();
+			if (leashHolder != null) {
+				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
+			}
+		}
 		boolean shouldSit = entity.isPassenger()
 				&& (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
@@ -172,12 +178,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
 				this.renderLayer(stack, bufferIn, packedLightIn, entity, limbSwing, limbSwingAmount, partialTicks, f7,
 						netHeadYaw, headPitch, bufferIn, layerRenderer);
-			}
-		}
-		if (entity instanceof Mob) {
-			Entity leashHolder = ((Mob) entity).getLeashHolder();
-			if (leashHolder != null) {
-				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
 			}
 		}
 		if (ModList.get().isLoaded("patchouli")) {
@@ -368,7 +368,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.layerRenderers.add(layer);
 	}
 
-	private <E extends Entity> void renderLeash(T entity, float partialTicks, PoseStack poseStack,
+	public <E extends Entity> void renderLeash(T entity, float partialTicks, PoseStack poseStack,
 			MultiBufferSource buffer, E leashHolder) {
 		int u;
 		poseStack.pushPose();
