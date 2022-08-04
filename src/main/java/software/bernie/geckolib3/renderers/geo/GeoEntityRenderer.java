@@ -370,7 +370,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.layerRenderers.add(layer);
 	}
 
-	private <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
+	public <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
 			VertexConsumerProvider buffer, E leashHolder) {
 		int u;
 		poseStack.push();
