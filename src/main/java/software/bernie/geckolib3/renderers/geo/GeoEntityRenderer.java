@@ -172,13 +172,16 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		Color renderColor = getRenderColor(entity, partialTicks, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(entity, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTexture(entity));
-		if (!entity.isInvisibleTo(MinecraftClient.getInstance().player))
+		if (!entity.isInvisibleTo(MinecraftClient.getInstance().player)) {
+			VertexConsumer glintBuffer = bufferIn.getBuffer(RenderLayer.getDirectEntityGlint());
+			VertexConsumer translucentBuffer = bufferIn
+					.getBuffer(RenderLayer.getEntityTranslucentCull(getTextureLocation(entity)));
 			render(model, entity, partialTicks, renderType, stack, bufferIn,
-					VertexConsumers.union(bufferIn.getBuffer(RenderLayer.getDirectEntityGlint()),
-							bufferIn.getBuffer(RenderLayer.getEntityTranslucentCull(getTextureLocation(entity)))),
+					glintBuffer != translucentBuffer ? VertexConsumers.union(glintBuffer, translucentBuffer) : null,
 					packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
 					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
+		}
 
 		if (!entity.isSpectator()) {
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
