@@ -1,3 +1,4 @@
-v3.0.85
+v3.0.86
 
-- Fix GeoEntityRenderer render buffers - EterDelta
+- Lead render fix - Dominik
+- renderLeash public now.
