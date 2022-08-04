@@ -46,6 +46,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		this.modelProvider = modelProvider;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
