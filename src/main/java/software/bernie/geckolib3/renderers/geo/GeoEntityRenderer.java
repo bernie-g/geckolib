@@ -104,6 +104,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
 			VertexConsumerProvider bufferIn, int packedLightIn) {
 		stack.push();
+		if (entity instanceof MobEntity) {
+			Entity leashHolder = ((MobEntity) entity).getHoldingEntity();
+			if (leashHolder != null) {
+				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
+			}
+		}
 		boolean shouldSit = entity.hasVehicle() && (entity.getVehicle() != null);
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -187,12 +193,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
 				this.renderLayer(stack, bufferIn, packedLightIn, entity, limbSwing, lastLimbDistance, partialTicks, f7,
 						netHeadYaw, headPitch, bufferIn, layerRenderer);
-			}
-		}
-		if (entity instanceof MobEntity) {
-			Entity leashHolder = ((MobEntity) entity).getHoldingEntity();
-			if (leashHolder != null) {
-				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
 			}
 		}
 		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
@@ -368,7 +368,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.layerRenderers.add(layer);
 	}
 
-	private <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
+	public <E extends Entity> void renderLeash(T entity, float partialTicks, MatrixStack poseStack,
 			VertexConsumerProvider buffer, E leashHolder) {
 		int u;
 		poseStack.push();
