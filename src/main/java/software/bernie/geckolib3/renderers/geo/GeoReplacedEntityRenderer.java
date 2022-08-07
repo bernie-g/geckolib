@@ -170,7 +170,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		if (!entity.isInvisibleTo(MinecraftClient.getInstance().player)) {
 			VertexConsumer glintBuffer = bufferIn.getBuffer(RenderLayer.getDirectEntityGlint());
 			VertexConsumer translucentBuffer = bufferIn
-					.getBuffer(RenderLayer.getEntityTranslucentCull(getTextureResource(entity)));
+					.getBuffer(RenderLayer.getEntityTranslucentCull(getTexture(entity)));
 			render(model, entity, partialTicks, renderType, stack, bufferIn,
 					glintBuffer != translucentBuffer ? VertexConsumers.union(glintBuffer, translucentBuffer) : null,
 					packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
