@@ -16,6 +16,7 @@ buildscript {
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
         classpath 'org.parchmentmc:librarian:1.+'
+        classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -26,6 +27,8 @@ apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle"
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
+apply plugin: "com.modrinth.minotaur"
+import com.modrinth.minotaur.dependencies.ModDependency
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -272,4 +275,21 @@ if (file('key.properties').exists()) {
             addGameVersion("Java 17")
         }
     }
+}
+
+if (file('key.properties').exists()) {
+	modrinth {
+		def modrinthProp = new Properties()
+		File secretPropsFile = file("key.properties")
+		modrinthProp.load(secretPropsFile.newInputStream())
+		
+		token = modrinthProp.getProperty('modrinthKey')
+		projectId = '8BmcQJ2H' 
+		versionNumber = project.mod_version 
+		versionName = 'Forge 1.19'
+		uploadFile = jar 
+		changelog = rootProject.file("changelog.txt").text
+		gameVersions = ['1.19.1', '1.19.2']
+		loaders = ['forge']
+	}
 }
