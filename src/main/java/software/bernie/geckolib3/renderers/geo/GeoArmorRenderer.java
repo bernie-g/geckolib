@@ -110,8 +110,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	}
 
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 24 / 16F, 0.0D);
-		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, 1.497F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -134,13 +134,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 			PatchouliCompat.patchouliLoaded(stack);
 		}
 		stack.pop();
-		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -24 / 16F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
+		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 24 / 16F, 0.0D);
-		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, 1.497F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -163,8 +163,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 			PatchouliCompat.patchouliLoaded(stack);
 		}
 		stack.pop();
-		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -24 / 16F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
+		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	private void fitToBiped() {
