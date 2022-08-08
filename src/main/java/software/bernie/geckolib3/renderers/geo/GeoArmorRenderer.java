@@ -94,14 +94,6 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return renderer;
 	}
 
-	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-
 	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
 			LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
 		setCurrentItem(entity, stack, slot, contextModel);
@@ -109,8 +101,8 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 24 / 16F, 0.0D);
-		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, 1.497F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -133,13 +125,13 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 			PatchouliCompat.patchouliLoaded(stack);
 		}
 		stack.pop();
-		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -24 / 16F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
+		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 24 / 16F, 0.0D);
-		stack.scale(-1.0F, -1.0F, 1.0F);
+		stack.translate(0.0D, 1.497F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -162,8 +154,8 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 			PatchouliCompat.patchouliLoaded(stack);
 		}
 		stack.pop();
-		stack.scale(-1.0F, -1.0F, 1.0F);
-		stack.translate(0.0D, -24 / 16F, 0.0D);
+		stack.scale(-1.005F, -1.0F, 1.005F);
+		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	private void fitToBiped() {
