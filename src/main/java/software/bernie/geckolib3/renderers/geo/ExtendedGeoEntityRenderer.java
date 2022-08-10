@@ -458,8 +458,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 		// Modify position to move point to correct location, otherwise it will be off
 		// when the sizes are different
-		sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX),
-				-(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
+		// Modifications of X and Z doon't seem to be necessary here, so let's ignore them. For now.
+		sourceLimb.setPos(
+				-(bone.getPivotX() /*+ sourceSizeX - targetSizeX*/),
+				-(bone.getPivotY() + sourceSizeY - targetSizeY), 
+				(bone.getPivotZ() /*+ sourceSizeZ - targetSizeZ*/)
+		);
 
 		if (!geoArmor) {
 			sourceLimb.xRot = -bone.getRotationX();
