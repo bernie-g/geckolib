@@ -305,7 +305,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 									boneSlot == EquipmentSlot.CHEST);
 
 							geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
-							geoArmorRenderer.applySlot(boneSlot);
+							
+							this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 
 							@SuppressWarnings("unchecked")
 							VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb,
@@ -328,6 +329,50 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					&& ((BlockItem) armorForBone.getItem()).getBlock() instanceof AbstractSkullBlock) {
 				this.HEAD_QUEUE.add(new Tuple<>(bone, armorForBone));
 			}
+		}
+	}
+
+	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer, ModelPart sourceLimb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
+		IBone gbHead  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.headBone);
+		IBone gbBody  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.bodyBone);
+		IBone gbArmL  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftArmBone);
+		IBone gbArmR  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightArmBone);
+		IBone gbLegL  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftLegBone);
+		IBone gbLegR  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightLegBone);
+		IBone gbBootL = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftBootBone);
+		IBone gbBootR = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightBootBone);
+		
+		if(sourceLimb == armorModel.head || sourceLimb == armorModel.hat) {
+			gbHead.setHidden(false);
+			return;
+		}
+		if(sourceLimb == armorModel.body) {
+			gbBody.setHidden(false);
+			return;
+		}
+		if(sourceLimb == armorModel.leftArm) {
+			gbArmL.setHidden(false);
+			return;
+		}
+		if(sourceLimb == armorModel.leftLeg) {
+			if(slot == EquipmentSlot.FEET) {
+				gbBootL.setHidden(false);
+			} else {
+				gbLegL.setHidden(false);
+			}
+			return;
+		}
+		if(sourceLimb == armorModel.rightArm) {
+			gbArmR.setHidden(false);
+			return;
+		}
+		if(sourceLimb == armorModel.rightLeg) {
+			if(slot == EquipmentSlot.FEET) {
+				gbBootR.setHidden(false);
+			} else {
+				gbLegR.setHidden(false);
+			}
+			return;
 		}
 	}
 
