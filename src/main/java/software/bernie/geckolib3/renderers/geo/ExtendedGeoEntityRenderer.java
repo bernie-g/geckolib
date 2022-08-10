@@ -436,7 +436,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 	}
 	
-	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer, ModelPart sourceLimb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
+	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer, ModelRenderer sourceLimb, BipedModel<?> armorModel, EquipmentSlotType slot) {
         IBone gbHead  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.headBone);
         IBone gbBody  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.bodyBone);
         IBone gbArmL  = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftArmBone);
@@ -459,7 +459,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
             return;
         }
         if(sourceLimb == armorModel.leftLeg) {
-            if(slot == EquipmentSlot.FEET) {
+            if(slot == EquipmentSlotType.FEET) {
                 gbBootL.setHidden(false);
             } else {
                 gbLegL.setHidden(false);
@@ -471,7 +471,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
             return;
         }
         if(sourceLimb == armorModel.rightLeg) {
-            if(slot == EquipmentSlot.FEET) {
+            if(slot == EquipmentSlotType.FEET) {
                 gbBootR.setHidden(false);
             } else {
                 gbLegR.setHidden(false);
