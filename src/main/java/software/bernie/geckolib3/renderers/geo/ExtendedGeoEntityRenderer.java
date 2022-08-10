@@ -361,7 +361,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 								geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone,
 										boneSlot);
+								//Just to be safe, it does some modelprovider stuff in there too
 								geoArmorRenderer.applySlot(boneSlot);
+								this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 
 								@SuppressWarnings("unchecked")
 								IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb,
