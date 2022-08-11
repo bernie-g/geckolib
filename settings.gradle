@@ -5,6 +5,6 @@
  * in the user guide at https://docs.gradle.org/4.8.1/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'geckolib'
+rootProject.name = 'geckolib-forge1.16'
 include ':geckolib-core'
 project(':geckolib-core').projectDir = new File('./core')
