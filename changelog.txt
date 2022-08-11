@@ -1,3 +1,4 @@
-3.1.13
+3.1.14
 
-- Fixes GeoArmor Scaling
+- Proper Scaling of Armor on ExtendedRenderEntities - DerToaster
+- Proper bone hiding on GeoRenderEntities -DerToaster 
