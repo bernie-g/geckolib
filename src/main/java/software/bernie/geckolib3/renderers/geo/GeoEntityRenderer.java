@@ -245,12 +245,16 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			while (var10.hasNext()) {
 				GeoCube cube = (GeoCube) var10.next();
 				stack.pushPose();
-				this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				if(!bone.cubesAreHidden()) {
+					this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				}
 				stack.popPose();
 			}
 
-			var10 = bone.childBones.iterator();
-
+			
+		}
+		Iterator<?> var10 = bone.childBones.iterator();
+		if (!bone.childBonesAreHiddenToo()) {
 			while (var10.hasNext()) {
 				GeoBone childBone = (GeoBone) var10.next();
 				this.renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
