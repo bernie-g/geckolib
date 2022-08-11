@@ -305,7 +305,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 									boneSlot == EquipmentSlot.CHEST);
 
 							geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
+							// Just to be safe, it does some modelprovider stuff in there too
 							geoArmorRenderer.applySlot(boneSlot);
+							this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 
 							@SuppressWarnings("unchecked")
 							VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb,
@@ -328,6 +330,51 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					&& ((BlockItem) armorForBone.getItem()).getBlock() instanceof AbstractSkullBlock) {
 				this.HEAD_QUEUE.add(new Tuple<>(bone, armorForBone));
 			}
+		}
+	}
+
+	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer,
+			ModelPart sourceLimb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
+		IBone gbHead = geoArmorRenderer.getAndHideBone(geoArmorRenderer.headBone);
+		IBone gbBody = geoArmorRenderer.getAndHideBone(geoArmorRenderer.bodyBone);
+		IBone gbArmL = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftArmBone);
+		IBone gbArmR = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightArmBone);
+		IBone gbLegL = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftLegBone);
+		IBone gbLegR = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightLegBone);
+		IBone gbBootL = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftBootBone);
+		IBone gbBootR = geoArmorRenderer.getAndHideBone(geoArmorRenderer.rightBootBone);
+
+		if (sourceLimb == armorModel.head || sourceLimb == armorModel.hat) {
+			gbHead.setHidden(false);
+			return;
+		}
+		if (sourceLimb == armorModel.body) {
+			gbBody.setHidden(false);
+			return;
+		}
+		if (sourceLimb == armorModel.leftArm) {
+			gbArmL.setHidden(false);
+			return;
+		}
+		if (sourceLimb == armorModel.leftLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootL.setHidden(false);
+			} else {
+				gbLegL.setHidden(false);
+			}
+			return;
+		}
+		if (sourceLimb == armorModel.rightArm) {
+			gbArmR.setHidden(false);
+			return;
+		}
+		if (sourceLimb == armorModel.rightLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootR.setHidden(false);
+			} else {
+				gbLegR.setHidden(false);
+			}
+			return;
 		}
 	}
 
@@ -372,9 +419,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 		// Modify position to move point to correct location, otherwise it will be off
 		// when the sizes are different
-		sourceLimb.setPos(-(bone.getPivotX() + sourceSizeX - targetSizeX),
-				-(bone.getPivotY() + sourceSizeY - targetSizeY), (bone.getPivotZ() + sourceSizeZ - targetSizeZ));
-
+		// Modifications of X and Z doon't seem to be necessary here, so let's ignore
+		// them. For now.
+		sourceLimb.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
+				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
+				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
+		
 		if (!geoArmor) {
 			sourceLimb.xRot = -bone.getRotationX();
 			sourceLimb.yRot = -bone.getRotationY();
@@ -497,7 +547,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			String boneName) {
 		Minecraft.getInstance().getItemRenderer().renderStatic(currentEntityBeingRendered, boneItem,
 				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb, null, packedLightIn,
-				LivingEntityRenderer.getOverlayCoords(currentEntityBeingRendered, 0.0F), currentEntityBeingRendered.getId());
+				LivingEntityRenderer.getOverlayCoords(currentEntityBeingRendered, 0.0F),
+				currentEntityBeingRendered.getId());
 	}
 
 	protected RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,

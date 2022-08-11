@@ -1,4 +1,4 @@
-v3.1.14
+v3.1.16
 
-- Lead render fix - Dominik
-- renderLeash public now.
+- Proper Scaling of Armor on ExtendedRenderEntities - DerToaster
+- Proper bone hiding on GeoRenderEntities -DerToaster 
