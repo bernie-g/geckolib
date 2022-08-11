@@ -420,9 +420,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		// when the sizes are different
 		// Modifications of X and Z doon't seem to be necessary here, so let's ignore them. For now.
 		sourceLimb.setPos(
-				-(bone.getPivotX() /*+ sourceSizeX - targetSizeX*/),
-				-(bone.getPivotY() + sourceSizeY - targetSizeY), 
-				(bone.getPivotZ() /*+ sourceSizeZ - targetSizeZ*/)
+				-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
+				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY), 
+				 (bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ)
 		);
 
 		if (!geoArmor) {
