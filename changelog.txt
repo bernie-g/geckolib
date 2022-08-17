@@ -1,4 +1,3 @@
-3.0.56
+3.0.57
 
-- Proper Scaling of Armor on ExtendedRenderEntities - DerToaster
-- Proper bone hiding on GeoRenderEntities -DerToaster 
+- Updated to latest Fabric API.
