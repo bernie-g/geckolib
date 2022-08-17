@@ -98,6 +98,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 
 	private static final String ANIM_NAME_SPIN_HANDS = ANIM_NAME_PREFIX + "spin_hands";
 
+	@SuppressWarnings("unused")
 	private <E extends IAnimatable> PlayState predicateSpinHands(AnimationEvent<E> event) {
 		if (event.getController().getCurrentAnimation() == null) {
 			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPIN_HANDS, true));
