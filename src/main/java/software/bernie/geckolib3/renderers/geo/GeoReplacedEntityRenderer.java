@@ -281,7 +281,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName();
+			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName()
+					&& Minecraft.renderNames();
 		}
 	}
 
