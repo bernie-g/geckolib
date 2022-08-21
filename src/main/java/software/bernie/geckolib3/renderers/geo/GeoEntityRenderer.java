@@ -334,7 +334,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.dispatcher.targetedEntity && entity.hasCustomName();
+			return entity == this.dispatcher.targetedEntity && entity.hasCustomName() && MinecraftClient.isHudEnabled();
 		}
 	}
 
