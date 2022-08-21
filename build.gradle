@@ -5,6 +5,7 @@ buildscript {
         maven { url = 'https://maven.minecraftforge.net/' }
 		maven { url = 'https://plugins.gradle.org/m2/' }
         jcenter()
+        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
@@ -12,6 +13,7 @@ buildscript {
         classpath "com.wynprice.cursemaven:CurseMaven:2.1.5"
         classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+        classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
@@ -21,9 +23,11 @@ apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: "com.wynprice.cursemaven"
+apply plugin: "com.modrinth.minotaur"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
+import com.modrinth.minotaur.dependencies.ModDependency
 
 version = project.mod_version
 group = project.maven_group
@@ -266,4 +270,21 @@ if (file('key.properties').exists()) {
             addGameVersion("Java 8")
         }
     }
+}
+
+if (file('key.properties').exists()) {
+	modrinth {
+		def modrinthProp = new Properties()
+		File secretPropsFile = file("key.properties")
+		modrinthProp.load(secretPropsFile.newInputStream())
+		
+		token = modrinthProp.getProperty('modrinthKey')
+		projectId = '8BmcQJ2H' 
+		versionNumber = project.mod_version 
+		versionName = 'Forge 1.16.5'
+		uploadFile = jar 
+		changelog = rootProject.file("changelog.txt").text
+		gameVersions = ['1.16.5']
+		loaders = ['forge']
+	}
 }
