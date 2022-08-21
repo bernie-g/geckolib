@@ -245,13 +245,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			while (var10.hasNext()) {
 				GeoCube cube = (GeoCube) var10.next();
 				stack.pushPose();
-				if(!bone.cubesAreHidden()) {
+				if (!bone.cubesAreHidden()) {
 					this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 				}
 				stack.popPose();
 			}
 
-			
 		}
 		Iterator<?> var10 = bone.childBones.iterator();
 		if (!bone.childBonesAreHiddenToo()) {
@@ -341,7 +340,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName();
+			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName()
+					&& Minecraft.renderNames();
 		}
 	}
 
