@@ -1,4 +1,3 @@
-v3.0.34
+v3.0.35
 
-- Proper Scaling of Armor on ExtendedRenderEntities - DerToaster
-- Proper bone hiding on GeoRenderEntities -DerToaster 
+- Fixed NameTag rendering with HUD off. - legenden#7526
