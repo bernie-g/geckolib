@@ -80,6 +80,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.modelProvider = modelProvider;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn,
 			int packedLightIn) {

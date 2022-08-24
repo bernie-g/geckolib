@@ -76,6 +76,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		}
 	}
 
+	@SuppressWarnings("resource")
 	public void render(T animatable, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn,
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;

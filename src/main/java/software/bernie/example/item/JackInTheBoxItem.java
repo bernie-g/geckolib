@@ -60,6 +60,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
+		@SuppressWarnings("resource")
 		ClientPlayerEntity player = Minecraft.getInstance().player;
 		if (player != null) {
 			player.playSound(SoundRegistry.JACK_MUSIC.get(), 1, 1);
@@ -92,6 +93,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			final AnimationController<?> controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
+				@SuppressWarnings("resource")
 				final ClientPlayerEntity player = Minecraft.getInstance().player;
 				if (player != null) {
 					player.displayClientMessage(new StringTextComponent("Opening the jack in the box!"), true);

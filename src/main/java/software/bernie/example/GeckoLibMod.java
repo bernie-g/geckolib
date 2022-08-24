@@ -48,6 +48,7 @@ public class GeckoLibMod {
 		}
 	}
 
+	@SuppressWarnings("resource")
 	@SubscribeEvent
 	public static void onEntityRemoved(EntityLeaveWorldEvent event) {
 		if (event.getEntity() == null) {
