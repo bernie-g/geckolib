@@ -45,14 +45,13 @@ configurations {
 }
 
 minecraft {
-    //mappings channel: 'official', version: '1.18.2'
     mappings channel: 'parchment', version: '2022.07.17-1.18.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'Client'
+            taskName 'geckolib-forge118-Client'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
@@ -68,40 +67,19 @@ minecraft {
         clientAlt {
             parent minecraft.runs.client
             workingDirectory project.file('runs/' + name)
-            taskName 'ClientAlt'
+            taskName 'geckolib-forge118-ClientAlt'
             args '--username', 'Alt'
         }
 
         server {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'Server'
+            taskName 'geckolib-forge118-Server'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-
-            // Uncomment this to run the server without the GUI
-            //args 'nogui'
-
-            mods {
-                geckolib {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('runs/' + name)
-            singleInstance true
-            taskName 'Data'
-
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-
-            args '--mod', 'geckolib3', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
+            
             mods {
                 geckolib {
                     source sourceSets.main
