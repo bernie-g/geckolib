@@ -59,7 +59,6 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		return PlayState.CONTINUE;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		AnimationController controller = new AnimationController(this, CONTROLLER_NAME, 20, this::predicate);
@@ -73,7 +72,6 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		data.addAnimationController(controller);
 	}
 
-	@SuppressWarnings("resource")
 	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
 		// The animation for the JackInTheBoxItem has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
@@ -104,7 +102,6 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		return super.use(world, player, hand);
 	}
 
-	@SuppressWarnings({ "rawtypes", "resource" })
 	@Override
 	public void onAnimationSync(int id, int state) {
 		if (state == ANIM_OPEN) {

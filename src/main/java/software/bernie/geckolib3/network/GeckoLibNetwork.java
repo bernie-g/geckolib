@@ -22,7 +22,6 @@ public class GeckoLibNetwork {
 	private static final String PROTOCOL_VERSION = "0"; // This should be updated whenever packets change
 	private static final SimpleChannel CHANNEL = fetchGeckoLibChannel("main");
 
-	@SuppressWarnings({ "unchecked" })
 	private static SimpleChannel fetchGeckoLibChannel(String name) {
 		try {
 			final ResourceLocation key = new ResourceLocation(GeckoLib.ModID, name);

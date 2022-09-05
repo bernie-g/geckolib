@@ -45,7 +45,6 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		return RenderType.entityCutout(textureLocation);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public GeoModelProvider<T> getEntityModel() {
 		return this.entityRenderer.getGeoModelProvider();
 	}

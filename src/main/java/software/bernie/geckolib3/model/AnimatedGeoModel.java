@@ -5,13 +5,13 @@ import java.util.Collections;
 import javax.annotation.Nullable;
 
 import com.eliotlash.molang.MolangParser;
+import com.mojang.blaze3d.Blaze3D;
 
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.Blaze3D;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -31,11 +31,10 @@ import software.bernie.geckolib3.util.MolangUtils;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
-	@SuppressWarnings("rawtypes")
+
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
 
-	@SuppressWarnings("rawtypes")
 	protected AnimatedGeoModel() {
 		this.animationProcessor = new AnimationProcessor(this);
 	}
@@ -48,7 +47,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has it's own collection of animations (called the
@@ -68,7 +66,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 		AnimationEvent<T> predicate;
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
+					Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
@@ -81,7 +80,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public AnimationProcessor getAnimationProcessor() {
 		return this.animationProcessor;
@@ -91,7 +89,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable) {
 		AnimationFile animation = GeckoLibCache.getInstance().getAnimations()

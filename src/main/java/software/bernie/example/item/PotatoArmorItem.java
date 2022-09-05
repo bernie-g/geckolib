@@ -65,7 +65,6 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 
 	// All you need to do here is add your animation controllers to the
 	// AnimationData
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));

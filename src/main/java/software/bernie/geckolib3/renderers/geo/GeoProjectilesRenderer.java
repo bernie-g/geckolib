@@ -26,7 +26,6 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 
-@SuppressWarnings("unchecked")
 public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
 		implements IGeoRenderer<T> {
 
@@ -46,7 +45,6 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		this.modelProvider = modelProvider;
 	}
 
-	@SuppressWarnings("resource")
 	@Override
 	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {

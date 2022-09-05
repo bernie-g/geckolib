@@ -51,7 +51,7 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 import software.bernie.geckolib3.util.RenderUtils;
 
-@SuppressWarnings("unchecked")
+
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T>
 		implements IGeoRenderer<T> {
 	static {
@@ -81,7 +81,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.modelProvider = modelProvider;
 	}
 
-	@SuppressWarnings("resource")
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
 			int packedLightIn) {
