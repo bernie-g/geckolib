@@ -50,7 +50,7 @@ minecraft {
         client {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'Client'
+            taskName 'geckolib-forge116-Client'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
@@ -66,39 +66,18 @@ minecraft {
         clientAlt {
             parent minecraft.runs.client
             workingDirectory project.file('runs/' + name)
-            taskName 'ClientAlt'
+            taskName 'geckolib-forge116-ClientAlt'
             args '--username', 'Alt'
         }
 
         server {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'Server'
+            taskName 'geckolib-forge116-Server'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-
-            // Uncomment this to run the server without the GUI
-            //args 'nogui'
-
-            mods {
-                geckolib {
-                    source sourceSets.main
-                }
-            }
-        }
-
-        data {
-            workingDirectory project.file('runs/' + name)
-            singleInstance true
-            taskName 'Data'
-
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-
-            args '--mod', 'geckolib3', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
 
             mods {
                 geckolib {
