@@ -26,7 +26,6 @@ import java.util.Map;
 /**
  * Helper class to convert json to keyframes
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonKeyFrameUtils {
 	private static VectorKeyFrameList<KeyFrame<IValue>> convertJson(List<Map.Entry<String, JsonElement>> element,
 			boolean isRotation, MolangParser parser) throws NumberFormatException, MolangException {

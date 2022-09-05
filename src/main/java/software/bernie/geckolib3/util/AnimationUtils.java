@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class AnimationUtils {
 	public static double convertTicksToSeconds(double ticks) {
 		return ticks / 20;

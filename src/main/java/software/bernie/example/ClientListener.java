@@ -55,7 +55,6 @@ public class ClientListener {
 		}
 	}
 
-	@SuppressWarnings("removal")
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
 		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {

@@ -44,7 +44,6 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	private final AnimatedGeoModel<IAnimatable> modelProvider;
 	private final T animatable;
@@ -79,7 +78,6 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		this.render(entityIn, this.animatable, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
-	@SuppressWarnings("resource")
 	public void render(Entity entity, IAnimatable animatable, float entityYaw, float partialTicks, PoseStack stack,
 			MultiBufferSource bufferIn, int packedLightIn) {
 		this.currentAnimatable = animatable;

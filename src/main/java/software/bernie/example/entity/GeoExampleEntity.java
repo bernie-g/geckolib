@@ -39,7 +39,6 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 		data.addAnimationController(controller);
 	}
 
-	@SuppressWarnings("resource")
 	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
 		final LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {

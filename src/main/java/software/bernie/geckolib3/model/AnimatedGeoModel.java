@@ -31,11 +31,9 @@ import software.bernie.geckolib3.util.MolangUtils;
 
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
-	@SuppressWarnings("rawtypes")
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
 
-	@SuppressWarnings("rawtypes")
 	protected AnimatedGeoModel() {
 		this.animationProcessor = new AnimationProcessor(this);
 	}
@@ -48,7 +46,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has it's own collection of animations (called the
@@ -82,7 +79,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
 	public AnimationProcessor getAnimationProcessor() {
 		return this.animationProcessor;
@@ -92,7 +88,6 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable) {
 		AnimationFile animation = GeckoLibCache.getInstance().getAnimations()

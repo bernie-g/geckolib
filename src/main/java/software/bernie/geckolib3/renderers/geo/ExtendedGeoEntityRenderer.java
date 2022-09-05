@@ -287,7 +287,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			// Geo Armor
 			else if (armorForBone.getItem() instanceof GeoArmorItem) {
 				final GeoArmorItem armorItem = (GeoArmorItem) armorForBone.getItem();
-				@SuppressWarnings("unchecked")
 				final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer
 						.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered);
 				final HumanoidModel<?> armorModel = (HumanoidModel<?>) geoArmorRenderer;
@@ -309,7 +308,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 							geoArmorRenderer.applySlot(boneSlot);
 							this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 
-							@SuppressWarnings("unchecked")
 							VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb,
 									RenderType.armorCutoutNoCull(GeoArmorRenderer
 											.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered)
@@ -580,7 +578,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Nullable
 	protected abstract ResourceLocation getTextureForBone(String boneName, T currentEntity);
 
-	@SuppressWarnings("deprecation")
 	protected void renderBlock(PoseStack matrixStack, MultiBufferSource rtb, int packedLightIn,
 			BlockState iBlockState) {
 		if (iBlockState.getRenderShape() != RenderShape.MODEL) {

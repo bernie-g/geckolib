@@ -15,7 +15,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class HabitatTileEntity extends BlockEntity implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	@SuppressWarnings("unchecked")
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.gecko_habitat.idle", true));
@@ -26,7 +25,6 @@ public class HabitatTileEntity extends BlockEntity implements IAnimatable {
 		super(TileRegistry.HABITAT_TILE.get(), pos, state);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void registerControllers(AnimationData data) {
 		data.addAnimationController(new AnimationController(this, "controller", 0, this::predicate));

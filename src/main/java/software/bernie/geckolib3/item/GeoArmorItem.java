@@ -36,7 +36,6 @@ public abstract class GeoArmorItem extends ArmorItem {
 		});
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Nullable
 	@Override
 	public final String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
