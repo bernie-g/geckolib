@@ -13,7 +13,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
 		super(materialIn, slot, builder);

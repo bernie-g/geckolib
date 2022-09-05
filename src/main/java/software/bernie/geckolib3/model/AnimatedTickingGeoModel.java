@@ -11,7 +11,6 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimationTickable> extends AnimatedGeoModel<T> {
 	public AnimatedTickingGeoModel() {
 	}

@@ -33,7 +33,6 @@ import software.bernie.geckolib3.util.AnimationUtils;
  * Helper for parsing the bedrock json animation format and finding certain
  * elements
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JsonAnimationUtils {
 	/**
 	 * Gets the "animations" object as a set of maps consisting of the name of the

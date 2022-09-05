@@ -75,13 +75,11 @@ public class GeckoLibUtil {
         return stack.hasTag() && stack.getTag().contains(GECKO_LIB_ID_NBT, TAG_INT);
     }
 
-    @SuppressWarnings("rawtypes")
 	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,
                                                             String controllerName) {
         return getControllerForID(factory, getIDFromStack(stack), controllerName);
     }
 
-    @SuppressWarnings("rawtypes")
 	public static AnimationController getControllerForID(AnimationFactory factory, Integer id,
                                                          String controllerName) {
         return factory.getOrCreateAnimationData(id).getAnimationControllers().get(controllerName);

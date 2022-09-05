@@ -13,7 +13,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class BotariumTileEntity extends TileEntity implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	@SuppressWarnings("unchecked")
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true));

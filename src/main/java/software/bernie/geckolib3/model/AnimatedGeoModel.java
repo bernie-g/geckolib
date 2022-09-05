@@ -29,7 +29,6 @@ import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;

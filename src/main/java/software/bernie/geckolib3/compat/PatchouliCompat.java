@@ -12,7 +12,6 @@ public class PatchouliCompat {
 
 	public static void patchouliLoaded(MatrixStack matrixStackIn) {
 		Class<GuiBook> patchouli = GuiBook.class;
-		@SuppressWarnings("resource")
 		boolean screen = Minecraft.getInstance().gui.equals(patchouli);
 		if (screen) {
 			matrixStackIn.pushPose();

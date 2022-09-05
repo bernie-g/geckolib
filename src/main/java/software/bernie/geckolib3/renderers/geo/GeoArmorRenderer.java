@@ -38,7 +38,6 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.GeoUtils;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends BipedModel
 		implements IGeoRenderer<T>, ModelFetcher<T> {
 	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
@@ -155,7 +154,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.render(0, matrixStackIn, bufferIn, packedLightIn);
 	}
 
-	@SuppressWarnings("resource")
 	public void render(float partialTicks, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 24 / 16F, 0.0D);
 		stack.scale(-1.0F, -1.0F, 1.0F);

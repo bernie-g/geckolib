@@ -22,7 +22,6 @@ import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntityRenderer
 		implements IGeoRenderer<T> {
 	static {
@@ -51,7 +50,6 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		this.render((T) tile, partialTicks, matrixStackIn, bufferIn, combinedLightIn);
 	}
 
-	@SuppressWarnings("resource")
 	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));

@@ -24,7 +24,6 @@ public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity
 		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void setLivingAnimations(GeoExampleEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
 		super.setLivingAnimations(entity, uniqueID, customPredicate);

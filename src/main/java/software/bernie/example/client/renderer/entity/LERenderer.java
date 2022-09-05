@@ -8,7 +8,6 @@ import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class LERenderer extends GeoEntityRenderer<LEEntity> {
 
-	@SuppressWarnings("unchecked")
 	public LERenderer(EntityRendererManager renderManager) {
 		super(renderManager, new LEModel());
 		this.addLayer(new GeoExampleLayer(this));

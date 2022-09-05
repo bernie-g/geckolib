@@ -342,7 +342,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			if (armorForBone.getItem() instanceof ArmorItem) {
 				final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
 				if (armorForBone.getItem() instanceof IAnimatable) {
-					@SuppressWarnings("unchecked")
 					final GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer = GeoArmorRenderer
 							.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered);
 					final BipedModel<?> armorModel = (BipedModel<?>) geoArmorRenderer;
@@ -365,7 +364,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 								geoArmorRenderer.applySlot(boneSlot);
 								this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 
-								@SuppressWarnings("unchecked")
 								IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb,
 										RenderType.armorCutoutNoCull(GeoArmorRenderer
 												.getRenderer(armorItem.getClass(), this.currentEntityBeingRendered)

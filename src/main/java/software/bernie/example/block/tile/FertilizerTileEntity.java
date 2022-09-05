@@ -13,7 +13,6 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class FertilizerTileEntity extends TileEntity implements IAnimatable {
 	private final AnimationFactory manager = new AnimationFactory(this);
 
-	@SuppressWarnings("unchecked")
 	private <E extends TileEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
 		if (event.getAnimatable().getLevel().isRaining()) {

@@ -10,7 +10,7 @@ import software.bernie.example.entity.ReplacedCreeperEntity;
 import software.bernie.geckolib3.renderers.geo.GeoReplacedEntityRenderer;
 
 public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedCreeperEntity> {
-	@SuppressWarnings("unchecked")
+
 	public ReplacedCreeperRenderer(EntityRendererManager renderManager) {
 		super(renderManager, new ReplacedCreeperModel(), new ReplacedCreeperEntity());
 	}
