@@ -1,0 +1,13 @@
+{
+	"required": true,
+	"package": "software.bernie.geckolib3q.mixins.fabric",
+	"compatibilityLevel": "JAVA_16",
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"mixins": [
+	],
+	"client": [
+		"MixinArmorFeatureRenderer"
+	]
+}

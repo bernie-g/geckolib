@@ -1,0 +1,27 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.potato_armor.new": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"bone3": {
+					"rotation": ["math.cos(query.anim_time * 180) * -5", 0, "math.sin(query.anim_time * 180) * 5"]
+				},
+				"bone9": {
+					"rotation": ["math.sin(query.anim_time * 180) * -5", 0, "math.sin(query.anim_time * 180) * 5"]
+				},
+				"bone14": {
+					"rotation": ["math.cos(query.anim_time * 180) * -2", 0, 0]
+				},
+				"bone8": {
+					"rotation": ["math.cos(query.anim_time * 180) * -2", 0, 0]
+				},
+				"bone26": {
+					"rotation": [0, 0, "math.cos(query.anim_time * 180) * -2"]
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}

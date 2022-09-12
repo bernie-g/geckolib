@@ -1,0 +1,12 @@
+pluginManagement {
+    repositories {
+		maven { url 'https://maven.fabricmc.net' }
+		maven { url 'https://maven.quiltmc.org/repository/release' }
+		maven { url 'https://maven.quiltmc.org/repository/snapshot' }
+		gradlePluginPortal()
+		mavenCentral()
+    }
+}
+rootProject.name = 'geckolib-quilt-1.18'
+include ':geckolib-core'
+project(':geckolib-core').projectDir = new File('./core')
