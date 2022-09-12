@@ -4,7 +4,7 @@ GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D 
 
 ## Installation
 [![curseforge](http://cf.way2muchnoise.eu/versions/388172.svg)](https://www.curseforge.com/minecraft/mc-mods/geckolib)
-![Java CI with Gradle](https://github.com/bernie-g/geckolib/workflows/Java%20CI%20with%20Gradle/badge.svg?branch=1.18)
+[![GitHub issues](https://img.shields.io/github/issues/bernie-g/geckolib?style=flat-square)](https://github.com/bernie-g/geckolib/issues)
 [![Latest version of 'geckolib-1.18-forge' @ Cloudsmith](https://api-prd.cloudsmith.io/v1/badges/version/geckolib3/geckolib/maven/geckolib-1.18-forge/latest/a=noarch;xg=software.bernie.geckolib/?render=true&show_latest=true)](https://cloudsmith.io/~geckolib3/repos/geckolib/packages/detail/maven/geckolib-1.18-forge/latest/a=noarch;xg=software.bernie.geckolib/)
 
 Please see the [Getting Started guide](https://github.com/bernie-g/geckolib/wiki/Getting-Started) for detailed installation instructions per modding framework.
