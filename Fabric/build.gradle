@@ -1,0 +1,222 @@
+buildscript {
+    repositories {
+        jcenter()
+    	maven { url  = 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
+    }
+}
+
+plugins {
+    id 'fabric-loom' version '0.10-SNAPSHOT'
+    id 'maven-publish'
+    id 'com.github.johnrengelman.shadow' version '7.0.0'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
+}
+
+import groovy.json.JsonSlurper
+import groovy.json.JsonOutput
+
+sourceCompatibility = JavaVersion.VERSION_16
+targetCompatibility = JavaVersion.VERSION_16
+
+archivesBaseName = project.archives_base_name
+def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
+version = snapshotVersion == null ? project.mod_version : "SNAPSHOT-" + snapshotVersion
+group = project.maven_group
+
+repositories {
+    mavenCentral()
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url 'https://maven.blamejared.com' }
+	maven {
+        url = "https://www.cursemaven.com"
+    }
+    maven {
+    	url "https://maven.cloudsmith.io/geckolib3/geckolib/"
+    }
+    maven { url  = 'https://plugins.gradle.org/m2/' }
+	maven {	
+		url = 'https://maven.terraformersmc.com/'
+	}
+}
+
+configurations {
+    shade
+}
+
+dependencies {
+    // Minecraft/Fabric deps
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modCompileOnly ("vazkii.patchouli:Patchouli:1.17-55-FABRIC-SNAPSHOT") {
+        exclude(group: "net.fabricmc.fabric-api")
+    }
+
+    // Actual dependencies
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    implementation(include('com.eliotlash.molang:molang:18'))
+    implementation(include('com.eliotlash.mclib:mclib:18'))
+    implementation project(':geckolib-core')
+
+    // Shaded dependencies
+    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    shade 'com.eliotlash.molang:molang:18'
+    shade 'com.eliotlash.mclib:mclib:18'
+    shade project(':geckolib-core')
+
+    // Testing
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+
+    test {
+        useJUnitPlatform()
+    }
+    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+}
+
+shadowJar {
+    configurations = [project.configurations.shade]
+    from sourceSets.main.output
+    duplicatesStrategy = 'exclude'
+    exclude('META-INF/services/**')
+    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
+    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    classifier 'dev'
+}
+
+jar {
+    manifest {
+        attributes([
+                "Specification-Title"     : "GeckoLib",
+                "Specification-Vendor"    : "Gecko",
+                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Implementation-Title"    : project.name,
+                "Implementation-Version"  : project.mod_version,
+                "Implementation-Vendor"   : "Gecko",
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+
+loom {
+	accessWidenerPath = file("src/main/resources/geckolib.aw")
+}
+
+processResources {
+    inputs.property "version", project.version
+
+	filesMatching("fabric.mod.json") {
+		expand "version": project.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = "UTF-8"
+	it.options.release = 16
+}
+
+artifacts {
+    archives shadowJar
+}
+
+java {
+	withSourcesJar()
+}
+
+jar {
+    from "LICENSE"
+}
+
+remapJar {
+    dependsOn(shadowJar)
+    input = shadowJar.archivePath
+}
+
+publishing {
+    publications {
+		mavenJava(MavenPublication) {
+			from components.java
+            artifactId = project.archives_base_name
+		}
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+	      name = "cloudsmith"
+	      url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      def releasesRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      def snapshotsRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+	      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+	      credentials {
+                def envUsername = System.getenv("cloudUsername")
+                def envPassword = System.getenv("cloudPassword")
+                username = envUsername == null ? findProperty("cloudUsername") : envUsername
+                password = envPassword == null ? findProperty("cloudPassword") : envPassword
+	      }
+	    }
+    }
+}
+
+processResources {
+	doLast {
+        def jsonMinifyStart = System.currentTimeMillis()
+        def jsonMinified = 0
+        def jsonBytesSaved = 0
+        fileTree(dir: outputs.files.asPath, include: '**/*.json').each { 
+            File file = it
+            jsonMinified++
+            def oldLength = file.length()
+            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+            jsonBytesSaved += oldLength - file.length()
+        }
+        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
+    }
+}
+
+if (file('key.properties').exists()) {
+    curseforge {
+
+    def curseProp = new Properties()
+    File secretPropsFile = file("key.properties")
+    curseProp.load(secretPropsFile.newInputStream())
+
+    project {
+        apiKey = curseProp.getProperty('curseKey')
+        id = "388172"
+        releaseType = "release"
+        changelogType = 'text'
+        changelog = file('changelog.txt')
+        addGameVersion("1.17.1")
+        addGameVersion("Fabric")
+        addGameVersion("Java 16")
+
+        relations {
+            requiredDependency 'fabric-api'      
+        }
+        mainArtifact(remapJar)
+
+        afterEvaluate {
+            uploadTask.dependsOn("remapJar")
+        }
+    }
+    options {
+    	//debug = true
+        forgeGradleIntegration = false
+    }
+   }
+}
