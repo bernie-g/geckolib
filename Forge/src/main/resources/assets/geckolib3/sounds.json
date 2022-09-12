@@ -1,0 +1,11 @@
+{
+  "jack_music": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "geckolib3:jack_music",
+        "stream": true
+      }
+    ]
+  }
+}

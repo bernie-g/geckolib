@@ -1,0 +1,46 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "software.bernie.geckolib",
+		"id": "geckolib3",
+		"version": "${version}",
+		"metadata": {
+			"name": "Geckolib",
+			"description": "Geckolib is a forward-kinematic animation engine for Minecraft Java Edition, which lets you export bedrock animations and play them automatically.",
+			"contributors": {
+				"Me!": "Gecko, Eliot, AzureDoom, Hydos, DerToaster"
+			},
+			"icon": "geckolib.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+			"init": [
+				"software.bernie.example.GeckoLibMod"
+			],
+			"client_init": [
+				"software.bernie.example.ClientListener",
+				"software.bernie.geckolib3.network.ClientPackets"
+			]
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.16.0-"
+			},
+			{
+				"id": "quilted_fabric_api",
+				"versions": ">=1.0.0-"
+			},
+			{
+				"id": "minecraft",
+				"versions": ">=1.19"
+			}
+		]
+	},
+	"mixin": [
+		"geckolib3.mixins.json"
+	],
+	"minecraft": {
+		"environment": "*"
+	}
+}
