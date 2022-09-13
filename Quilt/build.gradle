@@ -74,7 +74,7 @@ dependencies {
         useJUnitPlatform()
     }
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
-	modCompileOnly "curse.maven:Patchouli-393236:3866269"
+    modCompileOnly "vazkii.patchouli:Patchouli:1.19.2-76-FABRIC"
 }
 
 shadowJar {
