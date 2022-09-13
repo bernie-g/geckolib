@@ -15,8 +15,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.eliotlash.molang:molang:18'
-    implementation 'com.eliotlash.mclib:mclib:18'
+    implementation 'com.eliotlash.molang:molang:19'
+    implementation 'com.eliotlash.mclib:mclib:19'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 }
 
