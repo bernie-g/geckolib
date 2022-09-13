@@ -132,7 +132,8 @@ dependencies {
     test {
         useJUnitPlatform()
     }
-    implementation fg.deobf("curse.maven:Patchouli-306770:3877555")
+	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76:api")
+    compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76")
 }
 
 shadowJar {
