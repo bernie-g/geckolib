@@ -1,5 +1,7 @@
 package software.bernie.geckolib3;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderingRegistry;
 import net.fabricmc.fabric.impl.client.rendering.ArmorProviderExtensions;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
@@ -7,7 +9,6 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 
 public final class ArmorRenderingRegistryImpl {
 	private ArmorRenderingRegistryImpl() {
