@@ -1,3 +1,5 @@
-v3.1.20
+v3.1.21
 
-- Updated Core to support all current Molang functions 
+- Changed to Parchment MC Mappings.
+- Code clean up
+- Added new start of new looping system, does not yet support hold on last frame but frame work is in place - DerToaster98
