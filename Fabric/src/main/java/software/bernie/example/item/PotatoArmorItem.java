@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterial;
-import net.minecraft.item.Item;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -23,7 +23,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 public class PotatoArmorItem extends ArmorItem implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Settings builder) {
+	public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Properties builder) {
 		super(materialIn, slot, builder);
 	}
 
@@ -39,7 +39,7 @@ public class PotatoArmorItem extends ArmorItem implements IAnimatable {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", true));
 
 		// If the living entity is an armorstand just play the animation nonstop
-		if (livingEntity instanceof ArmorStandEntity) {
+		if (livingEntity instanceof ArmorStand) {
 			return PlayState.CONTINUE;
 		}
 
@@ -48,8 +48,8 @@ public class PotatoArmorItem extends ArmorItem implements IAnimatable {
 		List<Item> armorList = new ArrayList<>(4);
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-				if (livingEntity.getEquippedStack(slot) != null) {
-					armorList.add(livingEntity.getEquippedStack(slot).getItem());
+				if (livingEntity.getItemBySlot(slot) != null) {
+					armorList.add(livingEntity.getItemBySlot(slot).getItem());
 				}
 			}
 		}

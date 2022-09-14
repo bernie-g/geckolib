@@ -4,36 +4,36 @@
 // Blockbench plugin created by Gecko
 package software.bernie.example.client.model.tile;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 	@Override
-	public Identifier getAnimationResource(FertilizerTileEntity animatable) {
-		if (animatable.getWorld().isRaining()) {
-			return new Identifier(GeckoLib.ModID, "animations/fertilizer.animation.json");
+	public ResourceLocation getAnimationResource(FertilizerTileEntity animatable) {
+		if (animatable.getLevel().isRaining()) {
+			return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
 		} else {
-			return new Identifier(GeckoLib.ModID, "animations/botarium.animation.json");
+			return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
 		}
 	}
 
 	@Override
-	public Identifier getModelResource(FertilizerTileEntity animatable) {
-		if (animatable.getWorld().isRaining()) {
-			return new Identifier(GeckoLib.ModID, "geo/fertilizer.geo.json");
+	public ResourceLocation getModelResource(FertilizerTileEntity animatable) {
+		if (animatable.getLevel().isRaining()) {
+			return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
 		} else {
-			return new Identifier(GeckoLib.ModID, "geo/botarium.geo.json");
+			return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
 		}
 	}
 
 	@Override
-	public Identifier getTextureResource(FertilizerTileEntity entity) {
-		if (entity.getWorld().isRaining()) {
-			return new Identifier(GeckoLib.ModID + ":textures/block/fertilizer.png");
+	public ResourceLocation getTextureResource(FertilizerTileEntity entity) {
+		if (entity.getLevel().isRaining()) {
+			return new ResourceLocation(GeckoLib.ModID + ":textures/block/fertilizer.png");
 		} else {
-			return new Identifier(GeckoLib.ModID + ":textures/block/botarium.png");
+			return new ResourceLocation(GeckoLib.ModID + ":textures/block/botarium.png");
 		}
 	}
 }

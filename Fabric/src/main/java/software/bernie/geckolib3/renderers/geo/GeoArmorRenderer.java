@@ -5,22 +5,24 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -62,7 +64,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	private LivingEntity entityLiving;
 	private ItemStack itemStack;
 	private EquipmentSlot armorSlot;
-	private BipedEntityModel baseModel;
+	private HumanoidModel baseModel;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
@@ -93,66 +95,74 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return renderer;
 	}
 
-	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
-			LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
+	@Override
+	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack PoseStackIn,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, PoseStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+
+	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity,
+			EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
 		setCurrentItem(entity, stack, slot, contextModel);
 		this.render(matrices, vertexConsumers, light);
 	}
 
-	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
+	public void render(float partialTicks, PoseStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 1.497F, 0.0D);
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
-				MinecraftClient.getInstance().getTickDelta(), false,
+				Minecraft.getInstance().getFrameTime(), false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 
 		this.fitToBiped();
 		this.applySlot(armorSlot);
-		stack.push();
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureResource(currentArmorItem));
+		stack.pushPose();
+		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
-		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
-				getTextureResource(currentArmorItem));
+		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
+				getTextureLocation(currentArmorItem));
 		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn,
-				OverlayTexture.DEFAULT_UV, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
+				OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 
 		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
 			PatchouliCompat.patchouliLoaded(stack);
 		}
-		stack.pop();
+		stack.popPose();
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
-	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
+	public void render(PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 1.497F, 0.0D);
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
-				MinecraftClient.getInstance().getTickDelta(), false,
+				Minecraft.getInstance().getFrameTime(), false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
 		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 
 		this.fitToBiped();
 		this.applySlot(armorSlot);
-		stack.push();
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureResource(currentArmorItem));
+		stack.pushPose();
+		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, 0, stack, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(currentArmorItem, 0, stack, bufferIn, null, packedLightIn,
-				getTextureResource(currentArmorItem));
-		render(model, currentArmorItem, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.DEFAULT_UV,
+		RenderType renderType = getRenderType(currentArmorItem, 0, stack, bufferIn, null, packedLightIn,
+				getTextureLocation(currentArmorItem));
+		render(model, currentArmorItem, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 
 		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
 			PatchouliCompat.patchouliLoaded(stack);
 		}
-		stack.pop();
+		stack.popPose();
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
 	}
@@ -161,59 +171,59 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		if (this.headBone != null) {
 			IBone headBone = this.modelProvider.getBone(this.headBone);
 			GeoUtils.copyRotations(baseModel.head, headBone);
-			headBone.setPositionX(baseModel.head.pivotX);
-			headBone.setPositionY(-baseModel.head.pivotY);
-			headBone.setPositionZ(baseModel.head.pivotZ);
+			headBone.setPositionX(baseModel.head.x);
+			headBone.setPositionY(-baseModel.head.y);
+			headBone.setPositionZ(baseModel.head.z);
 		}
 
 		if (this.bodyBone != null) {
 			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
 			GeoUtils.copyRotations(baseModel.body, bodyBone);
-			bodyBone.setPositionX(baseModel.body.pivotX);
-			bodyBone.setPositionY(-baseModel.body.pivotY);
-			bodyBone.setPositionZ(baseModel.body.pivotZ);
+			bodyBone.setPositionX(baseModel.body.x);
+			bodyBone.setPositionY(-baseModel.body.y);
+			bodyBone.setPositionZ(baseModel.body.z);
 		}
 		if (this.rightArmBone != null) {
 			IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
 			GeoUtils.copyRotations(baseModel.rightArm, rightArmBone);
-			rightArmBone.setPositionX(baseModel.rightArm.pivotX + 5);
-			rightArmBone.setPositionY(2 - baseModel.rightArm.pivotY);
-			rightArmBone.setPositionZ(baseModel.rightArm.pivotZ);
+			rightArmBone.setPositionX(baseModel.rightArm.x + 5);
+			rightArmBone.setPositionY(2 - baseModel.rightArm.y);
+			rightArmBone.setPositionZ(baseModel.rightArm.z);
 		}
 
 		if (this.leftArmBone != null) {
 			IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
 			GeoUtils.copyRotations(baseModel.leftArm, leftArmBone);
-			leftArmBone.setPositionX(baseModel.leftArm.pivotX - 5);
-			leftArmBone.setPositionY(2 - baseModel.leftArm.pivotY);
-			leftArmBone.setPositionZ(baseModel.leftArm.pivotZ);
+			leftArmBone.setPositionX(baseModel.leftArm.x - 5);
+			leftArmBone.setPositionY(2 - baseModel.leftArm.y);
+			leftArmBone.setPositionZ(baseModel.leftArm.z);
 		}
 		if (this.rightLegBone != null) {
 			IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
 			GeoUtils.copyRotations(baseModel.rightLeg, rightLegBone);
-			rightLegBone.setPositionX(baseModel.rightLeg.pivotX + 2);
-			rightLegBone.setPositionY(12 - baseModel.rightLeg.pivotY);
-			rightLegBone.setPositionZ(baseModel.rightLeg.pivotZ);
+			rightLegBone.setPositionX(baseModel.rightLeg.x + 2);
+			rightLegBone.setPositionY(12 - baseModel.rightLeg.y);
+			rightLegBone.setPositionZ(baseModel.rightLeg.z);
 			if (this.rightBootBone != null) {
 				IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
 				GeoUtils.copyRotations(baseModel.rightLeg, rightBootBone);
-				rightBootBone.setPositionX(baseModel.rightLeg.pivotX + 2);
-				rightBootBone.setPositionY(12 - baseModel.rightLeg.pivotY);
-				rightBootBone.setPositionZ(baseModel.rightLeg.pivotZ);
+				rightBootBone.setPositionX(baseModel.rightLeg.x + 2);
+				rightBootBone.setPositionY(12 - baseModel.rightLeg.y);
+				rightBootBone.setPositionZ(baseModel.rightLeg.z);
 			}
 		}
 		if (this.leftLegBone != null) {
 			IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
 			GeoUtils.copyRotations(baseModel.leftLeg, leftLegBone);
-			leftLegBone.setPositionX(baseModel.leftLeg.pivotX - 2);
-			leftLegBone.setPositionY(12 - baseModel.leftLeg.pivotY);
-			leftLegBone.setPositionZ(baseModel.leftLeg.pivotZ);
+			leftLegBone.setPositionX(baseModel.leftLeg.x - 2);
+			leftLegBone.setPositionY(12 - baseModel.leftLeg.y);
+			leftLegBone.setPositionZ(baseModel.leftLeg.z);
 			if (this.leftBootBone != null) {
 				IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 				GeoUtils.copyRotations(baseModel.leftLeg, leftBootBone);
-				leftBootBone.setPositionX(baseModel.leftLeg.pivotX - 2);
-				leftBootBone.setPositionY(12 - baseModel.leftLeg.pivotY);
-				leftBootBone.setPositionZ(baseModel.leftLeg.pivotZ);
+				leftBootBone.setPositionX(baseModel.leftLeg.x - 2);
+				leftBootBone.setPositionY(12 - baseModel.leftLeg.y);
+				leftBootBone.setPositionZ(baseModel.leftLeg.z);
 			}
 		}
 	}
@@ -224,15 +234,20 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	@Override
-	public Identifier getTextureResource(T instance) {
+	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureResource(instance);
+	}
+
+	@Override
+	public ResourceLocation getTextureResource(T entity) {
+		return this.modelProvider.getTextureResource(entity);
 	}
 
 	/**
 	 * Everything after this point needs to be called every frame before rendering
 	 */
 	public GeoArmorRenderer<T> setCurrentItem(LivingEntity entityLiving, ItemStack itemStack, EquipmentSlot armorSlot,
-			BipedEntityModel model) {
+			HumanoidModel model) {
 		this.entityLiving = entityLiving;
 		this.itemStack = itemStack;
 		this.armorSlot = armorSlot;
@@ -296,6 +311,6 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	@Override
 	public Integer getUniqueID(T animatable) {
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
-				itemStack.hasNbt() ? itemStack.getNbt().toString() : 1, this.entityLiving.getUuid().toString());
+				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
 	}
 }

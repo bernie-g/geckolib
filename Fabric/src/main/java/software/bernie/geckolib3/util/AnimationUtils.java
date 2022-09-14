@@ -5,10 +5,10 @@
 
 package software.bernie.geckolib3.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.entity.Entity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
@@ -25,7 +25,7 @@ public class AnimationUtils {
 	 * Gets the renderer for an entity
 	 */
 	public static <T extends Entity> EntityRenderer<T> getRenderer(T entity) {
-		EntityRenderDispatcher renderManager = MinecraftClient.getInstance().getEntityRenderDispatcher();
+		EntityRenderDispatcher renderManager = Minecraft.getInstance().getEntityRenderDispatcher();
 		return (EntityRenderer<T>) renderManager.getRenderer(entity);
 	}
 

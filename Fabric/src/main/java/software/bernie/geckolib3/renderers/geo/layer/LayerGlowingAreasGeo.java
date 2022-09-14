@@ -2,11 +2,12 @@ package software.bernie.geckolib3.renderers.geo.layer;
 
 import java.util.function.Function;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
@@ -18,21 +19,22 @@ import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
  * 
  * Originally developed for chocolate quest repoured
  */
-public class LayerGlowingAreasGeo<T extends MobEntity & IAnimatable> extends AbstractLayerGeo<T> {
+public class LayerGlowingAreasGeo<T extends Mob & IAnimatable> extends AbstractLayerGeo<T> {
 
-	protected final Function<Identifier, RenderLayer> funcGetEmissiveRenderType;
+	protected final Function<ResourceLocation, RenderType> funcGetEmissiveRenderType;
 
-	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> funcGetCurrentTexture,
-			Function<T, Identifier> funcGetCurrentModel, Function<Identifier, RenderLayer> funcGetEmissiveRenderType) {
+	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, ResourceLocation> funcGetCurrentTexture,
+			Function<T, ResourceLocation> funcGetCurrentModel,
+			Function<ResourceLocation, RenderType> funcGetEmissiveRenderType) {
 		super(renderer, funcGetCurrentTexture, funcGetCurrentModel);
 
 		this.funcGetEmissiveRenderType = funcGetEmissiveRenderType;
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
-			T entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
-			float netHeadYaw, float headPitch) {
+	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityLivingBaseIn,
+			float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
+			float headPitch) {
 		this.reRenderCurrentModelInRenderer(entityLivingBaseIn, partialTicks, matrixStackIn, bufferIn, packedLightIn,
 				this.funcGetEmissiveRenderType
 						.apply(AutoGlowingTexture.get(this.funcGetCurrentTexture.apply(entityLivingBaseIn))));

@@ -2,14 +2,14 @@ package software.bernie.geckolib3.util;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.entity.model.EntityModelLoader;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.entity.Entity;
-import net.minecraft.resource.ResourceManager;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.Entity;
 
 @Environment(EnvType.CLIENT)
 public interface GeoArmorRendererFactory<T extends Entity> {
@@ -20,11 +20,11 @@ public interface GeoArmorRendererFactory<T extends Entity> {
 		private final EntityRenderDispatcher renderDispatcher;
 		private final ItemRenderer itemRenderer;
 		private final ResourceManager resourceManager;
-		private final EntityModelLoader modelLoader;
-		private final TextRenderer textRenderer;
+		private final EntityModelSet modelLoader;
+		private final Font textRenderer;
 
 		public Context(EntityRenderDispatcher renderDispatcher, ItemRenderer itemRenderer,
-				ResourceManager resourceManager, EntityModelLoader modelLoader, TextRenderer textRenderer) {
+				ResourceManager resourceManager, EntityModelSet modelLoader, Font textRenderer) {
 			this.renderDispatcher = renderDispatcher;
 			this.itemRenderer = itemRenderer;
 			this.resourceManager = resourceManager;
@@ -44,15 +44,15 @@ public interface GeoArmorRendererFactory<T extends Entity> {
 			return this.resourceManager;
 		}
 
-		public EntityModelLoader getModelLoader() {
+		public EntityModelSet getModelLoader() {
 			return this.modelLoader;
 		}
 
-		public ModelPart getPart(EntityModelLayer layer) {
-			return this.modelLoader.getModelPart(layer);
+		public ModelPart getPart(ModelLayerLocation layer) {
+			return this.modelLoader.bakeLayer(layer);
 		}
 
-		public TextRenderer getTextRenderer() {
+		public Font getTextRenderer() {
 			return this.textRenderer;
 		}
 	}

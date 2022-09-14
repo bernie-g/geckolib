@@ -1,16 +1,21 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import net.minecraft.client.util.math.Vector3d;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
-import software.bernie.geckolib3.geo.raw.pojo.*;
+import com.mojang.math.Vector3d;
+import com.mojang.math.Vector3f;
+
+import net.minecraft.core.Direction;
+import software.bernie.geckolib3.geo.raw.pojo.Cube;
+import software.bernie.geckolib3.geo.raw.pojo.FaceUv;
+import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
+import software.bernie.geckolib3.geo.raw.pojo.UvFaces;
+import software.bernie.geckolib3.geo.raw.pojo.UvUnion;
 import software.bernie.geckolib3.util.VectorUtils;
 
 public class GeoCube {
 	public GeoQuad[] quads = new GeoQuad[6];
-	public Vec3f pivot;
-	public Vec3f rotation;
-	public Vec3f size = new Vec3f();
+	public Vector3f pivot;
+	public Vector3f rotation;
+	public Vector3f size = new Vector3f();
 	public double inflate;
 	public Boolean mirror;
 
@@ -52,14 +57,14 @@ public class GeoCube {
 		if (size.z == 0) {
 			size.z = 0f;
 		}
-		Vec3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
-		rotation.multiplyComponentwise(-1, -1, 1);
+		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getRotation()));
+		rotation.mul(-1, -1, 1);
 
-		rotation.set((float) Math.toRadians(rotation.getX()), (float) Math.toRadians(rotation.getY()),
-				(float) Math.toRadians(rotation.getZ()));
+		rotation.set((float) Math.toRadians(rotation.x()), (float) Math.toRadians(rotation.y()),
+				(float) Math.toRadians(rotation.z()));
 
-		Vec3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
-		pivot.multiplyComponentwise(-1, 1, 1);
+		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(cubeIn.getPivot()));
+		pivot.mul(-1, 1, 1);
 
 		cube.pivot = pivot;
 		cube.rotation = rotation;

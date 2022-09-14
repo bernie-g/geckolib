@@ -21,7 +21,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
-import net.minecraft.client.gl.ShaderParseException;
+import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
@@ -166,9 +166,9 @@ public class JsonAnimationUtils {
 	}
 
 	private static JsonElement getObjectByKey(Set<Map.Entry<String, JsonElement>> json, String key)
-			throws ShaderParseException {
+			throws ChainedJsonException {
 		return json.stream().filter(x -> x.getKey().equals(key)).findFirst()
-				.orElseThrow(() -> new ShaderParseException("Could not find key: " + key)).getValue();
+				.orElseThrow(() -> new ChainedJsonException("Could not find key: " + key)).getValue();
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class JsonAnimationUtils {
 	 * @throws ShaderParseException the json exception
 	 */
 	public static Map.Entry<String, JsonElement> getAnimation(JsonObject animationFile, String animationName)
-			throws ShaderParseException {
+			throws ChainedJsonException {
 		return new AbstractMap.SimpleEntry(animationName, getObjectByKey(getAnimations(animationFile), animationName));
 	}
 
@@ -252,7 +252,9 @@ public class JsonAnimationUtils {
 		if (customInstructionKeyFrames != null) {
 			for (Map.Entry<String, JsonElement> keyFrame : customInstructionKeyFrames) {
 				animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20,
-						keyFrame.getValue() instanceof JsonArray ? convertJsonArrayToList(keyFrame.getValue().getAsJsonArray()).toString() : keyFrame.getValue().getAsString()));
+						keyFrame.getValue() instanceof JsonArray
+								? convertJsonArrayToList(keyFrame.getValue().getAsJsonArray()).toString()
+								: keyFrame.getValue().getAsString()));
 			}
 		}
 

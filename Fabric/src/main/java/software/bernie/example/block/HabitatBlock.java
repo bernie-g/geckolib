@@ -2,47 +2,47 @@ package software.bernie.example.block;
 
 import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.block.AbstractBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.Material;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import software.bernie.example.registry.TileRegistry;
 
-public class HabitatBlock extends BlockWithEntity implements BlockEntityProvider {
+public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
 
-	public static final DirectionProperty FACING = Properties.FACING;
+	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
 	public HabitatBlock() {
-		super(AbstractBlock.Settings.of(Material.GLASS).nonOpaque());
+		super(BlockBehaviour.Properties.of(Material.GLASS).noOcclusion());
 	}
 
 	/*
 	 * Hides the normal block and only shows the block entity created below
 	 */
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
 	/*
 	 * Adds that our block is faceable
 	 */
 	@Override
-	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
@@ -51,8 +51,10 @@ public class HabitatBlock extends BlockWithEntity implements BlockEntityProvider
 	 * done in the model in BB but eh
 	 */
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return this.getDefaultState().with(FACING, context.getPlayerFacing().rotateYClockwise().rotateYClockwise());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState()
+				.setValue(FACING,
+				context.getHorizontalDirection().getClockWise().getClockWise());
 	}
 
 	/*
@@ -61,28 +63,28 @@ public class HabitatBlock extends BlockWithEntity implements BlockEntityProvider
 	 */
 	@Nullable
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return TileRegistry.HABITAT_TILE.instantiate(pos, state);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return TileRegistry.HABITAT_TILE.create(pos, state);
 	}
 
 	/*
 	 * Sets the correct shape depending on your facing
 	 */
 	@Override
-	public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-		Direction direction = (Direction) state.get(FACING);
+	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
+		Direction direction = (Direction) state.getValue(FACING);
 		switch (direction) {
 		case NORTH: {
-			return Block.createCuboidShape(0, 0, 0, 32, 16, 16);
+			return Block.box(0, 0, 0, 32, 16, 16);
 		}
 		case SOUTH: {
-			return Block.createCuboidShape(-16, 0, 0, 16, 16, 16);
+			return Block.box(-16, 0, 0, 16, 16, 16);
 		}
 		case WEST: {
-			return Block.createCuboidShape(0, 0, -16, 16, 16, 16);
+			return Block.box(0, 0, -16, 16, 16, 16);
 		}
 		default:
-			return Block.createCuboidShape(0, 0, 0, 16, 16, 32);
+			return Block.box(0, 0, 0, 16, 16, 32);
 		}
 	}
 
@@ -91,9 +93,9 @@ public class HabitatBlock extends BlockWithEntity implements BlockEntityProvider
 	 * doesn't place into another block
 	 */
 	@Override
-	public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-		for (BlockPos testPos : BlockPos.iterate(pos,
-				pos.offset((Direction) state.get(FACING).rotateYClockwise(), 2))) {
+	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
+		for (BlockPos testPos : BlockPos.betweenClosed(pos,
+				pos.relative((Direction) state.getValue(FACING).getClockWise(), 2))) {
 			if (!testPos.equals(pos) && !world.getBlockState(testPos).isAir())
 				return false;
 		}

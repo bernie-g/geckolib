@@ -1,19 +1,20 @@
 package software.bernie.example.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -22,7 +23,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class BikeEntity extends AnimalEntity implements IAnimatable {
+public class BikeEntity extends Animal implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
@@ -30,18 +31,17 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 		return PlayState.CONTINUE;
 	}
 
-	public BikeEntity(EntityType<? extends AnimalEntity> type, World worldIn) {
+	public BikeEntity(EntityType<? extends Animal> type, Level worldIn) {
 		super(type, worldIn);
-		this.ignoreCameraFrustum = true;
 	}
 
 	@Override
-	public ActionResult interactMob(PlayerEntity player, Hand hand) {
-		if (!this.hasPassengers()) {
+	public InteractionResult mobInteract(Player player, InteractionHand hand) {
+		if (!this.isVehicle()) {
 			player.startRiding(this);
-			return super.interactMob(player, hand);
+			return super.mobInteract(player, hand);
 		}
-		return super.interactMob(player, hand);
+		return super.mobInteract(player, hand);
 	}
 
 	@Override
@@ -49,31 +49,36 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public void travel(Vec3d pos) {
+	public void travel(Vec3 pos) {
 		if (this.isAlive()) {
-			if (this.hasPassengers()) {
+			if (this.isVehicle()) {
 				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
-				this.yaw = livingentity.getYaw();
-				this.prevYaw = this.getYaw();
-				this.pitch = livingentity.getPitch() * 0.5F;
-				this.setRotation(this.getYaw(), this.getPitch());
-				this.bodyYaw = this.getYaw();
-				this.headYaw = this.bodyYaw;
-				float f = livingentity.sidewaysSpeed * 0.5F;
-				float f1 = livingentity.forwardSpeed;
+				this.setYRot(livingentity.getYRot());
+				this.yRotO = this.getYRot();
+				this.setXRot(livingentity.getXRot() * 0.5F);
+				this.setRot(this.getYRot(), this.getXRot());
+				this.yBodyRot = this.getYRot();
+				this.yHeadRot = this.yBodyRot;
+				float f = livingentity.xxa * 0.5F;
+				float f1 = livingentity.zza;
 				if (f1 <= 0.0F) {
 					f1 *= 0.25F;
 				}
 
-				this.setMovementSpeed(0.3F);
-				super.travel(new Vec3d(f, pos.y, f1));
+				this.setSpeed(0.3F);
+				super.travel(new Vec3((double) f, pos.y, (double) f1));
 			}
 		}
 	}
 
 	@Nullable
 	public Entity getControllingPassenger() {
-		return this.getPassengerList().isEmpty() ? null : this.getPassengerList().get(0);
+		return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+	}
+
+	@Override
+	public boolean hasExactlyOnePlayerPassenger() {
+		return true;
 	}
 
 	@Override
@@ -87,7 +92,7 @@ public class BikeEntity extends AnimalEntity implements IAnimatable {
 	}
 
 	@Override
-	public PassiveEntity createChild(ServerWorld world, PassiveEntity entity) {
+	public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob entity) {
 		return null;
 	}
 }

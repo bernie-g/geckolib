@@ -1,13 +1,14 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
@@ -19,30 +20,31 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		this.entityRenderer = entityRendererIn;
 	}
 
-	protected void renderCopyModel(GeoModelProvider<T> modelParentIn, Identifier textureLocationIn,
-			MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn, float limbSwing,
+	protected void renderCopyModel(GeoModelProvider<T> modelParentIn, ResourceLocation textureLocationIn,
+			PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityIn, float limbSwing,
 			float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red,
 			float green, float blue) {
 		if (!entityIn.isInvisible()) {
-			this.renderModel(modelParentIn, textureLocationIn, matrixStackIn, bufferIn, packedLightIn, entityIn,
+			this.renderModel(modelParentIn, textureLocationIn, PoseStackIn, bufferIn, packedLightIn, entityIn,
 					partialTicks, red, green, blue);
 		}
 	}
 
-	protected void renderModel(GeoModelProvider<T> modelProviderIn, Identifier textureLocationIn,
-			MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn, T entityIn,
-			float partialTicks, float red, float green, float blue) {
+	protected void renderModel(GeoModelProvider<T> modelProviderIn, ResourceLocation textureLocationIn,
+			PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityIn, float partialTicks,
+			float red, float green, float blue) {
 		GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelResource(entityIn));
-		RenderLayer renderType = getRenderType(textureLocationIn);
+		RenderType renderType = getRenderType(textureLocationIn);
 		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
-		this.getRenderer().render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, ivertexbuilder,
-				packedLightIn, LivingEntityRenderer.getOverlay((LivingEntity) entityIn, 0.0F), red, green, blue, 1.0F);
+		this.getRenderer().render(model, entityIn, partialTicks, renderType, PoseStackIn, bufferIn, ivertexbuilder,
+				packedLightIn, LivingEntityRenderer.getOverlayCoords((LivingEntity) entityIn, 0.0F), red, green, blue,
+				1.0F);
 	}
 
-	public RenderLayer getRenderType(Identifier textureLocation) {
-		return RenderLayer.getEntityCutout(textureLocation);
+	public RenderType getRenderType(ResourceLocation textureLocation) {
+		return RenderType.entityCutout(textureLocation);
 	}
-	
+
 	public GeoModelProvider<T> getEntityModel() {
 		return this.entityRenderer.getGeoModelProvider();
 	}
@@ -51,11 +53,15 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		return this.entityRenderer;
 	}
 
-	protected Identifier getEntityTexture(T entityIn) {
-		return this.entityRenderer.getTextureResource(entityIn);
+	protected ResourceLocation getEntityTexture(T entityIn) {
+		return this.entityRenderer.getTextureLocation(entityIn);
 	}
 
-	public abstract void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+	public ResourceLocation getTextureResource(T entity) {
+		return this.entityRenderer.getTextureResource(entity);
+	}
+
+	public abstract void render(PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn,
 			T entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
 			float netHeadYaw, float headPitch);
 }

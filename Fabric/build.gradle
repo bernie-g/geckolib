@@ -46,11 +46,10 @@ configurations {
 dependencies {
     // Minecraft/Fabric deps
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-	// mappings loom.layered() {
-		// officialMojangMappings()
-		// parchment("org.parchmentmc.data:parchment-${project.minecraft_version}:2022.05.22@zip")
-	// }
+	mappings( loom.layered() {
+		officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.14@zip")
+	})
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 

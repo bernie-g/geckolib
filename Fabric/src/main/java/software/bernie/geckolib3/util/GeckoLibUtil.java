@@ -4,8 +4,8 @@ import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITE
 
 import java.util.Objects;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
@@ -21,9 +21,9 @@ public class GeckoLibUtil {
 	 */
 	public static int getIDFromStack(ItemStack stack) {
 		if (stackHasIDTag(stack)) {
-			return stack.getNbt().getInt(GECKO_LIB_ID_NBT);
+			return stack.getTag().getInt(GECKO_LIB_ID_NBT);
 		}
-		return Objects.hash(stack.getItem().getTranslationKey(), stack.getNbt(), stack.getCount());
+		return Objects.hash(stack.getItem().getDescriptionId(), stack.getTag(), stack.getCount());
 	}
 
 	/**
@@ -33,10 +33,10 @@ public class GeckoLibUtil {
 	 * Note: This may make items unstackable since it modifies their NBT data. Only
 	 * use on items with a max stack size of one, or if you know what you're doing.
 	 */
-	public static void writeIDToStack(ItemStack stack, ServerWorld world) {
+	public static void writeIDToStack(ItemStack stack, ServerLevel world) {
 		if (!stackHasIDTag(stack)) {
 			final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
-			stack.getOrCreateNbt().putInt(GECKO_LIB_ID_NBT, id);
+			stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
 		}
 	}
 
@@ -46,13 +46,13 @@ public class GeckoLibUtil {
 	 * <p>
 	 * Will always return a unique ID that's stored in the stack's NBT data.
 	 */
-	public static int guaranteeIDForStack(ItemStack stack, ServerWorld world) {
+	public static int guaranteeIDForStack(ItemStack stack, ServerLevel world) {
 		if (!stackHasIDTag(stack)) {
 			final int id = GeckoLibIdTracker.from(world).getNextId(ITEM);
-			stack.getOrCreateNbt().putInt(GECKO_LIB_ID_NBT, id);
+			stack.getOrCreateTag().putInt(GECKO_LIB_ID_NBT, id);
 			return id;
 		} else {
-			return stack.getNbt().getInt(GECKO_LIB_ID_NBT);
+			return stack.getTag().getInt(GECKO_LIB_ID_NBT);
 		}
 	}
 
@@ -61,7 +61,7 @@ public class GeckoLibUtil {
 	 */
 	public static void removeIDFromStack(ItemStack stack) {
 		if (stackHasIDTag(stack)) {
-			stack.getNbt().remove(GECKO_LIB_ID_NBT);
+			stack.getTag().remove(GECKO_LIB_ID_NBT);
 		}
 	}
 
@@ -69,7 +69,7 @@ public class GeckoLibUtil {
 	 * Returns true if the stack has an ID stored in its NBT data.
 	 */
 	public static boolean stackHasIDTag(ItemStack stack) {
-		return stack.hasNbt() && stack.getNbt().contains(GECKO_LIB_ID_NBT, 3);
+		return stack.hasTag() && stack.getTag().contains(GECKO_LIB_ID_NBT, 3);
 	}
 
 	public static AnimationController getControllerForStack(AnimationFactory factory, ItemStack stack,

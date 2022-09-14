@@ -1,14 +1,14 @@
 package software.bernie.geckolib3.geo.exception;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 @SuppressWarnings("serial")
 public class GeckoLibException extends RuntimeException {
-	public GeckoLibException(Identifier fileLocation, String message) {
+	public GeckoLibException(ResourceLocation fileLocation, String message) {
 		super(fileLocation + ": " + message);
 	}
 
-	public GeckoLibException(Identifier fileLocation, String message, Throwable cause) {
+	public GeckoLibException(ResourceLocation fileLocation, String message, Throwable cause) {
 		super(fileLocation + ": " + message, cause);
 	}
 }

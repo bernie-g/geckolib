@@ -1,10 +1,11 @@
 package software.bernie.example.client.renderer.tile;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.example.client.model.tile.HabitatModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
@@ -18,9 +19,9 @@ public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 	}
 
 	@Override
-	public RenderLayer getRenderType(HabitatTileEntity animatable, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			Identifier textureLocation) {
-		return RenderLayer.getEntityTranslucent(getTextureResource(animatable));
+	public RenderType getRenderType(HabitatTileEntity animatable, float partialTicks, PoseStack stack,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
+		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

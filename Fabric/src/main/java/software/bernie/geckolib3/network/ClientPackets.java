@@ -3,9 +3,10 @@ package software.bernie.geckolib3.network;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayNetworkHandler;
-import net.minecraft.network.PacketByteBuf;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.network.FriendlyByteBuf;
 import software.bernie.geckolib3.GeckoLib;
 
 public class ClientPackets implements ClientModInitializer {
@@ -15,10 +16,10 @@ public class ClientPackets implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(GeckoLibNetwork.SYNCABLE, ClientPackets::handleSyncPacket);
 	}
 
-	public static void handleSyncPacket(MinecraftClient client, ClientPlayNetworkHandler handler, PacketByteBuf buf,
+	public static void handleSyncPacket(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf,
 			PacketSender responseSender) {
 
-		final String key = buf.readString();
+		final String key = buf.readUtf();
 		final int id = buf.readVarInt();
 		final int state = buf.readVarInt();
 

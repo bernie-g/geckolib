@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public class GeckoLib {
@@ -26,16 +26,16 @@ public class GeckoLib {
 
 	public static void initialize() {
 		if (!hasInitialized) {
-			ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES)
+			ResourceManagerHelper.get(PackType.CLIENT_RESOURCES)
 					.registerReloadListener(new IdentifiableResourceReloadListener() {
 						@Override
-						public Identifier getFabricId() {
-							return new Identifier(GeckoLib.ModID, "models");
+						public ResourceLocation getFabricId() {
+							return new ResourceLocation(GeckoLib.ModID, "models");
 						}
 
 						@Override
-						public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager,
-								Profiler prepareProfiler, Profiler applyProfiler, Executor prepareExecutor,
+						public CompletableFuture<Void> reload(PreparationBarrier synchronizer, ResourceManager manager,
+								ProfilerFiller prepareProfiler, ProfilerFiller applyProfiler, Executor prepareExecutor,
 								Executor applyExecutor) {
 							return GeckoLibCache.getInstance().reload(synchronizer, manager, prepareProfiler,
 									applyProfiler, prepareExecutor, applyExecutor);

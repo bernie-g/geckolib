@@ -3,18 +3,18 @@ package software.bernie.example.item;
 import java.util.List;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import software.bernie.example.entity.RocketProjectile;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.AnimationState;
@@ -36,34 +36,32 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	public static final int ANIM_OPEN = 0;
 
 	public PistolItem() {
-		super(new Item.Settings().group(ItemRegistry.geckolibItemGroup).maxCount(1).maxDamage(201));
+		super(new Item.Properties().tab(ItemRegistry.geckolibItemGroup).stacksTo(1).durability(201));
 		GeckoLibNetwork.registerSyncable(this);
 	}
 
 	@Override
-	public void onStoppedUsing(ItemStack stack, World worldIn, LivingEntity entityLiving, int remainingUseTicks) {
-		if (entityLiving instanceof PlayerEntity) {
-			PlayerEntity playerentity = (PlayerEntity) entityLiving;
-			if (stack.getDamage() < (stack.getMaxDamage() - 1)) {
-				playerentity.getItemCooldownManager().set(this, 5);
-				if (!worldIn.isClient) {
+	public void onUseTick(Level worldIn, LivingEntity entityLiving, ItemStack stack, int count) {
+		if (entityLiving instanceof Player) {
+			Player playerentity = (Player) entityLiving;
+			if (stack.getDamageValue() < (stack.getMaxDamage() - 1)) {
+				playerentity.getCooldowns().addCooldown(this, 5);
+				if (!worldIn.isClientSide()) {
 					RocketProjectile abstractarrowentity = createArrow(worldIn, stack, playerentity);
-					abstractarrowentity.setVelocity(playerentity, playerentity.getPitch(), playerentity.getYaw(), 0.0F,
-							0.25F * 3.0F, 1.0F);
-					abstractarrowentity.refreshPositionAndAngles(entityLiving.getX(), entityLiving.getBodyY(0.95),
-							entityLiving.getZ(), 0, 0);
+					abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(),
+							0.0F, 1.0F * 3.0F, 1.0F);
 
-					abstractarrowentity.setDamage(2.5);
-					abstractarrowentity.age = 35;
-					abstractarrowentity.hasNoGravity();
+					abstractarrowentity.setBaseDamage(2.5);
+					abstractarrowentity.tickCount = 35;
+					abstractarrowentity.isNoGravity();
 
-					stack.damage(1, entityLiving, p -> p.sendToolBreakStatus(entityLiving.getActiveHand()));
-					worldIn.spawnEntity(abstractarrowentity);
+					stack.hurtAndBreak(1, playerentity, p -> p.broadcastBreakEvent(playerentity.getUsedItemHand()));
+					worldIn.addFreshEntity(abstractarrowentity);
 				}
-				if (!worldIn.isClient) {
-					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerWorld) worldIn);
+				if (!worldIn.isClientSide()) {
+					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerLevel) worldIn);
 					GeckoLibNetwork.syncAnimation(playerentity, this, id, ANIM_OPEN);
-					for (PlayerEntity otherPlayer : PlayerLookup.tracking(playerentity)) {
+					for (Player otherPlayer : PlayerLookup.tracking(playerentity)) {
 						GeckoLibNetwork.syncAnimation(otherPlayer, this, id, ANIM_OPEN);
 					}
 				}
@@ -71,7 +69,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 		}
 	}
 
-	public RocketProjectile createArrow(World worldIn, ItemStack stack, LivingEntity shooter) {
+	public RocketProjectile createArrow(Level worldIn, ItemStack stack, LivingEntity shooter) {
 		RocketProjectile arrowentity = new RocketProjectile(worldIn, shooter);
 		return arrowentity;
 	}
@@ -87,8 +85,8 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public UseAction getUseAction(ItemStack stack) {
-		return UseAction.BOW;
+	public UseAnim getUseAnimation(ItemStack stack) {
+		return UseAnim.BOW;
 	}
 
 	public RocketProjectile customeArrow(RocketProjectile arrow) {
@@ -121,27 +119,26 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		ItemStack itemStack = user.getStackInHand(hand);
-		user.setCurrentHand(hand);
-		return TypedActionResult.consume(itemStack);
+	public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+		ItemStack itemStack = user.getItemInHand(hand);
+		user.startUsingItem(hand);
+		return InteractionResultHolder.consume(itemStack);
 	}
 
 	@Override
-	public boolean hasGlint(ItemStack stack) {
+	public boolean isFoil(ItemStack stack) {
 		return false;
 	}
 
 	@Override
-	public int getMaxUseTime(ItemStack stack) {
+	public int getUseDuration(ItemStack stack) {
 		return 72000;
 	}
 
 	@Override
-	public void appendTooltip(ItemStack stack, World world, List<Text> tooltip, TooltipContext context) {
-		tooltip.add(Text
-				.translatable(
-						"Ammo: " + (stack.getMaxDamage() - stack.getDamage() - 1) + " / " + (stack.getMaxDamage() - 1))
-				.formatted(Formatting.ITALIC));
+	public void appendHoverText(ItemStack stack, Level world, List<Component> tooltip, TooltipFlag context) {
+		tooltip.add(Component.translatable(
+				"Ammo: " + (stack.getMaxDamage() - stack.getDamageValue() - 1) + " / " + (stack.getMaxDamage() - 1))
+				.withStyle(ChatFormatting.ITALIC));
 	}
 }

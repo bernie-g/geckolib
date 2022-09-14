@@ -3,9 +3,10 @@ package software.bernie.geckolib3.renderers.texture;
 import java.io.IOException;
 import java.util.Optional;
 
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.resource.Resource;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.platform.NativeImage;
+
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import software.bernie.geckolib3.resource.data.GlowingMetadataSection;
 
 /*
@@ -17,11 +18,11 @@ import software.bernie.geckolib3.resource.data.GlowingMetadataSection;
  */
 public class AutoGlowingTexture extends GeoAbstractTexture {
 
-	public AutoGlowingTexture(Identifier originalLocation, Identifier location) {
+	public AutoGlowingTexture(ResourceLocation originalLocation, ResourceLocation location) {
 		super(originalLocation, location);
 	}
 
-	public static Identifier get(Identifier originalLocation) {
+	public static ResourceLocation get(ResourceLocation originalLocation) {
 		return get(originalLocation, "_glowing", AutoGlowingTexture::new);
 	}
 
@@ -29,7 +30,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	protected boolean onLoadTexture(Resource resource, NativeImage originalImage, NativeImage newImage) {
 		Optional<GlowingMetadataSection> glowingMetadata = null;
 		try {
-			glowingMetadata = resource.getMetadata().decode(GlowingMetadataSection.SERIALIZER);
+			glowingMetadata = resource.metadata().getSection(GlowingMetadataSection.SERIALIZER);
 		} catch (IOException e) {
 			LOGGER.warn("Failed reading glowing metadata of: {}", location, e);
 		}
@@ -38,10 +39,10 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			return false;
 		}
 		glowingMetadata.get().getGlowingSections().forEach(section -> section.forEach((x, y) -> {
-			newImage.setColor(x, y, originalImage.getColor(x, y));
+			newImage.setPixelRGBA(x, y, originalImage.getPixelRGBA(x, y));
 
 			// Remove it from the original
-			originalImage.setColor(x, y, 0);
+			originalImage.setPixelRGBA(x, y, 0);
 		}));
 		return true;
 	}

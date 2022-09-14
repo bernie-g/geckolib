@@ -4,7 +4,7 @@ import java.util.Collections;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -25,11 +25,11 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		if (manager.startTick == null) {
-			manager.startTick = (double) (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
+			manager.startTick = (double) (entity.tickTimer() + Minecraft.getInstance().getFrameTime());
 		}
 
-		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
+		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
+			manager.tick = (entity.tickTimer() + Minecraft.getInstance().getFrameTime());
 			double gameTick = manager.tick;
 			double deltaTicks = gameTick - lastGameTickTime;
 			seekTime += deltaTicks;
@@ -50,7 +50,7 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
 
-		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
+		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
 			codeAnimations(entity, uniqueID, customPredicate);
 		}
 	}
