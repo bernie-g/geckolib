@@ -30,6 +30,7 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.easing.EasingType;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.ParticleKeyFrameEvent;
@@ -200,8 +201,8 @@ public class AnimationController<T extends IAnimatable> {
 						System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
 						encounteredError.set(true);
 					}
-					if (animation != null && rawAnimation.loop != null) {
-						animation.loop = rawAnimation.loop;
+					if (animation != null && rawAnimation.loopType != null) {
+						animation.loop = rawAnimation.loopType;
 					}
 					return animation;
 				}).collect(Collectors.toCollection(LinkedList::new));
@@ -379,7 +380,7 @@ public class AnimationController<T extends IAnimatable> {
 			if (model != null) {
 				Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
 				if (animation != null) {
-					boolean loop = currentAnimation.loop;
+					ILoopType loop = currentAnimation.loop;
 					currentAnimation = animation;
 					currentAnimation.loop = loop;
 				}
@@ -543,7 +544,7 @@ public class AnimationController<T extends IAnimatable> {
 			resetEventKeyFrames();
 			// If the current animation is set to loop, keep it as the current animation and
 			// just start over
-			if (!currentAnimation.loop) {
+			if (!currentAnimation.loop.isRepeatingAfterEnd()) {
 				// Pull the next animation from the queue
 				Animation peek = animationQueue.peek();
 				if (peek == null) {
