@@ -101,7 +101,8 @@ public class GeckoLibCache {
 						// folder as well
 						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels"))
 							if (!entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
-								map.accept(entry.getKey(), entry.getValue().join());
+								if (!entry.getKey().getNamespace().equalsIgnoreCase("gunsrpg"))
+									map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
 	}

@@ -8,6 +8,8 @@ package software.bernie.geckolib3.core.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+
 /**
  * This class follows the builder pattern, which means that every method returns
  * an instance of this class. You can stack method calls, like this:
@@ -24,6 +26,12 @@ public class AnimationBuilder {
 	 * @param shouldLoop    loop
 	 * @return An instance of the current animation builder
 	 */
+	public AnimationBuilder addAnimation(String animationName, ILoopType loopType) {
+		animationList.add(new RawAnimation(animationName, loopType));
+		return this;
+	}
+	
+	@Deprecated
 	public AnimationBuilder addAnimation(String animationName, Boolean shouldLoop) {
 		animationList.add(new RawAnimation(animationName, shouldLoop));
 		return this;
@@ -52,9 +60,34 @@ public class AnimationBuilder {
 	public AnimationBuilder addRepeatingAnimation(String animationName, int timesToRepeat) {
 		assert timesToRepeat > 0;
 		for (int i = 0; i < timesToRepeat; i++) {
-			addAnimation(animationName, false);
+			addAnimation(animationName, EDefaultLoopTypes.PLAY_ONCE);
 		}
 		return this;
+	}
+	
+	public AnimationBuilder playOnce(String animationName) {
+		return this.addAnimation(animationName, EDefaultLoopTypes.PLAY_ONCE);
+	}
+	
+	public AnimationBuilder loop(String animationName) {
+		return this.addAnimation(animationName, EDefaultLoopTypes.LOOP);
+	}
+	
+	/*
+	 * Not implemented yet!
+	 */
+	public AnimationBuilder playAndHold(String animationName) {
+		return this.addAnimation(animationName, EDefaultLoopTypes.HOLD_ON_LAST_FRAME);
+	}
+	
+	//Below will use "Wait instructions", basically empty animations that do nothing, not sure if we really need those honestly
+	public AnimationBuilder delayNext(int waitTimeTicks) {
+		throw new UnsupportedOperationException("This isn't implemented yet, sorry!");
+	}
+	
+	public AnimationBuilder playAndHoldFor(String animationName, int waitTimeTicks) {
+		this.playAndHold(animationName);
+		return this.delayNext(waitTimeTicks);
 	}
 
 	/**

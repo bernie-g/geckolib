@@ -15,6 +15,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -27,12 +28,13 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 
 	public GeoExampleEntity(EntityType<? extends PathAwareEntity> type, World worldIn) {
 		super(type, worldIn);
-		this.ignoreCameraFrustum = true;
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (this.isAnimating) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
+			event.getController()
+					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
+							.addAnimation("animation.bat.idle", EDefaultLoopTypes.PLAY_ONCE));
 		} else {
 			event.getController().clearAnimationCache();
 			return PlayState.STOP;
@@ -50,7 +52,8 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0, this::predicate);
+		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0,
+				this::predicate);
 		controller.registerCustomInstructionListener(this::customListener);
 		data.addAnimationController(controller);
 	}

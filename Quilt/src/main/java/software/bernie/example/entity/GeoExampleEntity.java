@@ -15,6 +15,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -31,7 +32,9 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (this.isAnimating) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", false).addAnimation("animation.bat.idle", false));
+			event.getController()
+					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
+							.addAnimation("animation.bat.idle", EDefaultLoopTypes.PLAY_ONCE));
 		} else {
 			event.getController().clearAnimationCache();
 			return PlayState.STOP;
