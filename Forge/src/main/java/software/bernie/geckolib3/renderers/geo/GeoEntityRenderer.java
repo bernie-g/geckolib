@@ -340,7 +340,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		if (d0 >= (double) (f * f)) {
 			return false;
 		} else {
-			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName() && Minecraft.renderNames();
+			return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName()
+					&& Minecraft.renderNames();
 		}
 	}
 
