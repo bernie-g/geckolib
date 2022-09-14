@@ -1,6 +1,6 @@
 package software.bernie.geckolib3q.model.provider;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public interface IAnimatableModelProvider<E> {
 	/**
@@ -9,5 +9,5 @@ public interface IAnimatableModelProvider<E> {
 	 *
 	 * @return the animation file location
 	 */
-	Identifier getAnimationResource(E animatable);
+	ResourceLocation getAnimationResource(E animatable);
 }

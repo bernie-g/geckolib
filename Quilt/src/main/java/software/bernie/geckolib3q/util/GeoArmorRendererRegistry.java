@@ -1,7 +1,7 @@
 package software.bernie.geckolib3q.util;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ArmorItem;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ArmorItem;
 
 public interface GeoArmorRendererRegistry {
 

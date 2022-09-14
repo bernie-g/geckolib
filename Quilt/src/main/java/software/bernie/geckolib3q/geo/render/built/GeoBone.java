@@ -3,10 +3,11 @@ package software.bernie.geckolib3q.geo.render.built;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.util.math.Vector3d;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vector4f;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3d;
+import com.mojang.math.Vector4f;
+
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
@@ -51,14 +52,14 @@ public class GeoBone implements IBone {
 
 	public GeoBone() {
 		modelSpaceXform = new Matrix4f();
-		modelSpaceXform.loadIdentity();
+		modelSpaceXform.setIdentity();
 		trackXform = false;
 		rotMat = null;
 
 		worldSpaceXform = new Matrix4f();
-		worldSpaceXform.loadIdentity();
+		worldSpaceXform.setIdentity();
 		worldSpaceNormal = new Matrix3f();
-		worldSpaceNormal.loadIdentity();
+		worldSpaceNormal.setIdentity();
 	}
 
 	@Override
@@ -261,7 +262,7 @@ public class GeoBone implements IBone {
 		Matrix4f matrix = getModelSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
 		vec.transform(matrix);
-		return new Vector3d(-vec.getX() * 16f, vec.getY() * 16f, vec.getZ() * 16f);
+		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
 	public Matrix4f getWorldSpaceXform() {
@@ -277,19 +278,19 @@ public class GeoBone implements IBone {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
 		vec.transform(matrix);
-		return new Vector3d(vec.getX(), vec.getY(), vec.getZ());
+		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
 	public void setModelPosition(Vector3d pos) {
 		// TODO: Doesn't work on bones with parent transforms
 		GeoBone parent = getParent();
 		Matrix4f identity = new Matrix4f();
-		identity.loadIdentity();
+		identity.setIdentity();
 		Matrix4f matrix = parent == null ? identity : parent.getModelSpaceXform().copy();
 		matrix.invert();
 		Vector4f vec = new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1);
 		vec.transform(matrix);
-		setPosition(-vec.getX() * 16f, vec.getY() * 16f, vec.getZ() * 16f);
+		setPosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
 	public Matrix4f getModelRotationMat() {
@@ -299,9 +300,9 @@ public class GeoBone implements IBone {
 	}
 
 	public static void removeMatrixTranslation(Matrix4f matrix) {
-		matrix.a03 = 0;
-		matrix.a13 = 0;
-		matrix.a23 = 0;
+		matrix.m03 = 0;
+		matrix.m13 = 0;
+		matrix.m23 = 0;
 	}
 
 	public void setModelRotationMat(Matrix4f mat) {

@@ -1,10 +1,11 @@
 package software.bernie.geckolib3q.geo.render.built;
 
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
+import com.mojang.math.Vector3f;
+
+import net.minecraft.core.Direction;
 
 public class GeoQuad {
-	public final Vec3f normal;
+	public final Vector3f normal;
 	public GeoVertex[] vertices;
 	public Direction direction;
 
@@ -49,9 +50,9 @@ public class GeoQuad {
 		// only god knows what this does, but eliot told me it generates a normal vector
 		// which helps the game do lighting properly or something idk i didnt pay
 		// attention in physics we were in remote learning gimme a break
-		this.normal = directionIn.getUnitVector();
+		this.normal = directionIn.step();
 		if (mirrorIn != null && mirrorIn) {
-			this.normal.multiplyComponentwise(-1.0F, 1.0F, 1.0F);
+			this.normal.mul(-1.0F, 1.0F, 1.0F);
 		}
 	}
 

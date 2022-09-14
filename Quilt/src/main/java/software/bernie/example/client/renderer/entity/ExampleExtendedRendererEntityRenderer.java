@@ -1,16 +1,17 @@
 package software.bernie.example.client.renderer.entity;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.model.json.ModelTransformation.Mode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.DefaultBipedBoneIdents;
 import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
@@ -21,12 +22,12 @@ import software.bernie.geckolib3q.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
 
-	private static final Identifier TEXTURE = new Identifier(GeckoLib.ModID,
+	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
 			"textures/entity/extendedrendererentity.png");
-	private static final Identifier MODEL_RESLOC = new Identifier(GeckoLib.ModID,
+	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
 			"geo/extendedrendererentity.geo.json");
 
-	public ExampleExtendedRendererEntityRenderer(EntityRendererFactory.Context renderManager) {
+	public ExampleExtendedRendererEntityRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE,
 				"extendedrendererentity"));
 	}
@@ -45,22 +46,22 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected Mode getCameraTransformForItemAtBone(ItemStack boneItem, String boneName) {
+	protected TransformType getCameraTransformForItemAtBone(ItemStack boneItem, String boneName) {
 		switch (boneName) {
 		case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT:
-			return Mode.THIRD_PERSON_RIGHT_HAND;
+			return TransformType.THIRD_PERSON_RIGHT_HAND;
 		case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT:
-			return Mode.THIRD_PERSON_RIGHT_HAND;
+			return TransformType.THIRD_PERSON_RIGHT_HAND;
 		default:
-			return Mode.NONE;
+			return TransformType.NONE;
 		}
 	}
 
 	@Override
-	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName,
-			ExtendedRendererEntity currentEntity, IBone bone) {
+	protected void preRenderItem(PoseStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity,
+			IBone bone) {
 		if (item == this.mainHand || item == this.offHand) {
-			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
+			stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
 			boolean shieldFlag = item.getItem() instanceof ShieldItem;
 			if (item == this.mainHand) {
 				if (shieldFlag) {
@@ -71,7 +72,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			} else {
 				if (shieldFlag) {
 					stack.translate(0, 0.125, 0.25);
-					stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
+					stack.mulPose(Vector3f.YP.rotationDegrees(180));
 				} else {
 
 				}
@@ -84,7 +85,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName,
+	protected void postRenderItem(PoseStack PoseStack, ItemStack item, String boneName,
 			ExtendedRendererEntity currentEntity, IBone bone) {
 
 	}
@@ -140,7 +141,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected ModelPart getArmorPartForBone(String name, BipedEntityModel<?> armorModel) {
+	protected ModelPart getArmorPartForBone(String name, HumanoidModel<?> armorModel) {
 		switch (name) {
 		case "armorBipedLeftFoot":
 		case "armorBipedLeftLeg":
@@ -171,21 +172,21 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected void preRenderBlock(MatrixStack stack, BlockState block, String boneName,
+	protected void preRenderBlock(PoseStack stack, BlockState block, String boneName,
 			ExtendedRendererEntity currentEntity) {
 
 	}
 
 	@Override
-	protected void postRenderBlock(MatrixStack stack, BlockState block, String boneName,
+	protected void postRenderBlock(PoseStack stack, BlockState block, String boneName,
 			ExtendedRendererEntity currentEntity) {
 	}
 
-	protected final Identifier CAPE_TEXTURE = new Identifier(GeckoLib.ModID,
+	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
 			"textures/entity/extendedrendererentity_cape.png");
 
 	@Override
-	protected Identifier getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
+	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
 		switch (boneName) {
 		case "bipedCape":
 			return CAPE_TEXTURE;

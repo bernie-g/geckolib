@@ -4,16 +4,18 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.model.json.ModelTransformation;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -63,35 +65,40 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	}
 
 	@Override
-	public void render(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int combinedLightIn, int combinedOverlayIn) {
+	public void render(ItemStack itemStack, ItemTransforms.TransformType mode, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int combinedLightIn, int combinedOverlayIn) {
 		this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
 	}
 
-	public void render(T animatable, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn,
+	public void render(T animatable, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn,
 			ItemStack itemStack) {
 		this.currentItemStack = itemStack;
-		AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0,
-				MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(itemStack));
+		AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
+				false, Collections.singletonList(itemStack));
 		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
-		stack.push();
+		stack.pushPose();
 		// stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);
 
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(animatable));
+		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(animatable));
 		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn,
+		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(animatable));
-		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.DEFAULT_UV,
+		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
+		stack.popPose();
 	}
 
 	@Override
-	public Identifier getTextureLocation(T instance) {
+	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureResource(instance);
+	}
+
+	@Override
+	public ResourceLocation getTextureResource(T entity) {
+		return this.modelProvider.getTextureResource(entity);
 	}
 
 	@Override

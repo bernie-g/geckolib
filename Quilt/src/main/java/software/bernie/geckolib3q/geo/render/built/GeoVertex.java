@@ -1,23 +1,24 @@
 package software.bernie.geckolib3q.geo.render.built;
 
-import net.minecraft.util.math.Vec3f;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 
+import com.mojang.math.Vector3f;
+
 public class GeoVertex {
-	public final Vec3f position;
+	public final Vector3f position;
 	public float textureU;
 	public float textureV;
 
 	public GeoVertex(float x, float y, float z) {
-		this.position = new Vec3f(x, y, z);
+		this.position = new Vector3f(x, y, z);
 	}
 
 	public GeoVertex(double x, double y, double z) {
-		this.position = new Vec3f((float) x, (float) y, (float) z);
+		this.position = new Vector3f((float) x, (float) y, (float) z);
 	}
 
-	public GeoVertex(Vec3f posIn, float texU, float texV) {
+	public GeoVertex(Vector3f posIn, float texU, float texV) {
 		this.position = posIn;
 		this.textureU = texU;
 		this.textureV = texV;

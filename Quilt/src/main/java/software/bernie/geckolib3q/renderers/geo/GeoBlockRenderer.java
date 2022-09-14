@@ -1,18 +1,20 @@
 package software.bernie.geckolib3q.renderers.geo;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.FacingBlock;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3f;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -26,8 +28,8 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof BlockEntity) {
 				BlockEntity tile = (BlockEntity) object;
-				BlockEntityRenderer<BlockEntity> renderer = MinecraftClient.getInstance()
-						.getBlockEntityRenderDispatcher().get(tile);
+				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher()
+						.getRenderer(tile);
 				if (renderer instanceof GeoBlockRenderer) {
 					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
 				}
@@ -43,34 +45,33 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	@Override
-	public void render(BlockEntity tile, float partialTicks, MatrixStack matrixStackIn, VertexConsumerProvider bufferIn,
+	public void render(BlockEntity tile, float partialTicks, PoseStack matrixStackIn, MultiBufferSource bufferIn,
 			int combinedLightIn, int combinedOverlayIn) {
 		this.render((T) tile, partialTicks, matrixStackIn, bufferIn, combinedLightIn);
 	}
 
-	public void render(T tile, float partialTicks, MatrixStack stack, VertexConsumerProvider bufferIn,
-			int packedLightIn) {
+	public void render(T tile, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
-		stack.push();
+		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
 
 		rotateBlock(getFacing(tile), stack);
 
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(tile));
+		RenderSystem.setShaderTexture(0, getTextureLocation(tile));
 		Color renderColor = getRenderColor(tile, partialTicks, stack, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
+		RenderType renderType = getRenderType(tile, partialTicks, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(tile));
-		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.DEFAULT_UV,
+		render(model, tile, partialTicks, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
+		stack.popPose();
 	}
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getPos().hashCode();
+		return animatable.getBlockPos().hashCode();
 	}
 
 	@Override
@@ -78,42 +79,48 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		return this.modelProvider;
 	}
 
-	protected void rotateBlock(Direction facing, MatrixStack stack) {
+	protected void rotateBlock(Direction facing, PoseStack stack) {
 		switch (facing) {
 		case SOUTH:
-			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
+			stack.mulPose(Vector3f.YP.rotationDegrees(180));
 			break;
 		case WEST:
-			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(90));
+			stack.mulPose(Vector3f.YP.rotationDegrees(90));
 			break;
 		case NORTH:
-			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(0));
+			stack.mulPose(Vector3f.YP.rotationDegrees(0));
 			break;
 		case EAST:
-			stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(270));
+			stack.mulPose(Vector3f.YP.rotationDegrees(270));
 			break;
 		case UP:
-			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90));
+			stack.mulPose(Vector3f.XP.rotationDegrees(90));
 			break;
 		case DOWN:
-			stack.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(90));
+			stack.mulPose(Vector3f.XN.rotationDegrees(90));
 			break;
 		}
 	}
 
 	private Direction getFacing(T tile) {
-		BlockState blockState = tile.getCachedState();
-		if (blockState.contains(HorizontalFacingBlock.FACING)) {
-			return blockState.get(HorizontalFacingBlock.FACING);
-		} else if (blockState.contains(FacingBlock.FACING)) {
-			return blockState.get(FacingBlock.FACING);
+		BlockState blockState = tile.getBlockState();
+		if (blockState.hasProperty(HorizontalDirectionalBlock.FACING)) {
+			return blockState.getValue(HorizontalDirectionalBlock.FACING);
+		} else if (blockState.hasProperty(DirectionalBlock.FACING)) {
+			return blockState.getValue(DirectionalBlock.FACING);
 		} else {
 			return Direction.NORTH;
 		}
 	}
 
 	@Override
-	public Identifier getTextureLocation(T instance) {
+	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureResource(instance);
 	}
+
+	@Override
+	public ResourceLocation getTextureResource(T entity) {
+		return this.modelProvider.getTextureResource(entity);
+	}
+
 }

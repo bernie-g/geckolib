@@ -1,8 +1,8 @@
 package software.bernie.geckolib3q.geo.raw.pojo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Bone {
 	private double[] bindPoseRotation;

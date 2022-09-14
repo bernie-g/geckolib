@@ -1,9 +1,9 @@
 package software.bernie.geckolib3q.file;
 
-import software.bernie.geckolib3.core.builder.Animation;
-
 import java.util.Collection;
 import java.util.HashMap;
+
+import software.bernie.geckolib3.core.builder.Animation;
 
 public class AnimationFile {
 	private final HashMap<String, Animation> animations = new HashMap<>();

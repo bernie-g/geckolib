@@ -1,22 +1,22 @@
 package software.bernie.example.client.model.entity;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3q.GeckoLib;
 import software.bernie.geckolib3q.model.AnimatedGeoModel;
 
 public class ReplacedCreeperModel extends AnimatedGeoModel {
 	@Override
-	public Identifier getModelResource(Object object) {
-		return new Identifier(GeckoLib.ModID, "geo/creeper.geo.json");
+	public ResourceLocation getModelResource(Object object) {
+		return new ResourceLocation(GeckoLib.ModID, "geo/creeper.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureResource(Object object) {
-		return new Identifier(GeckoLib.ModID, "textures/model/entity/creeper.png");
+	public ResourceLocation getTextureResource(Object object) {
+		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/creeper.png");
 	}
 
 	@Override
-	public Identifier getAnimationResource(Object animatable) {
-		return new Identifier(GeckoLib.ModID, "animations/creeper.animation.json");
+	public ResourceLocation getAnimationResource(Object animatable) {
+		return new ResourceLocation(GeckoLib.ModID, "animations/creeper.animation.json");
 	}
 }

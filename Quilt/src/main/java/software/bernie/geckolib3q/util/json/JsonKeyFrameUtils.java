@@ -29,7 +29,6 @@ import software.bernie.geckolib3q.util.AnimationUtils;
  * Helper class to convert json to keyframes
  */
 public class JsonKeyFrameUtils {
-
 	private static VectorKeyFrameList<KeyFrame<IValue>> convertJson(List<Map.Entry<String, JsonElement>> element,
 			boolean isRotation, MolangParser parser) throws NumberFormatException, MolangException {
 		IValue previousXValue = null;

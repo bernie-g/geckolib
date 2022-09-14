@@ -1,28 +1,28 @@
 package software.bernie.example.client.renderer.entity;
 
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.mob.CreeperEntity;
-import net.minecraft.util.math.MathHelper;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Creeper;
 import software.bernie.example.client.model.entity.ReplacedCreeperModel;
 import software.bernie.example.entity.ReplacedCreeperEntity;
 import software.bernie.geckolib3q.renderers.geo.GeoReplacedEntityRenderer;
 
 public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedCreeperEntity> {
 
-	public ReplacedCreeperRenderer(EntityRendererFactory.Context ctx) {
+	public ReplacedCreeperRenderer(EntityRendererProvider.Context ctx) {
 		super(ctx, new ReplacedCreeperModel(), new ReplacedCreeperEntity());
 		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, this);
 	}
 
 	@Override
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, MatrixStack matrixStackIn,
-			float partialTickTime) {
-		CreeperEntity creeper = (CreeperEntity) entitylivingbaseIn;
-		float f = creeper.getClientFuseTime(partialTickTime);
-		float f1 = 1.0F + MathHelper.sin(f * 100.0F) * f * 0.01F;
-		f = MathHelper.clamp(f, 0.0F, 1.0F);
+	protected void preRenderCallback(LivingEntity entitylivingbaseIn, PoseStack matrixStackIn, float partialTickTime) {
+		Creeper creeper = (Creeper) entitylivingbaseIn;
+		float f = creeper.getSwelling(partialTickTime);
+		float f1 = 1.0F + Mth.sin(f * 100.0F) * f * 0.01F;
+		f = Mth.clamp(f, 0.0F, 1.0F);
 		f = f * f;
 		f = f * f;
 		float f2 = (1.0F + f * 0.4F) * f1;
@@ -32,8 +32,8 @@ public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<ReplacedC
 
 	@Override
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
-		CreeperEntity creeper = (CreeperEntity) livingEntityIn;
-		float f = creeper.getClientFuseTime(partialTicks);
-		return (int) (f * 10.0F) % 2 == 0 ? 0.0F : MathHelper.clamp(f, 0.5F, 1.0F);
+		Creeper creeper = (Creeper) livingEntityIn;
+		float f = creeper.getSwelling(partialTicks);
+		return (int) (f * 10.0F) % 2 == 0 ? 0.0F : Mth.clamp(f, 0.5F, 1.0F);
 	}
 }

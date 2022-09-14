@@ -2,12 +2,13 @@ package software.bernie.geckolib3q.renderers.geo.layer;
 
 import java.util.function.Function;
 
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3q.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3q.renderers.geo.GeoLayerRenderer;
@@ -21,13 +22,13 @@ import software.bernie.geckolib3q.renderers.geo.GeoLayerRenderer;
  */
 public abstract class AbstractLayerGeo<T extends LivingEntity & IAnimatable> extends GeoLayerRenderer<T> {
 
-	protected final Function<T, Identifier> funcGetCurrentTexture;
-	protected final Function<T, Identifier> funcGetCurrentModel;
+	protected final Function<T, ResourceLocation> funcGetCurrentTexture;
+	protected final Function<T, ResourceLocation> funcGetCurrentModel;
 
 	protected GeoEntityRenderer<T> geoRendererInstance;
 
-	public AbstractLayerGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> funcGetCurrentTexture,
-			Function<T, Identifier> funcGetCurrentModel) {
+	public AbstractLayerGeo(GeoEntityRenderer<T> renderer, Function<T, ResourceLocation> funcGetCurrentTexture,
+			Function<T, ResourceLocation> funcGetCurrentModel) {
 		super(renderer);
 		this.geoRendererInstance = renderer;
 		this.funcGetCurrentTexture = funcGetCurrentTexture;
@@ -37,15 +38,15 @@ public abstract class AbstractLayerGeo<T extends LivingEntity & IAnimatable> ext
 	/*
 	 * Utility method to force the renderer to re-render the model a second time
 	 */
-	protected void reRenderCurrentModelInRenderer(T entity, float partialTicks, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int packedLightIn, RenderLayer cameo) {
-		matrixStackIn.push();
+	protected void reRenderCurrentModelInRenderer(T entity, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn, RenderType cameo) {
+		matrixStackIn.pushPose();
 
 		this.getRenderer().render(this.getEntityModel().getModel(this.funcGetCurrentModel.apply(entity)), entity,
 				partialTicks, cameo, matrixStackIn, bufferIn, bufferIn.getBuffer(cameo), packedLightIn,
-				OverlayTexture.DEFAULT_UV, 1F, 1F, 1F, 1F);
+				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 
-		matrixStackIn.pop();
+		matrixStackIn.popPose();
 		// 1.12.2
 		/*
 		 * this.getRenderer().render(

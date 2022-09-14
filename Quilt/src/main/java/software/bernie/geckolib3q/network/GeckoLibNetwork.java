@@ -7,18 +7,18 @@ import java.util.function.Supplier;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib3q.GeckoLib;
 
 public class GeckoLibNetwork {
 	private static final Map<String, Supplier<ISyncable>> SYNCABLES = new HashMap<>();
-	public static final Identifier SYNCABLE = new Identifier(GeckoLib.ModID, "syncable");
+	public static final ResourceLocation SYNCABLE = new ResourceLocation(GeckoLib.ModID, "syncable");
 
-	public static void syncAnimation(PlayerEntity target, ISyncable syncable, int id, int state) {
-		if (target.world.isClient) {
+	public static void syncAnimation(Player target, ISyncable syncable, int id, int state) {
+		if (target.level.isClientSide()) {
 			throw new IllegalArgumentException("Only the server can request animation syncs!");
 		}
 		final String key = syncable.getSyncKey();
@@ -26,11 +26,11 @@ public class GeckoLibNetwork {
 			throw new IllegalArgumentException("Syncable not registered for " + key);
 		}
 
-		PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
+		FriendlyByteBuf buf = new FriendlyByteBuf(Unpooled.buffer());
 
 		encodeSyncPacket(buf, key, id, state);
 
-		ServerPlayNetworking.send((ServerPlayerEntity) target, SYNCABLE, buf);
+		ServerPlayNetworking.send((ServerPlayer) target, SYNCABLE, buf);
 	}
 
 	public static ISyncable getSyncable(String key) {
@@ -47,8 +47,8 @@ public class GeckoLibNetwork {
 		GeckoLib.LOGGER.debug("Registered syncable for " + key);
 	}
 
-	public static void encodeSyncPacket(PacketByteBuf buf, String key, int id, int state) {
-		buf.writeString(key);
+	public static void encodeSyncPacket(FriendlyByteBuf buf, String key, int id, int state) {
+		buf.writeUtf(key);
 		buf.writeVarInt(id);
 		buf.writeVarInt(state);
 	}

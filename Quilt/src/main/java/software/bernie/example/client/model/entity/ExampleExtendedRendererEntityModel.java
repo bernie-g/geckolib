@@ -1,20 +1,20 @@
 package software.bernie.example.client.model.entity;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3q.GeckoLib;
 import software.bernie.geckolib3q.model.AnimatedGeoModel;
 
 public class ExampleExtendedRendererEntityModel<T extends LivingEntity & IAnimatable> extends AnimatedGeoModel<T> {
 
-	protected static final Identifier ANIMATION_RESLOC = new Identifier(GeckoLib.ModID,
+	protected static final ResourceLocation ANIMATION_RESLOC = new ResourceLocation(GeckoLib.ModID,
 			"animations/extendedrendererentity.animation.json");
-	protected final Identifier MODEL_RESLOC;
-	protected final Identifier TEXTURE_DEFAULT;
+	protected final ResourceLocation MODEL_RESLOC;
+	protected final ResourceLocation TEXTURE_DEFAULT;
 	protected final String ENTITY_REGISTRY_PATH_NAME;
 
-	public ExampleExtendedRendererEntityModel(Identifier model, Identifier textureDefault,
+	public ExampleExtendedRendererEntityModel(ResourceLocation model, ResourceLocation textureDefault,
 			String entityName) {
 		super();
 		this.MODEL_RESLOC = model;
@@ -23,17 +23,17 @@ public class ExampleExtendedRendererEntityModel<T extends LivingEntity & IAnimat
 	}
 
 	@Override
-	public Identifier getAnimationResource(T animatable) {
+	public ResourceLocation getAnimationResource(T animatable) {
 		return ANIMATION_RESLOC;
 	}
 
 	@Override
-	public Identifier getModelResource(T object) {
+	public ResourceLocation getModelResource(T object) {
 		return MODEL_RESLOC;
 	}
 
 	@Override
-	public Identifier getTextureResource(T object) {
+	public ResourceLocation getTextureResource(T object) {
 		return TEXTURE_DEFAULT;
 	}
 

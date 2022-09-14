@@ -1,16 +1,16 @@
 package software.bernie.example.entity;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
@@ -21,18 +21,17 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IAnimationTickable {
+public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAnimationTickable {
 	AnimationFactory factory = new AnimationFactory(this);
 	private boolean isAnimating = false;
 
-	public GeoExampleEntity(EntityType<? extends PathAwareEntity> type, World worldIn) {
+	public GeoExampleEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {
 		super(type, worldIn);
-		this.ignoreCameraFrustum = true;
 	}
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (this.isAnimating) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", true));
+			event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", false).addAnimation("animation.bat.idle", false));
 		} else {
 			event.getController().clearAnimationCache();
 			return PlayState.STOP;
@@ -41,8 +40,8 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 	}
 
 	@Override
-	public ActionResult interactAt(PlayerEntity player, Vec3d hitPos, Hand hand) {
-		if (hand == Hand.MAIN_HAND) {
+	public InteractionResult interactAt(Player player, Vec3 hitPos, InteractionHand hand) {
+		if (hand == InteractionHand.MAIN_HAND) {
 			this.isAnimating = !this.isAnimating;
 		}
 		return super.interactAt(player, hitPos, hand);
@@ -50,15 +49,16 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0, this::predicate);
+		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0,
+				this::predicate);
 		controller.registerCustomInstructionListener(this::customListener);
 		data.addAnimationController(controller);
 	}
 
 	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
-		final ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		final LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
-			player.sendMessage(new LiteralText("KeyFraming"), true);
+			player.displayClientMessage(new TextComponent("KeyFraming"), true);
 		}
 	}
 
@@ -68,13 +68,13 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 	}
 
 	@Override
-	protected void initGoals() {
-		this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
-		super.initGoals();
+	protected void registerGoals() {
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		super.registerGoals();
 	}
 
 	@Override
 	public int tickTimer() {
-		return age;
+		return tickCount;
 	}
 }

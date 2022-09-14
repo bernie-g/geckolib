@@ -3,8 +3,8 @@ package software.bernie.geckolib3q.util;
 import java.util.HashMap;
 import java.util.function.BiConsumer;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ArmorItem;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ArmorItem;
 
 public class GeoArmorRegistryImpl implements GeoArmorRendererRegistry {
 	private static HashMap<Class<? extends ArmorItem>, GeoArmorRendererFactory<?>> map = new HashMap<>();
@@ -19,4 +19,5 @@ public class GeoArmorRegistryImpl implements GeoArmorRendererRegistry {
 		map.forEach(vanillaHandler);
 		handler = vanillaHandler;
 	}
+
 }

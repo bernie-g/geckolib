@@ -5,7 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import net.minecraft.util.math.Vec3f;
+import com.mojang.math.Vector3f;
+
 import software.bernie.geckolib3q.geo.raw.pojo.Bone;
 import software.bernie.geckolib3q.geo.raw.pojo.Cube;
 import software.bernie.geckolib3q.geo.raw.pojo.ModelProperties;
@@ -45,9 +46,9 @@ public class GeoBuilder implements IGeoBuilder {
 		GeoBone geoBone = new GeoBone();
 
 		Bone rawBone = bone.selfBone;
-		Vec3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
-		Vec3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
-		rotation.multiplyComponentwise(-1, -1, 1);
+		Vector3f rotation = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getRotation()));
+		Vector3f pivot = VectorUtils.convertDoubleToFloat(VectorUtils.fromArray(rawBone.getPivot()));
+		rotation.mul(-1, -1, 1);
 
 		geoBone.mirror = rawBone.getMirror();
 		geoBone.dontRender = rawBone.getNeverRender();
@@ -56,13 +57,13 @@ public class GeoBuilder implements IGeoBuilder {
 		geoBone.parent = parent;
 		geoBone.setModelRendererName(rawBone.getName());
 
-		geoBone.setRotationX((float) Math.toRadians(rotation.getX()));
-		geoBone.setRotationY((float) Math.toRadians(rotation.getY()));
-		geoBone.setRotationZ((float) Math.toRadians(rotation.getZ()));
+		geoBone.setRotationX((float) Math.toRadians(rotation.x()));
+		geoBone.setRotationY((float) Math.toRadians(rotation.y()));
+		geoBone.setRotationZ((float) Math.toRadians(rotation.z()));
 
-		geoBone.pivotX = -pivot.getX();
-		geoBone.pivotY = pivot.getY();
-		geoBone.pivotZ = pivot.getZ();
+		geoBone.pivotX = -pivot.x();
+		geoBone.pivotY = pivot.y();
+		geoBone.pivotZ = pivot.z();
 
 		if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
 			for (Cube cube : rawBone.getCubes()) {

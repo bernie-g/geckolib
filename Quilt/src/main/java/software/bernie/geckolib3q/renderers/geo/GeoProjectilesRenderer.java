@@ -2,17 +2,19 @@ package software.bernie.geckolib3q.renderers.geo;
 
 import java.util.Collections;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -38,21 +40,19 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	public GeoProjectilesRenderer(EntityRendererFactory.Context ctx, AnimatedGeoModel<T> modelProvider) {
+	public GeoProjectilesRenderer(EntityRendererProvider.Context ctx, AnimatedGeoModel<T> modelProvider) {
 		super(ctx);
 		this.modelProvider = modelProvider;
 	}
 
 	@Override
-	public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int packedLightIn) {
+	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
+			MultiBufferSource bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(entityIn));
-		matrixStackIn.push();
-		matrixStackIn.multiply(Vec3f.POSITIVE_Y
-				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevYaw, entityIn.getYaw()) - 90.0F));
-		matrixStackIn.multiply(Vec3f.POSITIVE_Z
-				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevPitch, entityIn.getPitch())));
-		matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(45.0F));
+		matrixStackIn.pushPose();
+		matrixStackIn.mulPose(
+				Vector3f.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
+		matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
 
 		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
@@ -62,20 +62,21 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
 		}
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entityIn));
+		RenderSystem.setShaderTexture(0, getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
-				getTexture(entityIn));
-		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getAlpha() / 255);
-		matrixStackIn.pop();
+		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
+				getTextureLocation(entityIn));
+		if (!entityIn.isInvisibleTo(Minecraft.getInstance().player))
+			render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
+					getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
+					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+					(float) renderColor.getAlpha() / 255);
+		matrixStackIn.popPose();
 		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
 	}
 
 	public static int getPackedOverlay(Entity livingEntityIn, float uIn) {
-		return OverlayTexture.getUv(OverlayTexture.getU(uIn), false);
+		return OverlayTexture.pack(OverlayTexture.u(uIn), OverlayTexture.v(false));
 	}
 
 	@Override
@@ -84,18 +85,18 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public Identifier getTextureLocation(T instance) {
+	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureResource(instance);
 	}
 
 	@Override
-	public Identifier getTexture(T entity) {
-		return getTextureLocation(entity);
+	public ResourceLocation getTextureResource(T entity) {
+		return this.modelProvider.getTextureResource(entity);
 	}
 
 	@Override
 	public Integer getUniqueID(T animatable) {
-		return animatable.getUuid().hashCode();
+		return animatable.getUUID().hashCode();
 	}
 
 }

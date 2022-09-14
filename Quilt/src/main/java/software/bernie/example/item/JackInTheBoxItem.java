@@ -2,16 +2,16 @@ package software.bernie.example.item;
 
 import org.quiltmc.qsl.networking.api.PlayerLookup;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.text.LiteralText;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -31,7 +31,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	private static final String controllerName = "popupController";
 	private static final int ANIM_OPEN = 0;
 
-	public JackInTheBoxItem(Settings properties) {
+	public JackInTheBoxItem(Properties properties) {
 		super(properties);
 		GeckoLibNetwork.registerSyncable(this);
 	}
@@ -60,7 +60,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		// sound to the current player.
 		// The music is synced with the animation so the box opens as soon as the music
 		// plays the box opening sound
-		ClientPlayerEntity player = MinecraftClient.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		player.playSound(SoundRegistry.JACK_MUSIC, 1, 1);
 	}
 
@@ -70,11 +70,11 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 	}
 
 	@Override
-	public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-		if (!world.isClient) {
-			final int id = GeckoLibUtil.guaranteeIDForStack(user.getStackInHand(hand), (ServerWorld) world);
+	public InteractionResultHolder<ItemStack> use(Level world, Player user, InteractionHand hand) {
+		if (!world.isClientSide()) {
+			final int id = GeckoLibUtil.guaranteeIDForStack(user.getItemInHand(hand), (ServerLevel) world);
 			GeckoLibNetwork.syncAnimation(user, this, id, ANIM_OPEN);
-			for (PlayerEntity otherPlayer : PlayerLookup.tracking(user)) {
+			for (Player otherPlayer : PlayerLookup.tracking(user)) {
 				GeckoLibNetwork.syncAnimation(otherPlayer, this, id, ANIM_OPEN);
 			}
 		}
@@ -89,9 +89,9 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, controllerName);
 
 			if (controller.getAnimationState() == AnimationState.Stopped) {
-				final ClientPlayerEntity player = MinecraftClient.getInstance().player;
+				final LocalPlayer player = Minecraft.getInstance().player;
 				if (player != null) {
-					player.sendMessage(new LiteralText("Opening the jack in the box!"), true);
+					player.displayClientMessage(new TextComponent("Opening the jack in the box!"), true);
 				}
 				// If you don't do this, the popup animation will only play once because the
 				// animation will be cached.

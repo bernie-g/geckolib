@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -11,41 +12,41 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
 
-import net.minecraft.block.AbstractSkullBlock;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SkullBlock;
-import net.minecraft.block.entity.SkullBlockEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.model.ModelPart.Cuboid;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.block.entity.SkullBlockEntityModel;
-import net.minecraft.client.render.block.entity.SkullBlockEntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.LivingEntityRenderer;
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.render.item.ItemRenderer;
-import net.minecraft.client.render.model.json.ModelTransformation.Mode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.DyeableArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtHelper;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Quaternion;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.SkullModelBase;
+import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.ModelPart.Cube;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AbstractSkullBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3q.ArmorRenderingRegistryImpl;
@@ -80,7 +81,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected float widthScale;
 	protected float heightScale;
 
-	protected final Queue<Pair<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
+	protected final Queue<Tuple<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
@@ -95,12 +96,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
-	protected ExtendedGeoEntityRenderer(EntityRendererFactory.Context renderManager,
+	protected ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager,
 			AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);
 	}
 
-	protected ExtendedGeoEntityRenderer(EntityRendererFactory.Context renderManager, AnimatedGeoModel<T> modelProvider,
+	protected ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider,
 			float widthScale, float heightScale, float shadowSize) {
 		super(renderManager, modelProvider);
 		this.shadowRadius = shadowSize;
@@ -110,35 +111,35 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	// Entrypoint for rendering, calls everything else
 	@Override
-	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider bufferIn, int packedLightIn) {
+	public void render(T entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
+			int packedLightIn) {
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
 
 	// Yes, this is necessary to be done after everything else, otherwise it will
 	// mess up the texture cause the rendertypebuffer will be modified
-	protected void renderHeads(MatrixStack stack, VertexConsumerProvider buffer, int packedLightIn) {
+	protected void renderHeads(PoseStack stack, MultiBufferSource buffer, int packedLightIn) {
 		while (!this.HEAD_QUEUE.isEmpty()) {
-			Pair<GeoBone, ItemStack> entry = this.HEAD_QUEUE.poll();
+			Tuple<GeoBone, ItemStack> entry = this.HEAD_QUEUE.poll();
 
-			GeoBone bone = entry.getLeft();
-			ItemStack itemStack = entry.getRight();
+			GeoBone bone = entry.getA();
+			ItemStack itemStack = entry.getB();
 
-			stack.push();
+			stack.pushPose();
 
 			this.moveAndRotateMatrixToMatchBone(stack, bone);
 
 			GameProfile skullOwnerProfile = null;
-			if (itemStack.hasNbt()) {
-				NbtCompound compoundnbt = itemStack.getNbt();
+			if (itemStack.hasTag()) {
+				CompoundTag compoundnbt = itemStack.getTag();
 				if (compoundnbt.contains("SkullOwner", 10)) {
-					skullOwnerProfile = NbtHelper.toGameProfile(compoundnbt.getCompound("SkullOwner"));
+					skullOwnerProfile = NbtUtils.readGameProfile(compoundnbt.getCompound("SkullOwner"));
 				} else if (compoundnbt.contains("SkullOwner", 8)) {
 					String s = compoundnbt.getString("SkullOwner");
 					if (!StringUtils.isBlank(s)) {
-						SkullBlockEntity.loadProperties(new GameProfile(null, s), (p_172560_) -> {
-							compoundnbt.put("SkullOwner", NbtHelper.writeGameProfile(new NbtCompound(), p_172560_));
+						SkullBlockEntity.updateGameprofile(new GameProfile((UUID) null, s), (p_172560_) -> {
+							compoundnbt.put("SkullOwner", NbtUtils.writeGameProfile(new CompoundTag(), p_172560_));
 						});
 					}
 				}
@@ -150,23 +151,23 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				GeoCube firstCube = bone.childCubes.get(0);
 				if (firstCube != null) {
 					// Calculate scale in relation to a vanilla head (8x8x8 units)
-					sx = firstCube.size.getX() / 8;
-					sy = firstCube.size.getY() / 8;
-					sz = firstCube.size.getZ() / 8;
+					sx = firstCube.size.x() / 8;
+					sy = firstCube.size.y() / 8;
+					sz = firstCube.size.z() / 8;
 				}
 			} catch (IndexOutOfBoundsException ioobe) {
 				// Ignore
 			}
 			stack.scale(1.1875F * sx, 1.1875F * sy, 1.1875F * sz);
 			stack.translate(-0.5, 0, -0.5);
-			SkullBlock.SkullType skullType = ((AbstractSkullBlock) ((BlockItem) itemStack.getItem()).getBlock())
-					.getSkullType();
-			SkullBlockEntityModel skullmodelbase = SkullBlockEntityRenderer
-					.getModels(MinecraftClient.getInstance().getEntityModelLoader()).get(skullType);
-			RenderLayer rendertype = SkullBlockEntityRenderer.getRenderLayer(skullType, skullOwnerProfile);
-			SkullBlockEntityRenderer.renderSkull((Direction) null, 0.0F, 0.0F, stack, buffer, packedLightIn,
-					skullmodelbase, rendertype);
-			stack.pop();
+			SkullBlock.Type skullblock$type = ((AbstractSkullBlock) ((BlockItem) itemStack.getItem()).getBlock())
+					.getType();
+			SkullModelBase skullmodelbase = SkullBlockRenderer
+					.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(skullblock$type);
+			RenderType rendertype = SkullBlockRenderer.getRenderType(skullblock$type, skullOwnerProfile);
+			SkullBlockRenderer.renderSkull((Direction) null, 0.0F, 0.0F, stack, buffer, packedLightIn, skullmodelbase,
+					rendertype);
+			stack.popPose();
 
 		}
 		;
@@ -174,13 +175,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	// Rendercall to render the model itself
 	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack PoseStackIn,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		super.render(model, animatable, partialTicks, type, PoseStackIn, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
 		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		this.renderHeads(matrixStackIn, renderTypeBuffer, packedLightIn);
+		this.renderHeads(PoseStackIn, renderTypeBuffer, packedLightIn);
 	}
 
 	protected float getWidthScale(T entity) {
@@ -192,7 +193,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	@Override
-	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+	public void renderEarly(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
 		this.rtb = renderTypeBuffer;
@@ -206,15 +207,15 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	@Override
-	public Identifier getTextureLocation(T entity) {
+	public ResourceLocation getTextureLocation(T entity) {
 		return this.modelProvider.getTextureResource(entity);
 	}
 
 	private T currentEntityBeingRendered;
-	private VertexConsumerProvider rtb;
+	private MultiBufferSource rtb;
 
 	@Override
-	public void renderLate(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
+	public void renderLate(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
 		super.renderLate(animatable, stackIn, ticks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red,
@@ -224,40 +225,40 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.currentPartialTicks = partialTicks;
 	}
 
-	protected final BipedEntityModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedEntityModel<LivingEntity>(
-			MinecraftClient.getInstance().getEntityModelLoader().getModelPart(EntityModelLayers.PLAYER_INNER_ARMOR));
-	protected final BipedEntityModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedEntityModel<LivingEntity>(
-			MinecraftClient.getInstance().getEntityModelLoader().getModelPart(EntityModelLayers.PLAYER_OUTER_ARMOR));
+	protected final HumanoidModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new HumanoidModel<LivingEntity>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
+	protected final HumanoidModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new HumanoidModel<LivingEntity>(
+			Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
 
 	protected abstract boolean isArmorBone(final GeoBone bone);
 
 	private VertexConsumer currentVertexBuilderInUse;
 	private float currentPartialTicks;
 
-	protected void moveAndRotateMatrixToMatchBone(MatrixStack stack, GeoBone bone) {
+	protected void moveAndRotateMatrixToMatchBone(PoseStack stack, GeoBone bone) {
 		// First, let's move our render position to the pivot point...
 		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPivotZ() / 16);
 
-		stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(bone.getRotationX()));
-		stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(bone.getRotationY()));
-		stack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(bone.getRotationZ()));
+		stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
+		stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
+		stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
 	}
 
-	protected void handleArmorRenderingForBone(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn,
-			int packedLightIn, int packedOverlayIn, Identifier currentTexture) {
+	protected void handleArmorRenderingForBone(GeoBone bone, PoseStack stack, VertexConsumer bufferIn,
+			int packedLightIn, int packedOverlayIn, ResourceLocation currentTexture) {
 		final ItemStack armorForBone = this.getArmorForBone(bone.getName(), currentEntityBeingRendered);
 		final EquipmentSlot boneSlot = this.getEquipmentSlotForArmorBone(bone.getName(), currentEntityBeingRendered);
 		if (armorForBone != null && armorForBone.getItem() instanceof ArmorItem
 				&& armorForBone.getItem() instanceof ArmorItem && boneSlot != null) {
 			final ArmorItem armorItem = (ArmorItem) armorForBone.getItem();
-			final BipedEntityModel<?> armorModel = (BipedEntityModel<?>) ArmorRenderingRegistryImpl.getArmorModel(
+			final HumanoidModel<?> armorModel = (HumanoidModel<?>) ArmorRenderingRegistryImpl.getArmorModel(
 					currentEntityBeingRendered, armorForBone, boneSlot,
 					boneSlot == EquipmentSlot.LEGS ? DEFAULT_BIPED_ARMOR_MODEL_INNER : DEFAULT_BIPED_ARMOR_MODEL_OUTER);
 			if (armorModel != null) {
 				ModelPart sourceLimb = this.getArmorPartForBone(bone.getName(), armorModel);
-				List<Cuboid> cubeList = sourceLimb.cuboids;
+				List<Cube> cubeList = sourceLimb.cubes;
 				if (sourceLimb != null && cubeList != null && !cubeList.isEmpty()) {
-					stack.push();
+					stack.pushPose();
 					if (IAnimatable.class.isAssignableFrom(armorItem.getClass())) {
 						final GeoArmorRenderer<? extends ArmorItem> geoArmorRenderer = GeoArmorRenderer
 								.getRenderer(armorItem.getClass());
@@ -269,35 +270,33 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 						// Just to be safe, it does some modelprovider stuff in there too
 						geoArmorRenderer.applySlot(boneSlot);
 						this.handleGeoArmorBoneVisibility(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
-						VertexConsumer ivb = ItemRenderer
-								.getArmorGlintConsumer(rtb,
-										RenderLayer.getArmorCutoutNoCull(GeoArmorRenderer
-												.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)),
-										false, armorForBone.hasGlint());
+						VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(
+								GeoArmorRenderer.getRenderer(armorItem.getClass()).getTextureLocation(armorItem)),
+								false, armorForBone.hasFoil());
 
 						geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
 					} else {
 						stack.scale(-1, -1, 1);
 						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
-						Identifier armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
+						ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
 								boneSlot, null);
 						this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack);
 						this.renderArmorOfItem(armorItem, armorForBone, boneSlot, armorResource, sourceLimb, stack,
 								packedLightIn, packedOverlayIn);
 					}
-					stack.pop();
+					stack.popPose();
 
-					bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(currentTexture));
+					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 				}
 			}
 		} else if (armorForBone.getItem() instanceof BlockItem
 				&& ((BlockItem) armorForBone.getItem()).getBlock() instanceof AbstractSkullBlock) {
-			this.HEAD_QUEUE.add(new Pair<>(bone, armorForBone));
+			this.HEAD_QUEUE.add(new Tuple<>(bone, armorForBone));
 		}
 	}
 
 	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends ArmorItem> geoArmorRenderer,
-			ModelPart sourceLimb, BipedEntityModel<?> armorModel, EquipmentSlot slot) {
+			ModelPart sourceLimb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
 		IBone gbHead = geoArmorRenderer.getAndHideBone(geoArmorRenderer.headBone);
 		IBone gbBody = geoArmorRenderer.getAndHideBone(geoArmorRenderer.bodyBone);
 		IBone gbArmL = geoArmorRenderer.getAndHideBone(geoArmorRenderer.leftArmBone);
@@ -342,7 +341,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	protected void renderArmorOfItem(ArmorItem armorItem, ItemStack armorForBone, EquipmentSlot boneSlot,
-			Identifier armorResource, ModelPart sourceLimb, MatrixStack stack, int packedLightIn, int packedOverlayIn) {
+			ResourceLocation armorResource, ModelPart sourceLimb, PoseStack stack, int packedLightIn,
+			int packedOverlayIn) {
 		if (armorItem instanceof DyeableArmorItem) {
 			int i = ((DyeableArmorItem) armorItem).getColor(armorForBone);
 			float r = (float) (i >> 16 & 255) / 255.0F;
@@ -357,18 +357,19 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 	}
 
-	protected void prepareArmorPositionAndScale(GeoBone bone, List<Cuboid> cubeList, ModelPart sourceLimb,
-			MatrixStack stack) {
+	protected void prepareArmorPositionAndScale(GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
+			PoseStack stack) {
 		prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, false, false);
 	}
 
-	protected void prepareArmorPositionAndScale(GeoBone bone, List<Cuboid> cubeList, ModelPart sourceLimb,
-			MatrixStack stack, boolean geoArmor, boolean modMatrixRot) {
+	protected void prepareArmorPositionAndScale(GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
+			PoseStack stack, boolean geoArmor, boolean modMatrixRot) {
 		GeoCube firstCube = bone.childCubes.get(0);
-		final Cuboid armorCube = cubeList.get(0);
-		final float targetSizeX = firstCube.size.getX();
-		final float targetSizeY = firstCube.size.getY();
-		final float targetSizeZ = firstCube.size.getZ();
+		final Cube armorCube = cubeList.get(0);
+
+		final float targetSizeX = firstCube.size.x();
+		final float targetSizeY = firstCube.size.y();
+		final float targetSizeZ = firstCube.size.z();
 
 		final float sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
 		final float sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
@@ -382,17 +383,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		// when the sizes are different
 		// Modifications of X and Z doon't seem to be necessary here, so let's ignore
 		// them. For now.
-		sourceLimb.setPivot(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
+		sourceLimb.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
 				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
-		sourceLimb.pitch = -bone.getRotationX();
-		sourceLimb.yaw = -bone.getRotationY();
-		sourceLimb.roll = bone.getRotationZ();
 		if (!geoArmor) {
-			sourceLimb.pitch = -bone.getRotationX();
-			sourceLimb.yaw = -bone.getRotationY();
-			sourceLimb.roll = bone.getRotationZ();
+			sourceLimb.xRot = -bone.getRotationX();
+			sourceLimb.yRot = -bone.getRotationY();
+			sourceLimb.zRot = bone.getRotationZ();
 		} else {
 			// All those *= 2 calls ARE necessary, otherwise the geo armor will apply
 			// rotations twice, so to have it only applied one time in the correct direction
@@ -416,13 +414,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				yRot = (float) Math.toRadians(yRot);
 				zRot = (float) Math.toRadians(zRot);
 
-				stack.multiply(new Quaternion(0, 0, zRot, false));
-				stack.multiply(new Quaternion(0, yRot, 0, false));
-				stack.multiply(new Quaternion(xRot, 0, 0, false));
+				stack.mulPose(new Quaternion(0, 0, zRot, false));
+				stack.mulPose(new Quaternion(0, yRot, 0, false));
+				stack.mulPose(new Quaternion(xRot, 0, 0, false));
 			} else {
-				sourceLimb.pitch = xRot;
-				sourceLimb.yaw = yRot;
-				sourceLimb.roll = zRot;
+				sourceLimb.xRot = xRot;
+				sourceLimb.yRot = yRot;
+				sourceLimb.zRot = zRot;
 			}
 		}
 
@@ -430,22 +428,22 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		Identifier tfb = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
+		ResourceLocation tfb = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
 		boolean customTextureMarker = tfb != null;
-		Identifier currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
+		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
 		if (customTextureMarker) {
 			currentTexture = tfb;
 			if (this.rtb != null) {
-				RenderLayer rt = this.getRenderTypeForBone(bone, this.currentEntityBeingRendered,
+				RenderType rt = this.getRenderTypeForBone(bone, this.currentEntityBeingRendered,
 						this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, currentTexture);
 				bufferIn = this.rtb.getBuffer(rt);
 			}
 		}
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
-			stack.push();
+			stack.pushPose();
 			// Render armor
 			if (this.isArmorBone(bone)) {
 				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
@@ -454,10 +452,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
 				if (boneItem != null || boneBlock != null) {
 					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn);
-					bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(currentTexture));
+					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 				}
 			}
-			stack.pop();
+			stack.popPose();
 		}
 		this.customBoneSpecificRenderingHook(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
 				alpha, customTextureMarker, currentTexture);
@@ -473,12 +471,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * Gets called after armor and item rendering but in every render cycle. This
 	 * serves as a hook for modders to include their own bone specific rendering
 	 */
-	protected void customBoneSpecificRenderingHook(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn,
+	protected void customBoneSpecificRenderingHook(GeoBone bone, PoseStack stack, VertexConsumer bufferIn,
 			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha,
-			boolean customTextureMarker, Identifier currentTexture) {
+			boolean customTextureMarker, ResourceLocation currentTexture) {
 	}
 
-	protected void handleItemAndBlockBoneRendering(MatrixStack stack, GeoBone bone, @Nullable ItemStack boneItem,
+	protected void handleItemAndBlockBoneRendering(PoseStack stack, GeoBone bone, @Nullable ItemStack boneItem,
 			@Nullable BlockState boneBlock, int packedLightIn) {
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
@@ -504,26 +502,27 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 	}
 
-	protected void renderItemStack(MatrixStack stack, VertexConsumerProvider rtb, int packedLightIn, ItemStack boneItem,
+	protected void renderItemStack(PoseStack stack, MultiBufferSource rtb, int packedLightIn, ItemStack boneItem,
 			String boneName) {
-		MinecraftClient.getInstance().getItemRenderer().renderItem(currentEntityBeingRendered, boneItem,
+		Minecraft.getInstance().getItemRenderer().renderStatic(currentEntityBeingRendered, boneItem,
 				this.getCameraTransformForItemAtBone(boneItem, boneName), false, stack, rtb, null, packedLightIn,
-				LivingEntityRenderer.getOverlay(currentEntityBeingRendered, 0.0F), currentEntityBeingRendered.getId());
+				LivingEntityRenderer.getOverlayCoords(currentEntityBeingRendered, 0.0F),
+				currentEntityBeingRendered.getId());
 	}
 
-	private RenderLayer getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
-			MatrixStack stack, VertexConsumer bufferIn, VertexConsumerProvider currentRenderTypeBufferInUse2,
-			int packedLightIn, Identifier currentTexture) {
+	private RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
+			PoseStack stack, VertexConsumer bufferIn, MultiBufferSource currentRenderTypeBufferInUse2,
+			int packedLightIn, ResourceLocation currentTexture) {
 		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack,
 				currentRenderTypeBufferInUse2, bufferIn, packedLightIn, currentTexture);
 	}
 
 	// Internal use only. Basically renders the passed "part" of the armor model on
 	// a pre-setup location
-	protected void renderArmorPart(MatrixStack stack, ModelPart sourceLimb, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha, ItemStack armorForBone, Identifier armorResource) {
-		VertexConsumer ivb = ItemRenderer.getArmorGlintConsumer(rtb, RenderLayer.getArmorCutoutNoCull(armorResource),
-				false, armorForBone.hasGlint());
+	protected void renderArmorPart(PoseStack stack, ModelPart sourceLimb, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha, ItemStack armorForBone, ResourceLocation armorResource) {
+		VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(armorResource), false,
+				armorForBone.hasFoil());
 		sourceLimb.render(stack, ivb, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
 
@@ -532,20 +531,19 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * i haven't tested it, so, maybe it works...
 	 */
 	@Nullable
-	protected abstract Identifier getTextureForBone(String boneName, T currentEntity);
+	protected abstract ResourceLocation getTextureForBone(String boneName, T currentEntity);
 
-	protected void renderBlock(MatrixStack matrixStack, VertexConsumerProvider rtb, int packedLightIn,
-			BlockState iBlockState) {
-		if (iBlockState.getRenderType() != BlockRenderType.MODEL) {
+	protected void renderBlock(PoseStack PoseStack, MultiBufferSource rtb, int packedLightIn, BlockState iBlockState) {
+		if (iBlockState.getRenderShape() != RenderShape.MODEL) {
 			return;
 		}
-		matrixStack.push();
-		matrixStack.translate(-0.25F, -0.25F, -0.25F);
-		matrixStack.scale(0.5F, 0.5F, 0.5F);
+		PoseStack.pushPose();
+		PoseStack.translate(-0.25F, -0.25F, -0.25F);
+		PoseStack.scale(0.5F, 0.5F, 0.5F);
 
-		MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(iBlockState, matrixStack, rtb,
-				packedLightIn, packedLightIn);
-		matrixStack.pop();
+		Minecraft.getInstance().getBlockRenderer().renderSingleBlock(iBlockState, PoseStack, rtb, packedLightIn,
+				packedLightIn);
+		PoseStack.popPose();
 	}
 
 	/*
@@ -554,7 +552,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Nullable
 	protected abstract ItemStack getHeldItemForBone(String boneName, T currentEntity);
 
-	protected abstract Mode getCameraTransformForItemAtBone(ItemStack boneItem, String boneName);
+	protected abstract TransformType getCameraTransformForItemAtBone(ItemStack boneItem, String boneName);
 
 	/*
 	 * Return null if there is no held block
@@ -562,16 +560,15 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Nullable
 	protected abstract BlockState getHeldBlockForBone(String boneName, T currentEntity);
 
-	protected abstract void preRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, T currentEntity,
+	protected abstract void preRenderItem(PoseStack PoseStack, ItemStack item, String boneName, T currentEntity,
 			IBone bone);
 
-	protected abstract void preRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, T currentEntity);
+	protected abstract void preRenderBlock(PoseStack PoseStack, BlockState block, String boneName, T currentEntity);
 
-	protected abstract void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, T currentEntity,
+	protected abstract void postRenderItem(PoseStack PoseStack, ItemStack item, String boneName, T currentEntity,
 			IBone bone);
 
-	protected abstract void postRenderBlock(MatrixStack matrixStack, BlockState block, String boneName,
-			T currentEntity);
+	protected abstract void postRenderBlock(PoseStack PoseStack, BlockState block, String boneName, T currentEntity);
 
 	/*
 	 * Return null, if there is no armor on this bone
@@ -588,7 +585,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	}
 
 	@Nullable
-	protected ModelPart getArmorPartForBone(String name, BipedEntityModel<?> armorModel) {
+	protected ModelPart getArmorPartForBone(String name, HumanoidModel<?> armorModel) {
 		return null;
 	}
 
@@ -601,11 +598,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * @param stack  ItemStack for the armor
 	 * @param slot   Slot ID that the item is in
 	 * @param type   Subtype, can be null or "overlay"
-	 * @return Identifier pointing at the armor's texture
+	 * @return ResourceLocation pointing at the armor's texture
 	 */
-	private static final Map<String, Identifier> ARMOR_TEXTURE_RES_MAP = Maps.newHashMap();
+	private static final Map<String, ResourceLocation> ARMOR_TEXTURE_RES_MAP = Maps.newHashMap();
 
-	protected Identifier getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type) {
+	protected ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type) {
 		ArmorItem item = (ArmorItem) stack.getItem();
 		String texture = item.getMaterial().getName();
 		String domain = "minecraft";
@@ -617,14 +614,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture,
 				(slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format("_%s", type));
 
-		Identifier Identifier = (Identifier) ARMOR_TEXTURE_RES_MAP.get(s1);
+		ResourceLocation ResourceLocation = (ResourceLocation) ARMOR_TEXTURE_RES_MAP.get(s1);
 
-		if (Identifier == null) {
-			Identifier = new Identifier(s1);
-			ARMOR_TEXTURE_RES_MAP.put(s1, Identifier);
+		if (ResourceLocation == null) {
+			ResourceLocation = new ResourceLocation(s1);
+			ARMOR_TEXTURE_RES_MAP.put(s1, ResourceLocation);
 		}
 
-		return Identifier;
+		return ResourceLocation;
 	}
 
 }

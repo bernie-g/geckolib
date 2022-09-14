@@ -1,48 +1,43 @@
 package software.bernie.example.block;
 
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.StateManager;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.material.Material;
 import software.bernie.example.registry.TileRegistry;
 
-import java.util.List;
-
-public class FertilizerBlock extends FacingBlock implements BlockEntityProvider {
+public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	public FertilizerBlock() {
-		super(AbstractBlock.Settings.of(Material.STONE).nonOpaque());
+		super(BlockBehaviour.Properties.of(Material.STONE).noOcclusion());
 	}
 
 	@Override
-	public BlockRenderType getRenderType(BlockState state) {
-		return BlockRenderType.ENTITYBLOCK_ANIMATED;
+	public RenderShape getRenderShape(BlockState state) {
+		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
-	protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Override
-	public BlockState getPlacementState(ItemPlacementContext context) {
-		return this.getDefaultState().with(FACING, context.getPlayerLookDirection().getOpposite());
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
+		return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
 	}
 
+	@Nullable
 	@Override
-	public void appendTooltip(ItemStack stack, @Nullable BlockView world, List<Text> tooltip, TooltipContext options) {
-		tooltip.add(new LiteralText("Turn on rain to see the fertilizer model!"));
-		super.appendTooltip(stack, world, tooltip, options);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return TileRegistry.FERTILIZER.create(pos, state);
 	}
-
-    @Nullable
-    @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-        return TileRegistry.FERTILIZER.instantiate(pos, state);
-    }
 }

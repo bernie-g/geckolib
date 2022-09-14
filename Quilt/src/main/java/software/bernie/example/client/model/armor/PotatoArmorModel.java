@@ -1,23 +1,23 @@
 package software.bernie.example.client.model.armor;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.PotatoArmorItem;
 import software.bernie.geckolib3q.GeckoLib;
 import software.bernie.geckolib3q.model.AnimatedGeoModel;
 
 public class PotatoArmorModel extends AnimatedGeoModel<PotatoArmorItem> {
 	@Override
-	public Identifier getModelResource(PotatoArmorItem object) {
-		return new Identifier(GeckoLib.ModID, "geo/potato_armor.geo.json");
+	public ResourceLocation getModelResource(PotatoArmorItem object) {
+		return new ResourceLocation(GeckoLib.ModID, "geo/potato_armor.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureResource(PotatoArmorItem object) {
-		return new Identifier(GeckoLib.ModID, "textures/item/potato_armor.png");
+	public ResourceLocation getTextureResource(PotatoArmorItem object) {
+		return new ResourceLocation(GeckoLib.ModID, "textures/item/potato_armor.png");
 	}
 
 	@Override
-	public Identifier getAnimationResource(PotatoArmorItem animatable) {
-		return new Identifier(GeckoLib.ModID, "animations/potato_armor.animation.json");
+	public ResourceLocation getAnimationResource(PotatoArmorItem animatable) {
+		return new ResourceLocation(GeckoLib.ModID, "animations/potato_armor.animation.json");
 	}
 }
