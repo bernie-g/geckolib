@@ -170,7 +170,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			stack.popPose();
 
 		}
-		;
 	}
 
 	// Rendercall to render the model itself
