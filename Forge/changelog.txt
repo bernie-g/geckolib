@@ -1,3 +1,6 @@
-v3.0.91
+v3.0.92
 
+- Changed to Parchment MC Mappings.
 - Code clean up
+- Backported Gecko Habitat
+- Added new start of new looping system, does not yet support hold on last frame but frame work is in place - DerToaster98
