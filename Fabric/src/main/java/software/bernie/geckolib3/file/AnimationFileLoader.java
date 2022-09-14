@@ -15,6 +15,7 @@ import software.bernie.geckolib3.util.json.JsonAnimationUtils;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +51,7 @@ public class AnimationFileLoader {
 
 	public static String getResourceAsString(Identifier location, ResourceManager manager) {
 		try (InputStream inputStream = manager.getResource(location).getInputStream()) {
-			return IOUtils.toString(inputStream);
+			return IOUtils.toString(inputStream, Charset.defaultCharset());
 		} catch (Exception e) {
 			String message = "Couldn't load " + location;
 			GeckoLib.LOGGER.error(message, e);

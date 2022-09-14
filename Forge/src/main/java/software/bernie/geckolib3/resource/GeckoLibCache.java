@@ -97,7 +97,12 @@ public class GeckoLibCache {
 				}, executor).thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
 						// Shouldn't be any duplicates as they are caught above
-						map.accept(entry.getKey(), entry.getValue().join());
+						// Skips moreplayermodels and customnpc namespaces as they use an animation
+						// folder as well
+						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels"))
+							if (!entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
+								if (!entry.getKey().getNamespace().equalsIgnoreCase("gunsrpg"))
+									map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
 	}
