@@ -1,6 +1,16 @@
 package software.bernie.example.block;
 
-import net.minecraft.block.*;
+import java.util.List;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.block.AbstractBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FacingBlock;
+import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemPlacementContext;
@@ -10,10 +20,7 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.BlockView;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.example.registry.TileRegistry;
-
-import java.util.List;
 
 public class FertilizerBlock extends FacingBlock implements BlockEntityProvider {
 	public FertilizerBlock() {

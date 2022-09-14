@@ -5,17 +5,20 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import software.bernie.example.block.tile.BotariumTileEntity;
-import software.bernie.example.client.model.tile.BotariumModel;
+import software.bernie.example.block.tile.HabitatTileEntity;
+import software.bernie.example.client.model.tile.HabitatModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
-public class BotariumTileRenderer extends GeoBlockRenderer<BotariumTileEntity> {
-	public BotariumTileRenderer() {
-		super(new BotariumModel());
+/**
+ * @author VoutVouniern Copyright (c) 03.06.2022 Developed by VoutVouniern
+ */
+public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
+	public HabitatTileRenderer() {
+		super(new HabitatModel());
 	}
 
 	@Override
-	public RenderLayer getRenderType(BotariumTileEntity animatable, float partialTicks, MatrixStack stack,
+	public RenderLayer getRenderType(HabitatTileEntity animatable, float partialTicks, MatrixStack stack,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			Identifier textureLocation) {
 		return RenderLayer.getEntityTranslucent(getTextureLocation(animatable));

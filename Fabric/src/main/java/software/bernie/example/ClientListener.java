@@ -37,8 +37,8 @@ import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.entity.RocketRender;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.item.PistolRender;
-import software.bernie.example.client.renderer.tile.BotariumTileRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
+import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
@@ -62,14 +62,14 @@ public class ClientListener implements ClientModInitializer {
 			GeoArmorRenderer.registerArmorRenderer(new PotatoArmorRenderer(), ItemRegistry.POTATO_HEAD,
 					ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_BOOTS);
 			EntityRendererRegistry.register(EntityRegistry.ROCKET, (ctx) -> new RocketRender(ctx));
-			BlockEntityRendererRegistry.register(TileRegistry.BOTARIUM_TILE,
-					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new BotariumTileRenderer());
+			BlockEntityRendererRegistry.register(TileRegistry.HABITAT_TILE,
+					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new HabitatTileRenderer());
 			BlockEntityRendererRegistry.register(TileRegistry.FERTILIZER,
 					(BlockEntityRendererFactory.Context rendererDispatcherIn) -> new FertilizerTileRenderer());
 
 			EntityRendererRegistry.register(EntityType.CREEPER, (ctx) -> new ReplacedCreeperRenderer(ctx));
 
-			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.BOTARIUM_BLOCK, RenderLayer.getCutout());
+			BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.HABITAT_BLOCK, RenderLayer.getCutout());
 			ClientPlayNetworking.registerGlobalReceiver(EntityPacket.ID, (client, handler, buf, responseSender) -> {
 				EntityPacketOnClient.onPacket(client, buf);
 			});
