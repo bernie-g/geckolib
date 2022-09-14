@@ -1,35 +1,33 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-
 buildscript {
     repositories {
         maven { url = "https://maven.minecraftforge.net/" }
-        maven { url = 'https://maven.parchmentmc.org' }
 		maven { url = "https://plugins.gradle.org/m2/" }
+        maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         jcenter()
-        gradlePluginPortal()
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath 'org.parchmentmc:librarian:1.+'
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'        
+        classpath 'org.parchmentmc:librarian:1.+'
         classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.johnrengelman.shadow'
 apply plugin: 'java'
 apply plugin: 'com.matthewprenger.cursegradle'
-apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle"
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: "com.modrinth.minotaur"
 
 import groovy.json.JsonSlurper
 import groovy.json.JsonOutput
 import com.modrinth.minotaur.dependencies.ModDependency
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -101,23 +99,23 @@ repositories {
     maven { url "https://maven.blamejared.com" }
     maven { url "https://minecraft.curseforge.com/api/maven/" }
     maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
-	maven { url "https://cfa2.cursemaven.com" }
+	maven { url "https://cursemaven.com" }
     maven { url "https://plugins.gradle.org/m2/" }
     mavenCentral()
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
-    library 'com.eliotlash.molang:molang:18'
-    library 'com.eliotlash.mclib:mclib:18'
+    library 'com.eliotlash.molang:molang:19'
+    library 'com.eliotlash.mclib:mclib:19'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
     library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    shade 'com.eliotlash.molang:molang:18'
-    shade 'com.eliotlash.mclib:mclib:18'
+    shade 'com.eliotlash.molang:molang:19'
+    shade 'com.eliotlash.mclib:mclib:19'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
