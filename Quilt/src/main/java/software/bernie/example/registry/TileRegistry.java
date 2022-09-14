@@ -2,8 +2,8 @@ package software.bernie.example.registry;
 
 import org.quiltmc.qsl.block.entity.api.QuiltBlockEntityTypeBuilder;
 
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.geckolib3.GeckoLib;

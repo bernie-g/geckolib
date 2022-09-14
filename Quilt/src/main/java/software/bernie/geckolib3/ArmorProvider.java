@@ -1,14 +1,15 @@
 package software.bernie.geckolib3;
 
-import net.minecraft.client.render.entity.model.BipedEntityModel;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
 
 public interface ArmorProvider {
-	BipedEntityModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
-			BipedEntityModel<LivingEntity> defaultModel);
+	HumanoidModel<LivingEntity> getArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
+			HumanoidModel<LivingEntity> defaultModel);
 
-	Identifier getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot, Identifier defaultTexture);
+	ResourceLocation getArmorTexture(LivingEntity entity, ItemStack stack, EquipmentSlot slot,
+			ResourceLocation defaultTexture);
 }

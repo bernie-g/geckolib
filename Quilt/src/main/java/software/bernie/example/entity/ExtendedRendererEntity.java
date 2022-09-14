@@ -2,24 +2,24 @@ package software.bernie.example.entity;
 
 import java.util.Optional;
 
-import net.minecraft.block.AbstractSkullBlock;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.ai.goal.LookAtEntityGoal;
-import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.network.Packet;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.UseAction;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import software.bernie.example.ClientListener.EntityPacket;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -29,18 +29,18 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatable {
+public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable {
 
 	// Geckolib
 	private AnimationFactory factory = new AnimationFactory(this);
 
-	public ExtendedRendererEntity(EntityType<? extends PathAwareEntity> type, World worldIn) {
+	public ExtendedRendererEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {
 		super(type, worldIn);
 	}
 
 	@Override
-	protected void initGoals() {
-		this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F /* distance */));
+	protected void registerGoals() {
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 	}
 
 	public boolean isTwoHandedAnimationRunning() {
@@ -58,14 +58,14 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	public boolean isWieldingTwoHandedWeapon() {
 		return
 		// Bow and crossbows
-		(this.getMainHandStack().getItem() instanceof RangedWeaponItem
-				|| this.getOffHandStack().getItem() instanceof RangedWeaponItem
-				|| this.getMainHandStack().getUseAction() == UseAction.BOW
-				|| this.getOffHandStack().getUseAction() == UseAction.BOW
-				|| this.getMainHandStack().getUseAction() == UseAction.CROSSBOW
-				|| this.getOffHandStack().getUseAction() == UseAction.CROSSBOW)
-				|| (this.getMainHandStack().getUseAction() == UseAction.SPEAR
-						|| this.getOffHandStack().getUseAction() == UseAction.SPEAR);
+		(this.getMainHandItem().getItem() instanceof ProjectileWeaponItem
+				|| this.getOffhandItem().getItem() instanceof ProjectileWeaponItem
+				|| this.getMainHandItem().getUseAnimation() == UseAnim.BOW
+				|| this.getOffhandItem().getUseAnimation() == UseAnim.BOW
+				|| this.getMainHandItem().getUseAnimation() == UseAnim.CROSSBOW
+				|| this.getOffhandItem().getUseAnimation() == UseAnim.CROSSBOW)
+				|| (this.getMainHandItem().getUseAnimation() == UseAnim.SPEAR
+						|| this.getOffhandItem().getUseAnimation() == UseAnim.SPEAR);
 	}
 
 	@Override
@@ -121,10 +121,10 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	private <E extends IAnimatable> PlayState predicateBodyPose(AnimationEvent<E> event) {
 		if (this.isTwoHandedAnimationRunning()) {
 
-		} else if (this.hasVehicle()) {
+		} else if (this.isPassenger()) {
 			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SITTING, true));
 			return PlayState.CONTINUE;
-		} else if (this.isInSneakingPose()) {
+		} else if (this.isCrouching()) {
 			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SNEAKING, true));
 			return PlayState.CONTINUE;
 		}
@@ -134,12 +134,12 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	private static final String ANIM_NAME_BLOCKING_LEFT = ANIM_NAME_PREFIX + "arms.left.block";
 	private static final String ANIM_NAME_BLOCKING_RIGHT = ANIM_NAME_PREFIX + "arms.right.block";
 
-	protected Hand getLeftHand() {
-		return this.isLeftHanded() ? Hand.MAIN_HAND : Hand.OFF_HAND;
+	protected InteractionHand getLeftHand() {
+		return this.isLeftHanded() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 	}
 
-	protected Hand getRightHand() {
-		return !this.isLeftHanded() ? Hand.MAIN_HAND : Hand.OFF_HAND;
+	protected InteractionHand getRightHand() {
+		return !this.isLeftHanded() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
 	}
 
 	private <E extends IAnimatable> PlayState predicateRightArmSwing(AnimationEvent<E> event) {
@@ -150,13 +150,13 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 		return this.predicateHandSwing(this.getLeftHand(), true, event);
 	}
 
-	protected <E extends IAnimatable> PlayState predicateHandSwing(Hand hand, boolean leftHand,
+	protected <E extends IAnimatable> PlayState predicateHandSwing(InteractionHand hand, boolean leftHand,
 			AnimationEvent<E> event) {
-		if (this.handSwinging && !this.isTwoHandedAnimationRunning()) {
-			ItemStack handItemStack = this.getStackInHand(hand);
+		if (this.swinging && !this.isTwoHandedAnimationRunning()) {
+			ItemStack handItemStack = this.getItemInHand(hand);
 			if (!handItemStack.isEmpty()) {
-				if (handItemStack.getItem().getUseAction(handItemStack) == UseAction.EAT
-						|| handItemStack.getItem().getUseAction(handItemStack) == UseAction.DRINK) {
+				if (handItemStack.getItem().getUseAnimation(handItemStack) == UseAnim.EAT
+						|| handItemStack.getItem().getUseAnimation(handItemStack) == UseAnim.DRINK) {
 					// Eating/Drinking animation
 				} else {
 					// Normal swinging
@@ -175,13 +175,13 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 		return this.predicateHandPose(this.getLeftHand(), true, event);
 	}
 
-	protected <E extends IAnimatable> PlayState predicateHandPose(Hand hand, boolean leftHand,
+	protected <E extends IAnimatable> PlayState predicateHandPose(InteractionHand hand, boolean leftHand,
 			AnimationEvent<E> event) {
-		ItemStack handItemStack = this.getStackInHand(hand);
+		ItemStack handItemStack = this.getItemInHand(hand);
 		if (!handItemStack.isEmpty() && !this.isTwoHandedAnimationRunning()) {
 			Item handItem = handItemStack.getItem();
 			if (this.isBlocking()
-					&& (handItem instanceof ShieldItem || handItem.getUseAction(handItemStack) == UseAction.BLOCK)) {
+					&& (handItem instanceof ShieldItem || handItem.getUseAnimation(handItemStack) == UseAnim.BLOCK)) {
 				event.getController().setAnimation(new AnimationBuilder()
 						.addAnimation(leftHand ? ANIM_NAME_BLOCKING_LEFT : ANIM_NAME_BLOCKING_RIGHT, true));
 			} else {
@@ -201,11 +201,11 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 				return PlayState.CONTINUE;
 			} else {
 				// First: Check for firearm, spear and greatsword in either hand
-				// Main hand has priority
-				Optional<PlayState> resultState = performTwoHandedLogicPerHand(this.getMainHandStack(),
+				// Main InteractionHand has priority
+				Optional<PlayState> resultState = performTwoHandedLogicPerHand(this.getMainHandItem(),
 						this.isLeftHanded(), event);
 				if (!resultState.isPresent()) {
-					resultState = performTwoHandedLogicPerHand(this.getOffHandStack(), !this.isLeftHanded(), event);
+					resultState = performTwoHandedLogicPerHand(this.getOffhandItem(), !this.isLeftHanded(), event);
 				}
 				if (resultState.isPresent()) {
 					return resultState.get();
@@ -233,12 +233,12 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 		// If item instanceof ItemGreatsword => Greatsword animation
 		// If item instanceof Spear => spear animation
 		// If item instanceof Firearm/Bow/Crossbow => firearm animation
-		if (item.getUseAction(itemStack) == UseAction.BOW || item.getUseAction(itemStack) == UseAction.CROSSBOW) {
+		if (item.getUseAnimation(itemStack) == UseAnim.BOW || item.getUseAnimation(itemStack) == UseAnim.CROSSBOW) {
 			// Firearm
 			event.getController().setAnimation(new AnimationBuilder()
 					.addAnimation(leftHanded ? ANIM_NAME_FIREARM_POSE_LEFT : ANIM_NAME_FIREARM_POSE_RIGHT, true));
 			return Optional.of(PlayState.CONTINUE);
-		} else if (item.getUseAction(itemStack) == UseAction.SPEAR) {
+		} else if (item.getUseAnimation(itemStack) == UseAnim.SPEAR) {
 			// Yes this is for tridents but we can use it anyway
 			// Spear
 			event.getController().setAnimation(new AnimationBuilder()
@@ -254,14 +254,14 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	private static final String ANIM_NAME_SPEAR_SWING = ANIM_NAME_PREFIX + "arms.attack-spear";
 
 	private <E extends IAnimatable> PlayState predicateTwoHandedSwing(AnimationEvent<E> event) {
-		if (this.isTwoHandedAnimationRunning() && this.handSwinging) {
+		if (this.isTwoHandedAnimationRunning() && this.swinging) {
 			// Check for greatsword & spear and play their animations
-			if (this.getMainHandStack().getItem().getUseAction(this.getMainHandStack()) == UseAction.SPEAR
-					|| this.getOffHandStack().getItem().getUseAction(this.getOffHandStack()) == UseAction.SPEAR) {
+			if (this.getMainHandItem().getItem().getUseAnimation(this.getMainHandItem()) == UseAnim.SPEAR
+					|| this.getOffhandItem().getItem().getUseAnimation(this.getOffhandItem()) == UseAnim.SPEAR) {
 				// Spear use animation
 				event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPEAR_SWING, false));
 			}
-			// If either hand item is greatsword => greatsword animation
+			// If either InteractionHand item is greatsword => greatsword animation
 		}
 		return PlayState.STOP;
 	}
@@ -272,27 +272,27 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	}
 
 	@Override
-	public Packet<?> createSpawnPacket() {
+	public Packet<?> getAddEntityPacket() {
 		return EntityPacket.createPacket(this);
 	}
 
 	@Override
-	protected ActionResult interactMob(PlayerEntity pPlayer, Hand pHand) {
-		ItemStack item = pPlayer.getStackInHand(pHand);
-		if (item != null && !item.isEmpty() && !this.world.isClient()) {
+	protected InteractionResult mobInteract(Player pPlayer, InteractionHand pHand) {
+		ItemStack item = pPlayer.getItemInHand(pHand);
+		if (item != null && !item.isEmpty() && !this.level.isClientSide()) {
 			if (item.getItem() instanceof ArmorItem) {
 				ArmorItem ai = (ArmorItem) item.getItem();
-				this.equipStack(ai.getSlotType(), item);
+				this.setItemSlot(ai.getSlot(), item);
 			} else if (item.getItem() instanceof BlockItem
 					&& ((BlockItem) item.getItem()).getBlock() instanceof AbstractSkullBlock) {
-				this.equipStack(EquipmentSlot.HEAD, item);
+				this.setItemSlot(EquipmentSlot.HEAD, item);
 			} else {
-				this.setStackInHand(pHand, item);
+				this.setItemInHand(pHand, item);
 			}
-			pPlayer.sendSystemMessage(Text.translatable("Equipped item: " + item.getItem().getTranslationKey() + "!"));
-			return ActionResult.SUCCESS;
+			pPlayer.sendSystemMessage(Component.literal("Equipped item: " + item.getItem().getDescriptionId() + "!"));
+			return InteractionResult.SUCCESS;
 		}
-		return super.interactMob(pPlayer, pHand);
+		return super.mobInteract(pPlayer, pHand);
 	}
 
 }

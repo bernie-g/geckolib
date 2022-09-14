@@ -1,6 +1,7 @@
 buildscript {
     repositories {
     	maven { url  = 'https://plugins.gradle.org/m2/' }
+        maven { url = 'https://maven.parchmentmc.org' }
     }
     dependencies {
         classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
@@ -34,6 +35,7 @@ repositories {
     maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
     maven { url "https://plugins.gradle.org/m2/" }
     maven { url "https://maven.shedaniel.me/" }
+	maven { url = 'https://maven.parchmentmc.org' }
 }
 
 configurations {
@@ -43,9 +45,9 @@ configurations {
 dependencies {
     // Minecraft/Quilt deps
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings( loom.layered {
-		addLayer quiltMappings.mappings( "org.quiltmc:quilt-mappings:$minecraft_version+build.$quilt_mappings:v2" )
-		//addLayer loom.officialMojangMappings()
+	mappings( loom.layered() {
+		officialMojangMappings()
+		parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.14@zip")
 	})
 	modImplementation "org.quiltmc:quilt-loader:$loader_version"
 	modImplementation "org.quiltmc:qsl:$qsl_version"

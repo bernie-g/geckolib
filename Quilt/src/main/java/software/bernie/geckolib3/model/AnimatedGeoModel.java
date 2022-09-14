@@ -4,12 +4,12 @@ import java.util.Collections;
 
 import com.eliotlash.molang.MolangParser;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
@@ -54,8 +54,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			manager.ticker = new AnimationTicker(manager);
 		}
 
-		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			seekTime = manager.tick + MinecraftClient.getInstance().getTickDelta();
+		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
+			seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
 		}
 
 		AnimationEvent<T> predicate;
@@ -96,7 +96,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public GeoModel getModel(Identifier location) {
+	public GeoModel getModel(ResourceLocation location) {
 		GeoModel model = super.getModel(location);
 		if (model == null) {
 			throw new GeckoLibException(location,
@@ -115,36 +115,35 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	@Override
 	public void setMolangQueries(IAnimatable animatable, double currentTick) {
 		MolangParser parser = GeckoLibCache.getInstance().parser;
-		MinecraftClient minecraftInstance = MinecraftClient.getInstance();
+		Minecraft minecraftInstance = Minecraft.getInstance();
 
-		parser.setValue("query.actor_count", minecraftInstance.world.getRegularEntityCount());
-		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.world.getTimeOfDay()));
-		parser.setValue("query.moon_phase", minecraftInstance.world.getMoonPhase());
+		parser.setValue("query.actor_count", minecraftInstance.level.getEntityCount());
+		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.level.getDayTime()));
+		parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
 		if (animatable instanceof Entity) {
-			parser.setValue("query.distance_from_camera",
-					minecraftInstance.gameRenderer.getCamera().getPos().distanceTo(((Entity) animatable).getPos()));
+			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera().getPosition()
+					.distanceTo(((Entity) animatable).position()));
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
-			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isTouchingWater()));
+			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
 			// Should probably check specifically whether it's in rain?
-			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(((Entity) animatable).isWet()));
+			parser.setValue("query.is_in_water_or_rain",
+					MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubble()));
 
 			if (animatable instanceof LivingEntity) {
 				LivingEntity livingEntity = (LivingEntity) animatable;
 				parser.setValue("query.health", livingEntity.getHealth());
 				parser.setValue("query.max_health", livingEntity.getMaxHealth());
-
 				parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isOnFire()));
 				// Doesn't work for some reason?
-				parser.setValue("query.on_fire_time", livingEntity.getFireTicks());
+				parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
 
-				Vec3d velocity = livingEntity.getVelocity();
-				// Must be always positive to prevent NaNs
-				float groundSpeed = MathHelper.sqrt((float) (+velocity.x * +velocity.z));
+				Vec3 velocity = livingEntity.getDeltaMovement();
+				float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				parser.setValue("query.ground_speed", groundSpeed);
 
-				float yawSpeed = livingEntity.getYaw((float) currentTick)
-						- livingEntity.getYaw((float) (currentTick - 0.1));
+				float yawSpeed = livingEntity.getViewYRot((float) currentTick)
+						- livingEntity.getViewYRot((float) (currentTick - 0.1));
 				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}

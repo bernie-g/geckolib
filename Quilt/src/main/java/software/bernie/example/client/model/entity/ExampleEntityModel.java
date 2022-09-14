@@ -1,27 +1,27 @@
 package software.bernie.example.client.model.entity;
 
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.entity.GeoExampleEntity;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity> {
 	@Override
-	public Identifier getAnimationResource(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "animations/bat.animation.json");
+	public ResourceLocation getAnimationResource(GeoExampleEntity entity) {
+		return new ResourceLocation(GeckoLib.ModID, "animations/bat.animation.json");
 	}
 
 	@Override
-	public Identifier getModelResource(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "geo/bat.geo.json");
+	public ResourceLocation getModelResource(GeoExampleEntity entity) {
+		return new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json");
 	}
 
 	@Override
-	public Identifier getTextureResource(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "textures/model/entity/bat.png");
+	public ResourceLocation getTextureResource(GeoExampleEntity entity) {
+		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
 	}
 
 	@Override

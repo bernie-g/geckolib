@@ -1,19 +1,19 @@
 package software.bernie.geckolib3.resource;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ReloadableResourceManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import software.bernie.geckolib3.GeckoLib;
 
 public class ResourceListener {
 	public static void registerReloadListener() {
-		if (MinecraftClient.getInstance() != null) {
-			if (MinecraftClient.getInstance().getResourceManager() == null) {
+		if (Minecraft.getInstance() != null) {
+			if (Minecraft.getInstance().getResourceManager() == null) {
 				throw new RuntimeException(
 						"GeckoLib was initialized too early! If you are on fabric, please read the wiki on when to initialize!");
 			}
-			ReloadableResourceManager reloadable = (ReloadableResourceManager) MinecraftClient.getInstance()
+			ReloadableResourceManager reloadable = (ReloadableResourceManager) Minecraft.getInstance()
 					.getResourceManager();
-			reloadable.registerReloader(GeckoLibCache.getInstance()::reload);
+			reloadable.registerReloadListener(GeckoLibCache.getInstance()::reload);
 		} else {
 			GeckoLib.LOGGER.warn(
 					"Minecraft.getInstance() was null, could not register reload listeners. Ignore if datagenning.");

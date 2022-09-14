@@ -1,15 +1,17 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import javax.annotation.Nullable;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
-import net.minecraft.util.math.Vector4f;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
+
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
@@ -20,8 +22,8 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
-	default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+	default void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
+			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, alpha);
@@ -38,9 +40,9 @@ public interface IGeoRenderer<T> {
 		}
 	}
 
-	default void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+	default void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		stack.push();
+		stack.pushPose();
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
 		RenderUtils.rotate(bone, stack);
@@ -49,11 +51,11 @@ public interface IGeoRenderer<T> {
 
 		if (!bone.isHidden()) {
 			for (GeoCube cube : bone.childCubes) {
-				stack.push();
+				stack.pushPose();
 				if (!bone.cubesAreHidden()) {
 					renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 				}
-				stack.pop();
+				stack.popPose();
 			}
 		}
 		if (!bone.childBonesAreHiddenToo()) {
@@ -62,67 +64,70 @@ public interface IGeoRenderer<T> {
 			}
 		}
 
-		stack.pop();
+		stack.popPose();
 	}
 
-	default void renderCube(GeoCube cube, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+	default void renderCube(GeoCube cube, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		RenderUtils.moveToPivot(cube, stack);
 		RenderUtils.rotate(cube, stack);
 		RenderUtils.moveBackFromPivot(cube, stack);
-		Matrix3f matrix3f = stack.peek().getNormal();
-		Matrix4f matrix4f = stack.peek().getModel();
+		Matrix3f matrix3f = stack.last().normal();
+		Matrix4f matrix4f = stack.last().pose();
 
 		for (GeoQuad quad : cube.quads) {
 			if (quad == null) {
 				continue;
 			}
-			Vec3f normal = quad.normal.copy();
+			Vector3f normal = quad.normal.copy();
 			normal.transform(matrix3f);
 
-			if ((cube.size.getY() == 0 || cube.size.getZ() == 0) && normal.getX() < 0) {
-				normal.multiplyComponentwise(-1, 1, 1);
+			/*
+			 * Fix shading dark shading for flat cubes + compatibility wish Optifine shaders
+			 */
+			if ((cube.size.y() == 0 || cube.size.z() == 0) && normal.x() < 0) {
+				normal.mul(-1, 1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getZ() == 0) && normal.getY() < 0) {
-				normal.multiplyComponentwise(1, -1, 1);
+			if ((cube.size.x() == 0 || cube.size.z() == 0) && normal.y() < 0) {
+				normal.mul(1, -1, 1);
 			}
-			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0) {
-				normal.multiplyComponentwise(1, 1, -1);
+			if ((cube.size.x() == 0 || cube.size.y() == 0) && normal.z() < 0) {
+				normal.mul(1, 1, -1);
 			}
 
 			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
-						1.0F);
+				Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0F);
 				vector4f.transform(matrix4f);
-				bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
-						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
-						normal.getZ());
+				bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.textureU,
+						vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(), normal.z());
 			}
 		}
 	}
 	
 	GeoModelProvider getGeoModelProvider();
 
-	Identifier getTextureResource(T instance);
+	ResourceLocation getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float partialTicks, VertexConsumerProvider renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float alpha) {
+	ResourceLocation getTextureResource(T instance);
+
+	default void renderEarly(T animatable, PoseStack stackIn, float partialTicks,
+			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float partialTicks, VertexConsumerProvider renderTypeBuffer,
+	default void renderLate(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
 	}
 
-	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			Identifier textureLocation) {
-		return RenderLayer.getEntityCutout(textureLocation);
+	default RenderType getRenderType(T animatable, float partialTicks, PoseStack stack,
+			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
+			ResourceLocation textureLocation) {
+		return RenderType.entityCutout(textureLocation);
 	}
 
-	default Color getRenderColor(T animatable, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn) {
+	default Color getRenderColor(T animatable, float partialTicks, PoseStack stack,
+			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn) {
 		return Color.ofRGBA(255, 255, 255, 255);
 	}
 

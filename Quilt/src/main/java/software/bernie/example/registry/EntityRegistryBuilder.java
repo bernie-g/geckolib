@@ -6,22 +6,22 @@
 package software.bernie.example.registry;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EntityType.EntityFactory;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.item.Item.Settings;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.SpawnEggItem;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityType.EntityFactory;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item.Properties;
+import net.minecraft.world.item.SpawnEggItem;
 
 public class EntityRegistryBuilder<E extends Entity> {
-	private static Identifier name;
+	private static ResourceLocation name;
 	private EntityFactory<E> entityFactory;
-	private SpawnGroup category;
+	private MobCategory category;
 	private int trackingDistance;
 	private int updateIntervalTicks;
 	private boolean alwaysUpdateVelocity;
@@ -34,7 +34,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 	public EntityRegistryBuilder() {
 	}
 
-	public static <E extends Entity> EntityRegistryBuilder<E> createBuilder(Identifier nameIn) {
+	public static <E extends Entity> EntityRegistryBuilder<E> createBuilder(ResourceLocation nameIn) {
 		name = nameIn;
 		return new EntityRegistryBuilder<>();
 	}
@@ -44,7 +44,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 		return this;
 	}
 
-	public EntityRegistryBuilder<E> category(SpawnGroup category) {
+	public EntityRegistryBuilder<E> category(MobCategory category) {
 		this.category = category;
 		return this;
 	}
@@ -79,10 +79,10 @@ public class EntityRegistryBuilder<E extends Entity> {
 	}
 
 	public EntityType<E> build() {
-		EntityType.Builder<E> entityBuilder = EntityType.Builder.create(this.entityFactory, this.category)
-				.setDimensions(this.dimensions.width, this.dimensions.height);
+		EntityType.Builder<E> entityBuilder = EntityType.Builder.of(this.entityFactory, this.category)
+				.sized(this.dimensions.width, this.dimensions.height);
 		if (fireImmune) {
-			entityBuilder.makeFireImmune();
+			entityBuilder.fireImmune();
 		}
 		if (this.alwaysUpdateVelocity && this.updateIntervalTicks != 0 & this.trackingDistance != 0) {
 			FabricEntityTypeBuilder.create(this.category, this.entityFactory).dimensions(this.dimensions)
@@ -94,9 +94,9 @@ public class EntityRegistryBuilder<E extends Entity> {
 
 		if (this.hasEgg) {
 			RegistryUtils.registerItem(
-					new SpawnEggItem((EntityType<? extends MobEntity>) entityType, this.primaryColor,
-							this.secondaryColor, (new Settings()).group(ItemGroup.MISC)),
-					new Identifier(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
+					new SpawnEggItem((EntityType<? extends Mob>) entityType, this.primaryColor, this.secondaryColor,
+							(new Properties()).tab(CreativeModeTab.TAB_MISC)),
+					new ResourceLocation(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
 		}
 
 		return entityType;

@@ -1,27 +1,27 @@
 package software.bernie.geckolib3.compat;
 
-import com.mojang.blaze3d.lighting.DiffuseLighting;
+import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.MultiBufferSource;
 import vazkii.patchouli.client.book.gui.GuiBook;
 
 public class PatchouliCompat {
 
-	public static void patchouliLoaded(MatrixStack matrixStackIn) {
+	public static void patchouliLoaded(PoseStack matrixStackIn) {
 		Class<GuiBook> patchouli = GuiBook.class;
-		boolean screen = MinecraftClient.getInstance().inGameHud.equals(patchouli);
+		boolean screen = Minecraft.getInstance().gui.equals(patchouli);
 		if (screen) {
-			matrixStackIn.push();
-			VertexConsumerProvider.Immediate irendertypebuffer$impl = MinecraftClient.getInstance().getBufferBuilders()
-					.getEntityVertexConsumers();
-			DiffuseLighting.setupFlatGuiLighting();
-			irendertypebuffer$impl.draw();
+			matrixStackIn.pushPose();
+			MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
+					.bufferSource();
+			Lighting.setupForFlatItems();
+			irendertypebuffer$impl.endBatch();
 			RenderSystem.enableDepthTest();
-			DiffuseLighting.setup3DGuiLighting();
-			matrixStackIn.pop();
+			Lighting.setupFor3DItems();
+			matrixStackIn.popPose();
 		}
 	}
 }
