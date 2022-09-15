@@ -106,7 +106,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.0.0'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.25'
     library 'com.eliotlash.molang:molang:19'
     library 'com.eliotlash.mclib:mclib:19'
     library(project(':geckolib-core')) {
