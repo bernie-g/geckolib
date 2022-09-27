@@ -466,6 +466,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 
 		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		bufferIn = rtb.getBuffer(RenderLayer.getEntityTranslucent(currentTexture));
 	}
 
 	/*
