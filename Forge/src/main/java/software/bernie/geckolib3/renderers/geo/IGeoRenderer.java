@@ -22,9 +22,14 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
+	
+	void setCurrentRTB(IRenderTypeBuffer rtb);
+	IRenderTypeBuffer getCurrentRTB();
+	
 	default void render(GeoModel model, T animatable, float partialTicks, RenderType type, MatrixStack matrixStackIn,
 			@Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		this.setCurrentRTB(renderTypeBuffer);
 		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, alpha);
 

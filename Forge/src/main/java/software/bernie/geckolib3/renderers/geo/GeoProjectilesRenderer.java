@@ -93,4 +93,16 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		return animatable.getUUID().hashCode();
 	}
 
+	protected IRenderTypeBuffer rtb = null;
+	
+	@Override
+	public void setCurrentRTB(IRenderTypeBuffer rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public IRenderTypeBuffer getCurrentRTB() {
+		return this.rtb;
+	}
+
 }

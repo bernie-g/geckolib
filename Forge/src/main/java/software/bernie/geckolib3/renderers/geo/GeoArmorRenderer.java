@@ -15,6 +15,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -330,5 +331,19 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
 	}
+	
+
+	protected IRenderTypeBuffer rtb = null;
+	
+	@Override
+	public void setCurrentRTB(IRenderTypeBuffer rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public IRenderTypeBuffer getCurrentRTB() {
+		return this.rtb;
+	}
+
 	
 }

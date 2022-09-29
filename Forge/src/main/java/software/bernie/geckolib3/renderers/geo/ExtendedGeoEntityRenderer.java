@@ -218,7 +218,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		super.renderLate(animatable, stackIn, ticks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red,
 				green, blue, partialTicks);
 		this.currentEntityBeingRendered = animatable;
-		this.currentVertexBuilderInUse = bufferIn;
 		this.currentPartialTicks = partialTicks;
 	}
 
@@ -227,34 +226,37 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected abstract boolean isArmorBone(final GeoBone bone);
 
-	private IVertexBuilder currentVertexBuilderInUse;
 	private float currentPartialTicks;
 
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if(this.rtb == null) {
+			throw new IllegalStateException("RenderTypeBuffer must never be null at this point!");
+		}
+		
 		ResourceLocation tfb = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
 		boolean customTextureMarker = tfb != null;
 		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
-		if (customTextureMarker) {
-			currentTexture = tfb;
-
-			if (this.rtb != null) {
-				RenderType rt = this.getRenderTypeForBone(bone, this.currentEntityBeingRendered,
-						this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, currentTexture);
-				bufferIn = this.rtb.getBuffer(rt);
-			}
-		}
+		
+		final RenderType rt = customTextureMarker ?
+				this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, tfb)
+				:
+				this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.rtb, bufferIn, packedLightIn, currentTexture);
+		bufferIn = this.rtb.getBuffer(rt);
+		
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.pushPose();
 
 			// Render armor
-
 			if (this.isArmorBone(bone)) {
 				stack.pushPose();
 				this.handleArmorRenderingForBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, currentTexture);
 				stack.popPose();
+				
+				//Reset buffer...
+				bufferIn = this.rtb.getBuffer(rt);
 			} else {
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
@@ -263,18 +265,26 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn);
 					stack.popPose();
 
-					bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
+					bufferIn = this.rtb.getBuffer(rt);
 				}
 			}
 			stack.popPose();
 		}
 		this.customBoneSpecificRenderingHook(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha, customTextureMarker, currentTexture);
+
+		////////////////////////////////////
+		stack.pushPose();
+		super.preparePositionRotationScale(bone, stack);
+		super.renderCubesOfBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		//////////////////////////////////////
 		// reset buffer
 		if (customTextureMarker) {
-			bufferIn = this.currentVertexBuilderInUse;
+			bufferIn = this.rtb.getBuffer(this.getRenderType(currentEntityBeingRendered, this.currentPartialTicks, stack, rtb, bufferIn, packedLightIn, currentTexture));
 		}
-
-		super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		//////////////////////////////////////
+		super.renderChildBones(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		stack.popPose();
+		////////////////////////////////////
 	}
 	
 	/*
@@ -373,8 +383,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 								geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLightIn);
 
 								stack.popPose();
-
-								bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 							}
 						}
 					}
@@ -402,8 +410,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 										stack, packedLightIn, packedOverlayIn);
 
 								stack.popPose();
-
-								bufferIn = rtb.getBuffer(RenderType.entityTranslucent(currentTexture));
 							}
 						}
 					}
