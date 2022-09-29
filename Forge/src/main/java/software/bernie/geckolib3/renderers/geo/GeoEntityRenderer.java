@@ -1,7 +1,6 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -42,7 +41,6 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
@@ -63,7 +61,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
-	private Matrix4f renderEarlyMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
 
 	public ItemStack mainHand;
 	public ItemStack offHand;
@@ -213,9 +211,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		stack.pushPose();
+	public void preparePositionRotationScale(GeoBone bone, MatrixStack stack) {
 		boolean rotOverride = bone.rotMat != null;
 		RenderUtils.translate(bone, stack);
 		RenderUtils.moveToPivot(bone, stack);
@@ -237,30 +233,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			bone.setModelSpaceXform(matBone);
 		}
 		RenderUtils.moveBackFromPivot(bone, stack);
-
-		if (!bone.isHidden) {
-			Iterator<?> var10 = bone.childCubes.iterator();
-
-			while (var10.hasNext()) {
-				GeoCube cube = (GeoCube) var10.next();
-				stack.pushPose();
-				if (!bone.cubesAreHidden()) {
-					this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-				}
-				stack.popPose();
-			}
-
-		}
-		Iterator<?> var10 = bone.childBones.iterator();
-		if (!bone.childBonesAreHiddenToo()) {
-			while (var10.hasNext()) {
-				GeoBone childBone = (GeoBone) var10.next();
-				this.renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
-						alpha);
-			}
-		}
-
-		stack.popPose();
 	}
 
 	@Override
