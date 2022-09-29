@@ -24,6 +24,7 @@ import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEnt
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
+import software.bernie.example.client.renderer.entity.TexturePerBoneTestEntityRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
 import software.bernie.example.entity.ReplacedCreeperEntity;
@@ -48,6 +49,8 @@ public class ClientListener {
 
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(),
 					ExampleExtendedRendererEntityRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(),
+					TexturePerBoneTestEntityRenderer::new);
 
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, () -> new PotatoArmorRenderer());
 			ClientRegistry.bindTileEntityRenderer(TileRegistry.HABITAT_TILE.get(), HabitatTileRenderer::new);
