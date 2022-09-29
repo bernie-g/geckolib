@@ -43,12 +43,15 @@ public interface IGeoRenderer<T> {
 	default void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		stack.pushPose();
-		RenderUtils.translate(bone, stack);
-		RenderUtils.moveToPivot(bone, stack);
-		RenderUtils.rotate(bone, stack);
-		RenderUtils.scale(bone, stack);
-		RenderUtils.moveBackFromPivot(bone, stack);
+		this.preparePositionRotationScale(bone, stack);
+		this.renderCubesOfBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		this.renderChildBones(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
+		stack.popPose();
+	}
+
+	default void renderCubesOfBone(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.isHidden()) {
 			for (GeoCube cube : bone.childCubes) {
 				stack.pushPose();
@@ -58,13 +61,23 @@ public interface IGeoRenderer<T> {
 				stack.popPose();
 			}
 		}
+	}
+	
+	default void renderChildBones(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.childBonesAreHiddenToo()) {
 			for (GeoBone childBone : bone.childBones) {
 				renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 			}
 		}
+	}
 
-		stack.popPose();
+	default void preparePositionRotationScale(GeoBone bone, MatrixStack stack) {
+		RenderUtils.translate(bone, stack);
+		RenderUtils.moveToPivot(bone, stack);
+		RenderUtils.rotate(bone, stack);
+		RenderUtils.scale(bone, stack);
+		RenderUtils.moveBackFromPivot(bone, stack);
 	}
 
 	default void renderCube(GeoCube cube, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
