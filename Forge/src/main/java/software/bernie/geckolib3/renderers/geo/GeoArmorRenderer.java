@@ -317,7 +317,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
-	protected IBone getAndHideBone(String boneName) {
+	/*
+	 * DO NOT USE WITHOUT REASON!
+	 * Returns null or the bone with the given name, before that it WILL hide that bone!
+	 */
+	public IBone getAndHideBone(String boneName) {
 		if (boneName != null) {
 			final IBone bone = this.modelProvider.getBone(boneName);
 			bone.setHidden(true);
