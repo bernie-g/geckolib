@@ -1,9 +1,12 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
 
@@ -27,7 +30,11 @@ import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ModelRenderer;
 import net.minecraft.client.renderer.model.ModelRenderer.ModelBox;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.Texture;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.SkullTileEntityRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -37,20 +44,25 @@ import net.minecraft.item.IDyeableArmorItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.resources.IResource;
 import net.minecraft.tileentity.SkullTileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.vector.Quaternion;
+import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.util.math.vector.Vector4f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.GeoQuad;
+import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -77,11 +89,22 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	public static enum EModelRenderCycle implements IRenderCycle {
 		INITIAL, REPEATED, SPECIAL /* For special use by the user */
 	}
+	
+	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
+	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
 
 	protected float widthScale;
 	protected float heightScale;
+	
+	private T currentEntityBeingRendered;
+	private IRenderTypeBuffer rtb;
+	
+	private float currentPartialTicks;
+	protected ResourceLocation textureForBone = null;
 
 	protected final Queue<Tuple<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
+	
+	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>(); //TODO: Replace with fastutil equivalent
 
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
@@ -208,9 +231,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		return this.modelProvider.getTextureLocation(entity);
 	}
 
-	private T currentEntityBeingRendered;
-	private IRenderTypeBuffer rtb;
-
 	@Override
 	public void renderLate(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
 			IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
@@ -221,12 +241,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.currentPartialTicks = partialTicks;
 	}
 
-	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedModel<>(0.5F);
-	protected final BipedModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedModel<>(1.0F);
-
 	protected abstract boolean isArmorBone(final GeoBone bone);
-
-	private float currentPartialTicks;
 
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
@@ -235,13 +250,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			throw new IllegalStateException("RenderTypeBuffer must never be null at this point!");
 		}
 		
-		ResourceLocation tfb = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
+		this.textureForBone  = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
-		boolean customTextureMarker = tfb != null;
+		boolean customTextureMarker = this.textureForBone != null;
 		ResourceLocation currentTexture = this.getTextureLocation(this.currentEntityBeingRendered);
 		
 		final RenderType rt = customTextureMarker ?
-				this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, tfb)
+				this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack, bufferIn, this.rtb, packedLightIn, this.textureForBone)
 				:
 				this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.rtb, bufferIn, packedLightIn, currentTexture);
 		bufferIn = this.rtb.getBuffer(rt);
@@ -280,6 +295,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		// reset buffer
 		if (customTextureMarker) {
 			bufferIn = this.rtb.getBuffer(this.getRenderType(currentEntityBeingRendered, this.currentPartialTicks, stack, rtb, bufferIn, packedLightIn, currentTexture));
+			//Reset the marker...
+			this.textureForBone = null;
 		}
 		//////////////////////////////////////
 		super.renderChildBones(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
@@ -661,6 +678,88 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 
 		return resourcelocation;
+	}
+	
+	//Auto UV recalculations for texturePerBone
+	@Override
+	public void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vector3f normal, IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		//If no textureForBone is used we can proceed normally
+		if(this.textureForBone == null) {
+			super.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		}
+		Tuple<Integer, Integer> tfbSize = this.getOrCreateTextureSize(this.textureForBone);
+		Tuple<Integer, Integer> textureSize = this.getOrCreateTextureSize(this.getTextureLocation(this.currentEntityBeingRendered));
+		
+		if(tfbSize == null || textureSize == null) {
+			super.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			//Exit here, cause texture sizes are null
+			return;
+		}
+		
+		for (GeoVertex vertex : quad.vertices) {
+			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
+					1.0F);
+			vector4f.transform(matrix4f);
+			
+			//Recompute the UV coordinates to the texture override
+			float texU = (vertex.textureU * textureSize.getA()) / tfbSize.getA();
+			float texV = (vertex.textureV * textureSize.getB()) / tfbSize.getB();
+			
+			bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
+					texU, texV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
+					normal.z());
+		}
+	}
+
+	protected Tuple<Integer, Integer> getOrCreateTextureSize(ResourceLocation tex) {
+		if(TEXTURE_SIZE_CACHE.containsKey(tex)) {
+			return TEXTURE_SIZE_CACHE.get(tex);
+		}
+		//For some reason it can't find the texture during the first 6(?) frames?
+		Tuple<Integer, Integer> size = this.getSizeOfTexture(tex);
+		if(size == null) {
+			return null;
+		}
+		return TEXTURE_SIZE_CACHE.computeIfAbsent(tex, (rs) -> size);
+	}
+	
+	//Accesses the actual images behind the texture to read the size of the texture
+	protected Tuple<Integer, Integer> getSizeOfTexture(ResourceLocation tex) {
+		if(tex == null) {
+			return null;
+		}
+		Texture originalTexture = null;
+		final Minecraft mc = Minecraft.getInstance();
+		final TextureManager textureManager = mc.getTextureManager();
+		try {
+			originalTexture = mc.submit(() -> {
+				Texture texture = textureManager.getTexture(tex);
+				if (texture == null) {
+					return null;
+				}
+				return texture;
+			}).get();
+		} catch (InterruptedException | ExecutionException e) {
+			GeckoLib.LOGGER.warn("Failed to load image for id {}", tex);
+			e.printStackTrace();
+		}
+		
+		if(originalTexture != null) {
+			try(IResource res = mc.getResourceManager().getResource(tex)) {
+				if(res != null) {
+					NativeImage image = originalTexture instanceof DynamicTexture ? ((DynamicTexture) originalTexture).getPixels()
+							: NativeImage.read(res.getInputStream());
+					if(image != null) {
+						return new Tuple<>(image.getWidth(), image.getHeight());
+					}
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			GeckoLib.LOGGER.warn("Found no image file for id {}", tex);
+		}
+		return null;
 	}
 
 }
