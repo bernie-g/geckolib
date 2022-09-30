@@ -113,14 +113,19 @@ public interface IGeoRenderer<T> {
 				normal.mul(1, 1, -1);
 			}
 
-			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
-						1.0F);
-				vector4f.transform(matrix4f);
-				bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
-						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
-						normal.z());
-			}
+			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		}
+	}
+	
+	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vector3f normal, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		for (GeoVertex vertex : quad.vertices) {
+			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
+					1.0F);
+			vector4f.transform(matrix4f);
+			bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
+					vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
+					normal.z());
 		}
 	}
 
