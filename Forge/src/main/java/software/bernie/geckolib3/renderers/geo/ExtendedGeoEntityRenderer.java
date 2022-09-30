@@ -522,20 +522,20 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		} else {
 			//All those *= 2 calls ARE necessary, otherwise the geo armor will apply rotations twice, so to have it only applied one time in the correct direction we add 2x the negative rotation to it
 			float xRot = -bone.getRotationX();
-			xRot *= 2;
+			//xRot *= 1;
 			float yRot = -bone.getRotationY();
-			yRot *= 2;
+			//yRot *= 1;
 			float zRot = bone.getRotationZ();
-			zRot *= 2;
-			GeoBone tmpBone = bone.parent;
+			//zRot *= 1;
+			/*GeoBone tmpBone = bone.parent;
 			while (tmpBone != null) {
 				xRot -= tmpBone.getRotationX();
 				yRot -= tmpBone.getRotationY();
 				zRot += tmpBone.getRotationZ();
 				tmpBone = tmpBone.parent;
-			}
+			}*/
 			
-			if (modMatrixRot) {
+			/*if (modMatrixRot) {
 				xRot = (float) Math.toRadians(xRot);
 				yRot = (float) Math.toRadians(yRot);
 				zRot = (float) Math.toRadians(zRot);
@@ -544,11 +544,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				stack.mulPose(new Quaternion(0, yRot, 0, false));
 				stack.mulPose(new Quaternion(xRot, 0, 0, false));
 				
-			} else {
+			} else {*/
 				sourceLimb.xRot = xRot;
 				sourceLimb.yRot = yRot;
 				sourceLimb.zRot = zRot;
-			}
+			//}
 		}
 
 		stack.scale(scaleX, scaleY, scaleZ);
