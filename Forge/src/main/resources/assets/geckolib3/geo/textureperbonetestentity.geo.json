@@ -12,26 +12,7 @@
 			},
 			"bones": [
 				{
-					"name": "outer_glass",
-					"pivot": [0, 0, 0],
-					"cubes": [
-						{
-							"origin": [-8, 0, -8],
-							"size": [16, 16, 16],
-							"uv": {
-								"north": {"uv": [0, 0], "uv_size": [16, 16]},
-								"east": {"uv": [0, 0], "uv_size": [16, 16]},
-								"south": {"uv": [0, 0], "uv_size": [16, 16]},
-								"west": {"uv": [0, 0], "uv_size": [16, 16]},
-								"up": {"uv": [16, 16], "uv_size": [-16, -16]},
-								"down": {"uv": [16, 16], "uv_size": [-16, -16]}
-							}
-						}
-					]
-				},
-				{
 					"name": "inner_glass",
-					"parent": "outer_glass",
 					"pivot": [0, 0, 0],
 					"cubes": [
 						{
@@ -44,6 +25,25 @@
 								"west": {"uv": [0, 0], "uv_size": [10, 10]},
 								"up": {"uv": [10, 10], "uv_size": [-10, -10]},
 								"down": {"uv": [10, 10], "uv_size": [-10, -10]}
+							}
+						}
+					]
+				},
+				{
+					"name": "outer_glass",
+					"parent": "inner_glass",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+							"origin": [-8, 0, -8],
+							"size": [16, 16, 16],
+							"uv": {
+								"north": {"uv": [0, 0], "uv_size": [16, 16]},
+								"east": {"uv": [0, 0], "uv_size": [16, 16]},
+								"south": {"uv": [0, 0], "uv_size": [16, 16]},
+								"west": {"uv": [0, 0], "uv_size": [16, 16]},
+								"up": {"uv": [16, 16], "uv_size": [-16, -16]},
+								"down": {"uv": [16, 16], "uv_size": [-16, -16]}
 							}
 						}
 					]
