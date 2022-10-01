@@ -53,7 +53,7 @@ public class ClientListener implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (QuiltLoader.isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (GeckoLibMod.shouldRegisterExamples()) {
 			EntityRendererRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, ExampleGeoRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.GEOLAYERENTITY, LERenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.BIKE_ENTITY, BikeGeoRenderer::new);

@@ -18,13 +18,21 @@ import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
 public class GeckoLibMod implements ModInitializer {
+	/**
+	 * When set to true, prevents examples from being registered.
+	 *
+	 * @deprecated due to mod loading order, setting this in your mod may not have an effect.
+	 * Use the {@link #DISABLE_EXAMPLES_PROPERTY_KEY system property} instead.
+	 */
+	@Deprecated(since = "3.1.21")
 	public static boolean DISABLE_IN_DEV = false;
-	boolean isDevelopmentEnvironment = QuiltLoader.isDevelopmentEnvironment();
+	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
+	private static final boolean isDevelopmentEnvironment = QuiltLoader.isDevelopmentEnvironment();
 
 	@Override
 	public void onInitialize(ModContainer mod) {
 		GeckoLib.initialize();
-		if (isDevelopmentEnvironment && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (shouldRegisterExamples()) {
 			new EntityRegistry();
 			FabricDefaultAttributeRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY,
 					EntityUtils.createGenericEntityAttributes());
@@ -39,5 +47,19 @@ public class GeckoLibMod implements ModInitializer {
 			new BlockRegistry();
 			new SoundRegistry();
 		}
+	}
+
+	/**
+	 * Returns whether examples are to be registered. Examples are registered when:
+	 * <ul>
+	 *     <li>The mod is running in a development environment; <em>and</em></li>
+	 *     <li>{@link #DISABLE_IN_DEV} is not set to true; <em>and</em></li>
+	 *     <li>the system property defined by {@link #DISABLE_EXAMPLES_PROPERTY_KEY} is not set to "true".</li>
+	 * </ul>
+	 *
+	 * @return whether the examples are to be registered
+	 */
+	static boolean shouldRegisterExamples() {
+		return isDevelopmentEnvironment && !DISABLE_IN_DEV && !Boolean.getBoolean(DISABLE_EXAMPLES_PROPERTY_KEY);
 	}
 }
