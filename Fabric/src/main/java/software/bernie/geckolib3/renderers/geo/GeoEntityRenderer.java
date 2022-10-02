@@ -428,4 +428,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).uv2(p).endVertex();
 		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).uv2(p).endVertex();
 	}
+
+	@Override
+	public void setCurrentRTB(MultiBufferSource rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public MultiBufferSource getCurrentRTB() {
+		return this.rtb;
+	}
 }

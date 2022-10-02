@@ -18,6 +18,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -330,5 +331,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public Integer getUniqueID(T animatable) {
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
+	}
+	
+	protected MultiBufferSource rtb = null;
+
+	@Override
+	public void setCurrentRTB(MultiBufferSource rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public MultiBufferSource getCurrentRTB() {
+		return this.rtb;
 	}
 }

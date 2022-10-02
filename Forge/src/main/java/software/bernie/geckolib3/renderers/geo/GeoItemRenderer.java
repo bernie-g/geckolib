@@ -115,4 +115,16 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	public Integer getUniqueID(T animatable) {
 		return GeckoLibUtil.getIDFromStack(currentItemStack);
 	}
+	
+	protected MultiBufferSource rtb = null;
+
+	@Override
+	public void setCurrentRTB(MultiBufferSource rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public MultiBufferSource getCurrentRTB() {
+		return this.rtb;
+	}
 }

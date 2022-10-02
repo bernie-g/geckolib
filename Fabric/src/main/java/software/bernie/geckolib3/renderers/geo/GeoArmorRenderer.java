@@ -313,4 +313,16 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
 	}
+	
+	protected MultiBufferSource rtb = null;
+
+	@Override
+	public void setCurrentRTB(MultiBufferSource rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public MultiBufferSource getCurrentRTB() {
+		return this.rtb;
+	}
 }

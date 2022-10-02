@@ -15,6 +15,7 @@ import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
+import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
@@ -27,6 +28,8 @@ public class EntityRegistry {
 			BikeEntity.class, 0.5f, 0.6F);
 	public static final RegistryObject<EntityType<ExtendedRendererEntity>> EXTENDED_RENDERER_EXAMPLE = buildEntity(
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F);
+	public static final RegistryObject<EntityType<TexturePerBoneTestEntity>> TEXTURE_PER_BONE_EXAMPLE = buildEntity(
+			TexturePerBoneTestEntity::new, TexturePerBoneTestEntity.class, 0.75F, 0.75F);
 	public static final RegistryObject<EntityType<LEEntity>> GEOLAYERENTITY = buildEntity(LEEntity::new,
 			LEEntity.class, 0.45F,1.0F);
 

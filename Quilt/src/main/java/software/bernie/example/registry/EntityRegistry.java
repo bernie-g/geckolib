@@ -17,6 +17,7 @@ import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
 import software.bernie.example.entity.RocketProjectile;
+import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
@@ -26,6 +27,8 @@ public class EntityRegistry {
 			MobCategory.CREATURE);
 	public static final EntityType<ExtendedRendererEntity> EXTENDED_RENDERER_EXAMPLE = buildEntity(
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F, MobCategory.CREATURE);
+	public static final EntityType<TexturePerBoneTestEntity> TEXTURE_PER_BONE_EXAMPLE = buildEntity(
+			TexturePerBoneTestEntity::new, TexturePerBoneTestEntity.class, 0.75F, 0.75F, MobCategory.CREATURE);
 	public static final EntityType<LEEntity> GEOLAYERENTITY = buildEntity(LEEntity::new, LEEntity.class, 0.45F, 1.0F,
 			MobCategory.CREATURE);
 	public static EntityType<RocketProjectile> ROCKET = buildEntity(RocketProjectile::new, RocketProjectile.class, 0.5F,

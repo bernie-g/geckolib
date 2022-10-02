@@ -47,9 +47,6 @@
 				"bone12": {
 					"rotation": ["math.cos(query.anim_time*360)*-5-5", 0, "math.cos(query.anim_time*360)*-15-15"]
 				}
-			},
-			"timeline": {
-				"0.0": "Test"
 			}
 		},
 		"animation.bat.walk": {
