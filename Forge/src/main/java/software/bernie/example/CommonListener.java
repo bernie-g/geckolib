@@ -23,6 +23,9 @@ public class CommonListener {
 			event.put(EntityRegistry.GEOLAYERENTITY.get(),
 					PathfinderMob.createMobAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
 							.add(Attributes.MAX_HEALTH, 1.0D).add(Attributes.MOVEMENT_SPEED, 0.25f).build());
+			event.put(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(),
+					PathfinderMob.createMobAttributes().add(Attributes.FOLLOW_RANGE, 16.0D)
+							.add(Attributes.MAX_HEALTH, 1.0D).add(Attributes.MOVEMENT_SPEED, 0.25f).build());
 		}
 	}
 }

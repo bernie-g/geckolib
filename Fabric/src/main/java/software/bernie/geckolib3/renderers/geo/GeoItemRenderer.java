@@ -98,4 +98,16 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	public Integer getUniqueID(T animatable) {
 		return GeckoLibUtil.getIDFromStack(currentItemStack);
 	}
+	
+	protected VertexConsumerProvider rtb = null;
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
+	}
 }

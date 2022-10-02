@@ -97,5 +97,17 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUuid().hashCode();
 	}
+	
+	protected VertexConsumerProvider rtb = null;
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
+	}
 
 }

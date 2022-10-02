@@ -19,9 +19,14 @@ import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
+	
+	void setCurrentRTB(VertexConsumerProvider rtb);
+	VertexConsumerProvider getCurrentRTB();
+	
 	default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		this.setCurrentRTB(renderTypeBuffer);
 		renderEarly(animatable, matrixStackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, alpha);
 
@@ -40,12 +45,15 @@ public interface IGeoRenderer<T> {
 	default void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		stack.push();
-		RenderUtils.translate(bone, stack);
-		RenderUtils.moveToPivot(bone, stack);
-		RenderUtils.rotate(bone, stack);
-		RenderUtils.scale(bone, stack);
-		RenderUtils.moveBackFromPivot(bone, stack);
+		this.preparePositionRotationScale(bone, stack);
+		this.renderCubesOfBone(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		this.renderChildBones(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 
+		stack.pop();
+	}
+
+	default void renderCubesOfBone(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.isHidden()) {
 			for (GeoCube cube : bone.childCubes) {
 				stack.push();
@@ -55,13 +63,23 @@ public interface IGeoRenderer<T> {
 				stack.pop();
 			}
 		}
+	}
+	
+	default void renderChildBones(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.childBonesAreHiddenToo()) {
 			for (GeoBone childBone : bone.childBones) {
 				renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 			}
 		}
+	}
 
-		stack.pop();
+	default void preparePositionRotationScale(GeoBone bone, MatrixStack stack) {
+		RenderUtils.translate(bone, stack);
+		RenderUtils.moveToPivot(bone, stack);
+		RenderUtils.rotate(bone, stack);
+		RenderUtils.scale(bone, stack);
+		RenderUtils.moveBackFromPivot(bone, stack);
 	}
 
 	default void renderCube(GeoCube cube, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
@@ -88,15 +106,21 @@ public interface IGeoRenderer<T> {
 			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0) {
 				normal.multiplyComponentwise(1, 1, -1);
 			}
-
-			for (GeoVertex vertex : quad.vertices) {
-				Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
-						1.0F);
-				vector4f.transform(matrix4f);
-				bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
-						vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
-						normal.getZ());
-			}
+			
+			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		
+		}
+	}
+	
+	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vec3f normal, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		for (GeoVertex vertex : quad.vertices) {
+			Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
+					1.0F);
+			vector4f.transform(matrix4f);
+			bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
+					vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
+					normal.getZ());
 		}
 	}
 

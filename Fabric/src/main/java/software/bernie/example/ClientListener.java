@@ -35,6 +35,7 @@ import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
 import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.entity.RocketRender;
+import software.bernie.example.client.renderer.entity.TexturePerBoneTestEntityRenderer;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
@@ -57,6 +58,8 @@ public class ClientListener implements ClientModInitializer {
 			EntityRendererRegistry.register(EntityRegistry.BIKE_ENTITY, BikeGeoRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.EXTENDED_RENDERER_EXAMPLE,
 					ExampleExtendedRendererEntityRenderer::new);
+			EntityRendererRegistry.register(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE,
+					TexturePerBoneTestEntityRenderer::new);
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
 			GeoArmorRenderer.registerArmorRenderer(new PotatoArmorRenderer(), ItemRegistry.POTATO_HEAD,

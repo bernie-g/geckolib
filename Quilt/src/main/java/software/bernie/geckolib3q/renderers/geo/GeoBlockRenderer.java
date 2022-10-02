@@ -122,5 +122,17 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	public ResourceLocation getTextureResource(T entity) {
 		return this.modelProvider.getTextureResource(entity);
 	}
+	
+	protected MultiBufferSource rtb = null;
+
+	@Override
+	public void setCurrentRTB(MultiBufferSource rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public MultiBufferSource getCurrentRTB() {
+		return this.rtb;
+	}
 
 }
