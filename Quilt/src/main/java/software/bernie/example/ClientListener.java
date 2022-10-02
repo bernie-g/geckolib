@@ -8,7 +8,6 @@ package software.bernie.example;
 import java.util.UUID;
 
 import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
@@ -54,7 +53,7 @@ public class ClientListener implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		if (QuiltLoader.isDevelopmentEnvironment() && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (GeckoLibMod.shouldRegisterExamples()) {
 			EntityRendererRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, ExampleGeoRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.GEOLAYERENTITY, LERenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.BIKE_ENTITY, BikeGeoRenderer::new);

@@ -28,11 +28,20 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 @Mod(GeckoLib.ModID)
 public class GeckoLibMod {
 	public static CreativeModeTab geckolibItemGroup;
+	/**
+	 * When set to true, prevents examples from being registered.
+	 *
+	 * @deprecated due to mod loading order, setting this in your mod may not have an effect.
+	 * Use the {@link #DISABLE_EXAMPLES_PROPERTY_KEY system property} instead.
+	 */
+	@Deprecated(since = "3.0.40")
 	public static boolean DISABLE_IN_DEV = false;
+	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
+	private static final boolean isDevelopmentEnvironment = !FMLEnvironment.production;
 
 	public GeckoLibMod() {
 		GeckoLib.initialize();
-		if (!FMLEnvironment.production && !DISABLE_IN_DEV) {
+		if (shouldRegisterExamples()) {
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
 			EntityRegistry.ENTITIES.register(bus);
 			ItemRegistry.ITEMS.register(bus);
@@ -64,5 +73,19 @@ public class GeckoLibMod {
 					instances.remove(event.getEntity().getUUID());
 				}
 			});
+	}
+
+	/**
+	 * Returns whether examples are to be registered. Examples are registered when:
+	 * <ul>
+	 *     <li>The mod is running in a development environment; <em>and</em></li>
+	 *     <li>{@link #DISABLE_IN_DEV} is not set to true; <em>and</em></li>
+	 *     <li>the system property defined by {@link #DISABLE_EXAMPLES_PROPERTY_KEY} is not set to "true".</li>
+	 * </ul>
+	 *
+	 * @return whether the examples are to be registered
+	 */
+	static boolean shouldRegisterExamples() {
+		return isDevelopmentEnvironment && !DISABLE_IN_DEV && !Boolean.getBoolean(DISABLE_EXAMPLES_PROPERTY_KEY);
 	}
 }
