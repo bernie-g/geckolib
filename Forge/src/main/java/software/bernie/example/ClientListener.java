@@ -35,7 +35,7 @@ public class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (GeckoLibMod.shouldRegisterExamples()) {
 			event.registerEntityRenderer(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
@@ -53,14 +53,14 @@ public class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
-		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (GeckoLibMod.shouldRegisterExamples()) {
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, () -> new PotatoArmorRenderer());
 		}
 	}
 
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
-		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
+		if (GeckoLibMod.shouldRegisterExamples()) {
 			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.HABITAT_BLOCK.get(), RenderType.translucent());
 		}
 	}
