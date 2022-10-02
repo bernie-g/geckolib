@@ -8,7 +8,6 @@ package software.bernie.example;
 import java.util.UUID;
 
 import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
