@@ -10,6 +10,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
@@ -283,5 +284,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	public Integer getUniqueID(T animatable) {
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUuid().toString());
+	}
+	
+	protected VertexConsumerProvider rtb = null;
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
 	}
 }

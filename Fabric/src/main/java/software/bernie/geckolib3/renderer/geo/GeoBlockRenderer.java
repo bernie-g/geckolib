@@ -112,4 +112,16 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
 	public Identifier getTextureLocation(T instance) {
 		return this.modelProvider.getTextureLocation(instance);
 	}
+	
+	protected VertexConsumerProvider rtb = null;
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
+	}
 }

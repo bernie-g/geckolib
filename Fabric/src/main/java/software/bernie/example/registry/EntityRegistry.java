@@ -15,22 +15,27 @@ import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
+import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
 	public static final EntityType<GeoExampleEntity> GEO_EXAMPLE_ENTITY = buildEntity(GeoExampleEntity::new,
-			GeoExampleEntity.class, .7F, 1.3F);
-	public static final EntityType<BikeEntity> BIKE_ENTITY = buildEntity(BikeEntity::new, BikeEntity.class, 0.5f, 0.6F);
+			GeoExampleEntity.class, .7F, 1.3F, SpawnGroup.CREATURE);
+	public static final EntityType<BikeEntity> BIKE_ENTITY = buildEntity(BikeEntity::new, BikeEntity.class, 0.5f, 0.6F,
+			SpawnGroup.CREATURE);
 	public static final EntityType<ExtendedRendererEntity> EXTENDED_RENDERER_EXAMPLE = buildEntity(
-			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F);
-	public static final EntityType<LEEntity> GEOLAYERENTITY = buildEntity(LEEntity::new, LEEntity.class, 0.45F, 1.0F);
+			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F, SpawnGroup.CREATURE);
+	public static final EntityType<TexturePerBoneTestEntity> TEXTURE_PER_BONE_EXAMPLE = buildEntity(
+			TexturePerBoneTestEntity::new, TexturePerBoneTestEntity.class, 0.75F, 0.75F, SpawnGroup.CREATURE);
+	public static final EntityType<LEEntity> GEOLAYERENTITY = buildEntity(LEEntity::new, LEEntity.class, 0.45F, 1.0F,
+			SpawnGroup.CREATURE);
 
 	public static <T extends Entity> EntityType<T> buildEntity(EntityType.EntityFactory<T> entity, Class<T> entityClass,
-			float width, float height) {
+			float width, float height, SpawnGroup group) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 			String name = entityClass.getSimpleName().toLowerCase();
 			return EntityRegistryBuilder.<T>createBuilder(new Identifier(GeckoLib.ModID, name)).entity(entity)
-					.category(SpawnGroup.CREATURE).dimensions(EntityDimensions.changing(width, height)).build();
+					.category(group).dimensions(EntityDimensions.changing(width, height)).build();
 		}
 		return null;
 	}

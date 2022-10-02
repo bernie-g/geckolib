@@ -423,4 +423,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).light(p).next();
 		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).light(p).next();
 	}
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
+	}
 }

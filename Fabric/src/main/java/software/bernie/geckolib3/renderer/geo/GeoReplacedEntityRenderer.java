@@ -362,4 +362,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).light(p).next();
 		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).light(p).next();
 	}
+	
+	protected VertexConsumerProvider rtb = null;
+
+	@Override
+	public void setCurrentRTB(VertexConsumerProvider rtb) {
+		this.rtb = rtb;
+	}
+
+	@Override
+	public VertexConsumerProvider getCurrentRTB() {
+		return this.rtb;
+	}
 }
