@@ -20,10 +20,10 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
 //This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
-public class PotatoArmorItem extends ArmorItem implements IAnimatable {
+public class GeckoArmorItem extends ArmorItem implements IAnimatable {
 	private final AnimationFactory factory = new AnimationFactory(this);
 
-	public PotatoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Properties builder) {
+	public GeckoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Properties builder) {
 		super(materialIn, slot, builder);
 	}
 
@@ -56,8 +56,8 @@ public class PotatoArmorItem extends ArmorItem implements IAnimatable {
 
 		// Make sure the player is wearing all the armor. If they are, continue playing
 		// the animation, otherwise stop
-		boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS,
-				ItemRegistry.POTATO_LEGGINGS, ItemRegistry.POTATO_CHEST, ItemRegistry.POTATO_HEAD));
+		boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.GECKOARMOR_BOOTS,
+				ItemRegistry.GECKOARMOR_LEGGINGS, ItemRegistry.GECKOARMOR_CHEST, ItemRegistry.GECKOARMOR_HEAD));
 		return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
 	}
 
