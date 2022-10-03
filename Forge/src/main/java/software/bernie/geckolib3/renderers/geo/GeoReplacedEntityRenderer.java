@@ -175,7 +175,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 					.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)));
 			render(model, entity, partialTicks, renderType, stack, bufferIn,
 					glintBuffer != translucentBuffer ? VertexBuilderUtils.create(glintBuffer, translucentBuffer) : null,
-					packedLightIn, getPackedOverlay(entityLiving, partialTicks), (float) renderColor.getRed() / 255f,
+					packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)), (float) renderColor.getRed() / 255f,
 					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
 		}
