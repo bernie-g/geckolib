@@ -1,6 +1,11 @@
-v3.0.26
+v3.0.27
 
-- Changed to Parchment MC Mappings.
-- Code clean up
-- Backported Gecko Habitat
-- Added new start of new looping system, does not yet support hold on last frame but frame work is in place - DerToaster98
+- Added example for entity texturePerBone - DerToaster
+- renderRecursively more modular. - DerToaster
+- Started work on bringing texturePerBone to other renders - DerToaster
+- Geo Armor armors fixed - DerToaster
+- Added geckolib.disable_examples system property - williambi https://github.com/bernie-g/geckolib/wiki/Miscellaneous#disabling-geckolib-dev-mode-only-examples
+- Updated armor item names in code.
+- getRenderTypeForBone now protected instead of private.
+- Access clean up (private -> protected)
+- Fixed Molang Parser null crashes
