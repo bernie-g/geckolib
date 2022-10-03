@@ -14,7 +14,7 @@ import software.bernie.geckolib3q.geo.render.built.GeoModel;
 import software.bernie.geckolib3q.model.provider.GeoModelProvider;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
-	private final IGeoRenderer<T> entityRenderer;
+	protected final IGeoRenderer<T> entityRenderer;
 
 	public GeoLayerRenderer(IGeoRenderer<T> entityRendererIn) {
 		this.entityRenderer = entityRendererIn;

@@ -44,11 +44,11 @@ import software.bernie.geckolib3.util.GeoUtils;
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extends HumanoidModel
 		implements IGeoRenderer<T>, ModelFetcher<T> {
 
-	private static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
+	protected static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
 
 	public static Map<Class<? extends ArmorItem>, Map<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
 
-	private Class<? extends ArmorItem> assignedItemClass = null;
+	protected Class<? extends ArmorItem> assignedItemClass = null;
 
 	{
 		AnimationController.addModelFetcher(this);

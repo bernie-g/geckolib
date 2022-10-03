@@ -59,11 +59,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
-	private T currentArmorItem;
-	private LivingEntity entityLiving;
-	private ItemStack itemStack;
-	private EquipmentSlot armorSlot;
-	private BipedEntityModel baseModel;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlot armorSlot;
+	protected BipedEntityModel baseModel;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
