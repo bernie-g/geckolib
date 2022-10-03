@@ -46,11 +46,11 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
-	private final AnimatedGeoModel<IAnimatable> modelProvider;
-	private final T animatable;
+	protected final AnimatedGeoModel<IAnimatable> modelProvider;
+	protected final T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
-	private IAnimatable currentAnimatable;
-	private static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
+	protected IAnimatable currentAnimatable;
+	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {

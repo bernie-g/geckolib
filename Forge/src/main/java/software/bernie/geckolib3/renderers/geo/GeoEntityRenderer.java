@@ -64,7 +64,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
-	private Matrix4f renderEarlyMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
 
 	public ItemStack mainHand;
 	public ItemStack offHand;

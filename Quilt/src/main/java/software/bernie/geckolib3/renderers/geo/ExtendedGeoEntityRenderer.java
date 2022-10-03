@@ -98,24 +98,21 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected float widthScale;
 	protected float heightScale;
 
-	private T currentEntityBeingRendered;
-	private MultiBufferSource rtb;
+	protected T currentEntityBeingRendered;
+	protected MultiBufferSource rtb;
 
-	private float currentPartialTicks;
+	protected float currentPartialTicks;
 	protected ResourceLocation textureForBone = null;
 
 	protected final Queue<Tuple<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 
-	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>(); // TODO:
-																											// Replace
-																											// with
-																											// fastutil
-																											// equivalent
+	/* TODO: Replace with fastutil equivalent */
+	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
 
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	protected IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	protected IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
@@ -462,10 +459,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				: this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.rtb,
 						bufferIn, packedLightIn, currentTexture);
 		bufferIn = this.rtb.getBuffer(rt);
-		
+
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.pushPose();
-			
+
 			// Render armor
 			if (this.isArmorBone(bone)) {
 				stack.pushPose();
@@ -665,7 +662,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	// Auto UV recalculations for texturePerBone
 	@Override
 	public void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vector3f normal, VertexConsumer bufferIn,
-			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) throws IOException {
+			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
+			throws IOException {
 		// If no textureForBone is used we can proceed normally
 		if (this.textureForBone == null) {
 			super.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green,

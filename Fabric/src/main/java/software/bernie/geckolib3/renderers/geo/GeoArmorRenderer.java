@@ -60,11 +60,11 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
-	private T currentArmorItem;
-	private LivingEntity entityLiving;
-	private ItemStack itemStack;
-	private EquipmentSlot armorSlot;
-	private HumanoidModel baseModel;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlot armorSlot;
+	protected HumanoidModel baseModel;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
