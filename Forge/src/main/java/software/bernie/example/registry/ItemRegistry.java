@@ -28,13 +28,13 @@ public class ItemRegistry {
 
 	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());
 
-	public static final RegistryObject<PotatoArmorItem> POTATO_HEAD = ITEMS.register("potato_head",
+	public static final RegistryObject<PotatoArmorItem> POTATO_HEAD = ITEMS.register("geckoarmor_head",
 			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.HEAD, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_CHEST = ITEMS.register("potato_chest",
+	public static final RegistryObject<PotatoArmorItem> POTATO_CHEST = ITEMS.register("geckoarmor_chest",
 			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.CHEST, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_LEGGINGS = ITEMS.register("potato_leggings",
+	public static final RegistryObject<PotatoArmorItem> POTATO_LEGGINGS = ITEMS.register("geckoarmor_leggings",
 			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_BOOTS = ITEMS.register("potato_boots",
+	public static final RegistryObject<PotatoArmorItem> POTATO_BOOTS = ITEMS.register("geckoarmor_boots",
 			() -> new PotatoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties()));
 
 }

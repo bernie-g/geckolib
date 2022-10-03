@@ -1,10 +1,10 @@
 {
   "itemGroup.geckolib3q.geckolib_examples": "Geckolib Examples",
 
-  "item.geckolib3q.potato_head": "Potato Armor Helmet",
-  "item.geckolib3q.potato_chest": "Potato Armor Chestplate",
-  "item.geckolib3q.potato_leggings": "Potato Armor Leggings",
-  "item.geckolib3q.potato_boots": "Potato Armor Boots",
+  "item.geckolib3q.geckoarmor_head": "Potato Armor Helmet",
+  "item.geckolib3q.geckoarmor_chest": "Potato Armor Chestplate",
+  "item.geckolib3q.geckoarmor_leggings": "Potato Armor Leggings",
+  "item.geckolib3q.geckoarmor_boots": "Potato Armor Boots",
   "item.geckolib3q.jackintheboxitem": "Jack In The Box",
   "item.geckolib3q.pistol": "Pistol",
   "block.geckolib3q.habitatblock": "Gecko Habitat",
