@@ -120,35 +120,36 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setMolangQueries(IAnimatable animatable, double currentTick) {
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Minecraft minecraftInstance = Minecraft.getInstance();
+		if (parser != null) {
+			parser.setValue("query.actor_count", minecraftInstance.level.getEntityCount());
+			parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.level.getDayTime()));
+			parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
-		parser.setValue("query.actor_count", minecraftInstance.level.getEntityCount());
-		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.level.getDayTime()));
-		parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
+			if (animatable instanceof Entity) {
+				parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera()
+						.getPosition().distanceTo(((Entity) animatable).position()));
+				parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
+				parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
+				// Should probably check specifically whether it's in rain?
+				parser.setValue("query.is_in_water_or_rain",
+						MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubble()));
 
-		if (animatable instanceof Entity) {
-			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera().getPosition()
-					.distanceTo(((Entity) animatable).position()));
-			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
-			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
-			// Should probably check specifically whether it's in rain?
-			parser.setValue("query.is_in_water_or_rain",
-					MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubble()));
+				if (animatable instanceof LivingEntity) {
+					LivingEntity livingEntity = (LivingEntity) animatable;
+					parser.setValue("query.health", livingEntity.getHealth());
+					parser.setValue("query.max_health", livingEntity.getMaxHealth());
+					parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isOnFire()));
+					// Doesn't work for some reason?
+					parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
 
-			if (animatable instanceof LivingEntity) {
-				LivingEntity livingEntity = (LivingEntity) animatable;
-				parser.setValue("query.health", livingEntity.getHealth());
-				parser.setValue("query.max_health", livingEntity.getMaxHealth());
-				parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isOnFire()));
-				// Doesn't work for some reason?
-				parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
+					Vec3 velocity = livingEntity.getDeltaMovement();
+					float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+					parser.setValue("query.ground_speed", groundSpeed);
 
-				Vec3 velocity = livingEntity.getDeltaMovement();
-				float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-				parser.setValue("query.ground_speed", groundSpeed);
-
-				float yawSpeed = livingEntity.getViewYRot((float) currentTick)
-						- livingEntity.getViewYRot((float) (currentTick - 0.1));
-				parser.setValue("query.yaw_speed", yawSpeed);
+					float yawSpeed = livingEntity.getViewYRot((float) currentTick)
+							- livingEntity.getViewYRot((float) (currentTick - 0.1));
+					parser.setValue("query.yaw_speed", yawSpeed);
+				}
 			}
 		}
 	}
