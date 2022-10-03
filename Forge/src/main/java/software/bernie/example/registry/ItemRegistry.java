@@ -11,7 +11,7 @@ import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PistolItem;
-import software.bernie.example.item.PotatoArmorItem;
+import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.geckolib3.GeckoLib;
 
 public class ItemRegistry {
@@ -29,13 +29,13 @@ public class ItemRegistry {
 
 	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());
 
-	public static final RegistryObject<PotatoArmorItem> POTATO_HEAD = ITEMS.register("geckoarmor_head",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.HEAD, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_CHEST = ITEMS.register("geckoarmor_chest",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.CHEST, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_LEGGINGS = ITEMS.register("geckoarmor_leggings",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.LEGS, new Item.Properties()));
-	public static final RegistryObject<PotatoArmorItem> POTATO_BOOTS = ITEMS.register("geckoarmor_boots",
-			() -> new PotatoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.FEET, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_HEAD = ITEMS.register("geckoarmor_head",
+			() -> new GeckoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.HEAD, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_CHEST = ITEMS.register("geckoarmor_chest",
+			() -> new GeckoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.CHEST, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_LEGGINGS = ITEMS.register("geckoarmor_leggings",
+			() -> new GeckoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.LEGS, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_BOOTS = ITEMS.register("geckoarmor_boots",
+			() -> new GeckoArmorItem(ArmorMaterial.DIAMOND, EquipmentSlotType.FEET, new Item.Properties()));
 
 }

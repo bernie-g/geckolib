@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.item.ArmorStandEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.EquipmentSlotType.Group;
-import net.minecraft.item.IArmorMaterial;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.Item;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -21,11 +19,12 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.item.GeoArmorItem;
 
-public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
-	private AnimationFactory factory = new AnimationFactory(this);
+//This is an example of animated armor. Make sure to read the comments thoroughly and also check out PotatoArmorRenderer.
+public class GeckoArmorItem extends GeoArmorItem implements IAnimatable {
+	private final AnimationFactory factory = new AnimationFactory(this);
 
-	public PotatoArmorItem(IArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
-		super(materialIn, slot, builder.tab(GeckoLibMod.geckolibItemGroup));
+	public GeckoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Item.Settings builder) {
+		super(materialIn, slot, builder);
 	}
 
 	// Predicate runs every frame
@@ -44,23 +43,21 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 			return PlayState.CONTINUE;
 		}
 
-
 		// elements 2 to 6 are the armor so we take the sublist. Armorlist now only
 		// contains the 4 armor slots
 		List<Item> armorList = new ArrayList<>(4);
-		for(EquipmentSlotType slot : EquipmentSlotType.values()) {
-			if(slot.getType() == Group.ARMOR) {
-				if(livingEntity.getItemBySlot(slot) != null) {
-					armorList.add(livingEntity.getItemBySlot(slot).getItem());
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+				if (livingEntity.getEquippedStack(slot) != null) {
+					armorList.add(livingEntity.getEquippedStack(slot).getItem());
 				}
 			}
 		}
 
 		// Make sure the player is wearing all the armor. If they are, continue playing
 		// the animation, otherwise stop
-		boolean isWearingAll = armorList
-				.containsAll(Arrays.asList(ItemRegistry.POTATO_BOOTS.get(), ItemRegistry.POTATO_LEGGINGS.get(),
-						ItemRegistry.POTATO_CHEST.get(), ItemRegistry.POTATO_HEAD.get()));
+		boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.GECKOARMOR_BOOTS,
+				ItemRegistry.GECKOARMOR_LEGGINGS, ItemRegistry.GECKOARMOR_CHEST, ItemRegistry.GECKOARMOR_HEAD));
 		return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
 	}
 
@@ -68,7 +65,7 @@ public class PotatoArmorItem extends GeoArmorItem implements IAnimatable {
 	// AnimationData
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<PotatoArmorItem>(this, "controller", 20, this::predicate));
+		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));
 	}
 
 	@Override

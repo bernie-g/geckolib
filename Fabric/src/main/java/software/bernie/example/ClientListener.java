@@ -26,7 +26,7 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
-import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
+import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
@@ -37,7 +37,7 @@ import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
-import software.bernie.example.item.PotatoArmorItem;
+import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.ItemRegistry;
@@ -63,7 +63,7 @@ public class ClientListener implements ClientModInitializer {
 					context) -> new TexturePerBoneTestEntityRenderer(entityRenderDispatcher));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
-			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
+			GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, new GeckoArmorRenderer());
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.HABITAT_TILE, HabitatTileRenderer::new);
 			BlockEntityRendererRegistry.INSTANCE.register(TileRegistry.FERTILIZER, FertilizerTileRenderer::new);
 
