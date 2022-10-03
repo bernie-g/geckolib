@@ -101,9 +101,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected final Queue<Pair<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 
-	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>(); // TODO: Replace with
-																									// fastutil
-																									// equivalent
+	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>(); // TODO: Replace with fastutil equivalent
 
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
