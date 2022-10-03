@@ -37,7 +37,7 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 		});
 	}
 
-	private final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> modelProvider;
 
 	public GeoBlockRenderer(TileEntityRendererDispatcher rendererDispatcherIn, AnimatedGeoModel<T> modelProvider) {
 		super(rendererDispatcherIn);

@@ -24,7 +24,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class GeoItemRenderer<T extends Item & IAnimatable>
 		implements IGeoRenderer<T>, BuiltinItemRendererRegistry.DynamicItemRenderer {
-	private static final Map<Class<? extends Item>, GeoItemRenderer> renderers = new ConcurrentHashMap<>();
+	protected static final Map<Class<? extends Item>, GeoItemRenderer> renderers = new ConcurrentHashMap<>();
 
 	// Register a model fetcher for this renderer
 	static {

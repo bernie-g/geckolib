@@ -42,7 +42,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		});
 	}
 
-	private final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> modelProvider;
 	// Set these to the names of your armor's bones, or null if you aren't using
 	// them
 	public String headBone = "armorHead";
@@ -57,7 +57,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	protected LivingEntity entityLiving;
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
-	private BipedEntityModel baseModel;
+	protected BipedEntityModel baseModel;
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		super(1);

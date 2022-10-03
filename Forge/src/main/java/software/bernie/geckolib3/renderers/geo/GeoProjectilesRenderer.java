@@ -37,7 +37,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		});
 	}
 
-	private final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> modelProvider;
 
 	public GeoProjectilesRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);

@@ -93,20 +93,21 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected float widthScale;
 	protected float heightScale;
 
-	private T currentEntityBeingRendered;
-	private VertexConsumerProvider rtb;
+	protected T currentEntityBeingRendered;
+	protected VertexConsumerProvider rtb;
 
-	private float currentPartialTicks;
+	protected float currentPartialTicks;
 	protected Identifier textureForBone = null;
 
 	protected final Queue<Pair<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
-
-	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>(); // TODO: Replace with fastutil equivalent
+	
+	/* TODO: Replace with fastutil equivalent */
+	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
 
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	protected IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	protected IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
