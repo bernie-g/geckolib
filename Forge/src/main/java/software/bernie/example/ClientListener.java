@@ -14,7 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import software.bernie.example.client.renderer.armor.PotatoArmorRenderer;
+import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
@@ -23,7 +23,7 @@ import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
 import software.bernie.example.client.renderer.entity.TexturePerBoneTestEntityRenderer;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
-import software.bernie.example.item.PotatoArmorItem;
+import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.TileRegistry;
@@ -54,7 +54,7 @@ public class ClientListener {
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
 		if (!FMLEnvironment.production && !GeckoLibMod.DISABLE_IN_DEV) {
-			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, () -> new PotatoArmorRenderer());
+			GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, () -> new GeckoArmorRenderer());
 		}
 	}
 

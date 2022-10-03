@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "geckolib3:item/potato_boots"
+    "layer0": "geckolib3q:item/geckoarmor_head"
   }
 }
