@@ -550,7 +550,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				LivingEntityRenderer.getOverlay(currentEntityBeingRendered, 0.0F), currentEntityBeingRendered.getId());
 	}
 
-	private RenderLayer getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
+	protected RenderLayer getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
 			MatrixStack stack, VertexConsumer bufferIn, VertexConsumerProvider currentRenderTypeBufferInUse2,
 			int packedLightIn, Identifier currentTexture) {
 		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack,

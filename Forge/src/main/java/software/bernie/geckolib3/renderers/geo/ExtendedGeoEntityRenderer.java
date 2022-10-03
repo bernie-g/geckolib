@@ -585,7 +585,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				currentEntityBeingRendered.getId());
 	}
 
-	private RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
+	protected RenderType getRenderTypeForBone(GeoBone bone, T currentEntityBeingRendered2, float currentPartialTicks2,
 			PoseStack stack, VertexConsumer bufferIn, MultiBufferSource currentRenderTypeBufferInUse2,
 			int packedLightIn, ResourceLocation currentTexture) {
 		return this.getRenderType(currentEntityBeingRendered2, currentPartialTicks2, stack,
