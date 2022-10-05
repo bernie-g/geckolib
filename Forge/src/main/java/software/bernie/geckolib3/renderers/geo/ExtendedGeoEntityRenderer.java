@@ -97,7 +97,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected float heightScale;
 
 	protected T currentEntityBeingRendered;
-	protected IRenderTypeBuffer rtb;
 
 	protected float currentPartialTicks;
 	protected ResourceLocation textureForBone = null;
@@ -217,7 +216,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, IRenderTypeBuffer renderTypeBuffer,
 			IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
-		this.rtb = renderTypeBuffer;
 		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn,
 				red, green, blue, partialTicks);
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
@@ -247,8 +245,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		if (this.rtb == null) {
+		if (this.getCurrentRTB() == null) {
 			throw new IllegalStateException("RenderTypeBuffer must never be null at this point!");
+		}
+		
+		if(this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
+			super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			return;
 		}
 
 		this.textureForBone = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
@@ -258,10 +261,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 		final RenderType rt = customTextureMarker
 				? this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack,
-						bufferIn, this.rtb, packedLightIn, this.textureForBone)
-				: this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.rtb,
+						bufferIn, this.getCurrentRTB(), packedLightIn, this.textureForBone)
+				: this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.getCurrentRTB(),
 						bufferIn, packedLightIn, currentTexture);
-		bufferIn = this.rtb.getBuffer(rt);
+		bufferIn = this.getCurrentRTB().getBuffer(rt);
 
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
 			stack.pushPose();
@@ -273,7 +276,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				stack.popPose();
 
 				// Reset buffer...
-				bufferIn = this.rtb.getBuffer(rt);
+				bufferIn = this.getCurrentRTB().getBuffer(rt);
 			} else {
 				ItemStack boneItem = this.getHeldItemForBone(bone.getName(), this.currentEntityBeingRendered);
 				BlockState boneBlock = this.getHeldBlockForBone(bone.getName(), this.currentEntityBeingRendered);
@@ -282,7 +285,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 					this.handleItemAndBlockBoneRendering(stack, bone, boneItem, boneBlock, packedLightIn);
 					stack.popPose();
 
-					bufferIn = this.rtb.getBuffer(rt);
+					bufferIn = this.getCurrentRTB().getBuffer(rt);
 				}
 			}
 			stack.popPose();
@@ -297,8 +300,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		//////////////////////////////////////
 		// reset buffer
 		if (customTextureMarker) {
-			bufferIn = this.rtb.getBuffer(this.getRenderType(currentEntityBeingRendered, this.currentPartialTicks,
-					stack, rtb, bufferIn, packedLightIn, currentTexture));
+			bufferIn = this.getCurrentRTB().getBuffer(this.getRenderType(currentEntityBeingRendered, this.currentPartialTicks,
+					stack, this.getCurrentRTB(), bufferIn, packedLightIn, currentTexture));
 			// Reset the marker...
 			this.textureForBone = null;
 		}
@@ -331,14 +334,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		if (boneItem != null) {
 			this.preRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 
-			this.renderItemStack(stack, this.rtb, packedLightIn, boneItem, bone.getName());
+			this.renderItemStack(stack, this.getCurrentRTB(), packedLightIn, boneItem, bone.getName());
 
 			this.postRenderItem(stack, boneItem, bone.getName(), this.currentEntityBeingRendered, bone);
 		}
 		if (boneBlock != null) {
 			this.preRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
 
-			this.renderBlock(stack, this.rtb, packedLightIn, boneBlock);
+			this.renderBlock(stack, this.getCurrentRTB(), packedLightIn, boneBlock);
 
 			this.postRenderBlock(stack, boneBlock, bone.getName(), this.currentEntityBeingRendered);
 		}
@@ -583,7 +586,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	// a pre-setup location
 	protected void renderArmorPart(MatrixStack stack, ModelRenderer sourceLimb, int packedLightIn, int packedOverlayIn,
 			float red, float green, float blue, float alpha, ItemStack armorForBone, ResourceLocation armorResource) {
-		IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(rtb, RenderType.armorCutoutNoCull(armorResource), false,
+		IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(this.getCurrentRTB(), RenderType.armorCutoutNoCull(armorResource), false,
 				armorForBone.hasFoil());
 		sourceLimb.render(stack, ivb, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
