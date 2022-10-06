@@ -167,6 +167,16 @@
 					"scale": [0.6, 1, 1.3]
 				}
 			}
+		},
+		"animation.bat.spin": {
+			"loop": true,
+			"bones": {
+				"leftear": {
+					"rotation": {
+						"vector": ["math.cos(query.anim_time*360)*20", "math.cos(query.anim_time*360)*20", "math.cos(query.anim_time*360)*20"]
+					}
+				}
+			}
 		}
 	},
 	"geckolib_format_version": 2

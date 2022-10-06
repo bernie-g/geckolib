@@ -42,6 +42,12 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 		return PlayState.CONTINUE;
 	}
 
+	private <E extends IAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
+			event.getController()
+					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
+		return PlayState.CONTINUE;
+	}
+
 	@Override
 	public InteractionResult interactAt(Player player, Vec3 hitPos, InteractionHand hand) {
 		if (hand == InteractionHand.MAIN_HAND) {
@@ -54,8 +60,11 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 	public void registerControllers(AnimationData data) {
 		AnimationController<GeoExampleEntity> controller = new AnimationController<>(this, "controller", 0,
 				this::predicate);
+		AnimationController<GeoExampleEntity> controllerspin = new AnimationController<>(this, "controllerspin", 0,
+				this::predicateSpin);
 		controller.registerCustomInstructionListener(this::customListener);
 		data.addAnimationController(controller);
+		data.addAnimationController(controllerspin);
 	}
 
 	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
