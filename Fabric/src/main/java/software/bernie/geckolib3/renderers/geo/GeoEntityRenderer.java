@@ -244,14 +244,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		RenderUtils.scale(bone, stack);
 		if (bone.isTrackingXform()) {
-			MatrixStack.Entry entry = stack.peek();
-			Matrix4f matBone = entry.getPositionMatrix().copy();
-			bone.setWorldSpaceXform(matBone.copy());
-
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-			renderEarlyMatInvert.invert();
-			matBone.multiply(renderEarlyMatInvert);
-			bone.setModelSpaceXform(matBone);
+            Matrix4f matBone = stack.peek().getPositionMatrix().copy();
+            Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+            renderEarlyMatInvert.invert();
+            multiplyBackward(renderEarlyMatInvert);
+            bone.getModelSpaceXform().load(matBone);
 		}
 		RenderUtils.moveBackFromPivot(bone, stack);
 
@@ -278,6 +275,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		stack.pop();
 	}
+
+    public void multiplyBackward(Matrix4f other) {
+        Matrix4f copy = other.copy();
+        copy.multiply(other);
+        other.load(copy);
+    }
 
 	@Override
 	public Identifier getTexture(T entity) {

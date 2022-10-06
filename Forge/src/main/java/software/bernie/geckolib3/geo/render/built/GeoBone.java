@@ -242,6 +242,7 @@ public class GeoBone implements IBone {
 		this.hideChildBonesToo = skipChildRendering;
 	}
 
+	/* Credit to BobMowzie for this section */
 	public GeoBone getParent() {
 		return (GeoBone) parent;
 	}
@@ -270,15 +271,6 @@ public class GeoBone implements IBone {
 		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
-	public Matrix4f getWorldSpaceXform() {
-		setTrackXform(true);
-		return worldSpaceXform;
-	}
-
-	public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
-		this.worldSpaceXform.load(worldSpaceXform);
-	}
-
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -300,6 +292,7 @@ public class GeoBone implements IBone {
 
 	public Matrix4f getModelRotationMat() {
 		Matrix4f matrix = getModelSpaceXform().copy();
+		removeMatrixTranslation(matrix);
 		return matrix;
 	}
 
@@ -320,6 +313,14 @@ public class GeoBone implements IBone {
 	public Matrix3f getWorldSpaceNormal() {
 		return worldSpaceNormal;
 	}
+
+    public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
+        this.worldSpaceXform = worldSpaceXform;
+    }
+
+    public Matrix4f getWorldSpaceXform() {
+        return worldSpaceXform;
+    }
 
 	// Position utils
 	public void addPosition(Vector3d vec) {
