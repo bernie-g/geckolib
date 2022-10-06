@@ -1,11 +1,10 @@
-3.0.63
+v3.0.64
 
-- Added example for entity texturePerBone - DerToaster
-- renderRecursively more modular. - DerToaster
-- Started work on bringing texturePerBone to other renders - DerToaster
-- Geo Armor armors fixed - DerToaster
-- Added geckolib.disable_examples system property - williambi https://github.com/bernie-g/geckolib/wiki/Miscellaneous#disabling-geckolib-dev-mode-only-examples
-- Updated armor item names in code.
-- getRenderTypeForBone now protected instead of private.
-- Access clean up (private -> protected)
-- Fixed Molang Parser null crashes
+- Use Getter/Setting methods for RTB - DerToaster
+- Skip special rendering when model gets rerendered in ExtendedGeoEntity Render - DerToaster
+- Change currentModelRenderCycle back to private, use getter.
+- Example Bat Entity left ear now spins, showing child bones be animated by other controllers if not used in another at the same time. 
+- Mirrored textures now work properly.
+
+### Known Issues Still Being Worked On ###
+- getWorldPosition is not returning the correct position.
