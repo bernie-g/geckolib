@@ -1,3 +1,3 @@
-v3.0.30
+v3.0.31
 
-- Backport GeoProjectileRender
+- Ported back Mirror Texture Fix
