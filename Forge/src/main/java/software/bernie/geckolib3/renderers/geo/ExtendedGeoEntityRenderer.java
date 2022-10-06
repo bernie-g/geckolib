@@ -109,7 +109,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	/*
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
-	protected IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	protected IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
