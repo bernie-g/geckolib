@@ -481,6 +481,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		if (this.getCurrentRTB() == null) {
 			throw new IllegalStateException("RenderTypeBuffer must never be null at this point!");
 		}
+		
+		if(this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
+			super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			return;
+		}
 
 		this.textureForBone = this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL ? null
 				: this.getTextureForBone(bone.getName(), this.currentEntityBeingRendered);
