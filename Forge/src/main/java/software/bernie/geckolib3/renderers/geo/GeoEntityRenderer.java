@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -41,6 +42,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoCube;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
@@ -208,6 +210,53 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.whTexture = this.getTextureLocation(animatable);
 		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, partialTicks);
+	}
+
+	@Override
+	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		stack.pushPose();
+		boolean rotOverride = bone.rotMat != null;
+		RenderUtils.translate(bone, stack);
+		RenderUtils.moveToPivot(bone, stack);
+		if (rotOverride) {
+			stack.last().pose().multiply(bone.rotMat);
+			stack.last().normal().mul(new Matrix3f(bone.rotMat));
+		} else {
+			RenderUtils.rotate(bone, stack);
+		}
+		RenderUtils.scale(bone, stack);
+		if (bone.isTrackingXform()) {
+			Matrix4f matBone = stack.last().pose().copy();
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			matBone.multiplyBackward(renderEarlyMatInvert);
+			bone.getModelSpaceXform().add(matBone);
+		}
+		RenderUtils.moveBackFromPivot(bone, stack);
+		if (!bone.isHidden) {
+			Iterator<?> var10 = bone.childCubes.iterator();
+
+			while (var10.hasNext()) {
+				GeoCube cube = (GeoCube) var10.next();
+				stack.pushPose();
+				if (!bone.cubesAreHidden()) {
+					this.renderCube(cube, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+				}
+				stack.popPose();
+			}
+		}
+		if (!bone.childBonesAreHiddenToo()) {
+			Iterator<?> var10 = bone.childBones.iterator();
+
+			while (var10.hasNext()) {
+				GeoBone childBone = (GeoBone) var10.next();
+				this.renderRecursively(childBone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+						alpha);
+			}
+		}
+
+		stack.popPose();
 	}
 
 	@Override
@@ -396,12 +445,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).uv2(p).endVertex();
 		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).uv2(p).endVertex();
 	}
-	
+
 	@Override
 	public void setCurrentRTB(IRenderTypeBuffer rtb) {
 		this.rtb = rtb;
 	}
-	
+
 	@Override
 	public IRenderTypeBuffer getCurrentRTB() {
 		return this.rtb;

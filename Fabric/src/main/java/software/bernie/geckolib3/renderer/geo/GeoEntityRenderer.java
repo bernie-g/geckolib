@@ -277,7 +277,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 		stack.pop();
 	}
-
+	
 	@Override
 	public Identifier getTexture(T entity) {
 		return getTextureLocation(entity);
