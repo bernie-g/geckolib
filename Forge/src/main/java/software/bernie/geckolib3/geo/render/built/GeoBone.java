@@ -49,22 +49,21 @@ public class GeoBone implements IBone {
 	public Object extraData;
 
 	private Matrix4f modelSpaceXform;
+	private Matrix4f localSpaceXform;
+	private Matrix4f worldSpaceXform;
+
 	private boolean trackXform;
 	public Matrix4f rotMat;
-
-	private Matrix4f worldSpaceXform;
-	private Matrix3f worldSpaceNormal;
 
 	public GeoBone() {
 		modelSpaceXform = new Matrix4f();
 		modelSpaceXform.setIdentity();
-		trackXform = false;
-		rotMat = null;
-
+		localSpaceXform = new Matrix4f();
+		localSpaceXform.setIdentity();
 		worldSpaceXform = new Matrix4f();
 		worldSpaceXform.setIdentity();
-		worldSpaceNormal = new Matrix3f();
-		worldSpaceNormal.setIdentity();
+		trackXform = false;
+		rotMat = null;
 	}
 
 	@Override
@@ -271,6 +270,31 @@ public class GeoBone implements IBone {
 		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
+	public Matrix4f getLocalSpaceXform() {
+		setTrackXform(true);
+		return localSpaceXform;
+	}
+
+	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
+		this.localSpaceXform.load(localSpaceXform);
+	}
+
+	public Vector3d getLocalPosition() {
+		Matrix4f matrix = getLocalSpaceXform();
+		Vector4f vec = new Vector4f(0, 0, 0, 1);
+		vec.transform(matrix);
+		return new Vector3d(vec.x(), vec.y(), vec.z());
+	}
+
+	public Matrix4f getWorldSpaceXform() {
+		setTrackXform(true);
+		return worldSpaceXform;
+	}
+
+	public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
+		this.worldSpaceXform.load(worldSpaceXform);
+	}
+
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -305,22 +329,6 @@ public class GeoBone implements IBone {
 	public void setModelRotationMat(Matrix4f mat) {
 		rotMat = mat;
 	}
-
-	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
-		this.worldSpaceNormal = worldSpaceNormal;
-	}
-
-	public Matrix3f getWorldSpaceNormal() {
-		return worldSpaceNormal;
-	}
-
-    public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
-        this.worldSpaceXform = worldSpaceXform;
-    }
-
-    public Matrix4f getWorldSpaceXform() {
-        return worldSpaceXform;
-    }
 
 	// Position utils
 	public void addPosition(Vector3d vec) {

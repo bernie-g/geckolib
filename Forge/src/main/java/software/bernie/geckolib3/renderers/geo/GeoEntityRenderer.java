@@ -65,7 +65,9 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
+	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
+	protected T animatable;
 
 	public ItemStack mainHand;
 	public ItemStack offHand;
@@ -91,6 +93,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
 			}
 		}
+		this.dispatchedMat = stack.last().pose().copy();
 		boolean shouldSit = entity.isPassenger()
 				&& (entity.getVehicle() != null && entity.getVehicle().shouldRiderSit());
 		EntityModelData entityModelData = new EntityModelData();
@@ -203,6 +206,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
 		renderEarlyMat = stackIn.last().pose().copy();
+		this.animatable = animatable;
 		this.mainHand = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offHand = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmet = animatable.getItemBySlot(EquipmentSlot.HEAD);
@@ -230,11 +234,30 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		RenderUtils.scale(bone, stack);
 		if (bone.isTrackingXform()) {
-            Matrix4f matBone = stack.last().pose().copy();
-            Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-            renderEarlyMatInvert.invert();
-            matBone.multiplyBackward(renderEarlyMatInvert);
-            bone.getModelSpaceXform().load(matBone);
+			PoseStack.Pose entry = stack.last();
+			Matrix4f boneMat = entry.pose().copy();
+
+			// Model space
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			Matrix4f modelPosBoneMat = boneMat.copy();
+			modelPosBoneMat.multiplyBackward(renderEarlyMatInvert);
+			bone.setModelSpaceXform(modelPosBoneMat);
+
+			// Local space
+			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			dispatchedMatInvert.invert();
+			Matrix4f localPosBoneMat = boneMat.copy();
+			localPosBoneMat.multiplyBackward(dispatchedMatInvert);
+			// (Offset is the only transform we may want to preserve from the dispatched mat)
+			Vec3 renderOffset = this.getRenderOffset(animatable, 1.0F);
+			localPosBoneMat.translate(new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
+			bone.setLocalSpaceXform(localPosBoneMat);
+
+			// World space
+			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			worldPosBoneMat.translate(new Vector3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
+			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
 		RenderUtils.moveBackFromPivot(bone, stack);
 
