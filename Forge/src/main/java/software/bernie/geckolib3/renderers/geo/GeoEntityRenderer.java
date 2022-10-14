@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -92,10 +94,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
+	@AvailableSince(value = "3.0.42")
 	protected IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
+	@AvailableSince(value = "3.0.42")
 	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
@@ -218,6 +222,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUUID().hashCode();
 	}
+	
+	@Override
+	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
 
 	@Override
 	public void renderEarly(T animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer,
@@ -314,10 +327,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.modelProvider;
 	}
 
+	@AvailableSince(value = "3.0.42")
 	protected float getWidthScale(T entity) {
 		return this.widthScale;
 	}
 
+	@AvailableSince(value = "3.0.42")
 	protected float getHeightScale(T entity) {
 		return this.heightScale;
 	}

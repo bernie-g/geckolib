@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -22,15 +24,21 @@ import net.minecraft.item.ArmorItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeoUtils;
+import software.bernie.geckolib3.util.IRenderCycle;
 
 public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
 	public static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
@@ -64,6 +72,25 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
 	protected BipedEntityModel baseModel;
+	protected float widthScale;
+	protected float heightScale;
+	protected Matrix4f dispatchedMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
+
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	
+	@AvailableSince(value = "3.0.65")
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	@AvailableSince(value = "3.0.65")
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
@@ -93,11 +120,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		}
 		return renderer;
 	}
-
+	
 	@Override
 	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
@@ -111,6 +139,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 1.497F, 0.0D);
 		stack.scale(-1.005F, -1.0F, 1.005F);
+		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -140,6 +170,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	public void render(MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 1.497F, 0.0D);
 		stack.scale(-1.005F, -1.0F, 1.005F);
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -165,6 +197,63 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
 	}
+	
+	@Override
+	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
+		this.currentArmorItem = animatable;
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
+	}
+	
+	@Override
+	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (bone.isTrackingXform()) {
+			MatrixStack.Entry entry = stack.peek();
+			Matrix4f boneMat = entry.getPositionMatrix().copy();
+
+			// Model space
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			Matrix4f modelPosBoneMat = boneMat.copy();
+			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
+			bone.setModelSpaceXform(modelPosBoneMat);
+
+			// Local space
+			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			dispatchedMatInvert.invert();
+			Matrix4f localPosBoneMat = boneMat.copy();
+			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
+			// (Offset is the only transform we may want to preserve from the dispatched mat)
+			Vec3d renderOffset = this.getPositionOffset(currentArmorItem, 1.0F);
+			localPosBoneMat.addToLastColumn(new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
+			bone.setLocalSpaceXform(localPosBoneMat);
+
+			// World space
+			// Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			// worldPosBoneMat.addToLastColumn(new Vec3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
+			// bone.setWorldSpaceXform(worldPosBoneMat);
+		}
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+
+	public Vec3d getPositionOffset(T entity, float tickDelta) {
+		return Vec3d.ZERO;
+	}
+
+    public void multiplyBackward(Matrix4f first, Matrix4f other) {
+        Matrix4f copy = other.copy();
+        copy.multiply(first);
+        first.load(copy);
+    }
 
 	private void fitToBiped() {
 		if (!(this.entityLiving instanceof ArmorStandEntity)) {
@@ -232,6 +321,16 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	@Override
 	public AnimatedGeoModel<T> getGeoModelProvider() {
 		return this.modelProvider;
+	}
+
+	@AvailableSince(value = "3.0.65")
+	protected float getWidthScale(Object animatable2) {
+		return this.widthScale;
+	}
+
+	@AvailableSince(value = "3.0.65")
+	protected float getHeightScale(Object entity) {
+		return this.heightScale;
 	}
 
 	@Override

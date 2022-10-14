@@ -48,6 +48,8 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T>
@@ -63,7 +65,9 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 
 	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
 	protected final AnimatedGeoModel<T> modelProvider;
+	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
+	protected T animatable;
 
 	public ItemStack mainHand;
 	public ItemStack offHand;
@@ -73,10 +77,25 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public ItemStack boots;
 	public VertexConsumerProvider rtb;
 	public Identifier whTexture;
+	protected float widthScale;
+	protected float heightScale;
 
 	public GeoEntityRenderer(EntityRendererFactory.Context ctx, AnimatedGeoModel<T> modelProvider) {
 		super(ctx);
 		this.modelProvider = modelProvider;
+	}
+
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
 	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn) {
@@ -97,10 +116,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			return 0.0F;
 		}
 	}
-	
+
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
 			VertexConsumerProvider bufferIn, int packedLightIn) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		stack.push();
 		if (entity instanceof MobEntity) {
 			Entity leashHolder = ((MobEntity) entity).getHoldingEntity();
@@ -108,6 +128,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				this.renderLeash(entity, partialTicks, stack, bufferIn, leashHolder);
 			}
 		}
+		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
 		boolean shouldSit = entity.hasVehicle() && (entity.getVehicle() != null);
 		EntityModelData entityModelData = new EntityModelData();
 		entityModelData.isSitting = shouldSit;
@@ -211,12 +232,22 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public Integer getUniqueID(T animatable) {
 		return animatable.getUuid().hashCode();
 	}
+	
+	@Override
+	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
 
 	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float partialTicks) {
 		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
+		this.animatable = animatable;
 		this.mainHand = animatable.getEquippedStack(EquipmentSlot.MAINHAND);
 		this.offHand = animatable.getEquippedStack(EquipmentSlot.OFFHAND);
 		this.helmet = animatable.getEquippedStack(EquipmentSlot.HEAD);
@@ -227,6 +258,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.whTexture = this.getTextureLocation(animatable);
 		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, partialTicks);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
 	}
 
 	@Override
@@ -244,11 +280,33 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		}
 		RenderUtils.scale(bone, stack);
 		if (bone.isTrackingXform()) {
-            Matrix4f matBone = stack.peek().getPositionMatrix().copy();
-            Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-            renderEarlyMatInvert.invert();
-            multiplyBackward(renderEarlyMatInvert);
-            bone.getModelSpaceXform().load(matBone);
+			MatrixStack.Entry entry = stack.peek();
+			Matrix4f boneMat = entry.getPositionMatrix().copy();
+
+			// Model space
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			Matrix4f modelPosBoneMat = boneMat.copy();
+			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
+			bone.setModelSpaceXform(modelPosBoneMat);
+
+			// Local space
+			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			dispatchedMatInvert.invert();
+			Matrix4f localPosBoneMat = boneMat.copy();
+			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
+			// (Offset is the only transform we may want to preserve from the dispatched
+			// mat)
+			Vec3d renderOffset = this.getPositionOffset(animatable, 1.0F);
+			localPosBoneMat.addToLastColumn(
+					new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
+			bone.setLocalSpaceXform(localPosBoneMat);
+
+			// World space
+			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			worldPosBoneMat.addToLastColumn(
+					new Vec3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
+			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
 		RenderUtils.moveBackFromPivot(bone, stack);
 
@@ -276,11 +334,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		stack.pop();
 	}
 
-    public void multiplyBackward(Matrix4f other) {
-        Matrix4f copy = other.copy();
-        copy.multiply(other);
-        other.load(copy);
-    }
+	public void multiplyBackward(Matrix4f first, Matrix4f other) {
+		Matrix4f copy = other.copy();
+		copy.multiply(first);
+		first.load(copy);
+	}
 
 	@Override
 	public Identifier getTexture(T entity) {
@@ -290,6 +348,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public GeoModelProvider<T> getGeoModelProvider() {
 		return this.modelProvider;
+	}
+
+	protected float getWidthScale(T entity) {
+		return this.widthScale;
+	}
+
+	protected float getHeightScale(T entity) {
+		return this.heightScale;
 	}
 
 	protected void applyRotations(T entityLiving, MatrixStack matrixStackIn, float ageInTicks, float rotationYaw,

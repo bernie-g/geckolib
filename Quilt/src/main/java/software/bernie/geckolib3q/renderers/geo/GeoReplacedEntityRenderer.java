@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.quiltmc.loader.api.QuiltLoader;
 
 import com.google.common.collect.Lists;
@@ -41,16 +42,38 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3q.compat.PatchouliCompat;
+import software.bernie.geckolib3q.geo.render.built.GeoBone;
 import software.bernie.geckolib3q.geo.render.built.GeoModel;
 import software.bernie.geckolib3q.model.AnimatedGeoModel;
 import software.bernie.geckolib3q.model.provider.data.EntityModelData;
+import software.bernie.geckolib3q.util.EModelRenderCycle;
+import software.bernie.geckolib3q.util.IRenderCycle;
 
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	protected final AnimatedGeoModel<IAnimatable> modelProvider;
-	protected final T animatable;
+	protected T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	protected IAnimatable currentAnimatable;
 	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
+	protected float widthScale;
+	protected float heightScale;
+	protected Matrix4f dispatchedMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
+
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	
+	@AvailableSince(value = "3.0.29")
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	@AvailableSince(value = "3.0.29")
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -75,6 +98,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return renderers.get(item);
 	}
 
+	@AvailableSince(value = "3.0.29")
+	protected float getWidthScale(Object animatable2) {
+		return this.widthScale;
+	}
+
+	@AvailableSince(value = "3.0.29")
+	protected float getHeightScale(Object entity) {
+		return this.heightScale;
+	}
+
 	@Override
 	public void render(Entity entityIn, float entityYaw, float partialTicks, PoseStack PoseStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
@@ -91,6 +124,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
 		}
 
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		this.dispatchedMat = stack.last().pose().copy();
 		stack.pushPose();
 		if (entity instanceof Mob) {
 			Entity leashHolder = ((Mob) entity).getLeashHolder();
@@ -191,6 +226,67 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
+	
+	@Override
+	public void render(GeoModel model, Object animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+	
+	@Override
+	public void renderEarly(Object animatable, PoseStack stackIn, float partialTicks,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		renderEarlyMat = stackIn.last().pose().copy();
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
+	}
+	
+	@Override
+	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (bone.isTrackingXform()) {
+			PoseStack.Pose entry = stack.last();
+			Matrix4f boneMat = entry.pose().copy();
+
+			// Model space
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			Matrix4f modelPosBoneMat = boneMat.copy();
+			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
+			bone.setModelSpaceXform(modelPosBoneMat);
+
+			// Local space
+			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			dispatchedMatInvert.invert();
+			Matrix4f localPosBoneMat = boneMat.copy();
+			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
+			// (Offset is the only transform we may want to preserve from the dispatched mat)
+			Vec3 renderOffset = this.getRenderOffset((Entity)animatable, 1.0F);
+			localPosBoneMat.translate(new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
+			bone.setLocalSpaceXform(localPosBoneMat);
+
+			// World space
+			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			worldPosBoneMat.translate(new Vector3f((float) ((Entity)animatable).getX(), (float) ((Entity)animatable).getY(), (float) ((Entity)animatable).getZ()));
+			bone.setWorldSpaceXform(worldPosBoneMat);
+		}
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+
+    public void multiplyBackward(Matrix4f first, Matrix4f other) {
+        Matrix4f copy = other.copy();
+        copy.multiply(first);
+        first.load(copy);
+    }
 
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
 		return 0.0F;
