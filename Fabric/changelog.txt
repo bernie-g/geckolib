@@ -1,10 +1,7 @@
-v3.0.94
+v3.0.95
 
-- Use Getter/Setting methods for RTB - DerToaster
-- Skip special rendering when model gets rerendered in ExtendedGeoEntity Render - DerToaster
-- Change currentModelRenderCycle back to private, use getter.
-- Example Bat Entity left ear now spins, showing child bones be animated by other controllers if not used in another at the same time. 
-- Mirrored textures now work properly.
-
-### Known Issues Still Being Worked On ###
-- getWorldPosition is not returning the correct position.
+- getWorldPosition now working properly, Gets the postion of a bone relative to the world - EterDelta
+- getLocalPosition added, Gets the postion of a bone relative to the entity - EterDelta
+- getModelPosition added, Gets the postion of a bone relative to the model - EterDelta
+- Added EModelRenderCycle, IRenderCycle for custom render cycles. See ExtendedGeoEntityRender.
+- Example Bat Entity shows particles on it's left ear now using getWorldPosition

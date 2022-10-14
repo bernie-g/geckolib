@@ -6,9 +6,11 @@ import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.example.client.model.tile.HabitatModel;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
 
 public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
@@ -21,5 +23,20 @@ public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn,
 			ResourceLocation textureLocation) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
+	}
+	
+	@Override
+	public void render(GeoModel model, HabitatTileEntity animatable, float partialTicks, RenderType type,
+			MatrixStack matrixStackIn, IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder,
+			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (model.getBone("gecko").isPresent()) {
+			animatable.getLevel().addParticle(ParticleTypes.PORTAL,
+					model.getBone("gecko").get().getWorldPosition().x,
+					model.getBone("gecko").get().getWorldPosition().y,
+					model.getBone("gecko").get().getWorldPosition().z, (animatable.getLevel().random.nextDouble() - 0.5D),
+					-animatable.getLevel().random.nextDouble(), (animatable.getLevel().random.nextDouble() - 0.5D));
+		}
+		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
 	}
 }

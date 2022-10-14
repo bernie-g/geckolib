@@ -63,6 +63,7 @@ import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 /**
@@ -76,22 +77,8 @@ import software.bernie.geckolib3.util.RenderUtils;
  */
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 
-	/*
-	 * Allows the end user to introduce custom render cycles
-	 */
-	public static interface IRenderCycle {
-		public String name();
-	}
-
-	public static enum EModelRenderCycle implements IRenderCycle {
-		INITIAL, REPEATED, SPECIAL /* For special use by the user */
-	}
-
 	protected final BipedEntityModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new BipedEntityModel<>(0.5F);
 	protected final BipedEntityModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new BipedEntityModel<>(1.0F);
-
-	protected float widthScale;
-	protected float heightScale;
 
 	protected T currentEntityBeingRendered;
 
@@ -102,19 +89,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	
 	/* TODO: Replace with fastutil equivalent */
 	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
-
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-
-	protected IRenderCycle getCurrentModelRenderCycle() {
-		return this.currentModelRenderCycle;
-	}
-
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
-		this.currentModelRenderCycle = currentModelRenderCycle;
-	}
 
 	protected ExtendedGeoEntityRenderer(EntityRenderDispatcher renderManager, AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);
@@ -133,7 +107,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
 			VertexConsumerProvider bufferIn, int packedLightIn) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 		this.renderHeads(stack, bufferIn, packedLightIn);
 	}
@@ -196,15 +169,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-	}
-
-	protected float getWidthScale(T entity) {
-		return this.widthScale;
-	}
-
-	protected float getHeightScale(T entity) {
-		return this.heightScale;
+		this.renderHeads(matrixStackIn, renderTypeBuffer, packedLightIn);
 	}
 
 	@Override
@@ -213,11 +178,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			float partialTicks) {
 		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn,
 				red, green, blue, partialTicks);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
 	}
 
 	@Override

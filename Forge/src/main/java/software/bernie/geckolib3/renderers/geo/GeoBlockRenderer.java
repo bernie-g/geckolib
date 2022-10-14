@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.IVertexBuilder;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.DirectionalBlock;
@@ -14,13 +15,18 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.vector.Matrix4f;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 
 public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> extends TileEntityRenderer
 		implements IGeoRenderer<T> {
@@ -38,6 +44,11 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	}
 
 	protected final AnimatedGeoModel<T> modelProvider;
+	protected float widthScale;
+	protected float heightScale;
+	protected Matrix4f dispatchedMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
+	protected T animatable;
 
 	public GeoBlockRenderer(TileEntityRendererDispatcher rendererDispatcherIn, AnimatedGeoModel<T> modelProvider) {
 		super(rendererDispatcherIn);
@@ -53,6 +64,8 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	public void render(T tile, float partialTicks, MatrixStack stack, IRenderTypeBuffer bufferIn, int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
+		this.dispatchedMat = stack.last().pose().copy();
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
@@ -70,8 +83,94 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	}
 
 	@Override
+	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, MatrixStack matrixStackIn,
+			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
+
+	@Override
+	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks, IRenderTypeBuffer renderTypeBuffer,
+			IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+			float alpha) {
+		renderEarlyMat = stackIn.last().pose().copy();
+		this.animatable = animatable;
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
+	}
+
+	@Override
+	public void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (bone.isTrackingXform()) {
+			MatrixStack.Entry entry = stack.last();
+			Matrix4f boneMat = entry.pose().copy();
+
+			// Model space
+			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			renderEarlyMatInvert.invert();
+			Matrix4f modelPosBoneMat = boneMat.copy();
+			modelPosBoneMat.multiplyBackward(renderEarlyMatInvert);
+			bone.setModelSpaceXform(modelPosBoneMat);
+
+			// Local space
+			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			dispatchedMatInvert.invert();
+			Matrix4f localPosBoneMat = boneMat.copy();
+			localPosBoneMat.multiplyBackward(dispatchedMatInvert);
+			// (Offset is the only transform we may want to preserve from the dispatched
+			// mat)
+			Vector3d renderOffset = this.getRenderOffset(animatable, 1.0F);
+			localPosBoneMat.translate(
+					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
+			bone.setLocalSpaceXform(localPosBoneMat);
+
+			// World space
+			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			worldPosBoneMat.translate(new Vector3f((float) ((TileEntity) animatable).getBlockPos().getX(),
+					(float) ((TileEntity) animatable).getBlockPos().getY(),
+					(float) ((TileEntity) animatable).getBlockPos().getZ()));
+			bone.setWorldSpaceXform(worldPosBoneMat);
+		}
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
+	}
+
+	public Vector3d getRenderOffset(T pEntity, float pPartialTicks) {
+		return Vector3d.ZERO;
+	}
+
+	@Override
 	public AnimatedGeoModel<T> getGeoModelProvider() {
 		return this.modelProvider;
+	}
+
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
+
+	protected float getWidthScale(Object animatable2) {
+		return this.widthScale;
+	}
+
+	protected float getHeightScale(Object entity) {
+		return this.heightScale;
 	}
 
 	protected void rotateBlock(Direction facing, MatrixStack stack) {
@@ -112,10 +211,9 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	public ResourceLocation getTextureLocation(T instance) {
 		return this.modelProvider.getTextureLocation(instance);
 	}
-	
 
 	protected IRenderTypeBuffer rtb = null;
-	
+
 	@Override
 	public void setCurrentRTB(IRenderTypeBuffer rtb) {
 		this.rtb = rtb;

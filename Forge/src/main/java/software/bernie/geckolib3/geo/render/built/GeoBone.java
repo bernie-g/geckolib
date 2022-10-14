@@ -3,7 +3,6 @@ package software.bernie.geckolib3.geo.render.built;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.util.math.vector.Vector4f;
@@ -48,22 +47,21 @@ public class GeoBone implements IBone {
 	public Object extraData;
 
 	private Matrix4f modelSpaceXform;
+	private Matrix4f localSpaceXform;
+	private Matrix4f worldSpaceXform;
+
 	private boolean trackXform;
 	public Matrix4f rotMat;
-
-	private Matrix4f worldSpaceXform;
-	private Matrix3f worldSpaceNormal;
 
 	public GeoBone() {
 		modelSpaceXform = new Matrix4f();
 		modelSpaceXform.setIdentity();
-		trackXform = false;
-		rotMat = null;
-
+		localSpaceXform = new Matrix4f();
+		localSpaceXform.setIdentity();
 		worldSpaceXform = new Matrix4f();
 		worldSpaceXform.setIdentity();
-		worldSpaceNormal = new Matrix3f();
-		worldSpaceNormal.setIdentity();
+		trackXform = false;
+		rotMat = null;
 	}
 
 	@Override
@@ -263,6 +261,7 @@ public class GeoBone implements IBone {
 		this.modelSpaceXform.set(modelSpaceXform);
 	}
 
+	/* Gets the postion of a bone relative to the model */
 	public Vector3d getModelPosition() {
 		Matrix4f matrix = getModelSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -270,6 +269,71 @@ public class GeoBone implements IBone {
 		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
+	public Matrix4f getLocalSpaceXform() {
+		setTrackXform(true);
+		return localSpaceXform;
+	}
+
+	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
+		localload(localSpaceXform);
+	}
+
+	/* Gets the postion of a bone relative to the entity */
+	public Vector3d getLocalPosition() {
+		Matrix4f matrix = getLocalSpaceXform();
+		Vector4f vec = new Vector4f(0, 0, 0, 1);
+		vec.transform(matrix);
+		return new Vector3d(vec.x(), vec.y(), vec.z());
+	}
+
+	public Matrix4f getWorldSpaceXform() {
+		setTrackXform(true);
+		return worldSpaceXform;
+	}
+
+	public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
+		worldload(worldSpaceXform);
+	}
+
+	public void worldload(Matrix4f pOther) {
+		this.worldSpaceXform.m00 = pOther.m00;
+		this.worldSpaceXform.m01 = pOther.m01;
+		this.worldSpaceXform.m02 = pOther.m02;
+		this.worldSpaceXform.m03 = pOther.m03;
+		this.worldSpaceXform.m10 = pOther.m10;
+		this.worldSpaceXform.m11 = pOther.m11;
+		this.worldSpaceXform.m12 = pOther.m12;
+		this.worldSpaceXform.m13 = pOther.m13;
+		this.worldSpaceXform.m20 = pOther.m20;
+		this.worldSpaceXform.m21 = pOther.m21;
+		this.worldSpaceXform.m22 = pOther.m22;
+		this.worldSpaceXform.m23 = pOther.m23;
+		this.worldSpaceXform.m30 = pOther.m30;
+		this.worldSpaceXform.m31 = pOther.m31;
+		this.worldSpaceXform.m32 = pOther.m32;
+		this.worldSpaceXform.m33 = pOther.m33;
+	}
+
+	public void localload(Matrix4f pOther) {
+		this.localSpaceXform.m00 = pOther.m00;
+		this.localSpaceXform.m01 = pOther.m01;
+		this.localSpaceXform.m02 = pOther.m02;
+		this.localSpaceXform.m03 = pOther.m03;
+		this.localSpaceXform.m10 = pOther.m10;
+		this.localSpaceXform.m11 = pOther.m11;
+		this.localSpaceXform.m12 = pOther.m12;
+		this.localSpaceXform.m13 = pOther.m13;
+		this.localSpaceXform.m20 = pOther.m20;
+		this.localSpaceXform.m21 = pOther.m21;
+		this.localSpaceXform.m22 = pOther.m22;
+		this.localSpaceXform.m23 = pOther.m23;
+		this.localSpaceXform.m30 = pOther.m30;
+		this.localSpaceXform.m31 = pOther.m31;
+		this.localSpaceXform.m32 = pOther.m32;
+		this.localSpaceXform.m33 = pOther.m33;
+	}
+
+	/* Gets the postion of a bone relative to the world */
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -278,7 +342,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setModelPosition(Vector3d pos) {
-		// TODO: Doesn't work on bones with parent transforms
+		/* Doesn't work on bones with parent transforms */
 		GeoBone parent = getParent();
 		Matrix4f identity = new Matrix4f();
 		identity.setIdentity();
@@ -304,22 +368,6 @@ public class GeoBone implements IBone {
 	public void setModelRotationMat(Matrix4f mat) {
 		rotMat = mat;
 	}
-
-	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
-		this.worldSpaceNormal = worldSpaceNormal;
-	}
-
-	public Matrix3f getWorldSpaceNormal() {
-		return worldSpaceNormal;
-	}
-
-    public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
-        this.worldSpaceXform = worldSpaceXform;
-    }
-
-    public Matrix4f getWorldSpaceXform() {
-        return worldSpaceXform;
-    }
 
 	// Position utils
 	public void addPosition(Vector3d vec) {
