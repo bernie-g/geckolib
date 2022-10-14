@@ -49,6 +49,8 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 
@@ -77,15 +79,31 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public ItemStack boots;
 	public MultiBufferSource rtb;
 	public ResourceLocation whTexture;
+	protected float widthScale;
+	protected float heightScale;
 
 	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}
 
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
+
 	@Override
 	public void render(T entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn,
 			int packedLightIn) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		stack.pushPose();
 		if (entity instanceof Mob) {
 			Entity leashHolder = ((Mob) entity).getLeashHolder();
@@ -217,6 +235,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.whTexture = this.getTextureLocation(animatable);
 		IGeoRenderer.super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn,
 				packedOverlayIn, red, green, blue, partialTicks);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
 	}
 
 	@Override
@@ -291,6 +314,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.modelProvider;
 	}
 
+	protected float getWidthScale(T entity) {
+		return this.widthScale;
+	}
+
+	protected float getHeightScale(T entity) {
+		return this.heightScale;
+	}
+	
 	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn) {
 		return OverlayTexture.pack(OverlayTexture.u(uIn),
 				OverlayTexture.v(livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0));

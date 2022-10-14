@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,6 +45,8 @@ import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	protected final AnimatedGeoModel<IAnimatable> modelProvider;
@@ -50,6 +54,23 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	protected IAnimatable currentAnimatable;
 	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
+	protected float widthScale;
+	protected float heightScale;
+
+	/*
+	 * 0 => Normal model 1 => Magical armor overlay
+	 */
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	
+	@AvailableSince(value = "3.0.42")
+	protected IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	@AvailableSince(value = "3.0.42")
+	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
+	}
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
@@ -72,6 +93,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return renderers.get(item);
 	}
 
+	@AvailableSince(value = "3.0.42")
+	protected float getWidthScale(Object animatable2) {
+		return this.widthScale;
+	}
+
+	@AvailableSince(value = "3.0.42")
+	protected float getHeightScale(Object entity) {
+		return this.heightScale;
+	}
+
 	@Override
 	public void render(Entity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
 			MultiBufferSource bufferIn, int packedLightIn) {
@@ -88,6 +119,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			throw (new RuntimeException("Replaced renderer was not an instanceof LivingEntity"));
 		}
 
+		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		stack.pushPose();
 		if (entity instanceof Mob) {
 			Entity leashHolder = ((Mob) entity).getLeashHolder();
@@ -189,6 +221,19 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
+	}
+	
+	@Override
+	public void renderEarly(Object animatable, PoseStack stackIn, float partialTicks,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
+				packedOverlayIn, red, green, blue, alpha);
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
 	}
 
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {

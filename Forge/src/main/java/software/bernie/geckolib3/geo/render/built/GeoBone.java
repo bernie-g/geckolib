@@ -3,7 +3,8 @@ package software.bernie.geckolib3.geo.render.built;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.mojang.math.Matrix3f;
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
@@ -263,6 +264,8 @@ public class GeoBone implements IBone {
 		this.modelSpaceXform.load(modelSpaceXform);
 	}
 
+	/* Gets the postion of a bone relative to the model */
+	@AvailableSince(value = "3.0.42")
 	public Vector3d getModelPosition() {
 		Matrix4f matrix = getModelSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -279,6 +282,8 @@ public class GeoBone implements IBone {
 		this.localSpaceXform.load(localSpaceXform);
 	}
 
+	/* Gets the postion of a bone relative to the entity */
+	@AvailableSince(value = "3.0.42")
 	public Vector3d getLocalPosition() {
 		Matrix4f matrix = getLocalSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -295,6 +300,8 @@ public class GeoBone implements IBone {
 		this.worldSpaceXform.load(worldSpaceXform);
 	}
 
+	/* Gets the postion of a bone relative to the world */
+	@AvailableSince(value = "3.0.42")
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -303,7 +310,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setModelPosition(Vector3d pos) {
-		// TODO: Doesn't work on bones with parent transforms
+		/* Doesn't work on bones with parent transforms */
 		GeoBone parent = getParent();
 		Matrix4f identity = new Matrix4f();
 		identity.setIdentity();
