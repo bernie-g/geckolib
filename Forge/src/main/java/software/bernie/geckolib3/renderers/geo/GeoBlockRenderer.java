@@ -100,6 +100,15 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 			stackIn.scale(width, height, width);
 		}
 	}
+	
+	@Override
+	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
+			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	}
 
 	@Override
 	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
