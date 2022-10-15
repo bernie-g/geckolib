@@ -1,7 +1,3 @@
-v3.0.42
+v3.0.43
 
-- getWorldPosition now working properly, Gets the postion of a bone relative to the world - EterDelta
-- getLocalPosition added, Gets the postion of a bone relative to the entity - EterDelta
-- getModelPosition added, Gets the postion of a bone relative to the model - EterDelta
-- Added EModelRenderCycle, IRenderCycle for custom render cycles. See ExtendedGeoEntityRender.
-- Example Bat Entity shows particles on it's left ear now using getWorldPosition
+- Fixes Armor, Block, Item, Projectile, and Replaced rendering due to missing method.
