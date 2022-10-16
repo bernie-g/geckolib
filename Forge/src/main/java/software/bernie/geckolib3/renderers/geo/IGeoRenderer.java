@@ -169,9 +169,13 @@ public interface IGeoRenderer<T> {
 	}
 	
 	//TODO: Change all below to protected in newer java versions
-	public void setCurrentModelRenderCycle(IRenderCycle cycle);
+	public default void setCurrentModelRenderCycle(IRenderCycle cycle) {
+		
+	}
 	@Nonnull
-	public IRenderCycle getCurrentModelRenderCycle();
+	public default IRenderCycle getCurrentModelRenderCycle() {
+		return EModelRenderCycle.INITIAL;
+	}
 	
 	public default float getWidthScale(T animatable2) {
 		return 1F;
