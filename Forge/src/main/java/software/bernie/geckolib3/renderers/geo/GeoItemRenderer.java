@@ -51,8 +51,8 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 
 	protected AnimatedGeoModel<T> modelProvider;
 	protected ItemStack currentItemStack;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;

@@ -54,8 +54,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	protected IAnimatable currentAnimatable;
 	protected static Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 
