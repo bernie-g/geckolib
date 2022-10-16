@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -66,8 +68,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
 	protected BipedEntityModel baseModel;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 
@@ -77,12 +79,15 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	@AvailableSince(value = "3.0.95")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.0.95")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -104,12 +109,14 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	@AvailableSince(value = "3.0.95")
-	protected float getWidthScale(T entity) {
+	@Override
+	public float getWidthScale(T entity) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.0.95")
-	protected float getHeightScale(T entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 
@@ -178,15 +185,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-
-	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -194,11 +192,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.currentArmorItem = animatable;
 		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
 	}
 
 	@Override
@@ -220,14 +213,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			dispatchedMatInvert.invert();
 			Matrix4f localPosBoneMat = boneMat.copy();
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched mat)
+			// (Offset is the only transform we may want to preserve from the dispatched
+			// mat)
 			Vec3d renderOffset = this.getPositionOffset(currentArmorItem, 1.0F);
-			localPosBoneMat.addToLastColumn(new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
+			localPosBoneMat.addToLastColumn(
+					new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
 			// Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-			// worldPosBoneMat.addToLastColumn(new Vec3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
+			// worldPosBoneMat.addToLastColumn(new Vec3f((float) animatable.getX(), (float)
+			// animatable.getY(), (float) animatable.getZ()));
 			// bone.setWorldSpaceXform(worldPosBoneMat);
 		}
 		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,

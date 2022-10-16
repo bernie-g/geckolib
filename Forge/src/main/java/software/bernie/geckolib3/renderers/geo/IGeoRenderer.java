@@ -25,10 +25,11 @@ import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
-	
+
 	void setCurrentRTB(IRenderTypeBuffer rtb);
+
 	IRenderTypeBuffer getCurrentRTB();
-	
+
 	default void render(GeoModel model, T animatable, float partialTicks, RenderType type, MatrixStack matrixStackIn,
 			@Nullable IRenderTypeBuffer renderTypeBuffer, @Nullable IVertexBuilder vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -72,7 +73,7 @@ public interface IGeoRenderer<T> {
 			}
 		}
 	}
-	
+
 	default void renderChildBones(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.childBonesAreHiddenToo()) {
@@ -118,19 +119,18 @@ public interface IGeoRenderer<T> {
 				normal.mul(1, 1, -1);
 			}
 
-			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green,
+					blue, alpha);
 		}
 	}
-	
-	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vector3f normal, IVertexBuilder bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+
+	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vector3f normal, IVertexBuilder bufferIn,
+			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 		for (GeoVertex vertex : quad.vertices) {
-			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(),
-					1.0F);
+			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0F);
 			vector4f.transform(matrix4f);
-			bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha,
-					vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(),
-					normal.z());
+			bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.textureU,
+					vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(), normal.z());
 		}
 	}
 
@@ -167,19 +167,20 @@ public interface IGeoRenderer<T> {
 	default Integer getUniqueID(T animatable) {
 		return animatable.hashCode();
 	}
-	
-	//TODO: Change all below to protected in newer java versions
+
 	public default void setCurrentModelRenderCycle(IRenderCycle cycle) {
-		
+
 	}
+
 	@Nonnull
 	public default IRenderCycle getCurrentModelRenderCycle() {
 		return EModelRenderCycle.INITIAL;
 	}
-	
+
 	public default float getWidthScale(T animatable2) {
 		return 1F;
 	}
+
 	public default float getHeightScale(T entity) {
 		return 1F;
 	}

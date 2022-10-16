@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.renderer.geo;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -16,13 +18,16 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
-	
+
 	void setCurrentRTB(VertexConsumerProvider rtb);
+
 	VertexConsumerProvider getCurrentRTB();
-	
+
 	default void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -40,6 +45,8 @@ public interface IGeoRenderer<T> {
 			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue,
 					alpha);
 		}
+		//Since we rendered at least once at this point, let's set the cycle to repeated
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
 	default void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
@@ -64,7 +71,7 @@ public interface IGeoRenderer<T> {
 			}
 		}
 	}
-	
+
 	default void renderChildBones(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (!bone.childBonesAreHiddenToo()) {
@@ -106,21 +113,21 @@ public interface IGeoRenderer<T> {
 			if ((cube.size.getX() == 0 || cube.size.getY() == 0) && normal.getZ() < 0) {
 				normal.multiplyComponentwise(1, 1, -1);
 			}
-			
-			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		
+
+			this.createVerticesOfQuad(quad, matrix4f, normal, bufferIn, packedLightIn, packedOverlayIn, red, green,
+					blue, alpha);
+
 		}
 	}
-	
-	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vec3f normal, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+
+	default void createVerticesOfQuad(GeoQuad quad, Matrix4f matrix4f, Vec3f normal, VertexConsumer bufferIn,
+			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
 		for (GeoVertex vertex : quad.vertices) {
 			Vector4f vector4f = new Vector4f(vertex.position.getX(), vertex.position.getY(), vertex.position.getZ(),
 					1.0F);
 			vector4f.transform(matrix4f);
-			bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha,
-					vertex.textureU, vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(),
-					normal.getZ());
+			bufferIn.vertex(vector4f.getX(), vector4f.getY(), vector4f.getZ(), red, green, blue, alpha, vertex.textureU,
+					vertex.textureV, packedOverlayIn, packedLightIn, normal.getX(), normal.getY(), normal.getZ());
 		}
 	}
 
@@ -128,14 +135,19 @@ public interface IGeoRenderer<T> {
 
 	Identifier getTextureLocation(T instance);
 
-	default void renderEarly(T animatable, MatrixStack stackIn, float partialTicks, VertexConsumerProvider renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float alpha) {
+	default void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
+			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
 	}
 
-	default void renderLate(T animatable, MatrixStack stackIn, float partialTicks, VertexConsumerProvider renderTypeBuffer,
-			VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float alpha) {
+	default void renderLate(T animatable, MatrixStack stackIn, float partialTicks,
+			VertexConsumerProvider renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn,
+			float red, float green, float blue, float alpha) {
 	}
 
 	default RenderLayer getRenderType(T animatable, float partialTicks, MatrixStack stack,
@@ -151,5 +163,22 @@ public interface IGeoRenderer<T> {
 
 	default Integer getUniqueID(T animatable) {
 		return animatable.hashCode();
+	}
+
+	public default void setCurrentModelRenderCycle(IRenderCycle cycle) {
+
+	}
+
+	@Nonnull
+	public default IRenderCycle getCurrentModelRenderCycle() {
+		return EModelRenderCycle.INITIAL;
+	}
+
+	public default float getWidthScale(T animatable2) {
+		return 1F;
+	}
+
+	public default float getHeightScale(T entity) {
+		return 1F;
 	}
 }
