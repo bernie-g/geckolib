@@ -194,15 +194,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	}
 
 	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, MatrixStack matrixStackIn,
-			IRenderTypeBuffer renderTypeBuffer, IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-
-	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks, IRenderTypeBuffer renderTypeBuffer,
 			IVertexBuilder vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {

@@ -46,6 +46,8 @@ public interface IGeoRenderer<T> {
 			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue,
 					alpha);
 		}
+		//Since we rendered at least once at this point, let's set the cycle to repeated
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
 	default void renderRecursively(GeoBone bone, MatrixStack stack, IVertexBuilder bufferIn, int packedLightIn,
