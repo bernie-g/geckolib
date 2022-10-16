@@ -9,6 +9,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,8 +76,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	protected LivingEntity entityLiving;
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 
@@ -116,7 +118,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				GeckoLib.LOGGER.error(
 						"Registration of armor renderer for item class {} failed cause the renderer class {} does not feature a zero-args constructor!",
 						itemClass.getName(), instance.getClass().getName());
-				throw new IllegalArgumentException("If you still use the registration using instances, please give it a no-args constructor!");
+				throw new IllegalArgumentException(
+						"If you still use the registration using instances, please give it a no-args constructor!");
 			}
 		}
 	}
@@ -192,31 +195,17 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		stack.scale(-1.0F, -1.0F, 1.0F);
 		stack.translate(0.0D, -24 / 16F, 0.0D);
 	}
-	
-	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-	
+
 	@Override
 	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
 		renderEarlyMat = stackIn.last().pose().copy();
 		this.currentArmorItem = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
-				packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
-	
+
 	@Override
 	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -250,7 +239,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 					(float) Minecraft.getInstance().cameraEntity.getZ()));
 			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
 	}
 
 	public Vec3 getRenderOffset(T pEntity, float pPartialTicks) {
@@ -332,22 +322,27 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	@AvailableSince(value = "3.0.42")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.0.42")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.0.42")
-	protected float getWidthScale(T entity) {
+	@Override
+	public float getWidthScale(T entity) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.0.42")
-	protected float getHeightScale(T entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 
@@ -432,7 +427,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
 	}
-	
+
 	protected MultiBufferSource rtb = null;
 
 	@Override

@@ -14,6 +14,9 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
+
+	private int currentTick = -1;
+
 	public ExampleGeoRenderer(EntityRendererProvider.Context renderManager) {
 		super(renderManager, new ExampleEntityModel());
 	}
@@ -29,12 +32,16 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	public void render(GeoModel model, GeoExampleEntity animatable, float partialTicks, RenderType type,
 			PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder,
 			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		if (model.getBone("leftear").isPresent()) {
-			animatable.getCommandSenderWorld().addParticle(ParticleTypes.PORTAL,
-					model.getBone("leftear").get().getWorldPosition().x,
-					model.getBone("leftear").get().getWorldPosition().y,
-					model.getBone("leftear").get().getWorldPosition().z, (animatable.getRandom().nextDouble() - 0.5D),
-					-animatable.getRandom().nextDouble(), (animatable.getRandom().nextDouble() - 0.5D));
+		if (currentTick < 0 || currentTick != animatable.tickCount) {
+			this.currentTick = animatable.tickCount;
+			if (model.getBone("leftear").isPresent()) {
+				animatable.getCommandSenderWorld().addParticle(ParticleTypes.PORTAL,
+						model.getBone("leftear").get().getWorldPosition().x,
+						model.getBone("leftear").get().getWorldPosition().y,
+						model.getBone("leftear").get().getWorldPosition().z,
+						(animatable.getRandom().nextDouble() - 0.5D), -animatable.getRandom().nextDouble(),
+						(animatable.getRandom().nextDouble() - 0.5D));
+			}
 		}
 		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
