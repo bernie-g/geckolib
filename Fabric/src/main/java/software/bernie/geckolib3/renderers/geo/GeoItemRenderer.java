@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -53,8 +55,8 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 
 	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
@@ -66,12 +68,15 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	@AvailableSince(value = "3.1.23")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -94,12 +99,14 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 
@@ -134,15 +141,6 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	}
 	
 	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-
-	@Override
 	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
@@ -150,11 +148,6 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 		this.animatable = animatable;
 		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
 	}
 
 	@Override

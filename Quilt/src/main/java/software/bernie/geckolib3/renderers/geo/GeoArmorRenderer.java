@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.quiltmc.loader.api.QuiltLoader;
 
@@ -73,8 +75,8 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
 	protected HumanoidModel baseModel;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 
@@ -82,14 +84,17 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	
+
 	@AvailableSince(value = "3.1.23")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -189,15 +194,6 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
 	}
-	
-	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
 
 	@Override
 	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
@@ -207,11 +203,6 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		this.currentArmorItem = animatable;
 		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
 	}
 
 	@Override
@@ -233,9 +224,11 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 			dispatchedMatInvert.invert();
 			Matrix4f localPosBoneMat = boneMat.copy();
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched mat)
+			// (Offset is the only transform we may want to preserve from the dispatched
+			// mat)
 			Vec3 renderOffset = this.getPositionOffset(currentArmorItem, 1.0F);
-			localPosBoneMat.translate(new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
+			localPosBoneMat.translate(
+					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
@@ -324,12 +317,14 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getWidthScale(T entity) {
+	@Override
+	public float getWidthScale(T entity) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getHeightScale(T entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 

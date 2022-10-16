@@ -2,6 +2,7 @@ package software.bernie.geckolib3.renderers.geo;
 
 import java.io.IOException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,6 +22,8 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
@@ -45,6 +48,8 @@ public interface IGeoRenderer<T> {
 			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue,
 					alpha);
 		}
+		//Since we rendered at least once at this point, let's set the cycle to repeated
+		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
 	default void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
@@ -144,6 +149,11 @@ public interface IGeoRenderer<T> {
 	default void renderEarly(T animatable, PoseStack stackIn, float partialTicks,
 			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
+		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
+			float width = this.getWidthScale(animatable);
+			float height = this.getHeightScale(animatable);
+			stackIn.scale(width, height, width);
+		}
 	}
 
 	default void renderLate(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
@@ -164,5 +174,22 @@ public interface IGeoRenderer<T> {
 
 	default Integer getUniqueID(T animatable) {
 		return animatable.hashCode();
+	}
+
+	public default void setCurrentModelRenderCycle(IRenderCycle cycle) {
+
+	}
+
+	@Nonnull
+	public default IRenderCycle getCurrentModelRenderCycle() {
+		return EModelRenderCycle.INITIAL;
+	}
+
+	public default float getWidthScale(T animatable2) {
+		return 1F;
+	}
+
+	public default float getHeightScale(T entity) {
+		return 1F;
 	}
 }

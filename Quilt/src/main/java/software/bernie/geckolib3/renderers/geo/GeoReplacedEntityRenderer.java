@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.quiltmc.loader.api.QuiltLoader;
 
@@ -55,8 +57,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
 	protected IAnimatable currentAnimatable;
 	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 
@@ -64,14 +66,17 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	
+
 	@AvailableSince(value = "3.1.23")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -99,12 +104,14 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(Object animatable2) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.1.23")
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(Object entity) {
 		return this.heightScale;
 	}
 
@@ -207,7 +214,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			VertexConsumer translucentBuffer = bufferIn
 					.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(entity)));
 			render(model, entity, partialTicks, renderType, stack, bufferIn,
-					glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer) : null,
+					glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer)
+							: null,
 					packedLightIn, getPackedOverlay(entityLiving, this.getOverlayProgress(entityLiving, partialTicks)),
 					(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 					(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
@@ -225,30 +233,16 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		stack.popPose();
 		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
 	}
-	
-	@Override
-	public void render(GeoModel model, Object animatable, float partialTicks, RenderType type, PoseStack matrixStackIn,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
-			float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-	
+
 	@Override
 	public void renderEarly(Object animatable, PoseStack stackIn, float partialTicks,
 			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
 			float red, float green, float blue, float alpha) {
 		renderEarlyMat = stackIn.last().pose().copy();
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
-				packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
-	
+
 	@Override
 	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -268,31 +262,34 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			dispatchedMatInvert.invert();
 			Matrix4f localPosBoneMat = boneMat.copy();
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched mat)
-			Vec3 renderOffset = this.getRenderOffset((Entity)animatable, 1.0F);
-			localPosBoneMat.translate(new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
+			// (Offset is the only transform we may want to preserve from the dispatched
+			// mat)
+			Vec3 renderOffset = this.getRenderOffset((Entity) animatable, 1.0F);
+			localPosBoneMat.translate(
+					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
 			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-			worldPosBoneMat.translate(new Vector3f((float) ((Entity)animatable).getX(), (float) ((Entity)animatable).getY(), (float) ((Entity)animatable).getZ()));
+			worldPosBoneMat.translate(new Vector3f((float) ((Entity) animatable).getX(),
+					(float) ((Entity) animatable).getY(), (float) ((Entity) animatable).getZ()));
 			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
 	}
 
-    public void multiplyBackward(Matrix4f first, Matrix4f other) {
-        Matrix4f copy = other.copy();
-        copy.multiply(first);
-        first.load(copy);
-    }
+	public void multiplyBackward(Matrix4f first, Matrix4f other) {
+		Matrix4f copy = other.copy();
+		copy.multiply(first);
+		first.load(copy);
+	}
 
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
 		return 0.0F;
 	}
 
-	protected void preRenderCallback(LivingEntity entitylivingbaseIn, PoseStack PoseStackIn,
-			float partialTickTime) {
+	protected void preRenderCallback(LivingEntity entitylivingbaseIn, PoseStack PoseStackIn, float partialTickTime) {
 	}
 
 	@Override
@@ -480,7 +477,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		vertexConsumer.vertex(positionMatrix, u - k, v + j, w + l).color(r, s, t, 1.0f).uv2(p).endVertex();
 		vertexConsumer.vertex(positionMatrix, u + k, v + i - j, w - l).color(r, s, t, 1.0f).uv2(p).endVertex();
 	}
-	
+
 	protected MultiBufferSource rtb = null;
 
 	@Override
