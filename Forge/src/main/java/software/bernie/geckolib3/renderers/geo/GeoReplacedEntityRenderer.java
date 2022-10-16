@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -46,7 +48,7 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 
-public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
+public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer<Object> {
 	protected final AnimatedGeoModel<IAnimatable> modelProvider;
 	protected T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
@@ -62,11 +64,14 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 	
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -93,11 +98,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return renderers.get(item);
 	}
 
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(Object animatable2) {
 		return this.widthScale;
 	}
 
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(Object entity) {
 		return this.heightScale;
 	}
 

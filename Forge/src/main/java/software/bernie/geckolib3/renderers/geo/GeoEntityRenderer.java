@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -90,11 +92,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 	
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -344,11 +349,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.modelProvider;
 	}
 
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 	

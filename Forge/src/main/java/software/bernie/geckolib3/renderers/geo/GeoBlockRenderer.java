@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.annotation.Nonnull;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
@@ -157,19 +159,24 @@ public abstract class GeoBlockRenderer<T extends TileEntity & IAnimatable> exten
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 

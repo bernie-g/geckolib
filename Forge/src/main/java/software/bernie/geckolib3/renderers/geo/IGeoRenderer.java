@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -19,6 +20,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
@@ -156,5 +158,17 @@ public interface IGeoRenderer<T> {
 
 	default Integer getUniqueID(T animatable) {
 		return animatable.hashCode();
+	}
+	
+	//TODO: Change all below to protected in newer java versions
+	public void setCurrentModelRenderCycle(IRenderCycle cycle);
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle();
+	
+	public default float getWidthScale(T animatable2) {
+		return 1F;
+	}
+	public default float getHeightScale(T entity) {
+		return 1F;
 	}
 }

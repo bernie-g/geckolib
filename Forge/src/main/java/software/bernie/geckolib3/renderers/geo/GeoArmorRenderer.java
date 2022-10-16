@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -331,19 +332,24 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 	
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 	
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 	
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 
