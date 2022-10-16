@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import javax.annotation.Nonnull;
+
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
 import net.minecraft.block.BlockState;
@@ -45,8 +47,8 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	protected final AnimatedGeoModel<T> modelProvider;
-	protected float widthScale;
-	protected float heightScale;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
@@ -55,14 +57,17 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	
+
 	@AvailableSince(value = "3.0.65")
-	protected IRenderCycle getCurrentModelRenderCycle() {
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.0.65")
-	protected void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
@@ -97,31 +102,17 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.pop();
 	}
-	
-	@Override
-	public void render(GeoModel model, T animatable, float partialTicks, RenderLayer type, MatrixStack matrixStackIn,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
-		IGeoRenderer.super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-	
+
 	@Override
 	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
 			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
 		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
-				packedOverlayIn, red, green, blue, alpha);
-		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL /* Pre-Layers */) {
-			float width = this.getWidthScale(animatable);
-			float height = this.getHeightScale(animatable);
-			stackIn.scale(width, height, width);
-		}
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
-	
+
 	@Override
 	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -155,18 +146,19 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 					(float) ((BlockEntity) animatable).getPos().getZ()));
 			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
 	}
 
 	public Vec3d getPositionOffset(T entity, float tickDelta) {
 		return Vec3d.ZERO;
 	}
 
-    public void multiplyBackward(Matrix4f first, Matrix4f other) {
-        Matrix4f copy = other.copy();
-        copy.multiply(first);
-        first.load(copy);
-    }
+	public void multiplyBackward(Matrix4f first, Matrix4f other) {
+		Matrix4f copy = other.copy();
+		copy.multiply(first);
+		first.load(copy);
+	}
 
 	@Override
 	public Integer getUniqueID(T animatable) {
@@ -179,12 +171,14 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	@AvailableSince(value = "3.0.65")
-	protected float getWidthScale(Object animatable2) {
+	@Override
+	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.0.65")
-	protected float getHeightScale(Object entity) {
+	@Override
+	public float getHeightScale(T entity) {
 		return this.heightScale;
 	}
 
@@ -226,7 +220,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	public Identifier getTextureLocation(T instance) {
 		return this.modelProvider.getTextureLocation(instance);
 	}
-	
+
 	protected VertexConsumerProvider rtb = null;
 
 	@Override

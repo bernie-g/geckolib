@@ -111,13 +111,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		this.heightScale = heightScale;
 	}
 
-	// Entrypoint for rendering, calls everything else
-	@Override
-	public void render(T entity, float entityYaw, float partialTicks, MatrixStack stack,
-			VertexConsumerProvider bufferIn, int packedLightIn) {
-		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-	}
-
 	// Yes, this is necessary to be done after everything else, otherwise it will
 	// mess up the texture cause the rendertypebuffer will be modified
 	protected void renderHeads(MatrixStack stack, VertexConsumerProvider buffer, int packedLightIn) {
@@ -184,15 +177,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		// Now, render the heads
 		this.renderHeads(matrixStackIn, renderTypeBuffer, packedLightIn);
 	}
-
-	@Override
-	public void renderEarly(T animatable, MatrixStack stackIn, float ticks, VertexConsumerProvider renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
-			float partialTicks) {
-		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn,
-				red, green, blue, partialTicks);
-	}
-
+	
 	@Override
 	public Identifier getTextureLocation(T entity) {
 		return this.modelProvider.getTextureLocation(entity);
