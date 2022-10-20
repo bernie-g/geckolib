@@ -1,3 +1,3 @@
-v3.1.25
+v3.1.26
 
-- Fixes last build no rendering issues.
+- Adds back GeoBone#getWorldSpaceNormal
