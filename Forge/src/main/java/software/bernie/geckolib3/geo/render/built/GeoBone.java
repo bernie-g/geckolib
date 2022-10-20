@@ -3,8 +3,6 @@ package software.bernie.geckolib3.geo.render.built;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.ApiStatus.AvailableSince;
-
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -284,12 +282,10 @@ public class GeoBone implements IBone {
 		localload(localSpaceXform);
 	}
 
-	@AvailableSince(value = "3.0.97")
 	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
 		this.worldSpaceNormal = worldSpaceNormal;
 	}
 
-	@AvailableSince(value = "3.0.97")
 	public Matrix3f getWorldSpaceNormal() {
 		return worldSpaceNormal;
 	}
