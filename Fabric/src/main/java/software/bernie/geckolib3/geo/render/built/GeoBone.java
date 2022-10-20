@@ -6,6 +6,7 @@ import java.util.List;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
 import net.minecraft.client.util.math.Vector3d;
+import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vector4f;
 import software.bernie.geckolib3.core.processor.IBone;
@@ -46,6 +47,7 @@ public class GeoBone implements IBone {
 	private Matrix4f modelSpaceXform;
 	private Matrix4f localSpaceXform;
 	private Matrix4f worldSpaceXform;
+	private Matrix3f worldSpaceNormal;
 
 	private boolean trackXform;
 	public Matrix4f rotMat;
@@ -57,6 +59,8 @@ public class GeoBone implements IBone {
 		localSpaceXform.loadIdentity();
 		worldSpaceXform = new Matrix4f();
 		worldSpaceXform.loadIdentity();
+		worldSpaceNormal = new Matrix3f();
+		worldSpaceNormal.loadIdentity();
 		trackXform = false;
 		rotMat = null;
 	}
@@ -265,6 +269,16 @@ public class GeoBone implements IBone {
 
 	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
 		localload(localSpaceXform);
+	}
+
+	@AvailableSince(value = "3.0.98")
+	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
+		this.worldSpaceNormal = worldSpaceNormal;
+	}
+
+	@AvailableSince(value = "3.0.98")
+	public Matrix3f getWorldSpaceNormal() {
+		return worldSpaceNormal;
 	}
 
 	/* Gets the postion of a bone relative to the entity */
