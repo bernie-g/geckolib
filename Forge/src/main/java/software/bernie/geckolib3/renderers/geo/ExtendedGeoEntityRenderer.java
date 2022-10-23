@@ -1,18 +1,5 @@
 package software.bernie.geckolib3.renderers.geo;
 
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-
-import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -22,7 +9,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import com.mojang.math.Vector4f;
-
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.SkullModelBase;
@@ -60,18 +47,20 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
+import org.apache.commons.lang3.StringUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.geo.render.built.GeoQuad;
-import software.bernie.geckolib3.geo.render.built.GeoVertex;
+import software.bernie.geckolib3.geo.render.built.*;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author DerToaster98 Copyright (c) 30.03.2022 Developed by DerToaster98
@@ -101,7 +90,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected final Queue<Tuple<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 
 	/* TODO: Replace with fastutil equivalent */
-	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
+	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new Object2ObjectOpenHashMap<>();
 
 	protected ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager,
 			AnimatedGeoModel<T> modelProvider) {

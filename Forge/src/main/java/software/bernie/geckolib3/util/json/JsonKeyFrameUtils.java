@@ -11,6 +11,7 @@ import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.math.NumberUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.ConstantValue;
@@ -19,7 +20,6 @@ import software.bernie.geckolib3.core.keyframe.KeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.util.AnimationUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -33,21 +33,21 @@ public class JsonKeyFrameUtils {
 		IValue previousYValue = null;
 		IValue previousZValue = null;
 
-		List<KeyFrame<IValue>> xKeyFrames = new ArrayList();
-		List<KeyFrame<IValue>> yKeyFrames = new ArrayList();
-		List<KeyFrame<IValue>> zKeyFrames = new ArrayList();
+		List<KeyFrame<IValue>> xKeyFrames = new ObjectArrayList<>();
+		List<KeyFrame<IValue>> yKeyFrames = new ObjectArrayList<>();
+		List<KeyFrame<IValue>> zKeyFrames = new ObjectArrayList<>();
 
 		for (int i = 0; i < element.size(); i++) {
 			Map.Entry<String, JsonElement> keyframe = element.get(i);
 			if(keyframe.getKey().equals("easing") || keyframe.getKey().equals("easingArgs")) continue;
 			Map.Entry<String, JsonElement> previousKeyFrame = i == 0 ? null : element.get(i - 1);
 
-			Double previousKeyFrameLocation = previousKeyFrame == null ? 0
+			double previousKeyFrameLocation = previousKeyFrame == null ? 0
 					: Double.parseDouble(previousKeyFrame.getKey());
-			Double currentKeyFrameLocation = NumberUtils.isCreatable(keyframe.getKey())
+			double currentKeyFrameLocation = NumberUtils.isCreatable(keyframe.getKey())
 					? Double.parseDouble(keyframe.getKey())
 					: 0;
-			Double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
+			double animationTimeDifference = currentKeyFrameLocation - previousKeyFrameLocation;
 
 			JsonArray vectorJsonArray = getKeyFrameVector(keyframe.getValue());
 			IValue xValue = parseExpression(parser, vectorJsonArray.get(0));

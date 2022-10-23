@@ -1,13 +1,13 @@
 package software.bernie.geckolib3.geo.render.built;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 public class GeoModel {
-	public List<GeoBone> topLevelBones = new ArrayList<>();
+	public List<GeoBone> topLevelBones = new ObjectArrayList<>();
 	public ModelProperties properties;
 
 	public Optional<GeoBone> getBone(String name) {
