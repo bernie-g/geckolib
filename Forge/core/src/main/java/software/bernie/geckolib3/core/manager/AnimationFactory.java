@@ -1,8 +1,8 @@
 package software.bernie.geckolib3.core.manager;
 
-import software.bernie.geckolib3.core.IAnimatable;
-
 import java.util.HashMap;
+
+import software.bernie.geckolib3.core.IAnimatable;
 
 public class AnimationFactory {
 	private final IAnimatable animatable;
