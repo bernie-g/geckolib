@@ -1,15 +1,20 @@
 package software.bernie.geckolib3.util;
 
-import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.manager.InstancedAnimationFactory;
+import software.bernie.geckolib3.core.manager.SingletonAnimationFactory;
+import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
 
 import java.util.Objects;
 
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
+import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
 
 public class GeckoLibUtil {
 	private static final String GECKO_LIB_ID_NBT = "GeckoLibID";
@@ -80,5 +85,9 @@ public class GeckoLibUtil {
 
 	public static AnimationController getControllerForID(AnimationFactory factory, Integer id, String controllerName) {
 		return factory.getOrCreateAnimationData(id).getAnimationControllers().get(controllerName);
+	}
+
+	public static AnimationFactory createFactory(IAnimatable animatable) {
+		return animatable instanceof Entity || animatable instanceof BlockEntity ? new InstancedAnimationFactory(animatable) : new SingletonAnimationFactory(animatable);
 	}
 }
