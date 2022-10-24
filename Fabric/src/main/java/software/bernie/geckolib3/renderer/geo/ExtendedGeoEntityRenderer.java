@@ -2,7 +2,6 @@ package software.bernie.geckolib3.renderer.geo;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
@@ -15,6 +14,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.fabricmc.fabric.impl.client.rendering.ArmorRenderingRegistryImpl;
 import net.minecraft.block.AbstractSkullBlock;
@@ -87,8 +87,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected final Queue<Pair<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 	
-	/* TODO: Replace with fastutil equivalent */
-	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
+	protected static Map<Identifier, Pair<Integer, Integer>> TEXTURE_SIZE_CACHE = new Object2ObjectOpenHashMap<>();
 
 	protected ExtendedGeoEntityRenderer(EntityRenderDispatcher renderManager, AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);

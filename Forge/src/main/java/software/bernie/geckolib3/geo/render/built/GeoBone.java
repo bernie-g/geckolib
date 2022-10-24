@@ -1,9 +1,10 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -14,8 +15,8 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 public class GeoBone implements IBone {
 	public GeoBone parent;
 
-	public List<GeoBone> childBones = new ArrayList<>();
-	public List<GeoCube> childCubes = new ArrayList<>();
+	public List<GeoBone> childBones = new ObjectArrayList<>();
+	public List<GeoCube> childCubes = new ObjectArrayList<>();
 
 	public String name;
 	private BoneSnapshot initialSnapshot;

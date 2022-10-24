@@ -1,10 +1,10 @@
 package software.bernie.geckolib3.network;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -13,7 +13,7 @@ import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.GeckoLib;
 
 public class GeckoLibNetwork {
-	private static final Map<String, Supplier<ISyncable>> SYNCABLES = new HashMap<>();
+	private static final Map<String, Supplier<ISyncable>> SYNCABLES = new Object2ObjectOpenHashMap<>();
 	public static final Identifier SYNCABLE = new Identifier(GeckoLib.ModID, "syncable");
 
 	public static void syncAnimation(PlayerEntity target, ISyncable syncable, int id, int state) {

@@ -2,7 +2,6 @@ package software.bernie.geckolib3.renderers.geo;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.UUID;
@@ -17,6 +16,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.minecraft.block.AbstractSkullBlock;
 import net.minecraft.block.BlockRenderType;
@@ -89,9 +89,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected ResourceLocation textureForBone = null;
 
 	protected final Queue<Tuple<GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
-	
-	/* TODO: Replace with fastutil equivalent */
-	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new HashMap<>();
+
+	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new Object2ObjectOpenHashMap<>();
 
 	protected ExtendedGeoEntityRenderer(EntityRendererManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		this(renderManager, modelProvider, 1F, 1F, 0);
@@ -191,8 +190,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		if (this.getCurrentRTB() == null) {
 			throw new IllegalStateException("RenderTypeBuffer must never be null at this point!");
 		}
-		
-		if(this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
+
+		if (this.getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
 			super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 			return;
 		}
@@ -205,8 +204,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		final RenderType rt = customTextureMarker
 				? this.getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, stack,
 						bufferIn, this.getCurrentRTB(), packedLightIn, this.textureForBone)
-				: this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack, this.getCurrentRTB(),
-						bufferIn, packedLightIn, currentTexture);
+				: this.getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, stack,
+						this.getCurrentRTB(), bufferIn, packedLightIn, currentTexture);
 		bufferIn = this.getCurrentRTB().getBuffer(rt);
 
 		if (this.getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
@@ -243,8 +242,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		//////////////////////////////////////
 		// reset buffer
 		if (customTextureMarker) {
-			bufferIn = this.getCurrentRTB().getBuffer(this.getRenderType(currentEntityBeingRendered, this.currentPartialTicks,
-					stack, this.getCurrentRTB(), bufferIn, packedLightIn, currentTexture));
+			bufferIn = this.getCurrentRTB().getBuffer(this.getRenderType(currentEntityBeingRendered,
+					this.currentPartialTicks, stack, this.getCurrentRTB(), bufferIn, packedLightIn, currentTexture));
 			// Reset the marker...
 			this.textureForBone = null;
 		}
@@ -529,8 +528,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	// a pre-setup location
 	protected void renderArmorPart(MatrixStack stack, ModelRenderer sourceLimb, int packedLightIn, int packedOverlayIn,
 			float red, float green, float blue, float alpha, ItemStack armorForBone, ResourceLocation armorResource) {
-		IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(this.getCurrentRTB(), RenderType.armorCutoutNoCull(armorResource), false,
-				armorForBone.hasFoil());
+		IVertexBuilder ivb = ItemRenderer.getArmorFoilBuffer(this.getCurrentRTB(),
+				RenderType.armorCutoutNoCull(armorResource), false, armorForBone.hasFoil());
 		sourceLimb.render(stack, ivb, packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
 

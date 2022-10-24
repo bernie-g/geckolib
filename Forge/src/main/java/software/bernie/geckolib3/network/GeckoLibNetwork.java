@@ -1,11 +1,11 @@
 package software.bernie.geckolib3.network;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.NetworkInstance;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -17,7 +17,7 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.network.messages.SyncAnimationMsg;
 
 public class GeckoLibNetwork {
-	private static final Map<String, Supplier<ISyncable>> SYNCABLES = new HashMap<>();
+	private static final Map<String, Supplier<ISyncable>> SYNCABLES = new Object2ObjectOpenHashMap<>();
 
 	private static final String PROTOCOL_VERSION = "0"; // This should be updated whenever packets change
 	private static final SimpleChannel CHANNEL = fetchGeckoLibChannel("main");
