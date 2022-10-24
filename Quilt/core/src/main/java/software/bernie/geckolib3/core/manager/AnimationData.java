@@ -6,16 +6,18 @@
 package software.bernie.geckolib3.core.manager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
 public class AnimationData {
-	private HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection;
-	private HashMap<String, AnimationController> animationControllers = new HashMap<>();
+	private Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection;
+	private Map<String, AnimationController> animationControllers = new Object2ObjectOpenHashMap<>();
 	public double tick;
 	public boolean isFirstTick = true;
 	private double resetTickLength = 1;
@@ -28,7 +30,7 @@ public class AnimationData {
 	 */
 	public AnimationData() {
 		super();
-		boneSnapshotCollection = new HashMap<>();
+		boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
 	}
 
 	/**
@@ -42,7 +44,7 @@ public class AnimationData {
 		return this.animationControllers.put(value.getName(), value);
 	}
 
-	public HashMap<String, Pair<IBone, BoneSnapshot>> getBoneSnapshotCollection() {
+	public Map<String, Pair<IBone, BoneSnapshot>> getBoneSnapshotCollection() {
 		return boneSnapshotCollection;
 	}
 
@@ -69,7 +71,7 @@ public class AnimationData {
 		this.resetTickLength = resetTickLength < 0 ? 0 : resetTickLength;
 	}
 
-	public HashMap<String, AnimationController> getAnimationControllers() {
+	public Map<String, AnimationController> getAnimationControllers() {
 		return animationControllers;
 	}
 }

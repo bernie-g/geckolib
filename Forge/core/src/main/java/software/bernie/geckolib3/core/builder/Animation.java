@@ -5,9 +5,9 @@
 
 package software.bernie.geckolib3.core.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
@@ -21,8 +21,8 @@ public class Animation {
 	public Double animationLength;
 	public ILoopType loop = EDefaultLoopTypes.LOOP;
 	public List<BoneAnimation> boneAnimations;
-	public List<EventKeyFrame<String>> soundKeyFrames = new ArrayList<>();
-	public List<ParticleEventKeyFrame> particleKeyFrames = new ArrayList<>();
-	public List<EventKeyFrame<String>> customInstructionKeyframes = new ArrayList<>();
+	public List<EventKeyFrame<String>> soundKeyFrames = new ObjectArrayList<>();
+	public List<ParticleEventKeyFrame> particleKeyFrames = new ObjectArrayList<>();
+	public List<EventKeyFrame<String>> customInstructionKeyframes = new ObjectArrayList<>();
 
 }

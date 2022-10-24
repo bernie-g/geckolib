@@ -5,10 +5,10 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.easing.EasingType;
 
 public class KeyFrame<T> {
@@ -16,7 +16,7 @@ public class KeyFrame<T> {
 	private T startValue;
 	private T endValue;
 	public EasingType easingType = EasingType.Linear;
-	public List<Double> easingArgs = new ArrayList<>();
+	public List<Double> easingArgs = new ObjectArrayList<>();
 
 	public KeyFrame(Double length, T startValue, T endValue) {
 		this.length = length;

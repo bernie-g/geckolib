@@ -1,12 +1,13 @@
 package software.bernie.geckolib3.core.manager;
 
-import java.util.HashMap;
+import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.IAnimatable;
 
 public class AnimationFactory {
 	private final IAnimatable animatable;
-	private HashMap<Integer, AnimationData> animationDataMap = new HashMap<>();
+	private Map<Integer, AnimationData> animationDataMap = new Object2ObjectOpenHashMap<>();
 
 	public AnimationFactory(IAnimatable animatable) {
 		this.animatable = animatable;
