@@ -278,10 +278,12 @@ public class GeoBone implements IBone {
 		return localSpaceXform;
 	}
 
+	@Deprecated
 	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
 		localload(localSpaceXform);
 	}
 
+	@Deprecated
 	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
 		this.worldSpaceNormal = worldSpaceNormal;
 	}
