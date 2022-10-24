@@ -26,9 +26,16 @@ public class GlowingMetadataSectionSerializer implements ResourceMetadataReader<
 	public GlowingMetadataSection fromJson(JsonObject jsonobject) {
 		if (jsonobject.has("sections")) {
 			JsonArray jsonarray = JsonHelper.asArray(jsonobject.get("sections"), "sections");
-			GlowingMetadataSection result = new GlowingMetadataSection(JsonUtil.stream(jsonarray, JsonObject.class)
-					.map(jsonObj -> new Section(JsonHelper.getInt(jsonObj, "x1"), JsonHelper.getInt(jsonObj, "y1"),
-							JsonHelper.getInt(jsonObj, "x2"), JsonHelper.getInt(jsonObj, "y2"))));
+			GlowingMetadataSection result = new GlowingMetadataSection(
+					JsonUtil.stream(jsonarray, JsonObject.class).map(jsonObj -> {
+						final int x1 = JsonHelper.getInt(jsonObj, "x1", JsonHelper.getInt(jsonObj, "x", 0));
+						final int y1 = JsonHelper.getInt(jsonObj, "y1", JsonHelper.getInt(jsonObj, "y", 0));
+						final int width = JsonHelper.getInt(jsonObj, "w", 0);
+						final int height = JsonHelper.getInt(jsonObj, "h", 0);
+						final int x2 = JsonHelper.getInt(jsonObj, "x2", x1 + width);
+						final int y2 = JsonHelper.getInt(jsonObj, "y2", y1 + height);
+						return new Section(x1, y1, x2, y2);
+					}));
 			if (!result.isEmpty()) {
 				return result;
 			}
