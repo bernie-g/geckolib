@@ -3,6 +3,7 @@ package software.bernie.geckolib3.geo.render.built;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import net.minecraft.util.math.vector.Matrix3f;
 import net.minecraft.util.math.vector.Matrix4f;
 import net.minecraft.util.math.vector.Vector3d;
@@ -266,6 +267,7 @@ public class GeoBone implements IBone {
 	}
 
 	/* Gets the postion of a bone relative to the model */
+	@AvailableSince(value = "3.0.95")
 	public Vector3d getModelPosition() {
 		Matrix4f matrix = getModelSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -293,6 +295,7 @@ public class GeoBone implements IBone {
 	}
 
 	/* Gets the postion of a bone relative to the entity */
+	@AvailableSince(value = "3.0.95")
 	public Vector3d getLocalPosition() {
 		Matrix4f matrix = getLocalSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
@@ -348,6 +351,7 @@ public class GeoBone implements IBone {
 	}
 
 	/* Gets the postion of a bone relative to the world */
+	@AvailableSince(value = "3.0.95")
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
 		Vector4f vec = new Vector4f(0, 0, 0, 1);
