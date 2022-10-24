@@ -5,10 +5,22 @@
 
 package software.bernie.geckolib3.util.json;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -17,8 +29,6 @@ import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.util.AnimationUtils;
-
-import java.util.*;
 
 /**
  * Helper for parsing the bedrock json animation format and finding certain
@@ -212,7 +222,9 @@ public class JsonAnimationUtils {
 				: AnimationUtils.convertSecondsToTicks(animation_length.getAsDouble());
 		animation.boneAnimations = new ArrayList();
 		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = (loop != null && loop.getAsString() == "true") ? EDefaultLoopTypes.LOOP : EDefaultLoopTypes.PLAY_ONCE;
+		animation.loop = loop == null ? EDefaultLoopTypes.PLAY_ONCE
+				: EDefaultLoopTypes.valueOf(loop.getAsString() == "true" ? EDefaultLoopTypes.LOOP.toString()
+						: loop.getAsString().toUpperCase());
 
 		// Handle parsing sound effect keyframes
 		ArrayList<Map.Entry<String, JsonElement>> soundEffectFrames = getSoundEffectFrames(animationJsonObject);
@@ -243,7 +255,9 @@ public class JsonAnimationUtils {
 		if (customInstructionKeyFrames != null) {
 			for (Map.Entry<String, JsonElement> keyFrame : customInstructionKeyFrames) {
 				animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20,
-						keyFrame.getValue() instanceof JsonArray ? convertJsonArrayToList(keyFrame.getValue().getAsJsonArray()).toString() : keyFrame.getValue().getAsString()));
+						keyFrame.getValue() instanceof JsonArray
+								? convertJsonArrayToList(keyFrame.getValue().getAsJsonArray()).toString()
+								: keyFrame.getValue().getAsString()));
 			}
 		}
 
