@@ -2,8 +2,10 @@ package software.bernie.geckolib3q.geo.exception;
 
 import net.minecraft.resources.ResourceLocation;
 
-@SuppressWarnings("serial")
 public class GeckoLibException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
 	public GeckoLibException(ResourceLocation fileLocation, String message) {
 		super(fileLocation + ": " + message);
 	}
