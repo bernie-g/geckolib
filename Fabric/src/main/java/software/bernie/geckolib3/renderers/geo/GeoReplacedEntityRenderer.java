@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -17,6 +16,7 @@ import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -54,7 +54,7 @@ import software.bernie.geckolib3.util.IRenderCycle;
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	private final AnimatedGeoModel<IAnimatable> modelProvider;
 	private T animatable;
-	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
+	protected final List<GeoLayerRenderer> layerRenderers = new ObjectArrayList<>();
 	private IAnimatable currentAnimatable;
 	private static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
 	protected float widthScale = 1;

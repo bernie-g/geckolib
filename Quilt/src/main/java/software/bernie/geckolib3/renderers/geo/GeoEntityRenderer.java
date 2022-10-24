@@ -9,7 +9,6 @@ import javax.annotation.Nonnull;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.quiltmc.loader.api.QuiltLoader;
 
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,6 +17,7 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
@@ -68,7 +68,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		});
 	}
 
-	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
+	protected final List<GeoLayerRenderer<T>> layerRenderers = new ObjectArrayList<>();
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
