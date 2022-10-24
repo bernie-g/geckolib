@@ -136,7 +136,8 @@ public class JsonAnimationUtils {
 	 */
 	public static ObjectArrayList<Map.Entry<String, JsonElement>> getSoundEffectFrames(JsonObject json) {
 		JsonObject sound_effects = json.getAsJsonObject("sound_effects");
-		return sound_effects == null ? new ObjectArrayList<>() : new ObjectArrayList<>(getObjectListAsArray(sound_effects));
+		return sound_effects == null ? new ObjectArrayList<>()
+				: new ObjectArrayList<>(getObjectListAsArray(sound_effects));
 	}
 
 	/**
@@ -149,7 +150,8 @@ public class JsonAnimationUtils {
 	 */
 	public static ObjectArrayList<Map.Entry<String, JsonElement>> getParticleEffectFrames(JsonObject json) {
 		JsonObject particle_effects = json.getAsJsonObject("particle_effects");
-		return particle_effects == null ? new ObjectArrayList<>() : new ObjectArrayList<>(getObjectListAsArray(particle_effects));
+		return particle_effects == null ? new ObjectArrayList<>()
+				: new ObjectArrayList<>(getObjectListAsArray(particle_effects));
 	}
 
 	/**
@@ -222,7 +224,9 @@ public class JsonAnimationUtils {
 				: AnimationUtils.convertSecondsToTicks(animation_length.getAsDouble());
 		animation.boneAnimations = new ObjectArrayList();
 		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = (loop != null && loop.getAsString() == "true") ? EDefaultLoopTypes.LOOP : EDefaultLoopTypes.PLAY_ONCE;
+		animation.loop = loop == null ? EDefaultLoopTypes.PLAY_ONCE
+				: EDefaultLoopTypes.valueOf(loop.getAsString() == "true" ? EDefaultLoopTypes.LOOP.toString()
+						: loop.getAsString().toUpperCase());
 
 		// Handle parsing sound effect keyframes
 		ObjectArrayList<Map.Entry<String, JsonElement>> soundEffectFrames = getSoundEffectFrames(animationJsonObject);
@@ -234,7 +238,8 @@ public class JsonAnimationUtils {
 		}
 
 		// Handle parsing particle effect keyframes
-		ObjectArrayList<Map.Entry<String, JsonElement>> particleKeyFrames = getParticleEffectFrames(animationJsonObject);
+		ObjectArrayList<Map.Entry<String, JsonElement>> particleKeyFrames = getParticleEffectFrames(
+				animationJsonObject);
 		if (particleKeyFrames != null) {
 			for (Map.Entry<String, JsonElement> keyFrame : particleKeyFrames) {
 				JsonObject object = keyFrame.getValue().getAsJsonObject();
