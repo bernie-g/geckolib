@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.renderers.texture.texture;
+package software.bernie.geckolib3.renderers.texture;
 
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.resource.Resource;

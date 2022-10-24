@@ -9,7 +9,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import software.bernie.geckolib3.renderers.texture.texture.AutoGlowingTexture;
+import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
 
 /*
  * Copyright: DerToaster98 - 13.06.2022
