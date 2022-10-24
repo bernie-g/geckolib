@@ -1,7 +1,5 @@
 package software.bernie.geckolib3.core.processor;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +9,8 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.eliotlash.molang.MolangParser;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -24,7 +24,7 @@ import software.bernie.geckolib3.core.util.MathUtil;
 
 public class AnimationProcessor<T extends IAnimatable> {
 	public boolean reloadAnimations = false;
-	private List<IBone> modelRendererList = new ArrayList();
+	private List<IBone> modelRendererList = new ObjectArrayList<>();
 	private double lastTickValue = -1;
 	private Set<Integer> animatedEntities = new HashSet<>();
 	private final IAnimatableModel animatedModel;
@@ -49,12 +49,12 @@ public class AnimationProcessor<T extends IAnimatable> {
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		// Keeps track of which bones have had animations applied to them, and
 		// eventually sets the ones that don't have an animation to their default values
-		HashMap<String, DirtyTracker> modelTracker = createNewDirtyTracker();
+		Map<String, DirtyTracker> modelTracker = createNewDirtyTracker();
 
 		// Store the current value of each bone rotation/position/scale
 		updateBoneSnapshots(manager.getBoneSnapshotCollection());
 
-		HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
+		Map<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
 
 		for (AnimationController<T> controller : manager.getAnimationControllers().values()) {
 			if (reloadAnimations) {
@@ -225,15 +225,15 @@ public class AnimationProcessor<T extends IAnimatable> {
 		manager.isFirstTick = false;
 	}
 
-	private HashMap<String, DirtyTracker> createNewDirtyTracker() {
-		HashMap<String, DirtyTracker> tracker = new HashMap<>();
+	private Map<String, DirtyTracker> createNewDirtyTracker() {
+		Map<String, DirtyTracker> tracker = new Object2ObjectOpenHashMap<>();
 		for (IBone bone : modelRendererList) {
 			tracker.put(bone.getName(), new DirtyTracker(false, false, false, bone));
 		}
 		return tracker;
 	}
 
-	private void updateBoneSnapshots(HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
+	private void updateBoneSnapshots(Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
 		for (IBone bone : modelRendererList) {
 			if (!boneSnapshotCollection.containsKey(bone.getName())) {
 				boneSnapshotCollection.put(bone.getName(), Pair.of(bone, new BoneSnapshot(bone.getInitialSnapshot())));

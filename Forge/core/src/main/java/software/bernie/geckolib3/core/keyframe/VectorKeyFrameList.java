@@ -5,8 +5,9 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  * A vector key frame list is a handy class used to store 3 lists of keyframes:
@@ -45,9 +46,9 @@ public class VectorKeyFrameList<T extends KeyFrame> {
 	 * Instantiates a new blank key frame list
 	 */
 	public VectorKeyFrameList() {
-		xKeyFrames = new ArrayList<>();
-		yKeyFrames = new ArrayList<>();
-		zKeyFrames = new ArrayList<>();
+		xKeyFrames = new ObjectArrayList<>();
+		yKeyFrames = new ObjectArrayList<>();
+		zKeyFrames = new ObjectArrayList<>();
 	}
 
 	public double getLastKeyframeTime() {

@@ -5,11 +5,11 @@
 
 package software.bernie.geckolib3.core.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
@@ -23,6 +23,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.molang.MolangParser;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.ConstantValue;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -54,7 +55,7 @@ import software.bernie.geckolib3.core.util.Axis;
  * @param <T> the type parameter
  */
 public class AnimationController<T extends IAnimatable> {
-	static List<ModelFetcher<?>> modelFetchers = new ArrayList<>();
+	static List<ModelFetcher<?>> modelFetchers = new ObjectArrayList<>();
 	/**
 	 * The Entity.
 	 */
@@ -372,7 +373,7 @@ public class AnimationController<T extends IAnimatable> {
 	 * @param boneSnapshotCollection The bone snapshot collection
 	 */
 	public void process(double tick, AnimationEvent<T> event, List<IBone> modelRendererList,
-			HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
+			Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
 			boolean crashWhenCantFindBone) {
 		parser.setValue("query.life_time", tick / 20);
 		if (currentAnimation != null) {
@@ -526,7 +527,7 @@ public class AnimationController<T extends IAnimatable> {
 	// At the beginning of a new transition, save a snapshot of the model's
 	// rotation, position, and scale values as the initial value to lerp from
 	private void saveSnapshotsForAnimation(Animation animation,
-			HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
+			Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
 		for (Pair<IBone, BoneSnapshot> snapshot : boneSnapshotCollection.values()) {
 			if (animation != null && animation.boneAnimations != null) {
 				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.getLeft().getName()))) {
