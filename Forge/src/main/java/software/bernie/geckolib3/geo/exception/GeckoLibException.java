@@ -1,14 +1,11 @@
 package software.bernie.geckolib3.geo.exception;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraft.util.ResourceLocation;
 
-@SuppressWarnings("serial")
 public class GeckoLibException extends RuntimeException {
 
-	public static final Logger LOGGER = LogManager.getLogger();
+	private static final long serialVersionUID = 1L;
+
 	public GeckoLibException(ResourceLocation fileLocation, String message) {
 		super(fileLocation + ": " + message);
 	}
