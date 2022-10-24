@@ -1,7 +1,6 @@
 package software.bernie.geckolib3.resource;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -11,6 +10,7 @@ import java.util.function.Function;
 
 import com.eliotlash.molang.MolangParser;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
@@ -61,8 +61,8 @@ public class GeckoLibCache {
 	public CompletableFuture<Void> reload(ResourceReloader.Synchronizer stage, ResourceManager resourceManager,
 			Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
-		Map<Identifier, AnimationFile> animations = new HashMap<>();
-		Map<Identifier, GeoModel> geoModels = new HashMap<>();
+		Map<Identifier, AnimationFile> animations = new Object2ObjectOpenHashMap<>();
+		Map<Identifier, GeoModel> geoModels = new Object2ObjectOpenHashMap<>();
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",
@@ -79,7 +79,7 @@ public class GeckoLibCache {
 				.supplyAsync(() -> resourceManager.findResources(type, fileName -> fileName.endsWith(".json")),
 						executor)
 				.thenApplyAsync(resources -> {
-					Map<Identifier, CompletableFuture<T>> tasks = new HashMap<>();
+					Map<Identifier, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
 					for (Identifier resource : resources) {
 						CompletableFuture<T> existing = tasks.put(resource,

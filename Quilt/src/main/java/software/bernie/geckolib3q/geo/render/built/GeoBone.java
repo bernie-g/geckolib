@@ -1,6 +1,5 @@
 package software.bernie.geckolib3q.geo.render.built;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
@@ -10,14 +9,15 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
 public class GeoBone implements IBone {
 	public GeoBone parent;
 
-	public List<GeoBone> childBones = new ArrayList<>();
-	public List<GeoCube> childCubes = new ArrayList<>();
+	public List<GeoBone> childBones = new ObjectArrayList<>();
+	public List<GeoCube> childCubes = new ObjectArrayList<>();
 
 	public String name;
 	public Boolean mirror;

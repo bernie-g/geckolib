@@ -1,17 +1,19 @@
 package software.bernie.geckolib3.geo.raw.tree;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.MinecraftGeometry;
 import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
 import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-
 public class RawGeometryTree {
-	public HashMap<String, RawBoneGroup> topLevelBones = new HashMap<>();
+	public Map<String, RawBoneGroup> topLevelBones = new Object2ObjectOpenHashMap<>();
 	public ModelProperties properties;
 
 	public static RawGeometryTree parseHierarchy(RawGeoModel model) {

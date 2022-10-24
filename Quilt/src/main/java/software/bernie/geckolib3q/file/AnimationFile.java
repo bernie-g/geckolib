@@ -1,12 +1,13 @@
 package software.bernie.geckolib3q.file;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.builder.Animation;
 
 public class AnimationFile {
-	private final HashMap<String, Animation> animations = new HashMap<>();
+	private final Map<String, Animation> animations = new Object2ObjectOpenHashMap<>();
 
 	public Animation getAnimation(String name) {
 		return animations.get(name);

@@ -1,7 +1,6 @@
 package software.bernie.geckolib3q.resource;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
@@ -11,6 +10,7 @@ import java.util.function.Function;
 
 import com.eliotlash.molang.MolangParser;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -58,11 +58,11 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier stage, ResourceManager resourceManager,
-			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor) {
-		Map<ResourceLocation, AnimationFile> animations = new HashMap<>();
-		Map<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+	public CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier stage,
+			ResourceManager resourceManager, ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler,
+			Executor backgroundExecutor, Executor gameExecutor) {
+		Map<ResourceLocation, AnimationFile> animations = new Object2ObjectOpenHashMap<>();
+		Map<ResourceLocation, GeoModel> geoModels = new Object2ObjectOpenHashMap<>();
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",
@@ -75,11 +75,10 @@ public class GeckoLibCache {
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
-		return CompletableFuture
-				.supplyAsync(() -> resourceManager.listResources(type, fileName -> fileName.toString().endsWith(".json")),
-						executor)
+		return CompletableFuture.supplyAsync(
+				() -> resourceManager.listResources(type, fileName -> fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
-					Map<ResourceLocation, CompletableFuture<T>> tasks = new HashMap<>();
+					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
 					for (ResourceLocation resource : resources) {
 						CompletableFuture<T> existing = tasks.put(resource,

@@ -6,8 +6,7 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Lists;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -65,7 +64,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		});
 	}
 
-	protected final List<GeoLayerRenderer<T>> layerRenderers = Lists.newArrayList();
+	protected final List<GeoLayerRenderer<T>> layerRenderers = new ObjectArrayList<>();
 	protected final AnimatedGeoModel<T> modelProvider;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();

@@ -1,10 +1,10 @@
 package software.bernie.geckolib3.geo.render.built;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.util.math.Vector3d;
 import net.minecraft.util.math.Matrix3f;
 import net.minecraft.util.math.Matrix4f;
@@ -15,8 +15,8 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 public class GeoBone implements IBone {
 	public GeoBone parent;
 
-	public List<GeoBone> childBones = new ArrayList<>();
-	public List<GeoCube> childCubes = new ArrayList<>();
+	public List<GeoBone> childBones = new ObjectArrayList<>();
+	public List<GeoCube> childCubes = new ObjectArrayList<>();
 
 	public String name;
 	public Boolean mirror;
@@ -48,7 +48,7 @@ public class GeoBone implements IBone {
 	private Matrix4f localSpaceXform;
 	private Matrix4f worldSpaceXform;
 	private Matrix3f worldSpaceNormal;
-	
+
 	private boolean trackXform;
 	public Matrix4f rotMat;
 

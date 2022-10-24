@@ -9,8 +9,7 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
-import com.google.common.collect.Lists;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
@@ -53,7 +52,7 @@ import software.bernie.geckolib3.util.IRenderCycle;
 public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
 	protected final AnimatedGeoModel<IAnimatable> modelProvider;
 	protected T animatable;
-	protected final List<GeoLayerRenderer> layerRenderers = Lists.newArrayList();
+	protected final List<GeoLayerRenderer> layerRenderers = new ObjectArrayList<>();
 	protected IAnimatable currentAnimatable;
 	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
 	protected float widthScale = 1;
