@@ -28,7 +28,11 @@ import software.bernie.geckolib3.util.RenderUtils;
 
 public interface IGeoRenderer<T> {
 
-	void setCurrentRTB(MultiBufferSource rtb);
+	GeoModelProvider getGeoModelProvider();
+
+	ResourceLocation getTextureLocation(T instance);
+
+	ResourceLocation getTextureResource(T instance);
 
 	MultiBufferSource getCurrentRTB();
 
@@ -49,7 +53,8 @@ public interface IGeoRenderer<T> {
 			renderRecursively(group, matrixStackIn, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue,
 					alpha);
 		}
-		//Since we rendered at least once at this point, let's set the cycle to repeated
+		// Since we rendered at least once at this point, let's set the cycle to
+		// repeated
 		this.setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
 	}
 
@@ -142,12 +147,6 @@ public interface IGeoRenderer<T> {
 		}
 	}
 
-	GeoModelProvider getGeoModelProvider();
-
-	ResourceLocation getTextureLocation(T instance);
-
-	ResourceLocation getTextureResource(T instance);
-
 	default void renderEarly(T animatable, PoseStack stackIn, float partialTicks,
 			@Nullable MultiBufferSource renderTypeBuffer, @Nullable VertexConsumer vertexBuilder, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
@@ -185,6 +184,10 @@ public interface IGeoRenderer<T> {
 	@Nonnull
 	public default IRenderCycle getCurrentModelRenderCycle() {
 		return EModelRenderCycle.INITIAL;
+	}
+
+	public default void setCurrentRTB(MultiBufferSource rtb) {
+
 	}
 
 	public default float getWidthScale(T animatable2) {
