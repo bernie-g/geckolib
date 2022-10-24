@@ -110,6 +110,7 @@ dependencies {
     }
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    compileOnly 'org.jetbrains:annotations:20.1.0'
 
 	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3")
@@ -119,6 +120,7 @@ dependencies {
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    shade group: 'org.jetbrains.annotations', name: 'jetbrains-annotations', version: '20.1.0'
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
