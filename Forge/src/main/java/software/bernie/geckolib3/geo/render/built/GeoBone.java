@@ -286,12 +286,12 @@ public class GeoBone implements IBone {
 		this.localSpaceXform.load(localSpaceXform);
 	}
 
-	@AvailableSince(value = "3.0.46")
+	@Deprecated
 	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
 		this.worldSpaceNormal = worldSpaceNormal;
 	}
 
-	@AvailableSince(value = "3.0.46")
+	@Deprecated
 	public Matrix3f getWorldSpaceNormal() {
 		return worldSpaceNormal;
 	}
