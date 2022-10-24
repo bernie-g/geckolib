@@ -4,6 +4,8 @@ import java.util.Collections;
 
 import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
@@ -75,21 +77,26 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	@Nonnull
 	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
+	
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getHeightScale(T entity) {
 		return this.heightScale;

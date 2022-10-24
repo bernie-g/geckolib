@@ -7,6 +7,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.VertexBuilderUtils;
@@ -65,12 +67,14 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	@Nonnull
 	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
@@ -99,11 +103,13 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return renderers.get(item);
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getWidthScale(Object animatable2) {
 		return this.widthScale;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getHeightScale(Object entity) {
 		return this.heightScale;

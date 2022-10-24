@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.annotation.Nonnull;
 
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import com.mojang.blaze3d.vertex.VertexBuilderUtils;
@@ -91,13 +93,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	
+
+	@AvailableSince(value = "3.0.95")
 	@Override
 	@Nonnull
 	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
@@ -335,11 +339,13 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.modelProvider;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
+	@AvailableSince(value = "3.0.95")
 	@Override
 	public float getHeightScale(T entity) {
 		return this.heightScale;
