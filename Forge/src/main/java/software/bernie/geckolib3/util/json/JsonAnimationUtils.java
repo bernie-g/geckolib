@@ -12,7 +12,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
@@ -216,7 +215,7 @@ public class JsonAnimationUtils {
 				: AnimationUtils.convertSecondsToTicks(animationLength.getAsDouble());
 		animation.boneAnimations = new ObjectArrayList<>();
 		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = loop == null ? EDefaultLoopTypes.PLAY_ONCE : ILoopType.fromString(loop.getAsString());
+		animation.loop = ILoopType.fromJson(loop);
 
 		// Handle parsing sound effect keyframes
 		for (Map.Entry<String, JsonElement> keyFrame : getSoundEffectFrames(animationJsonObject)) {

@@ -1,5 +1,8 @@
 package software.bernie.geckolib3.core.builder;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+
 import java.util.Locale;
 
 public interface ILoopType {
@@ -27,19 +30,33 @@ public interface ILoopType {
 		}
 	}
 
-	static ILoopType fromString(String string) {
-		if (string == null || string.equalsIgnoreCase("false")) {
+	static ILoopType fromJson(JsonElement json) {
+		if (json == null || !json.isJsonPrimitive()) {
 			return EDefaultLoopTypes.PLAY_ONCE;
 		}
 
-		if (string.equalsIgnoreCase("true")) {
-			return EDefaultLoopTypes.LOOP;
+		JsonPrimitive primitive = json.getAsJsonPrimitive();
+
+		if (primitive.isBoolean()) {
+			return primitive.getAsBoolean() ? EDefaultLoopTypes.LOOP : EDefaultLoopTypes.PLAY_ONCE;
 		}
 
-		try {
-			return EDefaultLoopTypes.valueOf(string.toUpperCase(Locale.ROOT));
+		if (primitive.isString()) {
+			String string = primitive.getAsString();
+
+			if (string.equalsIgnoreCase("false")) {
+				return EDefaultLoopTypes.PLAY_ONCE;
+			}
+
+			if (string.equalsIgnoreCase("true")) {
+				return EDefaultLoopTypes.LOOP;
+			}
+
+			try {
+				return EDefaultLoopTypes.valueOf(string.toUpperCase(Locale.ROOT));
+			}
+			catch (Exception ex) {}
 		}
-		catch (Exception ex) {}
 
 		return EDefaultLoopTypes.PLAY_ONCE;
 	}
