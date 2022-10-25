@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import software.bernie.geckolib3.core.AnimationState;
@@ -98,7 +99,7 @@ public class AnimationController<T extends IAnimatable> {
 	public static void addModelFetcher(ModelFetcher<?> fetcher) {
 		modelFetchers.add(fetcher);
 	}
-	
+
 	public static void removeModelFetcher(ModelFetcher<?> fetcher) {
 		Objects.requireNonNull(fetcher);
 		modelFetchers.remove(fetcher);
@@ -173,7 +174,7 @@ public class AnimationController<T extends IAnimatable> {
 	private final HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
 	protected boolean justStartedTransition = false;
-	public Function<Double, Double> customEasingMethod; // Look at converting to Double2DoubleFunction to reduce unboxing
+	public Double2DoubleFunction customEasingMethod;
 	protected boolean needsAnimationReload = false;
 	public double animationSpeed = 1D;
 	private final Set<EventKeyFrame<?>> executedKeyFrames = new ObjectOpenHashSet<>();
@@ -295,7 +296,7 @@ public class AnimationController<T extends IAnimatable> {
 	 *                              {@link software.bernie.geckolib3.core.easing.EasingManager}
 	 */
 	public AnimationController(T animatable, String name, float transitionLengthTicks,
-			Function<Double, Double> customEasingMethod, IAnimationPredicate<T> animationPredicate) {
+			Double2DoubleFunction customEasingMethod, IAnimationPredicate<T> animationPredicate) {
 		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
@@ -686,8 +687,7 @@ public class AnimationController<T extends IAnimatable> {
 	}
 
 	// Helper method to transform a KeyFrameLocation to an AnimationPoint
-	private AnimationPoint getAnimationPointAtTick(List<KeyFrame> frames, double tick, boolean isRotation,
-			Axis axis) {
+	private AnimationPoint getAnimationPointAtTick(List<KeyFrame> frames, double tick, boolean isRotation, Axis axis) {
 		KeyFrameLocation<KeyFrame> location = getCurrentKeyFrameLocation(frames, tick);
 		KeyFrame currentFrame = location.currentFrame;
 		double startValue = currentFrame.getStartValue().get();
@@ -715,8 +715,7 @@ public class AnimationController<T extends IAnimatable> {
 	 * Returns the current keyframe object, plus how long the previous keyframes
 	 * have taken (aka elapsed animation time)
 	 **/
-	private KeyFrameLocation<KeyFrame> getCurrentKeyFrameLocation(List<KeyFrame> frames,
-			double ageInTicks) {
+	private KeyFrameLocation<KeyFrame> getCurrentKeyFrameLocation(List<KeyFrame> frames, double ageInTicks) {
 		double totalTimeTracker = 0;
 		for (KeyFrame frame : frames) {
 			totalTimeTracker += frame.getLength();
@@ -749,5 +748,6 @@ public class AnimationController<T extends IAnimatable> {
 	}
 
 	@FunctionalInterface
-	public interface ModelFetcher<T> extends Function<IAnimatable, IAnimatableModel<T>> {}
+	public interface ModelFetcher<T> extends Function<IAnimatable, IAnimatableModel<T>> {
+	}
 }
