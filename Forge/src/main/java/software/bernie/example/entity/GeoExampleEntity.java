@@ -21,9 +21,10 @@ import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAnimationTickable {
-	private AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	private boolean isAnimating = false;
 
 	public GeoExampleEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {

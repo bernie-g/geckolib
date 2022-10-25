@@ -1,8 +1,5 @@
 package software.bernie.example.item;
 
-import java.util.List;
-import java.util.function.Consumer;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.network.chat.Component;
@@ -33,9 +30,12 @@ import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 public class PistolItem extends Item implements IAnimatable, ISyncable {
 
-	public AnimationFactory factory = new AnimationFactory(this);
+	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	public String controllerName = "controller";
 	public static final int ANIM_OPEN = 0;
 
