@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
@@ -27,8 +26,7 @@ public class AnimationFileLoader {
 		AnimationFile animationFile = new AnimationFile();
 		GeckoLib.LOGGER.debug("Attempting to load animation file {}...", location.toString());
 		JsonObject jsonRepresentation = loadFile(location, manager);
-		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
-		for (Map.Entry<String, JsonElement> entry : entrySet) {
+		for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(jsonRepresentation)) {
 			String animationName = entry.getKey();
 			Animation animation;
 			try {

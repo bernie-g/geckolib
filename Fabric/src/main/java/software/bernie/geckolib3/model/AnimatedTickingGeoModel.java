@@ -21,11 +21,11 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-		// Each animation has it's own collection of animations (called the
+		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (manager.startTick == null) {
-			manager.startTick = (double) (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
+		if (manager.startTick == -1) {
+			manager.startTick = (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
 		}
 
 		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {

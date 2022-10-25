@@ -6,8 +6,10 @@ import java.util.Map;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.builder.Animation;
 
-public class AnimationFile {
-	private final Map<String, Animation> animations = new Object2ObjectOpenHashMap<>();
+public record AnimationFile(Map<String, Animation> animations) {
+	public AnimationFile() {
+		this(new Object2ObjectOpenHashMap<>());
+	}
 
 	public Animation getAnimation(String name) {
 		return animations.get(name);

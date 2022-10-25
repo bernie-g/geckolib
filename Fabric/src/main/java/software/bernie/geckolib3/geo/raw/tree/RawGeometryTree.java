@@ -1,12 +1,11 @@
 package software.bernie.geckolib3.geo.raw.tree;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.MinecraftGeometry;
 import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
@@ -21,10 +20,11 @@ public class RawGeometryTree {
 		RawGeometryTree hierarchy = new RawGeometryTree();
 		MinecraftGeometry geometry = model.getMinecraftGeometry()[0];
 		hierarchy.properties = geometry.getProperties();
-		List<Bone> bones = new ArrayList<>(Arrays.asList(geometry.getBones()));
+		List<Bone> bones = new ObjectArrayList<>(geometry.getBones());
 
 		int index = bones.size() - 1;
 		while (true) {
+
 			Bone bone = bones.get(index);
 			if (!hasParent(bone)) {
 				hierarchy.topLevelBones.put(bone.getName(), new RawBoneGroup(bone));

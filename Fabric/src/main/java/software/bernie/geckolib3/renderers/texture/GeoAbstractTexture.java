@@ -18,7 +18,6 @@ import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.MissingSprite;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.texture.ResourceTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -54,9 +53,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		// here
 		// Overload with second param (default value) will just call getOrDefault() on
 		// the internal map
-		if (texManager.getOrDefault(location, MissingSprite.getMissingSpriteTexture()) == null) {
-			texManager.registerTexture(location, constructor.apply(originalLocation, location));
-		}
+		texManager.getOrDefault(location, MissingSprite.getMissingSpriteTexture());
 		return location;
 	}
 
@@ -72,14 +69,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		TextureManager textureManager = mc.getTextureManager();
 		AbstractTexture originalTexture;
 		try {
-			originalTexture = mc.submit(() -> {
-				AbstractTexture texture = textureManager.getTexture(this.originalLocation);
-				if (texture == null) {
-					texture = new ResourceTexture(this.originalLocation);
-					textureManager.registerTexture(this.originalLocation, texture);
-				}
-				return texture;
-			}).get();
+			originalTexture = mc.submit(() -> textureManager.getTexture(this.originalLocation)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new IOException("Failed loading original texture: " + this.originalLocation, e);
 		}
