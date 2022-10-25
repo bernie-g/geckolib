@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.example.registry;
 
 import net.fabricmc.loader.api.FabricLoader;
@@ -12,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.util.Identifier;
 import software.bernie.example.entity.BikeEntity;
+import software.bernie.example.entity.CarEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
@@ -23,6 +19,8 @@ public class EntityRegistry {
 	public static final EntityType<GeoExampleEntity> GEO_EXAMPLE_ENTITY = buildEntity(GeoExampleEntity::new,
 			GeoExampleEntity.class, .7F, 1.3F, SpawnGroup.CREATURE);
 	public static final EntityType<BikeEntity> BIKE_ENTITY = buildEntity(BikeEntity::new, BikeEntity.class, 0.5f, 0.6F,
+			SpawnGroup.CREATURE);
+	public static final EntityType<CarEntity> CAR_ENTITY = buildEntity(CarEntity::new, CarEntity.class, 1.5f, 1.5F,
 			SpawnGroup.CREATURE);
 	public static final EntityType<ExtendedRendererEntity> EXTENDED_RENDERER_EXAMPLE = buildEntity(
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F,

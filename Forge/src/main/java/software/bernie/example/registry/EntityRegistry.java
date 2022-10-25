@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.example.registry;
 
 import net.minecraft.world.entity.Entity;
@@ -12,6 +7,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.entity.BikeEntity;
+import software.bernie.example.entity.CarEntity;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.example.entity.LEEntity;
@@ -26,6 +22,8 @@ public class EntityRegistry {
 			GeoExampleEntity::new, GeoExampleEntity.class, .7F, 1.3F);
 	public static final RegistryObject<EntityType<BikeEntity>> BIKE_ENTITY = buildEntity(BikeEntity::new,
 			BikeEntity.class, 0.5f, 0.6F);
+	public static final RegistryObject<EntityType<CarEntity>> CAR_ENTITY = buildEntity(CarEntity::new, CarEntity.class,
+			1.5f, 1.5F);
 	public static final RegistryObject<EntityType<ExtendedRendererEntity>> EXTENDED_RENDERER_EXAMPLE = buildEntity(
 			ExtendedRendererEntity::new, ExtendedRendererEntity.class, 0.5F, 1.9F);
 	public static final RegistryObject<EntityType<TexturePerBoneTestEntity>> TEXTURE_PER_BONE_EXAMPLE = buildEntity(

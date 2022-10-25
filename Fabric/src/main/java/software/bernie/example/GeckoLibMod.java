@@ -34,6 +34,8 @@ public class GeckoLibMod implements ModInitializer {
 					EntityUtils.createGenericEntityAttributes());
 			FabricDefaultAttributeRegistry.register(EntityRegistry.BIKE_ENTITY,
 					EntityUtils.createGenericEntityAttributes());
+			FabricDefaultAttributeRegistry.register(EntityRegistry.CAR_ENTITY,
+					EntityUtils.createGenericEntityAttributes());
 			FabricDefaultAttributeRegistry.register(EntityRegistry.GEOLAYERENTITY,
 					EntityUtils.createGenericEntityAttributes());
 			FabricDefaultAttributeRegistry.register(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE,
