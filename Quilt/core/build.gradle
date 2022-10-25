@@ -3,9 +3,6 @@ buildscript {
     	maven { url  = 'https://plugins.gradle.org/m2/' }
     }
 }
-plugins {
-    id 'java-library'
-}
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
