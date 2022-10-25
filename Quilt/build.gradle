@@ -81,6 +81,7 @@ shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.output
     duplicatesStrategy = 'exclude'
+    exclude('it/**')
     exclude('META-INF/services/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'

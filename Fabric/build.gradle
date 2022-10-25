@@ -76,6 +76,7 @@ shadowJar {
     from sourceSets.main.output
     duplicatesStrategy = 'exclude'
     exclude('META-INF/services/**')
+    exclude('it/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier 'dev'

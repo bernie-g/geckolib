@@ -136,6 +136,7 @@ shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
     exclude('META-INF/services/**')
+    exclude('it/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
@@ -168,6 +169,7 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
     exclude('META-INF/**')
+    exclude('it/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
