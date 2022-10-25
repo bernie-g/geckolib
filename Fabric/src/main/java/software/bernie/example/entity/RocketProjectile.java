@@ -33,6 +33,7 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class RocketProjectile extends AbstractArrow implements IAnimatable {
 	protected int timeInAir;
@@ -40,7 +41,7 @@ public class RocketProjectile extends AbstractArrow implements IAnimatable {
 	private int ticksInAir;
 	private LivingEntity shooter;
 
-	private AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public RocketProjectile(EntityType<? extends RocketProjectile> entityType, Level world) {
 		super(entityType, world);

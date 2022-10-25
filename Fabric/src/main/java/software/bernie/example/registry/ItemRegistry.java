@@ -16,7 +16,7 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class ItemRegistry {
 
-	private static final CreativeModeTab geckolibItemGroup = new FabricItemGroup(
+	protected static final CreativeModeTab geckolibItemGroup = new FabricItemGroup(
 			new ResourceLocation(GeckoLib.ModID, "geckolib_examples")) {
 		@Override
 		public ItemStack makeIcon() {
