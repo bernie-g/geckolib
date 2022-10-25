@@ -113,7 +113,7 @@ public class JsonAnimationUtils {
 			JsonElement jsonElement = getGson().toJsonTree(Arrays.asList(primitive, primitive, primitive));
 			return ImmutableSet.of(new AbstractMap.SimpleEntry("0", jsonElement));
 		}
-		return getObjectListAsArray(scaleObject.getAsJsonObject());
+		return scaleObject.getAsJsonObject().entrySet();
 	}
 
 	/**

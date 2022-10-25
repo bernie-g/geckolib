@@ -95,10 +95,12 @@ public class GeckoLibCache {
 						// Shouldn't be any duplicates as they are caught above
 						// Skips moreplayermodels and customnpc namespaces as they use an animation
 						// folder as well
-						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels"))
-							if (!entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
-								if (!entry.getKey().getNamespace().equalsIgnoreCase("gunsrpg"))
-									map.accept(entry.getKey(), entry.getValue().join());
+						String namespace = entry.getKey().getNamespace();
+
+						if (!namespace.equalsIgnoreCase("moreplayermodels") || !namespace.equalsIgnoreCase("customnpcs")
+								|| !namespace.equalsIgnoreCase("gunsrpg")) {
+							map.accept(entry.getKey(), entry.getValue().join());
+						}
 					}
 				}, executor);
 	}

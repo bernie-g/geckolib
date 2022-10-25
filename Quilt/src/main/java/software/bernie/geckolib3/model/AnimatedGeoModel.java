@@ -45,33 +45,50 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, AnimationEvent customPredicate) {
-		// Each animation has it's own collection of animations (called the
+
+		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 
-		if (manager.ticker == null) {
+		if (manager.ticker == null && !(entity instanceof LivingEntity)) {
 			manager.ticker = new AnimationTicker(manager);
+		}
+		if (manager.startTick == -1 && entity instanceof LivingEntity) {
+			manager.startTick = (double) (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
+			if (entity instanceof LivingEntity) {
+				manager.tick = (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - lastGameTickTime;
+				seekTime += deltaTicks;
+				lastGameTickTime = gameTick;
+				codeAnimations(entity, uniqueID, customPredicate);
+			} else {
+				seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
+			}
 		}
 
 		AnimationEvent<T> predicate;
+
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-					Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
 
 		predicate.animationTick = seekTime;
 
-		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
-		if (!this.animationProcessor.getModelRendererList().isEmpty()) {
-			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser,
-					shouldCrashOnMissing);
+		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
+		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
+			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
+					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
+	}
+
+	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {
+
 	}
 
 	@Override

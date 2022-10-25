@@ -1,6 +1,11 @@
 package software.bernie.geckolib3.model;
 
+import java.util.Collections;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.Blaze3D;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -24,9 +29,6 @@ import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;
@@ -46,35 +48,54 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
+
 		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (manager.startTick == -1) {
+
+		if (manager.startTick == -1 && !(entity instanceof LivingEntity)) {
 			manager.startTick = getCurrentTick();
+		}
+		if (manager.startTick == -1 && entity instanceof LivingEntity) {
+			manager.startTick = (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = (getCurrentTick() - manager.startTick);
-			double gameTick = manager.tick;
-			double deltaTicks = gameTick - lastGameTickTime;
-			seekTime += deltaTicks;
-			lastGameTickTime = gameTick;
+			if (entity instanceof LivingEntity) {
+				manager.tick = (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - lastGameTickTime;
+				seekTime += deltaTicks;
+				lastGameTickTime = gameTick;
+				codeAnimations(entity, uniqueID, customPredicate);
+			} else {
+				manager.tick = (getCurrentTick() - manager.startTick);
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - lastGameTickTime;
+				seekTime += deltaTicks;
+				lastGameTickTime = gameTick;
+			}
 		}
 
 		AnimationEvent<T> predicate;
+
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-					Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
 
 		predicate.animationTick = seekTime;
-		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
-		if (!this.animationProcessor.getModelRendererList().isEmpty()) {
-			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser,
-					shouldCrashOnMissing);
+
+		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
+		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
+			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
+					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
+	}
+
+	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {
+
 	}
 
 	@Override
@@ -124,13 +145,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
 		if (animatable instanceof Entity entity) {
-			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera()
-					.getPosition().distanceTo(entity.position()));
+			parser.setValue("query.distance_from_camera",
+					minecraftInstance.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
 			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(entity.isOnGround()));
 			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(entity.isInWater()));
 			// Should probably check specifically whether it's in rain?
-			parser.setValue("query.is_in_water_or_rain",
-					MolangUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
+			parser.setValue("query.is_in_water_or_rain", MolangUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
 
 			if (entity instanceof LivingEntity livingEntity) {
 				parser.setValue("query.health", livingEntity.getHealth());

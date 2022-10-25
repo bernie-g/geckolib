@@ -26,8 +26,7 @@ public class GeoBone implements IBone {
 	public boolean isHidden;
 	public boolean areCubesHidden = false;
 	public boolean hideChildBonesToo;
-	// I still have no idea what this field does, but its in the json file so
-	// ¯\_(ツ)_/¯
+	// I still have no idea what this field does, but it's in the json file so
 	public Boolean reset;
 	public float pivotX;
 	public float pivotY;
