@@ -27,7 +27,7 @@ import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
-	public AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	private static final String controllerName = "popupController";
 	private static final int ANIM_OPEN = 0;
 
