@@ -1,18 +1,5 @@
 package software.bernie.geckolib3.resource;
 
-import com.eliotlash.molang.MolangParser;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.file.AnimationFileLoader;
-import software.bernie.geckolib3.file.GeoModelLoader;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.molang.MolangRegistrar;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,6 +7,19 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.core.molang.MolangParser;
+import software.bernie.geckolib3.file.AnimationFile;
+import software.bernie.geckolib3.file.AnimationFileLoader;
+import software.bernie.geckolib3.file.GeoModelLoader;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.molang.MolangRegistrar;
 
 public class GeckoLibCache {
 	private static GeckoLibCache INSTANCE;

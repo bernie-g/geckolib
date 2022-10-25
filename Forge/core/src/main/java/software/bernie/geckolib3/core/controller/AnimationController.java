@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangParser;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.AnimationState;
@@ -45,6 +44,7 @@ import software.bernie.geckolib3.core.keyframe.KeyFrame;
 import software.bernie.geckolib3.core.keyframe.KeyFrameLocation;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.util.Axis;

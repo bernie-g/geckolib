@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.eliotlash.molang.MolangParser;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -18,6 +16,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.snapshot.DirtyTracker;
 import software.bernie.geckolib3.core.util.MathUtil;

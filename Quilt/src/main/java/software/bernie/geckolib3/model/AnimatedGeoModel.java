@@ -2,8 +2,6 @@ package software.bernie.geckolib3.model;
 
 import java.util.Collections;
 
-import com.eliotlash.molang.MolangParser;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -15,6 +13,7 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.file.AnimationFile;
