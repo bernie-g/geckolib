@@ -81,6 +81,7 @@ shadowJar {
     duplicatesStrategy = 'exclude'
     exclude('META-INF/services/**')
     exclude('it/**')
+    exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier 'dev'

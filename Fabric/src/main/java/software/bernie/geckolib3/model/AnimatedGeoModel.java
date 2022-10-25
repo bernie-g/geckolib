@@ -50,16 +50,16 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 
-		if (manager.ticker == null && !(entity instanceof LivingEntity)) {
+		if (manager.ticker == null && !(entity instanceof Entity)) {
 			manager.ticker = new AnimationTicker(manager);
 		}
-		if (manager.startTick == -1 && entity instanceof LivingEntity) {
-			manager.startTick = (double) (((LivingEntity) entity).age + MinecraftClient.getInstance().getTickDelta());
+		if (manager.startTick == -1 && entity instanceof Entity) {
+			manager.startTick = (double) (((Entity) entity).age + MinecraftClient.getInstance().getTickDelta());
 		}
 
 		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			if (entity instanceof LivingEntity) {
-				manager.tick = (((LivingEntity) entity).age + MinecraftClient.getInstance().getTickDelta());
+			if (entity instanceof Entity) {
+				manager.tick = (((Entity) entity).age + MinecraftClient.getInstance().getTickDelta());
 				double gameTick = manager.tick;
 				double deltaTicks = gameTick - lastGameTickTime;
 				seekTime += deltaTicks;
@@ -73,7 +73,8 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		AnimationEvent<T> predicate;
 
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
+					Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
