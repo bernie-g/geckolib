@@ -1,13 +1,5 @@
 package software.bernie.geckolib3.resource;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
@@ -20,6 +12,14 @@ import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.molang.MolangRegistrar;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class GeckoLibCache {
 	private static GeckoLibCache INSTANCE;
@@ -98,10 +98,13 @@ public class GeckoLibCache {
 						// Shouldn't be any duplicates as they are caught above
 						// Skips moreplayermodels and customnpc namespaces as they use an animation
 						// folder as well
-						if (!entry.getKey().getNamespace().equalsIgnoreCase("moreplayermodels"))
-							if (!entry.getKey().getNamespace().equalsIgnoreCase("customnpcs"))
-								if (!entry.getKey().getNamespace().equalsIgnoreCase("gunsrpg"))
-									map.accept(entry.getKey(), entry.getValue().join());
+						String namespace = entry.getKey().getNamespace();
+
+						if (!namespace.equalsIgnoreCase("moreplayermodels") &&
+								!namespace.equalsIgnoreCase("customnpcs") &&
+								!namespace.equalsIgnoreCase("gunsrpg")) {
+							map.accept(entry.getKey(), entry.getValue().join());
+						}
 					}
 				}, executor);
 	}

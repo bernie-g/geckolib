@@ -4,13 +4,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.simple.SimpleChannel;
-
-import java.util.Optional;
-import java.util.function.Supplier;
-
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 public class SyncAnimationMsg {
     private final String key;
@@ -34,7 +33,7 @@ public class SyncAnimationMsg {
     }
 
     private static SyncAnimationMsg decode(FriendlyByteBuf buf) {
-        final String key = buf.readUtf(32767); // The max length here can be removed in 1.17+
+        final String key = buf.readUtf();
         final int id = buf.readVarInt();
         final int state = buf.readVarInt();
         return new SyncAnimationMsg(key, id, state);

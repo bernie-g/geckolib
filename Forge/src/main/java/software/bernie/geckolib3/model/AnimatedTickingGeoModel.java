@@ -1,15 +1,14 @@
 package software.bernie.geckolib3.model;
 
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-
 import net.minecraft.client.Minecraft;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.resource.GeckoLibCache;
+
+import javax.annotation.Nullable;
+import java.util.Collections;
 
 public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimationTickable> extends AnimatedGeoModel<T> {
 	public AnimatedTickingGeoModel() {
@@ -21,11 +20,11 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
-		// Each animation has it's own collection of animations (called the
+		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-		if (manager.startTick == null) {
-			manager.startTick = (double) (entity.tickTimer() + Minecraft.getInstance().getFrameTime());
+		if (manager.startTick == -1) {
+			manager.startTick = (entity.tickTimer() + Minecraft.getInstance().getFrameTime());
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
