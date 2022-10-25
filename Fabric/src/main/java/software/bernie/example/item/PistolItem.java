@@ -16,7 +16,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import software.bernie.example.entity.RocketProjectile;
-import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -36,7 +35,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	public static final int ANIM_OPEN = 0;
 
 	public PistolItem() {
-		super(new Item.Properties().tab(ItemRegistry.geckolibItemGroup).stacksTo(1).durability(201));
+		super(new Item.Properties().stacksTo(1).durability(201));
 		GeckoLibNetwork.registerSyncable(this);
 	}
 

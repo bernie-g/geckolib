@@ -5,10 +5,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
-import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -21,22 +19,14 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class RegistryUtils {
 
-	public static <B extends Block> B register(B block, ResourceLocation name) {
-		return register(block, name, CreativeModeTab.TAB_DECORATIONS);
-	}
-
 	public static <B extends Block> B register(String name, B block) {
-		return register(block, new ResourceLocation(GeckoLib.ModID, name), CreativeModeTab.TAB_DECORATIONS);
+		return register(block, new ResourceLocation(GeckoLib.ModID, name));
 	}
 
-	public static <B extends Block> B register(String name, B block, CreativeModeTab itemGroup) {
-		return register(block, new ResourceLocation(GeckoLib.ModID, name), itemGroup);
-	}
-
-	public static <B extends Block> B register(B block, ResourceLocation name, CreativeModeTab itemGroup) {
+	public static <B extends Block> B register(B block, ResourceLocation name) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 			Registry.register(Registry.BLOCK, name, block);
-			BlockItem item = new BlockItem(block, (new Properties()).tab(itemGroup));
+			BlockItem item = new BlockItem(block, (new Properties()));
 			item.registerBlocks(Item.BY_BLOCK, item);
 			Registry.register(Registry.ITEM, name, item);
 		}
@@ -71,13 +61,6 @@ public class RegistryUtils {
 		return null;
 	}
 
-	public static Block registerBlockWithWallBlock(Block block, Block wallBlock, ResourceLocation name) {
-		Registry.register(Registry.BLOCK, name, block);
-		Registry.register(Registry.ITEM, name,
-				new StandingAndWallBlockItem(block, wallBlock, new Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
-		return block;
-	}
-
 	public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String name,
 			BlockEntityType.Builder<T> builder) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
@@ -88,22 +71,10 @@ public class RegistryUtils {
 		return null;
 	}
 
-	public static Block registerNetherStem(ResourceLocation name, MaterialColor MapColor) {
-		return register(new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD, (blockState) -> MapColor)
-				.strength(1.0F).sound(SoundType.STEM)), name);
-	}
-
 	public static Block registerLog(ResourceLocation name, MaterialColor MapColor, MaterialColor MapColor2) {
 		return register(new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD,
 				(blockState) -> blockState.getValue(RotatedPillarBlock.AXIS) == Direction.Axis.Y ? MapColor : MapColor2)
 				.strength(2.0F).sound(SoundType.WOOD)), name);
-	}
-
-	public static Block registerNetherStem(String name, MaterialColor MapColor) {
-		return register(
-				new RotatedPillarBlock(BlockBehaviour.Properties.of(Material.WOOD, (blockState) -> MapColor)
-						.strength(1.0F).sound(SoundType.STEM)),
-				new ResourceLocation(GeckoLib.ModID, name), CreativeModeTab.TAB_BUILDING_BLOCKS);
 	}
 
 	public static Block registerLog(String name, MaterialColor MapColor, MaterialColor MapColor2) {

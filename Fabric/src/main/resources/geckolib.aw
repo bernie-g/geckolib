@@ -1,6 +1,7 @@
 accessWidener	v1	named
 accessible field net/minecraft/world/entity/Entity yRot F
 accessible field net/minecraft/world/entity/Entity xRot F
+accessible method net/minecraft/world/entity/Entity getLeashOffset ()Lnet/minecraft/world/phys/Vec3;
 
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
 

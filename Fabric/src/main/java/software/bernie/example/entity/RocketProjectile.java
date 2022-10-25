@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -23,7 +24,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.example.ClientListener;
+import software.bernie.example.ClientListener.EntityPacket;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -80,8 +81,8 @@ public class RocketProjectile extends AbstractArrow implements IAnimatable {
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
-		return ClientListener.EntityPacket.createPacket(this);
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
+		return EntityPacket.createPacket(this);
 	}
 
 	@Override

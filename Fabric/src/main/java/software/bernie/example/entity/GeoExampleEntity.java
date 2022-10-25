@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -22,7 +21,7 @@ import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 
-public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAnimationTickable {
+public class GeoExampleEntity extends PathfinderMob implements IAnimatable {
 	AnimationFactory factory = new AnimationFactory(this);
 	private boolean isAnimating = false;
 
@@ -43,8 +42,8 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 	}
 
 	private <E extends IAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
-			event.getController()
-					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
+		event.getController()
+				.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
 	}
 
@@ -83,10 +82,5 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 	protected void registerGoals() {
 		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
 		super.registerGoals();
-	}
-
-	@Override
-	public int tickTimer() {
-		return tickCount;
 	}
 }

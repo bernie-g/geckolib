@@ -14,7 +14,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EntityType.EntityFactory;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.SpawnEggItem;
 
@@ -95,7 +94,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 		if (this.hasEgg) {
 			RegistryUtils.registerItem(
 					new SpawnEggItem((EntityType<? extends Mob>) entityType, this.primaryColor, this.secondaryColor,
-							(new Properties()).tab(CreativeModeTab.TAB_MISC)),
+							(new Properties())),
 					new ResourceLocation(name.getNamespace(), String.format("%s_spawn_egg", name.getPath())));
 		}
 

@@ -23,6 +23,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -110,7 +111,7 @@ public class ClientListener implements ClientModInitializer {
 	public class EntityPacket {
 		public static final ResourceLocation ID = new ResourceLocation(GeckoLib.ModID, "spawn_entity");
 
-		public static Packet<?> createPacket(Entity entity) {
+		public static Packet<ClientGamePacketListener> createPacket(Entity entity) {
 			FriendlyByteBuf buf = createBuffer();
 			buf.writeVarInt(Registry.ENTITY_TYPE.getId(entity.getType()));
 			buf.writeUUID(entity.getUUID());
@@ -122,7 +123,7 @@ public class ClientListener implements ClientModInitializer {
 			buf.writeByte(Mth.floor(entity.getYRot() * 256.0F / 360.0F));
 			buf.writeFloat(entity.getXRot());
 			buf.writeFloat(entity.getYRot());
-			return ServerPlayNetworking.createS2CPacket(ID, buf);
+			return (Packet<ClientGamePacketListener>) ServerPlayNetworking.createS2CPacket(ID, buf);
 		}
 
 		private static FriendlyByteBuf createBuffer() {

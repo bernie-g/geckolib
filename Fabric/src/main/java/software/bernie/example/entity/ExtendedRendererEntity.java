@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -272,7 +273,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket() {
+	public Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return EntityPacket.createPacket(this);
 	}
 
