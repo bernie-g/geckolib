@@ -1,15 +1,15 @@
 package software.bernie.geckolib3.util;
 
-import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
-
-import java.util.Objects;
-
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
+
+import java.util.Objects;
+
+import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
 
 public class GeckoLibUtil {
 	private static final String GECKO_LIB_ID_NBT = "GeckoLibID";

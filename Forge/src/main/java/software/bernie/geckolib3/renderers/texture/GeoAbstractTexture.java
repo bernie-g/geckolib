@@ -1,30 +1,24 @@
 package software.bernie.geckolib3.renderers.texture;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.function.BiFunction;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 
 /*
  * Copyright: DerToaster98, Meldexun - 13.06.2022
@@ -56,9 +50,8 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		// here
 		// Overload with second param (default value) will just call getOrDefault() on
 		// the internal map
-		if (texManager.getTexture(location, MissingTextureAtlasSprite.getTexture()) == null) {
-			texManager.register(location, constructor.apply(originalLocation, location));
-		}
+		texManager.getTexture(location, MissingTextureAtlasSprite.getTexture());
+
 		return location;
 	}
 
@@ -74,14 +67,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		TextureManager textureManager = mc.getTextureManager();
 		AbstractTexture originalTexture;
 		try {
-			originalTexture = mc.submit(() -> {
-				AbstractTexture texture = textureManager.getTexture(this.originalLocation);
-				if (texture == null) {
-					texture = new SimpleTexture(this.originalLocation);
-					textureManager.register(this.originalLocation, texture);
-				}
-				return texture;
-			}).get();
+			originalTexture = mc.submit(() -> textureManager.getTexture(this.originalLocation)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new IOException("Failed loading original texture: " + this.originalLocation, e);
 		}

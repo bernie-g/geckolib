@@ -32,8 +32,8 @@ public class AnimationUtils {
 	public static <T extends Entity> GeoModelProvider getGeoModelForEntity(T entity) {
 		EntityRenderer<T> entityRenderer = getRenderer(entity);
 
-		if (entityRenderer instanceof IGeoRenderer) {
-			return ((IGeoRenderer<?>) entityRenderer).getGeoModelProvider();
+		if (entityRenderer instanceof IGeoRenderer geoRenderer) {
+			return geoRenderer.getGeoModelProvider();
 		}
 		return null;
 	}

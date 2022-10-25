@@ -1,37 +1,24 @@
 package software.bernie.geckolib3.core.easing;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
-import java.util.stream.DoubleStream;
-
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import software.bernie.geckolib3.core.util.Memoizer;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
+
 public class EasingManager {
-	static class EasingFunctionArgs {
-		public final EasingType easingType;
-		public final Double arg0;
-
-		public EasingFunctionArgs(EasingType easingType, Double arg0) {
-			this.easingType = easingType;
-			this.arg0 = arg0;
-		}
-
+	record EasingFunctionArgs(EasingType easingType, Double arg0) {
 		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (o == null || getClass() != o.getClass())
-				return false;
-			EasingFunctionArgs that = (EasingFunctionArgs) o;
-			return easingType == that.easingType && Objects.equals(arg0, that.arg0);
-		}
+			public boolean equals(Object o) {
+				if (this == o)
+					return true;
+				if (o == null || getClass() != o.getClass())
+					return false;
+				EasingFunctionArgs that = (EasingFunctionArgs)o;
+				return easingType == that.easingType && Objects.equals(arg0, that.arg0);
+			}
 
-		@Override
-		public int hashCode() {
-			return Objects.hash(easingType, arg0);
-		}
 	}
 
 	public static double ease(double number, EasingType easingType, List<Double> easingArgs) {
@@ -39,83 +26,50 @@ public class EasingManager {
 		return getEasingFunction.apply(new EasingFunctionArgs(easingType, firstArg)).apply(number);
 	}
 
-	// Memoize easing functions so we don't need to create new ones from HOFs every
+	// Memoize easing functions so that we don't need to create new ones from HOFs every
 	// frame
-	static Function<Double, Double> quart = poly(4);
-	static Function<Double, Double> quint = poly(5);
-	static Function<EasingFunctionArgs, Function<Double, Double>> getEasingFunction = Memoizer
+	static Double2DoubleFunction quart = poly(4);
+	static Double2DoubleFunction quint = poly(5);
+	static Function<EasingFunctionArgs, Double2DoubleFunction> getEasingFunction = Memoizer
 			.memoize(EasingManager::getEasingFuncImpl);
 
 	// Don't call this, use getEasingFunction instead as that function is the
 	// memoized version
-	static Function<Double, Double> getEasingFuncImpl(EasingFunctionArgs args) {
-		switch (args.easingType) {
-		default:
-		case Linear:
-			return in(EasingManager::linear);
-		case Step:
-			return in(step(args.arg0));
-		case EaseInSine:
-			return in(EasingManager::sin);
-		case EaseOutSine:
-			return out(EasingManager::sin);
-		case EaseInOutSine:
-			return inOut(EasingManager::sin);
-		case EaseInQuad:
-			return in(EasingManager::quad);
-		case EaseOutQuad:
-			return out(EasingManager::quad);
-		case EaseInOutQuad:
-			return inOut(EasingManager::quad);
-		case EaseInCubic:
-			return in(EasingManager::cubic);
-		case EaseOutCubic:
-			return out(EasingManager::cubic);
-		case EaseInOutCubic:
-			return inOut(EasingManager::cubic);
-		case EaseInExpo:
-			return in(EasingManager::exp);
-		case EaseOutExpo:
-			return out(EasingManager::exp);
-		case EaseInOutExpo:
-			return inOut(EasingManager::exp);
-		case EaseInCirc:
-			return in(EasingManager::circle);
-		case EaseOutCirc:
-			return out(EasingManager::circle);
-		case EaseInOutCirc:
-			return inOut(EasingManager::circle);
-		case EaseInQuart:
-			return in(quart);
-		case EaseOutQuart:
-			return out(quart);
-		case EaseInOutQuart:
-			return inOut(quart);
-		case EaseInQuint:
-			return in(quint);
-		case EaseOutQuint:
-			return out(quint);
-		case EaseInOutQuint:
-			return inOut(quint);
-		case EaseInBack:
-			return in(back(args.arg0));
-		case EaseOutBack:
-			return out(back(args.arg0));
-		case EaseInOutBack:
-			return inOut(back(args.arg0));
-		case EaseInElastic:
-			return in(elastic(args.arg0));
-		case EaseOutElastic:
-			return out(elastic(args.arg0));
-		case EaseInOutElastic:
-			return inOut(elastic(args.arg0));
-		case EaseInBounce:
-			return in(bounce(args.arg0));
-		case EaseOutBounce:
-			return out(bounce(args.arg0));
-		case EaseInOutBounce:
-			return inOut(bounce(args.arg0));
-		}
+	static Double2DoubleFunction getEasingFuncImpl(EasingFunctionArgs args) {
+		return switch (args.easingType) {
+			default -> in(EasingManager::linear);
+			case Step -> in(step(args.arg0));
+			case EaseInSine -> in(EasingManager::sin);
+			case EaseOutSine -> out(EasingManager::sin);
+			case EaseInOutSine -> inOut(EasingManager::sin);
+			case EaseInQuad -> in(EasingManager::quad);
+			case EaseOutQuad -> out(EasingManager::quad);
+			case EaseInOutQuad -> inOut(EasingManager::quad);
+			case EaseInCubic -> in(EasingManager::cubic);
+			case EaseOutCubic -> out(EasingManager::cubic);
+			case EaseInOutCubic -> inOut(EasingManager::cubic);
+			case EaseInExpo -> in(EasingManager::exp);
+			case EaseOutExpo -> out(EasingManager::exp);
+			case EaseInOutExpo -> inOut(EasingManager::exp);
+			case EaseInCirc -> in(EasingManager::circle);
+			case EaseOutCirc -> out(EasingManager::circle);
+			case EaseInOutCirc -> inOut(EasingManager::circle);
+			case EaseInQuart -> in(quart);
+			case EaseOutQuart -> out(quart);
+			case EaseInOutQuart -> inOut(quart);
+			case EaseInQuint -> in(quint);
+			case EaseOutQuint -> out(quint);
+			case EaseInOutQuint -> inOut(quint);
+			case EaseInBack -> in(back(args.arg0));
+			case EaseOutBack -> out(back(args.arg0));
+			case EaseInOutBack -> inOut(back(args.arg0));
+			case EaseInElastic -> in(elastic(args.arg0));
+			case EaseOutElastic -> out(elastic(args.arg0));
+			case EaseInOutElastic -> inOut(elastic(args.arg0));
+			case EaseInBounce -> in(bounce(args.arg0));
+			case EaseOutBounce -> out(bounce(args.arg0));
+			case EaseInOutBounce -> inOut(bounce(args.arg0));
+		};
 	}
 
 	// The MIT license notice below applies to the easing functions below except for
@@ -130,14 +84,14 @@ public class EasingManager {
 	/**
 	 * Runs an easing function forwards.
 	 */
-	static Function<Double, Double> in(Function<Double, Double> easing) {
+	static Double2DoubleFunction in(Double2DoubleFunction easing) {
 		return easing;
 	}
 
 	/**
 	 * Runs an easing function backwards.
 	 */
-	static Function<Double, Double> out(Function<Double, Double> easing) {
+	static Double2DoubleFunction out(Double2DoubleFunction easing) {
 		return t -> 1 - easing.apply(1 - t);
 	}
 
@@ -145,7 +99,7 @@ public class EasingManager {
 	 * Makes any easing function symmetrical. The easing function will run forwards
 	 * for half of the duration, then backwards for the rest of the duration.
 	 */
-	static Function<Double, Double> inOut(Function<Double, Double> easing) {
+	static Double2DoubleFunction inOut(Double2DoubleFunction easing) {
 		return t -> {
 			if (t < 0.5) {
 				return easing.apply(t * 2) / 2;
@@ -157,14 +111,14 @@ public class EasingManager {
 	/**
 	 * A stepping function, returns 1 for any positive value of `n`.
 	 */
-	static Function<Double, Double> step0() {
+	static Double2DoubleFunction step0() {
 		return n -> n > 0 ? 1D : 0;
 	}
 
 	/**
 	 * A stepping function, returns 1 if `n` is greater than or equal to 1.
 	 */
-	static Function<Double, Double> step1() {
+	static Double2DoubleFunction step1() {
 		return n -> n >= 1D ? 1D : 0;
 	}
 
@@ -183,7 +137,7 @@ public class EasingManager {
 	 * speed.
 	 *
 	 * http://cubic-bezier.com/#.42,0,1,1
-	 */
+	 **/
 	// static ease(t) {
 	// if (!ease) {
 	// ease = Easing.bezier(0.42, 0, 1, 1);
@@ -216,7 +170,7 @@ public class EasingManager {
 	 * <p>
 	 * n = 4: http://easings.net/#easeInQuart n = 5: http://easings.net/#easeInQuint
 	 */
-	static Function<Double, Double> poly(double n) {
+	static Double2DoubleFunction poly(double n) {
 		return (t) -> Math.pow(t, n);
 	}
 
@@ -256,7 +210,7 @@ public class EasingManager {
 	 * <p>
 	 * http://easings.net/#easeInElastic
 	 */
-	static Function<Double, Double> elastic(Double bounciness) {
+	static Double2DoubleFunction elastic(Double bounciness) {
 		double p = (bounciness == null ? 1 : bounciness) * Math.PI;
 		return t -> 1 - Math.pow(Math.cos((float) ((t * Math.PI) / 2)), 3) * Math.cos((float) (t * p));
 	}
@@ -269,7 +223,7 @@ public class EasingManager {
 	 * <p>
 	 * - http://tiny.cc/back_default (s = 1.70158, default)
 	 */
-	static Function<Double, Double> back(Double s) {
+	static Double2DoubleFunction back(Double s) {
 		double p = s == null ? 1.70158 : s * 1.70158;
 		return t -> t * t * ((p + 1) * t - p);
 	}
@@ -281,16 +235,16 @@ public class EasingManager {
 	 * for helping clean it up using min instead of ternaries
 	 * http://easings.net/#easeInBounce
 	 */
-	public static Function<Double, Double> bounce(Double s) {
+	public static Double2DoubleFunction bounce(Double s) {
 		double k = s == null ? 0.5 : s;
-		Function<Double, Double> q = x -> (121.0 / 16.0) * x * x;
-		Function<Double, Double> w = x -> ((121.0 / 4.0) * k) * Math.pow(x - (6.0 / 11.0), 2) + 1 - k;
-		Function<Double, Double> r = x -> 121 * k * k * Math.pow(x - (9.0 / 11.0), 2) + 1 - k * k;
-		Function<Double, Double> t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11.0), 2) + 1 - k * k * k;
+		Double2DoubleFunction q = x -> (121.0 / 16.0) * x * x;
+		Double2DoubleFunction w = x -> ((121.0 / 4.0) * k) * Math.pow(x - (6.0 / 11.0), 2) + 1 - k;
+		Double2DoubleFunction r = x -> 121 * k * k * Math.pow(x - (9.0 / 11.0), 2) + 1 - k * k;
+		Double2DoubleFunction t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11.0), 2) + 1 - k * k * k;
 		return x -> min(q.apply(x), w.apply(x), r.apply(x), t.apply(x));
 	}
 
-	static Function<Double, Double> step(Double stepArg) {
+	static Double2DoubleFunction step(Double stepArg) {
 		int steps = stepArg != null ? stepArg.intValue() : 2;
 		double[] intervals = stepRange(steps);
 		return t -> intervals[findIntervalBorderIndex(t, intervals, false)];
@@ -366,8 +320,12 @@ public class EasingManager {
 		if (steps < 2)
 			throw new IllegalArgumentException("steps must be > 2, got:" + steps);
 		double stepLength = stop / (double) steps;
-		// There must be an easier way of doing this but I just don't care
-		AtomicInteger i = new AtomicInteger();
-		return DoubleStream.generate(() -> i.getAndIncrement() * stepLength).limit(steps).toArray();
+		double[] stepArray = new double[steps];
+
+		for (int i = 0; i < steps; i++) {
+			stepArray[i] = i * stepLength;
+		}
+
+		return stepArray;
 	};
 }

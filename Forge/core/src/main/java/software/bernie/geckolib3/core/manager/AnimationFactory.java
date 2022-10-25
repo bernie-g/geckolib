@@ -1,13 +1,11 @@
 package software.bernie.geckolib3.core.manager;
 
-import java.util.Map;
-
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.IAnimatable;
 
 public class AnimationFactory {
 	private final IAnimatable animatable;
-	private Map<Integer, AnimationData> animationDataMap = new Object2ObjectOpenHashMap<>();
+	private final Int2ObjectOpenHashMap<AnimationData> animationDataMap = new Int2ObjectOpenHashMap<>();
 
 	public AnimationFactory(IAnimatable animatable) {
 		this.animatable = animatable;
@@ -23,7 +21,7 @@ public class AnimationFactory {
 	 *                 will be returned.
 	 * @return the animatable manager
 	 */
-	public AnimationData getOrCreateAnimationData(Integer uniqueID) {
+	public AnimationData getOrCreateAnimationData(int uniqueID) {
 		if (!animationDataMap.containsKey(uniqueID)) {
 			AnimationData data = new AnimationData();
 			animatable.registerControllers(data);

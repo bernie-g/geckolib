@@ -1,14 +1,11 @@
 package software.bernie.geckolib3.core.molang;
 
-import java.util.List;
-
 import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.mclib.math.MathBuilder;
 import com.eliotlash.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.molang.expressions.MolangAssignment;
 import software.bernie.geckolib3.core.molang.expressions.MolangExpression;
@@ -16,6 +13,8 @@ import software.bernie.geckolib3.core.molang.expressions.MolangMultiStatement;
 import software.bernie.geckolib3.core.molang.expressions.MolangValue;
 import software.bernie.geckolib3.core.molang.functions.CosDegrees;
 import software.bernie.geckolib3.core.molang.functions.SinDegrees;
+
+import java.util.List;
 
 /**
  * MoLang parser
@@ -29,8 +28,10 @@ public class MolangParser extends MathBuilder {
 	public static final MolangExpression ONE = new MolangValue(null, new Constant(1));
 	public static final String RETURN = "return ";
 
-	private MolangMultiStatement currentStatement;
+	private MolangMultiStatement currentStatement = null;
 
+	// TODO - Tslat
+	// This needs a SERIOUS looking at. I suspect you have some parallel processing race conditions happening in relation to currentStatement
 	public MolangParser() {
 		super();
 
@@ -38,7 +39,7 @@ public class MolangParser extends MathBuilder {
 		this.functions.put("cos", CosDegrees.class);
 		this.functions.put("sin", SinDegrees.class);
 
-		/* Remap functions to be in tact with Molang specification */
+		/* Remap functions to be intact with Molang specification */
 		this.remap("abs", "math.abs");
 		this.remap("acos", "math.acos");
 		this.remap("asin", "math.asin");
@@ -126,7 +127,7 @@ public class MolangParser extends MathBuilder {
 	 * Parse a molang expression
 	 */
 	public MolangExpression parseExpression(String expression) throws MolangException {
-		List<String> lines = new ObjectArrayList<String>();
+		List<String> lines = new ObjectArrayList<>();
 
 		for (String split : expression.toLowerCase().trim().split(";")) {
 			if (!split.trim().isEmpty()) {
@@ -175,12 +176,11 @@ public class MolangParser extends MathBuilder {
 			List<Object> symbols = this.breakdownChars(this.breakdown(expression));
 
 			/* Assignment it is */
-			if (symbols.size() >= 3 && symbols.get(0) instanceof String && this.isVariable(symbols.get(0))
+			if (symbols.size() >= 3 && symbols.get(0) instanceof String name && this.isVariable(symbols.get(0))
 					&& symbols.get(1).equals("=")) {
-				String name = (String) symbols.get(0);
 				symbols = symbols.subList(2, symbols.size());
 
-				Variable variable = null;
+				Variable variable;
 
 				if (!this.variables.containsKey(name) && !this.currentStatement.locals.containsKey(name)) {
 					variable = new Variable(name, 0);

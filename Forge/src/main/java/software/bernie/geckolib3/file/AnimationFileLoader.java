@@ -1,33 +1,29 @@
 package software.bernie.geckolib3.file;
 
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.io.IOUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.ChainedJsonException;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
+import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.util.json.JsonAnimationUtils;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.util.Map;
 
 public class AnimationFileLoader {
 
 	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
 		AnimationFile animationFile = new AnimationFile();
 		JsonObject jsonRepresentation = loadFile(location, manager);
-		Set<Map.Entry<String, JsonElement>> entrySet = JsonAnimationUtils.getAnimations(jsonRepresentation);
-		for (Map.Entry<String, JsonElement> entry : entrySet) {
+		for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(jsonRepresentation)) {
 			String animationName = entry.getKey();
 			Animation animation;
 			try {
