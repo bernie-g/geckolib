@@ -54,7 +54,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 
 		if (manager.startTick == -1 && !(entity instanceof LivingEntity)) {
-			manager.startTick = getCurrentTick();
+			manager.startTick = (getCurrentTick() + Minecraft.getInstance().getFrameTime());
 		}
 		if (manager.startTick == -1 && entity instanceof LivingEntity) {
 			manager.startTick = (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
