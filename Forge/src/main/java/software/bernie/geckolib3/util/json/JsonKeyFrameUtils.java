@@ -29,15 +29,15 @@ import software.bernie.geckolib3.util.AnimationUtils;
  * Helper class to convert json to keyframes
  */
 public class JsonKeyFrameUtils {
-	private static VectorKeyFrameList<KeyFrame<IValue>> convertJson(List<Map.Entry<String, JsonElement>> element,
+	private static VectorKeyFrameList<KeyFrame> convertJson(List<Map.Entry<String, JsonElement>> element,
 			boolean isRotation, MolangParser parser) throws NumberFormatException, MolangException {
 		IValue previousXValue = null;
 		IValue previousYValue = null;
 		IValue previousZValue = null;
 
-		List<KeyFrame<IValue>> xKeyFrames = new ObjectArrayList();
-		List<KeyFrame<IValue>> yKeyFrames = new ObjectArrayList();
-		List<KeyFrame<IValue>> zKeyFrames = new ObjectArrayList();
+		List<KeyFrame> xKeyFrames = new ObjectArrayList();
+		List<KeyFrame> yKeyFrames = new ObjectArrayList();
+		List<KeyFrame> zKeyFrames = new ObjectArrayList();
 
 		for (int i = 0; i < element.size(); i++) {
 			Map.Entry<String, JsonElement> keyframe = element.get(i);
@@ -65,9 +65,9 @@ public class JsonKeyFrameUtils {
 			IValue currentZValue = isRotation && zValue instanceof ConstantValue
 					? ConstantValue.fromDouble(Math.toRadians(zValue.get()))
 					: zValue;
-			KeyFrame<IValue> xKeyFrame;
-			KeyFrame<IValue> yKeyFrame;
-			KeyFrame<IValue> zKeyFrame;
+			KeyFrame xKeyFrame;
+			KeyFrame yKeyFrame;
+			KeyFrame zKeyFrame;
 
 			if (keyframe.getValue().isJsonObject() && hasEasingType(keyframe.getValue())) {
 				EasingType easingType = getEasingType(keyframe.getValue());
@@ -154,7 +154,7 @@ public class JsonKeyFrameUtils {
 	 * @return the vector key frame list
 	 * @throws NumberFormatException The number format exception
 	 */
-	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToKeyFrames(
+	public static VectorKeyFrameList<KeyFrame> convertJsonToKeyFrames(
 			List<Map.Entry<String, JsonElement>> element, MolangParser parser)
 			throws NumberFormatException, MolangException {
 		return convertJson(element, false, parser);
@@ -168,10 +168,10 @@ public class JsonKeyFrameUtils {
 	 * @return the vector key frame list
 	 * @throws NumberFormatException
 	 */
-	public static VectorKeyFrameList<KeyFrame<IValue>> convertJsonToRotationKeyFrames(
+	public static VectorKeyFrameList<KeyFrame> convertJsonToRotationKeyFrames(
 			List<Map.Entry<String, JsonElement>> element, MolangParser parser)
 			throws NumberFormatException, MolangException {
-		VectorKeyFrameList<KeyFrame<IValue>> frameList = convertJson(element, true, parser);
+		VectorKeyFrameList<KeyFrame> frameList = convertJson(element, true, parser);
 		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames, frameList.zKeyFrames);
 	}
 

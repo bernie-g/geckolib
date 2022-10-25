@@ -13,7 +13,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.Texture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -67,14 +66,7 @@ public abstract class GeoAbstractTexture extends Texture {
 		TextureManager textureManager = mc.getTextureManager();
 		Texture originalTexture;
 		try {
-			originalTexture = mc.submit(() -> {
-				Texture texture = textureManager.getTexture(this.originalLocation);
-				if (texture == null) {
-					texture = new SimpleTexture(this.originalLocation);
-					textureManager.register(this.originalLocation, texture);
-				}
-				return texture;
-			}).get();
+			originalTexture = mc.submit(() -> textureManager.getTexture(this.originalLocation)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new IOException("Failed loading original texture: " + this.originalLocation, e);
 		}

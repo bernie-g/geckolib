@@ -34,7 +34,7 @@ public class SyncAnimationMsg {
     }
 
     private static SyncAnimationMsg decode(PacketBuffer buf) {
-        final String key = buf.readUtf(32767); // The max length here can be removed in 1.17+
+        final String key = buf.readUtf();
         final int id = buf.readVarInt();
         final int state = buf.readVarInt();
         return new SyncAnimationMsg(key, id, state);
