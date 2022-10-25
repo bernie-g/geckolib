@@ -1,7 +1,12 @@
 package software.bernie.example.entity;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
+import net.minecraft.entity.AgeableEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.ActionResultType;
@@ -17,11 +22,10 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class BikeEntity extends AnimalEntity implements IAnimatable {
-	private AnimationFactory factory = new AnimationFactory(this);
+	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", true));

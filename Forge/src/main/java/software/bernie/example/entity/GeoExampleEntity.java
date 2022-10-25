@@ -21,9 +21,10 @@ import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class GeoExampleEntity extends CreatureEntity implements IAnimatable, IAnimationTickable {
-	private AnimationFactory factory = new AnimationFactory(this);
+	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	private boolean isAnimating = false;
 
 	public GeoExampleEntity(EntityType<? extends CreatureEntity> type, World worldIn) {
