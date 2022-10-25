@@ -29,6 +29,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
+import software.bernie.example.client.renderer.entity.CarGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
@@ -55,6 +56,7 @@ public class ClientListener implements ClientModInitializer {
 			EntityRendererRegistry.register(EntityRegistry.GEO_EXAMPLE_ENTITY, ExampleGeoRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.GEOLAYERENTITY, LERenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.BIKE_ENTITY, BikeGeoRenderer::new);
+			EntityRendererRegistry.register(EntityRegistry.CAR_ENTITY, CarGeoRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.EXTENDED_RENDERER_EXAMPLE,
 					ExampleExtendedRendererEntityRenderer::new);
 			EntityRendererRegistry.register(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE,
