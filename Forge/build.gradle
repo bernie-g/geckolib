@@ -103,7 +103,6 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.16.5-36.1.2'
-    compileOnly 'com.eliotlash.molang:molang:19'
     compileOnly 'com.eliotlash.mclib:mclib:19'
     compileOnly(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -115,7 +114,6 @@ dependencies {
 	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3")
 	
-    shade 'com.eliotlash.molang:molang:19'
     shade 'com.eliotlash.mclib:mclib:19'
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'

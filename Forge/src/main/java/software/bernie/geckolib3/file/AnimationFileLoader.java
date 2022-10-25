@@ -1,23 +1,25 @@
 package software.bernie.geckolib3.file;
 
-import com.eliotlash.molang.MolangParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import net.minecraft.client.util.JSONException;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.util.json.JsonAnimationUtils;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.io.IOUtils;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import net.minecraft.client.util.JSONException;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.JSONUtils;
+import net.minecraft.util.ResourceLocation;
+import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.molang.MolangParser;
+import software.bernie.geckolib3.util.json.JsonAnimationUtils;
 
 public class AnimationFileLoader {
 

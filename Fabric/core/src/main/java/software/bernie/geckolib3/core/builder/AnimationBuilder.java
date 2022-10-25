@@ -23,7 +23,7 @@ public class AnimationBuilder {
 	 *
 	 * @param animationName The name of the animation. MUST MATCH THE NAME OF THE
 	 *                      ANIMATION IN THE BLOCKBENCH FILE
-	 * @param shouldLoop    loop
+	 * @param loopType    loop
 	 * @return An instance of the current animation builder
 	 */
 	public AnimationBuilder addAnimation(String animationName, ILoopType loopType) {
