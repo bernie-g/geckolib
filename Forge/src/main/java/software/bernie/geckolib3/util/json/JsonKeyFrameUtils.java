@@ -169,7 +169,7 @@ public class JsonKeyFrameUtils {
 			List<Map.Entry<String, JsonElement>> element, MolangParser parser)
 			throws NumberFormatException, MolangException {
 		VectorKeyFrameList<KeyFrame> frameList = convertJson(element, true, parser);
-		return new VectorKeyFrameList(frameList.xKeyFrames(), frameList.yKeyFrames(), frameList.zKeyFrames());
+		return new VectorKeyFrameList(frameList.xKeyFrames, frameList.yKeyFrames, frameList.zKeyFrames);
 	}
 
 	public static IValue parseExpression(MolangParser parser, JsonElement element) throws MolangException {

@@ -5,9 +5,9 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import java.util.List;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 /**
  * A vector key frame list is a handy class used to store 3 lists of keyframes:
@@ -15,12 +15,40 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public record VectorKeyFrameList<T extends KeyFrame>(List<T> xKeyFrames, List<T> yKeyFrames, List<T> zKeyFrames) {
+public class VectorKeyFrameList<T extends KeyFrame> {
+	/**
+	 * The X key frames.
+	 */
+	public List<T> xKeyFrames;
+	/**
+	 * The Y key frames.
+	 */
+	public List<T> yKeyFrames;
+	/**
+	 * The Z key frames.
+	 */
+	public List<T> zKeyFrames;
+
+	/**
+	 * Instantiates a new vector key frame list from 3 lists of keyframes
+	 *
+	 * @param XKeyFrames the x key frames
+	 * @param YKeyFrames the y key frames
+	 * @param ZKeyFrames the z key frames
+	 */
+	public VectorKeyFrameList(List<T> XKeyFrames, List<T> YKeyFrames, List<T> ZKeyFrames) {
+		xKeyFrames = XKeyFrames;
+		yKeyFrames = YKeyFrames;
+		zKeyFrames = ZKeyFrames;
+	}
+
 	/**
 	 * Instantiates a new blank key frame list
 	 */
 	public VectorKeyFrameList() {
-		this(new ObjectArrayList<>(), new ObjectArrayList<>(), new ObjectArrayList<>());
+		xKeyFrames = new ObjectArrayList<>();
+		yKeyFrames = new ObjectArrayList<>();
+		zKeyFrames = new ObjectArrayList<>();
 	}
 
 	public double getLastKeyframeTime() {

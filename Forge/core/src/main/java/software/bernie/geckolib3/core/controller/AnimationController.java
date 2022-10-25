@@ -5,10 +5,27 @@
 
 package software.bernie.geckolib3.core.controller;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import org.apache.commons.lang3.tuple.Pair;
-import software.bernie.geckolib3.core.*;
+import software.bernie.geckolib3.core.AnimationState;
+import software.bernie.geckolib3.core.ConstantValue;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
+import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType;
@@ -17,16 +34,18 @@ import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.keyframe.*;
+import software.bernie.geckolib3.core.keyframe.AnimationPoint;
+import software.bernie.geckolib3.core.keyframe.BoneAnimation;
+import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
+import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
+import software.bernie.geckolib3.core.keyframe.KeyFrame;
+import software.bernie.geckolib3.core.keyframe.KeyFrameLocation;
+import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
+import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.util.Axis;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The type Animation controller.
@@ -427,7 +446,7 @@ public class AnimationController<T extends IAnimatable> {
 						}
 					}
 
-					if (first.isEmpty()) {
+					if (!first.isPresent()) {
 						if (crashWhenCantFindBone) {
 							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
 						} else {
@@ -443,42 +462,42 @@ public class AnimationController<T extends IAnimatable> {
 
 					// Adding the initial positions of the upcoming animation, so the model
 					// transitions to the initial state of the new animation
-					if (!rotationKeyFrames.xKeyFrames().isEmpty()) {
-						AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames(), 0, true, Axis.X);
-						AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames(), 0, true, Axis.Y);
-						AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames(), 0, true, Axis.Z);
-						boneAnimationQueue.rotationXQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+					if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
+						AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, 0, true, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, Axis.Z);
+						boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
 								xPoint.animationStartValue));
-						boneAnimationQueue.rotationYQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
 								yPoint.animationStartValue));
-						boneAnimationQueue.rotationZQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
 								zPoint.animationStartValue));
 					}
 
-					if (!positionKeyFrames.xKeyFrames().isEmpty()) {
-						AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames(), 0, false, Axis.X);
-						AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames(), 0, false, Axis.Y);
-						AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames(), 0, false, Axis.Z);
-						boneAnimationQueue.positionXQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+					if (!positionKeyFrames.xKeyFrames.isEmpty()) {
+						AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, false, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, false, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, false, Axis.Z);
+						boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.positionOffsetX, xPoint.animationStartValue));
-						boneAnimationQueue.positionYQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.positionOffsetY, yPoint.animationStartValue));
-						boneAnimationQueue.positionZQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
 					}
 
-					if (!scaleKeyFrames.xKeyFrames().isEmpty()) {
-						AnimationPoint xPoint = getAnimationPointAtTick(scaleKeyFrames.xKeyFrames(), 0, false, Axis.X);
-						AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames(), 0, false, Axis.Y);
-						AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames(), 0, false, Axis.Z);
-						boneAnimationQueue.scaleXQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+					if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
+						AnimationPoint xPoint = getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, 0, false, Axis.X);
+						AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, 0, false, Axis.Y);
+						AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, 0, false, Axis.Z);
+						boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.scaleValueX, xPoint.animationStartValue));
-						boneAnimationQueue.scaleYQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.scaleValueY, yPoint.animationStartValue));
-						boneAnimationQueue.scaleZQueue().add(new AnimationPoint(null, tick, transitionLengthTicks,
+						boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, tick, transitionLengthTicks,
 								boneSnapshot.scaleValueZ, zPoint.animationStartValue));
 					}
 				}
@@ -573,31 +592,31 @@ public class AnimationController<T extends IAnimatable> {
 			VectorKeyFrameList<KeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
 			VectorKeyFrameList<KeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
-			if (!rotationKeyFrames.xKeyFrames().isEmpty()) {
-				boneAnimationQueue.rotationXQueue()
-						.add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames(), tick, true, Axis.X));
-				boneAnimationQueue.rotationYQueue()
-						.add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames(), tick, true, Axis.Y));
-				boneAnimationQueue.rotationZQueue()
-						.add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames(), tick, true, Axis.Z));
+			if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
+				boneAnimationQueue.rotationXQueue
+						.add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
+				boneAnimationQueue.rotationYQueue
+						.add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y));
+				boneAnimationQueue.rotationZQueue
+						.add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z));
 			}
 
-			if (!positionKeyFrames.xKeyFrames().isEmpty()) {
-				boneAnimationQueue.positionXQueue()
-						.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames(), tick, false, Axis.X));
-				boneAnimationQueue.positionYQueue()
-						.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames(), tick, false, Axis.Y));
-				boneAnimationQueue.positionZQueue()
-						.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames(), tick, false, Axis.Z));
+			if (!positionKeyFrames.xKeyFrames.isEmpty()) {
+				boneAnimationQueue.positionXQueue
+						.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X));
+				boneAnimationQueue.positionYQueue
+						.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
+				boneAnimationQueue.positionZQueue
+						.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z));
 			}
 
-			if (!scaleKeyFrames.xKeyFrames().isEmpty()) {
-				boneAnimationQueue.scaleXQueue()
-						.add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames(), tick, false, Axis.X));
-				boneAnimationQueue.scaleYQueue()
-						.add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames(), tick, false, Axis.Y));
-				boneAnimationQueue.scaleZQueue()
-						.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames(), tick, false, Axis.Z));
+			if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
+				boneAnimationQueue.scaleXQueue
+						.add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X));
+				boneAnimationQueue.scaleYQueue
+						.add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y));
+				boneAnimationQueue.scaleZQueue
+						.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z));
 			}
 		}
 

@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import com.eliotlash.mclib.math.IValue;
-
 public class AnimationPoint {
 	/**
 	 * The current tick in the animation to lerp from

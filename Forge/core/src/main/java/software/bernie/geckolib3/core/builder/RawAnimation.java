@@ -39,9 +39,10 @@ public class RawAnimation {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof RawAnimation animation)) {
+		if (!(obj instanceof RawAnimation)) {
 			return false;
 		}
+		RawAnimation animation = (RawAnimation) obj;
 		return animation.loopType == this.loopType && animation.animationName.equals(this.animationName);
 	}
 
