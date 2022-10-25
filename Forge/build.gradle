@@ -94,7 +94,6 @@ repositories {
 	maven { url "https://cursemaven.com" }
     maven { url "https://maven.blamejared.com" }
     maven { url "https://minecraft.curseforge.com/api/maven/" }
-	maven { url "https://jitpack.io" }
     maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
     maven { url "https://maven.theillusivec4.top/" }
     maven { url "https://plugins.gradle.org/m2/" }
@@ -109,7 +108,7 @@ dependencies {
     }
     compileOnly group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     compileOnly group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    compileOnly 'org.jetbrains:annotations:20.1.0'
+	compileOnly group: 'org.jetbrains', name: 'annotations', version: '20.1.0'
 
 	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3:api")
     compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.16.4-53.3")
@@ -118,12 +117,6 @@ dependencies {
     shade project(':geckolib-core')
     shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    shade group: 'org.jetbrains.annotations', name: 'jetbrains-annotations', version: '20.1.0'
-
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 
     test {
         useJUnitPlatform()
@@ -134,6 +127,7 @@ shadowJar {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
     exclude('META-INF/services/**')
+    exclude('it/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
@@ -166,6 +160,7 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     configurations = [project.configurations.shade]
     from sourceSets.main.allSource
     exclude('META-INF/**')
+    exclude('it/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
     relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
