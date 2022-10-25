@@ -7,13 +7,15 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3q.util.GeckoLibUtil;
 
 public class ReplacedCreeperEntity implements IAnimatable {
-	AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	@Override
 	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
+		data.addAnimationController(
+				new AnimationController<ReplacedCreeperEntity>(this, "controller", 20, this::predicate));
 	}
 
 	private <P extends IAnimatable> PlayState predicate(AnimationEvent<P> event) {

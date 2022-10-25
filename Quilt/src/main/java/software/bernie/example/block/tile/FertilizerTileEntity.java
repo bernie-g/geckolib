@@ -11,11 +11,12 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3q.util.GeckoLibUtil;
 
 public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
-	private final AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    public FertilizerTileEntity(BlockPos pos, BlockState state) {
+	public FertilizerTileEntity(BlockPos pos, BlockState state) {
 		super(TileRegistry.FERTILIZER, pos, state);
 	}
 

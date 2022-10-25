@@ -21,9 +21,10 @@ import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IAnimationTickable {
-	AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	private boolean isAnimating = false;
 
 	public GeoExampleEntity(EntityType<? extends PathAwareEntity> type, World worldIn) {
@@ -43,11 +44,11 @@ public class GeoExampleEntity extends PathAwareEntity implements IAnimatable, IA
 	}
 
 	private <E extends IAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
-			event.getController()
-					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
+		event.getController()
+				.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
 	}
-	
+
 	@Override
 	public ActionResult interactAt(PlayerEntity player, Vec3d hitPos, Hand hand) {
 		if (hand == Hand.MAIN_HAND) {

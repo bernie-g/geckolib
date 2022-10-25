@@ -70,7 +70,11 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				lastGameTickTime = gameTick;
 				codeAnimations(entity, uniqueID, customPredicate);
 			} else {
-				seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
+				manager.tick = (getCurrentTick() - manager.startTick);
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - lastGameTickTime;
+				seekTime += deltaTicks;
+				lastGameTickTime = gameTick;
 			}
 		}
 

@@ -6,9 +6,14 @@ import java.util.Objects;
 
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.manager.InstancedAnimationFactory;
+import software.bernie.geckolib3.core.manager.SingletonAnimationFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
 
 public class GeckoLibUtil {
@@ -80,5 +85,25 @@ public class GeckoLibUtil {
 
 	public static AnimationController getControllerForID(AnimationFactory factory, Integer id, String controllerName) {
 		return factory.getOrCreateAnimationData(id).getAnimationControllers().get(controllerName);
+	}
+
+	/**
+	 * Creates a new AnimationFactory for the given animatable object
+	 * @param animatable The animatable object
+	 * @return A new AnimationFactory instance
+	 */
+	public static AnimationFactory createFactory(IAnimatable animatable) {
+		return createFactory(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
+	}
+
+	/**
+	 * Creates a new AnimationFactory for the given animatable object. <br>
+	 * Recommended to use {@link GeckoLibUtil#createFactory(IAnimatable)} unless you know what you're doing.
+	 * @param animatable The animatable object
+	 * @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
+	 * @return A new AnimationFactory instance
+	 */
+	public static AnimationFactory createFactory(IAnimatable animatable, boolean singletonObject) {
+		return singletonObject ? new SingletonAnimationFactory(animatable) : new InstancedAnimationFactory(animatable);
 	}
 }

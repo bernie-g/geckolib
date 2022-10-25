@@ -36,7 +36,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class PistolItem extends Item implements IAnimatable, ISyncable {
 
-	public AnimationFactory factory = new AnimationFactory(this);
+	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	public String controllerName = "controller";
 	public static final int ANIM_OPEN = 0;
 
