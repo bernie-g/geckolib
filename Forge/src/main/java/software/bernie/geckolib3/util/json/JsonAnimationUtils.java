@@ -5,21 +5,31 @@
 
 package software.bernie.geckolib3.util.json;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.eliotlash.mclib.math.IValue;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.util.AnimationUtils;
-
-import java.util.*;
 
 /**
  * Helper for parsing the bedrock json animation format and finding certain
@@ -214,10 +224,7 @@ public class JsonAnimationUtils {
 		animation.animationLength = animationLength == null ? -1
 				: AnimationUtils.convertSecondsToTicks(animationLength.getAsDouble());
 		animation.boneAnimations = new ObjectArrayList<>();
-		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = loop == null ? EDefaultLoopTypes.PLAY_ONCE
-				: EDefaultLoopTypes.valueOf(loop.getAsString() == "true" ? EDefaultLoopTypes.LOOP.toString()
-						: loop.getAsString().toUpperCase());
+		animation.loop = ILoopType.fromJson(animationJsonObject.get("loop"));
 
 		// Handle parsing sound effect keyframes
 		for (Map.Entry<String, JsonElement> keyFrame : getSoundEffectFrames(animationJsonObject)) {
