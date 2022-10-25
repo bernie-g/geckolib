@@ -2,10 +2,9 @@ package software.bernie.geckolib3.core.easing;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.stream.DoubleStream;
 
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import software.bernie.geckolib3.core.util.Memoizer;
 
 public class EasingManager {
@@ -39,16 +38,16 @@ public class EasingManager {
 		return getEasingFunction.apply(new EasingFunctionArgs(easingType, firstArg)).apply(number);
 	}
 
-	// Memoize easing functions so we don't need to create new ones from HOFs every
+	// Memoize easing functions so that we don't need to create new ones from HOFs every
 	// frame
-	static Function<Double, Double> quart = poly(4);
-	static Function<Double, Double> quint = poly(5);
-	static Function<EasingFunctionArgs, Function<Double, Double>> getEasingFunction = Memoizer
+	static Double2DoubleFunction quart = poly(4);
+	static Double2DoubleFunction quint = poly(5);
+	static Function<EasingFunctionArgs, Double2DoubleFunction> getEasingFunction = Memoizer
 			.memoize(EasingManager::getEasingFuncImpl);
 
 	// Don't call this, use getEasingFunction instead as that function is the
 	// memoized version
-	static Function<Double, Double> getEasingFuncImpl(EasingFunctionArgs args) {
+	static Double2DoubleFunction getEasingFuncImpl(EasingFunctionArgs args) {
 		switch (args.easingType) {
 		default:
 		case Linear:
@@ -130,14 +129,14 @@ public class EasingManager {
 	/**
 	 * Runs an easing function forwards.
 	 */
-	static Function<Double, Double> in(Function<Double, Double> easing) {
+	static Double2DoubleFunction in(Double2DoubleFunction easing) {
 		return easing;
 	}
 
 	/**
 	 * Runs an easing function backwards.
 	 */
-	static Function<Double, Double> out(Function<Double, Double> easing) {
+	static Double2DoubleFunction out(Double2DoubleFunction easing) {
 		return t -> 1 - easing.apply(1 - t);
 	}
 
@@ -145,7 +144,7 @@ public class EasingManager {
 	 * Makes any easing function symmetrical. The easing function will run forwards
 	 * for half of the duration, then backwards for the rest of the duration.
 	 */
-	static Function<Double, Double> inOut(Function<Double, Double> easing) {
+	static Double2DoubleFunction inOut(Double2DoubleFunction easing) {
 		return t -> {
 			if (t < 0.5) {
 				return easing.apply(t * 2) / 2;
@@ -157,14 +156,14 @@ public class EasingManager {
 	/**
 	 * A stepping function, returns 1 for any positive value of `n`.
 	 */
-	static Function<Double, Double> step0() {
+	static Double2DoubleFunction step0() {
 		return n -> n > 0 ? 1D : 0;
 	}
 
 	/**
 	 * A stepping function, returns 1 if `n` is greater than or equal to 1.
 	 */
-	static Function<Double, Double> step1() {
+	static Double2DoubleFunction step1() {
 		return n -> n >= 1D ? 1D : 0;
 	}
 
@@ -183,7 +182,7 @@ public class EasingManager {
 	 * speed.
 	 *
 	 * http://cubic-bezier.com/#.42,0,1,1
-	 */
+	 **/
 	// static ease(t) {
 	// if (!ease) {
 	// ease = Easing.bezier(0.42, 0, 1, 1);
@@ -216,7 +215,7 @@ public class EasingManager {
 	 * <p>
 	 * n = 4: http://easings.net/#easeInQuart n = 5: http://easings.net/#easeInQuint
 	 */
-	static Function<Double, Double> poly(double n) {
+	static Double2DoubleFunction poly(double n) {
 		return (t) -> Math.pow(t, n);
 	}
 
@@ -256,7 +255,7 @@ public class EasingManager {
 	 * <p>
 	 * http://easings.net/#easeInElastic
 	 */
-	static Function<Double, Double> elastic(Double bounciness) {
+	static Double2DoubleFunction elastic(Double bounciness) {
 		double p = (bounciness == null ? 1 : bounciness) * Math.PI;
 		return t -> 1 - Math.pow(Math.cos((float) ((t * Math.PI) / 2)), 3) * Math.cos((float) (t * p));
 	}
@@ -269,7 +268,7 @@ public class EasingManager {
 	 * <p>
 	 * - http://tiny.cc/back_default (s = 1.70158, default)
 	 */
-	static Function<Double, Double> back(Double s) {
+	static Double2DoubleFunction back(Double s) {
 		double p = s == null ? 1.70158 : s * 1.70158;
 		return t -> t * t * ((p + 1) * t - p);
 	}
@@ -281,16 +280,16 @@ public class EasingManager {
 	 * for helping clean it up using min instead of ternaries
 	 * http://easings.net/#easeInBounce
 	 */
-	public static Function<Double, Double> bounce(Double s) {
+	public static Double2DoubleFunction bounce(Double s) {
 		double k = s == null ? 0.5 : s;
-		Function<Double, Double> q = x -> (121.0 / 16.0) * x * x;
-		Function<Double, Double> w = x -> ((121.0 / 4.0) * k) * Math.pow(x - (6.0 / 11.0), 2) + 1 - k;
-		Function<Double, Double> r = x -> 121 * k * k * Math.pow(x - (9.0 / 11.0), 2) + 1 - k * k;
-		Function<Double, Double> t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11.0), 2) + 1 - k * k * k;
+		Double2DoubleFunction q = x -> (121.0 / 16.0) * x * x;
+		Double2DoubleFunction w = x -> ((121.0 / 4.0) * k) * Math.pow(x - (6.0 / 11.0), 2) + 1 - k;
+		Double2DoubleFunction r = x -> 121 * k * k * Math.pow(x - (9.0 / 11.0), 2) + 1 - k * k;
+		Double2DoubleFunction t = x -> 484 * k * k * k * Math.pow(x - (10.5 / 11.0), 2) + 1 - k * k * k;
 		return x -> min(q.apply(x), w.apply(x), r.apply(x), t.apply(x));
 	}
 
-	static Function<Double, Double> step(Double stepArg) {
+	static Double2DoubleFunction step(Double stepArg) {
 		int steps = stepArg != null ? stepArg.intValue() : 2;
 		double[] intervals = stepRange(steps);
 		return t -> intervals[findIntervalBorderIndex(t, intervals, false)];
@@ -366,8 +365,12 @@ public class EasingManager {
 		if (steps < 2)
 			throw new IllegalArgumentException("steps must be > 2, got:" + steps);
 		double stepLength = stop / (double) steps;
-		// There must be an easier way of doing this but I just don't care
-		AtomicInteger i = new AtomicInteger();
-		return DoubleStream.generate(() -> i.getAndIncrement() * stepLength).limit(steps).toArray();
+		double[] stepArray = new double[steps];
+
+		for (int i = 0; i < steps; i++) {
+			stepArray[i] = i * stepLength;
+		}
+
+		return stepArray;
 	};
 }

@@ -6,7 +6,6 @@
 package software.bernie.geckolib3.core.controller;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +19,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.eliotlash.mclib.math.IValue;
-
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.ConstantValue;
 import software.bernie.geckolib3.core.IAnimatable;
@@ -100,7 +99,7 @@ public class AnimationController<T extends IAnimatable> {
 	public static void addModelFetcher(ModelFetcher<?> fetcher) {
 		modelFetchers.add(fetcher);
 	}
-	
+
 	public static void removeModelFetcher(ModelFetcher<?> fetcher) {
 		Objects.requireNonNull(fetcher);
 		modelFetchers.remove(fetcher);
@@ -175,10 +174,10 @@ public class AnimationController<T extends IAnimatable> {
 	private final HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
 	protected boolean justStartedTransition = false;
-	public Function<Double, Double> customEasingMethod;
+	public Double2DoubleFunction customEasingMethod;
 	protected boolean needsAnimationReload = false;
 	public double animationSpeed = 1D;
-	private final Set<EventKeyFrame<?>> executedKeyFrames = new HashSet<>();
+	private final Set<EventKeyFrame<?>> executedKeyFrames = new ObjectOpenHashSet<>();
 
 	/**
 	 * This method sets the current animation with an animation builder. You can run
@@ -297,7 +296,7 @@ public class AnimationController<T extends IAnimatable> {
 	 *                              {@link software.bernie.geckolib3.core.easing.EasingManager}
 	 */
 	public AnimationController(T animatable, String name, float transitionLengthTicks,
-			Function<Double, Double> customEasingMethod, IAnimationPredicate<T> animationPredicate) {
+			Double2DoubleFunction customEasingMethod, IAnimationPredicate<T> animationPredicate) {
 		this.animatable = animatable;
 		this.name = name;
 		this.transitionLengthTicks = transitionLengthTicks;
@@ -439,8 +438,15 @@ public class AnimationController<T extends IAnimatable> {
 				for (BoneAnimation boneAnimation : currentAnimation.boneAnimations) {
 					BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName);
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
-					Optional<IBone> first = modelRendererList.stream()
-							.filter(x -> x.getName().equals(boneAnimation.boneName)).findFirst();
+					Optional<IBone> first = Optional.empty();
+
+					for (IBone bone : modelRendererList) {
+						if (bone.getName().equals(boneAnimation.boneName)) {
+							first = Optional.of(bone);
+							break;
+						}
+					}
+
 					if (!first.isPresent()) {
 						if (crashWhenCantFindBone) {
 							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
@@ -451,9 +457,9 @@ public class AnimationController<T extends IAnimatable> {
 					BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
 					assert boneSnapshot != null : "Bone snapshot was null";
 
-					VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-					VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
-					VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+					VectorKeyFrameList<KeyFrame> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+					VectorKeyFrameList<KeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
+					VectorKeyFrameList<KeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
 					// Adding the initial positions of the upcoming animation, so the model
 					// transitions to the initial state of the new animation
@@ -530,8 +536,11 @@ public class AnimationController<T extends IAnimatable> {
 			Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
 		for (Pair<IBone, BoneSnapshot> snapshot : boneSnapshotCollection.values()) {
 			if (animation != null && animation.boneAnimations != null) {
-				if (animation.boneAnimations.stream().anyMatch(x -> x.boneName.equals(snapshot.getLeft().getName()))) {
-					this.boneSnapshots.put(snapshot.getLeft().getName(), new BoneSnapshot(snapshot.getRight()));
+				for (BoneAnimation boneAnimation : animation.boneAnimations) {
+					if (boneAnimation.boneName.equals(snapshot.getLeft().getName())) {
+						this.boneSnapshots.put(boneAnimation.boneName, new BoneSnapshot(snapshot.getRight()));
+						break;
+					}
 				}
 			}
 		}
@@ -580,9 +589,9 @@ public class AnimationController<T extends IAnimatable> {
 				}
 			}
 
-			VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-			VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
-			VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+			VectorKeyFrameList<KeyFrame> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+			VectorKeyFrameList<KeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
+			VectorKeyFrameList<KeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
 			if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
 				boneAnimationQueue.rotationXQueue
@@ -678,10 +687,9 @@ public class AnimationController<T extends IAnimatable> {
 	}
 
 	// Helper method to transform a KeyFrameLocation to an AnimationPoint
-	private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation,
-			Axis axis) {
-		KeyFrameLocation<KeyFrame<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
-		KeyFrame<IValue> currentFrame = location.currentFrame;
+	private AnimationPoint getAnimationPointAtTick(List<KeyFrame> frames, double tick, boolean isRotation, Axis axis) {
+		KeyFrameLocation<KeyFrame> location = getCurrentKeyFrameLocation(frames, tick);
+		KeyFrame currentFrame = location.currentFrame;
 		double startValue = currentFrame.getStartValue().get();
 		double endValue = currentFrame.getEndValue().get();
 
@@ -707,10 +715,9 @@ public class AnimationController<T extends IAnimatable> {
 	 * Returns the current keyframe object, plus how long the previous keyframes
 	 * have taken (aka elapsed animation time)
 	 **/
-	private KeyFrameLocation<KeyFrame<IValue>> getCurrentKeyFrameLocation(List<KeyFrame<IValue>> frames,
-			double ageInTicks) {
+	private KeyFrameLocation<KeyFrame> getCurrentKeyFrameLocation(List<KeyFrame> frames, double ageInTicks) {
 		double totalTimeTracker = 0;
-		for (KeyFrame<IValue> frame : frames) {
+		for (KeyFrame frame : frames) {
 			totalTimeTracker += frame.getLength();
 			if (totalTimeTracker > ageInTicks) {
 				double tick = (ageInTicks - (totalTimeTracker - frame.getLength()));

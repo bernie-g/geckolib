@@ -1,10 +1,10 @@
 package software.bernie.geckolib3.core.event.predicate;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
+
+import java.util.List;
 
 public class AnimationEvent<T extends IAnimatable> {
 	private final T animatable;
@@ -14,7 +14,7 @@ public class AnimationEvent<T extends IAnimatable> {
 	private final float partialTick;
 	private final boolean isMoving;
 	private final List<Object> extraData;
-	protected AnimationController controller;
+	protected AnimationController<T> controller;
 
 	public AnimationEvent(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving,
 			List<Object> extraData) {
@@ -56,11 +56,11 @@ public class AnimationEvent<T extends IAnimatable> {
 		return isMoving;
 	}
 
-	public AnimationController getController() {
+	public AnimationController<T> getController() {
 		return controller;
 	}
 
-	public void setController(AnimationController controller) {
+	public void setController(AnimationController<T> controller) {
 		this.controller = controller;
 	}
 
@@ -68,9 +68,14 @@ public class AnimationEvent<T extends IAnimatable> {
 		return extraData;
 	}
 
-	@SuppressWarnings("hiding")
-	public <T> List<T> getExtraDataOfType(Class<T> type) {
-		return extraData.stream().filter(x -> type.isAssignableFrom(x.getClass())).map(x -> type.cast(x))
-				.collect(Collectors.toList());
+	public <D> List<D> getExtraDataOfType(Class<D> type) {
+		ObjectArrayList<D> matches = new ObjectArrayList<>();
+
+		for (Object obj : this.extraData) {
+			if (type.isAssignableFrom(obj.getClass()))
+				matches.add((D)obj);
+		}
+
+		return matches;
 	}
 }

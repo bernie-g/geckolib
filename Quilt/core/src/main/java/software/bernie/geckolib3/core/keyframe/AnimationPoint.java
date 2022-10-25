@@ -5,47 +5,45 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import com.eliotlash.mclib.math.IValue;
-
 public class AnimationPoint {
 	/**
 	 * The current tick in the animation to lerp from
 	 */
-	public final Double currentTick;
+	public final double currentTick;
 	/**
 	 * The tick that the current animation should end at
 	 */
-	public final Double animationEndTick;
+	public final double animationEndTick;
 	/**
 	 * The Animation start value.
 	 */
-	public final Double animationStartValue;
+	public final double animationStartValue;
 	/**
 	 * The Animation end value.
 	 */
-	public final Double animationEndValue;
+	public final double animationEndValue;
 
 	/**
 	 * The current keyframe.
 	 */
+	public final KeyFrame keyframe;
 
-	public final KeyFrame<IValue> keyframe;
-
-	public AnimationPoint(KeyFrame<IValue> keyframe, Double currentTick, Double animationEndTick,
-			Double animationStartValue, Double animationEndValue) {
+	// Remove boxed arguments method, leaving this in place just incase an unforeseen issue arises
+	/*public AnimationPoint(KeyFrame keyframe, double currentTick, Double animationEndTick,
+			Double animationStartValue, double animationEndValue) {
 		this.keyframe = keyframe;
 		this.currentTick = currentTick;
 		this.animationEndTick = animationEndTick;
 		this.animationStartValue = animationStartValue;
 		this.animationEndValue = animationEndValue;
-	}
+	}*/
 
-	public AnimationPoint(KeyFrame<IValue> keyframe, double tick, double animationEndTick, float animationStartValue,
+	public AnimationPoint(KeyFrame keyframe, double tick, double animationEndTick, double animationStartValue,
 			double animationEndValue) {
 		this.keyframe = keyframe;
 		this.currentTick = tick;
 		this.animationEndTick = animationEndTick;
-		this.animationStartValue = Double.valueOf(animationStartValue);
+		this.animationStartValue = animationStartValue;
 		this.animationEndValue = animationEndValue;
 	}
 

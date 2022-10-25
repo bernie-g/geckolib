@@ -5,10 +5,10 @@
 
 package software.bernie.geckolib3.core.builder;
 
-import java.util.List;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+
+import java.util.List;
 
 /**
  * This class follows the builder pattern, which means that every method returns
@@ -16,7 +16,7 @@ import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
  * <code>new AnimationBuilder().addAnimation("jump").addRepeatingAnimation("run", 5");</code>
  */
 public class AnimationBuilder {
-	private List<RawAnimation> animationList = new ObjectArrayList<>();
+	private final List<RawAnimation> animationList = new ObjectArrayList<>();
 
 	/**
 	 * Add a single animation to the queue and overrides the loop setting

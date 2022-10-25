@@ -1,18 +1,17 @@
 package software.bernie.geckolib3.core.molang.expressions;
 
-import java.util.List;
-import java.util.Map;
-import java.util.StringJoiner;
-
 import com.eliotlash.mclib.math.Variable;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.molang.MolangParser;
 
+import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
+
 public class MolangMultiStatement extends MolangExpression {
-	public List<MolangExpression> expressions = new ObjectArrayList<MolangExpression>();
-	public Map<String, Variable> locals = new Object2ObjectOpenHashMap<String, Variable>();
+	public List<MolangExpression> expressions = new ObjectArrayList<>();
+	public Map<String, Variable> locals = new Object2ObjectOpenHashMap<>();
 
 	public MolangMultiStatement(MolangParser context) {
 		super(context);

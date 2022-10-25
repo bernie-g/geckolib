@@ -11,9 +11,4 @@ public class ParticleEventKeyFrame extends EventKeyFrame<String> {
 		this.locator = locator;
 		this.effect = effect;
 	}
-
-	@Override
-	public String getEventData() {
-		return super.getEventData();
-	}
 }

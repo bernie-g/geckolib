@@ -43,7 +43,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.07.17-1.18.2'
+    mappings channel: 'parchment', version: '2022.09.04-1.18.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
@@ -105,7 +105,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
+    minecraft 'net.minecraftforge:forge:1.18.2-40.1.84'
     library 'com.eliotlash.mclib:mclib:19'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
