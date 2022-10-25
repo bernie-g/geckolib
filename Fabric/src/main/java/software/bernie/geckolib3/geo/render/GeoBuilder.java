@@ -1,12 +1,12 @@
 package software.bernie.geckolib3.geo.render;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.mojang.math.Vector3f;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;
 import software.bernie.geckolib3.geo.raw.pojo.Cube;
 import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
@@ -19,8 +19,8 @@ import software.bernie.geckolib3.util.VectorUtils;
 
 public class GeoBuilder implements IGeoBuilder {
 
-	private static Map<String, IGeoBuilder> moddedGeoBuilders = new HashMap<>();
-	private static IGeoBuilder defaultBuilder = new GeoBuilder();
+	private static final Map<String, IGeoBuilder> moddedGeoBuilders = new Object2ObjectOpenHashMap<>();
+	private static final IGeoBuilder defaultBuilder = new GeoBuilder();
 
 	public static void registerGeoBuilder(String modID, IGeoBuilder builder) {
 		moddedGeoBuilders.put(modID, builder);

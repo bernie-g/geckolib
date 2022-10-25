@@ -47,14 +47,6 @@ public abstract class AbstractLayerGeo<T extends LivingEntity & IAnimatable> ext
 				OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
 
 		matrixStackIn.popPose();
-		// 1.12.2
-		/*
-		 * this.getRenderer().render(
-		 * this.getEntityModel().getModel(this.funcGetCurrentModel.apply(entity)),
-		 * entity, partialTicks, (float) renderColor.getRed() / 255f, (float)
-		 * renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f, (float)
-		 * renderColor.getAlpha() / 255 );
-		 */
 	}
 
 }

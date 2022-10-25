@@ -45,33 +45,50 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, AnimationEvent customPredicate) {
-		// Each animation has it's own collection of animations (called the
+
+		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 
-		if (manager.ticker == null) {
+		if (manager.ticker == null && !(entity instanceof LivingEntity)) {
 			manager.ticker = new AnimationTicker(manager);
+		}
+		if (manager.startTick == -1 && entity instanceof LivingEntity) {
+			manager.startTick = (double) (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
 		}
 
 		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
+			if (entity instanceof LivingEntity) {
+				manager.tick = (((LivingEntity) entity).tickCount + Minecraft.getInstance().getFrameTime());
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - lastGameTickTime;
+				seekTime += deltaTicks;
+				lastGameTickTime = gameTick;
+				codeAnimations(entity, uniqueID, customPredicate);
+			} else {
+				seekTime = manager.tick + Minecraft.getInstance().getFrameTime();
+			}
 		}
 
 		AnimationEvent<T> predicate;
+
 		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-					Collections.emptyList());
+			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList());
 		} else {
 			predicate = customPredicate;
 		}
 
 		predicate.animationTick = seekTime;
 
-		animationProcessor.preAnimationSetup(predicate.getAnimatable(), seekTime);
-		if (!this.animationProcessor.getModelRendererList().isEmpty()) {
-			animationProcessor.tickAnimation(entity, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser,
-					shouldCrashOnMissing);
+		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
+		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
+			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
+					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
+	}
+
+	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {
+
 	}
 
 	@Override
@@ -115,36 +132,35 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	public void setMolangQueries(IAnimatable animatable, double currentTick) {
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Minecraft minecraftInstance = Minecraft.getInstance();
-		if (parser != null) {
-			parser.setValue("query.actor_count", minecraftInstance.level.getEntityCount());
-			parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.level.getDayTime()));
-			parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
-			if (animatable instanceof Entity) {
-				parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera()
-						.getPosition().distanceTo(((Entity) animatable).position()));
-				parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
-				parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
-				// Should probably check specifically whether it's in rain?
-				parser.setValue("query.is_in_water_or_rain",
-						MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubble()));
+		parser.setValue("query.actor_count", minecraftInstance.level.getEntityCount());
+		parser.setValue("query.time_of_day", MolangUtils.normalizeTime(minecraftInstance.level.getDayTime()));
+		parser.setValue("query.moon_phase", minecraftInstance.level.getMoonPhase());
 
-				if (animatable instanceof LivingEntity) {
-					LivingEntity livingEntity = (LivingEntity) animatable;
-					parser.setValue("query.health", livingEntity.getHealth());
-					parser.setValue("query.max_health", livingEntity.getMaxHealth());
-					parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isOnFire()));
-					// Doesn't work for some reason?
-					parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
+		if (animatable instanceof Entity) {
+			parser.setValue("query.distance_from_camera", minecraftInstance.gameRenderer.getMainCamera().getPosition()
+					.distanceTo(((Entity) animatable).position()));
+			parser.setValue("query.is_on_ground", MolangUtils.booleanToFloat(((Entity) animatable).isOnGround()));
+			parser.setValue("query.is_in_water", MolangUtils.booleanToFloat(((Entity) animatable).isInWater()));
+			// Should probably check specifically whether it's in rain?
+			parser.setValue("query.is_in_water_or_rain",
+					MolangUtils.booleanToFloat(((Entity) animatable).isInWaterRainOrBubble()));
 
-					Vec3 velocity = livingEntity.getDeltaMovement();
-					float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-					parser.setValue("query.ground_speed", groundSpeed);
+			if (animatable instanceof LivingEntity) {
+				LivingEntity livingEntity = (LivingEntity) animatable;
+				parser.setValue("query.health", livingEntity.getHealth());
+				parser.setValue("query.max_health", livingEntity.getMaxHealth());
+				parser.setValue("query.is_on_fire", MolangUtils.booleanToFloat(livingEntity.isOnFire()));
+				// Doesn't work for some reason?
+				parser.setValue("query.on_fire_time", livingEntity.getRemainingFireTicks());
 
-					float yawSpeed = livingEntity.getViewYRot((float) currentTick)
-							- livingEntity.getViewYRot((float) (currentTick - 0.1));
-					parser.setValue("query.yaw_speed", yawSpeed);
-				}
+				Vec3 velocity = livingEntity.getDeltaMovement();
+				float groundSpeed = Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+				parser.setValue("query.ground_speed", groundSpeed);
+
+				float yawSpeed = livingEntity.getViewYRot((float) currentTick)
+						- livingEntity.getViewYRot((float) (currentTick - 0.1));
+				parser.setValue("query.yaw_speed", yawSpeed);
 			}
 		}
 	}
