@@ -214,8 +214,7 @@ public class JsonAnimationUtils {
 		animation.animationLength = animationLength == null ? -1
 				: AnimationUtils.convertSecondsToTicks(animationLength.getAsDouble());
 		animation.boneAnimations = new ObjectArrayList<>();
-		JsonElement loop = animationJsonObject.get("loop");
-		animation.loop = ILoopType.fromJson(loop);
+		animation.loop = ILoopType.fromJson(animationJsonObject.get("loop"));
 
 		// Handle parsing sound effect keyframes
 		for (Map.Entry<String, JsonElement> keyFrame : getSoundEffectFrames(animationJsonObject)) {
