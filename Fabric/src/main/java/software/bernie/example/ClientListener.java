@@ -28,6 +28,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.Registry;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
+import software.bernie.example.client.renderer.entity.CarGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
@@ -55,12 +56,14 @@ public class ClientListener implements ClientModInitializer {
 					(entityRenderDispatcher, context) -> new ExampleGeoRenderer(entityRenderDispatcher));
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.BIKE_ENTITY,
 					(entityRenderDispatcher, context) -> new BikeGeoRenderer(entityRenderDispatcher));
+			EntityRendererRegistry.INSTANCE.register(EntityRegistry.CAR_ENTITY,
+					(entityRenderDispatcher, context) -> new CarGeoRenderer(entityRenderDispatcher));
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.GEOLAYERENTITY,
 					(entityRenderDispatcher, context) -> new LERenderer(entityRenderDispatcher));
 			EntityRendererRegistry.INSTANCE.register(EntityRegistry.EXTENDED_RENDERER_EXAMPLE, (entityRenderDispatcher,
 					context) -> new ExampleExtendedRendererEntityRenderer(entityRenderDispatcher));
-			EntityRendererRegistry.INSTANCE.register(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE, (entityRenderDispatcher,
-					context) -> new TexturePerBoneTestEntityRenderer(entityRenderDispatcher));
+			EntityRendererRegistry.INSTANCE.register(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE,
+					(entityRenderDispatcher, context) -> new TexturePerBoneTestEntityRenderer(entityRenderDispatcher));
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.JACK_IN_THE_BOX, new JackInTheBoxRenderer());
 			GeoItemRenderer.registerItemRenderer(ItemRegistry.PISTOL, new PistolRender());
 			GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, new GeckoArmorRenderer());

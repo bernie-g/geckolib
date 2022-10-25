@@ -15,12 +15,14 @@ public class CommonListener {
 		if (GeckoLibMod.shouldRegisterExamples()) {
 			event.put(EntityRegistry.BIKE_ENTITY.get(), CreatureEntity.createMobAttributes()
 					.add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.MAX_HEALTH, 1.0D).build());
+			event.put(EntityRegistry.CAR_ENTITY.get(), CreatureEntity.createMobAttributes()
+					.add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.MAX_HEALTH, 1.0D).build());
 			event.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), CreatureEntity.createMobAttributes()
 					.add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.MAX_HEALTH, 1.0D).build());
 
 			event.put(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), CreatureEntity.createMobAttributes()
 					.add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.MAX_HEALTH, 1.0D).build());
-			
+
 			event.put(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), CreatureEntity.createMobAttributes()
 					.add(Attributes.FOLLOW_RANGE, 16.0D).add(Attributes.MAX_HEALTH, 1.0D).build());
 

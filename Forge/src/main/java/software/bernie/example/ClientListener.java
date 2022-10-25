@@ -19,6 +19,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
+import software.bernie.example.client.renderer.entity.CarGeoRenderer;
 import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
 import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
 import software.bernie.example.client.renderer.entity.LERenderer;
@@ -44,6 +45,7 @@ public class ClientListener {
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEO_EXAMPLE_ENTITY.get(),
 					ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.CAR_ENTITY.get(), CarGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
 
 			RenderingRegistry.registerEntityRenderingHandler(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(),
