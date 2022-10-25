@@ -26,11 +26,12 @@ import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatable {
 
 	// Geckolib
-	private AnimationFactory factory = new AnimationFactory(this);
+	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public ExtendedRendererEntity(EntityType<? extends PathAwareEntity> p_i48575_1_, World p_i48575_2_) {
 		super(p_i48575_1_, p_i48575_2_);
@@ -93,7 +94,7 @@ public class ExtendedRendererEntity extends PathAwareEntity implements IAnimatab
 	}
 
 	private static final String ANIM_NAME_PREFIX = "animation.biped.";
-	
+
 	private static final String ANIM_NAME_SPIN_HANDS = ANIM_NAME_PREFIX + "spin_hands";
 
 	@SuppressWarnings("unused")

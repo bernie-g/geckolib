@@ -5,41 +5,46 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
+import com.eliotlash.mclib.math.IValue;
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
+import software.bernie.geckolib3.core.easing.EasingType;
+
 import java.util.List;
 import java.util.Objects;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import software.bernie.geckolib3.core.easing.EasingType;
-
-public class KeyFrame<T> {
-	private Double length;
-	private T startValue;
-	private T endValue;
+public class KeyFrame {
+	private double length;
+	private IValue startValue;
+	private IValue endValue;
 	public EasingType easingType = EasingType.Linear;
-	public List<Double> easingArgs = new ObjectArrayList<>();
+	public DoubleList easingArgs = new DoubleArrayList();
 
-	public KeyFrame(Double length, T startValue, T endValue) {
+	public KeyFrame(double length, IValue startValue, IValue endValue) {
 		this.length = length;
 		this.startValue = startValue;
 		this.endValue = endValue;
 	}
 
-	public KeyFrame(Double length, T startValue, T endValue, EasingType easingType) {
-		this.length = length;
-		this.startValue = startValue;
-		this.endValue = endValue;
-		this.easingType = easingType;
-	}
-
-	public KeyFrame(Double length, T startValue, T endValue, EasingType easingType, List<Double> easingArgs) {
+	public KeyFrame(double length, IValue startValue, IValue endValue, EasingType easingType) {
 		this.length = length;
 		this.startValue = startValue;
 		this.endValue = endValue;
 		this.easingType = easingType;
-		this.easingArgs = easingArgs;
 	}
 
-	public Double getLength() {
+	public KeyFrame(double length, IValue startValue, IValue endValue, EasingType easingType, List<IValue> easingArgs) {
+		this.length = length;
+		this.startValue = startValue;
+		this.endValue = endValue;
+		this.easingType = easingType;
+
+		for (IValue easing : easingArgs) {
+			this.easingArgs.add(easing.get());
+		}
+	}
+
+	public double getLength() {
 		return length;
 	}
 
@@ -47,19 +52,19 @@ public class KeyFrame<T> {
 		this.length = length;
 	}
 
-	public T getStartValue() {
+	public IValue getStartValue() {
 		return startValue;
 	}
 
-	public void setStartValue(T startValue) {
+	public void setStartValue(IValue startValue) {
 		this.startValue = startValue;
 	}
 
-	public T getEndValue() {
+	public IValue getEndValue() {
 		return endValue;
 	}
 
-	public void setEndValue(T endValue) {
+	public void setEndValue(IValue endValue) {
 		this.endValue = endValue;
 	}
 

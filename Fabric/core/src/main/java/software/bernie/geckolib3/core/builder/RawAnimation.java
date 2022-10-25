@@ -5,9 +5,9 @@
 
 package software.bernie.geckolib3.core.builder;
 
-import java.util.Objects;
-
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+
+import java.util.Objects;
 
 public class RawAnimation {
 	public String animationName;
@@ -43,14 +43,11 @@ public class RawAnimation {
 			return false;
 		}
 		RawAnimation animation = (RawAnimation) obj;
-		if (animation.loopType == this.loopType && animation.animationName.equals(this.animationName)) {
-			return true;
-		}
-		return false;
+		return animation.loopType == this.loopType && animation.animationName.equals(this.animationName);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(animationName, loopType);
+		return Objects.hash(this.animationName, this.loopType);
 	}
 }

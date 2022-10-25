@@ -16,7 +16,6 @@ import net.minecraft.client.resource.metadata.TextureResourceMetadata;
 import net.minecraft.client.texture.AbstractTexture;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.client.texture.ResourceTexture;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.client.texture.TextureUtil;
 import net.minecraft.resource.Resource;
@@ -48,9 +47,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		}
 		Identifier location = appendBeforeEnding(originalLocation, appendix);
 		TextureManager texManager = MinecraftClient.getInstance().getTextureManager();
-		if (texManager.getTexture(location) == null) {
-			texManager.registerTexture(location, constructor.apply(originalLocation, location));
-		}
+		texManager.getTexture(location);
 		return location;
 	}
 
@@ -66,14 +63,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		TextureManager textureManager = mc.getTextureManager();
 		AbstractTexture originalTexture;
 		try {
-			originalTexture = mc.submit(() -> {
-				AbstractTexture texture = textureManager.getTexture(this.originalLocation);
-				if (texture == null) {
-					texture = new ResourceTexture(this.originalLocation);
-					textureManager.registerTexture(this.originalLocation, texture);
-				}
-				return texture;
-			}).get();
+			originalTexture = mc.submit(() -> textureManager.getTexture(this.originalLocation)).get();
 		} catch (InterruptedException | ExecutionException e) {
 			throw new IOException("Failed loading original texture: " + this.originalLocation, e);
 		}

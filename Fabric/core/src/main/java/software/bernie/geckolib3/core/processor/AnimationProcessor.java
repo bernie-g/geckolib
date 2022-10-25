@@ -1,14 +1,10 @@
 package software.bernie.geckolib3.core.processor;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -21,18 +17,21 @@ import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.snapshot.DirtyTracker;
 import software.bernie.geckolib3.core.util.MathUtil;
 
+import java.util.List;
+import java.util.Map;
+
 public class AnimationProcessor<T extends IAnimatable> {
 	public boolean reloadAnimations = false;
-	private List<IBone> modelRendererList = new ObjectArrayList<>();
+	private final List<IBone> modelRendererList = new ObjectArrayList<>();
 	private double lastTickValue = -1;
-	private Set<Integer> animatedEntities = new HashSet<>();
+	private final IntSet animatedEntities = new IntOpenHashSet();
 	private final IAnimatableModel animatedModel;
 
 	public AnimationProcessor(IAnimatableModel animatedModel) {
 		this.animatedModel = animatedModel;
 	}
 
-	public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
+	public void tickAnimation(IAnimatable entity, int uniqueID, double seekTime, AnimationEvent<T> event,
 			MolangParser parser, boolean crashWhenCantFindBone) {
 		if (seekTime != lastTickValue) {
 			animatedEntities.clear();
@@ -43,7 +42,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 		lastTickValue = seekTime;
 		animatedEntities.add(uniqueID);
 
-		// Each animation has it's own collection of animations (called the
+		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
 		// Keeps track of which bones have had animations applied to them, and
