@@ -3,10 +3,23 @@ package software.bernie.geckolib3.core.manager;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.IAnimatable;
 
+/**
+ * TODO 1.20+:
+ * <ul>
+ *     <li>Remove {@code animationDataMap}</li>
+ *     <li>Make {@code AnimationFactory} abstract</li>
+ *     <li>Make {@code getOrCreateAnimationData} abstract</li>
+ * </ul>
+ */
 public class AnimationFactory {
-	private final IAnimatable animatable;
+	protected final IAnimatable animatable;
 	private final Int2ObjectOpenHashMap<AnimationData> animationDataMap = new Int2ObjectOpenHashMap<>();
 
+	/**
+	 * Deprecated, use {@code GeckolibUtil#createFactory(IAnimatable)}
+	 * @param animatable The animatable object the factory is for
+	 */
+	@Deprecated
 	public AnimationFactory(IAnimatable animatable) {
 		this.animatable = animatable;
 	}
