@@ -248,9 +248,7 @@ if (file('key.properties').exists()) {
             id = "388172"
             releaseType = "release"
             changelogType = 'text'
-            changelog = file('changelog.txt')
-        	addGameVersion("1.19")
-        	addGameVersion("1.19.1")
+            changelog = file('changelog.txt')=
         	addGameVersion("1.19.2")
             addGameVersion("Forge")
             addGameVersion("Java 17")
@@ -270,7 +268,7 @@ if (file('key.properties').exists()) {
 		versionName = 'Forge 1.19'
 		uploadFile = jar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.1', '1.19.2']
+		gameVersions = ['1.19.2']
 		loaders = ['forge']
 	}
 }
