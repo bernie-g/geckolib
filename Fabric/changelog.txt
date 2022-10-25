@@ -1,3 +1,9 @@
-v3.0.98
+v3.0.99
 
-- Adds back GeoBone#getWorldSpaceNormal
+- Support more simple structure of glowing meta section - DerToaster
+- Moves getWorldSpaceNormal and setWorldSpaceNormal to Deprecated.
+- Moves Maps and Arrays to FastUtil - Tslat
+- Updates core with FastUtil Update.
+- setCurrentRTB moved to default method. 
+- Cleaned up Examples and added new Car Example.
+- Updates core with Molang Update.
