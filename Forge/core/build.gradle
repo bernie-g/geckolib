@@ -3,12 +3,15 @@ buildscript {
     	maven { url  = 'https://plugins.gradle.org/m2/' }
     }
 }
+plugins {
+    id 'java-library'
+}
 apply plugin: 'java'
 apply plugin: 'maven-publish'
 
 group project.group
 def snapshotVersion = System.getenv("GITHUB_RUN_NUMBER")
-version = snapshotVersion == null ? project.version : "SNAPSHOT-" + snapshotVersion
+version = project.version
 archivesBaseName = project.archivesBaseName
 
 repositories {
@@ -20,8 +23,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.eliotlash.molang:molang:19'
-    implementation 'com.eliotlash.mclib:mclib:19'
+	implementation 'com.eliotlash.mclib:mclib:19'
+    implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'it.unimi.dsi:fastutil:8.4.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 }

@@ -11,8 +11,6 @@ import java.util.Map;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -22,6 +20,8 @@ import software.bernie.geckolib3.core.ConstantValue;
 import software.bernie.geckolib3.core.easing.EasingType;
 import software.bernie.geckolib3.core.keyframe.KeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib3.core.molang.MolangException;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3q.GeckoLib;
 import software.bernie.geckolib3q.util.AnimationUtils;
 

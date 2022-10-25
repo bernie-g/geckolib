@@ -106,7 +106,6 @@ repositories {
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.18.2-40.1.73'
-    library 'com.eliotlash.molang:molang:19'
     library 'com.eliotlash.mclib:mclib:19'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -114,7 +113,6 @@ dependencies {
     library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
     library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
-    shade 'com.eliotlash.molang:molang:19'
     shade 'com.eliotlash.mclib:mclib:19'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'

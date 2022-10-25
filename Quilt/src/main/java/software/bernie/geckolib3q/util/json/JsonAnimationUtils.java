@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -28,6 +27,7 @@ import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3q.util.AnimationUtils;
 
 /**
