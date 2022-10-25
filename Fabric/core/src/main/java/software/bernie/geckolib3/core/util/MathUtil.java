@@ -1,10 +1,10 @@
 package software.bernie.geckolib3.core.util;
 
-import java.util.function.Function;
-
 import software.bernie.geckolib3.core.easing.EasingManager;
 import software.bernie.geckolib3.core.easing.EasingType;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
+
+import java.util.function.Function;
 
 public class MathUtil {
 	/**
@@ -16,10 +16,10 @@ public class MathUtil {
 	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType,
 			Function<Double, Double> customEasingMethod) {
 		if (animationPoint.currentTick >= animationPoint.animationEndTick) {
-			return animationPoint.animationEndValue.floatValue();
+			return (float)animationPoint.animationEndValue;
 		}
 		if (animationPoint.currentTick == 0 && animationPoint.animationEndTick == 0) {
-			return animationPoint.animationEndValue.floatValue();
+			return (float)animationPoint.animationEndValue;
 		}
 
 		if (easingType == EasingType.CUSTOM && customEasingMethod != null) {
