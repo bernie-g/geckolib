@@ -17,6 +17,7 @@ public class AnimationFactory {
 
 	/**
 	 * Deprecated, use {@code GeckolibUtil#createFactory(IAnimatable)}
+	 * 
 	 * @param animatable The animatable object the factory is for
 	 */
 	@Deprecated

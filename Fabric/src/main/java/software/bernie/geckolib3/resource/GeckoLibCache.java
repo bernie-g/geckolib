@@ -1,14 +1,17 @@
 package software.bernie.geckolib3.resource;
 
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
@@ -19,15 +22,19 @@ import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.molang.MolangRegistrar;
 
 public class GeckoLibCache {
-	private Map<Identifier, AnimationFile> animations = Collections.emptyMap();
-	private Map<Identifier, GeoModel> geoModels = Collections.emptyMap();
 	private static GeckoLibCache INSTANCE;
-	public final MolangParser parser = new MolangParser();
+	private static final Set<String> excludedNamespaces = ObjectOpenHashSet.of("moreplayermodels", "customnpcs",
+			"gunsrpg");
+
 	private final AnimationFileLoader animationLoader;
 	private final GeoModelLoader modelLoader;
+
+	public final MolangParser parser = new MolangParser();
+
+	private Map<Identifier, AnimationFile> animations = Collections.emptyMap();
+	private Map<Identifier, GeoModel> geoModels = Collections.emptyMap();
 
 	public Map<Identifier, AnimationFile> getAnimations() {
 		if (!GeckoLib.hasInitialized) {
@@ -46,7 +53,6 @@ public class GeckoLibCache {
 	protected GeckoLibCache() {
 		this.animationLoader = new AnimationFileLoader();
 		this.modelLoader = new GeoModelLoader();
-		MolangRegistrar.registerVars(parser);
 	}
 
 	public static GeckoLibCache getInstance() {
@@ -57,11 +63,12 @@ public class GeckoLibCache {
 		return INSTANCE;
 	}
 
-	public CompletableFuture<Void> reload(ResourceReloader.Synchronizer stage, ResourceManager resourceManager,
-			Profiler preparationsProfiler, Profiler reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor) {
+	public CompletableFuture<Void> reload(ResourceReloader.Synchronizer stage,
+			ResourceManager resourceManager, Profiler preparationsProfiler, Profiler reloadProfiler,
+			Executor backgroundExecutor, Executor gameExecutor) {
 		Map<Identifier, AnimationFile> animations = new Object2ObjectOpenHashMap<>();
 		Map<Identifier, GeoModel> geoModels = new Object2ObjectOpenHashMap<>();
+		
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",
@@ -74,9 +81,8 @@ public class GeckoLibCache {
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String type, Function<Identifier, T> loader, BiConsumer<Identifier, T> map) {
-		return CompletableFuture
-				.supplyAsync(() -> resourceManager.findResources(type, fileName -> fileName.endsWith(".json")),
-						executor)
+		return CompletableFuture.supplyAsync(
+				() -> resourceManager.findResources(type, fileName -> fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<Identifier, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
@@ -96,12 +102,8 @@ public class GeckoLibCache {
 						// Shouldn't be any duplicates as they are caught above
 						// Skips moreplayermodels and customnpc namespaces as they use an animation
 						// folder as well
-						String namespace = entry.getKey().getNamespace();
-
-						if (!namespace.equalsIgnoreCase("moreplayermodels") || !namespace.equalsIgnoreCase("customnpcs")
-								|| !namespace.equalsIgnoreCase("gunsrpg")) {
+						if (!excludedNamespaces.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
 							map.accept(entry.getKey(), entry.getValue().join());
-						}
 					}
 				}, executor);
 	}

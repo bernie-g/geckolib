@@ -6,7 +6,7 @@ import com.eliotlash.mclib.math.MathBuilder;
 import com.eliotlash.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.molang.expressions.MolangAssignment;
 import software.bernie.geckolib3.core.molang.expressions.MolangExpression;
 import software.bernie.geckolib3.core.molang.expressions.MolangMultiStatement;
@@ -15,58 +15,84 @@ import software.bernie.geckolib3.core.molang.functions.CosDegrees;
 import software.bernie.geckolib3.core.molang.functions.SinDegrees;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.DoubleSupplier;
 
 /**
  * MoLang parser
- *
  * This bad boy parses Molang expressions
- *
  * https://bedrock.dev/docs/1.19.0.0/1.19.30.23/Molang#Math%20Functions
  */
 public class MolangParser extends MathBuilder {
+	// Replace base variables map
+	public static final Map<String, LazyVariable> VARIABLES = new Object2ObjectOpenHashMap<>();
 	public static final MolangExpression ZERO = new MolangValue(null, new Constant(0));
 	public static final MolangExpression ONE = new MolangValue(null, new Constant(1));
 	public static final String RETURN = "return ";
 
-	private MolangMultiStatement currentStatement = null;
-
-	// TODO - Tslat
-	// This needs a SERIOUS looking at. I suspect you have some parallel processing race conditions happening in relation to currentStatement
 	public MolangParser() {
 		super();
 
-		/* Replace radian based sin and cos with degreebased */
+		// Remap functions to be intact with Molang specification
+		doCoreRemaps();
+		registerAdditionalVariables();
+	}
+
+	private void doCoreRemaps() {
+		// Replace radian based sin and cos with degree-based functions
 		this.functions.put("cos", CosDegrees.class);
 		this.functions.put("sin", SinDegrees.class);
 
-		/* Remap functions to be intact with Molang specification */
-		this.remap("abs", "math.abs");
-		this.remap("acos", "math.acos");
-		this.remap("asin", "math.asin");
-		this.remap("atan", "math.atan");
-		this.remap("atan2", "math.atan2");
-		this.remap("ceil", "math.ceil");
-		this.remap("clamp", "math.clamp");
-		this.remap("cos", "math.cos");
-		this.remap("die_roll", "math.die_roll");
-		this.remap("die_roll_integer", "math.die_roll_integer");
-		this.remap("exp", "math.exp");
-		this.remap("floor", "math.floor");
-		this.remap("hermite_blend", "math.hermite_blend");
-		this.remap("lerp", "math.lerp");
-		this.remap("lerprotate", "math.lerprotate");
-		this.remap("ln", "math.ln");
-		this.remap("max", "math.max");
-		this.remap("min", "math.min");
-		this.remap("mod", "math.mod");
-		this.remap("pi", "math.pi");
-		this.remap("pow", "math.pow");
-		this.remap("random", "math.random");
-		this.remap("random_integer", "math.random_integer");
-		this.remap("round", "math.round");
-		this.remap("sin", "math.sin");
-		this.remap("sqrt", "math.sqrt");
-		this.remap("trunc", "math.trunc");
+		remap("abs", "math.abs");
+		remap("acos", "math.acos");
+		remap("asin", "math.asin");
+		remap("atan", "math.atan");
+		remap("atan2", "math.atan2");
+		remap("ceil", "math.ceil");
+		remap("clamp", "math.clamp");
+		remap("cos", "math.cos");
+		remap("die_roll", "math.die_roll");
+		remap("die_roll_integer", "math.die_roll_integer");
+		remap("exp", "math.exp");
+		remap("floor", "math.floor");
+		remap("hermite_blend", "math.hermite_blend");
+		remap("lerp", "math.lerp");
+		remap("lerprotate", "math.lerprotate");
+		remap("ln", "math.ln");
+		remap("max", "math.max");
+		remap("min", "math.min");
+		remap("mod", "math.mod");
+		remap("pi", "math.pi");
+		remap("pow", "math.pow");
+		remap("random", "math.random");
+		remap("random_integer", "math.random_integer");
+		remap("round", "math.round");
+		remap("sin", "math.sin");
+		remap("sqrt", "math.sqrt");
+		remap("trunc", "math.trunc");
+	}
+
+	private void registerAdditionalVariables() {
+		register(new LazyVariable("query.anim_time", 0));
+		register(new LazyVariable("query.actor_count", 0));
+		register(new LazyVariable("query.health", 0));
+		register(new LazyVariable("query.max_health", 0));
+		register(new LazyVariable("query.distance_from_camera", 0));
+		register(new LazyVariable("query.yaw_speed", 0));
+		register(new LazyVariable("query.is_in_water_or_rain", 0));
+		register(new LazyVariable("query.is_in_water", 0));
+		register(new LazyVariable("query.is_on_ground", 0));
+		register(new LazyVariable("query.time_of_day", 0));
+		register(new LazyVariable("query.is_on_fire", 0));
+		register(new LazyVariable("query.ground_speed", 0));
+	}
+
+	@Override
+	public void register(Variable variable) {
+		if (!(variable instanceof LazyVariable))
+			variable = LazyVariable.from(variable);
+
+		VARIABLES.put(variable.getName(), (LazyVariable)variable);
 	}
 
 	/**
@@ -76,47 +102,56 @@ public class MolangParser extends MathBuilder {
 		this.functions.put(newName, this.functions.remove(old));
 	}
 
+	/**
+	 * Deprecated, use {@link MolangParser#setValue(String, DoubleSupplier)}
+	 */
+	@Deprecated
 	public void setValue(String name, double value) {
-		Variable variable = this.getVariable(name);
-
-		if (variable != null) {
-			variable.set(value);
-		}
+		setValue(name, () -> value);
 	}
 
-	/**
-	 * Interactively return a new variable
-	 */
+	public void setValue(String name, DoubleSupplier value) {
+		LazyVariable variable = getVariable(name);
+
+		if (variable != null)
+			variable.set(value);
+	}
+
 	@Override
-	protected Variable getVariable(String name) {
-		Variable variable = this.currentStatement == null ? null : this.currentStatement.locals.get(name);
+	protected LazyVariable getVariable(String name) {
+		return VARIABLES.computeIfAbsent(name, key -> new LazyVariable(key, 0));
+	}
 
-		if (variable == null) {
-			variable = super.getVariable(name);
+	public LazyVariable getVariable(String name, MolangMultiStatement currentStatement) {
+		LazyVariable variable;
+
+		if (currentStatement != null) {
+			variable = currentStatement.locals.get(name);
+
+			if (variable != null)
+				return variable;
 		}
 
-		if (variable == null) {
-			variable = new Variable(name, 0);
-
-			this.register(variable);
-		}
-
-		return variable;
+		return getVariable(name);
 	}
 
 	public MolangExpression parseJson(JsonElement element) throws MolangException {
-		if (element.isJsonPrimitive()) {
-			JsonPrimitive primitive = element.getAsJsonPrimitive();
+		if (!element.isJsonPrimitive())
+			return ZERO;
 
-			if (primitive.isString()) {
-				try {
-					return new MolangValue(this, new Constant(Float.parseFloat(primitive.getAsString())));
-				} catch (Exception e) {
-				}
+		JsonPrimitive primitive = element.getAsJsonPrimitive();
 
-				return this.parseExpression(primitive.getAsString());
-			} else {
-				return new MolangValue(this, new Constant(primitive.getAsDouble()));
+		if (primitive.isNumber())
+			return new MolangValue(this, new Constant(primitive.getAsDouble()));
+
+		if (primitive.isString()) {
+			String string = primitive.getAsString();
+
+			try {
+				return new MolangValue(this, new Constant(Double.parseDouble(string)));
+			}
+			catch (NumberFormatException ex) {
+				return parseExpression(string);
 			}
 		}
 
@@ -127,33 +162,21 @@ public class MolangParser extends MathBuilder {
 	 * Parse a molang expression
 	 */
 	public MolangExpression parseExpression(String expression) throws MolangException {
-		List<String> lines = new ObjectArrayList<>();
+		MolangMultiStatement result = null;
 
 		for (String split : expression.toLowerCase().trim().split(";")) {
-			if (!split.trim().isEmpty()) {
-				lines.add(split);
+			String trimmed = split.trim();
+
+			if (!trimmed.isEmpty()) {
+				if (result == null)
+					result = new MolangMultiStatement(this);
+
+				result.expressions.add(parseOneLine(trimmed, result));
 			}
 		}
 
-		if (lines.size() == 0) {
+		if (result == null)
 			throw new MolangException("Molang expression cannot be blank!");
-		}
-
-		MolangMultiStatement result = new MolangMultiStatement(this);
-
-		this.currentStatement = result;
-
-		try {
-			for (String line : lines) {
-				result.expressions.add(this.parseOneLine(line));
-			}
-		} catch (Exception e) {
-			this.currentStatement = null;
-
-			throw e;
-		}
-
-		this.currentStatement = null;
 
 		return result;
 	}
@@ -161,40 +184,38 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Parse a single Molang statement
 	 */
-	protected MolangExpression parseOneLine(String expression) throws MolangException {
-		expression = expression.trim();
-
+	protected MolangExpression parseOneLine(String expression, MolangMultiStatement currentStatement) throws MolangException {
 		if (expression.startsWith(RETURN)) {
 			try {
-				return new MolangValue(this, this.parse(expression.substring(RETURN.length()))).addReturn();
-			} catch (Exception e) {
+				return new MolangValue(this, parse(expression.substring(RETURN.length()))).addReturn();
+			}
+			catch (Exception e) {
 				throw new MolangException("Couldn't parse return '" + expression + "' expression!");
 			}
 		}
 
 		try {
-			List<Object> symbols = this.breakdownChars(this.breakdown(expression));
+			List<Object> symbols = breakdownChars(this.breakdown(expression));
 
 			/* Assignment it is */
-			if (symbols.size() >= 3 && symbols.get(0) instanceof String && this.isVariable(symbols.get(0))
-					&& symbols.get(1).equals("=")) {
-				String name = (String) symbols.get(0);
+			if (symbols.size() >= 3 && symbols.get(0) instanceof String && isVariable(symbols.get(0)) && symbols.get(1).equals("=")) {
+				String name = (String)symbols.get(0);
 				symbols = symbols.subList(2, symbols.size());
+				LazyVariable variable;
 
-				Variable variable;
-
-				if (!this.variables.containsKey(name) && !this.currentStatement.locals.containsKey(name)) {
-					variable = new Variable(name, 0);
-					this.currentStatement.locals.put(name, variable);
-				} else {
-					variable = this.getVariable(name);
+				if (!VARIABLES.containsKey(name) && !currentStatement.locals.containsKey(name)) {
+					currentStatement.locals.put(name, (variable = new LazyVariable(name, 0)));
+				}
+				else {
+					variable = getVariable(name, currentStatement);
 				}
 
-				return new MolangAssignment(this, variable, this.parseSymbolsMolang(symbols));
+				return new MolangAssignment(this, variable, parseSymbolsMolang(symbols));
 			}
 
-			return new MolangValue(this, this.parseSymbolsMolang(symbols));
-		} catch (Exception e) {
+			return new MolangValue(this, parseSymbolsMolang(symbols));
+		}
+		catch (Exception e) {
 			throw new MolangException("Couldn't parse '" + expression + "' expression!");
 		}
 	}
@@ -205,7 +226,8 @@ public class MolangParser extends MathBuilder {
 	private IValue parseSymbolsMolang(List<Object> symbols) throws MolangException {
 		try {
 			return this.parseSymbols(symbols);
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 
 			throw new MolangException("Couldn't parse an expression!");
@@ -214,7 +236,7 @@ public class MolangParser extends MathBuilder {
 
 	/**
 	 * Extend this method to allow {@link #breakdownChars(String[])} to capture "="
-	 * as an operator so it was easier to parse assignment statements
+	 * as an operator, so it was easier to parse assignment statements
 	 */
 	@Override
 	protected boolean isOperator(String s) {
