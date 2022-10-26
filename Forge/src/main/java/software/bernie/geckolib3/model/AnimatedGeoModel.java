@@ -1,6 +1,11 @@
 package software.bernie.geckolib3.model;
 
+import java.util.Collections;
+
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.Blaze3D;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -24,9 +29,6 @@ import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
-import javax.annotation.Nullable;
-import java.util.Collections;
-
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;
@@ -47,9 +49,9 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		Minecraft mc = Minecraft.getInstance();
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
 		AnimationEvent<T> predicate;
-		double currentTick = entity instanceof LivingEntity livingEntity ? livingEntity.tickCount : getCurrentTick();
+		double currentTick = entity instanceof Entity livingEntity ? livingEntity.tickCount : getCurrentTick();
 
 		if (manager.startTick == -1)
 			manager.startTick = currentTick + mc.getFrameTime();

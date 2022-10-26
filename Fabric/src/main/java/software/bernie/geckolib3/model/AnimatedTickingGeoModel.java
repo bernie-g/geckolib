@@ -23,7 +23,7 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
 		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
 		if (manager.startTick == -1) {
 			manager.startTick = (entity.tickTimer() + Minecraft.getInstance().getFrameTime());
 		}
