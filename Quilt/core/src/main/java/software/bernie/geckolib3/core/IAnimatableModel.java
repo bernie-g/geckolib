@@ -7,7 +7,7 @@ import software.bernie.geckolib3.core.processor.IBone;
 
 public interface IAnimatableModel<E> {
 	default double getCurrentTick() {
-		return (System.nanoTime() / 1000000L / 50.0);
+		return System.nanoTime() / 1000000L / 50d;
 	}
 
 	default void setLivingAnimations(E entity, Integer uniqueID) {
@@ -27,10 +27,11 @@ public interface IAnimatableModel<E> {
 	 * @return the bone
 	 */
 	default IBone getBone(String boneName) {
-		IBone bone = this.getAnimationProcessor().getBone(boneName);
-		if (bone == null) {
+		IBone bone = getAnimationProcessor().getBone(boneName);
+
+		if (bone == null)
 			throw new RuntimeException("Could not find bone: " + boneName);
-		}
+
 		return bone;
 	}
 
