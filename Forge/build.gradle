@@ -25,10 +25,9 @@ apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remappe
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: "com.modrinth.minotaur"
 
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
-import com.modrinth.minotaur.dependencies.ModDependency
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -248,7 +247,7 @@ if (file('key.properties').exists()) {
             id = "388172"
             releaseType = "release"
             changelogType = 'text'
-            changelog = file('changelog.txt')=
+            changelog = file('changelog.txt')
         	addGameVersion("1.19.2")
             addGameVersion("Forge")
             addGameVersion("Java 17")
