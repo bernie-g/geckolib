@@ -102,6 +102,14 @@ public class MolangParser extends MathBuilder {
 		this.functions.put(newName, this.functions.remove(old));
 	}
 
+	/**
+	 * Deprecated, use {@link MolangParser#setValue(String, DoubleSupplier)}
+	 */
+	@Deprecated
+	public void setValue(String name, double value) {
+		setValue(name, () -> value);
+	}
+
 	public void setValue(String name, DoubleSupplier value) {
 		LazyVariable variable = getVariable(name);
 
