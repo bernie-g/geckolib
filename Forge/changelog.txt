@@ -1,4 +1,6 @@
-v3.0.99
+v3.0.100
 
-- Fixes shaded libraries being shipped that shouldn't be.
-- Fixes the crash due to loop being false in jsons. (#319) - Tslat 
+- Remove MolangRegistrar class and associated package as it is no longer used for anything (#322) - Tslat 
+- Optimise Molang variables for rendering via lazy value calculation. This could actually save a noticeable number of frames given the sqrt ops currently in place (#322) - Tslat 
+- Fix MolangParser's race condition problem. Should fix the legacy issue geckolib has always had with the mystery 'this.currentStatement is null' error (#322) - Tslat 
+- dd deprecated method for setvalue incase some mod is using it to reduce chance of it being a breaking chance (#322) - Tslat 

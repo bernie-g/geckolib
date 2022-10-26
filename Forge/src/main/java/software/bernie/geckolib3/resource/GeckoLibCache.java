@@ -19,7 +19,6 @@ import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.molang.MolangRegistrar;
 
 public class GeckoLibCache {
 	private static GeckoLibCache INSTANCE;
@@ -28,6 +27,9 @@ public class GeckoLibCache {
 	private final GeoModelLoader modelLoader;
 
 	public final MolangParser parser = new MolangParser();
+
+	private Map<ResourceLocation, AnimationFile> animations = Collections.emptyMap();
+	private Map<ResourceLocation, GeoModel> geoModels = Collections.emptyMap();
 
 	public Map<ResourceLocation, AnimationFile> getAnimations() {
 		if (!GeckoLib.hasInitialized) {
@@ -43,13 +45,9 @@ public class GeckoLibCache {
 		return geoModels;
 	}
 
-	private Map<ResourceLocation, AnimationFile> animations = Collections.emptyMap();
-	private Map<ResourceLocation, GeoModel> geoModels = Collections.emptyMap();
-
 	protected GeckoLibCache() {
 		this.animationLoader = new AnimationFileLoader();
 		this.modelLoader = new GeoModelLoader();
-		MolangRegistrar.registerVars(parser);
 	}
 
 	public static GeckoLibCache getInstance() {

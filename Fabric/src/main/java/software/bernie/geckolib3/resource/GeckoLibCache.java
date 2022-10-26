@@ -19,34 +19,35 @@ import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.molang.MolangRegistrar;
 
 public class GeckoLibCache {
-	private Map<Identifier, AnimationFile> animations = Collections.emptyMap();
-	private Map<Identifier, GeoModel> geoModels = Collections.emptyMap();
 	private static GeckoLibCache INSTANCE;
-	public final MolangParser parser = new MolangParser();
+
 	private final AnimationFileLoader animationLoader;
 	private final GeoModelLoader modelLoader;
 
+	public final MolangParser parser = new MolangParser();
+
+	private Map<Identifier, AnimationFile> animations = Collections.emptyMap();
+	private Map<Identifier, GeoModel> geoModels = Collections.emptyMap();
+
 	public Map<Identifier, AnimationFile> getAnimations() {
-		if (!GeckoLib.hasInitialized) {
+		if (!GeckoLib.hasInitialized) 
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
-		}
+		
 		return animations;
 	}
 
 	public Map<Identifier, GeoModel> getGeoModels() {
-		if (!GeckoLib.hasInitialized) {
+		if (!GeckoLib.hasInitialized) 
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
-		}
+		
 		return geoModels;
 	}
 
 	protected GeckoLibCache() {
 		this.animationLoader = new AnimationFileLoader();
 		this.modelLoader = new GeoModelLoader();
-		MolangRegistrar.registerVars(parser);
 	}
 
 	public static GeckoLibCache getInstance() {
@@ -62,6 +63,7 @@ public class GeckoLibCache {
 			Executor gameExecutor) {
 		Map<Identifier, AnimationFile> animations = new Object2ObjectOpenHashMap<>();
 		Map<Identifier, GeoModel> geoModels = new Object2ObjectOpenHashMap<>();
+		
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(parser, animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",

@@ -45,47 +45,43 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, AnimationEvent customPredicate) {
+		MinecraftClient mc = MinecraftClient.getInstance();
+		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
+		AnimationEvent<T> predicate;
+		double currentTick = entity instanceof LivingEntity ? ((Entity)entity).age : getCurrentTick();
 
-		// Each animation has its own collection of animations (called the
-		// EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID);
-
-		if (manager.ticker == null && !(entity instanceof Entity)) {
+		if (manager.ticker == null && !(entity instanceof LivingEntity)) 
 			manager.ticker = new AnimationTicker(manager);
-		}
-		if (manager.startTick == -1 && entity instanceof Entity) {
-			manager.startTick = (double) (((Entity) entity).age + MinecraftClient.getInstance().getTickDelta());
-		}
 
-		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			if (entity instanceof Entity) {
-				manager.tick = (((Entity) entity).age + MinecraftClient.getInstance().getTickDelta());
+		if (manager.startTick == -1)
+			manager.startTick = currentTick + mc.getTickDelta();
+
+		if (!mc.isPaused() || manager.shouldPlayWhilePaused) {
+			if (entity instanceof LivingEntity) {
+				manager.tick = currentTick + mc.getTickDelta();
 				double gameTick = manager.tick;
-				double deltaTicks = gameTick - lastGameTickTime;
-				seekTime += deltaTicks;
-				lastGameTickTime = gameTick;
+				double deltaTicks = gameTick - this.lastGameTickTime;
+				this.seekTime += deltaTicks;
+				this.lastGameTickTime = gameTick;
+
 				codeAnimations(entity, uniqueID, customPredicate);
 			} else {
-				seekTime = manager.tick + MinecraftClient.getInstance().getTickDelta();
+				manager.tick = currentTick - manager.startTick;
+				double gameTick = manager.tick;
+				double deltaTicks = gameTick - this.lastGameTickTime;
+				this.seekTime += deltaTicks;
+				this.lastGameTickTime = gameTick;
 			}
 		}
 
-		AnimationEvent<T> predicate;
+		predicate = customPredicate == null ? new AnimationEvent<T>(entity, 0, 0, (float)(manager.tick - this.lastGameTickTime), false, Collections.emptyList()) : customPredicate;
+		predicate.animationTick = this.seekTime;
 
-		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, (float) (manager.tick - lastGameTickTime), false,
-					Collections.emptyList());
-		} else {
-			predicate = customPredicate;
-		}
+		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), this.seekTime);
 
-		predicate.animationTick = seekTime;
-
-		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
-		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
-			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
-					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
-		}
+		if (!getAnimationProcessor().getModelRendererList().isEmpty())
+			getAnimationProcessor().tickAnimation(entity, uniqueID, this.seekTime, predicate,
+					GeckoLibCache.getInstance().parser, this.shouldCrashOnMissing);
 	}
 
 	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {
