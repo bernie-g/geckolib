@@ -1,8 +1,8 @@
 package software.bernie.geckolib3.core.molang.expressions;
 
-import com.eliotlash.mclib.math.Variable;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import software.bernie.geckolib3.core.molang.LazyVariable;
 import software.bernie.geckolib3.core.molang.MolangParser;
 
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.Map;
 import java.util.StringJoiner;
 
 public class MolangMultiStatement extends MolangExpression {
-	public List<MolangExpression> expressions = new ObjectArrayList<>();
-	public Map<String, Variable> locals = new Object2ObjectOpenHashMap<>();
+	public final List<MolangExpression> expressions = new ObjectArrayList<>();
+	public final Map<String, LazyVariable> locals = new Object2ObjectOpenHashMap<>();
 
 	public MolangMultiStatement(MolangParser context) {
 		super(context);
@@ -35,9 +35,8 @@ public class MolangMultiStatement extends MolangExpression {
 		for (MolangExpression expression : this.expressions) {
 			builder.add(expression.toString());
 
-			if (expression instanceof MolangValue && ((MolangValue) expression).returns) {
+			if (expression instanceof MolangValue && ((MolangValue)expression).returns)
 				break;
-			}
 		}
 
 		return builder.toString();
