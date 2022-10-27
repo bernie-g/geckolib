@@ -3,11 +3,10 @@ package software.bernie.geckolib3.geo.render.built;
 import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector4f;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3d;
+import org.joml.Vector4f;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.processor.IBone;
@@ -48,19 +47,19 @@ public class GeoBone implements IBone {
 	private Matrix4f localSpaceXform;
 	private Matrix4f worldSpaceXform;
 	private Matrix3f worldSpaceNormal;
-	
+
 	private boolean trackXform;
 	public Matrix4f rotMat;
 
 	public GeoBone() {
 		modelSpaceXform = new Matrix4f();
-		modelSpaceXform.setIdentity();
+		modelSpaceXform.identity();
 		localSpaceXform = new Matrix4f();
-		localSpaceXform.setIdentity();
+		localSpaceXform.identity();
 		worldSpaceXform = new Matrix4f();
-		worldSpaceXform.setIdentity();
+		worldSpaceXform.identity();
 		worldSpaceNormal = new Matrix3f();
-		worldSpaceNormal.setIdentity();
+		worldSpaceNormal.identity();
 		trackXform = false;
 		rotMat = null;
 	}
@@ -259,7 +258,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setModelSpaceXform(Matrix4f modelSpaceXform) {
-		this.modelSpaceXform.multiply(modelSpaceXform);
+		this.modelSpaceXform.mul(modelSpaceXform);
 	}
 
 	public Matrix4f getLocalSpaceXform() {
@@ -268,25 +267,14 @@ public class GeoBone implements IBone {
 	}
 
 	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
-		this.localSpaceXform.load(localSpaceXform);
-	}
-
-	@Deprecated
-	public void setWorldSpaceNormal(Matrix3f worldSpaceNormal) {
-		this.worldSpaceNormal = worldSpaceNormal;
-	}
-
-	@Deprecated
-	public Matrix3f getWorldSpaceNormal() {
-		return worldSpaceNormal;
+		this.localSpaceXform.mapXnYnZ(localSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the entity */
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getLocalPosition() {
 		Matrix4f matrix = getLocalSpaceXform();
-		Vector4f vec = new Vector4f(0, 0, 0, 1);
-		vec.transform(matrix);
+		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
@@ -296,15 +284,14 @@ public class GeoBone implements IBone {
 	}
 
 	public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
-		this.worldSpaceXform.load(worldSpaceXform);
+		this.worldSpaceXform.mapXnYnZ(worldSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the model */
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getModelPosition() {
 		Matrix4f matrix = getModelSpaceXform();
-		Vector4f vec = new Vector4f(0, 0, 0, 1);
-		vec.transform(matrix);
+		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
 		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
@@ -312,8 +299,7 @@ public class GeoBone implements IBone {
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getWorldPosition() {
 		Matrix4f matrix = getWorldSpaceXform();
-		Vector4f vec = new Vector4f(0, 0, 0, 1);
-		vec.transform(matrix);
+		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
@@ -321,24 +307,23 @@ public class GeoBone implements IBone {
 		/* Doesn't work on bones with parent transforms */
 		GeoBone parent = getParent();
 		Matrix4f identity = new Matrix4f();
-		identity.setIdentity();
-		Matrix4f matrix = parent == null ? identity : parent.getModelSpaceXform().copy();
+		identity.identity();
+		Matrix4f matrix = parent == null ? identity : parent.getModelSpaceXform();
 		matrix.invert();
-		Vector4f vec = new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1);
-		vec.transform(matrix);
+		Vector4f vec = matrix.transform(new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1.0f));
 		setPosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
 	public Matrix4f getModelRotationMat() {
-		Matrix4f matrix = getModelSpaceXform().copy();
+		Matrix4f matrix = getModelSpaceXform();
 		removeMatrixTranslation(matrix);
 		return matrix;
 	}
 
 	public static void removeMatrixTranslation(Matrix4f matrix) {
-		matrix.m03 = 0;
-		matrix.m13 = 0;
-		matrix.m23 = 0;
+		matrix.m03(0);
+		matrix.m13(0);
+		matrix.m23(0);
 	}
 
 	public void setModelRotationMat(Matrix4f mat) {

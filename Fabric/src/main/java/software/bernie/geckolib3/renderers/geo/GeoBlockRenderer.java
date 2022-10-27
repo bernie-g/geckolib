@@ -3,12 +3,13 @@ package software.bernie.geckolib3.renderers.geo;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -63,7 +64,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	 * 0 => Normal model 1 => Magical armor overlay
 	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	
+
 	@AvailableSince(value = "3.1.23")
 	@Override
 	@Nonnull
@@ -88,7 +89,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
 
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = stack.last().pose().copy();
+		this.dispatchedMat = stack.last().pose();
 		stack.pushPose();
 		stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0, 0.5);
@@ -104,35 +105,35 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 		stack.popPose();
 	}
-	
+
 	@Override
 	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
-		renderEarlyMat = stackIn.last().pose().copy();
+		renderEarlyMat = stackIn.last().pose();
 		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder, packedLightIn,
-				packedOverlayIn, red, green, blue, alpha);
+		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
+				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
-	
+
 	@Override
 	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose().copy();
+			Matrix4f boneMat = entry.pose();
 
 			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			Matrix4f renderEarlyMatInvert = renderEarlyMat;
 			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
+			Matrix4f modelPosBoneMat = boneMat;
 			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
 			bone.setModelSpaceXform(modelPosBoneMat);
 
 			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			Matrix4f dispatchedMatInvert = this.dispatchedMat;
 			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
+			Matrix4f localPosBoneMat = boneMat;
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
 			// (Offset is the only transform we may want to preserve from the dispatched
 			// mat)
@@ -142,24 +143,25 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
-			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			Matrix4f worldPosBoneMat = localPosBoneMat;
 			worldPosBoneMat.translate(new Vector3f((float) ((BlockEntity) animatable).getBlockPos().getX(),
 					(float) ((BlockEntity) animatable).getBlockPos().getY(),
 					(float) ((BlockEntity) animatable).getBlockPos().getZ()));
 			bone.setWorldSpaceXform(worldPosBoneMat);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+				alpha);
 	}
 
 	public Vec3 getPositionOffset(T entity, float tickDelta) {
 		return Vec3.ZERO;
 	}
 
-    public void multiplyBackward(Matrix4f first, Matrix4f other) {
-        Matrix4f copy = other.copy();
-        copy.multiply(first);
-        first.load(copy);
-    }
+	public void multiplyBackward(Matrix4f first, Matrix4f other) {
+		Matrix4f copy = other;
+		copy.mul(first);
+		first.mapXnYnZ(copy);
+	}
 
 	@Override
 	public Integer getUniqueID(T animatable) {
@@ -186,22 +188,22 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	protected void rotateBlock(Direction facing, PoseStack stack) {
 		switch (facing) {
 		case SOUTH:
-			stack.mulPose(Vector3f.YP.rotationDegrees(180));
+			stack.mulPose(Axis.YP.rotationDegrees(180));
 			break;
 		case WEST:
-			stack.mulPose(Vector3f.YP.rotationDegrees(90));
+			stack.mulPose(Axis.YP.rotationDegrees(90));
 			break;
 		case NORTH:
-			stack.mulPose(Vector3f.YP.rotationDegrees(0));
+			stack.mulPose(Axis.YP.rotationDegrees(0));
 			break;
 		case EAST:
-			stack.mulPose(Vector3f.YP.rotationDegrees(270));
+			stack.mulPose(Axis.YP.rotationDegrees(270));
 			break;
 		case UP:
-			stack.mulPose(Vector3f.XP.rotationDegrees(90));
+			stack.mulPose(Axis.XP.rotationDegrees(90));
 			break;
 		case DOWN:
-			stack.mulPose(Vector3f.XN.rotationDegrees(90));
+			stack.mulPose(Axis.XN.rotationDegrees(90));
 			break;
 		}
 	}
@@ -226,7 +228,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	public ResourceLocation getTextureResource(T entity) {
 		return this.modelProvider.getTextureResource(entity);
 	}
-	
+
 	protected MultiBufferSource rtb = null;
 
 	@Override

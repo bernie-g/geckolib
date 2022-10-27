@@ -2,9 +2,8 @@ package software.bernie.geckolib3.util;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
-
-import com.mojang.math.Vector3d;
-import com.mojang.math.Vector3f;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 
 public class VectorUtils {
 	public static Vector3d fromArray(double[] array) {

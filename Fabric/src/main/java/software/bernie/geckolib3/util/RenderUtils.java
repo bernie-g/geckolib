@@ -1,8 +1,10 @@
 package software.bernie.geckolib3.util;
 
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
@@ -36,23 +38,23 @@ public class RenderUtils {
 
 	public static void rotate(GeoBone bone, PoseStack stack) {
 		if (bone.getRotationZ() != 0.0F) {
-			stack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
+			stack.mulPose(Axis.ZP.rotation(bone.getRotationZ()));
 		}
 
 		if (bone.getRotationY() != 0.0F) {
-			stack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
+			stack.mulPose(Axis.YP.rotation(bone.getRotationY()));
 		}
 
 		if (bone.getRotationX() != 0.0F) {
-			stack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
+			stack.mulPose(Axis.XP.rotation(bone.getRotationX()));
 		}
 	}
 
 	public static void rotate(GeoCube bone, PoseStack stack) {
 		Vector3f rotation = bone.rotation;
 
-		stack.mulPose(new Quaternion(0, 0, rotation.z(), false));
-		stack.mulPose(new Quaternion(0, rotation.y(), 0, false));
-		stack.mulPose(new Quaternion(rotation.x(), 0, 0, false));
+		stack.mulPose(new Quaternionf().rotationXYZ(0, 0, rotation.z()));
+		stack.mulPose(new Quaternionf().rotationXYZ(0, rotation.y(), 0));
+		stack.mulPose(new Quaternionf().rotationXYZ(rotation.x(), 0, 0));
 	}
 }

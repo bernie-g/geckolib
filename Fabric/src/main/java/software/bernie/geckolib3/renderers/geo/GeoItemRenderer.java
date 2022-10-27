@@ -7,12 +7,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
 
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.Minecraft;
@@ -120,7 +120,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 			ItemStack itemStack) {
 
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = stack.last().pose().copy();
+		this.dispatchedMat = stack.last().pose();
 		this.currentItemStack = itemStack;
 		AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
 				false, Collections.singletonList(itemStack));
@@ -144,7 +144,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
 			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
-		renderEarlyMat = stackIn.last().pose().copy();
+		renderEarlyMat = stackIn.last().pose();
 		this.animatable = animatable;
 		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
@@ -155,19 +155,19 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose().copy();
+			Matrix4f boneMat = entry.pose();
 
 			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			Matrix4f renderEarlyMatInvert = renderEarlyMat;
 			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
+			Matrix4f modelPosBoneMat = boneMat;
 			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
 			bone.setModelSpaceXform(modelPosBoneMat);
 
 			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			Matrix4f dispatchedMatInvert = this.dispatchedMat;
 			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
+			Matrix4f localPosBoneMat = boneMat;
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
 			// (Offset is the only transform we may want to preserve from the dispatched mat)
 			Vec3 renderOffset = this.getPositionOffset(animatable, 1.0F);
@@ -175,7 +175,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
-			// Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			// Matrix4f worldPosBoneMat = localPosBoneMat;
 			// worldPosBoneMat.translate(new Vec3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
 			// bone.setWorldSpaceXform(worldPosBoneMat);
 		}
@@ -188,9 +188,9 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	}
 
 	public void multiplyBackward(Matrix4f first, Matrix4f other) {
-		Matrix4f copy = other.copy();
-		copy.multiply(first);
-		first.load(copy);
+		Matrix4f copy = other;
+		copy.mul(first);
+		first.mapXnYnZ(copy);
 	}
 
 	@Override

@@ -11,16 +11,17 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import com.mojang.math.Axis;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
@@ -197,9 +198,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		// First, let's move our render position to the pivot point...
 		stack.translate(bone.getPivotX() / 16, bone.getPivotY() / 16, bone.getPivotZ() / 16);
 
-		stack.mulPose(Vector3f.XP.rotationDegrees(bone.getRotationX()));
-		stack.mulPose(Vector3f.YP.rotationDegrees(bone.getRotationY()));
-		stack.mulPose(Vector3f.ZP.rotationDegrees(bone.getRotationZ()));
+		stack.mulPose(Axis.XP.rotationDegrees(bone.getRotationX()));
+		stack.mulPose(Axis.YP.rotationDegrees(bone.getRotationY()));
+		stack.mulPose(Axis.ZP.rotationDegrees(bone.getRotationZ()));
 	}
 
 	protected void handleArmorRenderingForBone(GeoBone bone, PoseStack stack, VertexConsumer bufferIn,
@@ -372,9 +373,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				yRot = (float) Math.toRadians(yRot);
 				zRot = (float) Math.toRadians(zRot);
 
-				stack.mulPose(new Quaternion(0, 0, zRot, false));
-				stack.mulPose(new Quaternion(0, yRot, 0, false));
-				stack.mulPose(new Quaternion(xRot, 0, 0, false));
+				stack.mulPose(new Quaternionf().rotationXYZ(0, 0, zRot));
+				stack.mulPose(new Quaternionf().rotationXYZ(0, yRot, 0));
+				stack.mulPose(new Quaternionf().rotationXYZ(xRot, 0, 0));
 			} else {
 				sourceLimb.xRot = xRot;
 				sourceLimb.yRot = yRot;
@@ -629,8 +630,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		}
 
 		for (GeoVertex vertex : quad.vertices) {
-			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0F);
-			vector4f.transform(matrix4f);
+            Vector4f vector4f = matrix4f.transform(new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0f));
 
 			// Recompute the UV coordinates to the texture override
 			float texU = (vertex.textureU * textureSize.getA()) / tfbSize.getA();

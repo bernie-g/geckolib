@@ -1,7 +1,7 @@
 package software.bernie.example.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -61,7 +61,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	protected void preRenderItem(PoseStack stack, ItemStack item, String boneName, ExtendedRendererEntity currentEntity,
 			IBone bone) {
 		if (item == this.mainHand || item == this.offHand) {
-			stack.mulPose(Vector3f.XP.rotationDegrees(-90.0F));
+			stack.mulPose(Axis.XP.rotationDegrees(-90.0F));
 			boolean shieldFlag = item.getItem() instanceof ShieldItem;
 			if (item == this.mainHand) {
 				if (shieldFlag) {
@@ -72,7 +72,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			} else {
 				if (shieldFlag) {
 					stack.translate(0, 0.125, 0.25);
-					stack.mulPose(Vector3f.YP.rotationDegrees(180));
+					stack.mulPose(Axis.YP.rotationDegrees(180));
 				} else {
 
 				}

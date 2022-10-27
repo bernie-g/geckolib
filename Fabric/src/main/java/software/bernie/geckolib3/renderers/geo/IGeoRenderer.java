@@ -5,12 +5,13 @@ import java.io.IOException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -110,8 +111,7 @@ public interface IGeoRenderer<T> {
 			if (quad == null) {
 				continue;
 			}
-			Vector3f normal = quad.normal.copy();
-			normal.transform(matrix3f);
+			Vector3f normal = matrix3f.transform(new Vector3f(quad.normal.absolute()));
 
 			/*
 			 * Fix shading dark shading for flat cubes + compatibility wish Optifine shaders
@@ -140,8 +140,7 @@ public interface IGeoRenderer<T> {
 			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha)
 			throws IOException {
 		for (GeoVertex vertex : quad.vertices) {
-			Vector4f vector4f = new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0F);
-			vector4f.transform(matrix4f);
+            Vector4f vector4f = matrix4f.transform(new Vector4f(vertex.position.x(), vertex.position.y(), vertex.position.z(), 1.0f));
 			bufferIn.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.textureU,
 					vertex.textureV, packedOverlayIn, packedLightIn, normal.x(), normal.y(), normal.z());
 		}

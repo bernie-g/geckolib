@@ -3,8 +3,7 @@ package software.bernie.geckolib3.geo.render;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import com.mojang.math.Vector3f;
+import org.joml.Vector3f;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.geo.raw.pojo.Bone;

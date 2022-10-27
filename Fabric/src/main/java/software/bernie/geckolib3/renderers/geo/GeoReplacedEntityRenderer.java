@@ -8,13 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexMultiConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.loader.api.FabricLoader;
@@ -132,7 +133,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = stack.last().pose().copy();
+		this.dispatchedMat = stack.last().pose();
 		stack.pushPose();
 		if (entity instanceof Mob) {
 			Entity leashHolder = ((Mob) entity).getLeashHolder();
@@ -238,7 +239,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	public void renderEarly(Object animatable, PoseStack stackIn, float partialTicks,
 			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn,
 			float red, float green, float blue, float alpha) {
-		renderEarlyMat = stackIn.last().pose().copy();
+		renderEarlyMat = stackIn.last().pose();
 		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
 				packedLightIn, packedOverlayIn, red, green, blue, alpha);
 	}
@@ -248,19 +249,19 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			int packedOverlayIn, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose().copy();
+			Matrix4f boneMat = entry.pose();
 
 			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
+			Matrix4f renderEarlyMatInvert = renderEarlyMat;
 			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
+			Matrix4f modelPosBoneMat = boneMat;
 			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
 			bone.setModelSpaceXform(modelPosBoneMat);
 
 			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
+			Matrix4f dispatchedMatInvert = this.dispatchedMat;
 			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
+			Matrix4f localPosBoneMat = boneMat;
 			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
 			// (Offset is the only transform we may want to preserve from the dispatched
 			// mat)
@@ -270,7 +271,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			bone.setLocalSpaceXform(localPosBoneMat);
 
 			// World space
-			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
+			Matrix4f worldPosBoneMat = localPosBoneMat;
 			worldPosBoneMat.translate(new Vector3f((float) ((Entity) animatable).getX(),
 					(float) ((Entity) animatable).getY(), (float) ((Entity) animatable).getZ()));
 			bone.setWorldSpaceXform(worldPosBoneMat);
@@ -280,9 +281,9 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	public void multiplyBackward(Matrix4f first, Matrix4f other) {
-		Matrix4f copy = other.copy();
-		copy.multiply(first);
-		first.load(copy);
+		Matrix4f copy = other;
+		copy.mul(first);
+		first.mapXnYnZ(copy);
 	}
 
 	protected float getOverlayProgress(LivingEntity livingEntityIn, float partialTicks) {
@@ -306,7 +307,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			float rotationYaw, float partialTicks) {
 		Pose pose = entityLiving.getPose();
 		if (pose != Pose.SLEEPING) {
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(180.0F - rotationYaw));
+			matrixStackIn.mulPose(Axis.YP.rotationDegrees(180.0F - rotationYaw));
 		}
 
 		if (entityLiving.deathTime > 0) {
@@ -316,23 +317,23 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 				f = 1.0F;
 			}
 
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
+			matrixStackIn.mulPose(Axis.ZP.rotationDegrees(f * this.getDeathMaxRotation(entityLiving)));
 		} else if (entityLiving.isAutoSpinAttack()) {
-			matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-90.0F - entityLiving.getXRot()));
+			matrixStackIn.mulPose(Axis.XP.rotationDegrees(-90.0F - entityLiving.getXRot()));
 			matrixStackIn
-					.mulPose(Vector3f.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
+					.mulPose(Axis.YP.rotationDegrees(((float) entityLiving.tickCount + partialTicks) * -75.0F));
 		} else if (pose == Pose.SLEEPING) {
 			Direction direction = entityLiving.getBedOrientation();
 			float f1 = direction != null ? getFacingAngle(direction) : rotationYaw;
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(f1));
-			matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
-			matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(270.0F));
+			matrixStackIn.mulPose(Axis.YP.rotationDegrees(f1));
+			matrixStackIn.mulPose(Axis.ZP.rotationDegrees(this.getDeathMaxRotation(entityLiving)));
+			matrixStackIn.mulPose(Axis.YP.rotationDegrees(270.0F));
 		} else if (entityLiving.hasCustomName() || entityLiving instanceof Player) {
 			String s = ChatFormatting.stripFormatting(entityLiving.getName().getString());
 			if (("Dinnerbone".equals(s) || "Grumm".equals(s)) && (!(entityLiving instanceof Player)
 					|| ((Player) entityLiving).isModelPartShown(PlayerModelPart.CAPE))) {
 				matrixStackIn.translate(0.0D, entityLiving.getBbHeight() + 0.1F, 0.0D);
-				matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(180.0F));
+				matrixStackIn.mulPose(Axis.ZP.rotationDegrees(180.0F));
 			}
 		}
 
