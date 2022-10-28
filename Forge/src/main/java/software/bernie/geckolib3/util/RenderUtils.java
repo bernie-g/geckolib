@@ -3,6 +3,7 @@ package software.bernie.geckolib3.util;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
+import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -94,27 +95,11 @@ public final class RenderUtils {
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		if (bone.getRotationZ() != 0)
-			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
-
-		if (bone.getRotationY() != 0)
-			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
-
-		if (bone.getRotationX() != 0)
-			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
+		poseStack.mulPose(new Quaternion(bone.getRotationX(), bone.getRotationY(), bone.getRotationZ(), false));
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
-		Vector3f rotation = cube.rotation;
-
-		if (rotation.z() != 0)
-			poseStack.mulPose(Vector3f.ZP.rotation(rotation.z()));
-
-		if (rotation.y() != 0)
-			poseStack.mulPose(Vector3f.YP.rotation(rotation.y()));
-
-		if (rotation.x() != 0)
-			poseStack.mulPose(Vector3f.XP.rotation(rotation.x()));
+		poseStack.mulPose(new Quaternion(cube.rotation.x(), cube.rotation.y(), cube.rotation.z(), false));
 	}
 
 	public static void scaleMatrixForBone(PoseStack poseStack, GeoBone bone) {
