@@ -245,8 +245,11 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
 			bone.setLocalSpaceXform(localMatrix);
-			poseState.translate(new Vector3f(this.animatable.position()));
-			bone.setWorldSpaceXform(poseState);
+
+			Matrix4f worldState = localMatrix.copy();
+
+			worldState.translate(new Vector3f(this.animatable.position()));
+			bone.setWorldSpaceXform(worldState);
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);

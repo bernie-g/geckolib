@@ -240,8 +240,11 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(entity, 1)));
 			bone.setLocalSpaceXform(localMatrix);
-			poseState.translate(new Vector3f(entity.position()));
-			bone.setWorldSpaceXform(poseState);
+
+			Matrix4f worldState = localMatrix.copy();
+
+			worldState.translate(new Vector3f(entity.position()));
+			bone.setWorldSpaceXform(worldState);
 		}
 
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,

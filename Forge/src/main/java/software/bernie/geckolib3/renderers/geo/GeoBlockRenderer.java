@@ -111,8 +111,11 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
 			bone.setLocalSpaceXform(localMatrix);
-			poseState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
-			bone.setWorldSpaceXform(poseState);
+
+			Matrix4f worldState = localMatrix.copy();
+
+			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
+			bone.setWorldSpaceXform(worldState);
 		}
 
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
