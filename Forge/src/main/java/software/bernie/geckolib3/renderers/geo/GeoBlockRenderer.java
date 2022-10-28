@@ -37,13 +37,12 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		implements IGeoRenderer<T>, BlockEntityRenderer {
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof BlockEntity) {
-				BlockEntity tile = (BlockEntity) object;
+			if (object instanceof BlockEntity tile) {
 				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher()
 						.getRenderer(tile);
-				if (renderer instanceof GeoBlockRenderer) {
-					return (IAnimatableModel<Object>) ((GeoBlockRenderer<?>) renderer).getGeoModelProvider();
-				}
+
+				if (renderer instanceof GeoBlockRenderer blockRenderer)
+					return (IAnimatableModel<Object>)blockRenderer.getGeoModelProvider();
 			}
 			return null;
 		});
