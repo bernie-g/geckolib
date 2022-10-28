@@ -28,7 +28,7 @@ public class GeckoLibIdTracker extends SavedData {
         GeckoLibIdTracker tracker = new GeckoLibIdTracker();
         tracker.usedIds.clear();
         for(String key : tag.getAllKeys()) {
-            if (tag.contains(key, 99)) {
+            if (tag.contains(key, CompoundTag.TAG_ANY_NUMERIC)) {
                 tracker.usedIds.put(key, tag.getInt(key));
             }
         }
