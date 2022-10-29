@@ -64,7 +64,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	/**
 	 * Use {@link LivingEntity#getItemBySlot(EquipmentSlot)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public ItemStack mainHand, offHand, helmet, chestplate, leggings, boots;
 	public MultiBufferSource rtb;
 	public ResourceLocation whTexture;
