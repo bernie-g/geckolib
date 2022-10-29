@@ -91,7 +91,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return null;
 	}
 
-	@Deprecated(since = "Please use the method that takes in the supplier, this is only present for legacy support", forRemoval = true)
+	/**
+	 * Use {@link GeoArmorRenderer#registerArmorRenderer(Class, Supplier)}
+	 * @param itemClass
+	 * @param renderer
+	 */
+	@Deprecated(forRemoval = true)
 	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer renderer) {
 		for (Constructor<?> constructor : renderer.getClass().getConstructors()) {
 			if (constructor.getParameterCount() == 0) {
