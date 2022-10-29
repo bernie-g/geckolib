@@ -17,9 +17,9 @@ public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity> {
 	}
 
 	@Override
-	public RenderType getRenderType(BikeEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(BikeEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

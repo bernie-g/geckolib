@@ -17,9 +17,9 @@ public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntit
 	}
 
 	@Override
-	public RenderType getRenderType(FertilizerTileEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(FertilizerTileEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

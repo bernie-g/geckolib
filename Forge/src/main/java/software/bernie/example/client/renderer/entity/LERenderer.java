@@ -7,10 +7,11 @@ import software.bernie.example.entity.LEEntity;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class LERenderer extends GeoEntityRenderer<LEEntity> {
-
 	public LERenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new LEModel());
-        this.addLayer(new GeoExampleLayer(this));
-        this.shadowRadius = 0.25f;
+
+		this.shadowRadius = 0.25f;
+
+        addLayer(new GeoExampleLayer(this));
     }
 }
