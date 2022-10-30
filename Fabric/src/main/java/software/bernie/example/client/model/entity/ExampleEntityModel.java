@@ -1,6 +1,7 @@
 package software.bernie.example.client.model.entity;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -25,14 +26,14 @@ public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity
 	}
 
 	@Override
-	public void setLivingAnimations(GeoExampleEntity entity, Integer uniqueID, AnimationEvent customPredicate) {
-		super.setLivingAnimations(entity, uniqueID, customPredicate);
+	public void setCustomAnimations(GeoExampleEntity animatable, int instanceId, AnimationEvent animationEvent) {
+		super.setCustomAnimations(animatable, instanceId, animationEvent);
 		IBone head = this.getAnimationProcessor().getBone("head");
 
-		EntityModelData extraData = (EntityModelData) customPredicate.getExtraDataOfType(EntityModelData.class).get(0);
+		EntityModelData extraData = (EntityModelData) animationEvent.getExtraDataOfType(EntityModelData.class).get(0);
 		if (head != null) {
-			head.setRotationX(extraData.headPitch * ((float) Math.PI / 180F));
-			head.setRotationY(extraData.netHeadYaw * ((float) Math.PI / 180F));
+			head.setRotationX(extraData.headPitch * Mth.DEG_TO_RAD);
+			head.setRotationY(extraData.netHeadYaw * Mth.DEG_TO_RAD);
 		}
 	}
 }

@@ -1,7 +1,6 @@
 package software.bernie.example.item;
 
-import org.quiltmc.qsl.networking.api.PlayerLookup;
-
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -17,6 +16,7 @@ import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -99,7 +99,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 				// Set the animation to open the JackInTheBoxItem which will start playing music
 				// and
 				// eventually do the actual animation. Also sets it to not loop
-				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
+				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", EDefaultLoopTypes.PLAY_ONCE));
 			}
 		}
 	}

@@ -246,7 +246,12 @@ public class AnimationProcessor<T extends IAnimatable> {
 	 * @return the bone
 	 */
 	public IBone getBone(String boneName) {
-		return modelRendererList.stream().filter(x -> x.getName().equals(boneName)).findFirst().orElse(null);
+		for (IBone bone : this.modelRendererList) {
+			if (bone.getName().equals(boneName))
+				return bone;
+		}
+
+		return null;
 	}
 
 	/**

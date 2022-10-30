@@ -17,21 +17,21 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 
 	private int currentTick = -1;
 
-	public ExampleGeoRenderer(EntityRendererProvider.Context ctx) {
-		super(ctx, new ExampleEntityModel());
+	public ExampleGeoRenderer(EntityRendererProvider.Context renderManager) {
+		super(renderManager, new ExampleEntityModel());
 	}
 
 	@Override
-	public RenderType getRenderType(GeoExampleEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(GeoExampleEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityCutout(getTextureLocation(animatable));
 	}
 
 	@Override
-	public void render(GeoModel model, GeoExampleEntity animatable, float partialTicks, RenderType type,
-			PoseStack matrixStackIn, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder,
-			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void render(GeoModel model, GeoExampleEntity animatable, float partialTick, RenderType type,
+					   PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer,
+					   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (currentTick < 0 || currentTick != animatable.tickCount) {
 			this.currentTick = animatable.tickCount;
 			if (model.getBone("leftear").isPresent()) {
@@ -43,8 +43,6 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 						(animatable.getRandom().nextDouble() - 0.5D));
 			}
 		}
-		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
-
 }

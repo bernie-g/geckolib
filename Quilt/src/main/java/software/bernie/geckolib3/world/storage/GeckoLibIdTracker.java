@@ -26,7 +26,7 @@ public class GeckoLibIdTracker extends SavedData {
 		GeckoLibIdTracker idCountsState = new GeckoLibIdTracker();
 		idCountsState.usedIds.clear();
 		for (String key : nbt.getAllKeys()) {
-			if (nbt.contains(key, 99)) {
+			if (nbt.contains(key, CompoundTag.TAG_ANY_NUMERIC)) {
 				idCountsState.usedIds.put(key, nbt.getInt(key));
 			}
 		}

@@ -29,8 +29,11 @@ public class RawAnimation {
 		this.animationName = animationName;
 		this.loopType = loop;
 	}
-	
-	@Deprecated
+
+	/**
+	 * Use {@link ILoopType} constructor
+	 */
+	@Deprecated(forRemoval = true)
 	public RawAnimation(String animationName, boolean loop) {
 		this(animationName, loop ? EDefaultLoopTypes.LOOP : EDefaultLoopTypes.PLAY_ONCE);
 	}
