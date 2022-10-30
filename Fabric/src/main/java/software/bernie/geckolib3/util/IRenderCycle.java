@@ -7,5 +7,5 @@ package software.bernie.geckolib3.util;
  * Allows the end user to introduce custom render cycles
  */
 public interface IRenderCycle {
-	public String name();
+	String name();
 }

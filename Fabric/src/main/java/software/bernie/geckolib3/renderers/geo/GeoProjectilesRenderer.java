@@ -22,7 +22,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -36,17 +35,15 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.util.RenderUtils;
 
 public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
 		implements IGeoRenderer<T> {
 
 	static {
-		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof Entity) {
-				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
-			}
-			return null;
-		});
+		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity
+				? (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity(entity)
+				: null);
 	}
 
 	private final AnimatedGeoModel<T> modelProvider;
@@ -55,16 +52,14 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	protected T animatable;
 	protected float widthScale = 1;
 	protected float heightScale = 1;
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	protected MultiBufferSource rtb = null;
 
 	public GeoProjectilesRenderer(EntityRendererProvider.Context ctx, AnimatedGeoModel<T> modelProvider) {
 		super(ctx);
+
 		this.modelProvider = modelProvider;
 	}
-
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	@AvailableSince(value = "3.1.23")
 	@Override
@@ -80,91 +75,73 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public void render(T entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn,
-			MultiBufferSource bufferIn, int packedLightIn) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(entityIn));
+	public void render(T animatable, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
+			int packedLight) {
+		GeoModel model = this.modelProvider.getModel(modelProvider.getModelResource(animatable));
+		this.dispatchedMat = poseStack.last().pose();
 
-		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = matrixStackIn.last().pose();
-		matrixStackIn.pushPose();
-		matrixStackIn
-				.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entityIn.yRotO, entityIn.getYRot()) - 90.0F));
-		matrixStackIn.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entityIn.xRotO, entityIn.getXRot())));
+		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		poseStack.pushPose();
+		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
 
-		float lastLimbDistance = 0.0F;
-		float limbSwing = 0.0F;
-		EntityModelData entityModelData = new EntityModelData();
-		AnimationEvent<T> predicate = new AnimationEvent<T>(entityIn, limbSwing, lastLimbDistance, partialTicks,
-				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
-		if (modelProvider instanceof IAnimatableModel) {
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
+		AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, 0, 0, partialTick, false,
+				Collections.singletonList(new EntityModelData()));
+
+		modelProvider.setCustomAnimations(animatable, getInstanceId(animatable), predicate);
+		
+		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
+
+		Color renderColor = getRenderColor(animatable, partialTick, poseStack, bufferSource, null, packedLight);
+		RenderType renderType = getRenderType(animatable, partialTick, poseStack, bufferSource, null, packedLight,
+				getTextureLocation(animatable));
+
+		if (!animatable.isInvisibleTo(Minecraft.getInstance().player)) {
+			render(model, animatable, partialTick, renderType, poseStack, bufferSource, null, packedLight,
+					getPackedOverlay(animatable, 0), renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
+					renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 		}
-		RenderSystem.setShaderTexture(0, getTextureLocation(entityIn));
-		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
-				getTextureLocation(entityIn));
-		if (!entityIn.isInvisibleTo(Minecraft.getInstance().player))
-			render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
-					getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-					(float) renderColor.getAlpha() / 255);
-		matrixStackIn.popPose();
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+
+		poseStack.popPose();
+		super.render(animatable, yaw, partialTick, poseStack, bufferSource, packedLight);
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
+			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
 			float alpha) {
-		renderEarlyMat = stackIn.last().pose();
+		this.renderEarlyMat = poseStack.last().pose();
 		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+				packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose();
+			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat;
-			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat;
-			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
-			bone.setModelSpaceXform(modelPosBoneMat);
+			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			localMatrix.translate(new Vector3f((float) getRenderOffset(animatable, 1).x(),
+					(float) getRenderOffset(animatable, 1).y(), (float) getRenderOffset(animatable, 1).z()));
 
-			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat;
-			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat;
-			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched
-			// mat)
-			Vec3 renderOffset = this.getRenderOffset(animatable, 1.0F);
-			localPosBoneMat.translate(
-					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
-			bone.setLocalSpaceXform(localPosBoneMat);
+			bone.setLocalSpaceXform(localMatrix);
 
-			// World space
-			Matrix4f worldPosBoneMat = localPosBoneMat;
-			worldPosBoneMat.translate(
+			Matrix4f worldState = localMatrix;
+			worldState.translate(
 					new Vector3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
-			bone.setWorldSpaceXform(worldPosBoneMat);
+			bone.setWorldSpaceXform(worldState);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+
+		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
-	public void multiplyBackward(Matrix4f first, Matrix4f other) {
-		Matrix4f copy = other;
-		copy.mul(first);
-		first.mapXnYnZ(copy);
-	}
-
-	public static int getPackedOverlay(Entity livingEntityIn, float uIn) {
+	// TODO 1.20+ change to instance method with T argument instead of entity
+	public int getPackedOverlay(T entity, float uIn) {
 		return OverlayTexture.pack(OverlayTexture.u(uIn), OverlayTexture.v(false));
 	}
 
@@ -175,13 +152,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@AvailableSince(value = "3.1.23")
 	@Override
-	public float getWidthScale(T animatable2) {
+	public float getWidthScale(T animatable) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.1.23")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 
@@ -196,15 +173,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public Integer getUniqueID(T animatable) {
+	public int getInstanceId(T animatable) {
 		return animatable.getUUID().hashCode();
 	}
 
-	protected MultiBufferSource rtb = null;
-
 	@Override
-	public void setCurrentRTB(MultiBufferSource rtb) {
-		this.rtb = rtb;
+	public void setCurrentRTB(MultiBufferSource bufferSource) {
+		this.rtb = bufferSource;
 	}
 
 	@Override

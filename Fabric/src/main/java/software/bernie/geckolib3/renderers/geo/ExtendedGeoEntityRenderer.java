@@ -585,8 +585,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	 * @param type   Subtype, can be null or "overlay"
 	 * @return ResourceLocation pointing at the armor's texture
 	 */
-	private static final Map<String, ResourceLocation> ARMOR_TEXTURE_RES_MAP = Maps.newHashMap();
-
 	protected ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type) {
 		ArmorItem item = (ArmorItem) stack.getItem();
 		String texture = item.getMaterial().getName();

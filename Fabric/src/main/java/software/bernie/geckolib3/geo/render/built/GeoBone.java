@@ -27,9 +27,9 @@ public class GeoBone implements IBone {
 	public boolean hideChildBonesToo;
 	// I still have no idea what this field does, but it's in the json file so
 	public Boolean reset;
-	public float pivotX;
-	public float pivotY;
-	public float pivotZ;
+	public float rotationPointX;
+	public float rotationPointY;
+	public float rotationPointZ;
 	private BoneSnapshot initialSnapshot;
 	private float scaleX = 1;
 	private float scaleY = 1;
@@ -180,32 +180,32 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setPivotX(float value) {
-		this.pivotX = value;
+		this.rotationPointX = value;
 	}
 
 	@Override
 	public void setPivotY(float value) {
-		this.pivotY = value;
+		this.rotationPointY = value;
 	}
 
 	@Override
 	public void setPivotZ(float value) {
-		this.pivotZ = value;
+		this.rotationPointZ = value;
 	}
 
 	@Override
 	public float getPivotX() {
-		return this.pivotX;
+		return this.rotationPointX;
 	}
 
 	@Override
 	public float getPivotY() {
-		return this.pivotY;
+		return this.rotationPointY;
 	}
 
 	@Override
 	public float getPivotZ() {
-		return this.pivotZ;
+		return this.rotationPointZ;
 	}
 
 	@Override
@@ -266,15 +266,14 @@ public class GeoBone implements IBone {
 		return localSpaceXform;
 	}
 
-	public void setLocalSpaceXform(Matrix4f localSpaceXform) {
-		this.localSpaceXform.mapXnYnZ(localSpaceXform);
+	public void setLocalSpaceXform(Matrix4f otherlocalSpaceXform) {
+		this.localSpaceXform.transpose(otherlocalSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the entity */
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getLocalPosition() {
-		Matrix4f matrix = getLocalSpaceXform();
-		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
+		Vector4f vec = getLocalSpaceXform().transform(new Vector4f(0, 0, 0, 1));
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
@@ -283,23 +282,21 @@ public class GeoBone implements IBone {
 		return worldSpaceXform;
 	}
 
-	public void setWorldSpaceXform(Matrix4f worldSpaceXform) {
-		this.worldSpaceXform.mapXnYnZ(worldSpaceXform);
+	public void setWorldSpaceXform(Matrix4f otherworldSpaceXform) {
+		this.worldSpaceXform.transpose(worldSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the model */
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getModelPosition() {
-		Matrix4f matrix = getModelSpaceXform();
-		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
+		Vector4f vec = getModelSpaceXform().transform(new Vector4f(0, 0, 0, 1));
 		return new Vector3d(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
 	/* Gets the postion of a bone relative to the world */
 	@AvailableSince(value = "3.1.23")
 	public Vector3d getWorldPosition() {
-		Matrix4f matrix = getWorldSpaceXform();
-		Vector4f vec = matrix.transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0f));
+		Vector4f vec = getWorldSpaceXform().transform(new Vector4f(0, 0, 0, 1));
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
@@ -308,14 +305,15 @@ public class GeoBone implements IBone {
 		GeoBone parent = getParent();
 		Matrix4f identity = new Matrix4f();
 		identity.identity();
-		Matrix4f matrix = parent == null ? identity : parent.getModelSpaceXform();
+		Matrix4f matrix = parent == null ? identity : new Matrix4f(parent.getModelSpaceXform());
 		matrix.invert();
-		Vector4f vec = matrix.transform(new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1.0f));
+		Vector4f vec = matrix
+				.transform(new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1));
 		setPosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 
 	public Matrix4f getModelRotationMat() {
-		Matrix4f matrix = getModelSpaceXform();
+		Matrix4f matrix = new Matrix4f(getModelSpaceXform());
 		removeMatrixTranslation(matrix);
 		return matrix;
 	}
