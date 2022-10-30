@@ -368,10 +368,19 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this;
 	}
 
-	@SuppressWarnings("incomplete-switch")
 	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
 		this.modelProvider.getModel(this.modelProvider.getModelResource(this.currentArmorItem));
 
+		setBoneVisibility(this.headBone, false);
+        setBoneVisibility(this.bodyBone, false);
+        setBoneVisibility(this.rightArmBone, false);
+        setBoneVisibility(this.leftArmBone, false);
+        setBoneVisibility(this.rightLegBone, false);
+        setBoneVisibility(this.leftLegBone, false);
+        setBoneVisibility(this.rightBootBone, false);
+        setBoneVisibility(this.rightBootBone, false);
+        setBoneVisibility(this.leftBootBone, false);
+        
 		switch (slot) {
 			case HEAD -> setBoneVisibility(this.headBone, true);
 			case CHEST -> {

@@ -42,6 +42,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeoUtils;
 import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.util.RenderUtils;
 
 public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
 	public static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
@@ -56,8 +57,15 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		});
 	}
 
-	protected AnimatedGeoModel<T> modelProvider;
-	protected ItemStack currentItemStack;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlot armorSlot;
+	protected HumanoidModel baseModel;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
+	protected Matrix4f dispatchedMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
 
 	// Set these to the names of your armor's bones, or null if you aren't using
 	// them
@@ -70,33 +78,11 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
 
-	protected T currentArmorItem;
-	protected LivingEntity entityLiving;
-	protected ItemStack itemStack;
-	protected EquipmentSlot armorSlot;
-	protected HumanoidModel baseModel;
-	protected float widthScale = 1;
-	protected float heightScale = 1;
-	protected Matrix4f dispatchedMat = new Matrix4f();
-	protected Matrix4f renderEarlyMat = new Matrix4f();
+	private AnimatedGeoModel<T> modelProvider;
 
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
+	protected MultiBufferSource rtb = null;
+
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-
-	@AvailableSince(value = "3.1.23")
-	@Override
-	@Nonnull
-	public IRenderCycle getCurrentModelRenderCycle() {
-		return this.currentModelRenderCycle;
-	}
-
-	@AvailableSince(value = "3.1.23")
-	@Override
-	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
-		this.currentModelRenderCycle = currentModelRenderCycle;
-	}
 
 	public GeoArmorRenderer(AnimatedGeoModel<T> modelProvider) {
 		this.modelProvider = modelProvider;
@@ -196,63 +182,41 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
+			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
 			float alpha) {
-		renderEarlyMat = stackIn.last().pose().copy();
+		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.currentArmorItem = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+				packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose().copy();
+			Matrix4f poseState = poseStack.last().pose();
+			Vec3 renderOffset = getRenderOffset(this.currentArmorItem, 1);
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
-			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
-			bone.setModelSpaceXform(modelPosBoneMat);
-
-			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
-			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
-			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched
-			// mat)
-			Vec3 renderOffset = this.getPositionOffset(currentArmorItem, 1.0F);
-			localPosBoneMat.translate(
-					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
-			bone.setLocalSpaceXform(localPosBoneMat);
-
-			// World space
-//			 Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-//			 worldPosBoneMat.translate(new Vector3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
-//			 bone.setWorldSpaceXform(worldPosBoneMat);
+			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			localMatrix.translate(new Vector3f(renderOffset));
+			bone.setLocalSpaceXform(localMatrix);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+
+		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
-	public Vec3 getPositionOffset(T entity, float tickDelta) {
+	public Vec3 getRenderOffset(T entity, float tickDelta) {
 		return Vec3.ZERO;
-	}
-
-	public void multiplyBackward(Matrix4f first, Matrix4f other) {
-		Matrix4f copy = other.copy();
-		copy.multiply(first);
-		first.load(copy);
 	}
 
 	private void fitToBiped() {
 		if (this.headBone != null) {
 			IBone headBone = this.modelProvider.getBone(this.headBone);
+
 			GeoUtils.copyRotations(baseModel.head, headBone);
 			headBone.setPositionX(baseModel.head.x);
 			headBone.setPositionY(-baseModel.head.y);
@@ -261,6 +225,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 
 		if (this.bodyBone != null) {
 			IBone bodyBone = this.modelProvider.getBone(this.bodyBone);
+
 			GeoUtils.copyRotations(baseModel.body, bodyBone);
 			bodyBone.setPositionX(baseModel.body.x);
 			bodyBone.setPositionY(-baseModel.body.y);
@@ -268,6 +233,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		}
 		if (this.rightArmBone != null) {
 			IBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
+
 			GeoUtils.copyRotations(baseModel.rightArm, rightArmBone);
 			rightArmBone.setPositionX(baseModel.rightArm.x + 5);
 			rightArmBone.setPositionY(2 - baseModel.rightArm.y);
@@ -276,6 +242,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 
 		if (this.leftArmBone != null) {
 			IBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
+
 			GeoUtils.copyRotations(baseModel.leftArm, leftArmBone);
 			leftArmBone.setPositionX(baseModel.leftArm.x - 5);
 			leftArmBone.setPositionY(2 - baseModel.leftArm.y);
@@ -283,12 +250,14 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		}
 		if (this.rightLegBone != null) {
 			IBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
+
 			GeoUtils.copyRotations(baseModel.rightLeg, rightLegBone);
 			rightLegBone.setPositionX(baseModel.rightLeg.x + 2);
 			rightLegBone.setPositionY(12 - baseModel.rightLeg.y);
 			rightLegBone.setPositionZ(baseModel.rightLeg.z);
 			if (this.rightBootBone != null) {
 				IBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
+
 				GeoUtils.copyRotations(baseModel.rightLeg, rightBootBone);
 				rightBootBone.setPositionX(baseModel.rightLeg.x + 2);
 				rightBootBone.setPositionY(12 - baseModel.rightLeg.y);
@@ -297,12 +266,14 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		}
 		if (this.leftLegBone != null) {
 			IBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
+
 			GeoUtils.copyRotations(baseModel.leftLeg, leftLegBone);
 			leftLegBone.setPositionX(baseModel.leftLeg.x - 2);
 			leftLegBone.setPositionY(12 - baseModel.leftLeg.y);
 			leftLegBone.setPositionZ(baseModel.leftLeg.z);
 			if (this.leftBootBone != null) {
 				IBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
+
 				GeoUtils.copyRotations(baseModel.leftLeg, leftBootBone);
 				leftBootBone.setPositionX(baseModel.leftLeg.x - 2);
 				leftBootBone.setPositionY(12 - baseModel.leftLeg.y);
@@ -314,6 +285,19 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 	@Override
 	public AnimatedGeoModel<T> getGeoModelProvider() {
 		return this.modelProvider;
+	}
+
+	@AvailableSince(value = "3.1.23")
+	@Override
+	@Nonnull
+	public IRenderCycle getCurrentModelRenderCycle() {
+		return this.currentModelRenderCycle;
+	}
+
+	@AvailableSince(value = "3.1.23")
+	@Override
+	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
+		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
 	@AvailableSince(value = "3.1.23")
@@ -352,55 +336,63 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return this;
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	public GeoArmorRenderer<T> applySlot(EquipmentSlot boneSlot) {
-		modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
+	public GeoArmorRenderer<T> applySlot(EquipmentSlot slot) {
+		this.modelProvider.getModel(this.modelProvider.getModelResource(this.currentArmorItem));
 
-		IBone headBone = this.getAndHideBone(this.headBone);
-		IBone bodyBone = this.getAndHideBone(this.bodyBone);
-		IBone rightArmBone = this.getAndHideBone(this.rightArmBone);
-		IBone leftArmBone = this.getAndHideBone(this.leftArmBone);
-		IBone rightLegBone = this.getAndHideBone(this.rightLegBone);
-		IBone leftLegBone = this.getAndHideBone(this.leftLegBone);
-		IBone rightBootBone = this.getAndHideBone(this.rightBootBone);
-		IBone leftBootBone = this.getAndHideBone(this.leftBootBone);
+		setBoneVisibility(this.headBone, false);
+		setBoneVisibility(this.bodyBone, false);
+		setBoneVisibility(this.rightArmBone, false);
+		setBoneVisibility(this.leftArmBone, false);
+		setBoneVisibility(this.rightLegBone, false);
+		setBoneVisibility(this.leftLegBone, false);
+		setBoneVisibility(this.rightBootBone, false);
+		setBoneVisibility(this.rightBootBone, false);
+		setBoneVisibility(this.leftBootBone, false);
 
-		switch (boneSlot) {
-		case HEAD:
-			if (headBone != null)
-				headBone.setHidden(false);
-			break;
-		case CHEST:
-			if (bodyBone != null)
-				bodyBone.setHidden(false);
-			if (rightArmBone != null)
-				rightArmBone.setHidden(false);
-			if (leftArmBone != null)
-				leftArmBone.setHidden(false);
-			break;
-		case LEGS:
-			if (rightLegBone != null)
-				rightLegBone.setHidden(false);
-			if (leftLegBone != null)
-				leftLegBone.setHidden(false);
-			break;
-		case FEET:
-			if (rightBootBone != null)
-				rightBootBone.setHidden(false);
-			if (leftBootBone != null)
-				leftBootBone.setHidden(false);
-			break;
+		switch (slot) {
+		case HEAD -> setBoneVisibility(this.headBone, true);
+		case CHEST -> {
+			setBoneVisibility(this.bodyBone, true);
+			setBoneVisibility(this.rightArmBone, true);
+			setBoneVisibility(this.leftArmBone, true);
 		}
+		case LEGS -> {
+			setBoneVisibility(this.rightLegBone, true);
+			setBoneVisibility(this.leftLegBone, true);
+		}
+		case FEET -> {
+			setBoneVisibility(this.rightBootBone, true);
+			setBoneVisibility(this.rightBootBone, true);
+			setBoneVisibility(this.leftBootBone, true);
+		}
+		default -> {
+		}
+		}
+
 		return this;
 	}
 
+	/**
+	 * Sets a specific bone (and its child-bones) to visible or not
+	 * 
+	 * @param boneName  The name of the bone
+	 * @param isVisible Whether the bone should be visible
+	 */
+	protected void setBoneVisibility(String boneName, boolean isVisible) {
+		if (boneName == null)
+			return;
+
+		this.modelProvider.getBone(boneName).setHidden(!isVisible);
+	}
+
+	/**
+	 * Use {@link GeoArmorRenderer#setBoneVisibility(String, boolean)}
+	 */
+	@Deprecated(forRemoval = true)
 	protected IBone getAndHideBone(String boneName) {
-		if (boneName != null) {
-			final IBone bone = this.modelProvider.getBone(boneName);
-			bone.setHidden(true);
-			return bone;
-		}
-		return null;
+		setBoneVisibility(boneName, false);
+
+		return this.modelProvider.getBone(boneName);
 	}
 
 	@Override
@@ -409,11 +401,9 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 				itemStack.hasTag() ? itemStack.getTag().toString() : 1, this.entityLiving.getUUID().toString());
 	}
 
-	protected MultiBufferSource rtb = null;
-
 	@Override
-	public void setCurrentRTB(MultiBufferSource rtb) {
-		this.rtb = rtb;
+	public void setCurrentRTB(MultiBufferSource bufferSource) {
+		this.rtb = bufferSource;
 	}
 
 	@Override

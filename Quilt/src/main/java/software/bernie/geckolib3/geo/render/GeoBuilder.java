@@ -61,9 +61,9 @@ public class GeoBuilder implements IGeoBuilder {
 		geoBone.setRotationY((float) Math.toRadians(rotation.y()));
 		geoBone.setRotationZ((float) Math.toRadians(rotation.z()));
 
-		geoBone.pivotX = -pivot.x();
-		geoBone.pivotY = pivot.y();
-		geoBone.pivotZ = pivot.z();
+		geoBone.rotationPointX = -pivot.x();
+		geoBone.rotationPointY = pivot.y();
+		geoBone.rotationPointZ = pivot.z();
 
 		if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
 			for (Cube cube : rawBone.getCubes()) {

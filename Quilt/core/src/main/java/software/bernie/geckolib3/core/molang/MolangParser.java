@@ -105,7 +105,7 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Deprecated, use {@link MolangParser#setValue(String, DoubleSupplier)}
 	 */
-	@Deprecated
+	@Deprecated(forRemoval = true)
 	public void setValue(String name, double value) {
 		setValue(name, () -> value);
 	}

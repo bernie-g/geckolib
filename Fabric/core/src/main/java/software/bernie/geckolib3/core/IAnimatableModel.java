@@ -10,11 +10,12 @@ public interface IAnimatableModel<E> {
 		return System.nanoTime() / 1000000L / 50d;
 	}
 
-	default void setLivingAnimations(E entity, Integer uniqueID) {
-		this.setLivingAnimations(entity, uniqueID, null);
+	default void setCustomAnimations(E animatable, int instanceId) {
+		setCustomAnimations(animatable, instanceId, null);
 	}
 
-	void setLivingAnimations(E entity, Integer uniqueID, AnimationEvent customPredicate);
+	// TODO 1.20+ Remove default keyword
+	default void setCustomAnimations(E animatable, int instanceId, AnimationEvent animationEvent) {}
 
 	AnimationProcessor getAnimationProcessor();
 
@@ -35,5 +36,23 @@ public interface IAnimatableModel<E> {
 		return bone;
 	}
 
-	void setMolangQueries(IAnimatable animatable, double currentTick);
+	void setMolangQueries(IAnimatable animatable, double seekTime);
+
+	/**
+	 * Use {@link IAnimatableModel#setCustomAnimations(Object, int)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	default void setLivingAnimations(E animatable, Integer instanceId) {
+		setCustomAnimations(animatable, instanceId);
+	}
+
+	/**
+	 * Use {@link IAnimatableModel#setCustomAnimations(Object, int, AnimationEvent)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	default void setLivingAnimations(E animatable, Integer instanceId, AnimationEvent animationEvent) {
+		setCustomAnimations(animatable, instanceId, animationEvent);
+	}
 }
