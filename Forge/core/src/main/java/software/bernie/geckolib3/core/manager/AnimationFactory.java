@@ -36,11 +36,21 @@ public class AnimationFactory {
 	 * @return the animatable manager
 	 */
 	public AnimationData getOrCreateAnimationData(int uniqueID) {
-		if (!animationDataMap.containsKey(uniqueID)) {
+		if (!this.animationDataMap.containsKey(uniqueID)) {
 			AnimationData data = new AnimationData();
-			animatable.registerControllers(data);
-			animationDataMap.put(uniqueID, data);
+
+			this.animatable.registerControllers(data);
+			this.animationDataMap.put(uniqueID, data);
 		}
+
 		return animationDataMap.get(uniqueID);
+	}
+
+	/**
+	 * Use {@link AnimationFactory#getOrCreateAnimationData(int)}
+	 */
+	@Deprecated
+	public AnimationData getOrCreateAnimationData(Integer uniqueID) {
+		return getOrCreateAnimationData((int)uniqueID);
 	}
 }
