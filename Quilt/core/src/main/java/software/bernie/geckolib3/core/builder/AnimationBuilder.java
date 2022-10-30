@@ -30,8 +30,11 @@ public class AnimationBuilder {
 		animationList.add(new RawAnimation(animationName, loopType));
 		return this;
 	}
-	
-	@Deprecated
+
+	/**
+	 * Use {@link AnimationBuilder#addAnimation(String, ILoopType)}
+	 */
+	@Deprecated(forRemoval = true)
 	public AnimationBuilder addAnimation(String animationName, Boolean shouldLoop) {
 		animationList.add(new RawAnimation(animationName, shouldLoop));
 		return this;

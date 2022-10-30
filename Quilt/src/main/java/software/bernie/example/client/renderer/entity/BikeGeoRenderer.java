@@ -12,15 +12,14 @@ import software.bernie.example.entity.BikeEntity;
 import software.bernie.geckolib3q.renderers.geo.GeoEntityRenderer;
 
 public class BikeGeoRenderer extends GeoEntityRenderer<BikeEntity> {
-
-	public BikeGeoRenderer(EntityRendererProvider.Context ctx) {
-		super(ctx, new BikeModel());
+	public BikeGeoRenderer(EntityRendererProvider.Context renderManager) {
+		super(renderManager, new BikeModel());
 	}
 
 	@Override
-	public RenderType getRenderType(BikeEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(BikeEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

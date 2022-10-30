@@ -36,12 +36,14 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 	
 	@Override
-	public RenderLayer getRenderType(TexturePerBoneTestEntity animatable, float partialTicks, MatrixStack stack, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, Identifier textureLocation) {
-		return RenderLayer.getEntityTranslucent(textureLocation);
+	public RenderLayer getRenderType(TexturePerBoneTestEntity animatable, float partialTick, MatrixStack poseStack,
+			VertexConsumerProvider bufferSource, VertexConsumer buffer, int packedLight,
+			Identifier texture) {
+		return RenderLayer.getEntityTranslucent(texture);
 	}
 	
 	@Override
-	protected Identifier getTextureForBone(String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected Identifier getTextureForBone(String boneName, TexturePerBoneTestEntity animatable) {
 		if(boneName.equalsIgnoreCase("outer_glass")) {
 			return TEXTURE_GLASS;
 		}
@@ -49,7 +51,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected ItemStack getHeldItemForBone(String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected ItemStack getHeldItemForBone(String boneName, TexturePerBoneTestEntity animatable) {
 		return null;
 	}
 
@@ -59,27 +61,27 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected BlockState getHeldBlockForBone(String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected BlockState getHeldBlockForBone(String boneName, TexturePerBoneTestEntity animatable) {
 		return null;
 	}
 
 	@Override
-	protected void preRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, IBone bone) {
+	protected void preRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity animatable, IBone bone) {
 		
 	}
 
 	@Override
-	protected void preRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected void preRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, TexturePerBoneTestEntity animatable) {
 		
 	}
 
 	@Override
-	protected void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, IBone bone) {
+	protected void postRenderItem(MatrixStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity animatable, IBone bone) {
 		
 	}
 
 	@Override
-	protected void postRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected void postRenderBlock(MatrixStack matrixStack, BlockState block, String boneName, TexturePerBoneTestEntity animatable) {
 		
 	}
 

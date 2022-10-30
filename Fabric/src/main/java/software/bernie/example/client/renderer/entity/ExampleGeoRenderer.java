@@ -1,7 +1,5 @@
 package software.bernie.example.client.renderer.entity;
 
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -23,16 +21,16 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	}
 
 	@Override
-	public RenderLayer getRenderType(GeoExampleEntity animatable, float partialTicks, MatrixStack stack,
-			@Nullable VertexConsumerProvider renderTypeBuffer, @Nullable VertexConsumer vertexBuilder,
-			int packedLightIn, Identifier textureLocation) {
+	public RenderLayer getRenderType(GeoExampleEntity animatable, float partialTick, MatrixStack poseStack,
+			VertexConsumerProvider bufferSource, VertexConsumer buffer, int packedLight,
+			Identifier texture) {
 		return RenderLayer.getEntityTranslucent(this.getTextureLocation(animatable));
 	}
 
 	@Override
-	public void render(GeoModel model, GeoExampleEntity animatable, float partialTicks, RenderLayer type,
-			MatrixStack matrixStackIn, VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder,
-			int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void render(GeoModel model, GeoExampleEntity animatable, float partialTick, RenderLayer type,
+			MatrixStack poseStack, VertexConsumerProvider bufferSource, VertexConsumer buffer,
+			int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (currentTick < 0 || currentTick != animatable.age) {
 			this.currentTick = animatable.age;
 			if (model.getBone("leftear").isPresent()) {
@@ -43,8 +41,8 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 						(animatable.getRandom().nextDouble() - 0.5D));
 			}
 		}
-		super.render(model, animatable, partialTicks, type, matrixStackIn, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer,
+				packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 }

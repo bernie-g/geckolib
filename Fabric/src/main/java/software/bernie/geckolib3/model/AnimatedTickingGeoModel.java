@@ -20,16 +20,16 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
+	public void setCustomAnimations(T animatable, int instanceId, @Nullable AnimationEvent animationEvent) {
 		// Each animation has its own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
+		AnimationData manager = animatable.getFactory().getOrCreateAnimationData(instanceId);
 		if (manager.startTick == -1) {
-			manager.startTick = (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
+			manager.startTick = (animatable.tickTimer() + MinecraftClient.getInstance().getTickDelta());
 		}
 
 		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = (entity.tickTimer() + MinecraftClient.getInstance().getTickDelta());
+			manager.tick = (animatable.tickTimer() + MinecraftClient.getInstance().getTickDelta());
 			double gameTick = manager.tick;
 			double deltaTicks = gameTick - lastGameTickTime;
 			seekTime += deltaTicks;
@@ -37,21 +37,21 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 		}
 
 		AnimationEvent<T> predicate;
-		if (customPredicate == null) {
-			predicate = new AnimationEvent<T>(entity, 0, 0, 0, false, Collections.emptyList());
+		if (animationEvent == null) {
+			predicate = new AnimationEvent<T>(animatable, 0, 0, 0, false, Collections.emptyList());
 		} else {
-			predicate = customPredicate;
+			predicate = animationEvent;
 		}
 
 		predicate.animationTick = seekTime;
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
 		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
-			getAnimationProcessor().tickAnimation(entity, uniqueID, seekTime, predicate,
+			getAnimationProcessor().tickAnimation(animatable, instanceId, seekTime, predicate,
 					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}
 
 		if (!MinecraftClient.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			codeAnimations(entity, uniqueID, customPredicate);
+			codeAnimations(animatable, instanceId, animationEvent);
 		}
 	}
 

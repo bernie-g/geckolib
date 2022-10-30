@@ -8,8 +8,11 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -32,6 +35,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.util.RenderUtils;
 
 public class GeoItemRenderer<T extends Item & IAnimatable>
 		implements IGeoRenderer<T>, BuiltinItemRendererRegistry.DynamicItemRenderer {
@@ -50,32 +54,30 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 
 	protected AnimatedGeoModel<T> modelProvider;
 	protected ItemStack currentItemStack;
-	protected float widthScale = 1;
-	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
+	protected VertexConsumerProvider rtb = null;
 
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	@AvailableSince(value = "3.0.65")
+	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider) {
+		this.modelProvider = modelProvider;
+	}
+
+	@AvailableSince(value = "3.1.23")
 	@Override
 	@Nonnull
 	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
-	@AvailableSince(value = "3.0.65")
+	@AvailableSince(value = "3.1.23")
 	@Override
 	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
-	}
-
-	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider) {
-		this.modelProvider = modelProvider;
 	}
 
 	public void setModel(AnimatedGeoModel<T> model) {
@@ -96,100 +98,88 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 		return modelProvider;
 	}
 
-	@AvailableSince(value = "3.0.65")
+	@AvailableSince(value = "3.1.23")
 	@Override
 	public float getWidthScale(T animatable2) {
 		return this.widthScale;
 	}
 
-	@AvailableSince(value = "3.0.65")
+	@AvailableSince(value = "3.1.23")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 
+	// fixes the item lighting
 	@Override
-	public void render(ItemStack itemStack, ModelTransformation.Mode mode, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int combinedLightIn, int combinedOverlayIn) {
-		this.render((T) itemStack.getItem(), matrixStackIn, bufferIn, combinedLightIn, itemStack);
-	}
-
-	public void render(T animatable, MatrixStack stack, VertexConsumerProvider bufferIn, int packedLightIn,
-			ItemStack itemStack) {
-		this.currentItemStack = itemStack;
-		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
-		AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0,
-				MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(itemStack));
-		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
-		stack.push();
-		// stack.translate(0, 0.01f, 0);
-		stack.translate(0.5, 0.5, 0.5);
-
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(animatable));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn,
-				getTextureLocation(animatable));
-		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.DEFAULT_UV,
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.pop();
-	}
-
-	@Override
-	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
-		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
-	}
-
-	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		if (bone.isTrackingXform()) {
-			MatrixStack.Entry entry = stack.peek();
-			Matrix4f boneMat = entry.getPositionMatrix().copy();
-
-			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
-			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
-			bone.setModelSpaceXform(modelPosBoneMat);
-
-			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
-			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
-			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched
-			// mat)
-			Vec3d renderOffset = this.getPositionOffset(animatable, 1.0F);
-			localPosBoneMat.addToLastColumn(
-					new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
-			bone.setLocalSpaceXform(localPosBoneMat);
-
-			// World space
-			// Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-			// worldPosBoneMat.addToLastColumn(new Vec3f((float) animatable.getX(), (float)
-			// animatable.getY(), (float) animatable.getZ()));
-			// bone.setWorldSpaceXform(worldPosBoneMat);
+	public void render(ItemStack stack, ModelTransformation.Mode transformType, MatrixStack poseStack,
+			VertexConsumerProvider bufferSource, int packedLight, int packedOverlay) {
+		if (transformType == ModelTransformation.Mode.GUI) {
+			poseStack.push();
+			VertexConsumerProvider.Immediate defaultBufferSource = bufferSource instanceof VertexConsumerProvider.Immediate bufferSource2 ?
+					bufferSource2 : MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers();
+			DiffuseLighting.disableGuiDepthLighting();
+			render((T)stack.getItem(), poseStack, bufferSource, packedLight, stack);
+			defaultBufferSource.draw();
+			RenderSystem.enableDepthTest();
+			DiffuseLighting.enableGuiDepthLighting();
+			poseStack.pop();
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+		else {
+			this.render((T)stack.getItem(), poseStack, bufferSource, packedLight, stack);
+		}
+	}
+
+	public void render(T animatable, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight,
+			ItemStack stack) {
+		this.currentItemStack = stack;
+		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelLocation(animatable));
+		AnimationEvent animationEvent = new AnimationEvent(animatable, 0, 0, MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(stack));
+		this.dispatchedMat = poseStack.peek().getPositionMatrix().copy();
+
+		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		this.modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), animationEvent); // TODO change to setCustomAnimations in 1.20+
+		poseStack.push();
+		poseStack.translate(0.5f, 0.51f, 0.5f);
+
+		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
+		Color renderColor = getRenderColor(animatable, 0, poseStack, bufferSource, null, packedLight);
+		RenderLayer renderType = getRenderType(animatable, 0, poseStack, bufferSource, null, packedLight,
+				getTextureLocation(animatable));
+		render(model, animatable, 0, renderType, poseStack, bufferSource, null, packedLight, OverlayTexture.DEFAULT_UV,
+				renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
+				renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
+		poseStack.pop();
+	}
+
+	@Override
+	public void renderEarly(T animatable, MatrixStack poseStack, float partialTick, VertexConsumerProvider bufferSource,
+							VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue,
+							float alpha) {
+		this.renderEarlyMat = poseStack.peek().getPositionMatrix().copy();
+		this.animatable = animatable;
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
+	}
+
+	@Override
+	public void renderRecursively(GeoBone bone, MatrixStack poseStack, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float alpha) {
+		if (bone.isTrackingXform()) {
+			Matrix4f poseState = poseStack.peek().getPositionMatrix().copy();
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
+
+			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			localMatrix.addToLastColumn(new Vec3f(getRenderOffset(this.animatable, 1)));
+			bone.setLocalSpaceXform(localMatrix);
+		}
+
+		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
-	public Vec3d getPositionOffset(T entity, float tickDelta) {
+	public Vec3d getRenderOffset(T animatable, float partialTick) {
 		return Vec3d.ZERO;
-	}
-
-	public void multiplyBackward(Matrix4f first, Matrix4f other) {
-		Matrix4f copy = other.copy();
-		copy.multiply(first);
-		first.load(copy);
 	}
 
 	@Override
@@ -198,15 +188,13 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 	}
 
 	@Override
-	public Integer getUniqueID(T animatable) {
+	public int getInstanceId(T animatable) {
 		return GeckoLibUtil.getIDFromStack(currentItemStack);
 	}
 
-	protected VertexConsumerProvider rtb = null;
-
 	@Override
-	public void setCurrentRTB(VertexConsumerProvider rtb) {
-		this.rtb = rtb;
+	public void setCurrentRTB(VertexConsumerProvider bufferSource) {
+		this.rtb = bufferSource;
 	}
 
 	@Override

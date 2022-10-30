@@ -6,6 +6,8 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
@@ -18,7 +20,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
@@ -33,17 +34,14 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.AnimationUtils;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.util.RenderUtils;
 
 public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
 		implements IGeoRenderer<T> {
 
 	static {
-		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof Entity) {
-				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
-			}
-			return null;
-		});
+		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ?
+				(IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
 	}
 
 	protected final AnimatedGeoModel<T> modelProvider;
@@ -52,11 +50,8 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
-
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
+	protected VertexConsumerProvider rtb = null;
 
 	@AvailableSince(value = "3.0.65")
 	@Override
@@ -73,85 +68,70 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	public GeoProjectilesRenderer(EntityRendererFactory.Context ctx, AnimatedGeoModel<T> modelProvider) {
 		super(ctx);
+		
 		this.modelProvider = modelProvider;
 	}
 
 	@Override
-	public void render(T entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int packedLightIn) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entityIn));
-		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = matrixStackIn.peek().getPositionMatrix().copy();
-		matrixStackIn.push();
-		matrixStackIn.multiply(Vec3f.POSITIVE_Y
-				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevYaw, entityIn.getYaw()) - 90.0F));
-		matrixStackIn.multiply(Vec3f.POSITIVE_Z
-				.getDegreesQuaternion(MathHelper.lerp(partialTicks, entityIn.prevPitch, entityIn.getPitch())));
-		matrixStackIn.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(45.0F));
+	public void render(T animatable, float yaw, float partialTick, MatrixStack poseStack,
+			VertexConsumerProvider bufferSource, int packedLight) {
+		GeoModel model = this.modelProvider.getModel(modelProvider.getModelLocation(animatable));
+		this.dispatchedMat = poseStack.peek().getPositionMatrix().copy();
 
-		float lastLimbDistance = 0.0F;
-		float limbSwing = 0.0F;
-		EntityModelData entityModelData = new EntityModelData();
-		AnimationEvent<T> predicate = new AnimationEvent<T>(entityIn, limbSwing, lastLimbDistance, partialTicks,
-				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
-		if (modelProvider instanceof IAnimatableModel) {
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
+		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		poseStack.push();
+		poseStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(MathHelper.lerp(partialTick, animatable.prevYaw, animatable.getYaw()) - 90));
+		poseStack.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(MathHelper.lerp(partialTick, animatable.prevPitch, animatable.getPitch())));
+
+		AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, 0, 0, partialTick,
+				false, Collections.singletonList(new EntityModelData()));
+
+		modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
+		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
+
+		Color renderColor = getRenderColor(animatable, partialTick, poseStack, bufferSource, null, packedLight);
+		RenderLayer renderType = getRenderType(animatable, partialTick, poseStack, bufferSource, null, packedLight,
+				getTextureLocation(animatable));
+
+		if (!animatable.isInvisibleTo(MinecraftClient.getInstance().player)) {
+			render(model, animatable, partialTick, renderType, poseStack, bufferSource, null, packedLight,
+					getPackedOverlay(animatable, 0), renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
+					renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 		}
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTexture(entityIn));
-		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
-		RenderLayer renderType = getRenderType(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn,
-				getTexture(entityIn));
-		render(model, entityIn, partialTicks, renderType, matrixStackIn, bufferIn, null, packedLightIn,
-				getPackedOverlay(entityIn, 0), (float) renderColor.getRed() / 255f,
-				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
-				(float) renderColor.getAlpha() / 255);
-		matrixStackIn.pop();
-		super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
+
+		poseStack.pop();
+		super.render(animatable, yaw, partialTick, poseStack, bufferSource, packedLight);
 	}
 
 	@Override
-	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
+	public void renderEarly(T animatable, MatrixStack poseStack, float partialTick, VertexConsumerProvider bufferSource,
+			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+			float alpha) {
+		this.renderEarlyMat = poseStack.peek().getPositionMatrix().copy();
 		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
+				packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void renderRecursively(GeoBone bone, MatrixStack poseStack, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			MatrixStack.Entry entry = stack.peek();
-			Matrix4f boneMat = entry.getPositionMatrix().copy();
+			Matrix4f poseState = poseStack.peek().getPositionMatrix().copy();
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
-			multiplyBackward(modelPosBoneMat, renderEarlyMatInvert);
-			bone.setModelSpaceXform(modelPosBoneMat);
+			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			localMatrix.addToLastColumn(new Vec3f(getPositionOffset(this.animatable, 1)));
+			bone.setLocalSpaceXform(localMatrix);
 
-			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
-			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
-			multiplyBackward(localPosBoneMat, dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched
-			// mat)
-			Vec3d renderOffset = this.getPositionOffset(animatable, 1.0F);
-			localPosBoneMat.addToLastColumn(
-					new Vec3f((float) renderOffset.getX(), (float) renderOffset.getY(), (float) renderOffset.getZ()));
-			bone.setLocalSpaceXform(localPosBoneMat);
+			Matrix4f worldState = localMatrix.copy();
 
-			// World space
-			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-			worldPosBoneMat.addToLastColumn(
-					new Vec3f((float) animatable.getX(), (float) animatable.getY(), (float) animatable.getZ()));
-			bone.setWorldSpaceXform(worldPosBoneMat);
+			worldState.addToLastColumn(new Vec3f(this.animatable.getPos()));
+			bone.setWorldSpaceXform(worldState);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+
+		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -161,7 +141,8 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		first.load(copy);
 	}
 
-	public static int getPackedOverlay(Entity livingEntityIn, float uIn) {
+	// TODO 1.20+ change to instance method with T argument instead of entity
+	public static int getPackedOverlay(Entity entity, float uIn) {
 		return OverlayTexture.getUv(OverlayTexture.getU(uIn), false);
 	}
 
@@ -172,13 +153,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 
 	@AvailableSince(value = "3.0.65")
 	@Override
-	public float getWidthScale(T animatable2) {
+	public float getWidthScale(T animatable) {
 		return this.widthScale;
 	}
 
 	@AvailableSince(value = "3.0.65")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 
@@ -193,15 +174,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public Integer getUniqueID(T animatable) {
+	public int getInstanceId(T animatable) {
 		return animatable.getUuid().hashCode();
 	}
 
-	protected VertexConsumerProvider rtb = null;
-
 	@Override
-	public void setCurrentRTB(VertexConsumerProvider rtb) {
-		this.rtb = rtb;
+	public void setCurrentRTB(VertexConsumerProvider bufferSource) {
+		this.rtb = bufferSource;
 	}
 
 	@Override

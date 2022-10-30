@@ -10,8 +10,10 @@ public class LERenderer extends GeoEntityRenderer<LEEntity> {
 
 	public LERenderer(EntityRendererFactory.Context renderManager) {
 		super(renderManager, new LEModel());
-		this.addLayer(new GeoExampleLayer(this));
+		
 		this.shadowRadius = 0.25f;
+		
+		addLayer(new GeoExampleLayer(this));
 	}
 	
 }

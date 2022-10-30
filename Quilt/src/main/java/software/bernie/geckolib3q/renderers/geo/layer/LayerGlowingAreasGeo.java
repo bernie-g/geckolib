@@ -20,24 +20,23 @@ import software.bernie.geckolib3q.renderers.texture.AutoGlowingTexture;
  * Originally developed for chocolate quest repoured
  */
 public class LayerGlowingAreasGeo<T extends Mob & IAnimatable> extends AbstractLayerGeo<T> {
-
 	protected final Function<ResourceLocation, RenderType> funcGetEmissiveRenderType;
 
-	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, ResourceLocation> funcGetCurrentTexture,
-			Function<T, ResourceLocation> funcGetCurrentModel,
-			Function<ResourceLocation, RenderType> funcGetEmissiveRenderType) {
-		super(renderer, funcGetCurrentTexture, funcGetCurrentModel);
+	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, ResourceLocation> currentTextureFunction,
+			Function<T, ResourceLocation> currentModelFunction,
+			Function<ResourceLocation, RenderType> emissiveRenderTypeFunction) {
+		super(renderer, currentTextureFunction, currentModelFunction);
 
-		this.funcGetEmissiveRenderType = funcGetEmissiveRenderType;
+		this.funcGetEmissiveRenderType = emissiveRenderTypeFunction;
 	}
 
 	@Override
-	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityLivingBaseIn,
-			float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw,
+	public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T animatable,
+			float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw,
 			float headPitch) {
-		this.reRenderCurrentModelInRenderer(entityLivingBaseIn, partialTicks, matrixStackIn, bufferIn, packedLightIn,
+		reRenderCurrentModelInRenderer(animatable, partialTick, poseStack, bufferSource, packedLight,
 				this.funcGetEmissiveRenderType
-						.apply(AutoGlowingTexture.get(this.funcGetCurrentTexture.apply(entityLivingBaseIn))));
+						.apply(AutoGlowingTexture.get(this.funcGetCurrentTexture.apply(animatable))));
 	}
 
 }

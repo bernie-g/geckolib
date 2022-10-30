@@ -20,32 +20,27 @@ import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
  * Originally developed for chocolate quest repoured
  */
 public abstract class AbstractLayerGeo<T extends LivingEntity & IAnimatable> extends GeoLayerRenderer<T> {
-
 	protected final Function<T, Identifier> funcGetCurrentTexture;
 	protected final Function<T, Identifier> funcGetCurrentModel;
 
 	protected GeoEntityRenderer<T> geoRendererInstance;
 
-	public AbstractLayerGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> funcGetCurrentTexture,
-			Function<T, Identifier> funcGetCurrentModel) {
+	public AbstractLayerGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> currentTextureFunction,
+			Function<T, Identifier> currentModelFunction) {
 		super(renderer);
+
 		this.geoRendererInstance = renderer;
-		this.funcGetCurrentTexture = funcGetCurrentTexture;
-		this.funcGetCurrentModel = funcGetCurrentModel;
+		this.funcGetCurrentTexture = currentTextureFunction;
+		this.funcGetCurrentModel = currentModelFunction;
 	}
 
-	/*
-	 * Utility method to force the renderer to re-render the model a second time
-	 */
-	protected void reRenderCurrentModelInRenderer(T entity, float partialTicks, MatrixStack matrixStackIn,
-			VertexConsumerProvider bufferIn, int packedLightIn, RenderLayer cameo) {
-		matrixStackIn.push();
-
-		this.getRenderer().render(this.getEntityModel().getModel(this.funcGetCurrentModel.apply(entity)), entity,
-				partialTicks, cameo, matrixStackIn, bufferIn, bufferIn.getBuffer(cameo), packedLightIn,
-				OverlayTexture.DEFAULT_UV, 1F, 1F, 1F, 1F);
-
-		matrixStackIn.pop();
+	protected void reRenderCurrentModelInRenderer(T animatable, float partialTick, MatrixStack poseStack,
+			VertexConsumerProvider bufferSource, int packedLight, RenderLayer renderType) {
+		poseStack.push();
+		getRenderer().render(getEntityModel().getModel(this.funcGetCurrentModel.apply(animatable)), animatable,
+				partialTick, renderType, poseStack, bufferSource, bufferSource.getBuffer(renderType), packedLight,
+				OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+		poseStack.pop();
 	}
 
 }

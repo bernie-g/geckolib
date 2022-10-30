@@ -2,6 +2,8 @@ package software.bernie.example.client.renderer.entity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.VertexConsumer;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.BipedEntityModel;
 import net.minecraft.client.render.model.json.ModelTransformation.Mode;
@@ -20,66 +22,64 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
-
 	private static final Identifier TEXTURE = new Identifier(GeckoLib.ModID,
 			"textures/entity/extendedrendererentity.png");
 	private static final Identifier MODEL_RESLOC = new Identifier(GeckoLib.ModID,
 			"geo/extendedrendererentity.geo.json");
 
+	protected ItemStack mainHandItem, offHandItem, helmetItem, chestplateItem, leggingsItem, bootsItem;
+
 	public ExampleExtendedRendererEntityRenderer(EntityRendererFactory.Context renderManager) {
-		super(renderManager, new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE,
-				"extendedrendererentity"));
+		super(renderManager, new ExampleExtendedRendererEntityModel<>(MODEL_RESLOC, TEXTURE, "testentity"));
+	}
+	
+	@Override
+	public void renderEarly(ExtendedRendererEntity animatable, MatrixStack poseStack, float partialTick,
+			VertexConsumerProvider bufferSource, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float partialTicks) {
+		super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, partialTicks);
+
+		this.mainHandItem = animatable.getEquippedStack(EquipmentSlot.MAINHAND);
+		this.offHandItem = animatable.getEquippedStack(EquipmentSlot.OFFHAND);
+		this.helmetItem = animatable.getEquippedStack(EquipmentSlot.HEAD);
+		this.chestplateItem = animatable.getEquippedStack(EquipmentSlot.CHEST);
+		this.leggingsItem = animatable.getEquippedStack(EquipmentSlot.LEGS);
+		this.bootsItem = animatable.getEquippedStack(EquipmentSlot.FEET);
 	}
 
 	@Override
 	protected ItemStack getHeldItemForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch (boneName) {
-		case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT:
-			return currentEntity.isLeftHanded() ? mainHand : offHand;
-		case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT:
-			return currentEntity.isLeftHanded() ? offHand : mainHand;
-		case DefaultBipedBoneIdents.POTION_BONE_IDENT:
-			break;
-		}
-		return null;
+		return switch (boneName) {
+			case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT -> currentEntity.isLeftHanded() ? mainHandItem : offHandItem;
+			case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT -> currentEntity.isLeftHanded() ? offHandItem : mainHandItem;
+			default -> null;
+		};
 	}
 
 	@Override
 	protected Mode getCameraTransformForItemAtBone(ItemStack boneItem, String boneName) {
-		switch (boneName) {
-		case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT:
-			return Mode.THIRD_PERSON_RIGHT_HAND;
-		case DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT:
-			return Mode.THIRD_PERSON_RIGHT_HAND;
-		default:
-			return Mode.NONE;
-		}
-	}
+		return switch (boneName) {
+		case DefaultBipedBoneIdents.LEFT_HAND_BONE_IDENT, DefaultBipedBoneIdents.RIGHT_HAND_BONE_IDENT -> Mode.THIRD_PERSON_RIGHT_HAND; // Do Defaults
+		default -> Mode.NONE;
+	};
+}
 
 	@Override
 	protected void preRenderItem(MatrixStack stack, ItemStack item, String boneName,
 			ExtendedRendererEntity currentEntity, IBone bone) {
-		if (item == this.mainHand || item == this.offHand) {
-			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90.0F));
-			boolean shieldFlag = item.getItem() instanceof ShieldItem;
-			if (item == this.mainHand) {
-				if (shieldFlag) {
-					stack.translate(0.0, 0.125, -0.25);
-				} else {
+		if (item == this.mainHandItem) {
+			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90f));
 
-				}
-			} else {
-				if (shieldFlag) {
-					stack.translate(0, 0.125, 0.25);
-					stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
-				} else {
+			if (item.getItem() instanceof ShieldItem)
+				stack.translate(0, 0.125, -0.25);
+		}
+		else if (item == this.offHandItem) {
+			stack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(-90f));
 
-				}
-
+			if (item.getItem() instanceof ShieldItem) {
+				stack.translate(0, 0.125, 0.25);
+				stack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
 			}
-			// stack.mulPose(Vector3f.YP.rotationDegrees(180));
-
-			// stack.scale(0.75F, 0.75F, 0.75F);
 		}
 	}
 
@@ -91,78 +91,59 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 
 	@Override
 	protected ItemStack getArmorForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch (boneName) {
-		case "armorBipedLeftFoot":
-		case "armorBipedRightFoot":
-		case "armorBipedLeftFoot2":
-		case "armorBipedRightFoot2":
-			return boots;
-		case "armorBipedLeftLeg":
-		case "armorBipedRightLeg":
-		case "armorBipedLeftLeg2":
-		case "armorBipedRightLeg2":
-			return leggings;
-		case "armorBipedBody":
-		case "armorBipedRightArm":
-		case "armorBipedLeftArm":
-			return chestplate;
-		case "armorBipedHead":
-			return helmet;
-		default:
-			return null;
-		}
+		return switch (boneName) {
+			case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT -> this.bootsItem;
+			case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> this.leggingsItem;
+			case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> this.chestplateItem;
+			case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> this.helmetItem;
+			default -> null;
+		};
 	}
 
 	@Override
 	protected EquipmentSlot getEquipmentSlotForArmorBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch (boneName) {
-		case "armorBipedLeftFoot":
-		case "armorBipedRightFoot":
-		case "armorBipedLeftFoot2":
-		case "armorBipedRightFoot2":
-			return EquipmentSlot.FEET;
-		case "armorBipedLeftLeg":
-		case "armorBipedRightLeg":
-		case "armorBipedLeftLeg2":
-		case "armorBipedRightLeg2":
-			return EquipmentSlot.LEGS;
-		case "armorBipedRightArm":
-			return !currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-		case "armorBipedLeftArm":
-			return currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
-		case "armorBipedBody":
-			return EquipmentSlot.CHEST;
-		case "armorBipedHead":
-			return EquipmentSlot.HEAD;
-		default:
-			return null;
-		}
+		return switch (boneName) {
+			case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT -> EquipmentSlot.FEET;
+			case DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> EquipmentSlot.LEGS;
+			case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> !currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+			case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> currentEntity.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
+			case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> EquipmentSlot.CHEST;
+			case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> EquipmentSlot.HEAD;
+			default -> null;
+		};
 	}
 
 	@Override
 	protected ModelPart getArmorPartForBone(String name, BipedEntityModel<?> armorModel) {
-		switch (name) {
-		case "armorBipedLeftFoot":
-		case "armorBipedLeftLeg":
-		case "armorBipedLeftFoot2":
-		case "armorBipedLeftLeg2":
-			return armorModel.leftLeg;
-		case "armorBipedRightFoot":
-		case "armorBipedRightLeg":
-		case "armorBipedRightFoot2":
-		case "armorBipedRightLeg2":
-			return armorModel.rightLeg;
-		case "armorBipedRightArm":
-			return armorModel.rightArm;
-		case "armorBipedLeftArm":
-			return armorModel.leftArm;
-		case "armorBipedBody":
-			return armorModel.body;
-		case "armorBipedHead":
-			return armorModel.head;
-		default:
-			return null;
-		}
+		return switch (name) {
+			case DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.LEFT_FOOT_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.LEFT_LEG_ARMOR_BONE_2_IDENT -> armorModel.leftLeg;
+			case DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_IDENT,
+					DefaultBipedBoneIdents.RIGHT_FOOT_ARMOR_BONE_2_IDENT,
+					DefaultBipedBoneIdents.RIGHT_LEG_ARMOR_BONE_2_IDENT -> armorModel.rightLeg;
+			case DefaultBipedBoneIdents.RIGHT_ARM_ARMOR_BONE_IDENT -> armorModel.rightArm;
+			case DefaultBipedBoneIdents.LEFT_ARM_ARMOR_BONE_IDENT -> armorModel.leftArm;
+			case DefaultBipedBoneIdents.BODY_ARMOR_BONE_IDENT -> armorModel.body;
+			case DefaultBipedBoneIdents.HEAD_ARMOR_BONE_IDENT -> armorModel.head;
+			default -> null;
+		};
 	}
 
 	@Override
@@ -185,13 +166,11 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			"textures/entity/extendedrendererentity_cape.png");
 
 	@Override
-	protected Identifier getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch (boneName) {
-		case "bipedCape":
+	protected Identifier getTextureForBone(String boneName, ExtendedRendererEntity animatable) {
+		if ("bipedCape".equals(boneName))
 			return CAPE_TEXTURE;
-		default:
-			return null;
-		}
+
+		return null;
 	}
 
 	@Override

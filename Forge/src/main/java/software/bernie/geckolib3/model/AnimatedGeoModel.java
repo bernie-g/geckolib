@@ -1,11 +1,6 @@
 package software.bernie.geckolib3.model;
 
-import java.util.Collections;
-
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.Blaze3D;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -29,9 +24,10 @@ import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
+import java.util.Collections;
+
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
-
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
 
@@ -48,24 +44,24 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public void setLivingAnimations(T entity, Integer uniqueID, @Nullable AnimationEvent customPredicate) {
+	public void setCustomAnimations(T animatable, int instanceId, AnimationEvent animationEvent) {
 		Minecraft mc = Minecraft.getInstance();
-		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
+		AnimationData manager = animatable.getFactory().getOrCreateAnimationData(instanceId);
 		AnimationEvent<T> predicate;
-		double currentTick = entity instanceof Entity livingEntity ? livingEntity.tickCount : getCurrentTick();
+		double currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : getCurrentTick();
 
 		if (manager.startTick == -1)
 			manager.startTick = currentTick + mc.getFrameTime();
 
 		if (!mc.isPaused() || manager.shouldPlayWhilePaused) {
-			if (entity instanceof LivingEntity) {
+			if (animatable instanceof LivingEntity) {
 				manager.tick = currentTick + mc.getFrameTime();
 				double gameTick = manager.tick;
 				double deltaTicks = gameTick - this.lastGameTickTime;
 				this.seekTime += deltaTicks;
 				this.lastGameTickTime = gameTick;
 
-				codeAnimations(entity, uniqueID, customPredicate);
+				codeAnimations(animatable, instanceId, animationEvent);
 			} else {
 				manager.tick = currentTick - manager.startTick;
 				double gameTick = manager.tick;
@@ -75,18 +71,16 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			}
 		}
 
-		predicate = customPredicate == null ? new AnimationEvent<T>(entity, 0, 0, (float)(manager.tick - this.lastGameTickTime), false, Collections.emptyList()) : customPredicate;
+		predicate = animationEvent == null ? new AnimationEvent<T>(animatable, 0, 0, (float)(manager.tick - this.lastGameTickTime), false, Collections.emptyList()) : animationEvent;
 		predicate.animationTick = this.seekTime;
 
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), this.seekTime);
 
 		if (!getAnimationProcessor().getModelRendererList().isEmpty())
-			getAnimationProcessor().tickAnimation(entity, uniqueID, this.seekTime, predicate, GeckoLibCache.getInstance().parser, this.shouldCrashOnMissing);
+			getAnimationProcessor().tickAnimation(animatable, instanceId, this.seekTime, predicate, GeckoLibCache.getInstance().parser, this.shouldCrashOnMissing);
 	}
 
-	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {
-
-	}
+	public void codeAnimations(T entity, Integer uniqueID, AnimationEvent<?> customPredicate) {}
 
 	@Override
 	public AnimationProcessor getAnimationProcessor() {
@@ -94,39 +88,44 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	public void registerModelRenderer(IBone modelRenderer) {
-		animationProcessor.registerModelRenderer(modelRenderer);
+		this.animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
 	@Override
 	public Animation getAnimation(String name, IAnimatable animatable) {
-		AnimationFile animation = GeckoLibCache.getInstance().getAnimations()
-				.get(this.getAnimationFileLocation((T) animatable));
+		AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(this.getAnimationFileLocation((T) animatable));
+
 		if (animation == null) {
 			throw new GeckoLibException(this.getAnimationFileLocation((T) animatable),
 					"Could not find animation file. Please double check name.");
 		}
+
 		return animation.getAnimation(name);
 	}
 
 	@Override
 	public GeoModel getModel(ResourceLocation location) {
 		GeoModel model = super.getModel(location);
+
 		if (model == null) {
 			throw new GeckoLibException(location,
 					"Could not find model. If you are getting this with a built mod, please just restart your game.");
 		}
-		if (model != currentModel) {
+
+		if (model != this.currentModel) {
 			this.animationProcessor.clearModelRendererList();
+			this.currentModel = model;
+
 			for (GeoBone bone : model.topLevelBones) {
 				registerBone(bone);
 			}
-			this.currentModel = model;
 		}
+
 		return model;
 	}
 
 	@Override
-	public void setMolangQueries(IAnimatable animatable, double currentTick) {
+	public void setMolangQueries(IAnimatable animatable, double seekTime) {
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Minecraft mc = Minecraft.getInstance();
 
@@ -149,7 +148,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 
 					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				});
-				parser.setValue("query.yaw_speed", () -> livingEntity.getViewYRot((float)currentTick - livingEntity.getViewYRot((float)currentTick - 0.1f)));
+				parser.setValue("query.yaw_speed", () -> livingEntity.getViewYRot((float)seekTime - livingEntity.getViewYRot((float)seekTime - 0.1f)));
 			}
 		}
 	}

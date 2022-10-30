@@ -10,18 +10,15 @@ import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.example.client.model.tile.HabitatModel;
 import software.bernie.geckolib3q.renderers.geo.GeoBlockRenderer;
 
-/**
- * @author VoutVouniern Copyright (c) 03.06.2022 Developed by VoutVouniern
- */
 public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 	public HabitatTileRenderer() {
 		super(new HabitatModel());
 	}
 
 	@Override
-	public RenderType getRenderType(HabitatTileEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(HabitatTileEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

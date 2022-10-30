@@ -19,23 +19,22 @@ import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
  * Originally developed for chocolate quest repoured
  */
 public class LayerGlowingAreasGeo<T extends MobEntity & IAnimatable> extends AbstractLayerGeo<T> {
-
 	protected final Function<Identifier, RenderLayer> funcGetEmissiveRenderType;
 
-	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> funcGetCurrentTexture,
-			Function<T, Identifier> funcGetCurrentModel, Function<Identifier, RenderLayer> funcGetEmissiveRenderType) {
-		super(renderer, funcGetCurrentTexture, funcGetCurrentModel);
+	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, Identifier> currentTextureFunction,
+			Function<T, Identifier> currentModelFunction,
+			Function<Identifier, RenderLayer> emissiveRenderTypeFunction) {
+		super(renderer, currentTextureFunction, currentModelFunction);
 
-		this.funcGetEmissiveRenderType = funcGetEmissiveRenderType;
+		this.funcGetEmissiveRenderType = emissiveRenderTypeFunction;
 	}
 
 	@Override
-	public void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
-			T entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
-			float netHeadYaw, float headPitch) {
-		this.reRenderCurrentModelInRenderer(entityLivingBaseIn, partialTicks, matrixStackIn, bufferIn, packedLightIn,
-				this.funcGetEmissiveRenderType
-						.apply(AutoGlowingTexture.get(this.funcGetCurrentTexture.apply(entityLivingBaseIn))));
+	public void render(MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight, T animatable,
+			float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw,
+			float headPitch) {
+		reRenderCurrentModelInRenderer(animatable, partialTick, poseStack, bufferSource, packedLight,
+				this.funcGetEmissiveRenderType.apply(AutoGlowingTexture.get(this.funcGetCurrentTexture.apply(animatable))));
 	}
 
 }

@@ -1,7 +1,6 @@
 package software.bernie.geckolib3q.renderers.geo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -10,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3q.geo.render.built.GeoModel;
 import software.bernie.geckolib3q.model.provider.GeoModelProvider;
 
 public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
@@ -20,25 +18,25 @@ public abstract class GeoLayerRenderer<T extends Entity & IAnimatable> {
 		this.entityRenderer = entityRendererIn;
 	}
 
-	protected void renderCopyModel(GeoModelProvider<T> modelParentIn, ResourceLocation textureLocationIn,
-			PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityIn, float limbSwing,
-			float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, float partialTicks, float red,
-			float green, float blue) {
-		if (!entityIn.isInvisible()) {
-			this.renderModel(modelParentIn, textureLocationIn, PoseStackIn, bufferIn, packedLightIn, entityIn,
-					partialTicks, red, green, blue);
+	protected void renderCopyModel(GeoModelProvider<T> modelProvider,
+			ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
+			int packedLight, T animatable, float partialTick, float red, float green, float blue) {
+		if (!animatable.isInvisible()) {
+			renderModel(modelProvider, texture, poseStack, bufferSource, packedLight, animatable,
+					partialTick, red, green, blue);
 		}
 	}
 
-	protected void renderModel(GeoModelProvider<T> modelProviderIn, ResourceLocation textureLocationIn,
-			PoseStack PoseStackIn, MultiBufferSource bufferIn, int packedLightIn, T entityIn, float partialTicks,
-			float red, float green, float blue) {
-		GeoModel model = modelProviderIn.getModel(modelProviderIn.getModelResource(entityIn));
-		RenderType renderType = getRenderType(textureLocationIn);
-		VertexConsumer ivertexbuilder = bufferIn.getBuffer(renderType);
-		this.getRenderer().render(model, entityIn, partialTicks, renderType, PoseStackIn, bufferIn, ivertexbuilder,
-				packedLightIn, LivingEntityRenderer.getOverlayCoords((LivingEntity) entityIn, 0.0F), red, green, blue,
-				1.0F);
+	protected void renderModel(GeoModelProvider<T> modelProvider,
+			ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
+			int packedLight, T animatable, float partialTick, float red, float green, float blue) {
+		if (animatable instanceof LivingEntity entity) {
+			RenderType renderType = getRenderType(texture);
+
+			getRenderer().render(modelProvider.getModel(modelProvider.getModelResource(animatable)),
+					animatable, partialTick, renderType, poseStack, bufferSource, bufferSource.getBuffer(renderType),
+					packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0), red, green, blue, 1);
+		}
 	}
 
 	public RenderType getRenderType(ResourceLocation textureLocation) {

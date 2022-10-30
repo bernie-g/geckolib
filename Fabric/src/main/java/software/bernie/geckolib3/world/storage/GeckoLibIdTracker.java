@@ -26,7 +26,7 @@ public class GeckoLibIdTracker extends PersistentState {
 		GeckoLibIdTracker idCountsState = new GeckoLibIdTracker();
 		idCountsState.usedIds.clear();
 		for (String key : nbt.getKeys()) {
-			if (nbt.contains(key, 99)) {
+			if (nbt.contains(key, NbtCompound.NUMBER_TYPE)) {
 				idCountsState.usedIds.put(key, nbt.getInt(key));
 			}
 		}

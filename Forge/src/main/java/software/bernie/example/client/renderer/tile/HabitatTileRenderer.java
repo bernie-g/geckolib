@@ -17,9 +17,9 @@ public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 	}
 
 	@Override
-	public RenderType getRenderType(HabitatTileEntity animatable, float partialTicks, PoseStack stack,
-			MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			ResourceLocation textureLocation) {
+	public RenderType getRenderType(HabitatTileEntity animatable, float partialTick, PoseStack poseStack,
+									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+									ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

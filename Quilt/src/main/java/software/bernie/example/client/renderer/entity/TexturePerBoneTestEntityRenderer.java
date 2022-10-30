@@ -36,12 +36,12 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 	
 	@Override
-	public RenderType getRenderType(TexturePerBoneTestEntity animatable, float partialTicks, PoseStack stack, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, ResourceLocation textureLocation) {
-		return RenderType.entityTranslucent(textureLocation);
+	public RenderType getRenderType(TexturePerBoneTestEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, ResourceLocation texture) {
+		return RenderType.entityTranslucent(texture);
 	}
 	
 	@Override
-	protected ResourceLocation getTextureForBone(String boneName, TexturePerBoneTestEntity currentEntity) {
+	protected ResourceLocation getTextureForBone(String boneName, TexturePerBoneTestEntity animatable) {
 		if(boneName.equalsIgnoreCase("outer_glass")) {
 			return TEXTURE_GLASS;
 		}

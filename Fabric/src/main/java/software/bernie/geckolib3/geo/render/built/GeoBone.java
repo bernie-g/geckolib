@@ -27,9 +27,9 @@ public class GeoBone implements IBone {
 	public boolean hideChildBonesToo;
 	// I still have no idea what this field does, but it's in the json file so
 	public Boolean reset;
-	public float pivotX;
-	public float pivotY;
-	public float pivotZ;
+	public float rotationPointX;
+	public float rotationPointY;
+	public float rotationPointZ;
 	private BoneSnapshot initialSnapshot;
 	private float scaleX = 1;
 	private float scaleY = 1;
@@ -180,32 +180,32 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setPivotX(float value) {
-		this.pivotX = value;
+		this.rotationPointX = value;
 	}
 
 	@Override
 	public void setPivotY(float value) {
-		this.pivotY = value;
+		this.rotationPointY = value;
 	}
 
 	@Override
 	public void setPivotZ(float value) {
-		this.pivotZ = value;
+		this.rotationPointZ = value;
 	}
 
 	@Override
 	public float getPivotX() {
-		return this.pivotX;
+		return this.rotationPointX;
 	}
 
 	@Override
 	public float getPivotY() {
-		return this.pivotY;
+		return this.rotationPointY;
 	}
 
 	@Override
 	public float getPivotZ() {
-		return this.pivotZ;
+		return this.rotationPointZ;
 	}
 
 	@Override

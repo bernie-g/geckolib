@@ -37,19 +37,17 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.util.RenderUtils;
 
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends BlockEntityWithoutLevelRenderer
 		implements IGeoRenderer<T> {
 	// Register a model fetcher for this renderer
 	static {
-		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof Item) {
-				Item item = (Item) object;
-				BlockEntityWithoutLevelRenderer renderer = RenderProperties.get(item).getItemStackRenderer();
-				if (renderer instanceof GeoItemRenderer) {
-					return (IAnimatableModel<Object>) ((GeoItemRenderer<?>) renderer).getGeoModelProvider();
-				}
-			}
+		AnimationController.addModelFetcher(animatable -> {
+			if (animatable instanceof Item item
+					&& RenderProperties.get(item).getItemStackRenderer()instanceof GeoItemRenderer geoItemRenderer)
+				return (IAnimatableModel<Object>) geoItemRenderer.getGeoModelProvider();
+
 			return null;
 		});
 	}
@@ -61,6 +59,9 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
+	protected MultiBufferSource rtb = null;
+
+	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	public GeoItemRenderer(AnimatedGeoModel<T> modelProvider) {
 		this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels(),
@@ -70,6 +71,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	public GeoItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet,
 			AnimatedGeoModel<T> modelProvider) {
 		super(dispatcher, modelSet);
+
 		this.modelProvider = modelProvider;
 	}
 
@@ -82,31 +84,26 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 		return modelProvider;
 	}
 
-	/*
-	 * 0 => Normal model 1 => Magical armor overlay
-	 */
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-
-	@AvailableSince(value = "3.0.42")
+	@AvailableSince(value = "3.1.24")
 	@Override
 	@Nonnull
 	public IRenderCycle getCurrentModelRenderCycle() {
 		return this.currentModelRenderCycle;
 	}
 
-	@AvailableSince(value = "3.0.42")
+	@AvailableSince(value = "3.1.24")
 	@Override
 	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
-	@AvailableSince(value = "3.0.42")
+	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getWidthScale(T entity) {
+	public float getWidthScale(T animatable) {
 		return this.widthScale;
 	}
 
-	@AvailableSince(value = "3.0.42")
+	@AvailableSince(value = "3.1.24")
 	@Override
 	public float getHeightScale(T entity) {
 		return this.heightScale;
@@ -114,112 +111,93 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 
 	// fixes the item lighting
 	@Override
-	public void renderByItem(ItemStack itemStack, ItemTransforms.TransformType p_239207_2_, PoseStack matrixStack,
-			MultiBufferSource bufferIn, int combinedLightIn, int p_239207_6_) {
-		if (p_239207_2_ == ItemTransforms.TransformType.GUI) {
-			matrixStack.pushPose();
-			MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers()
-					.bufferSource();
+	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack,
+			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+		if (transformType == ItemTransforms.TransformType.GUI) {
+			poseStack.pushPose();
+			MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2
+					? bufferSource2
+					: Minecraft.getInstance().renderBuffers().bufferSource();
 			Lighting.setupForFlatItems();
-			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
-			irendertypebuffer$impl.endBatch();
+			render((T) stack.getItem(), poseStack, bufferSource, packedLight, stack);
+			defaultBufferSource.endBatch();
 			RenderSystem.enableDepthTest();
 			Lighting.setupFor3DItems();
-			matrixStack.popPose();
+			poseStack.popPose();
 		} else {
-			this.render((T) itemStack.getItem(), matrixStack, bufferIn, combinedLightIn, itemStack);
+			this.render((T) stack.getItem(), poseStack, bufferSource, packedLight, stack);
 		}
 	}
 
-	public void render(T animatable, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn,
-			ItemStack itemStack) {
-		this.currentItemStack = itemStack;
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
-		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(), false,
-				Collections.singletonList(itemStack));
-		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
-		this.dispatchedMat = stack.last().pose().copy();
-		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		stack.pushPose();
-		stack.translate(0, 0.01f, 0);
-		stack.translate(0.5, 0.5, 0.5);
+	public void render(T animatable, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
+			ItemStack stack) {
+		this.currentItemStack = stack;
+		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelLocation(animatable));
+		AnimationEvent animationEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(),
+				false, Collections.singletonList(stack));
+		this.dispatchedMat = poseStack.last().pose().copy();
+
+		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		this.modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), animationEvent); // TODO change to
+																										// setCustomAnimations
+																										// in 1.20+
+		poseStack.pushPose();
+		poseStack.translate(0.5f, 0.51f, 0.5f);
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
-		Color renderColor = getRenderColor(animatable, 0, stack, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(animatable, 0, stack, bufferIn, null, packedLightIn,
+		Color renderColor = getRenderColor(animatable, 0, poseStack, bufferSource, null, packedLight);
+		RenderType renderType = getRenderType(animatable, 0, poseStack, bufferSource, null, packedLight,
 				getTextureLocation(animatable));
-		render(model, animatable, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-		stack.popPose();
+		render(model, animatable, 0, renderType, poseStack, bufferSource, null, packedLight, OverlayTexture.NO_OVERLAY,
+				renderColor.getRed() / 255f, renderColor.getGreen() / 255f, renderColor.getBlue() / 255f,
+				renderColor.getAlpha() / 255f);
+		poseStack.popPose();
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer,
-			VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue,
+	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
+			VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue,
 			float alpha) {
-		renderEarlyMat = stackIn.last().pose().copy();
+		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+				packedOverlayIn, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer bufferIn, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
+	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+			int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			PoseStack.Pose entry = stack.last();
-			Matrix4f boneMat = entry.pose().copy();
+			Matrix4f poseState = poseStack.last().pose().copy();
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			// Model space
-			Matrix4f renderEarlyMatInvert = renderEarlyMat.copy();
-			renderEarlyMatInvert.invert();
-			Matrix4f modelPosBoneMat = boneMat.copy();
-			modelPosBoneMat.multiplyBackward(renderEarlyMatInvert);
-			bone.setModelSpaceXform(modelPosBoneMat);
-
-			// Local space
-			Matrix4f dispatchedMatInvert = this.dispatchedMat.copy();
-			dispatchedMatInvert.invert();
-			Matrix4f localPosBoneMat = boneMat.copy();
-			localPosBoneMat.multiplyBackward(dispatchedMatInvert);
-			// (Offset is the only transform we may want to preserve from the dispatched
-			// mat)
-			Vec3 renderOffset = this.getRenderOffset(animatable, 1.0F);
-			localPosBoneMat.translate(
-					new Vector3f((float) renderOffset.x(), (float) renderOffset.y(), (float) renderOffset.z()));
-			bone.setLocalSpaceXform(localPosBoneMat);
-
-			// World space
-			Matrix4f worldPosBoneMat = localPosBoneMat.copy();
-			worldPosBoneMat.translate(new Vector3f((float) Minecraft.getInstance().cameraEntity.getX(),
-					(float) Minecraft.getInstance().cameraEntity.getY(),
-					(float) Minecraft.getInstance().cameraEntity.getZ()));
-			bone.setWorldSpaceXform(worldPosBoneMat);
+			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
+			bone.setLocalSpaceXform(localMatrix);
 		}
-		IGeoRenderer.super.renderRecursively(bone, stack, bufferIn, packedLightIn, packedOverlayIn, red, green, blue,
+
+		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
-	public Vec3 getRenderOffset(T pEntity, float pPartialTicks) {
+	public Vec3 getRenderOffset(T animatable, float partialTick) {
 		return Vec3.ZERO;
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(T instance) {
-		return this.modelProvider.getTextureLocation(instance);
+	public ResourceLocation getTextureLocation(T animatable) {
+		return this.modelProvider.getTextureLocation(animatable);
 	}
 
 	@Override
-	public Integer getUniqueID(T animatable) {
-		return GeckoLibUtil.getIDFromStack(currentItemStack);
+	public int getInstanceId(T animatable) {
+		return GeckoLibUtil.getIDFromStack(this.currentItemStack);
 	}
 
-	protected MultiBufferSource rtb = null;
-
 	@Override
-	public void setCurrentRTB(MultiBufferSource rtb) {
-		this.rtb = rtb;
+	public void setCurrentRTB(MultiBufferSource bufferSource) {
+		this.rtb = bufferSource;
 	}
 
 	@Override

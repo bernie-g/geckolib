@@ -14,6 +14,7 @@ import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -37,7 +38,7 @@ public class GeckoArmorItem extends ArmorItem implements IAnimatable {
 
 		// Always loop the animation but later on in this method we'll decide whether or
 		// not to actually play it
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", EDefaultLoopTypes.LOOP));
 
 		// If the living entity is an armorstand just play the animation nonstop
 		if (livingEntity instanceof ArmorStandEntity) {
