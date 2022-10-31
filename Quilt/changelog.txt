@@ -1,3 +1,7 @@
+v3.0.38
+
+- Adds back getTexture fix.
+
 v3.0.37
 
 - Updates Core with Java 17 changes from pervious PR.

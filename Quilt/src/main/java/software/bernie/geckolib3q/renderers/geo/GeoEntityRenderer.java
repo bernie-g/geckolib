@@ -401,6 +401,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	public ResourceLocation getTextureResource(T animatable) {
 		return this.modelProvider.getTextureResource(animatable);
 	}
+	
+	public ResourceLocation getTexture(T entity) {
+		return this.modelProvider.getTextureResource(entity);
+	}
 
 	public final boolean addLayer(GeoLayerRenderer<T> layer) {
 		return this.layerRenderers.add(layer);
