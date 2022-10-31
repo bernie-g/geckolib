@@ -190,7 +190,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		entityModelData.netHeadYaw = -netHeadYaw;
 
 		AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
-				(limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount <= getSwingMotionAnimThreshold()),
+				(limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount > getSwingMotionAnimThreshold()),
 				Collections.singletonList(entityModelData));
 		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
 
