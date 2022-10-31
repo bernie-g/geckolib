@@ -2,6 +2,7 @@ package software.bernie.geckolib3.model;
 
 import net.minecraft.client.Minecraft;
 import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -15,6 +16,16 @@ public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimation
 
 	public boolean isInitialized() {
 		return !this.getAnimationProcessor().getModelRendererList().isEmpty();
+	}
+
+	/**
+	 * Use {@link IAnimatableModel#setCustomAnimations(Object, int, AnimationEvent)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	@Override
+	public void setLivingAnimations(T animatable, Integer instanceId, AnimationEvent animationEvent) {
+		this.setCustomAnimations(animatable, instanceId.intValue(), animationEvent);
 	}
 
 	@Override

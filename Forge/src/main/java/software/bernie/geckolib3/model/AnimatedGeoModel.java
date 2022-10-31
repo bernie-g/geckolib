@@ -43,6 +43,16 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		}
 	}
 
+	/**
+	 * Use {@link IAnimatableModel#setCustomAnimations(Object, int, AnimationEvent)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	@Override
+	public void setLivingAnimations(T animatable, Integer instanceId, AnimationEvent animationEvent) {
+		this.setCustomAnimations(animatable, instanceId.intValue(), animationEvent);
+	}
+
 	@Override
 	public void setCustomAnimations(T animatable, int instanceId, AnimationEvent animationEvent) {
 		Minecraft mc = Minecraft.getInstance();
