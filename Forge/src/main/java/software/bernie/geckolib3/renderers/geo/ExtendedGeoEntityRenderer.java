@@ -544,7 +544,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	// TODO in 1.20+ Remove null check from type. Users should not be providing null to type, provide an empty string instead
 	protected ResourceLocation getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, @Nonnull String type) {
-		String path = ((ArmorItem)stack.getItem()).getMaterial().getName();
+		String path = ((ArmorItem) stack.getItem()).getMaterial().getName();
 		String domain = "minecraft";
 		String[] materialNameSplit = path.split(":", 2);
 
@@ -552,9 +552,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			domain = materialNameSplit[0];
 			path = materialNameSplit[1];
 		}
+		
+		String texture = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, path,
+				(slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format("_%s", type));
 
-		String texture = domain + ":textures/models/armor/" + path + "_layer_" +
-				(slot == EquipmentSlot.LEGS ? 2 : 1) + (type == null ? "" : "_" + type);
 		texture = ForgeHooksClient.getArmorTexture(entity, stack, texture, slot, type);
 
 		return ARMOR_TEXTURE_RES_MAP.computeIfAbsent(texture, ResourceLocation::new);
