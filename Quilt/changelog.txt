@@ -1,3 +1,0 @@
-3.1.26
-
-- Adds back GeoBone#getWorldSpaceNormal
