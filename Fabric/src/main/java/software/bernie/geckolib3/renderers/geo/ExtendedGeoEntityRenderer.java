@@ -539,20 +539,25 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	// to type, provide an empty string instead
 	protected Identifier getArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot,
 			@Nonnull String type) {
-		String path = ((ArmorItem) stack.getItem()).getMaterial().getName();
+		ArmorItem item = (ArmorItem) stack.getItem();
+		String texture = item.getMaterial().getName();
 		String domain = "minecraft";
-		String[] materialNameSplit = path.split(":", 2);
+		int idx = texture.indexOf(':');
+		if (idx != -1) {
+			domain = texture.substring(0, idx);
+			texture = texture.substring(idx + 1);
+		}
+		String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture,
+				(slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format("_%s", type));
 
-		if (materialNameSplit.length > 1) {
-			domain = materialNameSplit[0];
-			path = materialNameSplit[1];
+		Identifier ResourceLocation = (Identifier) ARMOR_TEXTURE_RES_MAP.get(s1);
+
+		if (ResourceLocation == null) {
+			ResourceLocation = new Identifier(s1);
+			ARMOR_TEXTURE_RES_MAP.put(s1, ResourceLocation);
 		}
 
-		String texture = domain + ":textures/models/armor/" + path + "_layer_" + (slot == EquipmentSlot.LEGS ? 2 : 1)
-				+ (type == null ? "" : "_" + type);
-		texture = ARMOR_TEXTURE_RES_MAP.get(texture).toString();
-
-		return ARMOR_TEXTURE_RES_MAP.computeIfAbsent(texture, Identifier::new);
+		return ResourceLocation;
 	}
 
 	// Auto UV recalculations for texturePerBone
