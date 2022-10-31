@@ -1,4 +1,4 @@
-v3.0.102
+v3.0.103
 
-- Fix the previous breaking change #329 - Tslat 
-- Examples update for using EDefaultLoopTypes.
+- Fixes keyframe issue.
+- Updates Examples.
