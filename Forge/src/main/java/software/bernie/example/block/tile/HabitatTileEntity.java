@@ -6,7 +6,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.animation.RawAnimation;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -18,7 +19,7 @@ public class HabitatTileEntity extends BlockEntity implements IAnimatable {
 
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().transitionLengthTicks = 0;
-		event.getController().setAnimation(new RawAnimation().addAnimation("animation.gecko_habitat.idle", true));
+		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.gecko_habitat.idle", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
 	}
 
