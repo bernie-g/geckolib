@@ -19,7 +19,7 @@ import software.bernie.geckolib3.geo.render.built.GeoCube;
 
 public final class RenderUtils {
 	/**
-	 * Use {@link RenderUtils#translateToPivotPoint(PoseStack, GeoCube)} <br>
+	 * Use {@link RenderUtils#translateToPivotPoint(MatrixStack, GeoCube)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -28,7 +28,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#translateAwayFromPivotPoint(PoseStack, GeoCube)} <br>
+	 * Use {@link RenderUtils#translateAwayFromPivotPoint(MatrixStack, GeoCube)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -37,7 +37,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#translateToPivotPoint(PoseStack, GeoBone)} <br>
+	 * Use {@link RenderUtils#translateToPivotPoint(MatrixStack, GeoBone)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -46,7 +46,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#translateAwayFromPivotPoint(PoseStack, GeoBone)} <br>
+	 * Use {@link RenderUtils#translateAwayFromPivotPoint(MatrixStack, GeoBone)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -55,7 +55,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#scaleMatrixForBone(PoseStack, GeoBone)} <br>
+	 * Use {@link RenderUtils#scaleMatrixForBone(MatrixStack, GeoBone)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -64,7 +64,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#translateMatrixToBone(PoseStack, GeoBone)} <br>
+	 * Use {@link RenderUtils#translateMatrixToBone(MatrixStack, GeoBone)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -73,7 +73,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#rotateMatrixAroundBone(PoseStack, GeoBone)} <br>
+	 * Use {@link RenderUtils#rotateMatrixAroundBone(MatrixStack, GeoBone)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -82,7 +82,7 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Use {@link RenderUtils#rotateMatrixAroundCube(PoseStack, GeoCube)} <br>
+	 * Use {@link RenderUtils#rotateMatrixAroundCube(MatrixStack, GeoCube)} <br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
@@ -95,11 +95,21 @@ public final class RenderUtils {
 	}
 
 	public static void rotateMatrixAroundBone(MatrixStack poseStack, GeoBone bone) {
-		poseStack.multiply(new Quaternion(bone.getRotationX(), bone.getRotationY(), bone.getRotationZ(), false));
+		if (bone.getRotationZ() != 0.0F) {
+			poseStack.multiply(Vec3f.POSITIVE_Z.getRadialQuaternion(bone.getRotationZ()));
+		}
+
+		if (bone.getRotationY() != 0.0F) {
+			poseStack.multiply(Vec3f.POSITIVE_Y.getRadialQuaternion(bone.getRotationY()));
+		}
+
+		if (bone.getRotationX() != 0.0F) {
+			poseStack.multiply(Vec3f.POSITIVE_X.getRadialQuaternion(bone.getRotationX()));
+		}
 	}
 
 	public static void rotateMatrixAroundCube(MatrixStack poseStack, GeoCube cube) {
-		poseStack.multiply(new Quaternion(cube.rotation.getZ(), cube.rotation.getY(), cube.rotation.getZ(), false));
+		poseStack.multiply(new Quaternion(cube.rotation.getX(), cube.rotation.getY(), cube.rotation.getZ(), false));
 	}
 
 	public static void scaleMatrixForBone(MatrixStack poseStack, GeoBone bone) {
