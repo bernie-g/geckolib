@@ -95,7 +95,17 @@ public final class RenderUtils {
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.mulPose(new Quaternion(bone.getRotationX(), bone.getRotationY(), bone.getRotationZ(), false));
+		if (bone.getRotationZ() != 0.0F) {
+			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
+		}
+
+		if (bone.getRotationY() != 0.0F) {
+			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
+		}
+
+		if (bone.getRotationX() != 0.0F) {
+			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
+		}
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {

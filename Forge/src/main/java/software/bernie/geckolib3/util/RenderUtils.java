@@ -1,10 +1,13 @@
 package software.bernie.geckolib3.util;
 
+import javax.annotation.Nullable;
+
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
+
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
@@ -14,8 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
-
-import javax.annotation.Nullable;
 
 public final class RenderUtils {
 	/**
@@ -95,7 +96,17 @@ public final class RenderUtils {
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.mulPose(new Quaternion(bone.getRotationX(), bone.getRotationY(), bone.getRotationZ(), false));
+		if (bone.getRotationZ() != 0.0F) {
+			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
+		}
+
+		if (bone.getRotationY() != 0.0F) {
+			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
+		}
+
+		if (bone.getRotationX() != 0.0F) {
+			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
+		}
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
