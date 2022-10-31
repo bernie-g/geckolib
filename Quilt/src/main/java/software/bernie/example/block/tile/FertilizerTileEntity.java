@@ -7,6 +7,7 @@ import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -21,8 +22,15 @@ public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
 	}
 
 	private <E extends BlockEntity & IAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().transitionLengthTicks = 0;
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true));
+		AnimationController controller = event.getController();
+		controller.transitionLengthTicks = 0;
+		if (event.getAnimatable().getLevel().isRaining()) {
+			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", EDefaultLoopTypes.LOOP)
+					.addAnimation("fertilizer.animation.idle", EDefaultLoopTypes.LOOP));
+		} else {
+			controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", EDefaultLoopTypes.LOOP)
+					.addAnimation("Botarium.anim.idle", EDefaultLoopTypes.LOOP));
+		}
 		return PlayState.CONTINUE;
 	}
 
