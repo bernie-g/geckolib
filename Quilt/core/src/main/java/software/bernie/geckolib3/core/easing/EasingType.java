@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.core.easing;
 
+import java.util.Locale;
+
 public enum EasingType {
 	NONE, CUSTOM, Linear, Step, EaseInSine, EaseOutSine, EaseInOutSine, EaseInQuad, EaseOutQuad, EaseInOutQuad,
 	EaseInCubic, EaseOutCubic, EaseInOutCubic, EaseInQuart, EaseOutQuart, EaseInOutQuart, EaseInQuint, EaseOutQuint,
@@ -8,11 +10,41 @@ public enum EasingType {
 	EaseInOutBounce;
 
 	public static EasingType getEasingTypeFromString(String search) {
-		for (EasingType each : EasingType.values()) {
-			if (each.name().compareToIgnoreCase(search) == 0) {
-				return each;
-			}
-		}
-		return null;
+		return switch (search.toLowerCase(Locale.ROOT)) {
+		default -> NONE;
+		case "custom" -> CUSTOM;
+		case "linear" -> Linear;
+		case "step" ->  Step;
+		case "easeinsine" ->  EaseInSine;
+		case "easeoutsine" ->  EaseOutSine;
+		case "easeinoutsine" ->  EaseInOutSine;
+		case "easeinquad" ->  EaseInQuad;
+		case "easeoutquad" ->  EaseOutQuad;
+		case "easeinoutquad" ->  EaseInOutQuad;
+		case "easeincubic" -> EaseInCubic;
+		case "easeoutcubic" ->  EaseOutCubic;
+		case "easeinoutcubic" ->  EaseInOutCubic;
+		case "easeinquart" ->  EaseInQuart;
+		case "easeoutquart" ->  EaseOutQuart;
+		case "easeinoutquart" ->  EaseInOutQuart;
+		case "easeinquint" ->  EaseInQuint;
+		case "easeoutquint" ->  EaseOutQuint;
+		case "easeinoutquint" -> EaseInOutQuint;
+		case "easeinexpo" ->  EaseInExpo;
+		case "easeoutexpo" ->  EaseOutExpo;
+		case "easeinoutexpo" ->  EaseInOutExpo;
+		case "easeincirc" ->  EaseInCirc;
+		case "easeoutcirc" ->  EaseOutCirc;
+		case "easeinoutcirc" ->  EaseInOutCirc;
+		case "easeinback" ->  EaseInBack;
+		case "easeoutback" -> EaseOutBack;
+		case "easeinoutback" ->  EaseInOutBack;
+		case "easeinelastic" ->  EaseInElastic;
+		case "easeoutelastic" ->  EaseOutElastic;
+		case "easeinoutelastic" ->  EaseInOutElastic;
+		case "easeinbounce" ->  EaseInBounce;
+		case "easeoutbounce" ->  EaseOutBounce;
+		case "easeinoutbounce" -> EaseInOutBounce;
+	};
 	}
 }

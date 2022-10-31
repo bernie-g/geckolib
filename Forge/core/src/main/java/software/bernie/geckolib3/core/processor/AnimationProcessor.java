@@ -70,21 +70,21 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
-				IBone bone = boneAnimation.bone;
+				IBone bone = boneAnimation.bone();
 				BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
 				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 
-				AnimationPoint rXPoint = boneAnimation.rotationXQueue.poll();
-				AnimationPoint rYPoint = boneAnimation.rotationYQueue.poll();
-				AnimationPoint rZPoint = boneAnimation.rotationZQueue.poll();
+				AnimationPoint rXPoint = boneAnimation.rotationXQueue().poll();
+				AnimationPoint rYPoint = boneAnimation.rotationYQueue().poll();
+				AnimationPoint rZPoint = boneAnimation.rotationZQueue().poll();
 
-				AnimationPoint pXPoint = boneAnimation.positionXQueue.poll();
-				AnimationPoint pYPoint = boneAnimation.positionYQueue.poll();
-				AnimationPoint pZPoint = boneAnimation.positionZQueue.poll();
+				AnimationPoint pXPoint = boneAnimation.positionXQueue().poll();
+				AnimationPoint pYPoint = boneAnimation.positionYQueue().poll();
+				AnimationPoint pZPoint = boneAnimation.positionZQueue().poll();
 
-				AnimationPoint sXPoint = boneAnimation.scaleXQueue.poll();
-				AnimationPoint sYPoint = boneAnimation.scaleYQueue.poll();
-				AnimationPoint sZPoint = boneAnimation.scaleZQueue.poll();
+				AnimationPoint sXPoint = boneAnimation.scaleXQueue().poll();
+				AnimationPoint sYPoint = boneAnimation.scaleYQueue().poll();
+				AnimationPoint sZPoint = boneAnimation.scaleZQueue().poll();
 
 				// If there's any rotation points for this bone
 				DirtyTracker dirtyTracker = modelTracker.get(bone.getName());

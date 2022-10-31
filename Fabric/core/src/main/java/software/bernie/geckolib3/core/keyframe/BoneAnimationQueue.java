@@ -7,19 +7,14 @@ package software.bernie.geckolib3.core.keyframe;
 
 import software.bernie.geckolib3.core.processor.IBone;
 
-public class BoneAnimationQueue {
-	public final IBone bone;
-	public AnimationPointQueue rotationXQueue = new AnimationPointQueue();
-	public AnimationPointQueue rotationYQueue = new AnimationPointQueue();
-	public AnimationPointQueue rotationZQueue = new AnimationPointQueue();
-	public AnimationPointQueue positionXQueue = new AnimationPointQueue();
-	public AnimationPointQueue positionYQueue = new AnimationPointQueue();
-	public AnimationPointQueue positionZQueue = new AnimationPointQueue();
-	public AnimationPointQueue scaleXQueue = new AnimationPointQueue();
-	public AnimationPointQueue scaleYQueue = new AnimationPointQueue();
-	public AnimationPointQueue scaleZQueue = new AnimationPointQueue();
+public record BoneAnimationQueue(IBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
+		AnimationPointQueue rotationZQueue, AnimationPointQueue positionXQueue, AnimationPointQueue positionYQueue,
+		AnimationPointQueue positionZQueue, AnimationPointQueue scaleXQueue, AnimationPointQueue scaleYQueue,
+		AnimationPointQueue scaleZQueue) {
 
 	public BoneAnimationQueue(IBone bone) {
-		this.bone = bone;
+		this(bone, new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
+				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
+				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue());
 	}
 }
