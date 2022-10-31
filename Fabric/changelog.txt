@@ -1,8 +1,11 @@
-v3.1.31
+v3.1.32
 
-- Fix the previous breaking change #329 - Tslat 
-- Fairly significant cleanup of the various renderer classes. #326 - Tslat 
-- Examples update for using EDefaultLoopTypes.
+- Updates Core with Java 17 changes from pervious PR.
+- Fixes Vanilla Armor Crash with Extended Render.
+- Fixes keyframe issue, fixing animations not playing.
+- Fixes broken movement check for entities. 
+- Fixes broken rotations on child bones.
+- Updates Example block entities to EDefaultLoopTypes
 
 ## Known Issues ##
 - GeoBone#getLocalPosition and GeoBone#getModelPosition are currently broken due to the change to joml in the snapshots, I am still testing what needs changed to what to work correctly.
