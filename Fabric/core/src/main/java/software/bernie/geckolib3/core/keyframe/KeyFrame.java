@@ -13,7 +13,7 @@ import software.bernie.geckolib3.core.easing.EasingType;
 import java.util.List;
 import java.util.Objects;
 
-public class KeyFrame {
+public class KeyFrame<T> {
 	private double length;
 	private IValue startValue;
 	private IValue endValue;
