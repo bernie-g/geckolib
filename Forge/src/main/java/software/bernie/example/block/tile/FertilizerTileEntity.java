@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -20,10 +20,10 @@ public class FertilizerTileEntity extends BlockEntity implements IAnimatable {
 		AnimationController controller = event.getController();
 		controller.transitionLengthTicks = 0;
 		if (event.getAnimatable().getLevel().isRaining()) {
-			controller.setAnimation(new AnimationBuilder().addAnimation("fertilizer.animation.deploy", true)
+			controller.setAnimation(new RawAnimation().addAnimation("fertilizer.animation.deploy", true)
 					.addAnimation("fertilizer.animation.idle", true));
 		} else {
-			controller.setAnimation(new AnimationBuilder().addAnimation("Botarium.anim.deploy", true)
+			controller.setAnimation(new RawAnimation().addAnimation("Botarium.anim.deploy", true)
 					.addAnimation("Botarium.anim.idle", true));
 		}
 		return PlayState.CONTINUE;

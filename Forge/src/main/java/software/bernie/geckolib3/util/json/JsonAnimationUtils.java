@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.ChainedJsonException;
-import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
@@ -209,9 +209,9 @@ public class JsonAnimationUtils {
 		JsonObject animationJsonObject = element.getValue().getAsJsonObject();
 
 		// Set some metadata about the animation
-		animation.animationName = element.getKey();
+		animation.name = element.getKey();
 		JsonElement animationLength = animationJsonObject.get("animation_length");
-		animation.animationLength = animationLength == null ? -1
+		animation.length = animationLength == null ? -1
 				: AnimationUtils.convertSecondsToTicks(animationLength.getAsDouble());
 		animation.boneAnimations = new ObjectArrayList<>();
 		animation.loop = ILoopType.fromJson(animationJsonObject.get("loop"));
@@ -272,8 +272,8 @@ public class JsonAnimationUtils {
 
 			animation.boneAnimations.add(boneAnimation);
 		}
-		if (animation.animationLength == -1) {
-			animation.animationLength = calculateLength(animation.boneAnimations);
+		if (animation.length == -1) {
+			animation.length = calculateLength(animation.boneAnimations);
 		}
 
 		return animation;

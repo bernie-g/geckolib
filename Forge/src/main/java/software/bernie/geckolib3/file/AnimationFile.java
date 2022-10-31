@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.file;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.animation.Animation;
 
 import java.util.Collection;
 import java.util.Map;

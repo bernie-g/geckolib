@@ -14,7 +14,7 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
@@ -34,7 +34,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (this.isAnimating) {
 			event.getController()
-					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
+					.setAnimation(new RawAnimation().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
 							.addAnimation("animation.bat.idle", EDefaultLoopTypes.PLAY_ONCE));
 		} else {
 			event.getController().clearAnimationCache();
@@ -45,7 +45,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 
 	private <E extends IAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
 			event.getController()
-					.setAnimation(new AnimationBuilder().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
+					.setAnimation(new RawAnimation().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
 	}
 

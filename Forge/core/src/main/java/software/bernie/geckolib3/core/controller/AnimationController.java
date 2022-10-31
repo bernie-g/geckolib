@@ -10,8 +10,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.*;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.animation.Animation;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.easing.EasingType;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
@@ -150,7 +150,7 @@ public class AnimationController<T extends IAnimatable> {
 	public double tickOffset;
 	protected Queue<Animation> animationQueue = new LinkedList<>();
 	protected Animation currentAnimation;
-	protected AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
+	protected RawAnimation currentAnimationBuilder = null;
 	protected boolean shouldResetTick = false;
 	private final HashMap<String, BoneSnapshot> boneSnapshots = new HashMap<>();
 	private boolean justStopped = false;
@@ -166,13 +166,13 @@ public class AnimationController<T extends IAnimatable> {
 	 * time, it won't restart. Additionally, it smoothly transitions between
 	 * animation states.
 	 */
-	public void setAnimation(AnimationBuilder builder) {
+	public void setAnimation(RawAnimation builder) {
 		IAnimatableModel<T> model = getModel(this.animatable);
 		if (model != null) {
 			if (builder == null || builder.getRawAnimationList().size() == 0) {
 				this.animationState = AnimationState.Stopped;
 			}
-			else if (!builder.getRawAnimationList().equals(this.currentAnimationBuilder.getRawAnimationList())
+			else if (!builder.getRawAnimationList().equals(this.currentAnimationBuilder)
 					|| this.needsAnimationReload) {
 				AtomicBoolean encounteredError = new AtomicBoolean(false);
 				// Convert the list of animation names to the actual list, keeping track of the
@@ -361,7 +361,7 @@ public class AnimationController<T extends IAnimatable> {
 			IAnimatableModel<T> model = getModel(this.animatable);
 
 			if (model != null) {
-				Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
+				Animation animation = model.getAnimation(currentAnimation.name, this.animatable);
 
 				if (animation != null) {
 					ILoopType loop = this.currentAnimation.loop;
@@ -379,6 +379,7 @@ public class AnimationController<T extends IAnimatable> {
 		if (animationState == AnimationState.Transitioning && adjustedTick >= this.transitionLengthTicks) {
 			this.shouldResetTick = true;
 			this.animationState = AnimationState.Running;
+			adjustedTick = adjustTick(tick);
 		}
 
 		assert adjustedTick >= 0 : "GeckoLib: Tick was less than zero";
@@ -541,7 +542,7 @@ public class AnimationController<T extends IAnimatable> {
 			boolean crashWhenCantFindBone) {
 		assert currentAnimation != null;
 		// Animation has ended
-		if (tick >= this.currentAnimation.animationLength) {
+		if (tick >= this.currentAnimation.length) {
 			resetEventKeyFrames();
 			// If the current animation is set to loop, keep it as the current animation and
 			// just start over
@@ -744,7 +745,7 @@ public class AnimationController<T extends IAnimatable> {
 	}
 
 	public void clearAnimationCache() {
-		this.currentAnimationBuilder = new AnimationBuilder();
+		this.currentAnimationBuilder = null;
 	}
 
 	public double getAnimationSpeed() {

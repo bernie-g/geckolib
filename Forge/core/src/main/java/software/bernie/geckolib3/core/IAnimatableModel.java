@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.core;
 
-import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
 import software.bernie.geckolib3.core.processor.IBone;

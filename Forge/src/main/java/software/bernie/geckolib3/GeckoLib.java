@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.resource.ResourceListener;
 
@@ -38,5 +39,15 @@ public class GeckoLib {
 			GeckoLibNetwork.initialize();
 		}
 		hasInitialized = true;
+	}
+
+	/**
+	 * Register a custom {@link software.bernie.geckolib3.core.animation.Animation.LoopType} with Geckolib,
+	 * allowing for dynamic handling of post-animation looping
+	 * @param name The name of the loop type handler
+	 * @param loopType The LoopType implementation to use for the given name
+	 */
+	synchronized public static void addCustomLoopType(String name, Animation.LoopType loopType) {
+		Animation.LoopType.addCustom(name, loopType);
 	}
 }

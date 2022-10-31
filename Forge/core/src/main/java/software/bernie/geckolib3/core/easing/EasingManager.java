@@ -1,36 +1,26 @@
 package software.bernie.geckolib3.core.easing;
 
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import software.bernie.geckolib3.core.util.Memoizer;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
-import software.bernie.geckolib3.core.util.Memoizer;
-
 public class EasingManager {
-	static class EasingFunctionArgs {
-		public final EasingType easingType;
-		public final Double arg0;
+	record EasingFunctionArgs(EasingType type, Double value) {
 
-		public EasingFunctionArgs(EasingType easingType, Double arg0) {
-			this.easingType = easingType;
-			this.arg0 = arg0;
-		}
 
 		@Override
-		public boolean equals(Object o) {
-			if (this == o)
-				return true;
-			if (o == null || getClass() != o.getClass())
-				return false;
-			EasingFunctionArgs that = (EasingFunctionArgs) o;
-			return easingType == that.easingType && Objects.equals(arg0, that.arg0);
-		}
+			public boolean equals(Object o) {
+				if (this == o)
+					return true;
+				if (o == null || getClass() != o.getClass())
+					return false;
+				EasingFunctionArgs that = (EasingFunctionArgs)o;
+				return type == that.type && Objects.equals(value, that.value);
+			}
 
-		@Override
-		public int hashCode() {
-			return Objects.hash(easingType, arg0);
-		}
 	}
 
 	public static double ease(double number, EasingType easingType, List<Double> easingArgs) {
@@ -48,12 +38,12 @@ public class EasingManager {
 	// Don't call this, use getEasingFunction instead as that function is the
 	// memoized version
 	static Double2DoubleFunction getEasingFuncImpl(EasingFunctionArgs args) {
-		switch (args.easingType) {
+		switch (args.type) {
 		default:
 		case Linear:
 			return in(EasingManager::linear);
 		case Step:
-			return in(step(args.arg0));
+			return in(step(args.value));
 		case EaseInSine:
 			return in(EasingManager::sin);
 		case EaseOutSine:
@@ -97,23 +87,23 @@ public class EasingManager {
 		case EaseInOutQuint:
 			return inOut(quint);
 		case EaseInBack:
-			return in(back(args.arg0));
+			return in(back(args.value));
 		case EaseOutBack:
-			return out(back(args.arg0));
+			return out(back(args.value));
 		case EaseInOutBack:
-			return inOut(back(args.arg0));
+			return inOut(back(args.value));
 		case EaseInElastic:
-			return in(elastic(args.arg0));
+			return in(elastic(args.value));
 		case EaseOutElastic:
-			return out(elastic(args.arg0));
+			return out(elastic(args.value));
 		case EaseInOutElastic:
-			return inOut(elastic(args.arg0));
+			return inOut(elastic(args.value));
 		case EaseInBounce:
-			return in(bounce(args.arg0));
+			return in(bounce(args.value));
 		case EaseOutBounce:
-			return out(bounce(args.arg0));
+			return out(bounce(args.value));
 		case EaseInOutBounce:
-			return inOut(bounce(args.arg0));
+			return inOut(bounce(args.value));
 		}
 	}
 

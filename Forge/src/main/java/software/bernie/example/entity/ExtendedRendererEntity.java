@@ -16,7 +16,7 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -97,7 +97,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 	@SuppressWarnings("unused")
 	private <E extends IAnimatable> PlayState predicateSpinHands(AnimationEvent<E> event) {
 		if (event.getController().getCurrentAnimation() == null) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPIN_HANDS, true));
+			event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_SPIN_HANDS, true));
 		}
 		return PlayState.CONTINUE;
 	}
@@ -106,7 +106,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 
 	private <E extends IAnimatable> PlayState predicateIdle(AnimationEvent<E> event) {
 		if (event.getController().getCurrentAnimation() == null) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_IDLE, true));
+			event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_IDLE, true));
 		}
 		return PlayState.CONTINUE;
 	}
@@ -118,10 +118,10 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 		if (this.isTwoHandedAnimationRunning()) {
 
 		} else if (this.isPassenger()) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SITTING, true));
+			event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_SITTING, true));
 			return PlayState.CONTINUE;
 		} else if (this.isCrouching()) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SNEAKING, true));
+			event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_SNEAKING, true));
 			return PlayState.CONTINUE;
 		}
 		return PlayState.STOP;
@@ -178,7 +178,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 			Item handItem = handItemStack.getItem();
 			if (this.isBlocking()
 					&& (handItem instanceof ShieldItem || handItem.getUseAnimation(handItemStack) == UseAnim.BLOCK)) {
-				event.getController().setAnimation(new AnimationBuilder()
+				event.getController().setAnimation(new RawAnimation()
 						.addAnimation(leftHand ? ANIM_NAME_BLOCKING_LEFT : ANIM_NAME_BLOCKING_RIGHT, true));
 			} else {
 				// If the item is a small gun play the correct animation
@@ -193,7 +193,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 	private <E extends IAnimatable> PlayState predicateTwoHandedPose(AnimationEvent<E> event) {
 		if (this.isTwoHandedAnimationRunning()) {
 			if (this.isSpellCasting()) {
-				event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPELLCASTING, true));
+				event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_SPELLCASTING, true));
 				return PlayState.CONTINUE;
 			} else {
 				// First: Check for firearm, spear and greatsword in either hand
@@ -231,13 +231,13 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 		// If item instanceof Firearm/Bow/Crossbow => firearm animation
 		if (item.getUseAnimation(itemStack) == UseAnim.BOW || item.getUseAnimation(itemStack) == UseAnim.CROSSBOW) {
 			// Firearm
-			event.getController().setAnimation(new AnimationBuilder()
+			event.getController().setAnimation(new RawAnimation()
 					.addAnimation(leftHanded ? ANIM_NAME_FIREARM_POSE_LEFT : ANIM_NAME_FIREARM_POSE_RIGHT, true));
 			return Optional.of(PlayState.CONTINUE);
 		} else if (item.getUseAnimation(itemStack) == UseAnim.SPEAR) {
 			// Yes this is for tridents but we can use it anyway
 			// Spear
-			event.getController().setAnimation(new AnimationBuilder()
+			event.getController().setAnimation(new RawAnimation()
 					.addAnimation(leftHanded ? ANIM_NAME_SPEAR_POSE_LEFT : ANIM_NAME_SPEAR_POSE_RIGHT, true));
 			return Optional.of(PlayState.CONTINUE);
 		}
@@ -255,7 +255,7 @@ public class ExtendedRendererEntity extends PathfinderMob implements IAnimatable
 			if (this.getMainHandItem().getItem().getUseAnimation(this.getMainHandItem()) == UseAnim.SPEAR
 					|| this.getOffhandItem().getItem().getUseAnimation(this.getOffhandItem()) == UseAnim.SPEAR) {
 				// Spear use animation
-				event.getController().setAnimation(new AnimationBuilder().addAnimation(ANIM_NAME_SPEAR_SWING, false));
+				event.getController().setAnimation(new RawAnimation().addAnimation(ANIM_NAME_SPEAR_SWING, false));
 			}
 			// If either hand item is greatsword => greatsword animation
 		}

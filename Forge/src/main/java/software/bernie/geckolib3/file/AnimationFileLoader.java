@@ -9,7 +9,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.builder.Animation;
+import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.util.json.JsonAnimationUtils;
 

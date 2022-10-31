@@ -19,7 +19,7 @@ import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -120,7 +120,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 				// Set the animation to open the JackInTheBoxItem which will start playing music
 				// and
 				// eventually do the actual animation. Also sets it to not loop
-				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", false));
+				controller.setAnimation(new RawAnimation().addAnimation("Soaryn_chest_popup", false));
 			}
 		}
 	}
