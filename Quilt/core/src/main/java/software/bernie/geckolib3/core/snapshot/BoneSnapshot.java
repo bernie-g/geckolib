@@ -65,7 +65,7 @@ public class BoneSnapshot {
 	}
 
 	public String name;
-	private final IBone modelRenderer;
+	private IBone modelRenderer;
 
 	public float scaleValueX;
 	public float scaleValueY;

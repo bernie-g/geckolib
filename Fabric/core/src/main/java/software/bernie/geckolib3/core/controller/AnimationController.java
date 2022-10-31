@@ -5,11 +5,30 @@
 
 package software.bernie.geckolib3.core.controller;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.eliotlash.mclib.math.IValue;
+
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import org.apache.commons.lang3.tuple.Pair;
-import software.bernie.geckolib3.core.*;
+import software.bernie.geckolib3.core.AnimationState;
+import software.bernie.geckolib3.core.ConstantValue;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.IAnimatableModel;
+import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.Animation;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType;
@@ -18,16 +37,18 @@ import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.keyframe.*;
+import software.bernie.geckolib3.core.keyframe.AnimationPoint;
+import software.bernie.geckolib3.core.keyframe.BoneAnimation;
+import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
+import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
+import software.bernie.geckolib3.core.keyframe.KeyFrame;
+import software.bernie.geckolib3.core.keyframe.KeyFrameLocation;
+import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
+import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.util.Axis;
-
-import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * The type Animation controller.
@@ -379,6 +400,7 @@ public class AnimationController<T extends IAnimatable> {
 		if (animationState == AnimationState.Transitioning && adjustedTick >= this.transitionLengthTicks) {
 			this.shouldResetTick = true;
 			this.animationState = AnimationState.Running;
+			adjustedTick = adjustTick(tick);
 		}
 
 		assert adjustedTick >= 0 : "GeckoLib: Tick was less than zero";
@@ -434,7 +456,7 @@ public class AnimationController<T extends IAnimatable> {
 						}
 					}
 
-					if (!first.isPresent()) {
+					if (first.isEmpty()) {
 						if (crashWhenCantFindBone)
 							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName);
 
@@ -444,9 +466,9 @@ public class AnimationController<T extends IAnimatable> {
 					BoneSnapshot initialSnapshot = first.get().getInitialSnapshot();
 					assert boneSnapshot != null : "Bone snapshot was null";
 
-					VectorKeyFrameList<KeyFrame> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-					VectorKeyFrameList<KeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
-					VectorKeyFrameList<KeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+					VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+					VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
+					VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
 					// Adding the initial positions of the upcoming animation, so the model
 					// transitions to the initial state of the new animation
@@ -454,13 +476,13 @@ public class AnimationController<T extends IAnimatable> {
 						AnimationPoint xPoint = getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, 0, true, Axis.X);
 						AnimationPoint yPoint = getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, 0, true, Axis.Y);
 						AnimationPoint zPoint = getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, 0, true, Axis.Z);
-						boneAnimationQueue.rotationXQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.rotationXQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.rotationValueX - initialSnapshot.rotationValueX,
 								xPoint.animationStartValue));
-						boneAnimationQueue.rotationYQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.rotationYQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.rotationValueY - initialSnapshot.rotationValueY,
 								yPoint.animationStartValue));
-						boneAnimationQueue.rotationZQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.rotationZQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.rotationValueZ - initialSnapshot.rotationValueZ,
 								zPoint.animationStartValue));
 					}
@@ -469,11 +491,11 @@ public class AnimationController<T extends IAnimatable> {
 						AnimationPoint xPoint = getAnimationPointAtTick(positionKeyFrames.xKeyFrames, 0, false, Axis.X);
 						AnimationPoint yPoint = getAnimationPointAtTick(positionKeyFrames.yKeyFrames, 0, false, Axis.Y);
 						AnimationPoint zPoint = getAnimationPointAtTick(positionKeyFrames.zKeyFrames, 0, false, Axis.Z);
-						boneAnimationQueue.positionXQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.positionXQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.positionOffsetX, xPoint.animationStartValue));
-						boneAnimationQueue.positionYQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.positionYQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.positionOffsetY, yPoint.animationStartValue));
-						boneAnimationQueue.positionZQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.positionZQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.positionOffsetZ, zPoint.animationStartValue));
 					}
 
@@ -481,11 +503,11 @@ public class AnimationController<T extends IAnimatable> {
 						AnimationPoint xPoint = getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, 0, false, Axis.X);
 						AnimationPoint yPoint = getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, 0, false, Axis.Y);
 						AnimationPoint zPoint = getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, 0, false, Axis.Z);
-						boneAnimationQueue.scaleXQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.scaleXQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.scaleValueX, xPoint.animationStartValue));
-						boneAnimationQueue.scaleYQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.scaleYQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.scaleValueY, yPoint.animationStartValue));
-						boneAnimationQueue.scaleZQueue.add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
+						boneAnimationQueue.scaleZQueue().add(new AnimationPoint(null, adjustedTick, this.transitionLengthTicks,
 								boneSnapshot.scaleValueZ, zPoint.animationStartValue));
 					}
 				}
@@ -586,34 +608,34 @@ public class AnimationController<T extends IAnimatable> {
 				continue;
 			}
 
-			VectorKeyFrameList<KeyFrame> rotationKeyFrames = boneAnimation.rotationKeyFrames;
-			VectorKeyFrameList<KeyFrame> positionKeyFrames = boneAnimation.positionKeyFrames;
-			VectorKeyFrameList<KeyFrame> scaleKeyFrames = boneAnimation.scaleKeyFrames;
+			VectorKeyFrameList<KeyFrame<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames;
+			VectorKeyFrameList<KeyFrame<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames;
+			VectorKeyFrameList<KeyFrame<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames;
 
 			if (!rotationKeyFrames.xKeyFrames.isEmpty()) {
-				boneAnimationQueue.rotationXQueue
+				boneAnimationQueue.rotationXQueue()
 						.add(getAnimationPointAtTick(rotationKeyFrames.xKeyFrames, tick, true, Axis.X));
-				boneAnimationQueue.rotationYQueue
+				boneAnimationQueue.rotationYQueue()
 						.add(getAnimationPointAtTick(rotationKeyFrames.yKeyFrames, tick, true, Axis.Y));
-				boneAnimationQueue.rotationZQueue
+				boneAnimationQueue.rotationZQueue()
 						.add(getAnimationPointAtTick(rotationKeyFrames.zKeyFrames, tick, true, Axis.Z));
 			}
 
 			if (!positionKeyFrames.xKeyFrames.isEmpty()) {
-				boneAnimationQueue.positionXQueue
+				boneAnimationQueue.positionXQueue()
 						.add(getAnimationPointAtTick(positionKeyFrames.xKeyFrames, tick, false, Axis.X));
-				boneAnimationQueue.positionYQueue
+				boneAnimationQueue.positionYQueue()
 						.add(getAnimationPointAtTick(positionKeyFrames.yKeyFrames, tick, false, Axis.Y));
-				boneAnimationQueue.positionZQueue
+				boneAnimationQueue.positionZQueue()
 						.add(getAnimationPointAtTick(positionKeyFrames.zKeyFrames, tick, false, Axis.Z));
 			}
 
 			if (!scaleKeyFrames.xKeyFrames.isEmpty()) {
-				boneAnimationQueue.scaleXQueue
+				boneAnimationQueue.scaleXQueue()
 						.add(getAnimationPointAtTick(scaleKeyFrames.xKeyFrames, tick, false, Axis.X));
-				boneAnimationQueue.scaleYQueue
+				boneAnimationQueue.scaleYQueue()
 						.add(getAnimationPointAtTick(scaleKeyFrames.yKeyFrames, tick, false, Axis.Y));
-				boneAnimationQueue.scaleZQueue
+				boneAnimationQueue.scaleZQueue()
 						.add(getAnimationPointAtTick(scaleKeyFrames.zKeyFrames, tick, false, Axis.Z));
 			}
 		}
@@ -688,10 +710,10 @@ public class AnimationController<T extends IAnimatable> {
 	}
 
 	// Helper method to transform a KeyFrameLocation to an AnimationPoint
-	private AnimationPoint getAnimationPointAtTick(List<KeyFrame> frames, double tick, boolean isRotation,
+	private AnimationPoint getAnimationPointAtTick(List<KeyFrame<IValue>> frames, double tick, boolean isRotation,
 			Axis axis) {
-		KeyFrameLocation<KeyFrame> location = getCurrentKeyFrameLocation(frames, tick);
-		KeyFrame currentFrame = location.currentFrame;
+		KeyFrameLocation<KeyFrame<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
+		KeyFrame<IValue> currentFrame = location.currentFrame;
 		double startValue = currentFrame.getStartValue().get();
 		double endValue = currentFrame.getEndValue().get();
 
@@ -718,11 +740,11 @@ public class AnimationController<T extends IAnimatable> {
 	 * Returns the current keyframe object, plus how long the previous keyframes
 	 * have taken (aka elapsed animation time)
 	 **/
-	private KeyFrameLocation<KeyFrame> getCurrentKeyFrameLocation(List<KeyFrame> frames,
+	private KeyFrameLocation<KeyFrame<IValue>> getCurrentKeyFrameLocation(List<KeyFrame<IValue>> frames,
 			double ageInTicks) {
 		double totalTimeTracker = 0;
 
-		for (KeyFrame frame : frames) {
+		for (KeyFrame<IValue> frame : frames) {
 			totalTimeTracker += frame.getLength();
 
 			if (totalTimeTracker > ageInTicks) {
