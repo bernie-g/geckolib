@@ -230,6 +230,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true,
 					boneSlot == EquipmentSlot.CHEST);
 			geoArmorRenderer.setCurrentItem(this.currentEntityBeingRendered, armorForBone, boneSlot);
+			// Just to be safe, it does some modelprovider stuff in there too
+			geoArmorRenderer.applySlot(boneSlot);
 			setLimbBoneVisible(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
 			geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLight);
 			stack.popPose();
