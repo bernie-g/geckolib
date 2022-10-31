@@ -554,14 +554,14 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 		String s1 = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, texture,
 				(slot == EquipmentSlot.LEGS ? 2 : 1), type == null ? "" : String.format("_%s", type));
 
-		ResourceLocation location = (ResourceLocation) ARMOR_TEXTURE_RES_MAP.get(s1);
+		ResourceLocation ResourceLocation = (ResourceLocation) ARMOR_TEXTURE_RES_MAP.get(s1);
 
-		if (location == null) {
-			location = new ResourceLocation(s1);
-			ARMOR_TEXTURE_RES_MAP.put(s1, location);
+		if (ResourceLocation == null) {
+			ResourceLocation = new ResourceLocation(s1);
+			ARMOR_TEXTURE_RES_MAP.put(s1, ResourceLocation);
 		}
 
-		return location;
+		return ResourceLocation;
 	}
 
 	// Auto UV recalculations for texturePerBone
