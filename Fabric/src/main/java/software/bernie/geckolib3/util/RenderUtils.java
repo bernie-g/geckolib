@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -20,12 +21,23 @@ import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
 
 public final class RenderUtils {
+
 	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
 		poseStack.translate(-bone.getPositionX() / 16f, bone.getPositionY() / 16f, bone.getPositionZ() / 16f);
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.mulPose(new Quaternionf().rotationXYZ(bone.getRotationX(), bone.getRotationY(), bone.getRotationZ()));
+		if (bone.getRotationZ() != 0.0F) {
+			poseStack.mulPose(Axis.ZP.rotation(bone.getRotationZ()));
+		}
+
+		if (bone.getRotationY() != 0.0F) {
+			poseStack.mulPose(Axis.YP.rotation(bone.getRotationY()));
+		}
+
+		if (bone.getRotationX() != 0.0F) {
+			poseStack.mulPose(Axis.XP.rotation(bone.getRotationX()));
+		}
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
@@ -70,10 +82,8 @@ public final class RenderUtils {
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path.<br>
 	 * Not performance-efficient, and should not be relied upon
-	 * 
 	 * @param texture The path of the texture resource to check
-	 * @return The dimensions (width x height) of the texture, or null if unable to
-	 *         find or read the file
+	 * @return The dimensions (width x height) of the texture, or null if unable to find or read the file
 	 */
 	@Nullable
 	public static IntIntPair getTextureDimensions(ResourceLocation texture) {
@@ -85,7 +95,8 @@ public final class RenderUtils {
 
 		try {
 			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(texture)).get();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			GeckoLib.LOGGER.warn("Failed to load image for id {}", texture);
 			e.printStackTrace();
 		}
@@ -98,7 +109,8 @@ public final class RenderUtils {
 		try {
 			image = originalTexture instanceof DynamicTexture dynamicTexture ? dynamicTexture.getPixels()
 					: NativeImage.read(mc.getResourceManager().getResource(texture).get().open());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			GeckoLib.LOGGER.error("Failed to read image for id {}", texture);
 			e.printStackTrace();
 		}
