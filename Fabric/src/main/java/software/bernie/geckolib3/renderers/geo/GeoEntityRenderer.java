@@ -71,10 +71,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
 
-	/**
-	 * Use {@link LivingEntity#getItemBySlot(EquipmentSlot)}
-	 */
-	@Deprecated
 	public ItemStack mainHand, offHand, helmet, chestplate, leggings, boots;
 	public MultiBufferSource rtb;
 	public ResourceLocation whTexture;
@@ -110,8 +106,6 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.rtb = bufferSource;
 		this.whTexture = getTextureLocation(animatable);
 
-		// TODO 1.20+ Remove these in breaking change. Users can retrieve these
-		// themselves if needed, this is unnecessary work
 		this.mainHand = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offHand = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmet = animatable.getItemBySlot(EquipmentSlot.HEAD);
@@ -195,9 +189,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				Collections.singletonList(entityModelData));
 		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
 
-		this.modelProvider.setCustomAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to
-																									// setCustomAnimations
-																									// in 1.20+
+		this.modelProvider.setCustomAnimations(animatable, getInstanceId(animatable), predicate);
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
@@ -214,7 +206,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			render(model, animatable, partialTick, renderType, poseStack, bufferSource,
 					glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer)
 							: null,
-					packedLight, getPackedOverlay(animatable, 0), renderColor.getRed() / 255f,
+					packedLight, getOverlay(animatable, 0), renderColor.getRed() / 255f,
 					renderColor.getGreen() / 255f, renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 		}
 
@@ -313,11 +305,12 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.heightScale;
 	}
 
-	// TODO 1.20+ change to instance method with T argument instead of entity
-	public static int getPackedOverlay(LivingEntity entity, float u) {
-		return OverlayTexture.pack(OverlayTexture.u(u), OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
+	@AvailableSince(value = "3.1.35")
+	public int getOverlay(T entity, float u) {
+		return OverlayTexture.pack(OverlayTexture.u(u),
+				OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
 	}
-
+	
 	protected void applyRotations(T animatable, PoseStack poseStack, float ageInTicks, float rotationYaw,
 			float partialTick) {
 		Pose pose = animatable.getPose();
@@ -489,14 +482,5 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	@Override
 	public MultiBufferSource getCurrentRTB() {
 		return this.rtb;
-	}
-
-	/**
-	 * Just add them yourself<br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	protected float getLerpedAge(T animatable, float partialTick) {
-		return animatable.tickCount + partialTick;
 	}
 }
