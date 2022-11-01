@@ -14,23 +14,19 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3f;
 import software.bernie.example.client.DefaultBipedBoneIdents;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
-	private static final Identifier TEXTURE = new Identifier(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity.png");
-	private static final Identifier MODEL_RESLOC = new Identifier(GeckoLib.ModID,
-			"geo/extendedrendererentity.geo.json");
 
 	protected ItemStack mainHandItem, offHandItem, helmetItem, chestplateItem, leggingsItem, bootsItem;
 
 	public ExampleExtendedRendererEntityRenderer(EntityRendererFactory.Context renderManager) {
-		super(renderManager, new ExampleExtendedRendererEntityModel<>(MODEL_RESLOC, TEXTURE, "testentity"));
+		super(renderManager, new ExampleExtendedRendererEntityModel<>(EntityResources.EXTENDED_MODEL, EntityResources.EXTENDED_TEXTURE, "testentity"));
 	}
 	
 	@Override
@@ -162,13 +158,10 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			ExtendedRendererEntity currentEntity) {
 	}
 
-	protected final Identifier CAPE_TEXTURE = new Identifier(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity_cape.png");
-
 	@Override
 	protected Identifier getTextureForBone(String boneName, ExtendedRendererEntity animatable) {
 		if ("bipedCape".equals(boneName))
-			return CAPE_TEXTURE;
+			return EntityResources.EXTENDED_CAPE_TEXTURE;
 
 		return null;
 	}

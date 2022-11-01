@@ -2,8 +2,8 @@ package software.bernie.example.client.model.entity;
 
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.entity.GeoExampleEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
@@ -12,17 +12,17 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity> {
 	@Override
 	public Identifier getAnimationFileLocation(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "animations/bat.animation.json");
+		return EntityResources.BAT_ANIMATIONS;
 	}
 
 	@Override
 	public Identifier getModelLocation(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "geo/bat.geo.json");
+		return EntityResources.BAT_MODEL;
 	}
 
 	@Override
 	public Identifier getTextureLocation(GeoExampleEntity entity) {
-		return new Identifier(GeckoLib.ModID, "textures/model/entity/bat.png");
+		return EntityResources.BAT_TEXTURE;
 	}
 
 	@Override

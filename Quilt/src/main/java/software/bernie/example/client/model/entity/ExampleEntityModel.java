@@ -2,27 +2,27 @@ package software.bernie.example.client.model.entity;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3q.GeckoLib;
 import software.bernie.geckolib3q.model.AnimatedTickingGeoModel;
 import software.bernie.geckolib3q.model.provider.data.EntityModelData;
 
 public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/bat.animation.json");
+		return EntityResources.BAT_ANIMATIONS;
 	}
 
 	@Override
 	public ResourceLocation getModelResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json");
+		return EntityResources.BAT_MODEL;
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
+		return EntityResources.BAT_TEXTURE;
 	}
 
 	@Override

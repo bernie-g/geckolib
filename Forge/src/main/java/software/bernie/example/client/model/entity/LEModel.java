@@ -1,25 +1,25 @@
 package software.bernie.example.client.model.entity;
 
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.entity.LEEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 
 public class LEModel extends AnimatedTickingGeoModel<LEEntity> {
 
 	@Override
 	public ResourceLocation getModelLocation(LEEntity object) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/le.geo.json");
+		return EntityResources.LAYER_EXAMPLE_MODEL;
 	}
 
 	@Override
 	public ResourceLocation getTextureLocation(LEEntity object) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/entity/le.png");
+		return EntityResources.LAYER_EXAMPLE_TEXTURE;
 	}
 
 	@Override
 	public ResourceLocation getAnimationFileLocation(LEEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/le.animations.json");
+		return EntityResources.LAYER_EXAMPLE_ANIMATIONS;
 	}
 
 }

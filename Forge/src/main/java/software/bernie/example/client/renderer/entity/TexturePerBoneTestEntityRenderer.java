@@ -10,24 +10,17 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.client.model.entity.TexturePerBoneTestEntityModel;
 import software.bernie.example.entity.TexturePerBoneTestEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<TexturePerBoneTestEntity> {
-	
-	private static final ResourceLocation TEXTURE = new ResourceLocation("minecraft",
-			"textures/block/redstone_block.png");
-	private static final ResourceLocation TEXTURE_GLASS = new ResourceLocation("minecraft",
-			"textures/block/white_stained_glass.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
-			"geo/textureperbonetestentity.geo.json");
 
 	public TexturePerBoneTestEntityRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new TexturePerBoneTestEntityModel<TexturePerBoneTestEntity>(MODEL_RESLOC, TEXTURE, "textureperbonetestentity"));
+		super(renderManager, new TexturePerBoneTestEntityModel<TexturePerBoneTestEntity>(EntityResources.TEXTUREPERBONE_MODEL, EntityResources.TEXTUREPERBONE_TEXTURE, "textureperbonetestentity"));
 	}
 
 	@Override
@@ -43,7 +36,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, TexturePerBoneTestEntity animatable) {
 		if(boneName.equalsIgnoreCase("outer_glass")) {
-			return TEXTURE_GLASS;
+			return EntityResources.TEXTUREPERBONE_GLASS_TEXTURE;
 		}
 		return null;
 	}
