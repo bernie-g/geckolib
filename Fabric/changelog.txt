@@ -1,3 +1,8 @@
+v3.0.75
+
+- Deprecate getPackedOverlay for getOverlay, move to non-static to allow Overriding.
+- Move example resources to constants
+
 v3.0.74
 
 - Fixes broken rotation on cubes
