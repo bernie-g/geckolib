@@ -267,7 +267,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setLocalSpaceXform(Matrix4f otherlocalSpaceXform) {
-		this.localSpaceXform.get(otherlocalSpaceXform);
+		this.localSpaceXform.set(otherlocalSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the entity */
@@ -283,7 +283,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setWorldSpaceXform(Matrix4f otherworldSpaceXform) {
-		this.worldSpaceXform.get(worldSpaceXform);
+		this.worldSpaceXform.set(worldSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the model */
