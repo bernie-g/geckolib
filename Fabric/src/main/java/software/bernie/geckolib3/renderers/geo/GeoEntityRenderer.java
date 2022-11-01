@@ -8,6 +8,7 @@ import javax.annotation.Nonnull;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -251,16 +252,16 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = new Matrix4f( poseStack.last().pose());
+			Matrix4f poseState = poseStack.last().pose();
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
 			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
-			localMatrix.translate(getRenderOffset(this.animatable, 1).toVector3f());
+			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setLocalSpaceXform(localMatrix);
-			
-			Matrix4f worldState = new Matrix4f(localMatrix);
 
-			worldState.translate(this.animatable.position().toVector3f());
+			Matrix4f worldState = localMatrix;
+
+			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceXform(worldState);
 		}
 

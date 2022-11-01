@@ -258,7 +258,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setModelSpaceXform(Matrix4f modelSpaceXform) {
-		this.modelSpaceXform.mul(modelSpaceXform);
+		this.modelSpaceXform.mul0(modelSpaceXform);
 	}
 
 	public Matrix4f getLocalSpaceXform() {
@@ -267,7 +267,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setLocalSpaceXform(Matrix4f otherlocalSpaceXform) {
-		this.localSpaceXform.transpose(otherlocalSpaceXform);
+		this.localSpaceXform.get(otherlocalSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the entity */
@@ -283,7 +283,7 @@ public class GeoBone implements IBone {
 	}
 
 	public void setWorldSpaceXform(Matrix4f otherworldSpaceXform) {
-		this.worldSpaceXform.transpose(worldSpaceXform);
+		this.worldSpaceXform.get(worldSpaceXform);
 	}
 
 	/* Gets the postion of a bone relative to the model */
@@ -313,7 +313,7 @@ public class GeoBone implements IBone {
 	}
 
 	public Matrix4f getModelRotationMat() {
-		Matrix4f matrix = new Matrix4f(getModelSpaceXform());
+		Matrix4f matrix = getModelSpaceXform();
 		removeMatrixTranslation(matrix);
 		return matrix;
 	}
