@@ -106,9 +106,19 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
-	public static int getPackedOverlay(LivingEntity livingEntityIn, float uIn) {
-		return OverlayTexture.getUv(OverlayTexture.getU(uIn),
-				livingEntityIn.hurtTime > 0 || livingEntityIn.deathTime > 0);
+	@AvailableSince(value = "3.0.75")
+	public int getOverlay(T entity, float u) {
+		return OverlayTexture.packUv(OverlayTexture.getU(u),
+				OverlayTexture.getV(entity.hurtTime > 0 || entity.deathTime > 0));
+	}
+
+	/**
+	 * Use {@link GeoEntityRenderer#getOverlay(T, float)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated()
+	public int getPackedOverlay(LivingEntity entity, float u) {
+		return this.getOverlay(animatable, u);
 	}
 
 	private static float getFacingAngle(Direction facingIn) {
@@ -211,7 +221,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 					.getBuffer(RenderLayer.getEntityTranslucentCull(getTextureLocation(entity)));
 			render(model, entity, partialTicks, renderType, stack, bufferIn,
 					glintBuffer != translucentBuffer ? VertexConsumers.union(glintBuffer, translucentBuffer) : null,
-					packedLightIn, getPackedOverlay(entity, 0), (float) renderColor.getRed() / 255f,
+					packedLightIn, getOverlay(entity, 0), (float) renderColor.getRed() / 255f,
 					(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
 					(float) renderColor.getAlpha() / 255);
 		}
