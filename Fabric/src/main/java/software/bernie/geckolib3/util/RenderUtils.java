@@ -109,7 +109,11 @@ public final class RenderUtils {
 	}
 
 	public static void rotateMatrixAroundCube(MatrixStack poseStack, GeoCube cube) {
-		poseStack.multiply(new Quaternion(cube.rotation.getX(), cube.rotation.getY(), cube.rotation.getZ(), false));
+		Vec3f rotation = cube.rotation;
+
+		poseStack.multiply(new Quaternion(0, 0, rotation.getZ(), false));
+		poseStack.multiply(new Quaternion(0, rotation.getY(), 0, false));
+		poseStack.multiply(new Quaternion(rotation.getY(), 0, 0, false));
 	}
 
 	public static void scaleMatrixForBone(MatrixStack poseStack, GeoBone bone) {
