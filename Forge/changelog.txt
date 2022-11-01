@@ -1,4 +1,4 @@
-v3.0.102
+v3.0.103
 
-- Fixes keyframe issue.
-- Updates Examples.
+- Deprecate getPackedOverlay for getOverlay, move to non-static to allow Overriding.
+- Move example resources to constants

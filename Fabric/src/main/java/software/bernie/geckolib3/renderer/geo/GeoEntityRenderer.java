@@ -106,7 +106,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.currentModelRenderCycle = currentModelRenderCycle;
 	}
 
-	@AvailableSince(value = "3.0.75")
+	@AvailableSince(value = "3.0.104")
 	public int getOverlay(T entity, float u) {
 		return OverlayTexture.packUv(OverlayTexture.getU(u),
 				OverlayTexture.getV(entity.hurtTime > 0 || entity.deathTime > 0));

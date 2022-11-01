@@ -351,7 +351,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.heightScale;
 	}
 
-	@AvailableSince(value = "3.0.53")
+	@AvailableSince(value = "3.0.103")
 	public int getOverlay(T entity, float u) {
 		return OverlayTexture.pack(OverlayTexture.u(u),
 				OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
