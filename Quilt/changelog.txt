@@ -1,4 +1,4 @@
-v3.0.38
+v3.0.39
 
 - Fixes broken rotation on cubes
 
