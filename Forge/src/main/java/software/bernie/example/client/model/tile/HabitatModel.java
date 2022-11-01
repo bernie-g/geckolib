@@ -1,27 +1,26 @@
-// Made with Blockbench 3.6.6
-// Exported for Minecraft version 1.12.2 or 1.15.2 (same format for both) for entity models animated with GeckoLibMod
-// Paste this class into your mod and follow the documentation for GeckoLibMod to use animations. You can find the documentation here: https://github.com/bernie-g/geckolib
-// Blockbench plugin created by Gecko
 package software.bernie.example.client.model.tile;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.HabitatTileEntity;
-import software.bernie.geckolib3.GeckoLib;
+import software.bernie.example.client.EntityResources;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
+/**
+ * @author VoutVouniern Copyright (c) 03.06.2022 Developed by VoutVouniern
+ */
 public class HabitatModel extends AnimatedGeoModel<HabitatTileEntity> {
 	@Override
-	public ResourceLocation getAnimationResource(HabitatTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/gecko_habitat.animation.json");
+	public ResourceLocation getAnimationResource(HabitatTileEntity entity) {
+		return EntityResources.HABITAT_ANIMATIONS;
 	}
 
 	@Override
 	public ResourceLocation getModelResource(HabitatTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/gecko_habitat.geo.json");
+		return EntityResources.HABITAT_MODEL;
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(HabitatTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/block/gecko_habitat.png");
+		return EntityResources.HABITAT_TEXTURE;
 	}
 }

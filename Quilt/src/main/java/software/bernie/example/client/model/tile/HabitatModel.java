@@ -2,7 +2,7 @@ package software.bernie.example.client.model.tile;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.HabitatTileEntity;
-import software.bernie.geckolib3.GeckoLib;
+import software.bernie.example.client.EntityResources;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 /**
@@ -11,16 +11,16 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class HabitatModel extends AnimatedGeoModel<HabitatTileEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(HabitatTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/gecko_habitat.animation.json");
+		return EntityResources.HABITAT_ANIMATIONS;
 	}
 
 	@Override
 	public ResourceLocation getModelResource(HabitatTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/gecko_habitat.geo.json");
+		return EntityResources.HABITAT_MODEL;
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(HabitatTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/block/gecko_habitat.png");
+		return EntityResources.HABITAT_TEXTURE;
 	}
 }
