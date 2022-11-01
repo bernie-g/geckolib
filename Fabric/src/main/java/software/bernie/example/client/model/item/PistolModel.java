@@ -1,23 +1,23 @@
 package software.bernie.example.client.model.item;
 
 import net.minecraft.util.Identifier;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.item.PistolItem;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class PistolModel extends AnimatedGeoModel<PistolItem> {
 	@Override
 	public Identifier getModelLocation(PistolItem object) {
-		return new Identifier(GeckoLib.ModID, "geo/pistol.geo.json");
+		return EntityResources.PISTOL_MODEL;
 	}
 
 	@Override
 	public Identifier getTextureLocation(PistolItem object) {
-		return new Identifier(GeckoLib.ModID, "textures/item/pistol.png");
+		return EntityResources.PISTOL_TEXTURE;
 	}
 
 	@Override
 	public Identifier getAnimationFileLocation(PistolItem animatable) {
-		return new Identifier(GeckoLib.ModID, "animations/pistol.animation.json");
+		return EntityResources.PISTOL_ANIMATIONS;
 	}
 }

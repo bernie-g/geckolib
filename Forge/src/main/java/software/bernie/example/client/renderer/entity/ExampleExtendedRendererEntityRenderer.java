@@ -13,23 +13,18 @@ import net.minecraft.item.ShieldItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.vector.Vector3f;
 import software.bernie.example.client.DefaultBipedBoneIdents;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
-			"geo/extendedrendererentity.geo.json");
-
 	public ExampleExtendedRendererEntityRenderer(EntityRendererManager renderManager) {
 		super(renderManager,
-				new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(MODEL_RESLOC, TEXTURE, "testentity"));
+				new ExampleExtendedRendererEntityModel<ExtendedRendererEntity>(EntityResources.EXTENDED_MODEL, EntityResources.EXTENDED_TEXTURE, "testentity"));
 	}
 
 	@Override
@@ -180,18 +175,13 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	@Override
 	protected void postRenderBlock(MatrixStack stack, BlockState block, String boneName, ExtendedRendererEntity currentEntity) {
 	}
-
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity_cape.png");
 	
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity currentEntity) {
-		switch (boneName) {
-		case "bipedCape":
-			return CAPE_TEXTURE;
-		default:
-			return null;
-		}
+		if ("bipedCape".equals(boneName))
+			return EntityResources.EXTENDED_CAPE_TEXTURE;
+
+		return null;
 	}
 
 	@Override
