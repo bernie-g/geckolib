@@ -206,7 +206,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 			render(model, animatable, partialTick, renderType, poseStack, bufferSource,
 					glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer)
 							: null,
-					packedLight, getPackedOverlay(animatable, 0), renderColor.getRed() / 255f,
+					packedLight, getOverlay(animatable, 0), renderColor.getRed() / 255f,
 					renderColor.getGreen() / 255f, renderColor.getBlue() / 255f,
 					renderColor.getAlpha() / 255f);
 		}
@@ -307,10 +307,19 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		return this.heightScale;
 	}
 
-	// TODO 1.20+ change to instance method with T argument instead of entity
-	public static int getPackedOverlay(LivingEntity entity, float u) {
+	@AvailableSince(value = "3.0.40")
+	public int getOverlay(T entity, float u) {
 		return OverlayTexture.pack(OverlayTexture.u(u),
 				OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
+	}
+
+	/**
+	 * Use {@link GeoEntityRenderer#getOverlay(T, float)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public int getPackedOverlay(LivingEntity entity, float u) {
+		return this.getOverlay(animatable, u);
 	}
 
 	protected void applyRotations(T animatable, PoseStack poseStack, float ageInTicks, float rotationYaw,
