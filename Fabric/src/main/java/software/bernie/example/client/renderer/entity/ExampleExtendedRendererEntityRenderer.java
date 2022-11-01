@@ -15,23 +15,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.DefaultBipedBoneIdents;
+import software.bernie.example.client.EntityResources;
 import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
-import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
-			"geo/extendedrendererentity.geo.json");
 
 	protected ItemStack mainHandItem, offHandItem, helmetItem, chestplateItem, leggingsItem, bootsItem;
 
 	public ExampleExtendedRendererEntityRenderer(EntityRendererProvider.Context renderManager) {
-		super(renderManager, new ExampleExtendedRendererEntityModel<>(MODEL_RESLOC, TEXTURE, "testentity"));
+		super(renderManager, new ExampleExtendedRendererEntityModel<>(EntityResources.EXTENDED_MODEL, EntityResources.EXTENDED_TEXTURE, "testentity"));
 	}
 
 	@Override
@@ -145,13 +141,10 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			ExtendedRendererEntity currentEntity) {
 	}
 
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
-			"textures/entity/extendedrendererentity_cape.png");
-
 	@Override
 	protected ResourceLocation getTextureForBone(String boneName, ExtendedRendererEntity animatable) {
 		if ("bipedCape".equals(boneName))
-			return CAPE_TEXTURE;
+			return EntityResources.EXTENDED_CAPE_TEXTURE;
 
 		return null;
 	}
