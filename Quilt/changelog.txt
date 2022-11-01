@@ -1,5 +1,9 @@
 v3.0.38
 
+- Fixes broken rotation on cubes
+
+v3.0.38
+
 - Adds back getTexture fix.
 
 v3.0.37
