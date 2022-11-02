@@ -9,6 +9,8 @@ import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
@@ -42,7 +44,7 @@ import software.bernie.geckolib3.util.GeoUtils;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
-public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
+public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeoRenderer<T>, ArmorRenderer {
 	public static final Map<Class<? extends ArmorItem>, GeoArmorRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
@@ -55,7 +57,15 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		});
 	}
 
-	protected ItemStack currentItemStack;
+	protected T currentArmorItem;
+	protected LivingEntity entityLiving;
+	protected ItemStack itemStack;
+	protected EquipmentSlot armorSlot;
+	protected BipedEntityModel baseModel;
+	protected float widthScale = 1;
+	protected float heightScale = 1;
+	protected Matrix4f dispatchedMat = new Matrix4f();
+	protected Matrix4f renderEarlyMat = new Matrix4f();
 
 	// Set these to the names of your armor's bones, or null if you aren't using
 	// them
@@ -67,16 +77,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	public String leftLegBone = "armorLeftLeg";
 	public String rightBootBone = "armorRightBoot";
 	public String leftBootBone = "armorLeftBoot";
-
-	protected T currentArmorItem;
-	protected LivingEntity entityLiving;
-	protected ItemStack itemStack;
-	protected EquipmentSlot armorSlot;
-	protected BipedEntityModel baseModel;
-	protected float widthScale = 1;
-	protected float heightScale = 1;
-	protected Matrix4f dispatchedMat = new Matrix4f();
-	protected Matrix4f renderEarlyMat = new Matrix4f();
 
 	private AnimatedGeoModel<T> modelProvider;
 
@@ -113,8 +113,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		return renderer;
 	}
 
-	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack,
-			LivingEntity entity, EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
+	public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, ItemStack stack, LivingEntity entity,
+			EquipmentSlot slot, int light, BipedEntityModel<LivingEntity> contextModel) {
 		setCurrentItem(entity, stack, slot, contextModel);
 		this.render(matrices, vertexConsumers, light);
 	}
@@ -122,8 +122,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 	public void render(float partialTicks, MatrixStack stack, VertexConsumer bufferIn, int packedLightIn) {
 		stack.translate(0.0D, 1.497F, 0.0D);
 		stack.scale(-1.005F, -1.0F, 1.005F);
-		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
+		this.dispatchedMat = stack.peek().getPositionMatrix().copy();
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(currentArmorItem));
 
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
@@ -134,7 +134,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		this.fitToBiped();
 		this.applySlot(armorSlot);
 		stack.push();
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
+		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
 		RenderLayer renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
 				getTextureLocation(currentArmorItem));
@@ -142,9 +142,9 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 				OverlayTexture.DEFAULT_UV, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 
-		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
+		if (FabricLoader.getInstance().isModLoaded("patchouli"))
 			PatchouliCompat.patchouliLoaded(stack);
-		}
+
 		stack.pop();
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
@@ -165,7 +165,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 		this.fitToBiped();
 		this.applySlot(armorSlot);
 		stack.push();
-		MinecraftClient.getInstance().getTextureManager().bindTexture(getTextureLocation(currentArmorItem));
+		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
 		Color renderColor = getRenderColor(currentArmorItem, 0, stack, bufferIn, null, packedLightIn);
 		RenderLayer renderType = getRenderType(currentArmorItem, 0, stack, bufferIn, null, packedLightIn,
 				getTextureLocation(currentArmorItem));
@@ -173,23 +173,23 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
 				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
 
-		if (FabricLoader.getInstance().isModLoaded("patchouli")) {
+		if (FabricLoader.getInstance().isModLoaded("patchouli"))
 			PatchouliCompat.patchouliLoaded(stack);
-		}
+
 		stack.pop();
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	@Override
-	public void renderEarly(T animatable, MatrixStack stackIn, float partialTicks,
-			VertexConsumerProvider renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn,
-			int packedOverlayIn, float red, float green, float blue, float alpha) {
-		renderEarlyMat = stackIn.peek().getPositionMatrix().copy();
+	public void renderEarly(T animatable, MatrixStack poseStack, float partialTick, VertexConsumerProvider bufferSource,
+			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+			float alpha) {
+		this.renderEarlyMat = poseStack.peek().getPositionMatrix().copy();
 		this.currentArmorItem = animatable;
-		
-		IGeoRenderer.super.renderEarly(animatable, stackIn, partialTicks, renderTypeBuffer, vertexBuilder,
-				packedLightIn, packedOverlayIn, red, green, blue, alpha);
+
+		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+				packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
@@ -302,7 +302,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implem
 
 	@AvailableSince(value = "3.0.65")
 	@Override
-	public float getWidthScale(T animatable2) {
+	public float getWidthScale(T entity) {
 		return this.widthScale;
 	}
 

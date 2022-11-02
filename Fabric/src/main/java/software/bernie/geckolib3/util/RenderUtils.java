@@ -91,7 +91,7 @@ public final class RenderUtils {
 	}
 
 	public static void translateMatrixToBone(MatrixStack poseStack, GeoBone bone) {
-		poseStack.translate(-bone.getPositionX() / 16f, bone.getPositionY() / 16f, bone.getRotationZ() / 16f);
+		poseStack.translate(-bone.getPositionX() / 16f, bone.getPositionY() / 16f, bone.getPositionZ() / 16f);
 	}
 
 	public static void rotateMatrixAroundBone(MatrixStack poseStack, GeoBone bone) {
@@ -113,7 +113,7 @@ public final class RenderUtils {
 
 		poseStack.multiply(new Quaternion(0, 0, rotation.getZ(), false));
 		poseStack.multiply(new Quaternion(0, rotation.getY(), 0, false));
-		poseStack.multiply(new Quaternion(rotation.getY(), 0, 0, false));
+		poseStack.multiply(new Quaternion(rotation.getX(), 0, 0, false));
 	}
 
 	public static void scaleMatrixForBone(MatrixStack poseStack, GeoBone bone) {
@@ -122,7 +122,7 @@ public final class RenderUtils {
 
 	public static void translateToPivotPoint(MatrixStack poseStack, GeoCube cube) {
 		Vec3f pivot = cube.pivot;
-		poseStack.translate(pivot.getZ() / 16f, pivot.getY() / 16f, pivot.getZ() / 16f);
+		poseStack.translate(pivot.getX() / 16f, pivot.getY() / 16f, pivot.getZ() / 16f);
 	}
 
 	public static void translateToPivotPoint(MatrixStack poseStack, GeoBone bone) {
@@ -131,7 +131,7 @@ public final class RenderUtils {
 
 	public static void translateAwayFromPivotPoint(MatrixStack poseStack, GeoCube cube) {
 		Vec3f pivot = cube.pivot;
-		poseStack.translate(-pivot.getZ() / 16f, -pivot.getY() / 16f, -pivot.getZ() / 16f);
+		poseStack.translate(-pivot.getX() / 16f, -pivot.getY() / 16f, -pivot.getZ() / 16f);
 	}
 
 	public static void translateAwayFromPivotPoint(MatrixStack poseStack, GeoBone bone) {
@@ -154,10 +154,8 @@ public final class RenderUtils {
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path.<br>
 	 * Not performance-efficient, and should not be relied upon
-	 * 
 	 * @param texture The path of the texture resource to check
-	 * @return The dimensions (width x height) of the texture, or null if unable to
-	 *         find or read the file
+	 * @return The dimensions (width x height) of the texture, or null if unable to find or read the file
 	 */
 	@Nullable
 	public static IntIntPair getTextureDimensions(Identifier texture) {
@@ -169,7 +167,8 @@ public final class RenderUtils {
 
 		try {
 			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(texture)).get();
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			GeckoLib.LOGGER.warn("Failed to load image for id {}", texture);
 			e.printStackTrace();
 		}
@@ -182,7 +181,8 @@ public final class RenderUtils {
 		try {
 			image = originalTexture instanceof NativeImageBackedTexture dynamicTexture ? dynamicTexture.getImage()
 					: NativeImage.read(mc.getResourceManager().getResource(texture).getInputStream());
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			GeckoLib.LOGGER.error("Failed to read image for id {}", texture);
 			e.printStackTrace();
 		}
