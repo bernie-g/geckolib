@@ -279,6 +279,15 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				netHeadYaw, headPitch);
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public int getInstanceId(T animatable) {
 		return animatable.getId();

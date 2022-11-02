@@ -126,6 +126,15 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		return Vec3.ZERO;
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public int getInstanceId(T animatable) {
 		return animatable.getBlockPos().hashCode();

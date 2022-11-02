@@ -174,15 +174,6 @@ public interface IGeoRenderer<T> {
 	}
 
 	/**
-	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	default Integer getUniqueID(T animatable) {
-		return getInstanceId(animatable);
-	}
-
-	/**
 	 * Use {@link RenderUtils#prepMatrixForBone(PoseStack, GeoBone)}<br>
 	 * Remove in 1.20+
 	 */

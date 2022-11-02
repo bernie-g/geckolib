@@ -315,6 +315,15 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		}
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	protected boolean isVisible(LivingEntity entity) {
 		return !entity.isInvisible();
 	}
