@@ -1,3 +1,7 @@
+v3.0.76
+
+- Fixes rotations properly. Stupid Yarn.
+
 v3.0.75
 
 - Deprecate getPackedOverlay for getOverlay, move to non-static to allow Overriding.
