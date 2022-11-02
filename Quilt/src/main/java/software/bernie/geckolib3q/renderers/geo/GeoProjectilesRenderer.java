@@ -172,6 +172,15 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		return this.modelProvider.getTextureResource(entity);
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public int getInstanceId(T animatable) {
 		return animatable.getUUID().hashCode();

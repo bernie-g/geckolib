@@ -190,6 +190,15 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 		return this.modelProvider.getTextureLocation(animatable);
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public int getInstanceId(T animatable) {
 		return GeckoLibUtil.getIDFromStack(this.currentItemStack);

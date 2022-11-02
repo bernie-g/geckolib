@@ -347,6 +347,15 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return 90;
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public boolean shouldShowName(Entity entity) {
 		double nameRenderDistance = entity.isDiscrete() ? 32d : 64d;

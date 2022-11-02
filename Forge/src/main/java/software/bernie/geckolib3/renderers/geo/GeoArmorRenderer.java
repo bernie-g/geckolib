@@ -425,6 +425,15 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		return this.modelProvider.getBone(boneName);
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	@Override
 	public int getInstanceId(T animatable) {
 		return Objects.hash(this.armorSlot, this.itemStack.getItem(), this.itemStack.getCount(),

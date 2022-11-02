@@ -390,8 +390,17 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return this.modelProvider.getBone(boneName);
 	}
 
-	@Override
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
 	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
+	@Override
+	public int getInstanceId(T animatable) {
 		return Objects.hash(this.armorSlot, itemStack.getItem(), itemStack.getCount(),
 				itemStack.hasNbt() ? itemStack.getNbt().toString() : 1, this.entityLiving.getUuid().toString());
 	}

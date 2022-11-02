@@ -268,6 +268,15 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		return this.modelProvider;
 	}
 
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
+	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
 	// TODO 1.20+ change to instance method with T argument instead of entity
 	public static int getPackedOverlay(LivingEntity entity, float u) {
 		return OverlayTexture.pack(OverlayTexture.u(u),

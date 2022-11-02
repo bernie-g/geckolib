@@ -160,8 +160,17 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		first.load(copy);
 	}
 
-	@Override
+	/**
+	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Remove in 1.20+
+	 */
+	@Deprecated(forRemoval = true)
 	public Integer getUniqueID(T animatable) {
+		return getInstanceId(animatable);
+	}
+
+	@Override
+	public int getInstanceId(T animatable) {
 		return animatable.getPos().hashCode();
 	}
 
