@@ -19,7 +19,6 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 public class AnimationFileLoader {
-
 	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
 		AnimationFile animationFile = new AnimationFile();
 		JsonObject jsonRepresentation = loadFile(location, manager);

@@ -1,26 +1,23 @@
 package software.bernie.geckolib3.core.molang.expressions;
 
-import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-
 import software.bernie.geckolib3.core.molang.MolangParser;
 
-public class MolangValue extends MolangExpression {
-	public IValue value;
-	public boolean returns;
+/**
+ * Molang extension for the {@link IValue} system.
+ * Used to handle values and expressions specific to Molang deserialization
+ */
+public class MolangValue implements IValue {
+	private final IValue value;
+	private final boolean returns;
 
-	public MolangValue(MolangParser context, IValue value) {
-		super(context);
-
-		this.value = value;
+	public MolangValue(IValue value) {
+		this(value, false);
 	}
 
-	public MolangExpression addReturn() {
-		this.returns = true;
-
-		return this;
+	public MolangValue(IValue value, boolean isReturn) {
+		this.value = value;
+		this.returns = isReturn;
 	}
 
 	@Override
@@ -28,17 +25,16 @@ public class MolangValue extends MolangExpression {
 		return this.value.get();
 	}
 
-	@Override
-	public String toString() {
-		return (this.returns ? MolangParser.RETURN : "") + this.value.toString();
+	public IValue getValueHolder() {
+		return this.value;
+	}
+
+	public boolean isReturnValue() {
+		return this.returns;
 	}
 
 	@Override
-	public JsonElement toJson() {
-		if (this.value instanceof Constant) {
-			return new JsonPrimitive(this.value.get());
-		}
-
-		return super.toJson();
+	public String toString() {
+		return (this.returns ? MolangParser.RETURN : "") + this.value.toString();
 	}
 }

@@ -5,7 +5,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
@@ -16,10 +16,10 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class LEEntity extends PathfinderMob implements IAnimatable, IAnimationTickable {
+public class LEEntity extends PathfinderMob implements GeoAnimatable, IAnimationTickable {
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+    private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {
             event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.geoLayerEntity.idle", EDefaultLoopTypes.LOOP));
             return PlayState.CONTINUE;
     }

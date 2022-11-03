@@ -13,7 +13,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -25,10 +25,10 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends Animal implements IAnimatable {
+public class BikeEntity extends Animal implements GeoAnimatable {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+	private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
 	}

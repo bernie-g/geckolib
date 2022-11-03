@@ -20,7 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -36,8 +36,8 @@ import software.bernie.geckolib3.util.RenderUtils;
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends BlockEntityWithoutLevelRenderer
-		implements IGeoRenderer<T> {
+public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntityWithoutLevelRenderer
+		implements GeoObjectRenderer<T> {
 	// Register a model fetcher for this renderer
 	static {
 		AnimationController.addModelFetcher(animatable -> {
@@ -154,7 +154,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
+		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 			bone.setLocalSpaceXform(localMatrix);
 		}
 
-		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -193,7 +193,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 	}
 
 	@Override
-	public MultiBufferSource getCurrentRTB() {
+	public MultiBufferSource getBufferSource() {
 		return this.rtb;
 	}
 }

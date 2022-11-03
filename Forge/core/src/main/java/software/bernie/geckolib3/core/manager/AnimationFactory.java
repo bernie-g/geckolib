@@ -1,27 +1,15 @@
 package software.bernie.geckolib3.core.manager;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 
 /**
- * TODO 1.20+:
- * <ul>
- *     <li>Remove {@code animationDataMap}</li>
- *     <li>Make {@code AnimationFactory} abstract</li>
- *     <li>Make {@code getOrCreateAnimationData} abstract</li>
- * </ul>
+ * The base factory class responsible for returning the {@link AnimationData} for a given instanceof of a {@link GeoAnimatable}.
+ * This class is abstracted and not intended for direct use. See either {@link SingletonAnimationFactory} or {@link InstancedAnimationFactory}
  */
-public class AnimationFactory {
-	protected final IAnimatable animatable;
-	private final Int2ObjectOpenHashMap<AnimationData> animationDataMap = new Int2ObjectOpenHashMap<>();
+public abstract class AnimationFactory {
+	protected final GeoAnimatable animatable;
 
-	/**
-	 * Deprecated, use {@code GeckolibUtil#createFactory(IAnimatable)}
-	 * 
-	 * @param animatable The animatable object the factory is for
-	 */
-	@Deprecated(forRemoval = true)
-	public AnimationFactory(IAnimatable animatable) {
+	protected AnimationFactory(GeoAnimatable animatable) {
 		this.animatable = animatable;
 	}
 
@@ -35,22 +23,5 @@ public class AnimationFactory {
 	 *                 will be returned.
 	 * @return the animatable manager
 	 */
-	public AnimationData getOrCreateAnimationData(int uniqueID) {
-		if (!this.animationDataMap.containsKey(uniqueID)) {
-			AnimationData data = new AnimationData();
-
-			this.animatable.registerControllers(data);
-			this.animationDataMap.put(uniqueID, data);
-		}
-
-		return animationDataMap.get(uniqueID);
-	}
-
-	/**
-	 * Use {@link AnimationFactory#getOrCreateAnimationData(int)}
-	 */
-	@Deprecated(forRemoval = true)
-	public AnimationData getOrCreateAnimationData(Integer uniqueID) {
-		return getOrCreateAnimationData((int)uniqueID);
-	}
+	public abstract AnimationData getOrCreateAnimationData(int uniqueID);
 }

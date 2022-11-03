@@ -1,13 +1,12 @@
 package software.bernie.geckolib3;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
-import software.bernie.geckolib3.resource.ResourceListener;
+import software.bernie.geckolib3.resource.GeckoLibCache;
 
 public class GeckoLib {
 	public static final Logger LOGGER = LogManager.getLogger();
@@ -35,7 +34,7 @@ public class GeckoLib {
 	 */
 	synchronized public static void initialize() {
 		if (!hasInitialized) {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> ResourceListener::registerReloadListener);
+			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
 			GeckoLibNetwork.initialize();
 		}
 		hasInitialized = true;

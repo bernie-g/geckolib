@@ -17,7 +17,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -27,10 +27,10 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class CarEntity extends Animal implements IAnimatable {
+public class CarEntity extends Animal implements GeoAnimatable {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+	private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (event.isMoving() && this.getFirstPassenger() != null) {
 			event.getController().setAnimation(new RawAnimation().addAnimation("moving", EDefaultLoopTypes.LOOP));
 		} else {

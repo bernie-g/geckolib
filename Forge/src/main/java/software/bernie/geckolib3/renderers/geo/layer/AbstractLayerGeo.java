@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
 
@@ -19,7 +19,7 @@ import java.util.function.Function;
  * 
  * Originally developed for chocolate quest repoured
  */
-public abstract class AbstractLayerGeo<T extends LivingEntity & IAnimatable> extends GeoLayerRenderer<T> {
+public abstract class AbstractLayerGeo<T extends LivingEntity & GeoAnimatable> extends GeoLayerRenderer<T> {
 	protected final Function<T, ResourceLocation> funcGetCurrentTexture;
 	protected final Function<T, ResourceLocation> funcGetCurrentModel;
 

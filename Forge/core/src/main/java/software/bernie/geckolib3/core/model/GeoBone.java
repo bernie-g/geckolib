@@ -1,8 +1,8 @@
-package software.bernie.geckolib3.core.processor;
+package software.bernie.geckolib3.core.model;
 
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
-public interface IBone {
+public interface GeoBone {
 	float getRotationX();
 
 	float getRotationY();

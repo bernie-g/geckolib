@@ -28,6 +28,9 @@ public class MathUtil {
 		} else if (easingType == EasingType.NONE && animationPoint.keyframe != null) {
 			easingType = animationPoint.keyframe.easingType;
 		}
+
+
+
 		double ease = EasingManager.ease(animationPoint.currentTick / animationPoint.animationEndTick, easingType,
 				animationPoint.keyframe == null ? null : animationPoint.keyframe.easingArgs);
 		return lerpValues(ease, animationPoint.animationStartValue, animationPoint.animationEndValue);

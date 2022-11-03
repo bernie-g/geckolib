@@ -7,17 +7,16 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.file.AnimationFile;
 import software.bernie.geckolib3.geo.exception.GeckoLibException;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
 import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
@@ -26,7 +25,7 @@ import software.bernie.geckolib3.util.MolangUtils;
 
 import java.util.Collections;
 
-public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
+public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;
 	private GeoModel currentModel;
@@ -35,10 +34,10 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		this.animationProcessor = new AnimationProcessor(this);
 	}
 
-	public void registerBone(GeoBone bone) {
+	public void registerBone(software.bernie.geckolib3.geo.render.built.GeoBone bone) {
 		registerModelRenderer(bone);
 
-		for (GeoBone childBone : bone.childBones) {
+		for (software.bernie.geckolib3.geo.render.built.GeoBone childBone : bone.childBones) {
 			registerBone(childBone);
 		}
 	}
@@ -97,12 +96,12 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 		return this.animationProcessor;
 	}
 
-	public void registerModelRenderer(IBone modelRenderer) {
+	public void registerModelRenderer(GeoBone modelRenderer) {
 		this.animationProcessor.registerModelRenderer(modelRenderer);
 	}
 
 	@Override
-	public Animation getAnimation(String name, IAnimatable animatable) {
+	public Animation getAnimation(String name, GeoAnimatable animatable) {
 		AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(this.getAnimationResource((T) animatable));
 
 		if (animation == null) {
@@ -126,7 +125,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			this.animationProcessor.clearModelRendererList();
 			this.currentModel = model;
 
-			for (GeoBone bone : model.topLevelBones) {
+			for (software.bernie.geckolib3.geo.render.built.GeoBone bone : model.topLevelBones) {
 				registerBone(bone);
 			}
 		}
@@ -135,7 +134,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 	}
 
 	@Override
-	public void setMolangQueries(IAnimatable animatable, double seekTime) {
+	public void setMolangQueries(GeoAnimatable animatable, double seekTime) {
 		MolangParser parser = GeckoLibCache.getInstance().parser;
 		Minecraft mc = Minecraft.getInstance();
 

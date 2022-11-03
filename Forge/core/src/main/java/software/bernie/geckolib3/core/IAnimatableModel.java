@@ -1,9 +1,10 @@
 package software.bernie.geckolib3.core;
 
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.processor.AnimationProcessor;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.model.GeoBone;
 
 public interface IAnimatableModel<E> {
 	default double getCurrentTick() {
@@ -19,7 +20,7 @@ public interface IAnimatableModel<E> {
 
 	AnimationProcessor getAnimationProcessor();
 
-	Animation getAnimation(String name, IAnimatable animatable);
+	Animation getAnimation(String name, GeoAnimatable animatable);
 
 	/**
 	 * Gets a bone by name.
@@ -27,8 +28,8 @@ public interface IAnimatableModel<E> {
 	 * @param boneName The bone name
 	 * @return the bone
 	 */
-	default IBone getBone(String boneName) {
-		IBone bone = getAnimationProcessor().getBone(boneName);
+	default GeoBone getBone(String boneName) {
+		GeoBone bone = getAnimationProcessor().getBone(boneName);
 
 		if (bone == null)
 			throw new RuntimeException("Could not find bone: " + boneName);
@@ -36,7 +37,7 @@ public interface IAnimatableModel<E> {
 		return bone;
 	}
 
-	void setMolangQueries(IAnimatable animatable, double seekTime);
+	void setMolangQueries(GeoAnimatable animatable, double seekTime);
 
 	/**
 	 * Use {@link IAnimatableModel#setCustomAnimations(Object, int)}<br>

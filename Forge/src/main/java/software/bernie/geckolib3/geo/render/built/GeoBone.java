@@ -6,12 +6,11 @@ import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import software.bernie.geckolib3.core.processor.IBone;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 
 import java.util.List;
 
-public class GeoBone implements IBone {
+public class GeoBone implements software.bernie.geckolib3.core.model.GeoBone {
 	public GeoBone parent;
 
 	public List<GeoBone> childBones = new ObjectArrayList<>();

@@ -5,10 +5,10 @@
 
 package software.bernie.geckolib3.core.snapshot;
 
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.model.GeoBone;
 
 public class BoneSnapshot {
-	public BoneSnapshot(IBone modelRenderer) {
+	public BoneSnapshot(GeoBone modelRenderer) {
 		rotationValueX = modelRenderer.getRotationX();
 		rotationValueY = modelRenderer.getRotationY();
 		rotationValueZ = modelRenderer.getRotationZ();
@@ -25,7 +25,7 @@ public class BoneSnapshot {
 		this.name = modelRenderer.getName();
 	}
 
-	public BoneSnapshot(IBone modelRenderer, boolean dontSaveRotations) {
+	public BoneSnapshot(GeoBone modelRenderer, boolean dontSaveRotations) {
 		if (dontSaveRotations) {
 			rotationValueX = 0;
 			rotationValueY = 0;
@@ -65,7 +65,7 @@ public class BoneSnapshot {
 	}
 
 	public String name;
-	private IBone modelRenderer;
+	private GeoBone modelRenderer;
 
 	public float scaleValueX;
 	public float scaleValueY;

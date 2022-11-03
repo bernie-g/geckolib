@@ -29,7 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.compat.PatchouliCompat;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -49,8 +49,8 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> extends EntityRenderer<T>
-		implements IGeoRenderer<T> {
+public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> extends EntityRenderer<T>
+		implements GeoObjectRenderer<T> {
 	static {
 		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ? (IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
 	}
@@ -108,7 +108,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 		this.leggings = animatable.getItemBySlot(EquipmentSlot.LEGS);
 		this.boots = animatable.getItemBySlot(EquipmentSlot.FEET);
 
-		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
 				packedOverlay, red, green, blue, partialTicks);
 	}
 
@@ -462,7 +462,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 	}
 
 	@Override
-	public MultiBufferSource getCurrentRTB() {
+	public MultiBufferSource getBufferSource() {
 		return this.rtb;
 	}
 

@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.core.manager;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 
 /**
  * AnimationFactory implementation for singleton/flyweight objects such as Items. Utilises a keyed map to differentiate different instances of the object.
@@ -9,7 +9,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 public class SingletonAnimationFactory extends AnimationFactory {
 	private final Int2ObjectOpenHashMap<AnimationData> animationDataMap = new Int2ObjectOpenHashMap<>();
 
-	public SingletonAnimationFactory(IAnimatable animatable) {
+	public SingletonAnimationFactory(GeoAnimatable animatable) {
 		super(animatable);
 	}
 

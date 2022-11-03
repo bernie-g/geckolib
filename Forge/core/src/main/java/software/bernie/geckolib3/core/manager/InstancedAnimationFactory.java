@@ -1,6 +1,6 @@
 package software.bernie.geckolib3.core.manager;
 
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 
 /**
  * AnimationFactory implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimationData} instance per factory.
@@ -8,7 +8,7 @@ import software.bernie.geckolib3.core.IAnimatable;
 public class InstancedAnimationFactory extends AnimationFactory {
 	private AnimationData animationData;
 
-	public InstancedAnimationFactory(IAnimatable animatable) {
+	public InstancedAnimationFactory(GeoAnimatable animatable) {
 		super(animatable);
 	}
 

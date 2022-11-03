@@ -20,7 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
@@ -33,10 +33,10 @@ import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
 
-public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
-		implements IGeoRenderer<T>, BlockEntityRenderer {
+public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
+		implements GeoObjectRenderer<T>, BlockEntityRenderer {
 	static {
-		AnimationController.addModelFetcher((IAnimatable object) -> {
+		AnimationController.addModelFetcher((GeoAnimatable object) -> {
 			if (object instanceof BlockEntity tile) {
 				BlockEntityRenderer<BlockEntity> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher()
 						.getRenderer(tile);
@@ -70,7 +70,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 			bone.setWorldSpaceXform(worldState);
 		}
 
-		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -196,7 +196,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable>
 	}
 
 	@Override
-	public MultiBufferSource getCurrentRTB() {
+	public MultiBufferSource getBufferSource() {
 		return this.rtb;
 	}
 }

@@ -9,18 +9,16 @@ import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib3.core.model.GeoModelProvider;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.*;
-import software.bernie.geckolib3.model.provider.GeoModelProvider;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface IGeoRenderer<T> {
-	MultiBufferSource getCurrentRTB();
+public interface GeoObjectRenderer<T> {
+	MultiBufferSource getBufferSource();
 
 	GeoModelProvider getGeoModelProvider();
 
@@ -174,7 +172,7 @@ public interface IGeoRenderer<T> {
 	}
 
 	/**
-	 * Use {@link IGeoRenderer#getInstanceId(Object)}<br>
+	 * Use {@link GeoObjectRenderer#getInstanceId(Object)}<br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)

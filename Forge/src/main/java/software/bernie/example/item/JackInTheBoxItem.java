@@ -17,7 +17,7 @@ import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.core.AnimationState;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -32,7 +32,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
+public class JackInTheBoxItem extends Item implements GeoAnimatable, ISyncable {
 	private static final String CONTROLLER_NAME = "popupController";
 	private static final int ANIM_OPEN = 0;
 	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
@@ -55,7 +55,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		});
 	}
 
-	private <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
+	private <P extends Item & GeoAnimatable> PlayState predicate(AnimationEvent<P> event) {
 		// Not setting an animation here as that's handled below
 		return PlayState.CONTINUE;
 	}
@@ -73,7 +73,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 		data.addAnimationController(controller);
 	}
 
-	private <ENTITY extends IAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
+	private <ENTITY extends GeoAnimatable> void soundListener(SoundKeyframeEvent<ENTITY> event) {
 		// The animation for the JackInTheBoxItem has a sound keyframe at time 0:00.
 		// As soon as that keyframe gets hit this method fires and it starts playing the
 		// sound to the current player.
@@ -110,7 +110,7 @@ public class JackInTheBoxItem extends Item implements IAnimatable, ISyncable {
 			// access to an AnimationEvent
 			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
-			if (controller.getAnimationState() == AnimationState.Stopped) {
+			if (controller.getAnimationState() == AnimationState.STOPPED) {
 				final LocalPlayer player = Minecraft.getInstance().player;
 				if (player != null) {
 					player.displayClientMessage(Component.literal("Opening the jack in the box!"), true);

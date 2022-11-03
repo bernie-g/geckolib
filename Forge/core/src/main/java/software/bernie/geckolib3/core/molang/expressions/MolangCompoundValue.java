@@ -3,26 +3,30 @@ package software.bernie.geckolib3.core.molang.expressions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.molang.LazyVariable;
-import software.bernie.geckolib3.core.molang.MolangParser;
 
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
-public class MolangMultiStatement extends MolangExpression {
-	public final List<MolangExpression> expressions = new ObjectArrayList<>();
+/**
+ * An extension of the {@link MolangValue} class, allowing for compound expressions.
+ */
+public class MolangCompoundValue extends MolangValue {
+	public final List<MolangValue> values = new ObjectArrayList<>();
 	public final Map<String, LazyVariable> locals = new Object2ObjectOpenHashMap<>();
 
-	public MolangMultiStatement(MolangParser context) {
-		super(context);
+	public MolangCompoundValue(MolangValue baseValue) {
+		super(baseValue);
+
+		this.values.add(baseValue);
 	}
 
 	@Override
 	public double get() {
 		double value = 0;
 
-		for (MolangExpression expression : this.expressions) {
-			value = expression.get();
+		for (MolangValue molangValue : this.values) {
+			value = molangValue.get();
 		}
 
 		return value;
@@ -32,10 +36,10 @@ public class MolangMultiStatement extends MolangExpression {
 	public String toString() {
 		StringJoiner builder = new StringJoiner("; ");
 
-		for (MolangExpression expression : this.expressions) {
-			builder.add(expression.toString());
+		for (MolangValue molangValue : this.values) {
+			builder.add(molangValue.toString());
 
-			if (expression instanceof MolangValue && ((MolangValue)expression).returns)
+			if (molangValue.isReturnValue())
 				break;
 		}
 

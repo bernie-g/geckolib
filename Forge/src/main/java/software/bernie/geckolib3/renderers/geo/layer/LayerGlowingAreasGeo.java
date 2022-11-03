@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Mob;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.texture.AutoGlowingTexture;
 
@@ -18,7 +18,7 @@ import java.util.function.Function;
  * 
  * Originally developed for chocolate quest repoured
  */
-public class LayerGlowingAreasGeo<T extends Mob & IAnimatable> extends AbstractLayerGeo<T> {
+public class LayerGlowingAreasGeo<T extends Mob & GeoAnimatable> extends AbstractLayerGeo<T> {
 	protected final Function<ResourceLocation, RenderType> funcGetEmissiveRenderType;
 
 	public LayerGlowingAreasGeo(GeoEntityRenderer<T> renderer, Function<T, ResourceLocation> currentTextureFunction,

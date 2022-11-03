@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.animation.RawAnimation;
@@ -23,7 +23,7 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAnimationTickable {
+public class GeoExampleEntity extends PathfinderMob implements GeoAnimatable, IAnimationTickable {
 	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	private boolean isAnimating = false;
 
@@ -31,7 +31,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 		super(type, worldIn);
 	}
 
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event) {
+	private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {
 		if (this.isAnimating) {
 			event.getController()
 					.setAnimation(new RawAnimation().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
@@ -43,7 +43,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 		return PlayState.CONTINUE;
 	}
 
-	private <E extends IAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
+	private <E extends GeoAnimatable> PlayState predicateSpin(AnimationEvent<E> event) {
 			event.getController()
 					.setAnimation(new RawAnimation().addAnimation("animation.bat.spin", EDefaultLoopTypes.LOOP));
 		return PlayState.CONTINUE;
@@ -68,7 +68,7 @@ public class GeoExampleEntity extends PathfinderMob implements IAnimatable, IAni
 		data.addAnimationController(controllerspin);
 	}
 
-	private <ENTITY extends IAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
+	private <ENTITY extends GeoAnimatable> void customListener(CustomInstructionKeyframeEvent<ENTITY> event) {
 		final LocalPlayer player = Minecraft.getInstance().player;
 		if (player != null) {
 			player.displayClientMessage(Component.literal("KeyFraming"), true);

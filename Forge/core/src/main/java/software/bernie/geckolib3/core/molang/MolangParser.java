@@ -7,9 +7,9 @@ import com.eliotlash.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import software.bernie.geckolib3.core.molang.expressions.MolangAssignment;
+import software.bernie.geckolib3.core.molang.expressions.MolangVariableHolder;
 import software.bernie.geckolib3.core.molang.expressions.MolangExpression;
-import software.bernie.geckolib3.core.molang.expressions.MolangMultiStatement;
+import software.bernie.geckolib3.core.molang.expressions.MolangCompoundValue;
 import software.bernie.geckolib3.core.molang.expressions.MolangValue;
 import software.bernie.geckolib3.core.molang.functions.CosDegrees;
 import software.bernie.geckolib3.core.molang.functions.SinDegrees;
@@ -24,13 +24,15 @@ import java.util.function.DoubleSupplier;
  * https://bedrock.dev/docs/1.19.0.0/1.19.30.23/Molang#Math%20Functions
  */
 public class MolangParser extends MathBuilder {
+	private static final MolangParser INSTANCE = new MolangParser();
+
 	// Replace base variables map
 	public static final Map<String, LazyVariable> VARIABLES = new Object2ObjectOpenHashMap<>();
 	public static final MolangExpression ZERO = new MolangValue(null, new Constant(0));
 	public static final MolangExpression ONE = new MolangValue(null, new Constant(1));
 	public static final String RETURN = "return ";
 
-	public MolangParser() {
+	private MolangParser() {
 		super();
 
 		// Remap functions to be intact with Molang specification
@@ -102,14 +104,6 @@ public class MolangParser extends MathBuilder {
 		this.functions.put(newName, this.functions.remove(old));
 	}
 
-	/**
-	 * Deprecated, use {@link MolangParser#setValue(String, DoubleSupplier)}
-	 */
-	@Deprecated(forRemoval = true)
-	public void setValue(String name, double value) {
-		setValue(name, () -> value);
-	}
-
 	public void setValue(String name, DoubleSupplier value) {
 		LazyVariable variable = getVariable(name);
 
@@ -122,7 +116,7 @@ public class MolangParser extends MathBuilder {
 		return VARIABLES.computeIfAbsent(name, key -> new LazyVariable(key, 0));
 	}
 
-	public LazyVariable getVariable(String name, MolangMultiStatement currentStatement) {
+	public LazyVariable getVariable(String name, MolangCompoundValue currentStatement) {
 		LazyVariable variable;
 
 		if (currentStatement != null) {
@@ -135,14 +129,14 @@ public class MolangParser extends MathBuilder {
 		return getVariable(name);
 	}
 
-	public MolangExpression parseJson(JsonElement element) throws MolangException {
+	public static MolangExpression parseJson(JsonElement element) throws MolangException {
 		if (!element.isJsonPrimitive())
 			return ZERO;
 
 		JsonPrimitive primitive = element.getAsJsonPrimitive();
 
 		if (primitive.isNumber())
-			return new MolangValue(this, new Constant(primitive.getAsDouble()));
+			return new MolangValue(new Constant(primitive.getAsDouble()));
 
 		if (primitive.isString()) {
 			String string = primitive.getAsString();
@@ -162,16 +156,16 @@ public class MolangParser extends MathBuilder {
 	 * Parse a molang expression
 	 */
 	public MolangExpression parseExpression(String expression) throws MolangException {
-		MolangMultiStatement result = null;
+		MolangCompoundValue result = null;
 
 		for (String split : expression.toLowerCase().trim().split(";")) {
 			String trimmed = split.trim();
 
 			if (!trimmed.isEmpty()) {
 				if (result == null)
-					result = new MolangMultiStatement(this);
+					result = new MolangCompoundValue(this);
 
-				result.expressions.add(parseOneLine(trimmed, result));
+				result.values.add(parseOneLine(trimmed, result));
 			}
 		}
 
@@ -184,10 +178,10 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Parse a single Molang statement
 	 */
-	protected MolangExpression parseOneLine(String expression, MolangMultiStatement currentStatement) throws MolangException {
+	protected MolangExpression parseOneLine(String expression, MolangCompoundValue currentStatement) throws MolangException {
 		if (expression.startsWith(RETURN)) {
 			try {
-				return new MolangValue(this, parse(expression.substring(RETURN.length()))).addReturn();
+				return new MolangValue(parse(expression.substring(RETURN.length())), true);
 			}
 			catch (Exception e) {
 				throw new MolangException("Couldn't parse return '" + expression + "' expression!");
@@ -210,7 +204,7 @@ public class MolangParser extends MathBuilder {
 					variable = getVariable(name, currentStatement);
 				}
 
-				return new MolangAssignment(this, variable, parseSymbolsMolang(symbols));
+				return new MolangVariableHolder(this, variable, parseSymbolsMolang(symbols));
 			}
 
 			return new MolangValue(this, parseSymbolsMolang(symbols));

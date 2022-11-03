@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.model;
 
 import net.minecraft.client.Minecraft;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
@@ -10,7 +10,7 @@ import software.bernie.geckolib3.resource.GeckoLibCache;
 
 import java.util.Collections;
 
-public abstract class AnimatedTickingGeoModel<T extends IAnimatable & IAnimationTickable> extends AnimatedGeoModel<T> {
+public abstract class AnimatedTickingGeoModel<T extends GeoAnimatable & IAnimationTickable> extends AnimatedGeoModel<T> {
 	public AnimatedTickingGeoModel() {
 	}
 

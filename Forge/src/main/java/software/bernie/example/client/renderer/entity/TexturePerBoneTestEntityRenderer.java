@@ -13,8 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.model.entity.TexturePerBoneTestEntityModel;
 import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.processor.IBone;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<TexturePerBoneTestEntity> {
@@ -31,7 +30,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected boolean isArmorBone(GeoBone bone) {
+	protected boolean isArmorBone(software.bernie.geckolib3.geo.render.built.GeoBone bone) {
 		return false;
 	}
 	
@@ -64,7 +63,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, IBone bone) {
+	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, GeoBone bone) {
 		
 	}
 
@@ -74,7 +73,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, IBone bone) {
+	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, TexturePerBoneTestEntity currentEntity, GeoBone bone) {
 		
 	}
 

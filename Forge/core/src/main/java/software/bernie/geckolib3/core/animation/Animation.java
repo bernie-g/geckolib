@@ -7,13 +7,12 @@ package software.bernie.geckolib3.core.animation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,8 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * A compiled animation instance for use by the {@link AnimationController}<br>
  * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable.
  */
-public record Animation(String name, double length, LoopType loopType, List<BoneAnimation> boneAnimations, KeyFrames keyFrames) {
-	public record KeyFrames(List<EventKeyFrame<String>> sounds, List<ParticleEventKeyFrame> particles, List<EventKeyFrame<String>> customInstructions) {}
+public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, KeyFrames keyFrames) {
+	public record KeyFrames(EventKeyFrame<String>[] sounds, ParticleEventKeyFrame[] particles, EventKeyFrame<String>[] customInstructions) {}
 
 	/**
 	 * Loop type functional interface to define post-play handling for a given animation. <br>
@@ -31,7 +30,7 @@ public record Animation(String name, double length, LoopType loopType, List<Bone
 	 */
 	@FunctionalInterface
 	public interface LoopType {
-		Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
+		final Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
 		LoopType PLAY_ONCE = (animatable, controller, currentAnimation) -> false;
 		LoopType LOOP = (animatable, controller, currentAnimation) -> true;
@@ -39,11 +38,11 @@ public record Animation(String name, double length, LoopType loopType, List<Bone
 		/**
 		 * Override in a custom instance to dynamically decide whether an animation should repeat or stop
 		 * @param animatable The animating object relevant to this method call
-		 * @param controller The {@link AnimationController<T>} playing the current animation
+		 * @param controller The {@link AnimationController} playing the current animation
 		 * @param currentAnimation The current animation that just played
 		 * @return Whether the animation should play again, or stop
 		 */
-		boolean shouldPlayAgain(IAnimatable animatable, AnimationController<? extends IAnimatable> controller, Animation currentAnimation);
+		boolean shouldPlayAgain(GeoAnimatable animatable, AnimationController<? extends GeoAnimatable> controller, Animation currentAnimation);
 
 		/**
 		 * Retrieve a LoopType instance based on a {@link JsonElement}.

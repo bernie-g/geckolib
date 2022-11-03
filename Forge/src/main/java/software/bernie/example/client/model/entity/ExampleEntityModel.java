@@ -5,7 +5,7 @@ import net.minecraft.util.Mth;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 
@@ -28,7 +28,7 @@ public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity
 	@Override
 	public void setCustomAnimations(GeoExampleEntity animatable, int instanceId, AnimationEvent animationEvent) {
 		super.setCustomAnimations(animatable, instanceId, animationEvent);
-		IBone head = this.getAnimationProcessor().getBone("head");
+		GeoBone head = this.getAnimationProcessor().getBone("head");
 		EntityModelData extraData = (EntityModelData) animationEvent.getExtraDataOfType(EntityModelData.class).get(0);
 
 		head.setRotationX(extraData.headPitch * Mth.DEG_TO_RAD);

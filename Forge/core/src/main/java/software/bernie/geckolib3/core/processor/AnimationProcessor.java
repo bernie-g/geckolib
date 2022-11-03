@@ -5,13 +5,14 @@ import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
 import software.bernie.geckolib3.core.snapshot.DirtyTracker;
@@ -20,9 +21,9 @@ import software.bernie.geckolib3.core.util.MathUtil;
 import java.util.List;
 import java.util.Map;
 
-public class AnimationProcessor<T extends IAnimatable> {
+public class AnimationProcessor<T extends GeoAnimatable> {
 	public boolean reloadAnimations = false;
-	private final List<IBone> modelRendererList = new ObjectArrayList<>();
+	private final List<GeoBone> modelRendererList = new ObjectArrayList<>();
 	private double lastTickValue = -1;
 	private final IntSet animatedEntities = new IntOpenHashSet();
 	private final IAnimatableModel animatedModel;
@@ -31,8 +32,8 @@ public class AnimationProcessor<T extends IAnimatable> {
 		this.animatedModel = animatedModel;
 	}
 
-	public void tickAnimation(IAnimatable entity, int uniqueID, double seekTime, AnimationEvent<T> event,
-			MolangParser parser, boolean crashWhenCantFindBone) {
+	public void tickAnimation(GeoAnimatable entity, int uniqueID, double seekTime, AnimationEvent<T> event,
+							  MolangParser parser, boolean crashWhenCantFindBone) {
 		if (seekTime != lastTickValue) {
 			animatedEntities.clear();
 		} else if (animatedEntities.contains(uniqueID)) { // Entity already animated on this tick
@@ -52,7 +53,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 		// Store the current value of each bone rotation/position/scale
 		updateBoneSnapshots(manager.getBoneSnapshotCollection());
 
-		Map<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
+		Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
 
 		for (AnimationController<T> controller : manager.getAnimationControllers().values()) {
 			if (reloadAnimations) {
@@ -70,7 +71,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
-				IBone bone = boneAnimation.bone();
+				GeoBone bone = boneAnimation.bone();
 				BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
 				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 
@@ -140,7 +141,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 		double resetTickLength = manager.getResetSpeed();
 		for (Map.Entry<String, DirtyTracker> tracker : modelTracker.entrySet()) {
-			IBone model = tracker.getValue().model;
+			GeoBone model = tracker.getValue().model;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
 			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getKey()).getRight();
 			if (saveSnapshot == null) {
@@ -225,14 +226,14 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 	private Map<String, DirtyTracker> createNewDirtyTracker() {
 		Map<String, DirtyTracker> tracker = new Object2ObjectOpenHashMap<>();
-		for (IBone bone : modelRendererList) {
+		for (GeoBone bone : modelRendererList) {
 			tracker.put(bone.getName(), new DirtyTracker(false, false, false, bone));
 		}
 		return tracker;
 	}
 
-	private void updateBoneSnapshots(Map<String, Pair<IBone, BoneSnapshot>> boneSnapshotCollection) {
-		for (IBone bone : modelRendererList) {
+	private void updateBoneSnapshots(Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshotCollection) {
+		for (GeoBone bone : modelRendererList) {
 			if (!boneSnapshotCollection.containsKey(bone.getName())) {
 				boneSnapshotCollection.put(bone.getName(), Pair.of(bone, new BoneSnapshot(bone.getInitialSnapshot())));
 			}
@@ -245,8 +246,8 @@ public class AnimationProcessor<T extends IAnimatable> {
 	 * @param boneName The bone name
 	 * @return the bone
 	 */
-	public IBone getBone(String boneName) {
-		for (IBone bone : this.modelRendererList) {
+	public GeoBone getBone(String boneName) {
+		for (GeoBone bone : this.modelRendererList) {
 			if (bone.getName().equals(boneName))
 				return bone;
 		}
@@ -260,7 +261,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 	 *
 	 * @param modelRenderer The model renderer
 	 */
-	public void registerModelRenderer(IBone modelRenderer) {
+	public void registerModelRenderer(GeoBone modelRenderer) {
 		modelRenderer.saveInitialSnapshot();
 		modelRendererList.add(modelRenderer);
 	}
@@ -269,11 +270,11 @@ public class AnimationProcessor<T extends IAnimatable> {
 		this.modelRendererList.clear();
 	}
 
-	public List<IBone> getModelRendererList() {
+	public List<GeoBone> getModelRendererList() {
 		return modelRendererList;
 	}
 
-	public void preAnimationSetup(IAnimatable animatable, double seekTime) {
+	public void preAnimationSetup(GeoAnimatable animatable, double seekTime) {
 		this.animatedModel.setMolangQueries(animatable, seekTime);
 	}
 }

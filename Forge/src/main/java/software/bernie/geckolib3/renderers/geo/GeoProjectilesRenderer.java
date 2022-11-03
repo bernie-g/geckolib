@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -15,26 +16,22 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.model.GeoModel;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModelProvider;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
-import software.bernie.geckolib3.util.AnimationUtils;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
 import java.util.Collections;
 
-public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends EntityRenderer<T>
-		implements IGeoRenderer<T> {
+public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T>
+		implements GeoObjectRenderer<T> {
 	static {
 		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ?
 				(IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
@@ -93,13 +90,13 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
+		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
 				packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
 	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
-			int packedOverlay, float red, float green, float blue, float alpha) {
+								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
@@ -114,7 +111,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 			bone.setWorldSpaceXform(worldState);
 		}
 
-		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -169,7 +166,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 	}
 
 	@Override
-	public MultiBufferSource getCurrentRTB() {
+	public MultiBufferSource getBufferSource() {
 		return this.rtb;
 	}
 

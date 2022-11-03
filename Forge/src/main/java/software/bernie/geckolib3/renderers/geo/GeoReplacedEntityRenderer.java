@@ -30,7 +30,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.compat.PatchouliCompat;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
@@ -48,20 +48,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends EntityRenderer implements IGeoRenderer {
-	protected static final Map<Class<? extends IAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
+public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends EntityRenderer implements GeoObjectRenderer {
+	protected static final Map<Class<? extends GeoAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
-		AnimationController.addModelFetcher((IAnimatable object) -> {
+		AnimationController.addModelFetcher((GeoAnimatable object) -> {
 			GeoReplacedEntityRenderer renderer = renderers.get(object.getClass());
 			return renderer == null ? null : renderer.getGeoModelProvider();
 		});
 	}
 
-	protected final AnimatedGeoModel<IAnimatable> modelProvider;
+	protected final AnimatedGeoModel<GeoAnimatable> modelProvider;
 	protected T animatable;
 	protected final List<GeoLayerRenderer> layerRenderers = new ObjectArrayList<>();
-	protected IAnimatable currentAnimatable;
+	protected GeoAnimatable currentAnimatable;
 	protected float widthScale = 1;
 	protected float heightScale = 1;
 	protected Matrix4f dispatchedMat = new Matrix4f();
@@ -70,7 +70,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
 	public GeoReplacedEntityRenderer(EntityRendererProvider.Context renderManager,
-			AnimatedGeoModel<IAnimatable> modelProvider, T animatable) {
+									 AnimatedGeoModel<GeoAnimatable> modelProvider, T animatable) {
 		super(renderManager);
 
 		this.modelProvider = modelProvider;
@@ -79,7 +79,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		renderers.putIfAbsent(animatable.getClass(), this);
 	}
 
-	public static GeoReplacedEntityRenderer getRenderer(Class<? extends IAnimatable> animatableClass) {
+	public static GeoReplacedEntityRenderer getRenderer(Class<? extends GeoAnimatable> animatableClass) {
 		return renderers.get(animatableClass);
 	}
 
@@ -113,7 +113,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 							MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn,
 							float red, float green, float blue, float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
-		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
+		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
 	}
 
 	@Override
@@ -123,8 +123,8 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		render(entity, this.animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
 	}
 
-	public void render(Entity entity, IAnimatable animatable, float entityYaw, float partialTick, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight) {
+	public void render(Entity entity, GeoAnimatable animatable, float entityYaw, float partialTick, PoseStack poseStack,
+					   MultiBufferSource bufferSource, int packedLight) {
 
 		if (!(entity instanceof LivingEntity livingEntity))
 			throw new IllegalStateException("Replaced renderer was not an instanceof LivingEntity");
@@ -247,7 +247,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 			bone.setWorldSpaceXform(worldState);
 		}
 
-		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -355,7 +355,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 
 	@Override
 	public ResourceLocation getTextureLocation(Object animatable) {
-		return this.modelProvider.getTextureResource((IAnimatable)animatable);
+		return this.modelProvider.getTextureResource((GeoAnimatable)animatable);
 	}
 
 	public final boolean addLayer(GeoLayerRenderer<? extends LivingEntity> layer) {
@@ -429,7 +429,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 	}
 
 	@Override
-	public MultiBufferSource getCurrentRTB() {
+	public MultiBufferSource getBufferSource() {
 		return this.rtb;
 	}
 

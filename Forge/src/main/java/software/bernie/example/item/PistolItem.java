@@ -19,7 +19,7 @@ import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.geckolib3.core.AnimationState;
-import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
@@ -34,7 +34,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class PistolItem extends Item implements IAnimatable, ISyncable {
+public class PistolItem extends Item implements GeoAnimatable, ISyncable {
 
 	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 	public String controllerName = "controller";
@@ -111,7 +111,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 		return arrow;
 	}
 
-	public <P extends Item & IAnimatable> PlayState predicate(AnimationEvent<P> event) {
+	public <P extends Item & GeoAnimatable> PlayState predicate(AnimationEvent<P> event) {
 		return PlayState.CONTINUE;
 	}
 
@@ -129,7 +129,7 @@ public class PistolItem extends Item implements IAnimatable, ISyncable {
 	public void onAnimationSync(int id, int state) {
 		if (state == ANIM_OPEN) {
 			final AnimationController<?> controller = GeckoLibUtil.getControllerForID(this.factory, id, controllerName);
-			if (controller.getAnimationState() == AnimationState.Stopped) {
+			if (controller.getAnimationState() == AnimationState.STOPPED) {
 				controller.markNeedsReload();
 				controller.setAnimation(new AnimationBuilder().addAnimation("firing", EDefaultLoopTypes.PLAY_ONCE));
 			}

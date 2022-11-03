@@ -1,112 +1,47 @@
 package software.bernie.geckolib3.util;
 
-import javax.annotation.Nullable;
-
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
-
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.model.GeoModelProvider;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
 
+import javax.annotation.Nullable;
+
+/**
+ * Helper class for various methods and functions useful while rendering
+ */
 public final class RenderUtils {
-	/**
-	 * Use {@link RenderUtils#translateToPivotPoint(PoseStack, GeoCube)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void moveToPivot(GeoCube cube, PoseStack stack) {
-		translateToPivotPoint(stack, cube);
-	}
-
-	/**
-	 * Use {@link RenderUtils#translateAwayFromPivotPoint(PoseStack, GeoCube)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void moveBackFromPivot(GeoCube cube, PoseStack stack) {
-		translateAwayFromPivotPoint(stack, cube);
-	}
-
-	/**
-	 * Use {@link RenderUtils#translateToPivotPoint(PoseStack, GeoBone)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void moveToPivot(GeoBone bone, PoseStack stack) {
-		translateToPivotPoint(stack, bone);
-	}
-
-	/**
-	 * Use {@link RenderUtils#translateAwayFromPivotPoint(PoseStack, GeoBone)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void moveBackFromPivot(GeoBone bone, PoseStack stack) {
-		translateAwayFromPivotPoint(stack, bone);
-	}
-
-	/**
-	 * Use {@link RenderUtils#scaleMatrixForBone(PoseStack, GeoBone)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void scale(GeoBone bone, PoseStack stack) {
-		scaleMatrixForBone(stack, bone);
-	}
-
-	/**
-	 * Use {@link RenderUtils#translateMatrixToBone(PoseStack, GeoBone)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void translate(GeoBone bone, PoseStack stack) {
-		translateMatrixToBone(stack, bone);
-	}
-
-	/**
-	 * Use {@link RenderUtils#rotateMatrixAroundBone(PoseStack, GeoBone)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void rotate(GeoBone bone, PoseStack stack) {
-		rotateMatrixAroundBone(stack, bone);
-	}
-
-	/**
-	 * Use {@link RenderUtils#rotateMatrixAroundCube(PoseStack, GeoCube)} <br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	public static void rotate(GeoCube bone, PoseStack stack) {
-		rotateMatrixAroundCube(stack, bone);
-	}
-
 	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
 		poseStack.translate(-bone.getPositionX() / 16f, bone.getPositionY() / 16f, bone.getPositionZ() / 16f);
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		if (bone.getRotationZ() != 0.0F) {
+		if (bone.getRotationZ() != 0)
 			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
-		}
 
-		if (bone.getRotationY() != 0.0F) {
+		if (bone.getRotationY() != 0)
 			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
-		}
 
-		if (bone.getRotationX() != 0.0F) {
+		if (bone.getRotationX() != 0)
 			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
-		}
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
@@ -127,16 +62,17 @@ public final class RenderUtils {
 	}
 
 	public static void translateToPivotPoint(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(bone.rotationPointX / 16f, bone.rotationPointY / 16f, bone.rotationPointZ / 16f);
+		poseStack.translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);
 	}
 
 	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoCube cube) {
 		Vector3f pivot = cube.pivot;
+
 		poseStack.translate(-pivot.x() / 16f, -pivot.y() / 16f, -pivot.z() / 16f);
 	}
 
 	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(-bone.rotationPointX / 16f, -bone.rotationPointY / 16f, -bone.rotationPointZ / 16f);
+		poseStack.translate(-bone.getPivotX() / 16f, -bone.getPivotY() / 16f, -bone.getPivotZ() / 16f);
 	}
 
 	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
@@ -198,5 +134,27 @@ public final class RenderUtils {
 		inputMatrix.multiply(baseMatrix);
 
 		return inputMatrix;
+	}
+
+	@Nullable
+	public static GeoModelProvider getGeoModelProviderForEntity(Entity entity) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+
+		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? geoRenderer.getGeoModelProvider() : null;
+	}
+
+	@Nullable
+	public static GeoModelProvider getGeoModelProviderForItem(Item item) {
+		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoObjectRenderer<?> geoRenderer)
+			return geoRenderer.getGeoModelProvider();
+
+		return null;
+	}
+
+	@Nullable
+	public static GeoModelProvider getGeoModelProviderForBlock(BlockEntity blockEntity) {
+		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+
+		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? geoRenderer.getGeoModelProvider() : null;
 	}
 }

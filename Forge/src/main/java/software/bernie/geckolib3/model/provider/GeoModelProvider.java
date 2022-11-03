@@ -1,8 +1,7 @@
 package software.bernie.geckolib3.model.provider;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib3.core.model.GeoModel;
 
 public abstract class GeoModelProvider<T> {
 	public double seekTime;
