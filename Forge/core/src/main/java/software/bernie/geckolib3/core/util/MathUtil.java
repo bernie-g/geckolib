@@ -1,7 +1,7 @@
 package software.bernie.geckolib3.core.util;
 
 import software.bernie.geckolib3.core.easing.EasingManager;
-import software.bernie.geckolib3.core.easing.EasingType;
+import software.bernie.geckolib3.core.animation.EasingType;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 
 import java.util.function.Function;

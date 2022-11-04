@@ -16,7 +16,7 @@ import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -37,7 +37,7 @@ public class GeoExampleEntity extends PathfinderMob implements GeoAnimatable, IA
 					.setAnimation(new RawAnimation().addAnimation("animation.bat.fly", EDefaultLoopTypes.PLAY_ONCE)
 							.addAnimation("animation.bat.idle", EDefaultLoopTypes.PLAY_ONCE));
 		} else {
-			event.getController().clearAnimationCache();
+			event.getController().markNeedsReload();
 			return PlayState.STOP;
 		}
 		return PlayState.CONTINUE;
@@ -63,7 +63,7 @@ public class GeoExampleEntity extends PathfinderMob implements GeoAnimatable, IA
 				this::predicate);
 		AnimationController<GeoExampleEntity> controllerspin = new AnimationController<>(this, "controllerspin", 0,
 				this::predicateSpin);
-		controller.registerCustomInstructionListener(this::customListener);
+		controller.setCustomInstructionKeyframeHandler(this::customListener);
 		data.addAnimationController(controller);
 		data.addAnimationController(controllerspin);
 	}

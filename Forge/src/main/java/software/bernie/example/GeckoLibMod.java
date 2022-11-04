@@ -20,8 +20,8 @@ import software.bernie.example.registry.ItemRegistry;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.controller.AnimationController.ModelFetcher;
+import software.bernie.geckolib3.core.animation.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 @EventBusSubscriber

@@ -3,6 +3,9 @@ package software.bernie.geckolib3.core.molang.functions;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.mclib.math.functions.Function;
 
+/**
+ * Replacement function for {@link com.eliotlash.mclib.math.functions.classic.Sin}, operating in degrees rather than radians
+ */
 public class SinDegrees extends Function {
 	public SinDegrees(IValue[] values, String name) throws Exception {
 		super(values, name);
@@ -15,6 +18,6 @@ public class SinDegrees extends Function {
 
 	@Override
 	public double get() {
-		return Math.sin(this.getArg(0) / 180 * Math.PI);
+		return Math.sin(getArg(0) / 180 * Math.PI);
 	}
 }

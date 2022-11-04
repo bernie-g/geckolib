@@ -12,7 +12,7 @@ import java.util.Objects;
 
 /**
  * A builder class for a raw/unbaked animation. These are constructed to pass to the
- * {@link software.bernie.geckolib3.core.controller.AnimationController} to build into full-fledged animations for usage.
+ * {@link AnimationController} to build into full-fledged animations for usage.
  * <br><br>
  * Animations added to this builder are added <u>in order of insertion</u> - the animations will play in the order that you define them.<br>
  * RawAnimation instances should be cached statically where possible to reduce overheads and improve efficiency.
@@ -35,11 +35,12 @@ public final class RawAnimation {
 	}
 
 	/**
-	 * Append an animation to the animation chain, playing the named animation and stopping or progressing to the next chained animation
+	 * Append an animation to the animation chain, playing the named animation and stopping
+	 * or progressing to the next chained animation depending on the loop type set in the animation json
 	 * @param animationName The name of the animation to play once
 	 */
 	public RawAnimation thenPlay(String animationName) {
-		return then(animationName, Animation.LoopType.PLAY_ONCE);
+		return then(animationName, Animation.LoopType.DEFAULT);
 	}
 
 	/**
@@ -51,13 +52,14 @@ public final class RawAnimation {
 	}
 
 	/**
-	 * Append an animation to the animation chain, playing the named animation <code>playCount</code> times, then stopping or progressing to the next chained animation
+	 * Append an animation to the animation chain, playing the named animation <code>playCount</code> times,
+	 * then stopping or progressing to the next chained animation depending on the loop type set in the animation json
 	 * @param animationName The name of the animation to play X times
 	 * @param playCount The number of times to repeat the animation before proceeding
 	 */
 	public RawAnimation thenPlayXTimes(String animationName, int playCount) {
 		for (int i = 0; i < playCount; i++) {
-			thenPlay(animationName);
+			then(animationName, i == playCount - 1 ? Animation.LoopType.DEFAULT : Animation.LoopType.PLAY_ONCE);
 		}
 
 		return this;
@@ -66,7 +68,7 @@ public final class RawAnimation {
 	/**
 	 * Append an animation to the animation chain, playing the named animation and proceeding based on the <code>loopType</code> parameter provided.
 	 * @param animationName The name of the animation to play. <u>MUST</u> match the name of the animation in the <code>.animation.json</code> file.
-	 * @param loopType The loop type handler for the animation
+	 * @param loopType The loop type handler for the animation, overriding the default value set in the animation json
 	 */
 	public RawAnimation then(String animationName, Animation.LoopType loopType) {
 		this.animationList.add(new Stage(animationName, loopType));

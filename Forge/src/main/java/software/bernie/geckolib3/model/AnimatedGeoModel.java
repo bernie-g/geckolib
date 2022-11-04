@@ -13,22 +13,23 @@ import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.molang.MolangParser;
-import software.bernie.geckolib3.core.processor.AnimationProcessor;
-import software.bernie.geckolib3.core.model.GeoBone;
-import software.bernie.geckolib3.file.AnimationFile;
+import software.bernie.geckolib3.core.animation.AnimationProcessor;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.molang.MolangQueries;
+import software.bernie.geckolib3.file.BakedAnimations;
 import software.bernie.geckolib3.geo.exception.GeckoLibException;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
 
 import java.util.Collections;
 
-public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModelProvider<T>
+public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;
-	private GeoModel currentModel;
+	private BakedGeoModel currentModel;
 
 	protected AnimatedGeoModel() {
 		this.animationProcessor = new AnimationProcessor(this);
@@ -102,7 +103,7 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 
 	@Override
 	public Animation getAnimation(String name, GeoAnimatable animatable) {
-		AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(this.getAnimationResource((T) animatable));
+		BakedAnimations animation = GeckoLibCache.getInstance().getAnimations().get(this.getAnimationResource((T) animatable));
 
 		if (animation == null) {
 			throw new GeckoLibException(this.getAnimationResource((T) animatable),
@@ -113,8 +114,8 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 	}
 
 	@Override
-	public GeoModel getModel(ResourceLocation location) {
-		GeoModel model = super.getModel(location);
+	public BakedGeoModel getBakedModel(ResourceLocation location) {
+		BakedGeoModel model = super.getBakedModel(location);
 
 		if (model == null) {
 			throw new GeckoLibException(location,
@@ -135,29 +136,30 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 
 	@Override
 	public void setMolangQueries(GeoAnimatable animatable, double seekTime) {
-		MolangParser parser = GeckoLibCache.getInstance().parser;
+		MolangParser parser = MolangParser.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
 
-		parser.setValue("query.actor_count", mc.level::getEntityCount);
-		parser.setValue("query.time_of_day", () -> MolangUtils.normalizeTime(mc.level.getDayTime()));
-		parser.setValue("query.moon_phase", mc.level::getMoonPhase);
+		parser.setValue(MolangQueries.ANIM_TIME, () -> seekTime / 20d);
+		parser.setValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
+		parser.setValue(MolangQueries.TIME_OF_DAY, () -> MolangUtils.normalizeTime(mc.level.getDayTime()));
+		parser.setValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
 
 		if (animatable instanceof Entity entity) {
-			parser.setValue("query.distance_from_camera", () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			parser.setValue("query.is_on_ground", () -> MolangUtils.booleanToFloat(entity.isOnGround()));
-			parser.setValue("query.is_in_water", () -> MolangUtils.booleanToFloat(entity.isInWater()));
-			parser.setValue("query.is_in_water_or_rain", () -> MolangUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
+			parser.setValue(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
+			parser.setValue(MolangQueries.IS_ON_GROUND, () -> MolangUtils.booleanToFloat(entity.isOnGround()));
+			parser.setValue(MolangQueries.IS_IN_WATER, () -> MolangUtils.booleanToFloat(entity.isInWater()));
+			parser.setValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> MolangUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
 
 			if (entity instanceof LivingEntity livingEntity) {
-				parser.setValue("query.health", livingEntity::getHealth);
-				parser.setValue("query.max_health", livingEntity::getMaxHealth);
-				parser.setValue("query.is_on_fire", () -> MolangUtils.booleanToFloat(livingEntity.isOnFire()));
-				parser.setValue("query.ground_speed", () -> {
+				parser.setValue(MolangQueries.HEALTH, livingEntity::getHealth);
+				parser.setValue(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
+				parser.setValue(MolangQueries.IS_ON_FIRE, () -> MolangUtils.booleanToFloat(livingEntity.isOnFire()));
+				parser.setValue(MolangQueries.GROUND_SPEED, () -> {
 					Vec3 velocity = livingEntity.getDeltaMovement();
 
 					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				});
-				parser.setValue("query.yaw_speed", () -> livingEntity.getViewYRot((float)seekTime - livingEntity.getViewYRot((float)seekTime - 0.1f)));
+				parser.setValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)seekTime - livingEntity.getViewYRot((float)seekTime - 0.1f)));
 			}
 		}
 	}

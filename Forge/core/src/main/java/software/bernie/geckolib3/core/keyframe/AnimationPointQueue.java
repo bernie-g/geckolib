@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 
 import java.util.LinkedList;
 

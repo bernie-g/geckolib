@@ -5,7 +5,7 @@ import net.minecraft.util.Mth;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.model.AnimatedTickingGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 

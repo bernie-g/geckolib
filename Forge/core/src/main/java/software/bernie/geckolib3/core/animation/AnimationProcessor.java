@@ -1,35 +1,63 @@
-package software.bernie.geckolib3.core.processor;
+package software.bernie.geckolib3.core.animation;
 
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.tuple.Pair;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoModel;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.core.molang.MolangParser;
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
-import software.bernie.geckolib3.core.snapshot.DirtyTracker;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
+import software.bernie.geckolib3.core.state.DirtyTracker;
 import software.bernie.geckolib3.core.util.MathUtil;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class AnimationProcessor<T extends GeoAnimatable> {
-	public boolean reloadAnimations = false;
-	private final List<GeoBone> modelRendererList = new ObjectArrayList<>();
-	private double lastTickValue = -1;
-	private final IntSet animatedEntities = new IntOpenHashSet();
-	private final IAnimatableModel animatedModel;
+	private final Map<RawAnimation, Queue<QueuedAnimation>> builtAnimationQueues = new Object2ObjectOpenHashMap<>();
+	private final List<GeoBone> bones = new ObjectArrayList<>();
+	private final GeoModel<T> model;
 
-	public AnimationProcessor(IAnimatableModel animatedModel) {
-		this.animatedModel = animatedModel;
+	public boolean reloadAnimations = false;
+	private double lastTickValue = -1;
+
+	public AnimationProcessor(GeoModel<T> model) {
+		this.model = model;
+	}
+
+	/**
+	 * Build an animation queue for the given {@link RawAnimation}. Allows for caching for efficient retrieval
+	 * @param animatable The animatable object being rendered
+	 * @param rawAnimation The raw animation to be compiled
+	 * @return A queue of animations and loop types to play
+	 */
+	public Queue<QueuedAnimation> buildAnimationQueue(T animatable, RawAnimation rawAnimation) {
+		return this.builtAnimationQueues.computeIfAbsent(rawAnimation, anim -> {
+			LinkedList<QueuedAnimation> animations = new LinkedList<>();
+			boolean error = false;
+
+			for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
+				Animation animation = model.getAnimation(animatable, stage.animationName());
+
+				if (animation == null) {
+					System.out.printf("Could not load animation: %s. Is it missing?", stage.animationName());
+
+					error = true;
+				}
+				else {
+					animations.add(new QueuedAnimation(animation, stage.loopType()));
+				}
+			}
+
+			return error ? null : animations;
+		});
 	}
 
 	public void tickAnimation(GeoAnimatable entity, int uniqueID, double seekTime, AnimationEvent<T> event,
@@ -67,7 +95,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			event.setController(controller);
 
 			// Process animations and add new values to the point queues
-			controller.process(seekTime, event, modelRendererList, boneSnapshots, parser, crashWhenCantFindBone);
+			controller.process(seekTime, event, bones, boneSnapshots, parser, crashWhenCantFindBone);
 
 			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
@@ -141,13 +169,13 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 		double resetTickLength = manager.getResetSpeed();
 		for (Map.Entry<String, DirtyTracker> tracker : modelTracker.entrySet()) {
-			GeoBone model = tracker.getValue().model;
+			GeoBone model = tracker.getValue().bone;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
 			BoneSnapshot saveSnapshot = boneSnapshots.get(tracker.getKey()).getRight();
 			if (saveSnapshot == null) {
 				if (crashWhenCantFindBone) {
 					throw new RuntimeException(
-							"Could not find save snapshot for bone: " + tracker.getValue().model.getName()
+							"Could not find save snapshot for bone: " + tracker.getValue().bone.getName()
 									+ ". Please don't add bones that are used in an animation at runtime.");
 				} else {
 					continue;
@@ -226,14 +254,14 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 	private Map<String, DirtyTracker> createNewDirtyTracker() {
 		Map<String, DirtyTracker> tracker = new Object2ObjectOpenHashMap<>();
-		for (GeoBone bone : modelRendererList) {
-			tracker.put(bone.getName(), new DirtyTracker(false, false, false, bone));
+		for (GeoBone bone : bones) {
+			tracker.put(bone.getName(), new DirtyTracker(bone, false, false, false));
 		}
 		return tracker;
 	}
 
 	private void updateBoneSnapshots(Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshotCollection) {
-		for (GeoBone bone : modelRendererList) {
+		for (GeoBone bone : bones) {
 			if (!boneSnapshotCollection.containsKey(bone.getName())) {
 				boneSnapshotCollection.put(bone.getName(), Pair.of(bone, new BoneSnapshot(bone.getInitialSnapshot())));
 			}
@@ -247,7 +275,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @return the bone
 	 */
 	public GeoBone getBone(String boneName) {
-		for (GeoBone bone : this.modelRendererList) {
+		for (GeoBone bone : this.bones) {
 			if (bone.getName().equals(boneName))
 				return bone;
 		}
@@ -263,18 +291,24 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 */
 	public void registerModelRenderer(GeoBone modelRenderer) {
 		modelRenderer.saveInitialSnapshot();
-		modelRendererList.add(modelRenderer);
+		bones.add(modelRenderer);
 	}
 
 	public void clearModelRendererList() {
-		this.modelRendererList.clear();
+		this.bones.clear();
 	}
 
 	public List<GeoBone> getModelRendererList() {
-		return modelRendererList;
+		return bones;
 	}
 
 	public void preAnimationSetup(GeoAnimatable animatable, double seekTime) {
-		this.animatedModel.setMolangQueries(animatable, seekTime);
+		this.model.setMolangQueries(animatable, seekTime);
 	}
+
+	/**
+	 * {@link Animation} and {@link software.bernie.geckolib3.core.animation.Animation.LoopType} override pair,
+	 * used to define a playable animation stage for a {@link software.bernie.geckolib3.core.animatable.GeoAnimatable}
+	 */
+	public record QueuedAnimation(Animation animation, Animation.LoopType loopType) {}
 }

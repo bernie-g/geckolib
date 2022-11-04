@@ -4,11 +4,10 @@
  */
 package software.bernie.geckolib3.core.animatable;
 
-import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animatable.model.GeoModel;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.core.model.GeoModelProvider;
 
 import java.util.function.Supplier;
 
@@ -24,7 +23,7 @@ import java.util.function.Supplier;
  */
 public interface GeoAnimatable {
 	/**
-	 * Register your {@link software.bernie.geckolib3.core.controller.AnimationController AnimationControllers} and their respective animations and conditions.
+	 * Register your {@link AnimationController AnimationControllers} and their respective animations and conditions.
 	 * Override this method in your animatable object and add your controllers via {@link AnimationData#addAnimationController(AnimationController)}.
 	 * You may add as many controllers as wanted.
 	 * <br><br>
@@ -42,9 +41,9 @@ public interface GeoAnimatable {
 	AnimationFactory getFactory();
 
 	/**
-	 * Animatables must be able to supply the {@link IAnimatableModel} that their animatable object is relevant to.
+	 * Animatables must be able to supply the {@link GeoModel} that their animatable object is relevant to.
 	 * The supplier is important to allow custom implementations to not need sided code to be immediately present.
 	 * @return A {@link Supplier} of a new or cached Geckolib model
 	 */
-	Supplier<GeoModelProvider> getGeoModelProvider();
+	Supplier<? extends GeoModel> getGeoModel();
 }

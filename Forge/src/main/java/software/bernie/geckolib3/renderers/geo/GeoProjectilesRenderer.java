@@ -18,13 +18,12 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.model.GeoModel;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
@@ -55,7 +54,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	@Override
 	public void render(T animatable, float yaw, float partialTick, PoseStack poseStack,
 			MultiBufferSource bufferSource, int packedLight) {
-		GeoModel model = this.modelProvider.getModel(modelProvider.getModelResource(animatable));
+		software.bernie.geckolib3.core.animatable.model.GeoModel model = this.modelProvider.getBakedModel(modelProvider.getModelResource(animatable));
 		this.dispatchedMat = poseStack.last().pose().copy();
 
 		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
@@ -121,7 +120,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	}
 
 	@Override
-	public GeoModelProvider<T> getGeoModelProvider() {
+	public GeoModel<T> geoGeoModel() {
 		return this.modelProvider;
 	}
 

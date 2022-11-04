@@ -2,7 +2,7 @@ package software.bernie.geckolib3.core.event.predicate;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 
 import java.util.List;
 

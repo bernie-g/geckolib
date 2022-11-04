@@ -2,7 +2,7 @@ package software.bernie.geckolib3.animatable;
 
 import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.model.GeoModelProvider;
+import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import java.util.function.Supplier;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  */
 public interface GeoEntity extends GeoAnimatable {
 	@Override
-	default Supplier<GeoModelProvider> getGeoModelProvider() {
-		return () -> RenderUtils.getGeoModelProviderForEntity((Entity)this);
+	default Supplier<GeoModel<?>> getGeoModel() {
+		return () -> RenderUtils.getGeoModelForEntity((Entity)this);
 	}
 }

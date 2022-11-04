@@ -1,8 +1,16 @@
-package software.bernie.geckolib3.core.model;
+package software.bernie.geckolib3.core.animatable.model;
 
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
 
+import java.util.List;
+
+/**
+ * Base class for Geckolib {@link GeoModel model} bones.<br>
+ * Mostly a placeholder to allow for splitting up core (non-Minecraft) libraries
+ */
 public interface GeoBone {
+	String getName();
+
 	float getRotationX();
 
 	float getRotationY();
@@ -69,9 +77,9 @@ public interface GeoBone {
 
 	BoneSnapshot getInitialSnapshot();
 
+	List<GeoBone> getChildBones();
+
 	default BoneSnapshot saveSnapshot() {
 		return new BoneSnapshot(this);
 	}
-
-	String getName();
 }

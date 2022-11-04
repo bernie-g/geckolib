@@ -46,7 +46,7 @@ public class GeckoLib {
 	 * @param name The name of the loop type handler
 	 * @param loopType The LoopType implementation to use for the given name
 	 */
-	synchronized public static void addCustomLoopType(String name, Animation.LoopType loopType) {
-		Animation.LoopType.addCustom(name, loopType);
+	synchronized public static Animation.LoopType addCustomLoopType(String name, Animation.LoopType loopType) {
+		return Animation.LoopType.register(name, loopType);
 	}
 }

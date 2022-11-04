@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.model.entity.TexturePerBoneTestEntityModel;
 import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<TexturePerBoneTestEntity> {

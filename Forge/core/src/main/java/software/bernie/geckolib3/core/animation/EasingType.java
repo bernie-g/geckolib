@@ -1,8 +1,9 @@
-package software.bernie.geckolib3.core.easing;
+package software.bernie.geckolib3.core.animation;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface EasingType {
 	final Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
 
-	EasingType LINEAR = register("linear", value -> easeIn(EasingType::linear));
+	EasingType LINEAR = register("linear", register("none", value -> easeIn(EasingType::linear)));
 	EasingType STEP = register("step", value -> easeIn(step(value)));
 	EasingType EASE_IN_SINE = register("easeinsine", value -> easeIn(EasingType::sine));
 	EasingType EASE_OUT_SINE = register("easeoutsine", value -> easeOut(EasingType::sine));
@@ -54,24 +55,36 @@ public interface EasingType {
 	Double2DoubleFunction buildTransformer(double value);
 
 	/**
-	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves
+	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves.<br>
+	 * <b><u>MUST be done during mod construct</u></b>
 	 * @param name The name of the easing type
 	 * @param easingType The {@code EasingType} to associate with the given name
 	 * @return The {@code EasingType} you registered
 	 */
 	static EasingType register(String name, EasingType easingType) {
-		EASING_TYPES.putIfAbsent(name.toLowerCase(Locale.ROOT).replaceAll("_", ""), easingType);
+		EASING_TYPES.putIfAbsent(name, easingType);
 
 		return easingType;
 	}
 
+	/**
+	 * Retrieve an {@code EasingType} instance based on a {@link JsonElement}. Returns one of the default {@code EasingTypes} if the name matches, or any other registered {@code EasingType} with a matching name.
+	 * @param json The {@code easing} {@link JsonElement} to attempt to parse.
+	 * @return A usable {@code EasingType} instance
+	 */
+	static EasingType fromJson(JsonElement json) {
+		if (json == null || !(json instanceof JsonPrimitive primitive) || !primitive.isString())
+			return LINEAR;
+
+		return fromString(primitive.getAsString());
+	}
 
 	/**
 	 * Get an existing {@code EasingType} from a given string, matching the string to its name.
 	 * @param name The name of the easing function
 	 * @return The relevant {@code EasingType}, or {@link EasingType#LINEAR} if none match
 	 */
-	static EasingType getEasingTypeFromString(String name) {
+	static EasingType fromString(String name) {
 		return EASING_TYPES.getOrDefault(name, EasingType.LINEAR);
 	}
 

@@ -13,7 +13,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.math.NumberUtils;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.ConstantValue;
-import software.bernie.geckolib3.core.easing.EasingType;
+import software.bernie.geckolib3.core.animation.EasingType;
 import software.bernie.geckolib3.core.keyframe.KeyFrame;
 import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
 import software.bernie.geckolib3.core.molang.MolangException;

@@ -18,9 +18,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.model.GeoBone;
-import software.bernie.geckolib3.core.model.GeoModelProvider;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
 
 import javax.annotation.Nullable;
@@ -136,25 +136,29 @@ public final class RenderUtils {
 		return inputMatrix;
 	}
 
-	@Nullable
-	public static GeoModelProvider getGeoModelProviderForEntity(Entity entity) {
-		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
-
-		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? geoRenderer.getGeoModelProvider() : null;
+	public static double getCurrentSystemTick() {
+		return System.nanoTime() / 1E6 / 50d;
 	}
 
 	@Nullable
-	public static GeoModelProvider getGeoModelProviderForItem(Item item) {
+	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+
+		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? (GeoModel<?>)geoRenderer.geoGeoModel() : null;
+	}
+
+	@Nullable
+	public static GeoModel<?> getGeoModelForItem(Item item) {
 		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoObjectRenderer<?> geoRenderer)
-			return geoRenderer.getGeoModelProvider();
+			return (GeoModel<?>)geoRenderer.geoGeoModel();
 
 		return null;
 	}
 
 	@Nullable
-	public static GeoModelProvider getGeoModelProviderForBlock(BlockEntity blockEntity) {
+	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
 
-		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? geoRenderer.getGeoModelProvider() : null;
+		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? (GeoModel<?>)geoRenderer.geoGeoModel() : null;
 	}
 }

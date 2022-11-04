@@ -8,12 +8,10 @@ package software.bernie.geckolib3.core.animation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
 import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
 import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,8 +30,9 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	public interface LoopType {
 		final Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
-		LoopType PLAY_ONCE = (animatable, controller, currentAnimation) -> false;
-		LoopType LOOP = (animatable, controller, currentAnimation) -> true;
+		LoopType DEFAULT = (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation);
+		LoopType PLAY_ONCE = register("play_once", register("false", (animatable, controller, currentAnimation) -> false));
+		LoopType LOOP = register("loop", register("true", (animatable, controller, currentAnimation) -> true));
 
 		/**
 		 * Override in a custom instance to dynamically decide whether an animation should repeat or stop
@@ -67,18 +66,20 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 		}
 
 		static LoopType fromString(String name) {
-			if (LOOP_TYPES.isEmpty()) {
-				LOOP_TYPES.put("false", PLAY_ONCE);
-				LOOP_TYPES.put("play_once", PLAY_ONCE);
-				LOOP_TYPES.put("loop", LOOP);
-				LOOP_TYPES.put("true", LOOP);
-			}
-
-			return LOOP_TYPES.getOrDefault(name.toLowerCase(Locale.ROOT), PLAY_ONCE);
+			return LOOP_TYPES.getOrDefault(name, PLAY_ONCE);
 		}
 
-		static void addCustom(String name, LoopType loopType) {
+		/**
+		 * Register a LoopType with Geckolib for handling loop functionality of animations..<br>
+		 * <u>MUST be done during mod construct</u></b>
+		 * @param name The name of the loop type
+		 * @param loopType
+		 * @return
+		 */
+		static LoopType register(String name, LoopType loopType) {
 			LOOP_TYPES.put(name, loopType);
+
+			return loopType;
 		}
 	}
 }

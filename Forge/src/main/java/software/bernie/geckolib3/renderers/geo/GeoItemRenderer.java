@@ -22,11 +22,11 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -42,7 +42,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 	static {
 		AnimationController.addModelFetcher(animatable -> {
 			if (animatable instanceof Item item && IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoItemRenderer geoItemRenderer)
-				return (IAnimatableModel<Object>)geoItemRenderer.getGeoModelProvider();
+				return (IAnimatableModel<Object>)geoItemRenderer.geoGeoModel();
 
 			return null;
 		});
@@ -76,7 +76,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 	}
 
 	@Override
-	public AnimatedGeoModel<T> getGeoModelProvider() {
+	public AnimatedGeoModel<T> geoGeoModel() {
 		return modelProvider;
 	}
 
@@ -128,7 +128,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 	public void render(T animatable, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight,
 			ItemStack stack) {
 		this.currentItemStack = stack;
-		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
+		BakedGeoModel model = this.modelProvider.getBakedModel(this.modelProvider.getModelResource(animatable));
 		AnimationEvent animationEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(), false, Collections.singletonList(stack));
 		this.dispatchedMat = poseStack.last().pose().copy();
 

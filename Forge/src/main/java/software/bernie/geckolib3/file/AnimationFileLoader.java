@@ -19,8 +19,8 @@ import java.nio.charset.Charset;
 import java.util.Map;
 
 public class AnimationFileLoader {
-	public AnimationFile loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
-		AnimationFile animationFile = new AnimationFile();
+	public BakedAnimations loadAllAnimations(MolangParser parser, ResourceLocation location, ResourceManager manager) {
+		BakedAnimations animationFile = new BakedAnimations();
 		JsonObject jsonRepresentation = loadFile(location, manager);
 		for (Map.Entry<String, JsonElement> entry : JsonAnimationUtils.getAnimations(jsonRepresentation)) {
 			String animationName = entry.getKey();

@@ -22,10 +22,10 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
@@ -42,7 +42,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 						.getRenderer(tile);
 
 				if (renderer instanceof GeoBlockRenderer blockRenderer)
-					return (IAnimatableModel<Object>)blockRenderer.getGeoModelProvider();
+					return (IAnimatableModel<Object>)blockRenderer.geoGeoModel();
 			}
 			return null;
 		});
@@ -80,7 +80,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 	}
 
 	public void render(T tile, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(tile));
+		BakedGeoModel model = modelProvider.getBakedModel(modelProvider.getModelResource(tile));
 		modelProvider.setLivingAnimations(tile, getInstanceId(tile)); // TODO change to setCustomAnimations in 1.20+
 		this.dispatchedMat = poseStack.last().pose().copy();
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
@@ -132,7 +132,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 	}
 
 	@Override
-	public AnimatedGeoModel<T> getGeoModelProvider() {
+	public AnimatedGeoModel<T> geoGeoModel() {
 		return this.modelProvider;
 	}
 

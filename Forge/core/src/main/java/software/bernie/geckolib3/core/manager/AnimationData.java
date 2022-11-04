@@ -7,9 +7,9 @@ package software.bernie.geckolib3.core.manager;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.apache.commons.lang3.tuple.Pair;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.model.GeoBone;
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib3.core.animation.AnimationController;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import java.util.HashMap;
 import java.util.Map;

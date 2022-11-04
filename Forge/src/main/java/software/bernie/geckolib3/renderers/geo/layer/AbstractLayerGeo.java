@@ -37,7 +37,7 @@ public abstract class AbstractLayerGeo<T extends LivingEntity & GeoAnimatable> e
 	protected void reRenderCurrentModelInRenderer(T animatable, float partialTick, PoseStack poseStack,
 			MultiBufferSource bufferSource, int packedLight, RenderType renderType) {
 		poseStack.pushPose();
-		getRenderer().render(getEntityModel().getModel(this.funcGetCurrentModel.apply(animatable)), animatable,
+		getRenderer().render(getEntityModel().getBakedModel(this.funcGetCurrentModel.apply(animatable)), animatable,
 				partialTick, renderType, poseStack, bufferSource, bufferSource.getBuffer(renderType), packedLight,
 				OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
 		poseStack.popPose();

@@ -17,7 +17,7 @@ import software.bernie.example.client.DefaultBipedBoneIdents;
 import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {

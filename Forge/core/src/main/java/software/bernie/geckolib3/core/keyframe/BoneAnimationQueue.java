@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 
 public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
 								 AnimationPointQueue rotationZQueue, AnimationPointQueue positionXQueue, AnimationPointQueue positionYQueue,

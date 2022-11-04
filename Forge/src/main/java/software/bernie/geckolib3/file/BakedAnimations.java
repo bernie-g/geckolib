@@ -6,8 +6,8 @@ import software.bernie.geckolib3.core.animation.Animation;
 import java.util.Collection;
 import java.util.Map;
 
-public record AnimationFile(Map<String, Animation> animations) {
-	public AnimationFile() {
+public record BakedAnimations(Map<String, Animation> animations) {
+	public BakedAnimations() {
 		this(new Object2ObjectOpenHashMap<>());
 	}
 

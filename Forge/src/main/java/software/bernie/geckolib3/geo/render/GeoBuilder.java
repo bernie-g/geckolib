@@ -10,7 +10,7 @@ import software.bernie.geckolib3.geo.raw.tree.RawBoneGroup;
 import software.bernie.geckolib3.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.util.VectorUtils;
 
 import java.util.Map;
@@ -29,8 +29,8 @@ public class GeoBuilder implements IGeoBuilder {
     }
 
     @Override
-    public GeoModel constructGeoModel(RawGeometryTree geometryTree) {
-        GeoModel model = new GeoModel();
+    public BakedGeoModel constructGeoModel(RawGeometryTree geometryTree) {
+        BakedGeoModel model = new BakedGeoModel();
         model.properties = geometryTree.properties;
         for (RawBoneGroup rawBone : geometryTree.topLevelBones.values()) {
             model.topLevelBones.add(this.constructBone(rawBone, geometryTree.properties, null));

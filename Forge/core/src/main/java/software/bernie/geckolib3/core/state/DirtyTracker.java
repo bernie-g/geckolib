@@ -3,20 +3,20 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib3.core.snapshot;
+package software.bernie.geckolib3.core.state;
 
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 
 public class DirtyTracker {
-	public GeoBone model;
+	public final GeoBone bone;
 	public boolean hasScaleChanged;
 	public boolean hasPositionChanged;
 	public boolean hasRotationChanged;
 
-	public DirtyTracker(boolean hasScaleChanged, boolean hasPositionChanged, boolean hasRotationChanged, GeoBone model) {
+	public DirtyTracker(GeoBone bone, boolean hasScaleChanged, boolean hasPositionChanged, boolean hasRotationChanged) {
 		this.hasScaleChanged = hasScaleChanged;
 		this.hasPositionChanged = hasPositionChanged;
 		this.hasRotationChanged = hasRotationChanged;
-		this.model = model;
+		this.bone = bone;
 	}
 }

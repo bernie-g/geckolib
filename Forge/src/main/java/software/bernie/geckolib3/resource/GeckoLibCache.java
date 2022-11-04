@@ -10,10 +10,10 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.ModLoader;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.file.AnimationFile;
+import software.bernie.geckolib3.file.BakedAnimations;
 import software.bernie.geckolib3.file.AnimationFileLoader;
 import software.bernie.geckolib3.file.GeoModelLoader;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -31,19 +31,19 @@ public class GeckoLibCache {
 	private static final AnimationFileLoader animationLoader = new AnimationFileLoader();
 	private static final GeoModelLoader modelLoader = new GeoModelLoader();
 
-	private static Map<ResourceLocation, AnimationFile> animations = Collections.emptyMap();
-	private static Map<ResourceLocation, GeoModel> geoModels = Collections.emptyMap();
+	private static Map<ResourceLocation, BakedAnimations> animations = Collections.emptyMap();
+	private static Map<ResourceLocation, BakedGeoModel> geoModels = Collections.emptyMap();
 
 	private GeckoLibCache() {}
 
-	public static Map<ResourceLocation, AnimationFile> getAnimations() {
+	public static Map<ResourceLocation, BakedAnimations> getBakedAnimations() {
 		if (!GeckoLib.hasInitialized)
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 
 		return animations;
 	}
 
-	public static Map<ResourceLocation, GeoModel> getGeoModels() {
+	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
 		if (!GeckoLib.hasInitialized)
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 
@@ -53,8 +53,8 @@ public class GeckoLibCache {
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
 			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
-		Map<ResourceLocation, AnimationFile> animations = new Object2ObjectOpenHashMap<>();
-		Map<ResourceLocation, GeoModel> geoModels = new Object2ObjectOpenHashMap<>();
+		Map<ResourceLocation, BakedAnimations> animations = new Object2ObjectOpenHashMap<>();
+		Map<ResourceLocation, BakedGeoModel> geoModels = new Object2ObjectOpenHashMap<>();
 
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(animation, resourceManager), animations::put),

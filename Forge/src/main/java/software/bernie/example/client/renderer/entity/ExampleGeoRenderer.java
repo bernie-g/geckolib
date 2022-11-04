@@ -10,7 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
@@ -29,7 +29,7 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	}
 
 	@Override
-	public void render(GeoModel model, GeoExampleEntity animatable, float partialTick, RenderType type,
+	public void render(BakedGeoModel model, GeoExampleEntity animatable, float partialTick, RenderType type,
 					   PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer,
 					   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (currentTick < 0 || currentTick != animatable.tickCount) {

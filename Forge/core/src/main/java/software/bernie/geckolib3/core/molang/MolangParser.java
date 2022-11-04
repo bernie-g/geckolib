@@ -7,10 +7,9 @@ import com.eliotlash.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import software.bernie.geckolib3.core.molang.expressions.MolangVariableHolder;
-import software.bernie.geckolib3.core.molang.expressions.MolangExpression;
 import software.bernie.geckolib3.core.molang.expressions.MolangCompoundValue;
 import software.bernie.geckolib3.core.molang.expressions.MolangValue;
+import software.bernie.geckolib3.core.molang.expressions.MolangVariableHolder;
 import software.bernie.geckolib3.core.molang.functions.CosDegrees;
 import software.bernie.geckolib3.core.molang.functions.SinDegrees;
 
@@ -24,12 +23,12 @@ import java.util.function.DoubleSupplier;
  * https://bedrock.dev/docs/1.19.0.0/1.19.30.23/Molang#Math%20Functions
  */
 public class MolangParser extends MathBuilder {
-	private static final MolangParser INSTANCE = new MolangParser();
+	public static final MolangParser INSTANCE = new MolangParser();
 
 	// Replace base variables map
 	public static final Map<String, LazyVariable> VARIABLES = new Object2ObjectOpenHashMap<>();
-	public static final MolangExpression ZERO = new MolangValue(null, new Constant(0));
-	public static final MolangExpression ONE = new MolangValue(null, new Constant(1));
+	public static final MolangVariableHolder ZERO = new MolangVariableHolder(null, new Constant(0));
+	public static final MolangVariableHolder ONE = new MolangVariableHolder(null, new Constant(1));
 	public static final String RETURN = "return ";
 
 	private MolangParser() {
@@ -129,7 +128,7 @@ public class MolangParser extends MathBuilder {
 		return getVariable(name);
 	}
 
-	public static MolangExpression parseJson(JsonElement element) throws MolangException {
+	public static MolangValue parseJson(JsonElement element) throws MolangException {
 		if (!element.isJsonPrimitive())
 			return ZERO;
 
@@ -142,7 +141,7 @@ public class MolangParser extends MathBuilder {
 			String string = primitive.getAsString();
 
 			try {
-				return new MolangValue(this, new Constant(Double.parseDouble(string)));
+				return new MolangValue(new Constant(Double.parseDouble(string)));
 			}
 			catch (NumberFormatException ex) {
 				return parseExpression(string);
@@ -155,15 +154,18 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Parse a molang expression
 	 */
-	public MolangExpression parseExpression(String expression) throws MolangException {
+	public static MolangValue parseExpression(String expression) throws MolangException {
 		MolangCompoundValue result = null;
 
 		for (String split : expression.toLowerCase().trim().split(";")) {
 			String trimmed = split.trim();
 
 			if (!trimmed.isEmpty()) {
-				if (result == null)
-					result = new MolangCompoundValue(this);
+				if (result == null) {
+					result = new MolangCompoundValue(parseOneLine(trimmed, result));
+
+					continue;
+				}
 
 				result.values.add(parseOneLine(trimmed, result));
 			}
@@ -178,10 +180,10 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Parse a single Molang statement
 	 */
-	protected MolangExpression parseOneLine(String expression, MolangCompoundValue currentStatement) throws MolangException {
+	protected static MolangValue parseOneLine(String expression, MolangCompoundValue currentStatement) throws MolangException {
 		if (expression.startsWith(RETURN)) {
 			try {
-				return new MolangValue(parse(expression.substring(RETURN.length())), true);
+				return new MolangValue(INSTANCE.parse(expression.substring(RETURN.length())), true);
 			}
 			catch (Exception e) {
 				throw new MolangException("Couldn't parse return '" + expression + "' expression!");
@@ -189,11 +191,9 @@ public class MolangParser extends MathBuilder {
 		}
 
 		try {
-			List<Object> symbols = breakdownChars(this.breakdown(expression));
+			List<Object> symbols = INSTANCE.breakdownChars(INSTANCE.breakdown(expression));
 
-			/* Assignment it is */
-			if (symbols.size() >= 3 && symbols.get(0) instanceof String && isVariable(symbols.get(0)) && symbols.get(1).equals("=")) {
-				String name = (String)symbols.get(0);
+			if (symbols.size() >= 3 && symbols.get(0) instanceof String name && INSTANCE.isVariable(symbols.get(0)) && symbols.get(1).equals("=")) {
 				symbols = symbols.subList(2, symbols.size());
 				LazyVariable variable;
 
@@ -201,13 +201,13 @@ public class MolangParser extends MathBuilder {
 					currentStatement.locals.put(name, (variable = new LazyVariable(name, 0)));
 				}
 				else {
-					variable = getVariable(name, currentStatement);
+					variable = INSTANCE.getVariable(name, currentStatement);
 				}
 
-				return new MolangVariableHolder(this, variable, parseSymbolsMolang(symbols));
+				return new MolangVariableHolder(variable, INSTANCE.parseSymbolsMolang(symbols));
 			}
 
-			return new MolangValue(this, parseSymbolsMolang(symbols));
+			return new MolangValue(INSTANCE.parseSymbolsMolang(symbols));
 		}
 		catch (Exception e) {
 			throw new MolangException("Couldn't parse '" + expression + "' expression!");

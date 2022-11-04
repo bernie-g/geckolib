@@ -31,11 +31,11 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
 import software.bernie.geckolib3.util.EModelRenderCycle;
@@ -54,7 +54,7 @@ public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends
 	static {
 		AnimationController.addModelFetcher((GeoAnimatable object) -> {
 			GeoReplacedEntityRenderer renderer = renderers.get(object.getClass());
-			return renderer == null ? null : renderer.getGeoModelProvider();
+			return renderer == null ? null : renderer.geoGeoModel();
 		});
 	}
 
@@ -191,7 +191,7 @@ public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends
 		float headPitch = Mth.lerp(partialTick, entity.xRotO, entity.getXRot());
 		entityModelData.headPitch = -headPitch;
 		entityModelData.netHeadYaw = -netHeadYaw;
-		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
+		BakedGeoModel model = this.modelProvider.getBakedModel(this.modelProvider.getModelResource(animatable));
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTick,
 				(limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount <= getSwingMotionAnimThreshold()), Collections.singletonList(entityModelData));
 
@@ -264,7 +264,7 @@ public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends
 	}
 
 	@Override
-	public AnimatedGeoModel getGeoModelProvider() {
+	public AnimatedGeoModel geoGeoModel() {
 		return this.modelProvider;
 	}
 

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Objects;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
-import software.bernie.geckolib3.core.easing.EasingType;
+import software.bernie.geckolib3.core.animation.EasingType;
 
 public class KeyFrame<T> {
 	private Double length;

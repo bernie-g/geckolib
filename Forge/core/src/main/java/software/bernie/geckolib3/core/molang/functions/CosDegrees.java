@@ -3,6 +3,9 @@ package software.bernie.geckolib3.core.molang.functions;
 import com.eliotlash.mclib.math.IValue;
 import com.eliotlash.mclib.math.functions.Function;
 
+/**
+ * Replacement function for {@link com.eliotlash.mclib.math.functions.classic.Cos}, operating in degrees rather than radians.
+ */
 public class CosDegrees extends Function {
 	public CosDegrees(IValue[] values, String name) throws Exception {
 		super(values, name);

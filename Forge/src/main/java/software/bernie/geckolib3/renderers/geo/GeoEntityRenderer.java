@@ -30,17 +30,14 @@ import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
-import software.bernie.geckolib3.util.AnimationUtils;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -51,11 +48,7 @@ import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> extends EntityRenderer<T>
 		implements GeoObjectRenderer<T> {
-	static {
-		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ? (IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
-	}
-
-	protected final AnimatedGeoModel<T> modelProvider;
+	protected final AnimatedGeoModel<T> model;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = new ObjectArrayList<>();
 	protected Matrix4f dispatchedMat = new Matrix4f();
 	protected Matrix4f renderEarlyMat = new Matrix4f();
@@ -72,10 +65,10 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 	protected float heightScale = 1;
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
-	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider) {
+	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> model) {
 		super(renderManager);
 
-		this.modelProvider = modelProvider;
+		this.model = model;
 	}
 
 	@AvailableSince(value = "3.1.24")
@@ -180,9 +173,9 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 
 		AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
 				(limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount > getSwingMotionAnimThreshold()), Collections.singletonList(entityModelData));
-		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(animatable));
+		BakedGeoModel model = this.model.getBakedModel(this.model.getModelResource(animatable));
 
-		this.modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
+		this.model.setLivingAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
@@ -285,8 +278,8 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 	}
 
 	@Override
-	public GeoModelProvider<T> getGeoModelProvider() {
-		return this.modelProvider;
+	public GeoModel<T> geoGeoModel() {
+		return this.model;
 	}
 
 	@AvailableSince(value = "3.1.24")
@@ -388,7 +381,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 
 	@Override
 	public ResourceLocation getTextureLocation(T animatable) {
-		return this.modelProvider.getTextureResource(animatable);
+		return this.model.getTextureResource(animatable);
 	}
 
 	public final boolean addLayer(GeoLayerRenderer<T> layer) {

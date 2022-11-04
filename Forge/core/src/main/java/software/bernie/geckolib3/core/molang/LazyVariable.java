@@ -21,11 +21,17 @@ public class LazyVariable extends Variable {
 		this.valueSupplier = valueSupplier;
 	}
 
+	/**
+	 * Set the new value for the variable, acting as a constant
+	 */
 	@Override
 	public void set(double value) {
 		this.valueSupplier = () -> value;
 	}
 
+	/**
+	 * Set the new value supplier for the variable
+	 */
 	public void set(DoubleSupplier valueSupplier) {
 		this.valueSupplier = valueSupplier;
 	}

@@ -3,10 +3,9 @@
  * Author: Bernie G. (Gecko)
  */
 
-package software.bernie.geckolib3.core.controller;
+package software.bernie.geckolib3.core.animation;
 
 import com.eliotlash.mclib.math.IValue;
-import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,25 +14,24 @@ import software.bernie.geckolib3.core.ConstantValue;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.Animation;
-import software.bernie.geckolib3.core.easing.EasingType;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoModel;
 import software.bernie.geckolib3.core.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.event.ParticleKeyFrameEvent;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.keyframe.*;
-import software.bernie.geckolib3.core.model.GeoBone;
 import software.bernie.geckolib3.core.molang.MolangParser;
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
 import software.bernie.geckolib3.core.util.Axis;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
 /**
  * The actual controller that handles the playing and usage of animations, including their various keyframes and instruction markers.
- * Each controller can only play a single animation at a time.
+ * Each controller can only play a single animation at a time - for example you may have one controller to animate walking,
+ * one to control attacks, one to control size, etc.
  */
 public class AnimationController<T extends GeoAnimatable> {
 	protected final T animatable;
@@ -41,8 +39,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected final AnimationStateHandler<T> stateHandler;
 	protected final double transitionLength;
 	protected final Map<String, BoneAnimationQueue> boneAnimationQueues = new Object2ObjectOpenHashMap<>();
-	protected final Queue<Animation> animationQueue = new LinkedList<>();
 	protected final Map<String, BoneSnapshot> boneSnapshots = new Object2ObjectOpenHashMap<>();
+	protected Queue<AnimationProcessor.QueuedAnimation> animationQueue = new LinkedList<>();
 
 	protected boolean isJustStarting = false;
 	protected boolean needsAnimationReload = false;
@@ -54,211 +52,204 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected ParticleKeyframeHandler<T> particleKeyframeHandler;
 	protected CustomKeyframeHandler<T> customKeyframeHandler;
 
-	protected Animation currentAnimation;
+	protected RawAnimation currentRawAnimation;
+	protected AnimationProcessor.QueuedAnimation currentAnimation;
 	protected AnimationState animationState = AnimationState.STOPPED;
 	protected double tickOffset;
-	protected double animationSpeed = 1;
-	protected EasingType easingType = EasingType.NONE;
-
-
-
-
-	protected AnimationBuilder currentAnimationBuilder = new AnimationBuilder();
-	public Double2DoubleFunction customEasingMethod;
+	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
+	protected EasingType easingType = EasingType.LINEAR;
 	private final Set<EventKeyFrame<?>> executedKeyFrames = new ObjectOpenHashSet<>();
 
-
-
 	/**
-	 * Instantiates a new Animation controller. Each animation controller can run
-	 * one animation at a time. You can have several animation controllers for each
-	 * entity, i.e. one animation to control the entity's size, one to control
-	 * movement, attacks, etc.
-	 *
-	 * @param animatable            The entity
-	 * @param name                  Name of the animation controller
-	 *                              (move_controller, size_controller,
-	 *                              attack_controller, etc.)
-	 * @param transitionLengthTicks How long it takes to transition between
-	 *                              animations (IN TICKS!!)
+	 * Instantiates a new {@code AnimationController}.<br>
+	 * This constructor assumes a 0-tick transition length between animations, and a generic name.
+	 * @param animatable The object that will be animated by this controller
+	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, String name, float transitionLengthTicks,
-							   AnimationStateHandler<T> animationPredicate) {
-		this.animatable = animatable;
-		this.name = name;
-		this.transitionLength = transitionLengthTicks;
-		this.stateHandler = animationPredicate;
-		this.tickOffset = 0.0d;
+	public AnimationController(T animatable, AnimationStateHandler<T> animationHandler) {
+		this(animatable, "base_controller", 0, animationHandler);
 	}
 
 	/**
-	 * Instantiates a new Animation controller. Each animation controller can run
-	 * one animation at a time. You can have several animation controllers for each
-	 * entity, i.e. one animation to control the entity's size, one to control
-	 * movement, attacks, etc.
-	 *
-	 * @param animatable            The entity
-	 * @param name                  Name of the animation controller
-	 *                              (move_controller, size_controller,
-	 *                              attack_controller, etc.)
-	 * @param transitionLengthTicks How long it takes to transition between
-	 *                              animations (IN TICKS!!)
-	 * @param easingtype            The method of easing to use. The other
-	 *                              constructor defaults to no easing.
+	 * Instantiates a new {@code AnimationController}.<br>
+	 * This constructor assumes a 0-tick transition length between animations.
+	 * @param animatable The object that will be animated by this controller
+	 * @param name The name of the controller - should represent what animations it handles
+	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, String name, float transitionLengthTicks, EasingType easingtype,
-							   AnimationStateHandler<T> animationPredicate) {
-		this.animatable = animatable;
-		this.name = name;
-		this.transitionLength = transitionLengthTicks;
-		this.easingType = easingtype;
-		this.stateHandler = animationPredicate;
-		this.tickOffset = 0.0d;
+	public AnimationController(T animatable, String name, AnimationStateHandler<T> animationHandler) {
+		this(animatable, name, 0, animationHandler);
 	}
 
 	/**
-	 * Instantiates a new Animation controller. Each animation controller can run
-	 * one animation at a time. You can have several animation controllers for each
-	 * entity, i.e. one animation to control the entity's size, one to control
-	 * movement, attacks, etc.
-	 *
-	 * @param animatable            The entity
-	 * @param name                  Name of the animation controller
-	 *                              (move_controller, size_controller,
-	 *                              attack_controller, etc.)
-	 * @param transitionLengthTicks How long it takes to transition between
-	 *                              animations (IN TICKS!!)
-	 * @param customEasingMethod    If you want to use an easing method that's not
-	 *                              included in the EasingType enum, pass your
-	 *                              method into here. The parameter that's passed in
-	 *                              will be a number between 0 and 1. Return a
-	 *                              number also within 0 and 1. Take a look at
-	 *                              {@link software.bernie.geckolib3.core.easing.EasingManager}
+	 * Instantiates a new {@code AnimationController}.<br>
+	 * This constructor assumes a generic name.
+	 * @param animatable The object that will be animated by this controller
+	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
+	 *                              Lerping is automatically applied where possible
+	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, String name, float transitionLengthTicks,
-							   Double2DoubleFunction customEasingMethod, AnimationStateHandler<T> animationPredicate) {
+	public AnimationController(T animatable, int transitionTickTime, AnimationStateHandler<T> animationHandler) {
+		this(animatable, "base_controller", transitionTickTime, animationHandler);
+	}
+
+	/**
+	 * Instantiates a new {@code AnimationController}.<br>
+	 * @param animatable The object that will be animated by this controller
+	 * @param name The name of the controller - should represent what animations it handles
+	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
+	 *                              Lerping is automatically applied where possible
+	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
+	 */
+	public AnimationController(T animatable, String name, int transitionTickTime, AnimationStateHandler<T> animationHandler) {
 		this.animatable = animatable;
 		this.name = name;
-		this.transitionLength = transitionLengthTicks;
-		this.customEasingMethod = customEasingMethod;
-		this.easingType = EasingType.CUSTOM;
-		this.stateHandler = animationPredicate;
-		this.tickOffset = 0.0d;
+		this.transitionLength = transitionTickTime;
+		this.stateHandler = animationHandler;
+	}
+
+	/**
+	 * Applies the given {@link SoundKeyframeHandler} to this controller, for handling {@link SoundKeyframeEvent sound keyframe instructions}.
+	 * @return this
+	 */
+	public AnimationController<T> setSoundKeyframeHandler(SoundKeyframeHandler<T> soundHandler) {
+		this.soundKeyframeHandler = soundHandler;
+
+		return this;
+	}
+
+	/**
+	 * Applies the given {@link ParticleKeyframeHandler} to this controller, for handling {@link ParticleKeyFrameEvent particle keyframe instructions}.
+	 * @return this
+	 */
+	public AnimationController<T> setParticleKeyframeHandler(ParticleKeyframeHandler<T> particleHandler) {
+		this.particleKeyframeHandler = particleHandler;
+
+		return this;
+	}
+
+	/**
+	 * Applies the given {@link CustomKeyframeHandler} to this controller, for handling {@link CustomInstructionKeyframeEvent sound keyframe instructions}.
+	 * @return this
+	 */
+	public AnimationController<T> setCustomInstructionKeyframeHandler(CustomKeyframeHandler<T> customInstructionHandler) {
+		this.customKeyframeHandler = customInstructionHandler;
+
+		return this;
+	}
+
+	/**
+	 * Applies the given modifier function to this controller, for handling the speed that the controller should play its animations at.<br>
+	 * An output value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc.
+	 * @param speedModFunction The function to apply to this controller to handle animation speed
+	 * @return this
+	 */
+	public AnimationController<T> setAnimationSpeedHandler(Function<T, Double> speedModFunction) {
+		this.animationSpeedModifier = speedModFunction;
+
+		return this;
+	}
+
+	/**
+	 * Applies the given modifier value to this controller, for handlign the speed that the controller hsould play its animations at.<br>
+	 * A value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc.
+	 * @param speed The speed modifier to apply to this controller to handle animation speed.
+	 * @return this
+	 */
+	public AnimationController<T> setAnimationSpeed(double speed) {
+		return setAnimationSpeedHandler(animatable -> speed);
 	}
 
 	/**
 	 * Gets the controller's name.
-	 *
-	 * @return the name
+	 * @return The name
 	 */
 	public String getName() {
 		return this.name;
 	}
 
 	/**
-	 * Gets the current animation. Can be null
-	 *
-	 * @return the current animation
+	 * Gets the currently loaded {@link Animation}. Can be null<br>
+	 * An animation returned here does not guarantee it is currently playing, just that it is the currently loaded animation for this controller
 	 */
 
-	public Animation getCurrentAnimation() {
+	public AnimationProcessor.QueuedAnimation getCurrentAnimation() {
 		return this.currentAnimation;
 	}
 
 	/**
-	 * Returns the current state of this animation controller.
+	 * Returns the current state of this controller.
 	 */
 	public AnimationState getAnimationState() {
 		return this.animationState;
 	}
 
 	/**
-	 * Gets the current animation's bone animation queues.
-	 *
-	 * @return the bone animation queues
+	 * Gets the currently loaded animation's {@link BoneAnimationQueue BoneAnimationQueues}.
 	 */
-	public HashMap<String, BoneAnimationQueue> getBoneAnimationQueues() {
+	public Map<String, BoneAnimationQueue> getBoneAnimationQueues() {
 		return this.boneAnimationQueues;
 	}
 
 	/**
-	 * Registers a sound listener.
+	 * Gets the current animation speed modifier.<br>
+	 * This modifier defines the relative speed in which animations will be played based on the current state of the game.
+	 * @return The computed current animation speed modifier
 	 */
-	public void registerSoundListener(SoundKeyframeHandler<T> soundListener) {
-		this.soundKeyframeHandler = soundListener;
+	public double getAnimationSpeed() {
+		return this.animationSpeedModifier.apply(this.animatable);
 	}
 
 	/**
-	 * Registers a particle listener.
+	 * Marks the controller as needing to reset its animation and state the next time {@link AnimationController#setAnimation(RawAnimation)} is called.
 	 */
-	public void registerParticleListener(ParticleKeyframeHandler<T> particleListener) {
-		this.particleKeyframeHandler = particleListener;
-	}
-
-	/**
-	 * Registers a custom instruction listener.
-	 */
-	public void registerCustomInstructionListener(CustomKeyframeHandler<T> customInstructionListener) {
-		this.customKeyframeHandler = customInstructionListener;
-	}
-
 	public void markNeedsReload() {
 		this.needsAnimationReload = true;
 	}
 
-	public void clearAnimationCache() {
-		this.currentAnimationBuilder = new AnimationBuilder();
-	}
-
-	public double getAnimationSpeed() {
-		return this.animationSpeed;
-	}
-
-	public void setAnimationSpeed(double animationSpeed) {
-		this.animationSpeed = animationSpeed;
+	/**
+	 * Tells the controller to stop all animations until told otherwise.<br>
+	 * Calling this will prevent the controller from continuing to play the currently loaded animation until
+	 * either {@link AnimationController#markNeedsReload()} is called, or
+	 * {@link AnimationController#setAnimation(RawAnimation)} is called with a different animation
+	 */
+	public void stop() {
+		this.animationState = AnimationState.STOPPED;
 	}
 
 	/**
-	 * This method sets the current animation with an animation builder. You can run
-	 * this method every frame, if you pass in the same animation builder every
-	 * time, it won't restart. Additionally, it smoothly transitions between
-	 * animation states.
+	 * Sets the currently loaded animation to the one provided.<br>
+	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
+	 * Pass null to this method to tell the controller to stop.<br>
+	 * If {@link AnimationController#markNeedsReload()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
+	 * @param rawAnimation
 	 */
-	public void setAnimation(AnimationBuilder builder) {
-		IAnimatableModel<T> model = getModel(this.animatable);
-		if (model != null) {
-			if (builder == null || builder.getRawAnimationList().size() == 0) {
-				this.animationState = AnimationState.STOPPED;
-			}
-			else if (!builder.getRawAnimationList().equals(this.currentAnimationBuilder.getRawAnimationList())
-					|| this.needsAnimationReload) {
-				AtomicBoolean encounteredError = new AtomicBoolean(false);
-				// Convert the list of animation names to the actual list, keeping track of the
-				// loop boolean along the way
-				LinkedList<Animation> animations = builder.getRawAnimationList().stream().map((rawAnimation) -> {
-					Animation animation = model.getAnimation(rawAnimation.animationName, animatable);
+	public void setAnimation(RawAnimation rawAnimation) {
+		if (rawAnimation == null || rawAnimation.getAnimationStages().isEmpty()) {
+			stop();
 
-					if (animation == null) {
-						System.out.printf("Could not load animation: %s. Is it missing?", rawAnimation.animationName);
-						encounteredError.set(true);
-					}
+			return;
+		}
 
-					if (animation != null && rawAnimation.loopType != null)
-						animation.loop = rawAnimation.loopType;
+		if (this.needsAnimationReload || !rawAnimation.equals(this.currentRawAnimation)) {
+			GeoModel<T> model = this.animatable.getGeoModel().get();
 
-					return animation;
-				}).collect(Collectors.toCollection(LinkedList::new));
+			if (model != null) {
+				Queue<AnimationProcessor.QueuedAnimation> animations = model.getAnimationProcessor().buildAnimationQueue(this.animatable, rawAnimation);
 
-				if (encounteredError.get())
+				if (animations != null) {
+					this.animationQueue = animations;
+					this.currentRawAnimation = rawAnimation;
+					this.shouldResetTick = true;
+					this.animationState = AnimationState.TRANSITIONING;
+					this.justStartedTransition = true;
+					this.needsAnimationReload = false;
+
 					return;
-
-				this.animationQueue = animations;
-				this.currentAnimationBuilder = builder;
-				this.shouldResetTick = true; // Reset the adjusted tick to 0 on next animation process call
-				this.animationState = AnimationState.TRANSITIONING;
-				this.justStartedTransition = true;
-				this.needsAnimationReload = false;
+				}
 			}
+
+			stop();
 		}
 	}
 
@@ -266,48 +257,27 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * This method is called every frame in order to populate the animation point
 	 * queues, and process animation state logic.
 	 *
-	 * @param tick                   The current tick + partial tick
+	 * @param seekTime                   The current tick + partial tick
 	 * @param event                  The animation test event
-	 * @param modelRendererList      The list of all AnimatedModelRender's
-	 * @param boneSnapshotCollection The bone snapshot collection
+	 * @param bones      The registered {@link GeoBone bones} for this model
+	 * @param snapshots The {@link BoneSnapshot} map
+	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(final double tick, AnimationEvent<T> event, List<GeoBone> modelRendererList,
-						Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshotCollection, MolangParser parser,
-						boolean crashWhenCantFindBone) {
-		parser.setValue("query.life_time", () -> tick / 20);
+	public void process(final double seekTime, AnimationEvent<T> event, List<GeoBone> bones,
+						Map<String, BoneSnapshot> snapshots, boolean crashWhenCantFindBone) {
+		double adjustedTick = adjustTick(seekTime);
 
-		if (this.currentAnimation != null) {
-			IAnimatableModel<T> model = getModel(this.animatable);
+		createInitialQueues(bones);
 
-			if (model != null) {
-				Animation animation = model.getAnimation(currentAnimation.animationName, this.animatable);
-
-				if (animation != null) {
-					ILoopType loop = this.currentAnimation.loop;
-					this.currentAnimation = animation;
-					this.currentAnimation.loop = loop;
-				}
-			}
-		}
-
-		createInitialQueues(modelRendererList);
-
-		double adjustedTick = adjustTick(tick);
-
-		// Transition period has ended, reset the tick and set the animation to running
 		if (animationState == AnimationState.TRANSITIONING && adjustedTick >= this.transitionLength) {
 			this.shouldResetTick = true;
 			this.animationState = AnimationState.RUNNING;
-			adjustedTick = adjustTick(tick);
+			adjustedTick = adjustTick(seekTime);
 		}
 
-		assert adjustedTick >= 0 : "GeckoLib: Tick was less than zero";
+		PlayState playState = this.stateHandler.handle(event);
 
-		// This tests the animation predicate
-		PlayState playState = this.testAnimationPredicate(event);
-
-		if (playState == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.size() == 0)) {
-			// The animation should transition to the model's initial state
+		if (playState == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.isEmpty())) {
 			this.animationState = AnimationState.STOPPED;
 			this.justStopped = true;
 
@@ -316,40 +286,47 @@ public class AnimationController<T extends GeoAnimatable> {
 
 		if (this.justStartedTransition && (this.shouldResetTick || this.justStopped)) {
 			this.justStopped = false;
-			adjustedTick = adjustTick(tick);
+			adjustedTick = adjustTick(seekTime);
 		}
-		else if (this.currentAnimation == null && this.animationQueue.size() != 0) {
+		else if (this.currentAnimation == null) {
 			this.shouldResetTick = true;
 			this.animationState = AnimationState.TRANSITIONING;
 			this.justStartedTransition = true;
 			this.needsAnimationReload = false;
-			adjustedTick = adjustTick(tick);
+			adjustedTick = adjustTick(seekTime);
 		}
 		else if (this.animationState != AnimationState.TRANSITIONING) {
 			this.animationState = AnimationState.RUNNING;
 		}
 
-		// Handle transitioning to a different animation (or just starting one)
-		if (this.animationState == AnimationState.TRANSITIONING) {
-			// Just started transitioning, so set the current animation to the first one
+		if (getAnimationState() == AnimationState.RUNNING) {
+			processCurrentAnimation(adjustedTick, seekTime, crashWhenCantFindBone);
+		}
+		else if (this.animationState == AnimationState.TRANSITIONING) {
 			if (adjustedTick == 0 || this.isJustStarting) {
 				this.justStartedTransition = false;
-				this.currentAnimation = animationQueue.poll();
+				this.currentAnimation = this.animationQueue.poll();
 
 				resetEventKeyFrames();
-				saveSnapshotsForAnimation(this.currentAnimation, boneSnapshotCollection);
-			}
-			if (this.currentAnimation != null) {
-				setAnimTime(parser, 0);
 
-				for (BoneAnimation boneAnimation : this.currentAnimation.boneAnimations) {
+				if (currentAnimation == null)
+					return;
+
+				saveSnapshotsForAnimation(this.currentAnimation, snapshots);
+			}
+
+			if (this.currentAnimation != null) {
+				MolangParser.INSTANCE.setValue("query.anim_time", () -> 0);
+
+				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName);
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName);
 					Optional<GeoBone> first = Optional.empty();
 
-					for (GeoBone bone : modelRendererList) {
+					for (GeoBone bone : bones) {
 						if (bone.getName().equals(boneAnimation.boneName)) {
 							first = Optional.of(bone);
+
 							break;
 						}
 					}
@@ -411,14 +388,14 @@ public class AnimationController<T extends GeoAnimatable> {
 				}
 			}
 		}
-		else if (getAnimationState() == AnimationState.RUNNING) {
-			// Actually run the animation
-			processCurrentAnimation(adjustedTick, tick, parser, crashWhenCantFindBone);
-		}
 	}
 
-	private void setAnimTime(MolangParser parser, final double tick) {
-		parser.setValue("query.anim_time", () -> tick / 20);
+	/**
+	 * Sets the {@code anim_time} molang query, overriding the current value
+	 * @param tick The tick
+	 */
+	private void setAnimTime(double tick) {
+
 	}
 
 	private IAnimatableModel<T> getModel(T animatable) {
@@ -436,19 +413,18 @@ public class AnimationController<T extends GeoAnimatable> {
 		return null;
 	}
 
-	protected PlayState testAnimationPredicate(AnimationEvent<T> event) {
-		return this.stateHandler.handle(event);
-	}
-
-	// At the beginning of a new transition, save a snapshot of the model's
-	// rotation, position, and scale values as the initial value to lerp from
-	private void saveSnapshotsForAnimation(Animation animation,
-			Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshotCollection) {
-		for (Pair<GeoBone, BoneSnapshot> snapshot : boneSnapshotCollection.values()) {
-			if (animation != null && animation.boneAnimations != null) {
+	/**
+	 * Cache the relevant {@link BoneSnapshot BoneSnapshots} for the current {@link software.bernie.geckolib3.core.animation.AnimationProcessor.QueuedAnimation}
+	 * for animation lerping
+	 * @param animation The {@code QueuedAnimation} to filter {@code BoneSnapshots} for
+	 * @param snapshots The master snapshot collection to pull filter from
+	 */
+	private void saveSnapshotsForAnimation(AnimationProcessor.QueuedAnimation animation, Map<String, BoneSnapshot> snapshots) {
+		for (BoneSnapshot snapshot : snapshots.values()) {
+			if (animation.animation().boneAnimations() != null) {
 				for (BoneAnimation boneAnimation : animation.boneAnimations) {
-					if (boneAnimation.boneName.equals(snapshot.getLeft().getName())) {
-						this.boneSnapshots.put(boneAnimation.boneName, new BoneSnapshot(snapshot.getRight()));
+					if (boneAnimation.boneName.equals(snapshot.name)) {
+						this.boneSnapshots.put(boneAnimation.boneName, new BoneSnapshot(snapshot));
 
 						break;
 					}
@@ -457,8 +433,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 	}
 
-	private void processCurrentAnimation(double tick, double actualTick, MolangParser parser,
-			boolean crashWhenCantFindBone) {
+	private void processCurrentAnimation(double tick, double actualTick, boolean crashWhenCantFindBone) {
 		assert currentAnimation != null;
 		// Animation has ended
 		if (tick >= this.currentAnimation.animationLength) {
@@ -577,7 +552,11 @@ public class AnimationController<T extends GeoAnimatable> {
 			this.currentAnimation = animationQueue.poll();
 	}
 
-	// Helper method to populate all the initial animation point queues
+	// TODO: Look into replacing the BoneAnimationQueue functionality, it is very inefficient
+	/**
+	 * Prepare the {@link BoneAnimationQueue} map for the current render frame
+	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
+	 */
 	private void createInitialQueues(List<GeoBone> modelRendererList) {
 		this.boneAnimationQueues.clear();
 
@@ -603,7 +582,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 		else {
 			// assert tick - this.tickOffset >= 0;
-			return this.animationSpeed * Math.max(tick - this.tickOffset, 0.0D);
+			return this.animationSpeedModifier * Math.max(tick - this.tickOffset, 0.0D);
 		}
 	}
 
@@ -655,6 +634,9 @@ public class AnimationController<T extends GeoAnimatable> {
 		return new KeyFrameLocation<>(frames.get(frames.size() - 1), ageInTicks);
 	}
 
+	/**
+	 * Clear the {@link EventKeyFrame} cache in preparation for the next animation
+	 */
 	private void resetEventKeyFrames() {
 		this.executedKeyFrames.clear();
 	}

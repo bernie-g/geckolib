@@ -21,7 +21,7 @@ import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
@@ -69,7 +69,7 @@ public class JackInTheBoxItem extends Item implements GeoAnimatable, ISyncable {
 		// To register a particle listener or custom event listener you do the exact
 		// same thing, just with registerParticleListener and
 		// registerCustomInstructionListener, respectively.
-		controller.registerSoundListener(this::soundListener);
+		controller.setSoundKeyframeHandler(this::soundListener);
 		data.addAnimationController(controller);
 	}
 

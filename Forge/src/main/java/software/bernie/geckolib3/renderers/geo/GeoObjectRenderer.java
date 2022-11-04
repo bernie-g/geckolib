@@ -9,9 +9,11 @@ import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.core.model.GeoModelProvider;
+import software.bernie.geckolib3.core.animatable.model.GeoModelProvider;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.*;
+import software.bernie.geckolib3.util.EModelRenderCycle;
+import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
@@ -20,13 +22,13 @@ import javax.annotation.Nullable;
 public interface GeoObjectRenderer<T> {
 	MultiBufferSource getBufferSource();
 
-	GeoModelProvider getGeoModelProvider();
+	GeoModelProvider geoGeoModel();
 
 	ResourceLocation getTextureLocation(T animatable);
 
-	default void render(GeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
-			@Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
-			int packedOverlay, float red, float green, float blue, float alpha) {
+	default void render(BakedGeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
+						@Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
+						int packedOverlay, float red, float green, float blue, float alpha) {
 		setCurrentRTB(bufferSource);
 		renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
 				packedOverlay, red, green, blue, alpha);

@@ -58,9 +58,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoCube;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.geo.render.built.GeoQuad;
 import software.bernie.geckolib3.geo.render.built.GeoVertex;
 import software.bernie.geckolib3.item.GeoArmorItem;
@@ -168,7 +168,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 	// Rendercall to render the model itself
 	@Override
-	public void render(GeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
+	public void render(BakedGeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
 					   MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlay,
 					   float red, float green, float blue, float alpha) {
 		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
@@ -178,7 +178,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 	@Override
 	public ResourceLocation getTextureLocation(T animatable) {
-		return this.modelProvider.getTextureResource(animatable);
+		return this.model.getTextureResource(animatable);
 	}
 
 	@Override

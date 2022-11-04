@@ -8,7 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.model.provider.GeoModelProvider;
+import software.bernie.geckolib3.model.provider.GeoModel;
 
 public abstract class GeoLayerRenderer<T extends Entity & GeoAnimatable> {
 	protected final GeoObjectRenderer<T> entityRenderer;
@@ -17,22 +17,22 @@ public abstract class GeoLayerRenderer<T extends Entity & GeoAnimatable> {
 		this.entityRenderer = entityRendererIn;
 	}
 
-	protected void renderCopyModel(GeoModelProvider<T> modelProvider,
-			ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
-			int packedLight, T animatable, float partialTick, float red, float green, float blue) {
+	protected void renderCopyModel(GeoModel<T> modelProvider,
+								   ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
+								   int packedLight, T animatable, float partialTick, float red, float green, float blue) {
 		if (!animatable.isInvisible()) {
 			renderModel(modelProvider, texture, poseStack, bufferSource, packedLight, animatable,
 					partialTick, red, green, blue);
 		}
 	}
 
-	protected void renderModel(GeoModelProvider<T> modelProvider,
-			ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
-			int packedLight, T animatable, float partialTick, float red, float green, float blue) {
+	protected void renderModel(GeoModel<T> modelProvider,
+							   ResourceLocation texture, PoseStack poseStack, MultiBufferSource bufferSource,
+							   int packedLight, T animatable, float partialTick, float red, float green, float blue) {
 		if (animatable instanceof LivingEntity entity) {
 			RenderType renderType = getRenderType(texture);
 
-			getRenderer().render(modelProvider.getModel(modelProvider.getModelResource(animatable)),
+			getRenderer().render(modelProvider.getBakedModel(modelProvider.getModelResource(animatable)),
 					animatable, partialTick, renderType, poseStack, bufferSource, bufferSource.getBuffer(renderType),
 					packedLight, LivingEntityRenderer.getOverlayCoords(entity, 0), red, green, blue, 1);
 		}
@@ -42,8 +42,8 @@ public abstract class GeoLayerRenderer<T extends Entity & GeoAnimatable> {
 		return RenderType.entityCutout(textureLocation);
 	}
 	
-	public GeoModelProvider<T> getEntityModel() {
-		return this.entityRenderer.getGeoModelProvider();
+	public GeoModel<T> getEntityModel() {
+		return this.entityRenderer.geoGeoModel();
 	}
 
 	public GeoObjectRenderer<T> getRenderer(){

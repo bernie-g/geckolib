@@ -6,11 +6,11 @@ import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import software.bernie.geckolib3.core.snapshot.BoneSnapshot;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import java.util.List;
 
-public class GeoBone implements software.bernie.geckolib3.core.model.GeoBone {
+public class GeoBone implements software.bernie.geckolib3.core.animatable.model.GeoBone {
 	public GeoBone parent;
 
 	public List<GeoBone> childBones = new ObjectArrayList<>();
@@ -75,7 +75,7 @@ public class GeoBone implements software.bernie.geckolib3.core.model.GeoBone {
 	@Override
 	public void saveInitialSnapshot() {
 		if (this.initialSnapshot == null) {
-			this.initialSnapshot = new BoneSnapshot(this, true);
+			this.initialSnapshot = new BoneSnapshot(this);
 		}
 	}
 

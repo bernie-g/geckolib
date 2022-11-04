@@ -9,10 +9,10 @@ import software.bernie.geckolib3.geo.raw.pojo.FormatVersion;
 import software.bernie.geckolib3.geo.raw.pojo.RawGeoModel;
 import software.bernie.geckolib3.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib3.geo.render.GeoBuilder;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 
 public class GeoModelLoader {
-	public GeoModel loadModel(ResourceManager resourceManager, ResourceLocation location) {
+	public BakedGeoModel loadModel(ResourceManager resourceManager, ResourceLocation location) {
 		try {
 			// Deserialize from json into basic json objects, bones are still stored as a
 			// flat list

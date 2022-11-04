@@ -24,12 +24,12 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.controller.AnimationController.ModelFetcher;
+import software.bernie.geckolib3.core.animation.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeoUtils;
@@ -85,7 +85,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	@Nullable
 	public IAnimatableModel<T> apply(GeoAnimatable t) {
 		if (t instanceof ArmorItem && t.getClass() == this.assignedItemClass)
-			return this.getGeoModelProvider();
+			return this.geoGeoModel();
 
 		return null;
 	}
@@ -174,7 +174,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	public void render(float partialTick, PoseStack poseStack, VertexConsumer buffer, int packedLight) {
-		GeoModel model = this.modelProvider.getModel(this.modelProvider.getModelResource(this.currentArmorItem));
+		BakedGeoModel model = this.modelProvider.getBakedModel(this.modelProvider.getModelResource(this.currentArmorItem));
 		AnimationEvent animationEvent = new AnimationEvent(this.currentArmorItem, 0, 0,
 				Minecraft.getInstance().getFrameTime(), false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
@@ -311,7 +311,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	@Override
-	public AnimatedGeoModel<T> getGeoModelProvider() {
+	public AnimatedGeoModel<T> geoGeoModel() {
 		return this.modelProvider;
 	}
 
@@ -368,7 +368,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	public GeoArmorRenderer applySlot(EquipmentSlot slot) {
-		this.modelProvider.getModel(this.modelProvider.getModelResource(this.currentArmorItem));
+		this.modelProvider.getBakedModel(this.modelProvider.getModelResource(this.currentArmorItem));
 
 		setBoneVisibility(this.headBone, false);
         setBoneVisibility(this.bodyBone, false);
