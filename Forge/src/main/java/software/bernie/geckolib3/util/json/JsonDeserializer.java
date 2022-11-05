@@ -11,35 +11,16 @@ import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.ChainedJsonException;
 import software.bernie.geckolib3.core.animation.Animation;
-import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
-import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
-import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
-import software.bernie.geckolib3.core.keyframe.VectorKeyFrameList;
+import software.bernie.geckolib3.core.keyframe.event.data.KeyFrameData;
+import software.bernie.geckolib3.core.keyframe.event.data.ParticleKeyframeData;
+import software.bernie.geckolib3.core.keyframe.KeyframeStack;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.util.AnimationUtils;
 
 import java.util.*;
 
-/**
- * Helper for parsing the bedrock json animation format and finding certain
- * elements
- */
-public class JsonAnimationUtils {
-	private static Gson GSON = null;
-
-	/**
-	 * Gets the "animations" object as a set of maps consisting of the name of the
-	 * animation and the inner json of the animation.
-	 *
-	 * @param json The root json object
-	 * @return The set of map entries where the string is the name of the animation
-	 *         and the JsonElement is the actual animation
-	 */
-	public static Set<Map.Entry<String, JsonElement>> getAnimations(JsonObject json) {
-		return json.getAsJsonObject("animations").entrySet();
-	}
-
+public class JsonDeserializer {
 	/**
 	 * Gets the "bones" object from an animation json object.
 	 *
@@ -218,7 +199,7 @@ public class JsonAnimationUtils {
 
 		// Handle parsing sound effect keyframes
 		for (Map.Entry<String, JsonElement> keyFrame : getSoundEffectFrames(animationJsonObject)) {
-			animation.soundKeyFrames.add(new EventKeyFrame<>(Double.parseDouble(keyFrame.getKey()) * 20,
+			animation.soundKeyFrames.add(new KeyFrameData<>(Double.parseDouble(keyFrame.getKey()) * 20,
 					keyFrame.getValue().getAsJsonObject().get("effect").getAsString()));
 		}
 
@@ -228,14 +209,14 @@ public class JsonAnimationUtils {
 			JsonElement effect = object.get("effect");
 			JsonElement locator = object.get("locator");
 			JsonElement pre_effect_script = object.get("pre_effect_script");
-			animation.particleKeyFrames.add(new ParticleEventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20,
+			animation.particleKeyFrames.add(new ParticleKeyframeData(Double.parseDouble(keyFrame.getKey()) * 20,
 					effect == null ? "" : effect.getAsString(), locator == null ? "" : locator.getAsString(),
 					pre_effect_script == null ? "" : pre_effect_script.getAsString()));
 		}
 
 		// Handle parsing custom instruction keyframes
 		for (Map.Entry<String, JsonElement> keyFrame : getCustomInstructionKeyFrames(animationJsonObject)) {
-			animation.customInstructionKeyframes.add(new EventKeyFrame(Double.parseDouble(keyFrame.getKey()) * 20,
+			animation.customInstructionKeyframes.add(new KeyFrameData(Double.parseDouble(keyFrame.getKey()) * 20,
 					keyFrame.getValue() instanceof JsonArray
 							? convertJsonArrayToList(keyFrame.getValue().getAsJsonArray()).toString()
 							: keyFrame.getValue().getAsString()));
@@ -251,7 +232,7 @@ public class JsonAnimationUtils {
 						.convertJsonToKeyFrames(new ObjectArrayList<>(getScaleKeyFrames(boneJsonObj)), parser);
 			} catch (Exception e) {
 				// No scale key frames found
-				boneAnimation.scaleKeyFrames = new VectorKeyFrameList<>();
+				boneAnimation.scaleKeyFrames = new KeyframeStack<>();
 			}
 
 			try {
@@ -259,7 +240,7 @@ public class JsonAnimationUtils {
 						.convertJsonToKeyFrames(new ObjectArrayList<>(getPositionKeyFrames(boneJsonObj)), parser);
 			} catch (Exception e) {
 				// No position key frames found
-				boneAnimation.positionKeyFrames = new VectorKeyFrameList<>();
+				boneAnimation.positionKeyFrames = new KeyframeStack<>();
 			}
 
 			try {
@@ -267,7 +248,7 @@ public class JsonAnimationUtils {
 						.convertJsonToRotationKeyFrames(new ObjectArrayList<>(getRotationKeyFrames(boneJsonObj)), parser);
 			} catch (Exception e) {
 				// No rotation key frames found
-				boneAnimation.rotationKeyFrames = new VectorKeyFrameList<>();
+				boneAnimation.rotationKeyFrames = new KeyframeStack<>();
 			}
 
 			animation.boneAnimations.add(boneAnimation);

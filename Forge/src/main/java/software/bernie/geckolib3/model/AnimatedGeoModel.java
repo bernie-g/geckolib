@@ -10,13 +10,13 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.Animation;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.animation.AnimationProcessor;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.molang.MolangQueries;
-import software.bernie.geckolib3.file.BakedAnimations;
+import software.bernie.geckolib3.loading.object.BakedAnimations;
 import software.bernie.geckolib3.geo.exception.GeckoLibException;
 import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModel;
@@ -86,7 +86,7 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), this.seekTime);
 
-		if (!getAnimationProcessor().getModelRendererList().isEmpty())
+		if (!getAnimationProcessor().getRegisteredBones().isEmpty())
 			getAnimationProcessor().tickAnimation(animatable, instanceId, this.seekTime, predicate, GeckoLibCache.getInstance().parser, this.shouldCrashOnMissing);
 	}
 
@@ -103,7 +103,7 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 
 	@Override
 	public Animation getAnimation(String name, GeoAnimatable animatable) {
-		BakedAnimations animation = GeckoLibCache.getInstance().getAnimations().get(this.getAnimationResource((T) animatable));
+		BakedAnimations animation = GeckoLibCache.getBakedAnimations().get(this.getAnimationResource((T) animatable));
 
 		if (animation == null) {
 			throw new GeckoLibException(this.getAnimationResource((T) animatable),
@@ -140,6 +140,7 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 		Minecraft mc = Minecraft.getInstance();
 
 		parser.setValue(MolangQueries.ANIM_TIME, () -> seekTime / 20d);
+		parser.setValue(MolangQueries.LIFE_TIME, () -> seekTime / 20d);
 		parser.setValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
 		parser.setValue(MolangQueries.TIME_OF_DAY, () -> MolangUtils.normalizeTime(mc.level.getDayTime()));
 		parser.setValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);

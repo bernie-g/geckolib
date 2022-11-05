@@ -1,9 +1,10 @@
 package software.bernie.geckolib3.geo.render.built;
 
 import com.mojang.math.Vector3f;
-
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib3.geo.raw.pojo.*;
+import software.bernie.geckolib3.util.VectorUtils;
 
 public class GeoCube {
 	public GeoQuad[] quads = new GeoQuad[6];
@@ -13,6 +14,11 @@ public class GeoCube {
 	public double inflate;
 	public Boolean mirror;
 
+	public GeoCube(GeoQuad quads, Vector3f pivot, Vector3f rotation, Vector3f size, Boolean inflate, Boolean mirror) {
+
+	}
+
+
 	private GeoCube(double[] size) {
 		if (size.length >= 3) {
 			this.size.set((float) size[0], (float) size[1], (float) size[2]);
@@ -20,7 +26,7 @@ public class GeoCube {
 	}
 
 	public static GeoCube createFromPojoCube(Cube cubeIn, ModelProperties properties, Double boneInflate,
-			Boolean mirror) {
+											 Boolean mirror) {
 		GeoCube cube = new GeoCube(cubeIn.getSize());
 
 		UvUnion uvUnion = cubeIn.getUv();

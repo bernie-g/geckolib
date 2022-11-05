@@ -1,7 +1,7 @@
-package software.bernie.geckolib3.file;
+package software.bernie.geckolib3.loading;
 
-import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.geo.exception.GeckoLibException;
 import software.bernie.geckolib3.geo.raw.pojo.Converter;
@@ -11,13 +11,18 @@ import software.bernie.geckolib3.geo.raw.tree.RawGeometryTree;
 import software.bernie.geckolib3.geo.render.GeoBuilder;
 import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 
-public class GeoModelLoader {
-	public BakedGeoModel loadModel(ResourceManager resourceManager, ResourceLocation location) {
+/**
+ * Json loader for {@code geo.json} files
+ */
+public final class GeoModelLoader {
+	public static BakedGeoModel deserializeModel(ResourceManager resourceManager, ResourceLocation location) {
 		try {
+
+
 			// Deserialize from json into basic json objects, bones are still stored as a
 			// flat list
 			RawGeoModel rawModel = Converter
-					.fromJsonString(AnimationFileLoader.getResourceAsString(location, resourceManager));
+					.fromJsonString(FileLoader.getFileContents(location, resourceManager));
 			if (rawModel.getFormatVersion() != FormatVersion.VERSION_1_12_0) {
 				throw new GeckoLibException(location, "Wrong geometry json version, expected 1.12.0");
 			}
@@ -28,9 +33,11 @@ public class GeoModelLoader {
 			// Build the quads and cubes from the raw tree into a built and ready to be
 			// rendered GeoModel
 			return GeoBuilder.getGeoBuilder(location.getNamespace()).constructGeoModel(rawGeometryTree);
-		} catch (Exception e) {
-			GeckoLib.LOGGER.error(String.format("Error parsing %S", location), e);
-			throw (new RuntimeException(e));
+		}
+		catch (Exception e) {
+			GeckoLib.LOGGER.error(String.format("Error parsing GeoModel %S", location), e);
+
+			throw new RuntimeException(e);
 		}
 	}
 }

@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.IAnimationTickable;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 
@@ -15,7 +15,7 @@ public abstract class AnimatedTickingGeoModel<T extends GeoAnimatable & IAnimati
 	}
 
 	public boolean isInitialized() {
-		return !this.getAnimationProcessor().getModelRendererList().isEmpty();
+		return !this.getAnimationProcessor().getRegisteredBones().isEmpty();
 	}
 
 	/**
@@ -54,7 +54,7 @@ public abstract class AnimatedTickingGeoModel<T extends GeoAnimatable & IAnimati
 
 		predicate.animationTick = seekTime;
 		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
-		if (!this.getAnimationProcessor().getModelRendererList().isEmpty()) {
+		if (!this.getAnimationProcessor().getRegisteredBones().isEmpty()) {
 			getAnimationProcessor().tickAnimation(animatable, instanceId, seekTime, predicate,
 					GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
 		}

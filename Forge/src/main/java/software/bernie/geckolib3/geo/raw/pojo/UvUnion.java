@@ -12,12 +12,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.io.IOException;
 
-@JsonDeserialize(using = UvUnion.Deserializer.class)
-@JsonSerialize(using = UvUnion.Serializer.class)
-public class UvUnion {
+public record UvUnion(double[] boxUVCoords, UvFaces faceUV, boolean isBoxUV) {
 	public double[] boxUVCoords;
 	public UvFaces faceUV;
 	public boolean isBoxUV;
+
+
+
 
 	static class Deserializer extends JsonDeserializer<UvUnion> {
 		@Override

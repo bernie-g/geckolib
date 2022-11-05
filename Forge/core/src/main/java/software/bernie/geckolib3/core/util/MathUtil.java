@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.core.util;
 
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import software.bernie.geckolib3.core.easing.EasingManager;
 import software.bernie.geckolib3.core.animation.EasingType;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
@@ -13,8 +14,7 @@ public class MathUtil {
 	 * @param animationPoint The animation point
 	 * @return the resulting lerped value
 	 */
-	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType,
-			Function<Double, Double> customEasingMethod) {
+	public static float lerpValues(AnimationPoint animationPoint, EasingType easingType) {
 		if (animationPoint.currentTick >= animationPoint.animationEndTick) {
 			return (float)animationPoint.animationEndValue;
 		}

@@ -3,13 +3,15 @@ package software.bernie.geckolib3.core.animation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import software.bernie.geckolib3.core.keyframe.Keyframe;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Functional interface defining an easing function.<br>
- * {@code value} is the easing value provided from the keyframe's {@link software.bernie.geckolib3.core.keyframe.KeyFrame#easingArgs}
+ * {@code value} is the easing value provided from the keyframe's {@link Keyframe#easingArgs}
  * <br><br>
  * For more information on easings, see:<br>
  * <a href="https://easings.net/">Easings.net</a><br>
@@ -76,7 +78,7 @@ public interface EasingType {
 		if (json == null || !(json instanceof JsonPrimitive primitive) || !primitive.isString())
 			return LINEAR;
 
-		return fromString(primitive.getAsString());
+		return fromString(primitive.getAsString().toLowerCase(Locale.ROOT));
 	}
 
 	/**

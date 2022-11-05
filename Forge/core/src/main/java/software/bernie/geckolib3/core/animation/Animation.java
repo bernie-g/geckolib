@@ -9,8 +9,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
-import software.bernie.geckolib3.core.keyframe.EventKeyFrame;
-import software.bernie.geckolib3.core.keyframe.ParticleEventKeyFrame;
+import software.bernie.geckolib3.core.keyframe.event.data.CustomInstructionKeyframeData;
+import software.bernie.geckolib3.core.keyframe.event.data.ParticleKeyframeData;
+import software.bernie.geckolib3.core.keyframe.event.data.SoundKeyframeData;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,9 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * A compiled animation instance for use by the {@link AnimationController}<br>
  * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable.
  */
-public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, KeyFrames keyFrames) {
-	public record KeyFrames(EventKeyFrame<String>[] sounds, ParticleEventKeyFrame[] particles, EventKeyFrame<String>[] customInstructions) {}
+public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Keyframes keyFrames) {
+	public record Keyframes(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
 
+	// TODO check hashcodes for LoopType implementations
 	/**
 	 * Loop type functional interface to define post-play handling for a given animation. <br>
 	 * Custom loop types are supported by extending this class and providing the extended class instance as the loop type for the animation

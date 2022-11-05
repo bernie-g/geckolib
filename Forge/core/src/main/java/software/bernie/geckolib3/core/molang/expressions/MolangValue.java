@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.core.molang.expressions;
 
+import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import software.bernie.geckolib3.core.molang.MolangParser;
 
@@ -31,6 +32,10 @@ public class MolangValue implements IValue {
 
 	public boolean isReturnValue() {
 		return this.returns;
+	}
+
+	public boolean isConstant() {
+		return getClass() == MolangValue.class && value instanceof Constant;
 	}
 
 	@Override

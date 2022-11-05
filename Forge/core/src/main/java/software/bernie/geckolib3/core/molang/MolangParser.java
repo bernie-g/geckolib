@@ -74,20 +74,25 @@ public class MolangParser extends MathBuilder {
 	}
 
 	private void registerAdditionalVariables() {
-		register(new LazyVariable("query.anim_time", 0));
-		register(new LazyVariable("query.actor_count", 0));
-		register(new LazyVariable("query.health", 0));
-		register(new LazyVariable("query.max_health", 0));
-		register(new LazyVariable("query.distance_from_camera", 0));
-		register(new LazyVariable("query.yaw_speed", 0));
-		register(new LazyVariable("query.is_in_water_or_rain", 0));
-		register(new LazyVariable("query.is_in_water", 0));
-		register(new LazyVariable("query.is_on_ground", 0));
-		register(new LazyVariable("query.time_of_day", 0));
-		register(new LazyVariable("query.is_on_fire", 0));
-		register(new LazyVariable("query.ground_speed", 0));
+		register(new LazyVariable(MolangQueries.ANIM_TIME, 0));
+		register(new LazyVariable(MolangQueries.LIFE_TIME, 0));
+		register(new LazyVariable(MolangQueries.ACTOR_COUNT, 0));
+		register(new LazyVariable(MolangQueries.HEALTH, 0));
+		register(new LazyVariable(MolangQueries.MAX_HEALTH, 0));
+		register(new LazyVariable(MolangQueries.DISTANCE_FROM_CAMERA, 0));
+		register(new LazyVariable(MolangQueries.YAW_SPEED, 0));
+		register(new LazyVariable(MolangQueries.IS_IN_WATER_OR_RAIN, 0));
+		register(new LazyVariable(MolangQueries.IS_IN_WATER, 0));
+		register(new LazyVariable(MolangQueries.IS_ON_GROUND, 0));
+		register(new LazyVariable(MolangQueries.TIME_OF_DAY, 0));
+		register(new LazyVariable(MolangQueries.IS_ON_FIRE, 0));
+		register(new LazyVariable(MolangQueries.GROUND_SPEED, 0));
 	}
 
+	/**
+	 * Register a new {@link Variable} with the {@code MolangParser}.<br>
+	 * Ideally should be called from the mod constructor.
+	 */
 	@Override
 	public void register(Variable variable) {
 		if (!(variable instanceof LazyVariable))
@@ -97,12 +102,17 @@ public class MolangParser extends MathBuilder {
 	}
 
 	/**
-	 * Remap function names
+	 * Remap a function to a new name, maintaining the actual functionality and removing the old registration entry
 	 */
 	public void remap(String old, String newName) {
 		this.functions.put(newName, this.functions.remove(old));
 	}
 
+	/**
+	 * Set the value supplier for a variable.
+	 * @param name The name of the variable to set the value for
+	 * @param value The value supplier to set
+	 */
 	public void setValue(String name, DoubleSupplier value) {
 		LazyVariable variable = getVariable(name);
 
@@ -110,8 +120,13 @@ public class MolangParser extends MathBuilder {
 			variable.set(value);
 	}
 
+	/**
+	 * Get the registered {@link LazyVariable} for the given name
+	 * @param name The name of the variable to get
+	 * @return The registered {@code LazyVariable} instance, or a newly registered instance if one wasn't registered previously
+	 */
 	@Override
-	protected LazyVariable getVariable(String name) {
+	public LazyVariable getVariable(String name) {
 		return VARIABLES.computeIfAbsent(name, key -> new LazyVariable(key, 0));
 	}
 

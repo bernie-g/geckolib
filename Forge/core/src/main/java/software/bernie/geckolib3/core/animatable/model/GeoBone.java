@@ -75,6 +75,20 @@ public interface GeoBone {
 
 	void saveInitialSnapshot();
 
+	void markScaleAsChanged();
+
+	void markRotationAsChanged();
+
+	void markPositionAsChanged();
+
+	boolean hasScaleChanged();
+
+	boolean hasRotationChanged();
+
+	boolean hasPositionChanged();
+
+	boolean resetStateChanges();
+
 	BoneSnapshot getInitialSnapshot();
 
 	List<GeoBone> getChildBones();

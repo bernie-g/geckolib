@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AnimationData {
-	private Map<String, Pair<GeoBone, BoneSnapshot>> boneSnapshotCollection;
+	private Map<String, BoneSnapshot> boneSnapshotCollection;
 	private Map<String, AnimationController> animationControllers = new Object2ObjectOpenHashMap<>();
 	public double tick;
 	public boolean isFirstTick = true;
@@ -43,7 +43,7 @@ public class AnimationData {
 		return this.animationControllers.put(value.getName(), value);
 	}
 
-	public Map<String, Pair<GeoBone, BoneSnapshot>> getBoneSnapshotCollection() {
+	public Map<String, BoneSnapshot> getBoneSnapshotCollection() {
 		return boneSnapshotCollection;
 	}
 

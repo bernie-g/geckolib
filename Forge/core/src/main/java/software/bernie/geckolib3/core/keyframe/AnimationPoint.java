@@ -5,51 +5,20 @@
 
 package software.bernie.geckolib3.core.keyframe;
 
-public class AnimationPoint {
-	/**
-	 * The current tick in the animation to lerp from
-	 */
-	public final double currentTick;
-	/**
-	 * The tick that the current animation should end at
-	 */
-	public final double animationEndTick;
-	/**
-	 * The Animation start value.
-	 */
-	public final double animationStartValue;
-	/**
-	 * The Animation end value.
-	 */
-	public final double animationEndValue;
-
-	/**
-	 * The current keyframe.
-	 */
-	public final KeyFrame keyframe;
-
-	// Remove boxed arguments method, leaving this in place just incase an unforeseen issue arises
-	/*public AnimationPoint(KeyFrame keyframe, double currentTick, Double animationEndTick,
-			Double animationStartValue, double animationEndValue) {
-		this.keyframe = keyframe;
-		this.currentTick = currentTick;
-		this.animationEndTick = animationEndTick;
-		this.animationStartValue = animationStartValue;
-		this.animationEndValue = animationEndValue;
-	}*/
-
-	public AnimationPoint(KeyFrame keyframe, double tick, double animationEndTick, double animationStartValue,
-			double animationEndValue) {
-		this.keyframe = keyframe;
-		this.currentTick = tick;
-		this.animationEndTick = animationEndTick;
-		this.animationStartValue = animationStartValue;
-		this.animationEndValue = animationEndValue;
-	}
-
+/**
+ * Animation state record that holds the state of an animation at a given point
+ * @param currentTick The lerped tick time (current tick + partial tick) of the point
+ * @param transitionLength The length of time (in ticks) that the point should take to transition
+ * @param animationStartValue The start value to provide to the animation handling system
+ * @param animationEndValue The end value to provide to the animation handling system
+ * @param keyFrame The {@code Nullable} Keyframe
+ */
+public record AnimationPoint(Keyframe<?> keyFrame, double currentTick, double transitionLength, double animationStartValue, double animationEndValue) {
 	@Override
 	public String toString() {
-		return "Tick: " + currentTick + " | End Tick: " + animationEndTick + " | Start Value: " + animationStartValue
-				+ " | End Value: " + animationEndValue;
+		return "Tick: " + this.currentTick +
+				" | Transition Length: " + this.transitionLength +
+				" | Start Value: " + this.animationStartValue +
+				" | End Value: " + this.animationEndValue;
 	}
 }

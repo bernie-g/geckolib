@@ -9,7 +9,7 @@ import software.bernie.geckolib3.core.animatable.model.GeoBone;
 
 public class BoneSnapshot {
 	public final String name;
-	private final GeoBone modelRenderer;
+	private final GeoBone bone;
 
 	public float scaleValueX;
 	public float scaleValueY;
@@ -23,9 +23,9 @@ public class BoneSnapshot {
 	public float rotationValueY;
 	public float rotationValueZ;
 
-	public float mostRecentResetRotationTick = 0;
-	public float mostRecentResetPositionTick = 0;
-	public float mostRecentResetScaleTick = 0;
+	public double mostRecentResetRotationTick = 0;
+	public double mostRecentResetPositionTick = 0;
+	public double mostRecentResetScaleTick = 0;
 
 	public boolean isCurrentlyRunningRotationAnimation = true;
 	public boolean isCurrentlyRunningPositionAnimation = true;
@@ -44,7 +44,7 @@ public class BoneSnapshot {
 		this.scaleValueY = bone.getScaleY();
 		this.scaleValueZ = bone.getScaleZ();
 
-		this.modelRenderer = bone;
+		this.bone = bone;
 		this.name = bone.getName();
 	}
 
@@ -61,7 +61,7 @@ public class BoneSnapshot {
 		this.rotationValueY = snapshot.rotationValueY;
 		this.rotationValueZ = snapshot.rotationValueZ;
 
-		this.modelRenderer = snapshot.modelRenderer;
+		this.bone = snapshot.bone;
 		this.name = snapshot.name;
 	}
 

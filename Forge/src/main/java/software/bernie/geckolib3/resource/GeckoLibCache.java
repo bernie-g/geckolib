@@ -10,9 +10,9 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.ModLoader;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.file.BakedAnimations;
-import software.bernie.geckolib3.file.AnimationFileLoader;
-import software.bernie.geckolib3.file.GeoModelLoader;
+import software.bernie.geckolib3.loading.object.BakedAnimations;
+import software.bernie.geckolib3.loading.FileLoader;
+import software.bernie.geckolib3.loading.GeoModelLoader;
 import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
 
 import java.util.Collections;
@@ -28,7 +28,7 @@ import java.util.function.Function;
 public class GeckoLibCache {
 	private static final Set<String> excludedNamespaces = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
 
-	private static final AnimationFileLoader animationLoader = new AnimationFileLoader();
+	private static final FileLoader animationLoader = new FileLoader();
 	private static final GeoModelLoader modelLoader = new GeoModelLoader();
 
 	private static Map<ResourceLocation, BakedAnimations> animations = Collections.emptyMap();
@@ -59,7 +59,7 @@ public class GeckoLibCache {
 		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
 				animation -> animationLoader.loadAllAnimations(animation, resourceManager), animations::put),
 				loadResources(backgroundExecutor, resourceManager, "geo",
-						resource -> modelLoader.loadModel(resourceManager, resource), geoModels::put))
+						resource -> modelLoader.deserializeModel(resourceManager, resource), geoModels::put))
 				.thenCompose(stage::wait).thenAcceptAsync(empty -> {
 					GeckoLibCache.animations = animations;
 					GeckoLibCache.geoModels = geoModels;

@@ -10,7 +10,7 @@ package software.bernie.geckolib3.core.keyframe;
  * should be executed.
  *
  */
-public class KeyFrameLocation<T extends KeyFrame> {
+public class KeyFrameLocation<T extends Keyframe> {
 	/**
 	 * The curent frame.
 	 */
