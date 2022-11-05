@@ -22,7 +22,7 @@ public class GeckoLibNetwork {
 
 	private static SimpleChannel fetchGeckoLibChannel(String name) {
 		try {
-			final ResourceLocation key = new ResourceLocation(GeckoLib.ModID, name);
+			final ResourceLocation key = new ResourceLocation(GeckoLib.MOD_ID, name);
 			final Method findTarget = NetworkRegistry.class.getDeclaredMethod("findTarget", ResourceLocation.class);
 			findTarget.setAccessible(true);
 			return ((Optional<NetworkInstance>) findTarget.invoke(null, key)).map(SimpleChannel::new)

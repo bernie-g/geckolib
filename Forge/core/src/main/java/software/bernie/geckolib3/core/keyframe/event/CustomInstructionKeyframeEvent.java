@@ -14,7 +14,7 @@ import software.bernie.geckolib3.core.keyframe.event.data.CustomInstructionKeyfr
  * Called when a custom instruction keyframe is encountered
  */
 public class CustomInstructionKeyframeEvent<T extends GeoAnimatable> extends KeyFrameEvent<T, CustomInstructionKeyframeData> {
-	public CustomInstructionKeyframeEvent(T entity, double animationTick, String instructions, AnimationController<T> controller,
+	public CustomInstructionKeyframeEvent(T entity, double animationTick, AnimationController<T> controller,
 										  CustomInstructionKeyframeData customInstructionKeyframeData) {
 		super(entity, animationTick, controller, customInstructionKeyframeData);
 	}

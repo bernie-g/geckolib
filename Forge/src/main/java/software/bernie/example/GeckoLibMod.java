@@ -25,7 +25,7 @@ import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 @EventBusSubscriber
-@Mod(GeckoLib.ModID)
+@Mod(GeckoLib.MOD_ID)
 public class GeckoLibMod {
 	public static CreativeModeTab geckolibItemGroup;	
 	/**

@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Container class for cube information, only used in deserialization at startup
  */
-public record Bone(double[] bindPoseRotation, @Nullable Cube[] cubes, @Nullable Boolean debug,
+public record Bone(double[] bindPoseRotation, Cube[] cubes, @Nullable Boolean debug,
 				   @Nullable Double inflate, @Nullable Map<String, LocatorValue> locators,
 				   @Nullable Boolean mirror, @Nullable String name, @Nullable Boolean neverRender,
 				   @Nullable String parent, double[] pivot, @Nullable PolyMesh polyMesh,

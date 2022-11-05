@@ -8,16 +8,16 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class TestModel extends AnimatedGeoModel<TestEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(TestEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/parasite.animation.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "animations/parasite.animation.json");
 	}
 
 	@Override
 	public ResourceLocation getModelResource(TestEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/parasite.geo.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "geo/parasite.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(TestEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/entity/cow.png");
+		return new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/cow.png");
 	}
 }

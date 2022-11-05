@@ -9,9 +9,9 @@ import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib3.cache.object.*;
 import software.bernie.geckolib3.core.animatable.model.GeoModelProvider;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.*;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -73,7 +73,7 @@ public interface GeoObjectRenderer<T> {
 
 	default void renderChildBones(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
 			int packedOverlay, float red, float green, float blue, float alpha) {
-		if (bone.childBonesAreHiddenToo())
+		if (bone.isHidingChildren())
 			return;
 
 		for (GeoBone childBone : bone.childBones) {

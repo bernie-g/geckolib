@@ -32,9 +32,9 @@ import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoBone;
+import software.bernie.geckolib3.cache.object.GeoCube;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.model.provider.data.EntityModelData;
@@ -235,14 +235,14 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 			Matrix4f poseState = poseStack.last().pose().copy();
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
-			bone.setLocalSpaceXform(localMatrix);
+			bone.setLocalSpaceMatrix(localMatrix);
 
 			Matrix4f worldState = localMatrix.copy();
 
 			worldState.translate(new Vector3f(this.animatable.position()));
-			bone.setWorldSpaceXform(worldState);
+			bone.setWorldSpaceMatrix(worldState);
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);

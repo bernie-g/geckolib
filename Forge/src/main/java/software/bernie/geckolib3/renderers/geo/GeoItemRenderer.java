@@ -25,8 +25,8 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoBone;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -164,9 +164,9 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 			Matrix4f poseState = poseStack.last().pose().copy();
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
-			bone.setLocalSpaceXform(localMatrix);
+			bone.setLocalSpaceMatrix(localMatrix);
 		}
 
 		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,

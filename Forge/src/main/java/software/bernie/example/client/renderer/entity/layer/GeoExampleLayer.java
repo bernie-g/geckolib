@@ -13,9 +13,9 @@ import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
 
 public class GeoExampleLayer extends GeoLayerRenderer {
     // A resource location for the texture of the layer. This will be applied onto pre-existing cubes on the model
-    private static final ResourceLocation LAYER = new ResourceLocation(GeckoLib.ModID, "textures/entity/le_glasses.png");
+    private static final ResourceLocation LAYER = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/le_glasses.png");
     // A resource location for the model of the entity. This model is put on top of the normal one, which is then given the texture
-    private static final ResourceLocation MODEL = new ResourceLocation(GeckoLib.ModID, "geo/le.geo.json");
+    private static final ResourceLocation MODEL = new ResourceLocation(GeckoLib.MOD_ID, "geo/le.geo.json");
 
 	public GeoExampleLayer(GeoObjectRenderer<?> entityRendererIn) {
         super(entityRendererIn);

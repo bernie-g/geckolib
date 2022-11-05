@@ -8,7 +8,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class TexturePerBoneTestEntityModel<T extends LivingEntity & GeoAnimatable> extends AnimatedGeoModel<T>  {
 
-	protected static final ResourceLocation ANIMATION_RESLOC = new ResourceLocation(GeckoLib.ModID, "animations/textureperbonetestentity.animation.json");
+	protected static final ResourceLocation ANIMATION_RESLOC = new ResourceLocation(GeckoLib.MOD_ID, "animations/textureperbonetestentity.animation.json");
 	protected final ResourceLocation MODEL_RESLOC;
 	protected final ResourceLocation TEXTURE_DEFAULT;
 	protected final String ENTITY_REGISTRY_PATH_NAME;

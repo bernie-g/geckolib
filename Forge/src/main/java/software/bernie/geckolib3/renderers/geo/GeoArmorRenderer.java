@@ -29,7 +29,7 @@ import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeoUtils;
@@ -198,9 +198,6 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 				OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
 				renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 
-		if (ModList.get().isLoaded("patchouli"))
-			PatchouliCompat.patchouliLoaded(poseStack);
-
 		poseStack.popPose();
 	}
 
@@ -216,16 +213,16 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	@Override
-	public void renderRecursively(software.bernie.geckolib3.geo.render.built.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose();
 			Vec3 renderOffset = getRenderOffset(this.currentArmorItem, 1);
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 
-			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(renderOffset));
-			bone.setLocalSpaceXform(localMatrix);
+			bone.setLocalSpaceMatrix(localMatrix);
 		}
 
 		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
@@ -240,72 +237,72 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		if (this.headBone != null) {
 			GeoBone headBone = this.modelProvider.getBone(this.headBone);
 
-			GeoUtils.copyRotations(this.head, headBone);
-			headBone.setPositionX(this.head.x);
-			headBone.setPositionY(-this.head.y);
-			headBone.setPositionZ(this.head.z);
+			RenderUtils.matchModelPartRot(this.head, headBone);
+			headBone.setPosX(this.head.x);
+			headBone.setPosY(-this.head.y);
+			headBone.setPosZ(this.head.z);
 		}
 
 		if (this.bodyBone != null) {
 			GeoBone bodyBone = this.modelProvider.getBone(this.bodyBone);
 
-			GeoUtils.copyRotations(this.body, bodyBone);
-			bodyBone.setPositionX(this.body.x);
-			bodyBone.setPositionY(-this.body.y);
-			bodyBone.setPositionZ(this.body.z);
+			RenderUtils.matchModelPartRot(this.body, bodyBone);
+			bodyBone.setPosX(this.body.x);
+			bodyBone.setPosY(-this.body.y);
+			bodyBone.setPosZ(this.body.z);
 		}
 
 		if (this.rightArmBone != null) {
 			GeoBone rightArmBone = this.modelProvider.getBone(this.rightArmBone);
 
-			GeoUtils.copyRotations(this.rightArm, rightArmBone);
-			rightArmBone.setPositionX(this.rightArm.x + 5);
-			rightArmBone.setPositionY(2 - this.rightArm.y);
-			rightArmBone.setPositionZ(this.rightArm.z);
+			RenderUtils.matchModelPartRot(this.rightArm, rightArmBone);
+			rightArmBone.setPosX(this.rightArm.x + 5);
+			rightArmBone.setPosY(2 - this.rightArm.y);
+			rightArmBone.setPosZ(this.rightArm.z);
 		}
 
 		if (this.leftArmBone != null) {
 			GeoBone leftArmBone = this.modelProvider.getBone(this.leftArmBone);
 
-			GeoUtils.copyRotations(this.leftArm, leftArmBone);
-			leftArmBone.setPositionX(this.leftArm.x - 5);
-			leftArmBone.setPositionY(2 - this.leftArm.y);
-			leftArmBone.setPositionZ(this.leftArm.z);
+			RenderUtils.matchModelPartRot(this.leftArm, leftArmBone);
+			leftArmBone.setPosX(this.leftArm.x - 5);
+			leftArmBone.setPosY(2 - this.leftArm.y);
+			leftArmBone.setPosZ(this.leftArm.z);
 		}
 
 		if (this.rightLegBone != null) {
 			GeoBone rightLegBone = this.modelProvider.getBone(this.rightLegBone);
 
-			GeoUtils.copyRotations(this.rightLeg, rightLegBone);
-			rightLegBone.setPositionX(this.rightLeg.x + 2);
-			rightLegBone.setPositionY(12 - this.rightLeg.y);
-			rightLegBone.setPositionZ(this.rightLeg.z);
+			RenderUtils.matchModelPartRot(this.rightLeg, rightLegBone);
+			rightLegBone.setPosX(this.rightLeg.x + 2);
+			rightLegBone.setPosY(12 - this.rightLeg.y);
+			rightLegBone.setPosZ(this.rightLeg.z);
 
 			if (this.rightBootBone != null) {
 				GeoBone rightBootBone = this.modelProvider.getBone(this.rightBootBone);
 
-				GeoUtils.copyRotations(this.rightLeg, rightBootBone);
-				rightBootBone.setPositionX(this.rightLeg.x + 2);
-				rightBootBone.setPositionY(12 - this.rightLeg.y);
-				rightBootBone.setPositionZ(this.rightLeg.z);
+				RenderUtils.matchModelPartRot(this.rightLeg, rightBootBone);
+				rightBootBone.setPosX(this.rightLeg.x + 2);
+				rightBootBone.setPosY(12 - this.rightLeg.y);
+				rightBootBone.setPosZ(this.rightLeg.z);
 			}
 		}
 
 		if (this.leftLegBone != null) {
 			GeoBone leftLegBone = this.modelProvider.getBone(this.leftLegBone);
 
-			GeoUtils.copyRotations(this.leftLeg, leftLegBone);
-			leftLegBone.setPositionX(this.leftLeg.x - 2);
-			leftLegBone.setPositionY(12 - this.leftLeg.y);
-			leftLegBone.setPositionZ(this.leftLeg.z);
+			RenderUtils.matchModelPartRot(this.leftLeg, leftLegBone);
+			leftLegBone.setPosX(this.leftLeg.x - 2);
+			leftLegBone.setPosY(12 - this.leftLeg.y);
+			leftLegBone.setPosZ(this.leftLeg.z);
 
 			if (this.leftBootBone != null) {
 				GeoBone leftBootBone = this.modelProvider.getBone(this.leftBootBone);
 
-				GeoUtils.copyRotations(this.leftLeg, leftBootBone);
-				leftBootBone.setPositionX(this.leftLeg.x - 2);
-				leftBootBone.setPositionY(12 - this.leftLeg.y);
-				leftBootBone.setPositionZ(this.leftLeg.z);
+				RenderUtils.matchModelPartRot(this.leftLeg, leftBootBone);
+				leftBootBone.setPosX(this.leftLeg.x - 2);
+				leftBootBone.setPosY(12 - this.leftLeg.y);
+				leftBootBone.setPosZ(this.leftLeg.z);
 			}
 		}
 	}

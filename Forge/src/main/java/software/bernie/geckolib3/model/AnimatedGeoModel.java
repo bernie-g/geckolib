@@ -17,12 +17,13 @@ import software.bernie.geckolib3.core.animation.AnimationProcessor;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.molang.MolangQueries;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
-import software.bernie.geckolib3.geo.exception.GeckoLibException;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.GeckoLibException;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.model.provider.IAnimatableModelProvider;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib3.cache.GeckoLibCache;
 import software.bernie.geckolib3.util.MolangUtils;
+import software.bernie.geckolib3.util.RenderUtils;
 
 import java.util.Collections;
 
@@ -35,10 +36,10 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 		this.animationProcessor = new AnimationProcessor(this);
 	}
 
-	public void registerBone(software.bernie.geckolib3.geo.render.built.GeoBone bone) {
+	public void registerBone(software.bernie.geckolib3.cache.object.GeoBone bone) {
 		registerModelRenderer(bone);
 
-		for (software.bernie.geckolib3.geo.render.built.GeoBone childBone : bone.childBones) {
+		for (software.bernie.geckolib3.cache.object.GeoBone childBone : bone.childBones) {
 			registerBone(childBone);
 		}
 	}
@@ -126,7 +127,7 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 			this.animationProcessor.clearModelRendererList();
 			this.currentModel = model;
 
-			for (software.bernie.geckolib3.geo.render.built.GeoBone bone : model.topLevelBones) {
+			for (software.bernie.geckolib3.cache.object.GeoBone bone : model.topLevelBones) {
 				registerBone(bone);
 			}
 		}
@@ -142,19 +143,19 @@ public abstract class AnimatedGeoModel<T extends GeoAnimatable> extends GeoModel
 		parser.setValue(MolangQueries.ANIM_TIME, () -> seekTime / 20d);
 		parser.setValue(MolangQueries.LIFE_TIME, () -> seekTime / 20d);
 		parser.setValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
-		parser.setValue(MolangQueries.TIME_OF_DAY, () -> MolangUtils.normalizeTime(mc.level.getDayTime()));
+		parser.setValue(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);
 		parser.setValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
 
 		if (animatable instanceof Entity entity) {
 			parser.setValue(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			parser.setValue(MolangQueries.IS_ON_GROUND, () -> MolangUtils.booleanToFloat(entity.isOnGround()));
-			parser.setValue(MolangQueries.IS_IN_WATER, () -> MolangUtils.booleanToFloat(entity.isInWater()));
-			parser.setValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> MolangUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
+			parser.setValue(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.isOnGround()));
+			parser.setValue(MolangQueries.IS_IN_WATER, () -> RenderUtils.booleanToFloat(entity.isInWater()));
+			parser.setValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
 
 			if (entity instanceof LivingEntity livingEntity) {
 				parser.setValue(MolangQueries.HEALTH, livingEntity::getHealth);
 				parser.setValue(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
-				parser.setValue(MolangQueries.IS_ON_FIRE, () -> MolangUtils.booleanToFloat(livingEntity.isOnFire()));
+				parser.setValue(MolangQueries.IS_ON_FIRE, () -> RenderUtils.booleanToFloat(livingEntity.isOnFire()));
 				parser.setValue(MolangQueries.GROUND_SPEED, () -> {
 					Vec3 velocity = livingEntity.getDeltaMovement();
 

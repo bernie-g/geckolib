@@ -1,7 +1,6 @@
-package software.bernie.geckolib3.geo.render.built;
+package software.bernie.geckolib3.cache.object;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import software.bernie.geckolib3.geo.raw.pojo.ModelProperties;
+import software.bernie.geckolib3.loading.json.raw.ModelProperties;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,10 +9,6 @@ import java.util.Optional;
  * Baked model object for Geckolib models.
  */
 public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties properties) implements software.bernie.geckolib3.core.animatable.model.BakedGeoModel {
-	public BakedGeoModel() {
-		this(new ObjectArrayList<>(), new ModelProperties());
-	}
-
 	/**
 	 * Gets a bone from this model by name.<br>
 	 * Generally not a very efficient method, should be avoided where possible.

@@ -2,6 +2,7 @@ package software.bernie.geckolib3.loading.json.raw;
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
+import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 
 import javax.annotation.Nullable;
@@ -21,6 +22,17 @@ public record UVFaces(@Nullable FaceUV north, @Nullable FaceUV south, @Nullable 
 			FaceUV down = GsonHelper.getAsObject(obj, "down", null, context, FaceUV.class);
 
 			return new UVFaces(north, south, east, west, up, down);
+		};
+	}
+
+	public FaceUV fromDirection(Direction direction) {
+		return switch(direction) {
+			case NORTH -> north;
+			case SOUTH -> south;
+			case EAST -> east;
+			case WEST -> west;
+			case UP -> up;
+			case DOWN -> down;
 		};
 	}
 }

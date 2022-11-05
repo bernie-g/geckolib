@@ -92,30 +92,26 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				EasingType easingType = controller.easingTypeFunction.apply(animatable);
 
 				if (rotXPoint != null && rotYPoint != null && rotZPoint != null) {
-					bone.setRotationX(MathUtil.lerpValues(rotXPoint, easingType) + initialSnapshot.rotationValueX);
-					bone.setRotationY(MathUtil.lerpValues(rotYPoint, easingType) + initialSnapshot.rotationValueY);
-					bone.setRotationZ(MathUtil.lerpValues(rotZPoint, easingType) + initialSnapshot.rotationValueZ);
+					bone.setRotX(MathUtil.lerpValues(rotXPoint, easingType) + initialSnapshot.getRotX());
+					bone.setRotY(MathUtil.lerpValues(rotYPoint, easingType) + initialSnapshot.getRotY());
+					bone.setRotZ(MathUtil.lerpValues(rotZPoint, easingType) + initialSnapshot.getRotZ());
 
-					snapshot.rotationValueX = bone.getRotationX();
-					snapshot.rotationValueY = bone.getRotationY();
-					snapshot.rotationValueZ = bone.getRotationZ();
-					snapshot.isCurrentlyRunningRotationAnimation = true;
+					snapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
+					snapshot.startRotAnim();
 
 					bone.markRotationAsChanged();
 					modifiedBones.add(bone);
 				}
 
 				if (posXPoint != null && posYPoint != null && posZPoint != null) {
-					bone.setPositionX(
+					bone.setPosX(
 							MathUtil.lerpValues(posXPoint, easingType));
-					bone.setPositionY(
+					bone.setPosY(
 							MathUtil.lerpValues(posYPoint, easingType));
-					bone.setPositionZ(
+					bone.setPosZ(
 							MathUtil.lerpValues(posZPoint, easingType));
-					snapshot.positionOffsetX = bone.getPositionX();
-					snapshot.positionOffsetY = bone.getPositionY();
-					snapshot.positionOffsetZ = bone.getPositionZ();
-					snapshot.isCurrentlyRunningPositionAnimation = true;
+					snapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
+					snapshot.startPosAnim();
 
 					bone.markPositionAsChanged();
 					modifiedBones.add(bone);
@@ -125,10 +121,8 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					bone.setScaleX(MathUtil.lerpValues(scaleXPoint, easingType));
 					bone.setScaleY(MathUtil.lerpValues(scaleYPoint, easingType));
 					bone.setScaleZ(MathUtil.lerpValues(scaleZPoint, easingType));
-					snapshot.scaleValueX = bone.getScaleX();
-					snapshot.scaleValueY = bone.getScaleY();
-					snapshot.scaleValueZ = bone.getScaleZ();
-					snapshot.isCurrentlyRunningScaleAnimation = true;
+					snapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+					snapshot.startScaleAnim();
 
 					bone.markScaleAsChanged();
 					modifiedBones.add(bone);
@@ -154,69 +148,54 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			}
 
 			if (!bone.hasRotationChanged()) {
-				if (saveSnapshot.isCurrentlyRunningRotationAnimation) {
-					saveSnapshot.mostRecentResetRotationTick = seekTime;
-					saveSnapshot.isCurrentlyRunningRotationAnimation = false;
-				}
+				if (saveSnapshot.isRotAnimInProgress())
+					saveSnapshot.stopRotAnim(seekTime);
 
 				double percentageReset = Math
-						.min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
+						.min((seekTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
-				bone.setRotationX(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX,
-						initialSnapshot.rotationValueX));
-				bone.setRotationY(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY,
-						initialSnapshot.rotationValueY));
-				bone.setRotationZ(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
-						initialSnapshot.rotationValueZ));
+				bone.setRotX(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotX(),
+						initialSnapshot.getRotX()));
+				bone.setRotY(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotY(),
+						initialSnapshot.getRotY()));
+				bone.setRotZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotZ(),
+						initialSnapshot.getRotZ()));
 
-				if (percentageReset >= 1) {
-					saveSnapshot.rotationValueX = bone.getRotationX();
-					saveSnapshot.rotationValueY = bone.getRotationY();
-					saveSnapshot.rotationValueZ = bone.getRotationZ();
-				}
+				if (percentageReset >= 1)
+					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
 			}
 
 			if (!bone.hasPositionChanged()) {
-				if (saveSnapshot.isCurrentlyRunningPositionAnimation) {
-					saveSnapshot.mostRecentResetPositionTick = seekTime;
-					saveSnapshot.isCurrentlyRunningPositionAnimation = false;
-				}
+				if (saveSnapshot.isPosAnimInProgress())
+					saveSnapshot.stopPosAnim(seekTime);
 
 				double percentageReset = Math
-						.min((seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength, 1);
+						.min((seekTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
-				bone.setPositionX(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetX,
-						initialSnapshot.positionOffsetX));
-				bone.setPositionY(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetY,
-						initialSnapshot.positionOffsetY));
-				bone.setPositionZ(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetZ,
-						initialSnapshot.positionOffsetZ));
+				bone.setPosX(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetX(),
+						initialSnapshot.getOffsetX()));
+				bone.setPosY(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetY(),
+						initialSnapshot.getOffsetY()));
+				bone.setPosZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetZ(),
+						initialSnapshot.getOffsetZ()));
 
-				if (percentageReset >= 1) {
-					saveSnapshot.positionOffsetX = bone.getPositionX();
-					saveSnapshot.positionOffsetY = bone.getPositionY();
-					saveSnapshot.positionOffsetZ = bone.getPositionZ();
-				}
+				if (percentageReset >= 1)
+					saveSnapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
 			}
 
 			if (!bone.hasScaleChanged()) {
-				if (saveSnapshot.isCurrentlyRunningScaleAnimation) {
-					saveSnapshot.mostRecentResetScaleTick = seekTime;
-					saveSnapshot.isCurrentlyRunningScaleAnimation = false;
-				}
+				if (saveSnapshot.isScaleAnimInProgress())
+					saveSnapshot.stopScaleAnim(seekTime);
 
-				double percentageReset = Math.min((seekTime - saveSnapshot.mostRecentResetScaleTick) / resetTickLength,
+				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength,
 						1);
 
-				bone.setScaleX(MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueX, initialSnapshot.scaleValueX));
-				bone.setScaleY(MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueY, initialSnapshot.scaleValueY));
-				bone.setScaleZ(MathUtil.lerpValues(percentageReset, saveSnapshot.scaleValueZ, initialSnapshot.scaleValueZ));
+				bone.setScaleX(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleX(), initialSnapshot.getScaleX()));
+				bone.setScaleY(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleY(), initialSnapshot.getScaleY()));
+				bone.setScaleZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleZ(), initialSnapshot.getScaleZ()));
 
-				if (percentageReset >= 1) {
-					saveSnapshot.scaleValueX = bone.getScaleX();
-					saveSnapshot.scaleValueY = bone.getScaleY();
-					saveSnapshot.scaleValueZ = bone.getScaleZ();
-				}
+				if (percentageReset >= 1)
+					saveSnapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 			}
 		}
 
@@ -239,7 +218,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	private Map<String, BoneSnapshot> updateBoneSnapshots(Map<String, BoneSnapshot> snapshots) {
 		for (GeoBone bone : getRegisteredBones()) {
 			if (!snapshots.containsKey(bone.getName()))
-				snapshots.put(bone.getName(), new BoneSnapshot(bone.getInitialSnapshot()));
+				snapshots.put(bone.getName(), BoneSnapshot.copy(bone.getInitialSnapshot()));
 		}
 
 		return snapshots;

@@ -2,6 +2,8 @@ package software.bernie.geckolib3.core.keyframe.event.data;
 
 import software.bernie.geckolib3.core.keyframe.Keyframe;
 
+import java.util.Objects;
+
 /**
  * Sound {@link Keyframe} instruction holder
  */
@@ -19,5 +21,10 @@ public class SoundKeyframeData extends KeyFrameData {
 	 */
 	public String getSound() {
 		return this.sound;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getStartTick(), sound);
 	}
 }

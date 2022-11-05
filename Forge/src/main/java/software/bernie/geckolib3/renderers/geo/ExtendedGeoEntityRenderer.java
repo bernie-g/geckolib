@@ -59,10 +59,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.ForgeHooksClient;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
-import software.bernie.geckolib3.geo.render.built.GeoQuad;
-import software.bernie.geckolib3.geo.render.built.GeoVertex;
+import software.bernie.geckolib3.cache.object.GeoCube;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoQuad;
+import software.bernie.geckolib3.cache.object.GeoVertex;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
@@ -94,7 +94,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	private float currentPartialTicks;
 	protected ResourceLocation textureForBone = null;
 
-	protected final Queue<Tuple<software.bernie.geckolib3.geo.render.built.GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
+	protected final Queue<Tuple<software.bernie.geckolib3.cache.object.GeoBone, ItemStack>> HEAD_QUEUE = new ArrayDeque<>();
 
 	protected ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager,
 			AnimatedGeoModel<T> modelProvider) {
@@ -114,9 +114,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	// mess up the texture cause the rendertypebuffer will be modified
 	protected void renderHeads(PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 		while (!this.HEAD_QUEUE.isEmpty()) {
-			Tuple<software.bernie.geckolib3.geo.render.built.GeoBone, ItemStack> entry = this.HEAD_QUEUE.poll();
+			Tuple<software.bernie.geckolib3.cache.object.GeoBone, ItemStack> entry = this.HEAD_QUEUE.poll();
 
-			software.bernie.geckolib3.geo.render.built.GeoBone bone = entry.getA();
+			software.bernie.geckolib3.cache.object.GeoBone bone = entry.getA();
 			ItemStack itemStack = entry.getB();
 			GameProfile skullOwnerProfile = null;
 
@@ -192,10 +192,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		this.currentPartialTicks = partialTicks;
 	}
 
-	protected abstract boolean isArmorBone(final software.bernie.geckolib3.geo.render.built.GeoBone bone);
+	protected abstract boolean isArmorBone(final software.bernie.geckolib3.cache.object.GeoBone bone);
 
 
-	protected void handleArmorRenderingForBone(software.bernie.geckolib3.geo.render.built.GeoBone bone, PoseStack stack, VertexConsumer buffer,
+	protected void handleArmorRenderingForBone(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack stack, VertexConsumer buffer,
 											   int packedLight, int packedOverlay, ResourceLocation currentTexture) {
 		ItemStack armorForBone = getArmorForBone(bone.getName(), this.currentEntityBeingRendered);
 		EquipmentSlot boneSlot = getEquipmentSlotForArmorBone(bone.getName(), this.currentEntityBeingRendered);
@@ -326,12 +326,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		}
 	}
 
-	protected void prepareArmorPositionAndScale(software.bernie.geckolib3.geo.render.built.GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
+	protected void prepareArmorPositionAndScale(software.bernie.geckolib3.cache.object.GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
 												PoseStack stack) {
 		prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, false, false);
 	}
 
-	protected void prepareArmorPositionAndScale(software.bernie.geckolib3.geo.render.built.GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
+	protected void prepareArmorPositionAndScale(software.bernie.geckolib3.cache.object.GeoBone bone, List<Cube> cubeList, ModelPart sourceLimb,
 												PoseStack poseStack, boolean geoArmor, boolean modMatrixRot) {
 		GeoCube firstCube = bone.childCubes.get(0);
 		Cube armorCube = cubeList.get(0);
@@ -354,22 +354,22 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (!geoArmor) {
-			sourceLimb.xRot = -bone.getRotationX();
-			sourceLimb.yRot = -bone.getRotationY();
-			sourceLimb.zRot = bone.getRotationZ();
+			sourceLimb.xRot = -bone.getRotX();
+			sourceLimb.yRot = -bone.getRotY();
+			sourceLimb.zRot = bone.getRotZ();
 		}
 		else {
 			// All those * 2 calls ARE necessary, otherwise the geo armor will apply
 			// rotations twice, so to have it only applied one time in the correct direction
 			// we add 2x the negative rotation to it
-			float xRot = bone.getRotationX() * -2;
-			float yRot = bone.getRotationY() * -2;
-			float zRot = bone.getRotationZ() * 2;
+			float xRot = bone.getRotX() * -2;
+			float yRot = bone.getRotY() * -2;
+			float zRot = bone.getRotZ() * 2;
 
-			for (software.bernie.geckolib3.geo.render.built.GeoBone parentBone = bone.parent; parentBone != null; parentBone = parentBone.parent) {
-				xRot -= parentBone.getRotationX();
-				yRot -= parentBone.getRotationY();
-				zRot += parentBone.getRotationZ();
+			for (software.bernie.geckolib3.cache.object.GeoBone parentBone = bone.getParent(); parentBone != null; parentBone = parentBone.getParent()) {
+				xRot -= parentBone.getRotX();
+				yRot -= parentBone.getRotY();
+				zRot += parentBone.getRotZ();
 			}
 
 			if (modMatrixRot) {
@@ -388,7 +388,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	}
 
 	@Override
-	public void renderRecursively(software.bernie.geckolib3.geo.render.built.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		MultiBufferSource bufferSource = getBufferSource();
 
@@ -457,12 +457,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	 * Gets called after armor and item rendering but in every render cycle. This
 	 * serves as a hook for modders to include their own bone specific rendering
 	 */
-	protected void customBoneSpecificRenderingHook(software.bernie.geckolib3.geo.render.built.GeoBone bone, PoseStack poseStack, VertexConsumer buffer,
+	protected void customBoneSpecificRenderingHook(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer,
 												   int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
 												   boolean customTextureMarker, ResourceLocation currentTexture) {
 	}
 
-	protected void handleItemAndBlockBoneRendering(PoseStack poseStack, software.bernie.geckolib3.geo.render.built.GeoBone bone, @Nullable ItemStack boneItem,
+	protected void handleItemAndBlockBoneRendering(PoseStack poseStack, software.bernie.geckolib3.cache.object.GeoBone bone, @Nullable ItemStack boneItem,
 												   @Nullable BlockState boneBlock, int packedLight, int packedOverlay) {
 		RenderUtils.prepMatrixForBone(poseStack, bone);
 		RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
@@ -488,7 +488,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 				currentEntityBeingRendered.getId());
 	}
 
-	protected RenderType getRenderTypeForBone(software.bernie.geckolib3.geo.render.built.GeoBone bone, T animatable, float partialTick,
+	protected RenderType getRenderTypeForBone(software.bernie.geckolib3.cache.object.GeoBone bone, T animatable, float partialTick,
 											  PoseStack poseStack, VertexConsumer buffer, MultiBufferSource bufferSource, int packedLight, ResourceLocation texture) {
 		return getRenderType(animatable, partialTick, poseStack, bufferSource, buffer, packedLight, texture);
 	}
@@ -634,11 +634,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	}
 
 	/**
-	 * Use {@link RenderUtils#translateAndRotateMatrixForBone(PoseStack, software.bernie.geckolib3.geo.render.built.GeoBone)}<br>
+	 * Use {@link RenderUtils#translateAndRotateMatrixForBone(PoseStack, software.bernie.geckolib3.cache.object.GeoBone)}<br>
 	 * Remove in 1.20+
 	 */
 	@Deprecated(forRemoval = true)
-	protected void moveAndRotateMatrixToMatchBone(PoseStack stack, software.bernie.geckolib3.geo.render.built.GeoBone bone) {
+	protected void moveAndRotateMatrixToMatchBone(PoseStack stack, software.bernie.geckolib3.cache.object.GeoBone bone) {
 		RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 	}
 

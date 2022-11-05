@@ -1,11 +1,5 @@
 package software.bernie.geckolib3.item;
 
-import java.util.function.Consumer;
-
-import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.NotNull;
-
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -14,7 +8,11 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+
+import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
@@ -25,7 +23,6 @@ public abstract class GeoArmorItem extends ArmorItem {
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		super.initializeClient(consumer);
 		consumer.accept(new IClientItemExtensions() {
-
 			@Override
 			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack,
 					EquipmentSlot equipmentSlot, HumanoidModel<?> original) {

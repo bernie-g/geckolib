@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import javax.annotation.Nullable;
 
@@ -17,7 +17,7 @@ public record ModelProperties(@Nullable Boolean animationArmsDown, @Nullable Boo
 							  @Nullable Boolean animationSingleLegAnimation, @Nullable Boolean animationStationaryLegs,
 							  @Nullable Boolean animationStatueOfLibertyArms, @Nullable Boolean animationUpsideDown,
 							  @Nullable String identifier, @Nullable Boolean preserveModelPose,
-							  @Nullable Double textureHeight, @Nullable Double textureWidth,
+							  double textureHeight, double textureWidth,
 							  @Nullable Double visibleBoundsHeight, double[] visibleBoundsOffset,
 							  @Nullable Double visibleBoundsWidth) {
 	public static JsonDeserializer<ModelProperties> deserializer() throws JsonParseException {
@@ -35,8 +35,8 @@ public record ModelProperties(@Nullable Boolean animationArmsDown, @Nullable Boo
 			Boolean animationUpsideDown = JsonUtil.getOptionalBoolean(obj, "animationUpsideDown");
 			String identifier = GsonHelper.getAsString(obj, "identifier", null);
 			Boolean preserveModelPose = JsonUtil.getOptionalBoolean(obj, "preserve_model_pose");
-			Double textureHeight = JsonUtil.getOptionalDouble(obj, "texture_height");
-			Double textureWidth = JsonUtil.getOptionalDouble(obj, "texture_width");
+			double textureHeight = GsonHelper.getAsDouble(obj, "texture_height");
+			double textureWidth = GsonHelper.getAsDouble(obj, "texture_width");
 			Double visibleBoundsHeight = JsonUtil.getOptionalDouble(obj, "visible_bounds_height");
 			double[] visibleBoundsOffset = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "visible_bounds_offset", null));
 			Double visibleBoundsWidth = JsonUtil.getOptionalDouble(obj, "visible_bounds_width");

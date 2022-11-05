@@ -69,9 +69,9 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 	 * @param nextZPoint The Z {@code AnimationPoint} that is next in the queue, to serve as the end value of the new point
 	 */
 	public void addNextPosition(Keyframe<?> keyFrame, double lerpedTick, double transitionLength, BoneSnapshot startSnapshot, AnimationPoint nextXPoint, AnimationPoint nextYPoint, AnimationPoint nextZPoint) {
-		addPosXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.positionOffsetX, nextXPoint.animationStartValue());
-		addPosYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.positionOffsetY, nextYPoint.animationStartValue());
-		addPosZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.positionOffsetZ, nextZPoint.animationStartValue());
+		addPosXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotX(), nextXPoint.animationStartValue());
+		addPosYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotY(), nextYPoint.animationStartValue());
+		addPosZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotZ(), nextZPoint.animationStartValue());
 	}
 
 	/**
@@ -121,9 +121,9 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 	 * @param nextZPoint The Z {@code AnimationPoint} that is next in the queue, to serve as the end value of the new point
 	 */
 	public void addNextScale(Keyframe<?> keyFrame, double lerpedTick, double transitionLength, BoneSnapshot startSnapshot, AnimationPoint nextXPoint, AnimationPoint nextYPoint, AnimationPoint nextZPoint) {
-		addScaleXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.scaleValueX, nextXPoint.animationStartValue());
-		addScaleYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.scaleValueY, nextYPoint.animationStartValue());
-		addScaleZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.scaleValueZ, nextZPoint.animationStartValue());
+		addScaleXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getScaleX(), nextXPoint.animationStartValue());
+		addScaleYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getScaleY(), nextYPoint.animationStartValue());
+		addScaleZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getScaleZ(), nextZPoint.animationStartValue());
 	}
 
 	/**
@@ -174,9 +174,9 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 	 * @param nextZPoint The Z {@code AnimationPoint} that is next in the queue, to serve as the end value of the new point
 	 */
 	public void addNextRotation(Keyframe<?> keyFrame, double lerpedTick, double transitionLength, BoneSnapshot startSnapshot, BoneSnapshot initialSnapshot, AnimationPoint nextXPoint, AnimationPoint nextYPoint, AnimationPoint nextZPoint) {
-		addRotationXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.rotationValueX - initialSnapshot.rotationValueX, nextXPoint.animationStartValue());
-		addRotationYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.rotationValueY - initialSnapshot.rotationValueY, nextYPoint.animationStartValue());
-		addRotationZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.rotationValueZ - initialSnapshot.rotationValueZ, nextZPoint.animationStartValue());
+		addRotationXPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotX() - initialSnapshot.getRotX(), nextXPoint.animationStartValue());
+		addRotationYPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotY() - initialSnapshot.getRotY(), nextYPoint.animationStartValue());
+		addRotationZPoint(keyFrame, lerpedTick, transitionLength, startSnapshot.getRotZ() - initialSnapshot.getRotZ(), nextZPoint.animationStartValue());
 	}
 
 	/**

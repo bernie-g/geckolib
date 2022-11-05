@@ -2,7 +2,7 @@ package software.bernie.geckolib3.loading.json.raw;
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import javax.annotation.Nullable;
 

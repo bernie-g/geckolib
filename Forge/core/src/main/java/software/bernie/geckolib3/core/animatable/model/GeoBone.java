@@ -11,17 +11,19 @@ import java.util.List;
 public interface GeoBone {
 	String getName();
 
-	float getRotationX();
+	GeoBone getParent();
 
-	float getRotationY();
+	float getRotX();
 
-	float getRotationZ();
+	float getRotY();
 
-	float getPositionX();
+	float getRotZ();
 
-	float getPositionY();
+	float getPosX();
 
-	float getPositionZ();
+	float getPosY();
+
+	float getPosZ();
 
 	float getScaleX();
 
@@ -29,17 +31,29 @@ public interface GeoBone {
 
 	float getScaleZ();
 
-	void setRotationX(float value);
+	void setRotX(float value);
 
-	void setRotationY(float value);
+	void setRotY(float value);
 
-	void setRotationZ(float value);
+	void setRotZ(float value);
 
-	void setPositionX(float value);
+	default void updateRotation(float xRot, float yRot, float zRot) {
+		setRotX(xRot);
+		setRotY(yRot);
+		setRotZ(zRot);
+	}
 
-	void setPositionY(float value);
+	void setPosX(float value);
 
-	void setPositionZ(float value);
+	void setPosY(float value);
+
+	void setPosZ(float value);
+
+	default void updatePosition(float posX, float posY, float posZ) {
+		setPosX(posX);
+		setPosY(posY);
+		setPosZ(posZ);
+	}
 
 	void setScaleX(float value);
 
@@ -47,11 +61,23 @@ public interface GeoBone {
 
 	void setScaleZ(float value);
 
+	default void updateScale(float scaleX, float scaleY, float scaleZ) {
+		setScaleX(scaleX);
+		setScaleY(scaleY);
+		setScaleZ(scaleZ);
+	}
+
 	void setPivotX(float value);
 
 	void setPivotY(float value);
 
 	void setPivotZ(float value);
+
+	default void updatePivot(float pivotX, float pivotY, float pivotZ) {
+		setPivotX(pivotX);
+		setPivotY(pivotY);
+		setPivotZ(pivotZ);
+	}
 
 	float getPivotX();
 
@@ -61,17 +87,11 @@ public interface GeoBone {
 
 	boolean isHidden();
 
-	boolean cubesAreHidden();
-
-	boolean childBonesAreHiddenToo();
+	boolean isHidingChildren();
 
 	void setHidden(boolean hidden);
 
-	void setCubesHidden(boolean hidden);
-
-	void setHidden(boolean selfHidden, boolean skipChildRendering);
-
-	void setModelRendererName(String modelRendererName);
+	void setChildrenHidden(boolean hideChildren);
 
 	void saveInitialSnapshot();
 
@@ -87,11 +107,11 @@ public interface GeoBone {
 
 	boolean hasPositionChanged();
 
-	boolean resetStateChanges();
+	void resetStateChanges();
 
 	BoneSnapshot getInitialSnapshot();
 
-	List<GeoBone> getChildBones();
+	List<? extends GeoBone> getChildBones();
 
 	default BoneSnapshot saveSnapshot() {
 		return new BoneSnapshot(this);

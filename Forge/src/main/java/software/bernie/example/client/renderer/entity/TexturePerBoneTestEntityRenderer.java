@@ -22,7 +22,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 			"textures/block/redstone_block.png");
 	private static final ResourceLocation TEXTURE_GLASS = new ResourceLocation("minecraft",
 			"textures/block/white_stained_glass.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
+	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.MOD_ID,
 			"geo/textureperbonetestentity.geo.json");
 
 	public TexturePerBoneTestEntityRenderer(EntityRendererProvider.Context renderManager) {
@@ -30,7 +30,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 	@Override
-	protected boolean isArmorBone(software.bernie.geckolib3.geo.render.built.GeoBone bone) {
+	protected boolean isArmorBone(software.bernie.geckolib3.cache.object.GeoBone bone) {
 		return false;
 	}
 	

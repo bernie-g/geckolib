@@ -9,8 +9,8 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class SoundRegistry {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
-			GeckoLib.ModID);
+			GeckoLib.MOD_ID);
 
 	public static RegistryObject<SoundEvent> JACK_MUSIC = SOUNDS.register("jack_music",
-			() -> new SoundEvent(new ResourceLocation(GeckoLib.ModID, "jack_music")));
+			() -> new SoundEvent(new ResourceLocation(GeckoLib.MOD_ID, "jack_music")));
 }

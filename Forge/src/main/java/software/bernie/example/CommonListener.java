@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.Mod;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.geckolib3.GeckoLib;
 
-@Mod.EventBusSubscriber(modid = GeckoLib.ModID, bus = Mod.EventBusSubscriber.Bus.MOD)
+@Mod.EventBusSubscriber(modid = GeckoLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CommonListener {
 	@SubscribeEvent
 	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {

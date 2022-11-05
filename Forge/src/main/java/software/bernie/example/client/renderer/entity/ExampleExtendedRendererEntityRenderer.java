@@ -21,9 +21,9 @@ import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
-	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.ModID,
+	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.MOD_ID,
 			"textures/entity/extendedrendererentity.png");
-	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.ModID,
+	private static final ResourceLocation MODEL_RESLOC = new ResourceLocation(GeckoLib.MOD_ID,
 			"geo/extendedrendererentity.geo.json");
 
 	protected ItemStack mainHandItem, offHandItem, helmetItem, chestplateItem, leggingsItem, bootsItem;
@@ -156,7 +156,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 			ExtendedRendererEntity currentEntity) {
 	}
 
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
+	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.MOD_ID,
 			"textures/entity/extendedrendererentity_cape.png");
 
 	@Override
@@ -168,7 +168,7 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	protected boolean isArmorBone(software.bernie.geckolib3.geo.render.built.GeoBone bone) {
+	protected boolean isArmorBone(software.bernie.geckolib3.cache.object.GeoBone bone) {
 		return bone.getName().startsWith("armor");
 	}
 

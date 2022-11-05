@@ -14,7 +14,7 @@ import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.geckolib3.GeckoLib;
 
 public class ItemRegistry {
-	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.ModID);
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.MOD_ID);
 
 	public static final RegistryObject<BlockItem> HABITAT = ITEMS.register("habitat",
 			() -> new BlockItem(BlockRegistry.HABITAT_BLOCK.get(),

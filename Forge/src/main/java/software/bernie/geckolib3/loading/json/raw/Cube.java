@@ -4,14 +4,14 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import javax.annotation.Nullable;
 
 /**
  * Container class for cube information, only used in deserialization at startup
  */
-public record Cube(@Nullable Double inflate, @Nullable Boolean mirror, double[] origin, double[] pivot, double[] rotatation, double[] size, @Nullable UVUnion uv) {
+public record Cube(@Nullable Double inflate, @Nullable Boolean mirror, double[] origin, double[] pivot, double[] rotatation, double[] size, UVUnion uv) {
 	public static JsonDeserializer<Cube> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			JsonObject obj = json.getAsJsonObject();

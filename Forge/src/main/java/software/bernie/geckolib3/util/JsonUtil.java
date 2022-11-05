@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.util.json;
+package software.bernie.geckolib3.util;
 
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -6,7 +6,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.loading.json.raw.*;
+import software.bernie.geckolib3.loading.json.typeadapter.BakedAnimationsAdapter;
 import software.bernie.geckolib3.loading.json.typeadapter.KeyFramesAdapter;
+import software.bernie.geckolib3.loading.object.BakedAnimations;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -24,6 +26,7 @@ public final class JsonUtil {
 			.registerTypeAdapter(Cube.class, Cube.deserializer())
 			.registerTypeAdapter(FaceUV.class, FaceUV.deserializer())
 			.registerTypeAdapter(LocatorClass.class, LocatorClass.deserializer())
+			.registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
 			.registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
 			.registerTypeAdapter(Model.class, Model.deserializer())
 			.registerTypeAdapter(ModelProperties.class, ModelProperties.deserializer())
@@ -33,6 +36,7 @@ public final class JsonUtil {
 			.registerTypeAdapter(UVFaces.class, UVFaces.deserializer())
 			.registerTypeAdapter(UVUnion.class, UVUnion.deserializer())
 			.registerTypeAdapter(Animation.Keyframes.class, new KeyFramesAdapter())
+			.registerTypeAdapter(BakedAnimations.class, new BakedAnimationsAdapter())
 			.create();
 
 	/**

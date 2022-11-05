@@ -13,27 +13,27 @@ public class FertilizerModel extends AnimatedGeoModel<FertilizerTileEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(FertilizerTileEntity animatable) {
 		if (animatable.getLevel().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID, "animations/fertilizer.animation.json");
+			return new ResourceLocation(GeckoLib.MOD_ID, "animations/fertilizer.animation.json");
 		} else {
-			return new ResourceLocation(GeckoLib.ModID, "animations/botarium.animation.json");
+			return new ResourceLocation(GeckoLib.MOD_ID, "animations/botarium.animation.json");
 		}
 	}
 
 	@Override
 	public ResourceLocation getModelResource(FertilizerTileEntity animatable) {
 		if (animatable.getLevel().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID, "geo/fertilizer.geo.json");
+			return new ResourceLocation(GeckoLib.MOD_ID, "geo/fertilizer.geo.json");
 		} else {
-			return new ResourceLocation(GeckoLib.ModID, "geo/botarium.geo.json");
+			return new ResourceLocation(GeckoLib.MOD_ID, "geo/botarium.geo.json");
 		}
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(FertilizerTileEntity entity) {
 		if (entity.getLevel().isRaining()) {
-			return new ResourceLocation(GeckoLib.ModID + ":textures/block/fertilizer.png");
+			return new ResourceLocation(GeckoLib.MOD_ID + ":textures/block/fertilizer.png");
 		} else {
-			return new ResourceLocation(GeckoLib.ModID + ":textures/block/botarium.png");
+			return new ResourceLocation(GeckoLib.MOD_ID + ":textures/block/botarium.png");
 		}
 	}
 }

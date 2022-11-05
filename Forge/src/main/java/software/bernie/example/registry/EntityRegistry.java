@@ -17,7 +17,7 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class EntityRegistry {
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
-			GeckoLib.ModID);
+			GeckoLib.MOD_ID);
 
 	public static final RegistryObject<EntityType<GeoExampleEntity>> GEO_EXAMPLE_ENTITY = buildEntity(
 			GeoExampleEntity::new, GeoExampleEntity.class, .7F, 1.3F);

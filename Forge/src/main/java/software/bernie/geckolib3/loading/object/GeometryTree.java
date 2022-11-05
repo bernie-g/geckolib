@@ -50,9 +50,7 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 		return new GeometryTree(topLevelBones, geometry.modelProperties());
 	}
 
-	public static BoneStructure findBoneStructureInTree(Map<String, BoneStructure> bones, String boneName) {
-		BoneStructure structure = null;
-
+	private static BoneStructure findBoneStructureInTree(Map<String, BoneStructure> bones, String boneName) {
 		for (BoneStructure entry : bones.values()) {
 			if (boneName.equals(entry.self().name()))
 				return entry;
@@ -63,6 +61,6 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 				return subStructure;
 		}
 
-		return structure;
+		return null;
 	}
 }

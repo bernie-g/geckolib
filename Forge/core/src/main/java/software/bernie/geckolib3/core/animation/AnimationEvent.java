@@ -2,9 +2,9 @@ package software.bernie.geckolib3.core.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.util.DataTicket;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Animation state handler for end-users.<br>
@@ -98,7 +98,7 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	 * @return The cached data for the given {@code DataTicket}, or null if not saved
 	 */
 	public <D> D getData(DataTicket<D> dataTicket) {
-		return (D)this.extraData.get(dataTicket);
+		return dataTicket.getData(this.extraData);
 	}
 
 	/**
@@ -108,17 +108,5 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	 */
 	public <D> void setData(DataTicket<D> dataTicket, D data) {
 		this.extraData.put(dataTicket, data);
-	}
-
-	/**
-	 * Ticket object to define a data object in the event
-	 * @param id The name of the data value
-	 * @param objectType The class type of the data
-	 */
-	public record DataTicket<D>(String id, Class<D> objectType) {
-		@Override
-		public int hashCode() {
-			return Objects.hash(this.id, this.objectType);
-		}
 	}
 }

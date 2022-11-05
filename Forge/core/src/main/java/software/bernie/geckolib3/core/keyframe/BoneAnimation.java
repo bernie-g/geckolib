@@ -19,31 +19,4 @@ public record BoneAnimation(String boneName,
 							KeyframeStack<Keyframe<IValue>> rotationKeyFrames,
 							KeyframeStack<Keyframe<IValue>> positionKeyFrames,
 							KeyframeStack<Keyframe<IValue>> scaleKeyFrames) {
-	/**
-	 * Get the name of the {@link software.bernie.geckolib3.core.animatable.model.GeoBone} relevant to this animation
-	 */
-	public String getBoneName() {
-		return this.boneName;
-	}
-
-	/**
-	 * Gets the {@link KeyframeStack} responsible for the rotation {@link Keyframe} transformations
-	 */
-	public KeyframeStack<Keyframe<IValue>> getRotationKeyframes() {
-		return this.rotationKeyFrames;
-	}
-
-	/**
-	 * Gets the {@link KeyframeStack} responsible for the position {@link Keyframe} transformations
-	 */
-	public KeyframeStack<Keyframe<IValue>> getPositionKeyframes() {
-		return this.rotationKeyFrames;
-	}
-
-	/**
-	 * Gets the {@link KeyframeStack} responsible for the scale {@link Keyframe} transformations
-	 */
-	public KeyframeStack<Keyframe<IValue>> getScale() {
-		return this.rotationKeyFrames;
-	}
 }

@@ -12,16 +12,16 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class HabitatModel extends AnimatedGeoModel<HabitatTileEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(HabitatTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/gecko_habitat.animation.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "animations/gecko_habitat.animation.json");
 	}
 
 	@Override
 	public ResourceLocation getModelResource(HabitatTileEntity animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/gecko_habitat.geo.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "geo/gecko_habitat.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(HabitatTileEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/block/gecko_habitat.png");
+		return new ResourceLocation(GeckoLib.MOD_ID, "textures/block/gecko_habitat.png");
 	}
 }

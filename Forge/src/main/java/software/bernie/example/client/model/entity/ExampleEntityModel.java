@@ -12,17 +12,17 @@ import software.bernie.geckolib3.model.provider.data.EntityModelData;
 public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/bat.animation.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "animations/bat.animation.json");
 	}
 
 	@Override
 	public ResourceLocation getModelResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/bat.geo.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "geo/bat.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(GeoExampleEntity entity) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/model/entity/bat.png");
+		return new ResourceLocation(GeckoLib.MOD_ID, "textures/model/entity/bat.png");
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class ExampleEntityModel extends AnimatedTickingGeoModel<GeoExampleEntity
 		GeoBone head = this.getAnimationProcessor().getBone("head");
 		EntityModelData extraData = (EntityModelData) animationEvent.getExtraDataOfType(EntityModelData.class).get(0);
 
-		head.setRotationX(extraData.headPitch * Mth.DEG_TO_RAD);
-		head.setRotationY(extraData.netHeadYaw * Mth.DEG_TO_RAD);
+		head.setRotX(extraData.headPitch * Mth.DEG_TO_RAD);
+		head.setRotY(extraData.netHeadYaw * Mth.DEG_TO_RAD);
 	}
 }

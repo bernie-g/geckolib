@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.util.GsonHelper;
 import software.bernie.geckolib3.resource.data.GlowingMetadataSection.Section;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 /*
  * Copyright: DerToaster98 - 13.06.2022

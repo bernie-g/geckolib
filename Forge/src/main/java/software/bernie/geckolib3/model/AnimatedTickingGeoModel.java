@@ -6,7 +6,7 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.resource.GeckoLibCache;
+import software.bernie.geckolib3.cache.GeckoLibCache;
 
 import java.util.Collections;
 

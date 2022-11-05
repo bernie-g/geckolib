@@ -2,6 +2,8 @@ package software.bernie.geckolib3.core.keyframe.event.data;
 
 import software.bernie.geckolib3.core.keyframe.Keyframe;
 
+import java.util.Objects;
+
 /**
  * Custom instruction {@link Keyframe} instruction holder
  */
@@ -19,5 +21,10 @@ public class CustomInstructionKeyframeData extends KeyFrameData {
 	 */
 	public String getInstructions() {
 		return this.instructions;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getStartTick(), instructions);
 	}
 }

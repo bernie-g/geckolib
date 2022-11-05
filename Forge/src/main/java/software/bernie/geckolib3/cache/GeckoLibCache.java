@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.resource;
+package software.bernie.geckolib3.cache;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -10,10 +10,14 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.ModLoader;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.loading.object.BakedAnimations;
+import software.bernie.geckolib3.GeckoLibException;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.loading.FileLoader;
-import software.bernie.geckolib3.loading.GeoModelLoader;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.loading.json.FormatVersion;
+import software.bernie.geckolib3.loading.json.raw.Model;
+import software.bernie.geckolib3.loading.object.BakedAnimations;
+import software.bernie.geckolib3.loading.object.BakedModelFactory;
+import software.bernie.geckolib3.loading.object.GeometryTree;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -25,11 +29,12 @@ import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class GeckoLibCache {
+/**
+ * Cache class for holding loaded {@link software.bernie.geckolib3.core.animation.Animation Animations}
+ * and {@link software.bernie.geckolib3.core.animatable.model.GeoModel Models}
+ */
+public final class GeckoLibCache {
 	private static final Set<String> excludedNamespaces = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
-
-	private static final FileLoader animationLoader = new FileLoader();
-	private static final GeoModelLoader modelLoader = new GeoModelLoader();
 
 	private static Map<ResourceLocation, BakedAnimations> animations = Collections.emptyMap();
 	private static Map<ResourceLocation, BakedGeoModel> geoModels = Collections.emptyMap();
@@ -50,20 +55,49 @@ public class GeckoLibCache {
 		return geoModels;
 	}
 
+	public static void registerReloadListener() {
+		if (Minecraft.getInstance() == null) {
+			if (!ModLoader.isDataGenRunning())
+				GeckoLib.LOGGER.warn("Minecraft.getInstance() was null, could not register reload listeners");
+
+			return;
+		}
+
+		if (!(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager resourceManager))
+			throw new RuntimeException("GeckoLib was initialized too early!");
+
+		resourceManager.registerReloadListener(GeckoLibCache::reload);
+	}
+
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
 			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
 		Map<ResourceLocation, BakedAnimations> animations = new Object2ObjectOpenHashMap<>();
-		Map<ResourceLocation, BakedGeoModel> geoModels = new Object2ObjectOpenHashMap<>();
+		Map<ResourceLocation, BakedGeoModel> models = new Object2ObjectOpenHashMap<>();
 
-		return CompletableFuture.allOf(loadResources(backgroundExecutor, resourceManager, "animations",
-				animation -> animationLoader.loadAllAnimations(animation, resourceManager), animations::put),
-				loadResources(backgroundExecutor, resourceManager, "geo",
-						resource -> modelLoader.deserializeModel(resourceManager, resource), geoModels::put))
+		return CompletableFuture.allOf(
+				loadAnimations(backgroundExecutor, resourceManager, animations::put),
+				loadModels(backgroundExecutor, resourceManager, models::put))
 				.thenCompose(stage::wait).thenAcceptAsync(empty -> {
 					GeckoLibCache.animations = animations;
-					GeckoLibCache.geoModels = geoModels;
+					GeckoLibCache.geoModels = models;
 				}, gameExecutor);
+	}
+
+	private static CompletableFuture<Void> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedAnimations> elementConsumer) {
+		return loadResources(backgroundExecutor, resourceManager, "animations", resource ->
+				FileLoader.loadAnimationsFile(resource, resourceManager), elementConsumer);
+	}
+
+	private static CompletableFuture<Void> loadModels(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedGeoModel> elementConsumer) {
+		return loadResources(backgroundExecutor, resourceManager, "geo", resource -> {
+			Model model = FileLoader.loadModelFile(resource, resourceManager);
+
+			if (model.formatVersion() != FormatVersion.V_1_12_0)
+				throw new GeckoLibException(resource, "Unsupported geometry json version. Supported versions: 1.12.0");
+
+			return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
+			}, elementConsumer);
 	}
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
@@ -74,38 +108,17 @@ public class GeckoLibCache {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
 					for (ResourceLocation resource : resources.keySet()) {
-						CompletableFuture<T> existing = tasks.put(resource,
-								CompletableFuture.supplyAsync(() -> loader.apply(resource), executor));
-
-						if (existing != null) {// Possibly if this matters, the last one will win
-							System.err.println("Duplicate resource for " + resource);
-							existing.cancel(false);
-						}
+						tasks.put(resource, CompletableFuture.supplyAsync(() -> loader.apply(resource), executor));
 					}
 
 					return tasks;
-				}, executor).thenAcceptAsync(tasks -> {
+				}, executor)
+				.thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
 						// Skip known namespaces that use an "animation" folder as well
 						if (!excludedNamespaces.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
 							map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
-	}
-
-	public static void registerReloadListener() {
-		if (Minecraft.getInstance() == null) {
-			if (!ModLoader.isDataGenRunning())
-				GeckoLib.LOGGER.warn("Minecraft.getInstance() was null, could not register reload listeners. Ignore if datagenning.");
-
-			return;
-		}
-
-		if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager resourceManager) {
-			resourceManager.registerReloadListener(GeckoLibCache::reload);
-		}
-		else {
-			throw new RuntimeException("GeckoLib was initialized too early!");
-		}
 	}
 }

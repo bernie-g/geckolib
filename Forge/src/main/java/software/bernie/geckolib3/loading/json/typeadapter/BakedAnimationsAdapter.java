@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.math.NumberUtils;
+import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.animation.EasingType;
 import software.bernie.geckolib3.core.keyframe.BoneAnimation;
@@ -17,7 +18,7 @@ import software.bernie.geckolib3.core.molang.MolangException;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.molang.expressions.MolangValue;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -29,12 +30,18 @@ import java.util.Map;
  */
 public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations> {
 	@Override
-	public BakedAnimations deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException, MolangException {
+	public BakedAnimations deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject obj = json.getAsJsonObject();
 		Map<String, Animation> animations = new Object2ObjectOpenHashMap<>(obj.size());
 
 		for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-			animations.put(entry.getKey(), bakeAnimation(entry.getKey(), entry.getValue().getAsJsonObject(), context));
+			try {
+				animations.put(entry.getKey(), bakeAnimation(entry.getKey(), entry.getValue().getAsJsonObject(), context));
+			}
+			catch (MolangException ex) {
+				GeckoLib.LOGGER.error("Unable to parse animation: " + entry.getKey());
+				ex.printStackTrace();
+			}
 		}
 
 		return new BakedAnimations(animations);
@@ -45,6 +52,9 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		Animation.LoopType loopType = Animation.LoopType.fromJson(animationObj.get("loop"));
 		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()), context);
 		Animation.Keyframes keyframes = context.deserialize(animationObj, Animation.Keyframes.class);
+
+		if (length == -1)
+			length = calculateAnimationLength(boneAnimations);
 
 		return new Animation(name, length, loopType, boneAnimations, keyframes);
 	}
@@ -145,5 +155,17 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		}
 
 		return new KeyframeStack<>(xFrames, yFrames, zFrames);
+	}
+
+	private static double calculateAnimationLength(BoneAnimation[] boneAnimations) {
+		double length = 0;
+
+		for (BoneAnimation animation : boneAnimations) {
+			length = Math.max(length, animation.rotationKeyFrames().getLastKeyframeTime());
+			length = Math.max(length, animation.positionKeyFrames().getLastKeyframeTime());
+			length = Math.max(length, animation.scaleKeyFrames().getLastKeyframeTime());
+		}
+
+		return length == 0 ? Double.MAX_VALUE : length;
 	}
 }

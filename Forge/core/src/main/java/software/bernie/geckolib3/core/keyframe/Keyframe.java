@@ -51,7 +51,7 @@ public record Keyframe<T>(double length, T startValue, T endValue, EasingType ea
 		if (this == obj)
 			return true;
 
-		if (obj == null || getClass() != obj.getClass())
+		if (getClass() != obj.getClass())
 			return false;
 
 		return hashCode() == obj.hashCode();

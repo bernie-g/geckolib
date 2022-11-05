@@ -8,16 +8,16 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 public class PistolModel extends AnimatedGeoModel<PistolItem> {
 	@Override
 	public ResourceLocation getModelResource(PistolItem object) {
-		return new ResourceLocation(GeckoLib.ModID, "geo/pistol.geo.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "geo/pistol.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(PistolItem object) {
-		return new ResourceLocation(GeckoLib.ModID, "textures/item/pistol.png");
+		return new ResourceLocation(GeckoLib.MOD_ID, "textures/item/pistol.png");
 	}
 
 	@Override
 	public ResourceLocation getAnimationResource(PistolItem animatable) {
-		return new ResourceLocation(GeckoLib.ModID, "animations/pistol.animation.json");
+		return new ResourceLocation(GeckoLib.MOD_ID, "animations/pistol.animation.json");
 	}
 }

@@ -1,9 +1,15 @@
-package software.bernie.geckolib3.geo.exception;
+package software.bernie.geckolib3;
 
 import net.minecraft.resources.ResourceLocation;
 
-public class GeckoLibException extends RuntimeException {
+import java.io.Serial;
 
+/**
+ * Generic {@link Exception} wrapper for GeckoLib.<br>
+ * Mostly just serves as a marker for internal error handling.
+ */
+public class GeckoLibException extends RuntimeException {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	public GeckoLibException(ResourceLocation fileLocation, String message) {

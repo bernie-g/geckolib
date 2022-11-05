@@ -10,7 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {

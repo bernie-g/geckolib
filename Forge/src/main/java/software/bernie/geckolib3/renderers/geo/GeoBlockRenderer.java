@@ -24,8 +24,8 @@ import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.geo.render.built.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoBone;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
@@ -108,14 +108,14 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
 			BlockPos pos = this.animatable.getBlockPos();
 
-			bone.setModelSpaceXform(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
-			bone.setLocalSpaceXform(localMatrix);
+			bone.setLocalSpaceMatrix(localMatrix);
 
 			Matrix4f worldState = localMatrix.copy();
 
 			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
-			bone.setWorldSpaceXform(worldState);
+			bone.setWorldSpaceMatrix(worldState);
 		}
 
 		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,

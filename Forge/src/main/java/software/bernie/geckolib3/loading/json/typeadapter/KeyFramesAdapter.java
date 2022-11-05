@@ -7,7 +7,7 @@ import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.keyframe.event.data.CustomInstructionKeyframeData;
 import software.bernie.geckolib3.core.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib3.core.keyframe.event.data.SoundKeyframeData;
-import software.bernie.geckolib3.util.json.JsonUtil;
+import software.bernie.geckolib3.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.util.Map;

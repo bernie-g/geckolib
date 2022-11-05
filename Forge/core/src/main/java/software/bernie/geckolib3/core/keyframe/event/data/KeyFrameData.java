@@ -7,6 +7,8 @@ package software.bernie.geckolib3.core.keyframe.event.data;
 
 import software.bernie.geckolib3.core.keyframe.Keyframe;
 
+import java.util.Objects;
+
 /**
  * Base class for custom {@link Keyframe} events.<br>
  * @see ParticleKeyframeData
@@ -24,5 +26,21 @@ public abstract class KeyFrameData {
 	 */
 	public double getStartTick() {
 		return startTick;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+
+		if (this.getClass() != obj.getClass())
+			return false;
+
+		return this.hashCode() == obj.hashCode();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(startTick);
 	}
 }

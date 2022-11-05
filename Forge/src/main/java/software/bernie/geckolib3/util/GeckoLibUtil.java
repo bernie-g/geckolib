@@ -6,17 +6,23 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.animation.AnimationController;
+import software.bernie.geckolib3.core.animation.EasingType;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.core.manager.InstancedAnimationFactory;
 import software.bernie.geckolib3.core.manager.SingletonAnimationFactory;
+import software.bernie.geckolib3.loading.object.BakedModelFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
 
 import java.util.Objects;
 
 import static software.bernie.geckolib3.world.storage.GeckoLibIdTracker.Type.ITEM;
 
-public class GeckoLibUtil {
+/**
+ * Helper class for various GeckoLib-specific functions.
+ */
+public final class GeckoLibUtil {
 	private static final String GECKO_LIB_ID_NBT = "GeckoLibID";
 
 	/**
@@ -105,5 +111,38 @@ public class GeckoLibUtil {
 	 */
 	public static AnimationFactory createFactory(GeoAnimatable animatable, boolean singletonObject) {
 		return singletonObject ? new SingletonAnimationFactory(animatable) : new InstancedAnimationFactory(animatable);
+	}
+
+	/**
+	 * Register a custom {@link software.bernie.geckolib3.core.animation.Animation.LoopType} with GeckoLib,
+	 * allowing for dynamic handling of post-animation looping.<br>
+	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * @param name The name of the {@code LoopType} handler
+	 * @param loopType The {@code LoopType} implementation to use for the given name
+	 */
+	synchronized public static Animation.LoopType addCustomLoopType(String name, Animation.LoopType loopType) {
+		return Animation.LoopType.register(name, loopType);
+	}
+
+	/**
+	 * Register a custom {@link software.bernie.geckolib3.core.animation.EasingType} with GeckoLib,
+	 * allowing for dynamic handling of animation transitions and curves.<br>
+	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * @param name The name of the {@code EasingType} handler
+	 * @param easingType The {@code EasingType} implementation to use for the given name
+	 */
+	synchronized public static EasingType addCustomEasingType(String name, EasingType easingType) {
+		return EasingType.register(name, easingType);
+	}
+
+	/**
+	 * Register a custom {@link software.bernie.geckolib3.loading.object.BakedModelFactory} with GeckoLib,
+	 * allowing for dynamic handling of geo model loading.<br>
+	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * @param namespace The namespace (modid) to register the factory for
+	 * @param factory The factory responsible for model loading under the given namespace
+	 */
+	synchronized public static void addCustomBakedModelFactory(String namespace, BakedModelFactory factory) {
+		BakedModelFactory.register(namespace, factory);
 	}
 }

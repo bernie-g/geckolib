@@ -8,6 +8,7 @@ import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -16,10 +17,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoCube;
+import software.bernie.geckolib3.cache.object.GeoCube;
 import software.bernie.geckolib3.model.provider.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
 
@@ -30,26 +32,26 @@ import javax.annotation.Nullable;
  */
 public final class RenderUtils {
 	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(-bone.getPositionX() / 16f, bone.getPositionY() / 16f, bone.getPositionZ() / 16f);
+		poseStack.translate(-bone.getPosX() / 16f, bone.getPosY() / 16f, bone.getPosZ() / 16f);
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		if (bone.getRotationZ() != 0)
-			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotationZ()));
+		if (bone.getRotZ() != 0)
+			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotZ()));
 
-		if (bone.getRotationY() != 0)
-			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotationY()));
+		if (bone.getRotY() != 0)
+			poseStack.mulPose(Vector3f.YP.rotation(bone.getRotY()));
 
-		if (bone.getRotationX() != 0)
-			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotationX()));
+		if (bone.getRotX() != 0)
+			poseStack.mulPose(Vector3f.XP.rotation(bone.getRotX()));
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
-		Vector3f rotation = cube.rotation;
+		Vec3 rotation = cube.rotation();
 
-		poseStack.mulPose(new Quaternion(0, 0, rotation.z(), false));
-		poseStack.mulPose(new Quaternion(0, rotation.y(), 0, false));
-		poseStack.mulPose(new Quaternion(rotation.x(), 0, 0, false));
+		poseStack.mulPose(new Quaternion(0, 0, (float)rotation.z(), false));
+		poseStack.mulPose(new Quaternion(0, (float)rotation.y(), 0, false));
+		poseStack.mulPose(new Quaternion((float)rotation.x(), 0, 0, false));
 	}
 
 	public static void scaleMatrixForBone(PoseStack poseStack, GeoBone bone) {
@@ -57,7 +59,7 @@ public final class RenderUtils {
 	}
 
 	public static void translateToPivotPoint(PoseStack poseStack, GeoCube cube) {
-		Vector3f pivot = cube.pivot;
+		Vec3 pivot = cube.pivot();
 		poseStack.translate(pivot.x() / 16f, pivot.y() / 16f, pivot.z() / 16f);
 	}
 
@@ -66,7 +68,7 @@ public final class RenderUtils {
 	}
 
 	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoCube cube) {
-		Vector3f pivot = cube.pivot;
+		Vec3 pivot = cube.pivot();
 
 		poseStack.translate(-pivot.x() / 16f, -pivot.y() / 16f, -pivot.z() / 16f);
 	}
@@ -138,6 +140,24 @@ public final class RenderUtils {
 
 	public static double getCurrentSystemTick() {
 		return System.nanoTime() / 1E6 / 50d;
+	}
+
+	public static float booleanToFloat(boolean input) {
+		return input ? 1f : 0f;
+	}
+
+	public static Vec3 arrayToVec(double[] array) {
+		return new Vec3(array[0], array[1], array[2]);
+	}
+
+	/**
+	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations.<br>
+	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts.
+	 */
+	public static void matchModelPartRot(ModelPart from, GeoBone to) {
+		to.setRotX(-from.xRot);
+		to.setRotY(-from.yRot);
+		to.setRotZ(from.zRot);
 	}
 
 	@Nullable

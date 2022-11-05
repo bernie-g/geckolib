@@ -58,7 +58,8 @@ public interface EasingType {
 
 	/**
 	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves.<br>
-	 * <b><u>MUST be done during mod construct</u></b>
+	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * It is recommended you don't call this directly, and instead call it via {@link GeckoLibUtil#addCustomEasingType}
 	 * @param name The name of the easing type
 	 * @param easingType The {@code EasingType} to associate with the given name
 	 * @return The {@code EasingType} you registered

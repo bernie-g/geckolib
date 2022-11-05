@@ -8,7 +8,7 @@ import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public class ExampleExtendedRendererEntityModel<T extends LivingEntity & GeoAnimatable> extends AnimatedGeoModel<T> {
 
-	protected static final ResourceLocation ANIMATION_RESLOC = new ResourceLocation(GeckoLib.ModID,
+	protected static final ResourceLocation ANIMATION_RESLOC = new ResourceLocation(GeckoLib.MOD_ID,
 			"animations/extendedrendererentity.animation.json");
 	protected final ResourceLocation MODEL_RESLOC;
 	protected final ResourceLocation TEXTURE_DEFAULT;

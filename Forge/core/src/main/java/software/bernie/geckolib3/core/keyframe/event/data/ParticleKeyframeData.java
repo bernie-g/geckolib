@@ -2,6 +2,8 @@ package software.bernie.geckolib3.core.keyframe.event.data;
 
 import software.bernie.geckolib3.core.keyframe.Keyframe;
 
+import java.util.Objects;
+
 /**
  * Particle {@link Keyframe} instruction holder
  */
@@ -37,5 +39,10 @@ public class ParticleKeyframeData extends KeyFrameData {
 	 */
 	public String script() {
 		return this.script;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getStartTick(), effect, locator, script);
 	}
 }
