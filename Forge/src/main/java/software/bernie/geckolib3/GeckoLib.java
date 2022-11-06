@@ -12,6 +12,7 @@ import software.bernie.geckolib3.cache.GeckoLibCache;
  * Hello World!<br>
  * There's not much to really see here, but feel free to stay a while and have a snack or something.
  * @see software.bernie.geckolib3.util.GeckoLibUtil
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Getting-Started">GeckoLib Wiki - Getting Started</a>
  */
 public class GeckoLib {
 	public static final Logger LOGGER = LogManager.getLogger();

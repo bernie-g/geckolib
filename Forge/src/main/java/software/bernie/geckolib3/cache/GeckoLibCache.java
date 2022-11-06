@@ -34,25 +34,23 @@ import java.util.function.Function;
  * and {@link software.bernie.geckolib3.core.animatable.model.GeoModel Models}
  */
 public final class GeckoLibCache {
-	private static final Set<String> excludedNamespaces = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
+	private static final Set<String> EXCLUDED_NAMESPACES = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
 
-	private static Map<ResourceLocation, BakedAnimations> animations = Collections.emptyMap();
-	private static Map<ResourceLocation, BakedGeoModel> geoModels = Collections.emptyMap();
-
-	private GeckoLibCache() {}
+	private static Map<ResourceLocation, BakedAnimations> ANIMATIONS = Collections.emptyMap();
+	private static Map<ResourceLocation, BakedGeoModel> MODELS = Collections.emptyMap();
 
 	public static Map<ResourceLocation, BakedAnimations> getBakedAnimations() {
 		if (!GeckoLib.hasInitialized)
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 
-		return animations;
+		return ANIMATIONS;
 	}
 
 	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
 		if (!GeckoLib.hasInitialized)
 			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
 
-		return geoModels;
+		return MODELS;
 	}
 
 	public static void registerReloadListener() {
@@ -69,7 +67,7 @@ public final class GeckoLibCache {
 		resourceManager.registerReloadListener(GeckoLibCache::reload);
 	}
 
-	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
+	private static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
 			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
 			Executor gameExecutor) {
 		Map<ResourceLocation, BakedAnimations> animations = new Object2ObjectOpenHashMap<>();
@@ -79,8 +77,8 @@ public final class GeckoLibCache {
 				loadAnimations(backgroundExecutor, resourceManager, animations::put),
 				loadModels(backgroundExecutor, resourceManager, models::put))
 				.thenCompose(stage::wait).thenAcceptAsync(empty -> {
-					GeckoLibCache.animations = animations;
-					GeckoLibCache.geoModels = models;
+					GeckoLibCache.ANIMATIONS = animations;
+					GeckoLibCache.MODELS = models;
 				}, gameExecutor);
 	}
 
@@ -116,7 +114,7 @@ public final class GeckoLibCache {
 				.thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
 						// Skip known namespaces that use an "animation" folder as well
-						if (!excludedNamespaces.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
+						if (!EXCLUDED_NAMESPACES.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
 							map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);

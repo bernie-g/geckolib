@@ -120,23 +120,39 @@ public record Color(int argbInt) {
 	}
 
 	public int getColor() {
-		return argbInt;
+		return this.argbInt;
 	}
 
 	public int getAlpha() {
-		return argbInt >> 24 & 0xFF;
+		return this.argbInt >> 24 & 0xFF;
+	}
+
+	public float getAlphaFloat() {
+		return getAlpha() / 255f;
 	}
 
 	public int getRed() {
-		return argbInt >> 16 & 0xFF;
+		return this.argbInt >> 16 & 0xFF;
+	}
+
+	public float getRedFloat() {
+		return getRed() / 255f;
 	}
 
 	public int getGreen() {
-		return argbInt >> 8 & 0xFF;
+		return this.argbInt >> 8 & 0xFF;
+	}
+
+	public float getGreenFloat() {
+		return getGreen() / 255f;
 	}
 
 	public int getBlue() {
-		return argbInt & 0xFF;
+		return this.argbInt & 0xFF;
+	}
+
+	public float getBlueFloat() {
+		return getBlue() / 255f;
 	}
 
 	/**

@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.renderers.geo;
+package software.bernie.geckolib3.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -84,7 +84,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	@Nullable
 	public IAnimatableModel<T> apply(GeoAnimatable t) {
 		if (t instanceof ArmorItem && t.getClass() == this.assignedItemClass)
-			return this.geoGeoModel();
+			return this.getGeoModel();
 
 		return null;
 	}
@@ -189,11 +189,10 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		fitToBiped();
 		RenderSystem.setShaderTexture(0, getTextureLocation(this.currentArmorItem));
 
-		Color renderColor = getRenderColor(this.currentArmorItem, partialTick, poseStack, null, buffer, packedLight);
-		RenderType renderType = getRenderType(this.currentArmorItem, partialTick, poseStack, null, buffer, packedLight,
-				getTextureLocation(this.currentArmorItem));
+		Color renderColor = getRenderColor(poseStack, this.currentArmorItem, null, buffer, partialTick, packedLight);
+		RenderType renderType = getRenderType(poseStack, this.currentArmorItem, getTextureLocation(this.currentArmorItem), null, buffer, partialTick, packedLight);
 
-		render(model, this.currentArmorItem, partialTick, renderType, poseStack, null, buffer, packedLight,
+		actuallyRender(poseStack, this.currentArmorItem, model, renderType, null, buffer, partialTick, packedLight,
 				OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
 				renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 
@@ -201,18 +200,16 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-							VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
-							float alpha) {
+	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+						  float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.currentArmorItem = animatable;
 
-		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
-				packedLight, packedOverlay, red, green, blue, alpha);
+		GeoRenderer.super.preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, software.bernie.geckolib3.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose();
@@ -224,7 +221,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 			bone.setLocalSpaceMatrix(localMatrix);
 		}
 
-		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -307,7 +304,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 	}
 
 	@Override
-	public AnimatedGeoModel<T> geoGeoModel() {
+	public AnimatedGeoModel<T> getGeoModel() {
 		return this.modelProvider;
 	}
 

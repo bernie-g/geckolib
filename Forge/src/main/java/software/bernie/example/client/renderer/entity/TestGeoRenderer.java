@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.model.entity.TestModel;
 import software.bernie.example.entity.TestEntity;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderer.GeoEntityRenderer;
 
 public class TestGeoRenderer extends GeoEntityRenderer<TestEntity> {
 	public TestGeoRenderer(EntityRendererProvider.Context renderManager) {
@@ -17,8 +17,7 @@ public class TestGeoRenderer extends GeoEntityRenderer<TestEntity> {
 	}
 
 	@Override
-	public RenderType getRenderType(TestEntity animatable, float partialTick, PoseStack poseStack,
-			MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, ResourceLocation texture) {
+	public RenderType getRenderType(PoseStack poseStack, TestEntity animatable, ResourceLocation texture, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

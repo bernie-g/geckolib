@@ -1,6 +1,7 @@
 package software.bernie.geckolib3.model;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -17,12 +18,13 @@ import software.bernie.geckolib3.core.animation.AnimationProcessor;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.molang.MolangQueries;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
-import software.bernie.geckolib3.renderers.geo.GeoRenderer;
+import software.bernie.geckolib3.renderer.GeoRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
 /**
  * Base class for all code-based model objects.<br>
  * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses.
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
 public abstract class GeoModel<T extends GeoAnimatable> implements software.bernie.geckolib3.core.animatable.model.GeoModel<T> {
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
@@ -54,11 +56,21 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 		return false;
 	}
 
+	/**
+	 * Gets the default render type for this animatable, to be selected by default by the renderer using it
+	 */
+	public RenderType getRenderType(T animatable, ResourceLocation texture) {
+		return RenderType.entityCutout(texture);
+	}
+
 	@Override
 	public final BakedGeoModel getBakedGeoModel(String location) {
 		return getBakedModel(new ResourceLocation(location));
 	}
 
+	/**
+	 * Get the baked geo model object used for rendering from the given resource path
+	 */
 	public BakedGeoModel getBakedModel(ResourceLocation location) {
 		BakedGeoModel model = GeckoLibCache.getBakedModels().get(location);
 
@@ -73,6 +85,9 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 		return this.currentModel;
 	}
 
+	/**
+	 * Get the baked animation object used for rendering from the given resource path
+	 */
 	@Override
 	public Animation getAnimation(T animatable, String name) {
 		ResourceLocation location = getAnimationResource(animatable);

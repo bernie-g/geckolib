@@ -1,15 +1,14 @@
 package software.bernie.example.client.renderer.armor;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.example.GeckoLibMod;
-import software.bernie.example.client.model.armor.GeckoArmorModel;
 import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.DefaultedItemGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
+import software.bernie.geckolib3.renderer.GeoArmorRenderer;
+import software.bernie.geckolib3.renderer.GeoRenderer;
 
 /**
- * Example {@link software.bernie.geckolib3.renderers.geo.GeoRenderer} for the {@link GeckoArmorItem} example item
+ * Example {@link GeoRenderer} for the {@link GeckoArmorItem} example item
  */
 public final class GeckoArmorRenderer extends GeoArmorRenderer<GeckoArmorItem> {
 	public GeckoArmorRenderer() {

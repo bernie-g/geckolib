@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 /**
  * The {@link GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}.
  * This also applies to armor, as they are also just items
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
  */
 public interface GeoItem extends GeoAnimatable {
 	@Override

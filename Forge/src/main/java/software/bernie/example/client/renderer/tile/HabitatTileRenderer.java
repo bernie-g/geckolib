@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.example.client.model.tile.HabitatModel;
-import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
+import software.bernie.geckolib3.renderer.GeoBlockRenderer;
 
 public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 	public HabitatTileRenderer(BlockEntityRendererProvider.Context rendererDispatcherIn) {
@@ -17,9 +17,7 @@ public class HabitatTileRenderer extends GeoBlockRenderer<HabitatTileEntity> {
 	}
 
 	@Override
-	public RenderType getRenderType(HabitatTileEntity animatable, float partialTick, PoseStack poseStack,
-									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
-									ResourceLocation texture) {
+	public RenderType getRenderType(PoseStack poseStack, HabitatTileEntity animatable, ResourceLocation texture, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

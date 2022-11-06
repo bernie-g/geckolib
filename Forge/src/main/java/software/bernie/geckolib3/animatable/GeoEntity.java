@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 /**
  * The {@link GeoAnimatable} interface specific to {@link net.minecraft.world.entity.Entity Entities}.
  * This also applies to Projectiles and other Entity subclasses.
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Entity-Animations">GeckoLib Wiki - Entity Animations</a>
  */
 public interface GeoEntity extends GeoAnimatable {
 	@Override

@@ -10,6 +10,7 @@ import java.util.function.Supplier;
 /**
  * The {@link GeoAnimatable} interface specific to {@link net.minecraft.world.level.block.Block Blocks}.
  * Specifically, Geckolib currently only supports animations for {@link net.minecraft.world.level.block.entity.BlockEntity BlockEntities}
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Block-Animations">GeckoLib Wiki - Block Animations</a>
  */
 public interface GeoBlock extends GeoAnimatable {
 	@Override

@@ -14,7 +14,7 @@ import software.bernie.example.client.model.entity.TexturePerBoneTestEntityModel
 import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
+import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
 
 public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<TexturePerBoneTestEntity> {
 	
@@ -35,7 +35,7 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 	
 	@Override
-	public RenderType getRenderType(TexturePerBoneTestEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, ResourceLocation texture) {
+	public RenderType getRenderType(PoseStack poseStack, TexturePerBoneTestEntity animatable, ResourceLocation texture, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight) {
 		return RenderType.entityTranslucent(texture);
 	}
 	

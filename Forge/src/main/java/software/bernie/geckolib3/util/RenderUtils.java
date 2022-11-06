@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
@@ -21,10 +22,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.cache.object.GeoCube;
+import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.model.GeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoRenderer;
+import software.bernie.geckolib3.renderer.GeoRenderer;
 
 import javax.annotation.Nullable;
 
@@ -165,17 +166,45 @@ public final class RenderUtils {
 		to.setRotZ(from.zRot);
 	}
 
+	/**
+	 * If a {@link GeoCube} is a 2d plane the {@link software.bernie.geckolib3.cache.object.GeoQuad Quad's}
+	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks.<br>
+	 * This performs a pseudo-ABS function to help resolve some of those issues.
+	 */
+	public static void fixInvertedFlatCube(GeoCube cube, Vector3f normal) {
+		if (normal.x() < 0 && (cube.size().y() == 0 || cube.size().z() == 0))
+			normal.mul(-1, 1, 1);
+
+		if (normal.y() < 0 && (cube.size().x() == 0 || cube.size().z() == 0))
+			normal.mul(1, -1, 1);
+
+		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
+			normal.mul(1, 1, -1);
+	}
+
+	/**
+	 * Converts a {@link Direction} to a rotational float for rotation purposes
+	 */
+	public static float getDirectionAngle(Direction direction) {
+		return switch(direction) {
+			case SOUTH -> 90f;
+			case NORTH -> 270f;
+			case EAST -> 180f;
+			default -> 0f;
+		};
+	}
+
 	@Nullable
 	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
 
-		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.geoGeoModel() : null;
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
 	}
 
 	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
 		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
-			return geoRenderer.geoGeoModel();
+			return geoRenderer.getGeoModel();
 
 		return null;
 	}
@@ -184,6 +213,6 @@ public final class RenderUtils {
 	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
 
-		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.geoGeoModel() : null;
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
 	}
 }

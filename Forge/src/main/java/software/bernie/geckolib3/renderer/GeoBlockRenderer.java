@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.renderers.geo;
+package software.bernie.geckolib3.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -42,7 +42,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 						.getRenderer(tile);
 
 				if (renderer instanceof GeoBlockRenderer blockRenderer)
-					return (IAnimatableModel<Object>)blockRenderer.geoGeoModel();
+					return (IAnimatableModel<Object>)blockRenderer.getGeoModel();
 			}
 			return null;
 		});
@@ -64,13 +64,12 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-							VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
-							float alpha) {
+	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+						  float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		GeoRenderer.super.preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
@@ -91,17 +90,16 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 		rotateBlock(getFacing(tile), poseStack);
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(tile));
-		Color renderColor = getRenderColor(tile, partialTick, poseStack, bufferSource, null, packedLight);
-		RenderType renderType = getRenderType(tile, partialTick, poseStack, bufferSource, null, packedLight,
-				getTextureLocation(tile));
-		render(model, tile, partialTick, renderType, poseStack, bufferSource, null, packedLight, OverlayTexture.NO_OVERLAY,
+		Color renderColor = getRenderColor(poseStack, tile, bufferSource, null, partialTick, packedLight);
+		RenderType renderType = getRenderType(poseStack, tile, getTextureLocation(tile), bufferSource, null, partialTick, packedLight);
+		actuallyRender(poseStack, tile, model, renderType, bufferSource, null, partialTick, packedLight, OverlayTexture.NO_OVERLAY,
 				renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
 				renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 		poseStack.popPose();
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
@@ -118,7 +116,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -132,7 +130,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 	}
 
 	@Override
-	public AnimatedGeoModel<T> geoGeoModel() {
+	public AnimatedGeoModel<T> getGeoModel() {
 		return this.modelProvider;
 	}
 

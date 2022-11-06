@@ -11,7 +11,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.model.entity.ExampleEntityModel;
 import software.bernie.example.entity.GeoExampleEntity;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
+import software.bernie.geckolib3.renderer.GeoEntityRenderer;
 
 public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 
@@ -22,16 +22,12 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 	}
 
 	@Override
-	public RenderType getRenderType(GeoExampleEntity animatable, float partialTick, PoseStack poseStack,
-									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
-									ResourceLocation texture) {
+	public RenderType getRenderType(PoseStack poseStack, GeoExampleEntity animatable, ResourceLocation texture, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight) {
 		return RenderType.entityCutout(getTextureLocation(animatable));
 	}
 
 	@Override
-	public void render(BakedGeoModel model, GeoExampleEntity animatable, float partialTick, RenderType type,
-					   PoseStack poseStack, MultiBufferSource bufferSource, VertexConsumer buffer,
-					   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void actuallyRender(PoseStack poseStack, GeoExampleEntity animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (currentTick < 0 || currentTick != animatable.tickCount) {
 			this.currentTick = animatable.tickCount;
 			if (model.getBone("leftear").isPresent()) {
@@ -43,6 +39,6 @@ public class ExampleGeoRenderer extends GeoEntityRenderer<GeoExampleEntity> {
 						(animatable.getRandom().nextDouble() - 0.5D));
 			}
 		}
-		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		super.actuallyRender(poseStack, animatable, model, type, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 }

@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.renderers.geo;
+package software.bernie.geckolib3.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -71,12 +71,11 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 		modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
-		Color renderColor = getRenderColor(animatable, partialTick, poseStack, bufferSource, null, packedLight);
-		RenderType renderType = getRenderType(animatable, partialTick, poseStack, bufferSource, null, packedLight,
-				getTextureLocation(animatable));
+		Color renderColor = getRenderColor(poseStack, animatable, bufferSource, null, partialTick, packedLight);
+		RenderType renderType = getRenderType(poseStack, animatable, getTextureLocation(animatable), bufferSource, null, partialTick, packedLight);
 
 		if (!animatable.isInvisibleTo(Minecraft.getInstance().player)) {
-			render(model, animatable, partialTick, renderType, poseStack, bufferSource, null, packedLight,
+			actuallyRender(partialTick, animatable, renderType, bufferSource, null, model, poseStack, packedLight,
 					getPackedOverlay(animatable, 0), renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
 					renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 		}
@@ -86,18 +85,16 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	}
 
 	@Override
-	public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
-			float alpha) {
+	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+						  float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
-				packedLight, packedOverlay, red, green, blue, alpha);
+		GeoRenderer.super.preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderRecursively(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
@@ -113,7 +110,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -123,7 +120,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	}
 
 	@Override
-	public GeoModel<T> geoGeoModel() {
+	public GeoModel<T> getGeoModel() {
 		return this.modelProvider;
 	}
 

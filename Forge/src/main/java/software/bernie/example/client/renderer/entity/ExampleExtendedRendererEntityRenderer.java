@@ -18,7 +18,7 @@ import software.bernie.example.client.model.entity.ExampleExtendedRendererEntity
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
+import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
 	private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.MOD_ID,
@@ -33,9 +33,8 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 	@Override
-	public void renderEarly(ExtendedRendererEntity animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-							VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float partialTicks) {
-		super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, partialTicks);
+	public void preRender(PoseStack poseStack, ExtendedRendererEntity animatable, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float partialTicks) {
+		super.preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, partialTicks);
 
 		this.mainHandItem = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offHandItem = animatable.getItemBySlot(EquipmentSlot.OFFHAND);

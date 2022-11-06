@@ -5,6 +5,7 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimationTickable;
 import software.bernie.geckolib3.core.object.PlayState;
@@ -16,7 +17,7 @@ import software.bernie.geckolib3.core.animation.AnimationData;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class LEEntity extends PathfinderMob implements GeoAnimatable, IAnimationTickable {
+public class LEEntity extends PathfinderMob implements GeoEntity {
     private AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
     private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {

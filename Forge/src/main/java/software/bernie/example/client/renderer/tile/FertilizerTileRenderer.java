@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.example.client.model.tile.FertilizerModel;
-import software.bernie.geckolib3.renderers.geo.GeoBlockRenderer;
+import software.bernie.geckolib3.renderer.GeoBlockRenderer;
 
 public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntity> {
 	public FertilizerTileRenderer(BlockEntityRendererProvider.Context rendererDispatcherIn) {
@@ -17,9 +17,7 @@ public class FertilizerTileRenderer extends GeoBlockRenderer<FertilizerTileEntit
 	}
 
 	@Override
-	public RenderType getRenderType(FertilizerTileEntity animatable, float partialTick, PoseStack poseStack,
-									MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
-									ResourceLocation texture) {
+	public RenderType getRenderType(PoseStack poseStack, FertilizerTileEntity animatable, ResourceLocation texture, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight) {
 		return RenderType.entityTranslucent(getTextureLocation(animatable));
 	}
 }

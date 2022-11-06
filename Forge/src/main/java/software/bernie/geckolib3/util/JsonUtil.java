@@ -14,8 +14,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * Json helper class for various json functions
@@ -148,12 +146,4 @@ public final class JsonUtil {
 	public static Integer getOptionalInteger(JsonObject obj, String elementName) {
 		return obj.has(elementName) ? GsonHelper.getAsInt(obj, elementName) : null;
 	}
-
-	public static <T extends JsonElement> Stream<T> stream(JsonArray jsonArray, Class<T> jsonClass) {
-		return IntStream.range(0, jsonArray.size())
-				.mapToObj(jsonArray::get)
-				.filter(jsonClass::isInstance)
-				.map(jsonClass::cast);
-	}
-
 }

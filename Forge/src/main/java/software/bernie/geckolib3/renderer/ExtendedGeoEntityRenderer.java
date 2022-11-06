@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.renderers.geo;
+package software.bernie.geckolib3.renderer;
 
 import java.util.ArrayDeque;
 import java.util.List;
@@ -168,10 +168,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 	// Rendercall to render the model itself
 	@Override
-	public void render(BakedGeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
-					   MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlay,
-					   float red, float green, float blue, float alpha) {
-		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay,
+							   float red, float green, float blue, float alpha) {
+		super.actuallyRender(poseStack, animatable, model, type, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		// Now, render the heads
 		renderHeads(poseStack, bufferSource, packedLight);
 	}
@@ -182,10 +181,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	}
 
 	@Override
-	public void renderLate(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
+	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
 						   VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
 						   float partialTicks) {
-		super.renderLate(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red,
+		super.postRender(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red,
 				green, blue, partialTicks);
 
 		this.currentEntityBeingRendered = animatable;
@@ -388,7 +387,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 	}
 
 	@Override
-	public void renderRecursively(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, software.bernie.geckolib3.cache.object.GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		MultiBufferSource bufferSource = getBufferSource();
 
@@ -396,7 +395,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 			throw new NullPointerException("Can't render with a null RenderTypeBuffer! (GeoEntityRenderer.rtb is null)");
 
 		if (getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
-			super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+			super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
 			return;
 		}
@@ -409,8 +408,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		RenderType renderType = useCustomTexture
 				? getRenderTypeForBone(bone, this.currentEntityBeingRendered, this.currentPartialTicks, poseStack,
 						buffer, bufferSource, packedLight, this.textureForBone)
-				: getRenderType(this.currentEntityBeingRendered, this.currentPartialTicks, poseStack,
-				bufferSource, buffer, packedLight, currentTexture);
+				: getRenderType(poseStack, this.currentEntityBeingRendered, currentTexture, bufferSource, buffer, this.currentPartialTicks, packedLight);
 		buffer = bufferSource.getBuffer(renderType);
 
 		if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
@@ -439,17 +437,16 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 		poseStack.pushPose();
 		RenderUtils.prepMatrixForBone(poseStack, bone);
-		super.renderCubesOfBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
 		// Reset buffer
 		if (useCustomTexture) {
-			buffer = bufferSource.getBuffer(this.getRenderType(this.currentEntityBeingRendered,
-					this.currentPartialTicks, poseStack, bufferSource, buffer, packedLight, currentTexture));
+			buffer = bufferSource.getBuffer(this.getRenderType(poseStack, this.currentEntityBeingRendered, currentTexture, bufferSource, buffer, this.currentPartialTicks, packedLight));
 			// Reset the marker...
 			this.textureForBone = null;
 		}
 
-		super.renderChildBones(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		super.renderChildBones(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
 
@@ -490,7 +487,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 	protected RenderType getRenderTypeForBone(software.bernie.geckolib3.cache.object.GeoBone bone, T animatable, float partialTick,
 											  PoseStack poseStack, VertexConsumer buffer, MultiBufferSource bufferSource, int packedLight, ResourceLocation texture) {
-		return getRenderType(animatable, partialTick, poseStack, bufferSource, buffer, packedLight, texture);
+		return getRenderType(poseStack, animatable, texture, bufferSource, buffer, partialTick, packedLight);
 	}
 
 	// Internal use only. Basically renders the passed "part" of the armor model on
