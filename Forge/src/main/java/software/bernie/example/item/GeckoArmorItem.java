@@ -1,5 +1,7 @@
 package software.bernie.example.item;
 
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
@@ -8,72 +10,82 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.registry.ItemRegistry;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
+import software.bernie.geckolib3.animatable.GeoItem;
+import software.bernie.geckolib3.constant.DataTickets;
+import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animation.AnimationController;
+import software.bernie.geckolib3.core.animation.AnimationData;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Set;
 
-public class GeckoArmorItem extends GeoArmorItem implements GeoAnimatable {
-	private AnimationFactory factory = GeckoLibUtil.createFactory(this);
+/**
+ * Example {@link GeoItem} implementation in the form of a wearable armor.<br>
+ * @see GeoArmorItem
+ */
+public final class GeckoArmorItem extends GeoArmorItem implements GeoItem {
+	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	public GeckoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
-		super(materialIn, slot, builder.tab(GeckoLibMod.geckolibItemGroup));
+	public GeckoArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
+		super(armorMaterial, slot, properties.tab(GeckoLibMod.ITEM_GROUP));
 	}
 
-	// Predicate runs every frame
-	@SuppressWarnings("unused")
-	private <P extends GeoAnimatable> PlayState predicate(AnimationEvent<P> event) {
-		// This is all the extradata this event carries. The livingentity is the entity
-		// that's wearing the armor. The itemstack and equipmentslottype are self
-		// explanatory.
-		List<EquipmentSlot> slotData = event.getExtraDataOfType(EquipmentSlot.class);
-		List<ItemStack> stackData = event.getExtraDataOfType(ItemStack.class);
-		LivingEntity livingEntity = event.getExtraDataOfType(LivingEntity.class).get(0);
-
-		// Always loop the animation but later on in this method we'll decide whether or
-		// not to actually play it
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.potato_armor.new", EDefaultLoopTypes.LOOP));
-
-		// If the living entity is an armorstand just play the animation nonstop
-		if (livingEntity instanceof ArmorStand) {
-			return PlayState.CONTINUE;
-		}
-
-		List<Item> armorList = new ArrayList<>(4);
-		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			if (slot.getType() == EquipmentSlot.Type.ARMOR) {
-				if (livingEntity.getItemBySlot(slot) != null) {
-					armorList.add(livingEntity.getItemBySlot(slot).getItem());
-				}
-			}
-		}
-
-		// Make sure the player is wearing all the armor. If they are, continue playing
-		// the animation, otherwise stop
-		boolean isWearingAll = armorList.containsAll(Arrays.asList(ItemRegistry.GECKOARMOR_BOOTS.get(),
-				ItemRegistry.GECKOARMOR_LEGGINGS.get(), ItemRegistry.GECKOARMOR_CHEST.get(), ItemRegistry.GECKOARMOR_HEAD.get()));
-		return isWearingAll ? PlayState.CONTINUE : PlayState.STOP;
-	}
-
-	// All you need to do here is add your animation controllers to the
-	// AnimationData
+	/**
+	 * Register the animation controller for this item
+	 */
 	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));
+	public void registerControllers(AnimationData<?> data) {
+		data.addAnimationController(new AnimationController<>(this, 20, this::checkAnimations));
 	}
 
+	/**
+	 * Simple getter to return the animation factory for this item
+	 */
 	@Override
 	public AnimationFactory getFactory() {
 		return this.factory;
+	}
+
+	/**
+	 * Our animation predicate for this item. It has been split off into this separate method for easy reading.
+	 */
+	private <A extends GeckoArmorItem> PlayState checkAnimations(AnimationEvent<A> event) {
+		// Apply our generic permanent animation.
+		// Whether it plays or not is decided down below.
+		event.getController().setAnimation(DefaultAnimations.GENERIC_PERMANENT);
+
+		// Let's gather some data from the event to use below
+		// This is the entity that is currently wearing/holding the item
+		LivingEntity entity = event.getData(DataTickets.LIVING_ENTITY);
+
+		// We'll just have armorstands always animate, so we can return here
+		if (entity instanceof ArmorStand)
+			return PlayState.CONTINUE;
+
+		// For this example, we only want the animation to play if the entity is wearing all pieces of the armor
+		// Let's collect the armor pieces the entity is currently wearing
+		Set<Item> wornArmor = new ObjectOpenHashSet<>();
+
+		for (ItemStack stack : entity.getArmorSlots()) {
+			// We can stop immediately if any of the slots are empty
+			if (stack.isEmpty())
+				return PlayState.STOP;
+
+			wornArmor.add(stack.getItem());
+		}
+
+		// Check each of the pieces match our set
+		boolean isFullSet = wornArmor.containsAll(ObjectArrayList.of(
+				ItemRegistry.GECKOARMOR_BOOTS.get(),
+				ItemRegistry.GECKOARMOR_LEGGINGS.get(),
+				ItemRegistry.GECKOARMOR_CHEST.get(),
+				ItemRegistry.GECKOARMOR_HEAD.get()));
+
+		// Play the animation if the full set is being worn, otherwise stop
+		return isFullSet ? PlayState.CONTINUE : PlayState.STOP;
 	}
 }

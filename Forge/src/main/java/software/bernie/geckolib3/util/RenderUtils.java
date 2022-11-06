@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.util;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
@@ -22,8 +23,8 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.cache.object.GeoCube;
-import software.bernie.geckolib3.model.provider.GeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
+import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib3.renderers.geo.GeoRenderer;
 
 import javax.annotation.Nullable;
 
@@ -142,6 +143,10 @@ public final class RenderUtils {
 		return System.nanoTime() / 1E6 / 50d;
 	}
 
+	public static double getCurrentTick() {
+		return Blaze3D.getTime() * 20d;
+	}
+
 	public static float booleanToFloat(boolean input) {
 		return input ? 1f : 0f;
 	}
@@ -164,13 +169,13 @@ public final class RenderUtils {
 	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
 
-		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? (GeoModel<?>)geoRenderer.geoGeoModel() : null;
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.geoGeoModel() : null;
 	}
 
 	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
-		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoObjectRenderer<?> geoRenderer)
-			return (GeoModel<?>)geoRenderer.geoGeoModel();
+		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
+			return geoRenderer.geoGeoModel();
 
 		return null;
 	}
@@ -179,6 +184,6 @@ public final class RenderUtils {
 	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
 
-		return renderer instanceof GeoObjectRenderer<?> geoRenderer ? (GeoModel<?>)geoRenderer.geoGeoModel() : null;
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.geoGeoModel() : null;
 	}
 }

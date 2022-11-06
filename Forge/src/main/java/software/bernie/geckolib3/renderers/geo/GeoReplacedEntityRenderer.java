@@ -33,11 +33,11 @@ import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import software.bernie.geckolib3.model.data.EntityModelData;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -48,7 +48,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends EntityRenderer implements GeoObjectRenderer {
+public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends EntityRenderer implements GeoRenderer {
 	protected static final Map<Class<? extends GeoAnimatable>, GeoReplacedEntityRenderer> renderers = new ConcurrentHashMap<>();
 
 	static {
@@ -113,7 +113,7 @@ public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends
 							MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn,
 							float red, float green, float blue, float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
 	}
 
 	@Override
@@ -247,7 +247,7 @@ public abstract class GeoReplacedEntityRenderer<T extends GeoAnimatable> extends
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 

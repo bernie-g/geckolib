@@ -20,13 +20,13 @@ import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRender;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -41,7 +41,7 @@ public class PistolItem extends Item implements GeoAnimatable, ISyncable {
 	public static final int ANIM_OPEN = 0;
 
 	public PistolItem() {
-		super(new Item.Properties().tab(GeckoLibMod.geckolibItemGroup).stacksTo(1).durability(201));
+		super(new Item.Properties().tab(GeckoLibMod.ITEM_GROUP).stacksTo(1).durability(201));
 		GeckoLibNetwork.registerSyncable(this);
 	}
 

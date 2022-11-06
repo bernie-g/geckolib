@@ -16,29 +16,34 @@ import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
+import software.bernie.geckolib3.animatable.GeoItem;
 import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-public class JackInTheBoxItem extends Item implements GeoAnimatable, ISyncable {
+/**
+ * Example {@link GeoItem} implementation in the form of a firearm.<br>
+ */
+public final class JackInTheBoxItem extends Item implements GeoItem, ISyncable {
 	private static final String CONTROLLER_NAME = "popupController";
 	private static final int ANIM_OPEN = 0;
 	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public JackInTheBoxItem(Properties properties) {
-		super(properties.tab(GeckoLibMod.geckolibItemGroup));
+		super(properties.tab(GeckoLibMod.ITEM_GROUP));
+
 		GeckoLibNetwork.registerSyncable(this);
 	}
 	

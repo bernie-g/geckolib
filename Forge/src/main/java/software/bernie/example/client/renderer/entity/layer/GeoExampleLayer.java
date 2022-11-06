@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
-import software.bernie.geckolib3.renderers.geo.GeoObjectRenderer;
+import software.bernie.geckolib3.renderers.geo.GeoRenderer;
 
 public class GeoExampleLayer extends GeoLayerRenderer {
     // A resource location for the texture of the layer. This will be applied onto pre-existing cubes on the model
@@ -17,7 +17,7 @@ public class GeoExampleLayer extends GeoLayerRenderer {
     // A resource location for the model of the entity. This model is put on top of the normal one, which is then given the texture
     private static final ResourceLocation MODEL = new ResourceLocation(GeckoLib.MOD_ID, "geo/le.geo.json");
 
-	public GeoExampleLayer(GeoObjectRenderer<?> entityRendererIn) {
+	public GeoExampleLayer(GeoRenderer<?> entityRendererIn) {
         super(entityRendererIn);
     }
     

@@ -7,10 +7,10 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.geckolib3.GeckoLib;
 
-public class SoundRegistry {
+public final class SoundRegistry {
 	public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(ForgeRegistries.SOUND_EVENTS,
 			GeckoLib.MOD_ID);
 
-	public static RegistryObject<SoundEvent> JACK_MUSIC = SOUNDS.register("jack_music",
-			() -> new SoundEvent(new ResourceLocation(GeckoLib.MOD_ID, "jack_music")));
+	public static RegistryObject<SoundEvent> JACK_MUSIC = SOUNDS.register("jack_in_the_box_music",
+			() -> new SoundEvent(new ResourceLocation(GeckoLib.MOD_ID, "jack_in_the_box_music")));
 }

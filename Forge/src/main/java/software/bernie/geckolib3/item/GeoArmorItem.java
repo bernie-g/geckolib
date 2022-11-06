@@ -14,6 +14,10 @@ import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
+/**
+ * Wrapper class for GeckoLib armor items.<br>
+ * Not specifically required to be used, but it does do some required work you will need to replicate if you don't use it.
+ */
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
 		super(materialIn, slot, builder);
@@ -21,14 +25,14 @@ public abstract class GeoArmorItem extends ArmorItem {
 
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
 		consumer.accept(new IClientItemExtensions() {
 			@Override
-			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack,
-					EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-				return (HumanoidModel<?>) GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass(), livingEntity)
-						.applyEntityStats(original).setCurrentItem(livingEntity, itemStack, equipmentSlot)
-						.applySlot(equipmentSlot);
+			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack,
+					EquipmentSlot slot, HumanoidModel<?> defaultModel) {
+				return (HumanoidModel<?>)GeoArmorRenderer.getRenderer(GeoArmorItem.this.getClass(), entity)
+						.applyEntityStats(defaultModel)
+						.setCurrentItem(entity, stack, slot)
+						.applySlot(slot);
 			}
 		});
 	}
@@ -38,6 +42,6 @@ public abstract class GeoArmorItem extends ArmorItem {
 	public final String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
 		Class<? extends ArmorItem> clazz = this.getClass();
 		GeoArmorRenderer renderer = GeoArmorRenderer.getRenderer(clazz, entity);
-		return renderer.getTextureLocation((ArmorItem) stack.getItem()).toString();
+		return renderer.getTextureLocation((ArmorItem)stack.getItem()).toString();
 	}
 }

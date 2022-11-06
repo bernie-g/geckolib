@@ -10,8 +10,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.cache.object.*;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.GeoModelProvider;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
+import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -19,12 +21,17 @@ import software.bernie.geckolib3.util.RenderUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface GeoObjectRenderer<T> {
+/**
+ * Base interface for all GeckoLib renderers.<br>
+ */
+public interface GeoRenderer<T extends GeoAnimatable> {
 	MultiBufferSource getBufferSource();
 
-	GeoModelProvider geoGeoModel();
+	GeoModel<T> geoGeoModel();
 
-	ResourceLocation getTextureLocation(T animatable);
+	default ResourceLocation getTextureLocation(T animatable) {
+		return geoGeoModel().getTextureResource(animatable);
+	}
 
 	default void render(BakedGeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
 						@Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
@@ -166,28 +173,10 @@ public interface GeoObjectRenderer<T> {
 	}
 
 	default float getWidthScale(T animatable) {
-		return 1F;
+		return 1f;
 	}
 
-	default float getHeightScale(T entity) {
-		return 1F;
-	}
-
-	/**
-	 * Use {@link GeoObjectRenderer#getInstanceId(Object)}<br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	default Integer getUniqueID(T animatable) {
-		return getInstanceId(animatable);
-	}
-
-	/**
-	 * Use {@link RenderUtils#prepMatrixForBone(PoseStack, GeoBone)}<br>
-	 * Remove in 1.20+
-	 */
-	@Deprecated(forRemoval = true)
-	default void preparePositionRotationScale(GeoBone bone, PoseStack poseStack) {
-		RenderUtils.prepMatrixForBone(poseStack, bone);
+	default float getHeightScale(T animatable) {
+		return 1f;
 	}
 }

@@ -9,7 +9,7 @@ import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.animatable.model.GeoModel;
@@ -24,7 +24,7 @@ import software.bernie.geckolib3.core.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.molang.MolangQueries;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
-import software.bernie.geckolib3.core.util.Axis;
+import software.bernie.geckolib3.core.object.Axis;
 
 import java.util.*;
 import java.util.function.Function;
@@ -59,7 +59,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected State animationState = State.STOPPED;
 	protected double tickOffset;
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
-	protected Function<T, EasingType> easingTypeFunction = animatable -> EasingType.LINEAR;
+	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
 
 	/**
@@ -163,21 +163,23 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Overrides the default ({@link EasingType#LINEAR}) {@code EasingType} for the controller
+	 * Sets the controller's {@link EasingType} override for animations.<br>
+	 * By default, the controller will use whatever {@code EasingType} was defined in the animation json
 	 * @param easingTypeFunction The new {@code EasingType} to use
 	 * @return this
 	 */
-	public AnimationController<T> setEasingTypeFunction(EasingType easingTypeFunction) {
-		return setEasingType(animatable -> easingTypeFunction);
+	public AnimationController<T> setOverrideEasingType(EasingType easingTypeFunction) {
+		return setOverrideEasingTypeFunction(animatable -> easingTypeFunction);
 	}
 
 	/**
-	 * Overrides the default ({@link EasingType#LINEAR}) {@code EasingType} function for the controller
+	 * Sets the controller's {@link EasingType} override function for animations.<br>
+	 * By default, the controller will use whatever {@code EasingType} was defined in the animation json
 	 * @param easingType The new {@code EasingType} to use
 	 * @return this
 	 */
-	public AnimationController<T> setEasingType(Function<T, EasingType> easingType) {
-		this.easingTypeFunction = easingType;
+	public AnimationController<T> setOverrideEasingTypeFunction(Function<T, EasingType> easingType) {
+		this.overrideEasingTypeFunction = easingType;
 
 		return this;
 	}
@@ -254,7 +256,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		if (this.needsAnimationReload || !rawAnimation.equals(this.currentRawAnimation)) {
-			GeoModel<T> model = this.animatable.getGeoModel().get();
+			GeoModel<T> model = (GeoModel<T>)this.animatable.getGeoModel().get();
 
 			if (model != null) {
 				Queue<AnimationProcessor.QueuedAnimation> animations = model.getAnimationProcessor().buildAnimationQueue(this.animatable, rawAnimation);
@@ -550,18 +552,18 @@ public class AnimationController<T extends GeoAnimatable> {
 												   Axis axis) {
 		KeyframeLocation<Keyframe<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
 		Keyframe<IValue> currentFrame = location.keyframe();
-		double startValue = currentFrame.getStartValue().get();
-		double endValue = currentFrame.getEndValue().get();
+		double startValue = currentFrame.startValue().get();
+		double endValue = currentFrame.endValue().get();
 
 		if (isRotation) {
-			if (!(currentFrame.getStartValue() instanceof Constant)) {
+			if (!(currentFrame.startValue() instanceof Constant)) {
 				startValue = Math.toRadians(startValue);
 
 				if (axis == Axis.X || axis == Axis.Y)
 					startValue *= -1;
 			}
 
-			if (!(currentFrame.getEndValue() instanceof Constant)) {
+			if (!(currentFrame.endValue() instanceof Constant)) {
 				endValue = Math.toRadians(endValue);
 
 				if (axis == Axis.X || axis == Axis.Y)
@@ -569,7 +571,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 		}
 
-		return new AnimationPoint(currentFrame, location.startTick(), currentFrame.getLength(), startValue, endValue);
+		return new AnimationPoint(currentFrame, location.startTick(), currentFrame.length(), startValue, endValue);
 	}
 
 	/**
@@ -583,10 +585,10 @@ public class AnimationController<T extends GeoAnimatable> {
 		double totalFrameTime = 0;
 
 		for (Keyframe<IValue> frame : frames) {
-			totalFrameTime += frame.getLength();
+			totalFrameTime += frame.length();
 
 			if (totalFrameTime > ageInTicks)
-				return new KeyframeLocation<>(frame, (ageInTicks - (totalFrameTime - frame.getLength())));
+				return new KeyframeLocation<>(frame, (ageInTicks - (totalFrameTime - frame.length())));
 		}
 
 		return new KeyframeLocation<>(frames.get(frames.size() - 1), ageInTicks);
@@ -603,16 +605,17 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * Every render frame, the {@code AnimationController} will call this handler for <u>each</u> animatable that is being rendered.
 	 * This handler defines which animation should be currently playing, and returning a {@link PlayState} to tell the controller what to do next.<br>
 	 * Example Usage:<br>
-	 * <pre>AnimationFrameHandler myIdleWalkHandler = event -> {
-	 * 	if (event.isMoving()) {
-	 * 		event.getController().setAnimation(myWalkAnimation);
-	 * 	}
-	 * 	else {
-	 * 		event.getController().setAnimation(myIdleAnimation);
-	 * 	}
+	 * <pre>{@code
+	 * AnimationFrameHandler myIdleWalkHandler = event -> {
+	 *	if (event.isMoving()) {
+	 *		event.getController().setAnimation(myWalkAnimation);
+	 *	}
+	 *	else {
+	 *		event.getController().setAnimation(myIdleAnimation);
+	 *	}
 	 *
-	 * 	return PlayState.CONTINUE;
-	 * };</pre>
+	 *	return PlayState.CONTINUE;
+	 *};}</pre>
 	 */
 	@FunctionalInterface
 	public interface AnimationStateHandler<A extends GeoAnimatable> {

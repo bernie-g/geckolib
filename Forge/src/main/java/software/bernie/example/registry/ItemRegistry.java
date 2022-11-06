@@ -13,17 +13,17 @@ import software.bernie.example.item.PistolItem;
 import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.geckolib3.GeckoLib;
 
-public class ItemRegistry {
+public final class ItemRegistry {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.MOD_ID);
 
 	public static final RegistryObject<BlockItem> HABITAT = ITEMS.register("habitat",
 			() -> new BlockItem(BlockRegistry.HABITAT_BLOCK.get(),
-					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
-	public static final RegistryObject<BlockItem> FERTILIZER_ITEM = ITEMS.register("fertilizer",
+					new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+	public static final RegistryObject<BlockItem> FERTILIZER = ITEMS.register("fertilizer",
 			() -> new BlockItem(BlockRegistry.FERTILIZER_BLOCK.get(),
-					new Item.Properties().tab(GeckoLibMod.geckolibItemGroup)));
+					new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
 
-	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jackintheboxitem",
+	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jack_in_the_box",
 			() -> new JackInTheBoxItem(new Item.Properties()));
 
 	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());

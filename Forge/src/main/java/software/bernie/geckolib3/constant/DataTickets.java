@@ -3,8 +3,8 @@ package software.bernie.geckolib3.constant;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.core.util.DataTicket;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import software.bernie.geckolib3.core.object.DataTicket;
+import software.bernie.geckolib3.model.data.EntityModelData;
 
 /**
  * Stores the default (builtin) {@link DataTicket DataTickets} used in Geckolib

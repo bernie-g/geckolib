@@ -9,9 +9,9 @@ import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.EasingType;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.core.manager.InstancedAnimationFactory;
-import software.bernie.geckolib3.core.manager.SingletonAnimationFactory;
+import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib3.core.animation.factory.InstancedAnimationFactory;
+import software.bernie.geckolib3.core.animation.factory.SingletonAnimationFactory;
 import software.bernie.geckolib3.loading.object.BakedModelFactory;
 import software.bernie.geckolib3.world.storage.GeckoLibIdTracker;
 

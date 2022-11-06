@@ -7,7 +7,7 @@ import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
-import software.bernie.geckolib3.core.util.DataTicket;
+import software.bernie.geckolib3.core.object.DataTicket;
 
 import javax.annotation.Nullable;
 import java.util.List;

@@ -14,14 +14,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
-import software.bernie.example.client.renderer.entity.BikeGeoRenderer;
-import software.bernie.example.client.renderer.entity.CarGeoRenderer;
-import software.bernie.example.client.renderer.entity.ExampleExtendedRendererEntityRenderer;
-import software.bernie.example.client.renderer.entity.ExampleGeoRenderer;
-import software.bernie.example.client.renderer.entity.LERenderer;
-import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
-import software.bernie.example.client.renderer.entity.TestGeoRenderer;
-import software.bernie.example.client.renderer.entity.TexturePerBoneTestEntityRenderer;
+import software.bernie.example.client.renderer.entity.*;
 import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
 import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
 import software.bernie.example.item.GeckoArmorItem;
@@ -32,7 +25,7 @@ import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.renderers.geo.GeoArmorRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class ClientListener {
+public final class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
@@ -42,15 +35,13 @@ public class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.CAR_ENTITY.get(), CarGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.TEST_ENTITY.get(), TestGeoRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
-			event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(),
-					ExampleExtendedRendererEntityRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(),
-					TexturePerBoneTestEntityRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), TexturePerBoneTestEntityRenderer::new);
+
+			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 
 			event.registerBlockEntityRenderer(TileRegistry.HABITAT_TILE.get(), HabitatTileRenderer::new);
 			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
-
-			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 		}
 	}
 
@@ -63,8 +54,7 @@ public class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
-		if (GeckoLibMod.shouldRegisterExamples()) {
+		if (GeckoLibMod.shouldRegisterExamples())
 			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.HABITAT_BLOCK.get(), RenderType.translucent());
-		}
 	}
 }

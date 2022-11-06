@@ -23,7 +23,7 @@ import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -34,7 +34,7 @@ import software.bernie.geckolib3.util.RenderUtils;
 import javax.annotation.Nonnull;
 
 public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
-		implements GeoObjectRenderer<T>, BlockEntityRenderer {
+		implements GeoRenderer<T>, BlockEntityRenderer {
 	static {
 		AnimationController.addModelFetcher((GeoAnimatable object) -> {
 			if (object instanceof BlockEntity tile) {
@@ -70,7 +70,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -157,7 +157,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable>
 
 	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 

@@ -13,7 +13,7 @@ import java.util.Optional;
  */
 public interface GeoModel<E extends GeoAnimatable> {
 	/**
-	 * Get the
+	 * Get the baked model data for this model based on the provided string location
 	 * @param location The resource path of the baked model (usually the animatable's id string)
 	 * @return The BakedGeoModel
 	 */
@@ -43,13 +43,19 @@ public interface GeoModel<E extends GeoAnimatable> {
 	Animation getAnimation(E animatable, String name);
 
 	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, int, AnimationEvent)} for custom animation work
+	 */
+	void handleAnimations(E animatable, int instanceId, AnimationEvent<E> animationEvent);
+
+	/**
 	 * This method is called once per render frame for each {@link software.bernie.geckolib3.core.animatable.GeoAnimatable} being rendered.<br>
 	 * Override to set custom animations (such as head rotation, etc).
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
 	 * @param instanceId The instance id of the {@code GeoAnimatable}
 	 * @param animationEvent An {@link AnimationEvent} instance created to hold animation data for the {@code animatable} for this method call
 	 */
-	default void setCustomAnimations(E animatable, int instanceId, AnimationEvent<?> animationEvent) {}
+	default void setCustomAnimations(E animatable, int instanceId, AnimationEvent<E> animationEvent) {}
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>

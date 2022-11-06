@@ -31,13 +31,13 @@ import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.cache.object.GeoCube;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.GeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib3.model.data.EntityModelData;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -47,7 +47,7 @@ import java.util.Collections;
 import java.util.List;
 
 public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> extends EntityRenderer<T>
-		implements GeoObjectRenderer<T> {
+		implements GeoRenderer<T> {
 	protected final AnimatedGeoModel<T> model;
 	protected final List<GeoLayerRenderer<T>> layerRenderers = new ObjectArrayList<>();
 	protected Matrix4f dispatchedMat = new Matrix4f();
@@ -101,7 +101,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 		this.leggings = animatable.getItemBySlot(EquipmentSlot.LEGS);
 		this.boots = animatable.getItemBySlot(EquipmentSlot.FEET);
 
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
 				packedOverlay, red, green, blue, partialTicks);
 	}
 
@@ -290,7 +290,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & GeoAnimatable> 
 
 	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 

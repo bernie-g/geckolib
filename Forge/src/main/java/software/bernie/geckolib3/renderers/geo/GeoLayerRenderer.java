@@ -8,12 +8,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.model.provider.GeoModel;
+import software.bernie.geckolib3.model.GeoModel;
 
 public abstract class GeoLayerRenderer<T extends Entity & GeoAnimatable> {
-	protected final GeoObjectRenderer<T> entityRenderer;
+	protected final GeoRenderer<T> entityRenderer;
 
-	public GeoLayerRenderer(GeoObjectRenderer<T> entityRendererIn) {
+	public GeoLayerRenderer(GeoRenderer<T> entityRendererIn) {
 		this.entityRenderer = entityRendererIn;
 	}
 
@@ -46,7 +46,7 @@ public abstract class GeoLayerRenderer<T extends Entity & GeoAnimatable> {
 		return this.entityRenderer.geoGeoModel();
 	}
 
-	public GeoObjectRenderer<T> getRenderer(){
+	public GeoRenderer<T> getRenderer(){
 		return this.entityRenderer;
 	}
 

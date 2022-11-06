@@ -1,8 +1,10 @@
 package software.bernie.geckolib3.core.animation;
 
+import com.eliotlash.mclib.utils.Interpolations;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.Keyframe;
 
 import java.util.Locale;
@@ -17,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <a href="https://easings.net/">Easings.net</a><br>
  * <a href="https://cubic-bezier.com">Cubic-Bezier.com</a><br>
  */
+@SuppressWarnings("unused")
 @FunctionalInterface
 public interface EasingType {
 	final Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
@@ -54,7 +57,22 @@ public interface EasingType {
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 
-	Double2DoubleFunction buildTransformer(double value);
+	Double2DoubleFunction buildTransformer(Double value);
+
+	static double lerpWithOverride(AnimationPoint animationPoint, EasingType override) {
+		return override == null ? animationPoint.keyFrame().easingType().apply(animationPoint) : override.apply(animationPoint);
+	}
+
+	default double apply(AnimationPoint animationPoint) {
+		return apply(animationPoint, animationPoint.keyFrame().easingArgs() == null ? null : (Double)animationPoint.keyFrame().easingArgs().get(0), animationPoint.currentTick() / animationPoint.transitionLength());
+	}
+
+	default double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+		if (animationPoint.currentTick() >= animationPoint.transitionLength())
+			return (float)animationPoint.animationEndValue();
+
+		return Interpolations.lerp(animationPoint.animationStartValue(), animationPoint.animationEndValue(), buildTransformer(easingValue).apply(lerpValue));
+	}
 
 	/**
 	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves.<br>
@@ -76,7 +94,7 @@ public interface EasingType {
 	 * @return A usable {@code EasingType} instance
 	 */
 	static EasingType fromJson(JsonElement json) {
-		if (json == null || !(json instanceof JsonPrimitive primitive) || !primitive.isString())
+		if (!(json instanceof JsonPrimitive primitive) || !primitive.isString())
 			return LINEAR;
 
 		return fromString(primitive.getAsString().toLowerCase(Locale.ROOT));
@@ -205,8 +223,10 @@ public interface EasingType {
 	 * {@code f(t) = 1 - (cos(t * π) / 2))^3 * cos(t * n * π)}<br>
 	 * <a href="http://easings.net/#easeInElastic">Easings.net#easeInElastic</a>
 	 */
-	static Double2DoubleFunction elastic(double n) {
-		return t -> 1 - Math.pow(Math.cos(t * Math.PI / 2f), 3) * Math.cos(t * n * Math.PI);
+	static Double2DoubleFunction elastic(Double n) {
+		double n2 = n == null ? 1 : n;
+
+		return t -> 1 - Math.pow(Math.cos(t * Math.PI / 2f), 3) * Math.cos(t * n2 * Math.PI);
 	}
 
 	/**
@@ -215,11 +235,13 @@ public interface EasingType {
 	 * Thanks to <b>Waterded#6455</b> for making the bounce adjustable, and <b>GiantLuigi4#6616</b> for additional cleanup.<br>
 	 * <a href="http://easings.net/#easeInBounce">Easings.net#easeInBounce</a>
 	 */
-	static Double2DoubleFunction bounce(double n) {
+	static Double2DoubleFunction bounce(Double n) {
+		final double n2 = n == null ? 0.5d : n;
+
 		Double2DoubleFunction one = x -> 121f / 16f * x * x;
-		Double2DoubleFunction two = x -> 121f / 4f * n * Math.pow(x - 6f / 11f, 2) + 1 - n;
-		Double2DoubleFunction three = x -> 121 * n * n * Math.pow(x - 9f / 11f, 2) + 1 - n * n;
-		Double2DoubleFunction four = x -> 484 * n * n * n * Math.pow(x - 10.5f / 11f, 2) + 1 - n * n * n;
+		Double2DoubleFunction two = x -> 121f / 4f * n2 * Math.pow(x - 6f / 11f, 2) + 1 - n2;
+		Double2DoubleFunction three = x -> 121 * n2 * n2 * Math.pow(x - 9f / 11f, 2) + 1 - n2 * n2;
+		Double2DoubleFunction four = x -> 484 * n2 * n2 * n2 * Math.pow(x - 10.5f / 11f, 2) + 1 - n2 * n2 * n2;
 
 		return t -> Math.min(Math.min(one.apply(t), two.apply(t)), Math.min(three.apply(t), four.apply(t)));
 	}
@@ -229,8 +251,10 @@ public interface EasingType {
 	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t * n * 1.70158)</code><br>
 	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	 */
-	static Double2DoubleFunction back(double n) {
-		return t -> t * t * ((n * 1.70158d + 1) * t * n * 1.70158d);
+	static Double2DoubleFunction back(Double n) {
+		final double n2 = n == null ? 1d : n;
+
+		return t -> t * t * ((n2 * 1.70158d + 1) * t * n2 * 1.70158d);
 	}
 
 	/**
@@ -269,11 +293,13 @@ public interface EasingType {
 	 * Returns a stepped value based on the nearest step to the input value.<br>
 	 * The size (grade) of the steps depends on the provided value of {@code n}
 	 **/
-	static Double2DoubleFunction step(double n) {
-		if (n < 2)
-			throw new IllegalArgumentException("Steps must be >= 2, got: " + n);
+	static Double2DoubleFunction step(Double n) {
+		double n2 = n == null ? 2 : n;
 
-		final int steps = (int)n;
+		if (n2 < 2)
+			throw new IllegalArgumentException("Steps must be >= 2, got: " + n2);
+
+		final int steps = (int)n2;
 
 		return t -> {
 			double result = 0;

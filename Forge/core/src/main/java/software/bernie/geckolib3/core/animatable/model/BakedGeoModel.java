@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.core.animatable.model;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -7,6 +8,7 @@ import java.util.Optional;
  * Mostly an internal placeholder to allow for splitting up core (non-Minecraft) libraries
  */
 public interface BakedGeoModel {
+	List<? extends GeoBone> getBones();
 	/**
 	 * Gets a bone from this model by name.<br>
 	 * Generally not a very efficient method, should be avoided where possible.

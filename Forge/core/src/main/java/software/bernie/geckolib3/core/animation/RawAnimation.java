@@ -18,7 +18,7 @@ import java.util.Objects;
  * RawAnimation instances should be cached statically where possible to reduce overheads and improve efficiency.
  * <br><br>
  * Example usage: <br>
- * <code>RawAnimation.begin().thenPlay("action.open_box").thenLoop("state.stay_open")</code>
+ * <pre>{@code RawAnimation.begin().thenPlay("action.open_box").thenLoop("state.stay_open")}</pre>
  */
 public final class RawAnimation {
 	private final List<Stage> animationList = new ObjectArrayList<>();

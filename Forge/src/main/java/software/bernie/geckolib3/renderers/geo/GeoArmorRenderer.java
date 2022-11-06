@@ -18,7 +18,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.ModList;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.compat.PatchouliCompat;
@@ -28,7 +27,7 @@ import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.util.EModelRenderCycle;
@@ -44,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> extends HumanoidModel
-		implements GeoObjectRenderer<T>, ModelFetcher<T> {
+		implements GeoRenderer<T>, ModelFetcher<T> {
 	protected static Map<Class<? extends ArmorItem>, Supplier<GeoArmorRenderer>> CONSTRUCTORS = new ConcurrentHashMap<>();
 	public static Map<Class<? extends ArmorItem>, ConcurrentHashMap<UUID, GeoArmorRenderer<?>>> LIVING_ENTITY_RENDERERS = new ConcurrentHashMap<>();
 	// Rename this in breaking change to ARMOR_ITEM_RENDERERS
@@ -208,7 +207,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.currentArmorItem = animatable;
 
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
 				packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
@@ -225,7 +224,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 			bone.setLocalSpaceMatrix(localMatrix);
 		}
 
-		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -333,7 +332,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 
 	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 

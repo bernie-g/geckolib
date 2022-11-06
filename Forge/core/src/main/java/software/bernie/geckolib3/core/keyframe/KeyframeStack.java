@@ -27,15 +27,15 @@ public record KeyframeStack<T extends Keyframe<?>>(List<T> xKeyframes, List<T> y
 		double zTime = 0;
 
 		for (T frame : xKeyframes()) {
-			xTime += frame.getLength();
+			xTime += frame.length();
 		}
 
 		for (T frame : yKeyframes()) {
-			yTime += frame.getLength();
+			yTime += frame.length();
 		}
 
 		for (T frame : zKeyframes()) {
-			zTime += frame.getLength();
+			zTime += frame.length();
 		}
 
 		return Math.max(xTime, Math.max(yTime, zTime));

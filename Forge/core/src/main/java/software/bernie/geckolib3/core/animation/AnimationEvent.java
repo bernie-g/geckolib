@@ -2,7 +2,7 @@ package software.bernie.geckolib3.core.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.util.DataTicket;
+import software.bernie.geckolib3.core.object.DataTicket;
 
 import java.util.Map;
 
@@ -21,6 +21,10 @@ public class AnimationEvent<T extends GeoAnimatable> {
 
 	protected AnimationController<T> controller;
 	public double animationTick;
+
+	public AnimationEvent(T animatable, float partialTick) {
+		this(animatable, 0, 0, partialTick, false);
+	}
 
 	public AnimationEvent(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
 		this.animatable = animatable;

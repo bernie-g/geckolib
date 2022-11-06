@@ -1,7 +1,5 @@
 package software.bernie.example.block;
 
-import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -21,8 +19,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import software.bernie.example.registry.TileRegistry;
 
-public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
+import javax.annotation.Nullable;
 
+public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
 	public HabitatBlock() {

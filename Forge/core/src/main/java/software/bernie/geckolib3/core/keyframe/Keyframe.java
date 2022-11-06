@@ -29,18 +29,6 @@ public record Keyframe<T>(double length, T startValue, T endValue, EasingType ea
 		this(length, startValue, endValue, easingType, new ObjectArrayList<>(0));
 	}
 
-	public Double getLength() {
-		return length;
-	}
-
-	public T getStartValue() {
-		return startValue;
-	}
-
-	public T getEndValue() {
-		return endValue;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.length, this.startValue, this.endValue, this.easingType, this.easingArgs);

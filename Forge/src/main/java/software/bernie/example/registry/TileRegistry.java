@@ -8,14 +8,14 @@ import software.bernie.example.block.tile.HabitatTileEntity;
 import software.bernie.example.block.tile.FertilizerTileEntity;
 import software.bernie.geckolib3.GeckoLib;
 
-public class TileRegistry {
+public final class TileRegistry {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
 			.create(ForgeRegistries.BLOCK_ENTITY_TYPES, GeckoLib.MOD_ID);
 
 	public static final RegistryObject<BlockEntityType<HabitatTileEntity>> HABITAT_TILE = TILES
-			.register("habitattile", () -> BlockEntityType.Builder
+			.register("habitat", () -> BlockEntityType.Builder
 					.of(HabitatTileEntity::new, BlockRegistry.HABITAT_BLOCK.get()).build(null));
 	public static final RegistryObject<BlockEntityType<FertilizerTileEntity>> FERTILIZER = TILES
-			.register("fertilizertile", () -> BlockEntityType.Builder
+			.register("fertilizer", () -> BlockEntityType.Builder
 					.of(FertilizerTileEntity::new, BlockRegistry.FERTILIZER_BLOCK.get()).build(null));
 }

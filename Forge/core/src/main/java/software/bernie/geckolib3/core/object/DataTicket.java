@@ -1,4 +1,4 @@
-package software.bernie.geckolib3.core.util;
+package software.bernie.geckolib3.core.object;
 
 import java.util.Map;
 import java.util.Objects;
@@ -8,7 +8,7 @@ import java.util.Objects;
  * @param id The name of the data value
  * @param objectType The class type of the data
  */
-public record DataTicket<D>(String id, Class<D> objectType) {
+public record DataTicket<D>(String id, Class<? extends D> objectType) {
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.id, this.objectType);

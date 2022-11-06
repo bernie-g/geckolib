@@ -1,15 +1,15 @@
 package software.bernie.geckolib3.core.animation;
 
+import com.eliotlash.mclib.utils.Interpolations;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.animatable.model.BakedGeoModel;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.animatable.model.GeoModel;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
-import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
-import software.bernie.geckolib3.core.util.MathUtil;
 
 import java.util.*;
 
@@ -58,19 +58,19 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
 	public void tickAnimation(T animatable, int instanceId, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
-		AnimationData manager = animatable.getFactory().getOrCreateAnimationData(instanceId);
-		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(manager.getBoneSnapshotCollection());
+		AnimationData<T> animationData = animatable.getFactory().getOrCreateAnimationData(instanceId);
+		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animationData.getBoneSnapshotCollection());
 		List<GeoBone> modifiedBones = new ObjectArrayList<>();
 
 		resetBoneTransformationMarkers();
 
-		for (AnimationController<T> controller : manager.getAnimationControllers().values()) {
+		for (AnimationController<T> controller : animationData.getAnimationControllers().values()) {
 			if (this.reloadAnimations) {
 				controller.markNeedsReload();
 				controller.getBoneAnimationQueues().clear();
 			}
 
-			controller.isJustStarting = manager.isFirstTick;
+			controller.isJustStarting = animationData.isFirstTick();
 
 			event.withController(controller);
 			controller.process(seekTime, event, this.bones.values(), boneSnapshots, crashWhenCantFindBone);
@@ -89,12 +89,12 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				AnimationPoint scaleXPoint = boneAnimation.scaleXQueue().poll();
 				AnimationPoint scaleYPoint = boneAnimation.scaleYQueue().poll();
 				AnimationPoint scaleZPoint = boneAnimation.scaleZQueue().poll();
-				EasingType easingType = controller.easingTypeFunction.apply(animatable);
+				EasingType easingType = controller.overrideEasingTypeFunction.apply(animatable);
 
 				if (rotXPoint != null && rotYPoint != null && rotZPoint != null) {
-					bone.setRotX(MathUtil.lerpValues(rotXPoint, easingType) + initialSnapshot.getRotX());
-					bone.setRotY(MathUtil.lerpValues(rotYPoint, easingType) + initialSnapshot.getRotY());
-					bone.setRotZ(MathUtil.lerpValues(rotZPoint, easingType) + initialSnapshot.getRotZ());
+					bone.setRotX((float)EasingType.lerpWithOverride(rotXPoint, easingType) + initialSnapshot.getRotX());
+					bone.setRotY((float)EasingType.lerpWithOverride(rotYPoint, easingType) + initialSnapshot.getRotY());
+					bone.setRotZ((float)EasingType.lerpWithOverride(rotZPoint, easingType) + initialSnapshot.getRotZ());
 
 					snapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
 					snapshot.startRotAnim();
@@ -105,11 +105,11 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 				if (posXPoint != null && posYPoint != null && posZPoint != null) {
 					bone.setPosX(
-							MathUtil.lerpValues(posXPoint, easingType));
+							(float)EasingType.lerpWithOverride(posXPoint, easingType));
 					bone.setPosY(
-							MathUtil.lerpValues(posYPoint, easingType));
+							(float)EasingType.lerpWithOverride(posYPoint, easingType));
 					bone.setPosZ(
-							MathUtil.lerpValues(posZPoint, easingType));
+							(float)EasingType.lerpWithOverride(posZPoint, easingType));
 					snapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
 					snapshot.startPosAnim();
 
@@ -118,9 +118,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				}
 
 				if (scaleXPoint != null && scaleYPoint != null && scaleZPoint != null) {
-					bone.setScaleX(MathUtil.lerpValues(scaleXPoint, easingType));
-					bone.setScaleY(MathUtil.lerpValues(scaleYPoint, easingType));
-					bone.setScaleZ(MathUtil.lerpValues(scaleZPoint, easingType));
+					bone.setScaleX((float)EasingType.lerpWithOverride(scaleXPoint, easingType));
+					bone.setScaleY((float)EasingType.lerpWithOverride(scaleYPoint, easingType));
+					bone.setScaleZ((float)EasingType.lerpWithOverride(scaleZPoint, easingType));
 					snapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 					snapshot.startScaleAnim();
 
@@ -131,7 +131,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		}
 
 		this.reloadAnimations = false;
-		double resetTickLength = manager.getResetSpeed();
+		double resetTickLength = animatable.getBoneResetTime();
 
 		for (GeoBone bone : modifiedBones) {
 			BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
@@ -154,12 +154,12 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				double percentageReset = Math
 						.min((seekTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
-				bone.setRotX(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotX(),
-						initialSnapshot.getRotX()));
-				bone.setRotY(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotY(),
-						initialSnapshot.getRotY()));
-				bone.setRotZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getRotZ(),
-						initialSnapshot.getRotZ()));
+				bone.setRotX((float)Interpolations.lerp(saveSnapshot.getRotX(),
+						initialSnapshot.getRotX(), percentageReset));
+				bone.setRotY((float)Interpolations.lerp(saveSnapshot.getRotY(),
+						initialSnapshot.getRotY(), percentageReset));
+				bone.setRotZ((float)Interpolations.lerp(saveSnapshot.getRotZ(),
+						initialSnapshot.getRotZ(), percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
@@ -172,12 +172,12 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				double percentageReset = Math
 						.min((seekTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
-				bone.setPosX(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetX(),
-						initialSnapshot.getOffsetX()));
-				bone.setPosY(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetY(),
-						initialSnapshot.getOffsetY()));
-				bone.setPosZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getOffsetZ(),
-						initialSnapshot.getOffsetZ()));
+				bone.setPosX((float)Interpolations.lerp(saveSnapshot.getOffsetX(),
+						initialSnapshot.getOffsetX(), percentageReset));
+				bone.setPosY((float)Interpolations.lerp(saveSnapshot.getOffsetY(),
+						initialSnapshot.getOffsetY(), percentageReset));
+				bone.setPosZ((float)Interpolations.lerp(saveSnapshot.getOffsetZ(),
+						initialSnapshot.getOffsetZ(), percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
@@ -187,19 +187,18 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				if (saveSnapshot.isScaleAnimInProgress())
 					saveSnapshot.stopScaleAnim(seekTime);
 
-				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength,
-						1);
+				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
 
-				bone.setScaleX(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleX(), initialSnapshot.getScaleX()));
-				bone.setScaleY(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleY(), initialSnapshot.getScaleY()));
-				bone.setScaleZ(MathUtil.lerpValues(percentageReset, saveSnapshot.getScaleZ(), initialSnapshot.getScaleZ()));
+				bone.setScaleX((float)Interpolations.lerp(saveSnapshot.getScaleX(), initialSnapshot.getScaleX(), percentageReset));
+				bone.setScaleY((float)Interpolations.lerp(saveSnapshot.getScaleY(), initialSnapshot.getScaleY(), percentageReset));
+				bone.setScaleZ((float)Interpolations.lerp(saveSnapshot.getScaleZ(), initialSnapshot.getScaleZ(), percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 			}
 		}
 
-		manager.isFirstTick = false;
+		animationData.finishFirstTick();
 	}
 
 	/**
@@ -235,22 +234,30 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Register model renderer. Each AnimatedModelRenderer (group in blockbench)
-	 * NEEDS to be registered via this method.
-	 *
-	 * @param bone The model renderer
+	 * Adds the given bone to the bones list for this processor.<br>
+	 * This is normally handled automatically by Geckolib.<br>
+	 * Failure to properly register a bone will break things.
 	 */
-	public void registerModelRenderer(GeoBone bone) {
+	public void registerGeoBone(GeoBone bone) {
 		bone.saveInitialSnapshot();
-		bones.put(bone.getName(), bone);
+		this.bones.put(bone.getName(), bone);
+
+		for (GeoBone child : bone.getChildBones()) {
+			registerGeoBone(bone);
+		}
 	}
 
 	/**
 	 * Clear the {@link GeoBone GeoBones} currently registered to the processor,
-	 * to prepare for a new collection of {@code GeoBones} to be registered
+	 * then prepares the processor for a new model.<br>
+	 * Should be called whenever switching models to render/animate
 	 */
-	public void clearModelRendererList() {
+	public void setActiveModel(BakedGeoModel model) {
 		this.bones.clear();
+
+		for (GeoBone bone : model.getBones()) {
+			registerGeoBone(bone);
+		}
 	}
 
 	/**

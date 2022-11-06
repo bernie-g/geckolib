@@ -24,7 +24,7 @@ import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntityWithoutLevelRenderer
-		implements GeoObjectRenderer<T> {
+		implements GeoRenderer<T> {
 	// Register a model fetcher for this renderer
 	static {
 		AnimationController.addModelFetcher(animatable -> {
@@ -101,7 +101,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 
 	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 
@@ -154,7 +154,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
 	}
 
 	@Override
@@ -169,7 +169,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 			bone.setLocalSpaceMatrix(localMatrix);
 		}
 
-		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 

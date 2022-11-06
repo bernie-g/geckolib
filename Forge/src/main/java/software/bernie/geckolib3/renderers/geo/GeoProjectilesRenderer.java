@@ -21,10 +21,10 @@ import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.model.provider.GeoModel;
-import software.bernie.geckolib3.model.provider.data.EntityModelData;
+import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib3.model.data.EntityModelData;
 import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 
 public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T>
-		implements GeoObjectRenderer<T> {
+		implements GeoRenderer<T> {
 	static {
 		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ?
 				(IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
@@ -92,7 +92,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.animatable = animatable;
 
-		GeoObjectRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
+		GeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
 				packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
@@ -113,7 +113,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoObjectRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -148,7 +148,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 
 	@AvailableSince(value = "3.1.24")
 	@Override
-	public float getHeightScale(T entity) {
+	public float getHeightScale(T animatable) {
 		return this.heightScale;
 	}
 
