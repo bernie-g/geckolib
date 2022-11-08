@@ -1,30 +1,29 @@
 package software.bernie.example.entity;
 
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationEvent;
+import software.bernie.geckolib3.animatable.GeoEntity;
+import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animation.AnimationData;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
-public class ReplacedCreeperEntity implements GeoAnimatable {
-	AnimationFactory factory = GeckoLibUtil.createFactory(this);
+/**
+ * Replacement {@link net.minecraft.world.entity.monster.Creeper} {@link GeoEntity} to showcase
+ * replacing the model and animations of an existing entity
+ * @see software.bernie.geckolib3.renderer.GeoReplacedEntityRenderer
+ * @see software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer
+ * @see software.bernie.example.client.model.entity.ReplacedCreeperModel
+ */
+public class ReplacedCreeperEntity implements GeoEntity {
+	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
+	/**
+	 * Register the idle + walk animations for the entity.<br>
+	 * In this situation we're going to use a generic controller that is already built for us
+	 * @see software.bernie.geckolib3.constant.DefaultAnimations
+	 */
 	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, "controller", 20, this::predicate));
-	}
-
-	private <P extends GeoAnimatable> PlayState predicate(AnimationEvent<P> event) {
-		if (!(event.getLimbSwingAmount() > -0.15F && event.getLimbSwingAmount() < 0.15F)) {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_walk", EDefaultLoopTypes.LOOP));
-		} else {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("creeper_idle", EDefaultLoopTypes.LOOP));
-		}
-		return PlayState.CONTINUE;
+	public void registerControllers(AnimationData<?> data) {
+		data.addAnimationController(DefaultAnimations.genericWalkIdleController(this));
 	}
 
 	@Override

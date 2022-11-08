@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.GeckoLibException;
 import software.bernie.geckolib3.cache.GeckoLibCache;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.Animation;
 import software.bernie.geckolib3.core.animation.AnimationData;
@@ -20,6 +21,8 @@ import software.bernie.geckolib3.core.molang.MolangQueries;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
 import software.bernie.geckolib3.renderer.GeoRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
+
+import java.util.Optional;
 
 /**
  * Base class for all code-based model objects.<br>
@@ -86,6 +89,16 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 	}
 
 	/**
+	 * Gets a bone from this model by name.<br>
+	 * Generally not a very efficient method, should be avoided where possible.
+	 * @param name The name of the bone
+	 * @return An {@link Optional} containing the {@link software.bernie.geckolib3.cache.object.GeoBone} if one matches, otherwise an empty Optional
+	 */
+	public Optional<software.bernie.geckolib3.cache.object.GeoBone> getBone(String name) {
+		return Optional.ofNullable((GeoBone)getAnimationProcessor().getBone(name));
+	}
+
+	/**
 	 * Get the baked animation object used for rendering from the given resource path
 	 */
 	@Override
@@ -107,7 +120,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 	@Override
 	public final void handleAnimations(T animatable, int instanceId, AnimationEvent<T> animationEvent) {
 		Minecraft mc = Minecraft.getInstance();
-		AnimationData<T> animationData = animatable.getFactory().getOrCreateAnimationData(instanceId);
+		AnimationData<T> animationData = animatable.getFactory().getAnimationData(instanceId);
 		double currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
 
 		if (animationData.getFirstTickTime() == -1)

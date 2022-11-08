@@ -25,7 +25,7 @@ public interface GeoModel<E extends GeoAnimatable> {
 	 * @param name The name of the bone
 	 * @return An {@link Optional} containing the {@link GeoBone} if one matches, otherwise an empty Optional
 	 */
-	default Optional<GeoBone> getBone(String name) {
+	default Optional<? extends GeoBone> getBone(String name) {
 		return Optional.ofNullable(getAnimationProcessor().getBone(name));
 	}
 

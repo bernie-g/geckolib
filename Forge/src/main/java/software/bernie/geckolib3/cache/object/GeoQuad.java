@@ -15,6 +15,8 @@ public record GeoQuad(GeoVertex[] vertices, Vector3f normal, Direction direction
 			float texHeight, boolean mirror, Direction direction) {
 		float uWidth = (u + uSize) / texWidth;
 		float vHeight = (v + vSize) / texHeight;
+		u /= texWidth;
+		v /= texHeight;
 		Vector3f normal = direction.step();
 
 		if (mirror) {

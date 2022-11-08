@@ -9,22 +9,22 @@ import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.animatable.model.GeoModel;
+import software.bernie.geckolib3.core.keyframe.*;
 import software.bernie.geckolib3.core.keyframe.event.CustomInstructionKeyframeEvent;
+import software.bernie.geckolib3.core.keyframe.event.ParticleKeyframeEvent;
+import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.keyframe.event.data.CustomInstructionKeyframeData;
 import software.bernie.geckolib3.core.keyframe.event.data.KeyFrameData;
 import software.bernie.geckolib3.core.keyframe.event.data.ParticleKeyframeData;
-import software.bernie.geckolib3.core.keyframe.event.ParticleKeyframeEvent;
-import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.keyframe.*;
 import software.bernie.geckolib3.core.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.molang.MolangQueries;
-import software.bernie.geckolib3.core.state.BoneSnapshot;
 import software.bernie.geckolib3.core.object.Axis;
+import software.bernie.geckolib3.core.object.PlayState;
+import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import java.util.*;
 import java.util.function.Function;
@@ -39,7 +39,6 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected final T animatable;
 	protected final String name;
 	protected final AnimationStateHandler<T> stateHandler;
-	protected final double transitionLength;
 	protected final Map<String, BoneAnimationQueue> boneAnimationQueues = new Object2ObjectOpenHashMap<>();
 	protected final Map<String, BoneSnapshot> boneSnapshots = new Object2ObjectOpenHashMap<>();
 	protected Queue<AnimationProcessor.QueuedAnimation> animationQueue = new LinkedList<>();
@@ -54,6 +53,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected ParticleKeyframeHandler<T> particleKeyframeHandler;
 	protected CustomKeyframeHandler<T> customKeyframeHandler;
 
+	protected double transitionLength;
 	protected RawAnimation currentRawAnimation;
 	protected AnimationProcessor.QueuedAnimation currentAnimation;
 	protected State animationState = State.STOPPED;
@@ -242,11 +242,17 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Overrides the animation transition time for the controller
+	 */
+	public void setTransitionLength(int ticks) {
+		this.transitionLength = ticks;
+	}
+
+	/**
 	 * Sets the currently loaded animation to the one provided.<br>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
 	 * Pass null to this method to tell the controller to stop.<br>
 	 * If {@link AnimationController#markNeedsReload()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
-	 * @param rawAnimation
 	 */
 	public void setAnimation(RawAnimation rawAnimation) {
 		if (rawAnimation == null || rawAnimation.getAnimationStages().isEmpty()) {

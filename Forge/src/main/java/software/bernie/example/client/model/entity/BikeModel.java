@@ -1,23 +1,25 @@
 package software.bernie.example.client.model.entity;
 
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.example.client.renderer.entity.BikeRenderer;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.DefaultedEntityGeoModel;
+import software.bernie.geckolib3.model.GeoModel;
 
-public class BikeModel extends AnimatedGeoModel<BikeEntity> {
-	@Override
-	public ResourceLocation getAnimationResource(BikeEntity entity) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "animations/bike.animation.json");
+/**
+ * Example {@link GeoModel} for the {@link BikeEntity}
+ * @see BikeRenderer
+ */
+public class BikeModel extends DefaultedEntityGeoModel<BikeEntity> {
+	public BikeModel() {
+		super(new ResourceLocation(GeckoLib.MOD_ID, "bike"));
 	}
 
+	// We want this entity to have a translucent render
 	@Override
-	public ResourceLocation getModelResource(BikeEntity entity) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "geo/bike.geo.json");
-	}
-
-	@Override
-	public ResourceLocation getTextureResource(BikeEntity entity) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "textures/model/entity/bike.png");
+	public RenderType getRenderType(BikeEntity animatable, ResourceLocation texture) {
+		return RenderType.entityTranslucent(getTextureResource(animatable));
 	}
 }

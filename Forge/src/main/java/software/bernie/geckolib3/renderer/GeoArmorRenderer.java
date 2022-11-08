@@ -1,3 +1,4 @@
+/*
 package software.bernie.geckolib3.renderer;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -20,25 +21,19 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.compat.PatchouliCompat;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationController.ModelFetcher;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.core.object.Color;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.GeoUtils;
-import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -89,11 +84,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		return null;
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link GeoArmorRenderer#registerArmorRenderer(Class, Supplier)}
 	 * @param itemClass
 	 * @param renderer
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	public static void registerArmorRenderer(Class<? extends ArmorItem> itemClass, GeoArmorRenderer renderer) {
 		for (Constructor<?> constructor : renderer.getClass().getConstructors()) {
@@ -125,10 +122,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		LIVING_ENTITY_RENDERERS.put(itemClass, new ConcurrentHashMap<>());
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link GeoArmorRenderer#getRenderer(Class, Entity)}
 	 * Remove at some point unless a use is found for it
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	public static GeoArmorRenderer getRenderer(Class<? extends ArmorItem> item, final Entity wearer,
 											   boolean forExtendedEntity) {
@@ -338,9 +337,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		return this.modelProvider.getTextureResource(animatable);
 	}
 
-	/**
+	*/
+/**
 	 * Everything after this point needs to be called every frame before rendering
-	 */
+	 *//*
+
 	public GeoArmorRenderer setCurrentItem(LivingEntity entity, ItemStack itemStack, EquipmentSlot armorSlot) {
 		this.entityLiving = entity;
 		this.itemStack = itemStack;
@@ -395,11 +396,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		return this;
 	}
 
-	/**
+	*/
+/**
 	 * Sets a specific bone (and its child-bones) to visible or not
 	 * @param boneName The name of the bone
 	 * @param isVisible Whether the bone should be visible
-	 */
+	 *//*
+
 	protected void setBoneVisibility(String boneName, boolean isVisible) {
 		if (boneName == null)
 			return;
@@ -407,9 +410,11 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		this.modelProvider.getBone(boneName).setHidden(!isVisible);
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link GeoArmorRenderer#setBoneVisibility(String, boolean)}
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	protected GeoBone getAndHideBone(String boneName) {
 		setBoneVisibility(boneName, false);
@@ -433,3 +438,4 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & GeoAnimatable> exte
 		return this.rtb;
 	}
 }
+*/

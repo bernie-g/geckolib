@@ -1,5 +1,6 @@
 package software.bernie.geckolib3.loading.json.raw;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
@@ -15,7 +16,7 @@ public record MinecraftGeometry(Bone[] bones, @Nullable String cape, @Nullable M
 	public static JsonDeserializer<MinecraftGeometry> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			JsonObject obj = json.getAsJsonObject();
-			Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", null), context, Bone.class);
+			Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", new JsonArray(0)), context, Bone.class);
 			String cape = GsonHelper.getAsString(obj, "cape", null);
 			ModelProperties modelProperties = GsonHelper.getAsObject(obj, "description", null, context, ModelProperties.class);
 

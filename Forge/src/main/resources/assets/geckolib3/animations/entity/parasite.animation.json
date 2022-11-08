@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"sneak": {
+		"move.sneak": {
 			"loop": true,
 			"bones": {
 				"head": {
@@ -26,7 +26,7 @@
 				}
 			}
 		},
-		"sprint": {
+		"move.run": {
 			"animation_length": 4.36,
 			"bones": {
 				"head": {
@@ -262,7 +262,7 @@
 				}
 			}
 		},
-		"idle": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 1.76,
 			"bones": {
@@ -426,8 +426,8 @@
 				}
 			}
 		},
-		"attack": {
-			"loop": true,
+		"attack.strike": {
+			"loop": false,
 			"animation_length": 0.84,
 			"bones": {
 				"head": {
@@ -624,7 +624,7 @@
 				}
 			}
 		},
-		"swim": {
+		"move.swim": {
 			"loop": true,
 			"animation_length": 1.76,
 			"bones": {
@@ -788,7 +788,7 @@
 				}
 			}
 		},
-		"walk": {
+		"move.walk": {
 			"loop": true,
 			"animation_length": 1.92,
 			"bones": {

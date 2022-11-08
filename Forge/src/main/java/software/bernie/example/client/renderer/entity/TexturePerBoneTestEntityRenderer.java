@@ -1,3 +1,4 @@
+/*
 package software.bernie.example.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,6 +16,7 @@ import software.bernie.example.entity.TexturePerBoneTestEntity;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
 import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
+
 
 public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<TexturePerBoneTestEntity> {
 	
@@ -83,3 +85,4 @@ public class TexturePerBoneTestEntityRenderer extends ExtendedGeoEntityRenderer<
 	}
 
 }
+*/

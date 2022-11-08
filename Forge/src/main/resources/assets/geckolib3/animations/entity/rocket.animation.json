@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"idle": {
+		"misc.idle": {
 			"animation_length": 0.04,
 			"bones": {
 				"Rocket": {

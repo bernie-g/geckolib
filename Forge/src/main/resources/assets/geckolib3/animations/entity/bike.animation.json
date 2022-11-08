@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.bike.idle": {
+		"misc.idle": {
 			"loop": true,
 			"bones": {
 				"body": {

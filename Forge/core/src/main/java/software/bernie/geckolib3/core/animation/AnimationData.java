@@ -7,6 +7,7 @@ package software.bernie.geckolib3.core.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.object.DataTicket;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class AnimationData<T extends GeoAnimatable> {
 	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
 	private final Map<String, AnimationController<T>> animationControllers = new Object2ObjectOpenHashMap<>();
+	private Map<DataTicket<?>, Object> extraData;
 
 	private double lastUpdateTime;
 	private boolean isFirstTick = true;
@@ -67,5 +69,24 @@ public class AnimationData<T extends GeoAnimatable> {
 
 	protected void finishFirstTick() {
 		this.isFirstTick = false;
+	}
+
+	/**
+	 * Set a custom data point to be used later
+	 * @param dataTicket The DataTicket for the data point
+	 * @param data The piece of data to store
+	 */
+	public <D> void setData(DataTicket<D> dataTicket, D data) {
+		if (this.extraData == null)
+			this.extraData = new Object2ObjectOpenHashMap<>();
+
+		this.extraData.put(dataTicket, data);
+	}
+
+	/**
+	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
+	 */
+	public <D> D getData(DataTicket<D> dataTicket) {
+		return this.extraData != null ? dataTicket.getData(this.extraData) : null;
 	}
 }

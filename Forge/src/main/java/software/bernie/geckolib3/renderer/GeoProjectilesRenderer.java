@@ -1,106 +1,165 @@
 package software.bernie.geckolib3.renderer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.AnimationUtils;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import org.jetbrains.annotations.ApiStatus.AvailableSince;
+import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
-import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.object.Color;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.model.GeoModel;
-import software.bernie.geckolib3.model.data.EntityModelData;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.IRenderCycle;
+import software.bernie.geckolib3.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib3.util.RenderUtils;
 
-import javax.annotation.Nonnull;
-import java.util.Collections;
+import java.util.List;
 
-public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T>
-		implements GeoRenderer<T> {
-	static {
-		AnimationController.addModelFetcher(animatable -> animatable instanceof Entity entity ?
-				(IAnimatableModel<Object>)AnimationUtils.getGeoModelForEntity(entity) : null);
-	}
+public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
+	protected final GeoModel<T> model;
+	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 
-	protected final AnimatedGeoModel<T> modelProvider;
-	protected float widthScale = 1;
-	protected float heightScale = 1;
-	protected Matrix4f dispatchedMat = new Matrix4f();
-	protected Matrix4f renderEarlyMat = new Matrix4f();
 	protected T animatable;
-	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
-	protected MultiBufferSource rtb = null;
 
-	public GeoProjectilesRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider) {
+	protected Matrix4f renderStartPose = new Matrix4f();
+	protected Matrix4f preRenderPose = new Matrix4f();
+
+	public GeoProjectilesRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
 		super(renderManager);
 
-		this.modelProvider = modelProvider;
+		this.model = model;
 	}
 
+	/**
+	 * Gets the model instance for this renderer
+	 */
 	@Override
-	public void render(T animatable, float yaw, float partialTick, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight) {
-		software.bernie.geckolib3.core.animatable.model.GeoModel model = this.modelProvider.getBakedModel(modelProvider.getModelResource(animatable));
-		this.dispatchedMat = poseStack.last().pose().copy();
+	public GeoModel<T> getGeoModel() {
+		return this.model;
+	}
 
-		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		poseStack.pushPose();
+	/**
+	 * Gets the {@link GeoAnimatable} instance currently being rendered
+	 */
+	@Override
+	public T getAnimatable() {
+		return this.animatable;
+	}
+
+	/**
+	 * Gets the {@code int} id that represents the current animatable's instance for animation purposes.
+	 * This is mostly useful for things like items, which have a single registered instance for all objects
+	 */
+	@Override
+	public int getInstanceId(T animatable) {
+		return animatable.getId();
+	}
+
+	/**
+	 * Shadowing override of {@link EntityRenderer#getTextureLocation}.<br>
+	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
+	 */
+	@Override
+	public ResourceLocation getTextureLocation(T animatable) {
+		return GeoRenderer.super.getTextureLocation(animatable);
+	}
+
+	/**
+	 * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
+	 */
+	@Override
+	public List<GeoRenderLayer<T>> getRenderLayers() {
+		return this.renderLayers;
+	}
+
+	/**
+	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+	 */
+	public GeoProjectilesRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
+		this.renderLayers.add(renderLayer);
+
+		return this;
+	}
+
+	/**
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
+	 * work such as scaling and translating.<br>
+	 * {@link PoseStack} translations made here are kept until the end of the render process
+	 */
+	@Override
+	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer,
+						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+						  float alpha) {
+		this.preRenderPose = poseStack.last().pose().copy();
+
 		poseStack.mulPose(Vector3f.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
 		poseStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
-
-		AnimationEvent<T> predicate = new AnimationEvent<T>(animatable, 0, 0, partialTick,
-				false, Collections.singletonList(new EntityModelData()));
-
-		modelProvider.setLivingAnimations(animatable, getInstanceId(animatable), predicate); // TODO change to setCustomAnimations in 1.20+
-		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
-
-		Color renderColor = getRenderColor(poseStack, animatable, bufferSource, null, partialTick, packedLight);
-		RenderType renderType = getRenderType(poseStack, animatable, getTextureLocation(animatable), bufferSource, null, partialTick, packedLight);
-
-		if (!animatable.isInvisibleTo(Minecraft.getInstance().player)) {
-			actuallyRender(partialTick, animatable, renderType, bufferSource, null, model, poseStack, packedLight,
-					getPackedOverlay(animatable, 0), renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
-					renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
-		}
-
-		poseStack.popPose();
-		super.render(animatable, yaw, partialTick, poseStack, bufferSource, packedLight);
 	}
 
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
-						  float alpha) {
-		this.renderEarlyMat = poseStack.last().pose().copy();
-		this.animatable = animatable;
+	public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack,
+					   MultiBufferSource bufferSource, int packedLight) {
+		this.animatable = entity;
 
-		GeoRenderer.super.preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		defaultRender(poseStack, entity, bufferSource, null, null, entityYaw, partialTick, packedLight);
 	}
 
+	@Override
+	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
+							   MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
+							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		float motionThreshold = getMotionAnimThreshold(animatable);
+		Vec3 velocity = animatable.getDeltaMovement();
+		float avgVelocity = ((float)Math.abs(velocity.x) + (float)Math.abs(velocity.y) + (float)Math.abs(velocity.z) / 3f);
+		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, avgVelocity >= motionThreshold);
+
+		this.model.setCustomAnimations(animatable, getInstanceId(animatable), animationEvent);
+
+		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
+			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+	}
+
+	/**
+	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
+	 */
+	@Override
+	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
+								  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
+								  int packedLight, int packedOverlay) {
+		if (!animatable.isSpectator())
+			GeoRenderer.super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+	}
+
+	/**
+	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
+	 * {@link PoseStack} transformations will be unused and lost once this method ends
+	 */
+	@Override
+	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer,
+						   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
+	}
+
+	/**
+	 * Renders the provided {@link GeoBone} and its associated child bones
+	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.dispatchedMat);
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderEarlyMat));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
 			bone.setLocalSpaceMatrix(localMatrix);
 
@@ -114,59 +173,17 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 				alpha);
 	}
 
-	// TODO 1.20+ change to instance method with T argument instead of entity
-	public static int getPackedOverlay(Entity entity, float uIn) {
-		return OverlayTexture.pack(OverlayTexture.u(uIn), OverlayTexture.v(false));
-	}
-
+	/**
+	 * Whether the entity's nametag should be rendered or not.<br>
+	 * Pretty much exclusively used in {@link EntityRenderer#renderNameTag}
+	 */
 	@Override
-	public GeoModel<T> getGeoModel() {
-		return this.modelProvider;
-	}
+	public boolean shouldShowName(T animatable) {
+		double nameRenderDistance = animatable.isDiscrete() ? 32d : 64d;
 
-	@AvailableSince(value = "3.1.24")
-	@Override
-	@Nonnull
-	public IRenderCycle getCurrentModelRenderCycle() {
-		return this.currentModelRenderCycle;
-	}
+		if (this.entityRenderDispatcher.distanceToSqr(animatable) >= nameRenderDistance * nameRenderDistance)
+			return false;
 
-	@AvailableSince(value = "3.1.24")
-	@Override
-	public void setCurrentModelRenderCycle(IRenderCycle currentModelRenderCycle) {
-		this.currentModelRenderCycle = currentModelRenderCycle;
+		return animatable == this.entityRenderDispatcher.crosshairPickEntity && animatable.hasCustomName() && Minecraft.renderNames();
 	}
-
-	@AvailableSince(value = "3.1.24")
-	@Override
-	public float getWidthScale(T animatable) {
-		return this.widthScale;
-	}
-
-	@AvailableSince(value = "3.1.24")
-	@Override
-	public float getHeightScale(T animatable) {
-		return this.heightScale;
-	}
-
-	@Override
-	public ResourceLocation getTextureLocation(T animatable) {
-		return this.modelProvider.getTextureResource(animatable);
-	}
-
-	@Override
-	public int getInstanceId(T animatable) {
-		return animatable.getUUID().hashCode();
-	}
-
-	@Override
-	public void setCurrentRTB(MultiBufferSource bufferSource) {
-		this.rtb = bufferSource;
-	}
-
-	@Override
-	public MultiBufferSource getBufferSource() {
-		return this.rtb;
-	}
-
 }

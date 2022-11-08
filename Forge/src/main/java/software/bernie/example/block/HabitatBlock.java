@@ -1,7 +1,6 @@
 package software.bernie.example.block;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -17,10 +16,19 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import software.bernie.example.block.entity.HabitatBlockEntity;
+import software.bernie.example.client.renderer.block.HabitatBlockRenderer;
 import software.bernie.example.registry.TileRegistry;
 
 import javax.annotation.Nullable;
 
+/**
+ * Example animated block using GeckoLib animations.<br>
+ * There's nothing to see here since the {@link Block} class itself has little to do with animations
+ * @see software.bernie.example.client.model.block.HabitatModel
+ * @see HabitatBlockEntity
+ * @see HabitatBlockRenderer
+ */
 public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
@@ -28,26 +36,16 @@ public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
 		super(Properties.of(Material.STONE).noOcclusion());
 	}
 
-	/*
-	 * Hides the normal block and only shows the block entity created below
-	 */
 	@Override
 	public RenderShape getRenderShape(BlockState state) {
 		return RenderShape.ENTITYBLOCK_ANIMATED;
 	}
 
-	/*
-	 * Adds that our block is faceable
-	 */
 	@Override
 	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
-	/*
-	 * Sets the correct facing, needed to flip this block on the 180, should have
-	 * done in the model in BB but eh
-	 */
 	@Nullable
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext context) {
@@ -55,48 +53,30 @@ public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
 				context.getHorizontalDirection().getClockWise().getClockWise());
 	}
 
-	/*
-	 * Creates the block entity that we have playing our animations and rendering
-	 * the block
-	 */
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
 		return TileRegistry.HABITAT_TILE.get().create(blockPos, blockState);
 	}
 
-	/*
-	 * Sets the correct shape depending on your facing
-	 */
 	@Override
 	public VoxelShape getShape(BlockState state, BlockGetter world, BlockPos pos, CollisionContext context) {
-		Direction direction = (Direction) state.getValue(FACING);
-		switch (direction) {
-		case NORTH: {
-			return Block.box(0, 0, 0, 32, 16, 16);
-		}
-		case SOUTH: {
-			return Block.box(-16, 0, 0, 16, 16, 16);
-		}
-		case WEST: {
-			return Block.box(0, 0, -16, 16, 16, 16);
-		}
-		default:
-			return Block.box(0, 0, 0, 16, 16, 32);
-		}
+		return switch (state.getValue(FACING)) {
+			case NORTH -> Block.box(0, 0, 0, 32, 16, 16);
+			case SOUTH -> Block.box(-16, 0, 0, 16, 16, 16);
+			case WEST -> Block.box(0, 0, -16, 16, 16, 16);
+			default -> Block.box(0, 0, 0, 16, 16, 32);
+		};
 	}
 
-	/*
-	 * Tests for air 1 block out from the facing pos to ensure it's air so the block
-	 * doesn't place into another block
-	 */
 	@Override
 	public boolean canSurvive(BlockState state, LevelReader world, BlockPos pos) {
 		for (BlockPos testPos : BlockPos.betweenClosed(pos,
-				pos.relative((Direction) state.getValue(FACING).getClockWise(), 2))) {
+				pos.relative(state.getValue(FACING).getClockWise(), 2))) {
 			if (!testPos.equals(pos) && !world.getBlockState(testPos).isAir())
 				return false;
 		}
+
 		return true;
 	}
 }

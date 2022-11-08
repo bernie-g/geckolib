@@ -74,10 +74,10 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 		/**
 		 * Register a LoopType with Geckolib for handling loop functionality of animations..<br>
 		 * <b><u>MUST be called during mod construct</u></b><br>
-		 * It is recommended you don't call this directly, and instead call it via {@link GeckoLibUtil#addCustomLoopType}
+		 * It is recommended you don't call this directly, and instead call it via {@code GeckoLibUtil#addCustomLoopType}
 		 * @param name The name of the loop type
-		 * @param loopType
-		 * @return
+		 * @param loopType The loop type to register
+		 * @return The registered {@code LoopType}
 		 */
 		static LoopType register(String name, LoopType loopType) {
 			LOOP_TYPES.put(name, loopType);

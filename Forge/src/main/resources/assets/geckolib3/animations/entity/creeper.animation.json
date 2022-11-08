@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"creeper_idle": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 2.12,
 			"bones": {
@@ -115,7 +115,7 @@
 				}
 			}
 		},
-		"creeper_walk": {
+		"move.walk": {
 			"loop": true,
 			"animation_length": 2.08,
 			"bones": {
@@ -309,7 +309,7 @@
 				}
 			}
 		},
-		"creeper_explode": {
+		"attack.explode": {
 			"animation_length": 1.5,
 			"bones": {
 				"head": {

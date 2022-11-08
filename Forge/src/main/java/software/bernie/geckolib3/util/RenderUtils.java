@@ -148,10 +148,21 @@ public final class RenderUtils {
 		return Blaze3D.getTime() * 20d;
 	}
 
+	/**
+	 * Returns a float equivalent of a boolean.<br>
+	 * Output table:
+	 * <ul>
+	 *     <li>true -> 1</li>
+	 *     <li>false -> 0</li>
+	 * </ul>
+	 */
 	public static float booleanToFloat(boolean input) {
 		return input ? 1f : 0f;
 	}
 
+	/**
+	 * Converts a given double array to its {@link Vec3} equivalent
+	 */
 	public static Vec3 arrayToVec(double[] array) {
 		return new Vec3(array[0], array[1], array[2]);
 	}

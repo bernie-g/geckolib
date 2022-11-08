@@ -11,6 +11,7 @@ import software.bernie.geckolib3.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -39,11 +40,12 @@ public final class JsonUtil {
 
 	/**
 	 * Convert a {@link JsonArray} of doubles to a {@code double[]}.<br>
-	 * No type checking is done, so if the array contains anything other than doubles, this will throw an exception
+	 * No type checking is done, so if the array contains anything other than doubles, this will throw an exception.<br>
+	 * Ensures a minimum size of 3, as this is the expected usage of this method
 	 */
 	public static double[] jsonArrayToDoubleArray(@Nullable JsonArray array) throws JsonParseException {
 		if (array == null)
-			return new double[0];
+			return new double[3];
 
 		double[] output = new double[array.size()];
 
@@ -60,17 +62,14 @@ public final class JsonUtil {
 	 * @param context The {@link com.google.gson.Gson} context for deserialization
 	 * @param objectClass The object type that the array contains
 	 */
-	public static <T> T[] jsonArrayToObjectArray(@Nullable JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
-		if (array == null)
-			return (T[])new Object[0];
-
-		Object[] objArray = new Object[array.size()];
+	public static <T> T[] jsonArrayToObjectArray(JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
+		T[] objArray = (T[])Array.newInstance(objectClass, array.size());
 
 		for (int i = 0; i < array.size(); i++) {
 			objArray[i] = context.deserialize(array.get(i), objectClass);
 		}
 
-		return (T[])objArray;
+		return objArray;
 	}
 
 	/**

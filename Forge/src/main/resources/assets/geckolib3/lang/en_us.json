@@ -5,8 +5,9 @@
   "item.geckolib3.geckoarmor_chest": "Gecko Armor Chestplate",
   "item.geckolib3.geckoarmor_leggings": "Gecko Armor Leggings",
   "item.geckolib3.geckoarmor_boots": "Gecko Armor Boots",
-  "item.geckolib3.jackintheboxitem": "Jack In The Box",
+  "item.geckolib3.jack_in_the_box": "Jack In The Box",
   "item.geckolib3.pistol": "Pistol",
-  "block.geckolib3.habitatblock": "Gecko Habitat",
-  "block.geckolib3.fertilizerblock": "Fertilizer"
+  "block.geckolib3.habitat_block": "Gecko Habitat",
+  "block.geckolib3.fertilizer_block": "Fertilizer",
+  "block.geckolib3.fertilizer_block.tooltip": "Turn on rain to see the fertilizer model!"
 }

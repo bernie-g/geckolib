@@ -99,10 +99,10 @@ public final class RawAnimation {
 		if (this == obj)
 			return true;
 
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 
-		return this.hashCode() == obj.hashCode();
+		return hashCode() == obj.hashCode();
 	}
 
 	@Override
@@ -120,10 +120,10 @@ public final class RawAnimation {
 			if (this == obj)
 				return true;
 
-			if (getClass() != obj.getClass())
+			if (obj == null || getClass() != obj.getClass())
 				return false;
 
-			return this.hashCode() == obj.hashCode();
+			return hashCode() == obj.hashCode();
 		}
 
 		@Override

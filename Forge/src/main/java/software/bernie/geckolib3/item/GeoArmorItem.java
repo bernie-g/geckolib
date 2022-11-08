@@ -1,3 +1,4 @@
+/*
 package software.bernie.geckolib3.item;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -14,10 +15,12 @@ import software.bernie.geckolib3.renderer.GeoArmorRenderer;
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
 
+*/
 /**
  * Wrapper class for GeckoLib armor items.<br>
  * Not specifically required to be used, but it does do some required work you will need to replicate if you don't use it.
- */
+ *//*
+
 public abstract class GeoArmorItem extends ArmorItem {
 	public GeoArmorItem(ArmorMaterial materialIn, EquipmentSlot slot, Properties builder) {
 		super(materialIn, slot, builder);
@@ -45,3 +48,4 @@ public abstract class GeoArmorItem extends ArmorItem {
 		return renderer.getTextureLocation((ArmorItem)stack.getItem()).toString();
 	}
 }
+*/

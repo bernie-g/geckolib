@@ -19,7 +19,7 @@ public class InstancedAnimationFactory extends AnimationFactory {
 	 * only one {@code AnimationData} instance is used
 	 */
 	@Override
-	public AnimationData<?> getOrCreateAnimationData(int uniqueID) {
+	public AnimationData<?> getAnimationData(int uniqueId) {
 		if (this.animationData == null) {
 			this.animationData = new AnimationData<>();
 

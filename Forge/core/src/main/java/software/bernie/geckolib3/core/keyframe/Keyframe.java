@@ -18,7 +18,6 @@ import java.util.Objects;
  * @param endValue The value to end the keyframe's transformation with
  * @param easingType The {@code EasingType} to use for transformations
  * @param easingArgs The arguments to provide to the easing calculation
- * @param <T>
  */
 public record Keyframe<T>(double length, T startValue, T endValue, EasingType easingType, List<T> easingArgs) {
 	public Keyframe(double length, T startValue, T endValue) {
@@ -39,7 +38,7 @@ public record Keyframe<T>(double length, T startValue, T endValue, EasingType ea
 		if (this == obj)
 			return true;
 
-		if (getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 
 		return hashCode() == obj.hashCode();

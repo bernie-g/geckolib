@@ -19,14 +19,14 @@ public class SingletonAnimationFactory extends AnimationFactory {
 	 * This factory subclass assumes that all animatable instances will be sharing this factory instance, and so differentiates data by integer ids.
 	 */
 	@Override
-	public AnimationData<?> getOrCreateAnimationData(int uniqueID) {
-		if (!this.animationDataMap.containsKey(uniqueID)) {
+	public AnimationData<?> getAnimationData(int uniqueId) {
+		if (!this.animationDataMap.containsKey(uniqueId)) {
 			AnimationData<?> data = new AnimationData<>();
 
 			this.animatable.registerControllers(data);
-			this.animationDataMap.put(uniqueID, data);
+			this.animationDataMap.put(uniqueId, data);
 		}
 
-		return this.animationDataMap.get(uniqueID);
+		return this.animationDataMap.get(uniqueId);
 	}
 }

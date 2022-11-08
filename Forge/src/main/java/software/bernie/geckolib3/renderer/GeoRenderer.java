@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.cache.object.*;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.object.Color;
 import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.renderer.layer.GeoRenderLayer;
@@ -86,6 +87,22 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		return animatable.hashCode();
 	}
 
+	// TODO do some testing to work out a better/more consistent way to approach this
+	/**
+	 * Determines the threshold value before the animatable should be considered moving for animation purposes.<br>
+	 * The default value and usage for this varies depending on the renderer.<br>
+	 * <ul>
+	 *     <li>For entities, it represents how far (from 0) the arm swing should be moving before counting as moving for animation purposes.</li>
+	 *     <li>For projectiles, it represents the average velocity of the object.</li>
+	 *     <li>For Tile Entities, it's currently unused</li>
+	 * </ul>
+	 * The lower the value, the more sensitive the {@link AnimationEvent#isMoving()} check will be.<br>
+	 * Particularly low values may have adverse effects however
+	 */
+	default float getMotionAnimThreshold(T animatable) {
+		return 0.15f;
+	}
+
 	/**
 	 * Initial access point for rendering. It all begins here.<br>
 	 * All GeckoLib renderers should immediately defer their respective default {@code render} calls to this, for consistent handling
@@ -99,7 +116,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		float green = renderColor.getGreenFloat();
 		float blue = renderColor.getBlueFloat();
 		float alpha = renderColor.getAlphaFloat();
-		int packedOverlay = getPackedOverlay(animatable, partialTick);
+		int packedOverlay = getPackedOverlay(animatable, 0);
 		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
 
 		if (renderType == null)
@@ -234,7 +251,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	default void createVerticesOfQuad(GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
 			int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		for (GeoVertex vertex : quad.vertices()) {
-			Vector4f vector4f = new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1);
+			Vector3f position = vertex.position();
+			Vector4f vector4f = new Vector4f(position.x(), position.y(), position.z(), 1);
 
 			vector4f.transform(poseState);
 			buffer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.texU(),

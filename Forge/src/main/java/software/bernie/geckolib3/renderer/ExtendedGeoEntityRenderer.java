@@ -1,3 +1,4 @@
+/*
 package software.bernie.geckolib3.renderer;
 
 import java.util.ArrayDeque;
@@ -64,10 +65,9 @@ import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoQuad;
 import software.bernie.geckolib3.cache.object.GeoVertex;
 import software.bernie.geckolib3.item.GeoArmorItem;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
 
+*/
 /**
  * @author DerToaster98 Copyright (c) 30.03.2022 Developed by DerToaster98
  *         GitHub: https://github.com/DerToaster98
@@ -76,7 +76,8 @@ import software.bernie.geckolib3.util.RenderUtils;
  *         {@code GeoEnttiyRenderer}. It automates the process of rendering
  *         items at hand bones as well as standard armor at certain bones. The
  *         model must feature a few special bones for this to work.
- */
+ *//*
+
 @OnlyIn(Dist.CLIENT)
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnimatable> extends GeoEntityRenderer<T> {
 	protected static Map<ResourceLocation, IntIntPair> TEXTURE_DIMENSIONS_CACHE = new Object2ObjectOpenHashMap<>();
@@ -299,10 +300,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		}
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link ExtendedGeoEntityRenderer#setLimbBoneVisible(GeoArmorRenderer, ModelPart, HumanoidModel, EquipmentSlot)}<br>
 	 * Remove in 1.20+
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	protected void handleGeoArmorBoneVisibility(GeoArmorRenderer<? extends GeoArmorItem> geoArmorRenderer,
 			ModelPart sourceLimb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
@@ -450,10 +453,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		poseStack.popPose();
 	}
 
-	/*
+	*/
+/*
 	 * Gets called after armor and item rendering but in every render cycle. This
 	 * serves as a hook for modders to include their own bone specific rendering
-	 */
+	 *//*
+
 	protected void customBoneSpecificRenderingHook(software.bernie.geckolib3.cache.object.GeoBone bone, PoseStack poseStack, VertexConsumer buffer,
 												   int packedLight, int packedOverlay, float red, float green, float blue, float alpha,
 												   boolean customTextureMarker, ResourceLocation currentTexture) {
@@ -500,26 +505,32 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		sourceLimb.render(poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
-	/**
+	*/
+/**
 	 * Return a specific texture for a given bone, or null to use the existing texture
 	 * @param boneName The name of the bone to be rendered
 	 * @param animatable The animatable instance
 	 * @return The specified texture path, or null if no override
-	 */
+	 *//*
+
 	@Nullable
 	protected abstract ResourceLocation getTextureForBone(String boneName, T animatable);
 
-	/*
+	*/
+/*
 	 * Return null if there is no item
-	 */
+	 *//*
+
 	@Nullable
 	protected abstract ItemStack getHeldItemForBone(String boneName, T animatable);
 
 	protected abstract TransformType getCameraTransformForItemAtBone(ItemStack stack, String boneName);
 
-	/*
+	*/
+/*
 	 * Return null if there is no held block
-	 */
+	 *//*
+
 	@Nullable
 	protected abstract BlockState getHeldBlockForBone(String boneName, T animatable);
 
@@ -533,10 +544,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 
 	protected abstract void postRenderBlock(PoseStack poseStack, BlockState state, String boneName, T animatable);
 
-	/*
+	*/
+/*
 	 * Return null, if there is no armor on this bone
 	 * 
-	 */
+	 *//*
+
 	@Nullable
 	protected ItemStack getArmorForBone(String boneName, T animatable) {
 		return null;
@@ -619,10 +632,12 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		poseStack.popPose();
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link RenderUtils#getTextureDimensions(ResourceLocation)}<br>
 	 * Remove in 1.20+
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	protected Tuple<Integer, Integer> getSizeOfTexture(ResourceLocation texture) {
 		IntIntPair dimensions = RenderUtils.getTextureDimensions(texture);
@@ -630,21 +645,26 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & GeoAnim
 		return dimensions == null ? null : new Tuple<>(dimensions.firstInt(), dimensions.secondInt());
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link RenderUtils#translateAndRotateMatrixForBone(PoseStack, software.bernie.geckolib3.cache.object.GeoBone)}<br>
 	 * Remove in 1.20+
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	protected void moveAndRotateMatrixToMatchBone(PoseStack stack, software.bernie.geckolib3.cache.object.GeoBone bone) {
 		RenderUtils.translateAndRotateMatrixForBone(stack, bone);
 	}
 
-	/**
+	*/
+/**
 	 * Use {@link ExtendedGeoEntityRenderer#computeTextureSize(ResourceLocation)}<br>
 	 * Remove in 1.20+
-	 */
+	 *//*
+
 	@Deprecated(forRemoval = true)
 	protected Tuple<Integer, Integer> getOrCreateTextureSize(ResourceLocation texture) {
 		return TEXTURE_SIZE_CACHE.computeIfAbsent(texture, key -> getSizeOfTexture(texture));
 	}
 }
+*/

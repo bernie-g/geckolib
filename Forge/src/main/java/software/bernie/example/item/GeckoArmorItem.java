@@ -1,3 +1,4 @@
+/*
 package software.bernie.example.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -23,10 +24,12 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.Set;
 
+*/
 /**
  * Example {@link GeoItem} implementation in the form of a wearable armor.<br>
  * @see GeoArmorItem
- */
+ *//*
+
 public final class GeckoArmorItem extends GeoArmorItem implements GeoItem {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
@@ -34,29 +37,35 @@ public final class GeckoArmorItem extends GeoArmorItem implements GeoItem {
 		super(armorMaterial, slot, properties.tab(GeckoLibMod.ITEM_GROUP));
 	}
 
-	/**
+	*/
+/**
 	 * Register the animation controller for this item
-	 */
+	 *//*
+
 	@Override
 	public void registerControllers(AnimationData<?> data) {
 		data.addAnimationController(new AnimationController<>(this, 20, this::checkAnimations));
 	}
 
-	/**
+	*/
+/**
 	 * Simple getter to return the animation factory for this item
-	 */
+	 *//*
+
 	@Override
 	public AnimationFactory getFactory() {
 		return this.factory;
 	}
 
-	/**
+	*/
+/**
 	 * Our animation predicate for this item. It has been split off into this separate method for easy reading.
-	 */
+	 *//*
+
 	private <A extends GeckoArmorItem> PlayState checkAnimations(AnimationEvent<A> event) {
-		// Apply our generic permanent animation.
+		// Apply our generic idle animation.
 		// Whether it plays or not is decided down below.
-		event.getController().setAnimation(DefaultAnimations.GENERIC_PERMANENT);
+		event.getController().setAnimation(DefaultAnimations.IDLE);
 
 		// Let's gather some data from the event to use below
 		// This is the entity that is currently wearing/holding the item
@@ -89,3 +98,4 @@ public final class GeckoArmorItem extends GeoArmorItem implements GeoItem {
 		return isFullSet ? PlayState.CONTINUE : PlayState.STOP;
 	}
 }
+*/

@@ -34,7 +34,7 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static Model loadModelFile(ResourceLocation location, ResourceManager manager) {
-		return JsonUtil.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(loadFile(location, manager), "model"), Model.class);
+		return JsonUtil.GEO_GSON.fromJson(loadFile(location, manager), Model.class);
 	}
 
 	/**

@@ -1,3 +1,4 @@
+/*
 package software.bernie.example.entity;
 
 import net.minecraft.network.chat.Component;
@@ -37,7 +38,9 @@ public class ExtendedRendererEntity extends PathfinderMob implements GeoAnimatab
 
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(0, new LookAtPlayerGoal(this, Player.class, 8.0F /* distance */));
+		this.goalSelector.addGoal(0, new LookAtPlayerGoal(this, Player.class, 8.0F */
+/* distance *//*
+));
 	}
 
 	public boolean isTwoHandedAnimationRunning() {
@@ -296,3 +299,4 @@ public class ExtendedRendererEntity extends PathfinderMob implements GeoAnimatab
 	}
 
 }
+*/

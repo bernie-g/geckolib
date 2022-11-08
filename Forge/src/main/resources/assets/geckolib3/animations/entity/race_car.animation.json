@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"moving": {
+		"move.drive": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -43,7 +43,7 @@
 				}
 			}
 		},
-		"idle": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {

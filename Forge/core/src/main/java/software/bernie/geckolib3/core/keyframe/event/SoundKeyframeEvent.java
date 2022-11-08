@@ -21,7 +21,6 @@ public class SoundKeyframeEvent<T extends GeoAnimatable> extends KeyFrameEvent<T
 	 * @param animationTick The amount of ticks that have passed in either the
 	 *                      current transition or animation, depending on the
 	 *                      controller's AnimationState.
-	 * @param sound         The name of the sound to play
 	 * @param controller    the controller
 	 */
 	public SoundKeyframeEvent(T entity, double animationTick, AnimationController<T> controller, SoundKeyframeData keyFrameData) {

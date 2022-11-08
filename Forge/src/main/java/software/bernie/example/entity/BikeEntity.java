@@ -13,70 +13,78 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.example.client.renderer.entity.BikeRenderer;
+import software.bernie.geckolib3.animatable.GeoEntity;
+import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animation.AnimationData;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class BikeEntity extends Animal implements GeoAnimatable {
+/**
+ * Example {@link GeoAnimatable} implementation of an entity
+ * @see BikeRenderer
+ * @see software.bernie.example.client.model.entity.BikeModel
+ */
+public class BikeEntity extends Animal implements GeoEntity {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	private <E extends GeoAnimatable> PlayState predicate(AnimationEvent<E> event) {
-		event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.bike.idle", EDefaultLoopTypes.LOOP));
-		return PlayState.CONTINUE;
-	}
+	public BikeEntity(EntityType<? extends Animal> type, Level level) {
+		super(type, level);
 
-	public BikeEntity(EntityType<? extends Animal> type, Level worldIn) {
-		super(type, worldIn);
 		this.noCulling = true;
 	}
 
+	// Let the player ride the entity
 	@Override
 	public InteractionResult mobInteract(Player player, InteractionHand hand) {
 		if (!this.isVehicle()) {
 			player.startRiding(this);
+
 			return super.mobInteract(player, hand);
 		}
+
 		return super.mobInteract(player, hand);
 	}
 
+	// Turn off step sounds since it's a bike
 	@Override
-	protected void playStepSound(BlockPos pos, BlockState blockIn) {
-	}
+	protected void playStepSound(BlockPos pos, BlockState block) {}
 
+	// Apply player-controlled movement
 	@Override
 	public void travel(Vec3 pos) {
 		if (this.isAlive()) {
 			if (this.isVehicle()) {
-				LivingEntity livingentity = (LivingEntity) this.getControllingPassenger();
-				this.setYRot(livingentity.getYRot());
-				this.yRotO = this.getYRot();
-				this.setXRot(livingentity.getXRot() * 0.5F);
-				this.setRot(this.getYRot(), this.getXRot());
+				LivingEntity passenger = (LivingEntity)getControllingPassenger();
+				this.yRotO = getYRot();
+				this.xRotO = getXRot();
+
+				setYRot(passenger.getYRot());
+				setXRot(passenger.getXRot() * 0.5f);
+				setRot(getYRot(), getXRot());
+
 				this.yBodyRot = this.getYRot();
 				this.yHeadRot = this.yBodyRot;
-				float f = livingentity.xxa * 0.5F;
-				float f1 = livingentity.zza;
-				if (f1 <= 0.0F) {
-					f1 *= 0.25F;
-				}
+				float x = passenger.xxa * 0.5F;
+				float z = passenger.zza;
 
-				this.setSpeed(0.3F);
-				super.travel(new Vec3((double) f, pos.y, (double) f1));
+				if (z <= 0)
+					z *= 0.25f;
+
+				this.setSpeed(0.3f);
+				super.travel(new Vec3(x, pos.y, z));
 			}
 		}
 	}
 
+	// Get the controlling passenger
 	@Nullable
+	@Override
 	public Entity getControllingPassenger() {
-		return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
+		return getFirstPassenger();
 	}
 
 	@Override
@@ -84,9 +92,10 @@ public class BikeEntity extends Animal implements GeoAnimatable {
 		return true;
 	}
 
+	// Add our generic idle animation controller
 	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController<BikeEntity>(this, "controller", 0, this::predicate));
+	public void registerControllers(AnimationData<?> data) {
+		data.addAnimationController(DefaultAnimations.genericIdleController(this));
 	}
 
 	@Override
@@ -95,8 +104,7 @@ public class BikeEntity extends Animal implements GeoAnimatable {
 	}
 
 	@Override
-	public AgeableMob getBreedOffspring(ServerLevel p_241840_1_, AgeableMob p_241840_2_) {
+	public AgeableMob getBreedOffspring(ServerLevel level, AgeableMob partner) {
 		return null;
 	}
-
 }

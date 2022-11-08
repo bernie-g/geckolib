@@ -4,14 +4,11 @@ import com.mojang.math.Matrix3f;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
-import software.bernie.geckolib3.core.object.DataTicket;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Mutable bone object representing a set of cubes, as well as child bones.<br>
@@ -29,7 +26,6 @@ public class GeoBone implements software.bernie.geckolib3.core.animatable.model.
 	private final Boolean dontRender;
 	private final Boolean reset;
 
-	private Map<DataTicket<?>, Object> extraData = null;
 	private BoneSnapshot initialSnapshot;
 
 	private boolean hidden;
@@ -296,17 +292,6 @@ public class GeoBone implements software.bernie.geckolib3.core.animatable.model.
 
 	public Boolean getReset() {
 		return this.reset;
-	}
-
-	public <D> D getExtraData(DataTicket<D> dataTicket) {
-		return dataTicket.getData(this.extraData);
-	}
-
-	public <D> void setExtraData(DataTicket<D> dataTicket, D data) {
-		if (this.extraData == null)
-			this.extraData = new Object2ObjectOpenHashMap<>();
-
-		this.extraData.put(dataTicket, data);
 	}
 
 	public List<GeoCube> getCubes() {

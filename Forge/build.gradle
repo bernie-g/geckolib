@@ -15,6 +15,7 @@ buildscript {
         classpath "com.modrinth.minotaur:Minotaur:2.1.2"
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
@@ -43,16 +44,17 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.09.04-1.19.2'
+    mappings channel: 'parchment', version: '2022.11.06-1.19.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'geckolib-forge119-Client'
+            taskName 'GeckoLib Client Debug (Forge)'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
+
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
 
             mods {
@@ -65,14 +67,14 @@ minecraft {
         clientAlt {
             parent minecraft.runs.client
             workingDirectory project.file('runs/' + name)
-            taskName 'geckolib-forge119-ClientAlt'
+            taskName 'GeckoLib Client-2 Debug (Forge)'
             args '--username', 'Alt'
         }
 
         server {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'geckolib-forge119-Server'
+            taskName 'GeckoLib Server Debug (Forge)'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
@@ -105,31 +107,31 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.25'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.47'
     library 'com.eliotlash.mclib:mclib:19'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
-    library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    //library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+    //library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
     shade 'com.eliotlash.mclib:mclib:19'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
-    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    //shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
+   // shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
 
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
+    //testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
+    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
 
-    test {
-        useJUnitPlatform()
-    }
-	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76:api")
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76")
+    //test {
+    //    useJUnitPlatform()
+    //}
+	//compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76:api")
+    //compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76")
 }
 
 shadowJar {
@@ -139,7 +141,7 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    //relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
 }
 
@@ -157,7 +159,7 @@ jar {
         attributes([
                 "Specification-Title"     : "GeckoLib",
                 "Specification-Vendor"    : "Gecko",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
+                "Specification-Version"   : "4", // We are version 1 of ourselves
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "Gecko",
@@ -173,7 +175,7 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
+    //relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
 }
 

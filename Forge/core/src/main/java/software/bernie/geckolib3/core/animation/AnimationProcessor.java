@@ -58,7 +58,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
 	public void tickAnimation(T animatable, int instanceId, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
-		AnimationData<T> animationData = animatable.getFactory().getOrCreateAnimationData(instanceId);
+		AnimationData<T> animationData = animatable.getFactory().getAnimationData(instanceId);
 		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animationData.getBoneSnapshotCollection());
 		List<GeoBone> modifiedBones = new ObjectArrayList<>();
 
@@ -243,7 +243,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		this.bones.put(bone.getName(), bone);
 
 		for (GeoBone child : bone.getChildBones()) {
-			registerGeoBone(bone);
+			registerGeoBone(child);
 		}
 	}
 

@@ -1,23 +1,21 @@
+/*
 package software.bernie.example.client.model.item;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.PistolItem;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.DefaultedItemGeoModel;
+import software.bernie.geckolib3.model.GeoModel;
 
-public class PistolModel extends AnimatedGeoModel<PistolItem> {
-	@Override
-	public ResourceLocation getModelResource(PistolItem object) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "geo/pistol.geo.json");
-	}
+*/
+/**
+ * Example {@link GeoModel} for the {@link PistolItem}
+ * @see software.bernie.example.client.renderer.item.PistolRender
+ *//*
 
-	@Override
-	public ResourceLocation getTextureResource(PistolItem object) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "textures/item/pistol.png");
-	}
-
-	@Override
-	public ResourceLocation getAnimationResource(PistolItem animatable) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "animations/pistol.animation.json");
+public class PistolModel extends DefaultedItemGeoModel<PistolItem> {
+	public PistolModel() {
+		super(new ResourceLocation(GeckoLib.MOD_ID, "pistol"));
 	}
 }
+*/

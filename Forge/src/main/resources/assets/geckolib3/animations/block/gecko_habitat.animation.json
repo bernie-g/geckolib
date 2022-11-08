@@ -1,7 +1,8 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.gecko_habitat.crawl": {
+		"move.crawl": {
+			"loop": false,
 			"animation_length": 18,
 			"bones": {
 				"gecko": {

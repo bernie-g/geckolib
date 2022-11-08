@@ -18,18 +18,17 @@ import java.util.Map;
 import java.util.function.DoubleSupplier;
 
 /**
- * MoLang parser
- * This bad boy parses Molang expressions
- * https://bedrock.dev/docs/1.19.0.0/1.19.30.23/Molang#Math%20Functions
+ * Utility class for parsing and utilising MoLang functions and expressions
+ * @see <a href="https://bedrock.dev/docs/1.19.0.0/1.19.30.23/Molang#Math%20Functions">Bedrock Dev - Molang</a>
  */
 public class MolangParser extends MathBuilder {
-	public static final MolangParser INSTANCE = new MolangParser();
-
 	// Replace base variables map
 	public static final Map<String, LazyVariable> VARIABLES = new Object2ObjectOpenHashMap<>();
 	public static final MolangVariableHolder ZERO = new MolangVariableHolder(null, new Constant(0));
 	public static final MolangVariableHolder ONE = new MolangVariableHolder(null, new Constant(1));
 	public static final String RETURN = "return ";
+
+	public static final MolangParser INSTANCE = new MolangParser();
 
 	private MolangParser() {
 		super();

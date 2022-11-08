@@ -3,7 +3,6 @@ package software.bernie.geckolib3.renderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -43,6 +42,7 @@ import java.util.List;
  * Base {@link GeoRenderer} class for rendering {@link Entity Entities} specifically.<br>
  * All entities added to be rendered by GeckoLib should use an instance of this class.
  */
+@SuppressWarnings("JavadocReference")
 public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
 	protected final GeoModel<T> model;
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
@@ -123,15 +123,13 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 
 	@Override
 	public void render(T entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-		VertexConsumer glintBuffer = bufferSource.getBuffer(RenderType.entityGlintDirect());
-		VertexConsumer translucentBuffer = bufferSource.getBuffer(RenderType.entityTranslucentCull(getTextureLocation(animatable)));
-		VertexConsumer buffer = glintBuffer != translucentBuffer ? VertexMultiConsumer.create(glintBuffer, translucentBuffer) : null;
+		this.animatable = entity;
 
-		defaultRender(poseStack, entity, bufferSource, null, buffer, entityYaw, partialTick, packedLight);
+		defaultRender(poseStack, entity, bufferSource, null, null, entityYaw, partialTick, packedLight);
 	}
 
 	/**
-	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -194,18 +192,19 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		}
 
 		float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
-
+		float motionThreshold = getMotionAnimThreshold(animatable);
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
-				(limbSwingAmount <= -getSwingMotionAnimThreshold() || limbSwingAmount > getSwingMotionAnimThreshold()));
+				(limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold));
 
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.setCustomAnimations(animatable, getInstanceId(animatable), animationEvent);
+		this.model.handleAnimations(animatable, getInstanceId(animatable), animationEvent);
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
 		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
-			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick,
+					packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}
@@ -214,7 +213,9 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
 	 */
 	@Override
-	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
+								  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
+								  int packedLight, int packedOverlay) {
 		if (!animatable.isSpectator())
 			GeoRenderer.super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 	}
@@ -224,10 +225,14 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer,
+						   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
 	}
 
+	/**
+	 * Renders the provided {@link GeoBone} and its associated child bones
+	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
@@ -340,15 +345,6 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 
 		return OverlayTexture.pack(OverlayTexture.u(u),
 				OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
-	}
-
-	/**
-	 * Determines how far (from 0) the arm swing should be moving before counting as moving for animation purposes.<br>
-	 * The lower the value, the more sensitive the {@link AnimationEvent#isMoving()} check will be.
-	 * Particularly low values may have adverse effects however
-	 */
-	protected float getSwingMotionAnimThreshold() {
-		return 0.15f;
 	}
 
 	/**

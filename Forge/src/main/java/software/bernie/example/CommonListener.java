@@ -26,7 +26,7 @@ public final class CommonListener {
 			event.put(EntityRegistry.CAR_ENTITY.get(), genericAttribs.build());
 			event.put(EntityRegistry.TEST_ENTITY.get(), genericAttribs.build());
 			event.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), genericAttribs.build());
-			event.put(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), genericAttribs.build());
+			//event.put(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), genericAttribs.build());
 			event.put(EntityRegistry.GEOLAYERENTITY.get(), genericMovingAttribs.build());
 			event.put(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), genericMovingAttribs.build());
 		}

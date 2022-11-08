@@ -65,7 +65,8 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets whether the current {@link GeoAnimatable} is considered to be moving for animation purposes
+	 * Gets whether the current {@link GeoAnimatable} is considered to be moving for animation purposes.<br>
+	 * Note that this is a best-case approximation of movement, and your needs may vary.
 	 */
 	public boolean isMoving() {
 		return this.isMoving;

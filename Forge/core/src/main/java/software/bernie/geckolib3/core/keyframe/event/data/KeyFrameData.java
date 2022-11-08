@@ -33,7 +33,7 @@ public abstract class KeyFrameData {
 		if (this == obj)
 			return true;
 
-		if (this.getClass() != obj.getClass())
+		if (obj == null || getClass() != obj.getClass())
 			return false;
 
 		return this.hashCode() == obj.hashCode();

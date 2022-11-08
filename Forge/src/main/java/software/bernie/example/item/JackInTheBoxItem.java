@@ -17,16 +17,14 @@ import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib3.animatable.GeoItem;
-import software.bernie.geckolib3.core.AnimationState;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimationEvent;
+import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.ISyncable;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -46,7 +44,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem, ISyncable {
 
 		GeckoLibNetwork.registerSyncable(this);
 	}
-	
+	// TODO test and fix this
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		super.initializeClient(consumer);
@@ -115,7 +113,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem, ISyncable {
 			// access to an AnimationEvent
 			final AnimationController controller = GeckoLibUtil.getControllerForID(this.factory, id, CONTROLLER_NAME);
 
-			if (controller.getAnimationState() == AnimationState.STOPPED) {
+			if (controller.getAnimationState() == AnimationController.State.STOPPED) {
 				final LocalPlayer player = Minecraft.getInstance().player;
 				if (player != null) {
 					player.displayClientMessage(Component.literal("Opening the jack in the box!"), true);
@@ -126,7 +124,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem, ISyncable {
 				// Set the animation to open the JackInTheBoxItem which will start playing music
 				// and
 				// eventually do the actual animation. Also sets it to not loop
-				controller.setAnimation(new AnimationBuilder().addAnimation("Soaryn_chest_popup", EDefaultLoopTypes.PLAY_ONCE));
+				controller.setAnimation(RawAnimation.begin().thenLoop("Soaryn_chest_popup"));
 			}
 		}
 	}

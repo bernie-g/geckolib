@@ -66,11 +66,11 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		for (Map.Entry<String, JsonElement> entry : bonesObj.entrySet()) {
 			JsonObject entryObj = entry.getValue().getAsJsonObject();
 			KeyframeStack<Keyframe<IValue>> scaleFrames = buildKeyframeStack(
-					getTripletObj(GsonHelper.getAsJsonObject(entryObj, "scale")), false);
+					getTripletObj(entryObj.get("scale")), false);
 			KeyframeStack<Keyframe<IValue>> positionFrames = buildKeyframeStack(
-					getTripletObj(GsonHelper.getAsJsonObject(entryObj, "position")), false);
+					getTripletObj(entryObj.get("position")), false);
 			KeyframeStack<Keyframe<IValue>> rotationFrames = buildKeyframeStack(
-					getTripletObj(GsonHelper.getAsJsonObject(entryObj, "rotation")), true);
+					getTripletObj(entryObj.get("rotation")), true);
 
 			animations[index] = new BoneAnimation(entry.getKey(), rotationFrames, positionFrames, scaleFrames);
 			index++;
@@ -80,6 +80,9 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 	}
 
 	private static List<Pair<String, JsonElement>> getTripletObj(JsonElement element) {
+		if (element == null)
+			element = new JsonPrimitive(1);
+
 		if (element instanceof JsonPrimitive primitive) {
 			JsonArray array = new JsonArray(3);
 
@@ -103,7 +106,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			return list;
 		}
 
-		throw new JsonParseException("Invalid object type provided to getTripletObj");
+		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
 	private KeyframeStack<Keyframe<IValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {

@@ -13,16 +13,13 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
+import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
+import software.bernie.example.client.renderer.block.HabitatBlockRenderer;
 import software.bernie.example.client.renderer.entity.*;
-import software.bernie.example.client.renderer.tile.FertilizerTileRenderer;
-import software.bernie.example.client.renderer.tile.HabitatTileRenderer;
-import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
 import software.bernie.example.registry.TileRegistry;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.renderer.GeoArmorRenderer;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class ClientListener {
@@ -30,25 +27,25 @@ public final class ClientListener {
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
 		if (GeckoLibMod.shouldRegisterExamples()) {
-			event.registerEntityRenderer(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), ExampleGeoRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.BIKE_ENTITY.get(), BikeGeoRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.CAR_ENTITY.get(), CarGeoRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.TEST_ENTITY.get(), TestGeoRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), BatRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.BIKE_ENTITY.get(), BikeRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.CAR_ENTITY.get(), RaceCarRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.TEST_ENTITY.get(), ParasiteRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
-			event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), TexturePerBoneTestEntityRenderer::new);
+			//event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
+			//event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), TexturePerBoneTestEntityRenderer::new);
 
 			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 
-			event.registerBlockEntityRenderer(TileRegistry.HABITAT_TILE.get(), HabitatTileRenderer::new);
-			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), FertilizerTileRenderer::new);
+			event.registerBlockEntityRenderer(TileRegistry.HABITAT_TILE.get(), context -> new HabitatBlockRenderer());
+			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), context -> new FertilizerBlockRenderer());
 		}
 	}
 
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
 		if (GeckoLibMod.shouldRegisterExamples()) {
-			GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, () -> new GeckoArmorRenderer());
+			//GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, () -> new GeckoArmorRenderer());
 		}
 	}
 

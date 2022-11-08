@@ -3,21 +3,15 @@ package software.bernie.example.client.model.item;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib3.model.DefaultedItemGeoModel;
+import software.bernie.geckolib3.model.GeoModel;
 
-public class JackInTheBoxModel extends AnimatedGeoModel<JackInTheBoxItem> {
-	@Override
-	public ResourceLocation getModelResource(JackInTheBoxItem object) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "geo/jack.geo.json");
-	}
-
-	@Override
-	public ResourceLocation getTextureResource(JackInTheBoxItem object) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "textures/item/jack.png");
-	}
-
-	@Override
-	public ResourceLocation getAnimationResource(JackInTheBoxItem animatable) {
-		return new ResourceLocation(GeckoLib.MOD_ID, "animations/jackinthebox.animation.json");
+/**
+ * Example {@link GeoModel} for the {@link JackInTheBoxItem}
+ * @see software.bernie.example.client.renderer.item.JackInTheBoxRenderer
+ */
+public class JackInTheBoxModel extends DefaultedItemGeoModel<JackInTheBoxItem> {
+	public JackInTheBoxModel() {
+		super(new ResourceLocation(GeckoLib.MOD_ID, "jack_in_the_box"));
 	}
 }
