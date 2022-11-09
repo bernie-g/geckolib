@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"misc.deploy": {
+		"botarium.deploy": {
 			"animation_length": 3,
 			"bones": {
 				"Machine": {
@@ -582,7 +582,7 @@
 				}
 			}
 		},
-		"misc.idle": {
+		"botarium.idle": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {

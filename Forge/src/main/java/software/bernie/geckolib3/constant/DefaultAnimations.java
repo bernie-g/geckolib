@@ -20,9 +20,9 @@ public final class DefaultAnimations {
 
 	public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("misc.idle");
 	public static final RawAnimation LIVING = RawAnimation.begin().thenLoop("misc.living");
-	public static final RawAnimation SPAWN = RawAnimation.begin().thenLoop("misc.spawn");
-	public static final RawAnimation INTERACT = RawAnimation.begin().thenLoop("misc.interact");
-	public static final RawAnimation DEPLOY = RawAnimation.begin().thenLoop("misc.deploy");
+	public static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("misc.spawn");
+	public static final RawAnimation INTERACT = RawAnimation.begin().thenPlay("misc.interact");
+	public static final RawAnimation DEPLOY = RawAnimation.begin().thenPlay("misc.deploy");
 
 	public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
 	public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("move.swim");

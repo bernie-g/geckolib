@@ -39,7 +39,7 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "car_drive"
+					"effect": "drive"
 				}
 			}
 		},
@@ -65,7 +65,7 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "idle_sound"
+					"effect": "idle"
 				}
 			}
 		}

@@ -63,7 +63,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 	 * Gets the default render type for this animatable, to be selected by default by the renderer using it
 	 */
 	public RenderType getRenderType(T animatable, ResourceLocation texture) {
-		return RenderType.entityCutout(texture);
+		return RenderType.entityCutoutNoCull(texture);
 	}
 
 	@Override
@@ -148,7 +148,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 		processor.preAnimationSetup(animationEvent.getAnimatable(), this.seekTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, instanceId, this.seekTime, animationEvent, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animationData, this.seekTime, animationEvent, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationEvent);
 	}

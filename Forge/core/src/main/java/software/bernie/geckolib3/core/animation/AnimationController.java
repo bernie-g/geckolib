@@ -49,9 +49,9 @@ public class AnimationController<T extends GeoAnimatable> {
 	private boolean justStopped = false;
 	protected boolean justStartedTransition = false;
 
-	protected SoundKeyframeHandler<T> soundKeyframeHandler;
-	protected ParticleKeyframeHandler<T> particleKeyframeHandler;
-	protected CustomKeyframeHandler<T> customKeyframeHandler;
+	protected SoundKeyframeHandler<T> soundKeyframeHandler = null;
+	protected ParticleKeyframeHandler<T> particleKeyframeHandler = null;
+	protected CustomKeyframeHandler<T> customKeyframeHandler = null;
 
 	protected double transitionLength;
 	protected RawAnimation currentRawAnimation;
@@ -61,6 +61,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
 	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
+	private GeoModel<T> lastModel;
 
 	/**
 	 * Instantiates a new {@code AnimationController}.<br>
@@ -262,10 +263,8 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		if (this.needsAnimationReload || !rawAnimation.equals(this.currentRawAnimation)) {
-			GeoModel<T> model = (GeoModel<T>)this.animatable.getGeoModel().get();
-
-			if (model != null) {
-				Queue<AnimationProcessor.QueuedAnimation> animations = model.getAnimationProcessor().buildAnimationQueue(this.animatable, rawAnimation);
+			if (this.lastModel != null) {
+				Queue<AnimationProcessor.QueuedAnimation> animations = this.lastModel.getAnimationProcessor().buildAnimationQueue(this.animatable, rawAnimation);
 
 				if (animations != null) {
 					this.animationQueue = animations;
@@ -287,15 +286,16 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * This method is called every frame in order to populate the animation point
 	 * queues, and process animation state logic.
 	 *
-	 * @param seekTime                   The current tick + partial tick
-	 * @param event                  The animation test event
-	 * @param bones      The registered {@link GeoBone bones} for this model
-	 * @param snapshots The {@link BoneSnapshot} map
+	 * @param model					The model currently being processed
+	 * @param event                 The animation test event
+	 * @param bones                 The registered {@link GeoBone bones} for this model
+	 * @param snapshots             The {@link BoneSnapshot} map
+	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(final double seekTime, AnimationEvent<T> event, Collection<GeoBone> bones,
-						Map<String, BoneSnapshot> snapshots, boolean crashWhenCantFindBone) {
+	public void process(GeoModel<T> model, AnimationEvent<T> event, Collection<GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
+		this.lastModel = model;
 
 		createInitialQueues(bones);
 
@@ -431,7 +431,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		MolangParser.INSTANCE.setValue(MolangQueries.ANIM_TIME, () -> 0);
 
 		for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
-			BoneAnimationQueue boneAnimationQueue = boneAnimationQueues.get(boneAnimation.boneName());
+			BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 
 			if (boneAnimationQueue == null) {
 				if (crashWhenCantFindBone)
@@ -467,6 +467,12 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		for (SoundKeyframeData keyFrameData : this.currentAnimation.animation().keyFrames().sounds()) {
+			if (this.soundKeyframeHandler == null) {
+				System.out.println("Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+
+				break;
+			}
+
 			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
 				SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable,
 						adjustedTick, this, keyFrameData);
@@ -477,6 +483,12 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		for (ParticleKeyframeData keyFrameData : this.currentAnimation.animation().keyFrames().particles()) {
+			if (this.particleKeyframeHandler == null) {
+				System.out.println("Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+
+				break;
+			}
+
 			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
 				ParticleKeyframeEvent<T> event = new ParticleKeyframeEvent<>(this.animatable,
 						adjustedTick, this, keyFrameData);
@@ -487,6 +499,12 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		for (CustomInstructionKeyframeData keyFrameData : currentAnimation.animation().keyFrames().customInstructions()) {
+			if (this.customKeyframeHandler == null) {
+				System.out.println("Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+
+				break;
+			}
+
 			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
 				CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
 						adjustedTick, this, keyFrameData);
@@ -496,8 +514,8 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 		}
 
-		if (this.transitionLength == 0 && shouldResetTick && this.animationState == State.TRANSITIONING)
-			this.currentAnimation = animationQueue.poll();
+		if (this.transitionLength == 0 && this.shouldResetTick && this.animationState == State.TRANSITIONING)
+			this.currentAnimation = this.animationQueue.poll();
 	}
 
 	// TODO: Look into replacing the BoneAnimationQueue functionality, it is very inefficient

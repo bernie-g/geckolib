@@ -51,7 +51,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 	/**
 	 * Gets the {@link RenderType} to render the given animatable with.<br>
-	 * Uses the {@link RenderType#entityCutout}	{@code RenderType} by default.<br>
+	 * Uses the {@link RenderType#entityCutoutNoCull}	{@code RenderType} by default.<br>
 	 * Override this to change the way a model will render (such as translucent models, etc)
 	 */
 	default RenderType getRenderType(PoseStack poseStack, T animatable, ResourceLocation texture,

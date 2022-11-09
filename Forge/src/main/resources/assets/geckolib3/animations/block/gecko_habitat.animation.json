@@ -579,7 +579,7 @@
 				}
 			}
 		},
-		"animation.gecko_habitat.idle": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 22,
 			"bones": {

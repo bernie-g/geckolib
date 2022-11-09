@@ -69,18 +69,19 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 
 				return PlayState.STOP;
 			}
-		}).setCustomInstructionKeyframeHandler(this::handleCustomKeyframe));
+			// Handle the custom instruction keyframe that is part of our animation json, in a new class instance for server-safety
+		}).setCustomInstructionKeyframeHandler(new AnimationController.CustomKeyframeHandler<BatEntity>() {
+			@Override
+			public void handle(CustomInstructionKeyframeEvent<BatEntity> event) {
+				final LocalPlayer player = Minecraft.getInstance().player;
+
+				if (player != null)
+					player.displayClientMessage(Component.literal("KeyFraming"), true);
+			}
+		}));
 
 		// Add our generic living animation controller
 		data.addAnimationController(DefaultAnimations.genericLivingController(this));
-	}
-
-	// Handle the custom instruction keyframe that is part of our animation json
-	private <E extends GeoAnimatable> void handleCustomKeyframe(CustomInstructionKeyframeEvent<E> event) {
-		final LocalPlayer player = Minecraft.getInstance().player;
-
-		if (player != null)
-			player.displayClientMessage(Component.literal("KeyFraming"), true);
 	}
 
 	@Override

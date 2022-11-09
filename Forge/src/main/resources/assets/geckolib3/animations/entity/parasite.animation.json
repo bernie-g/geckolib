@@ -1,32 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"move.sneak": {
-			"loop": true,
-			"bones": {
-				"head": {
-					"position": {
-						"vector": [0, 0, 0]
-					}
-				},
-				"body": {
-					"position": {
-						"vector": [0, 0, 0]
-					}
-				},
-				"worm": {
-					"position": {
-						"vector": [0, 0, 0]
-					}
-				},
-				"bone9": {
-					"position": {
-						"vector": [0, 0, 0]
-					}
-				}
-			}
-		},
-		"move.run": {
+		"misc.spawn": {
 			"animation_length": 4.36,
 			"bones": {
 				"head": {

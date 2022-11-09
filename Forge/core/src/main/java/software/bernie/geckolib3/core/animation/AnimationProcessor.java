@@ -34,10 +34,10 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		boolean error = false;
 
 		for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
-			Animation animation = model.getAnimation(animatable, stage.animationName());
+			Animation animation = this.model.getAnimation(animatable, stage.animationName());
 
 			if (animation == null) {
-				System.out.printf("Could not load animation: %s. Is it missing?", stage.animationName());
+				System.out.println("Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
 
 				error = true;
 			}
@@ -51,14 +51,15 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 	/**
 	 * Tick and apply transformations to the model based on the current state of the {@link AnimationController}
-	 * @param animatable The animatable object relevant to the animation being played
-	 * @param instanceId The {@code int} id for the instance being rendered
-	 * @param seekTime The current lerped tick (current tick + partial tick)
-	 * @param event An {@link AnimationEvent} instance applied to this render frame
+	 *
+	 * @param animatable            The animatable object relevant to the animation being played
+	 * @param model                 The model currently being processed
+	 * @param animationData			The AnimationData instance being used for this animation processor
+	 * @param seekTime              The current lerped tick (current tick + partial tick)
+	 * @param event                 An {@link AnimationEvent} instance applied to this render frame
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
-	public void tickAnimation(T animatable, int instanceId, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
-		AnimationData<T> animationData = animatable.getFactory().getAnimationData(instanceId);
+	public void tickAnimation(T animatable, GeoModel<T> model, AnimationData<T> animationData, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
 		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animationData.getBoneSnapshotCollection());
 		List<GeoBone> modifiedBones = new ObjectArrayList<>();
 
@@ -73,7 +74,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			controller.isJustStarting = animationData.isFirstTick();
 
 			event.withController(controller);
-			controller.process(seekTime, event, this.bones.values(), boneSnapshots, crashWhenCantFindBone);
+			controller.process(model, event, this.bones.values(), boneSnapshots, seekTime, crashWhenCantFindBone);
 
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				GeoBone bone = boneAnimation.bone();
@@ -95,24 +96,18 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					bone.setRotX((float)EasingType.lerpWithOverride(rotXPoint, easingType) + initialSnapshot.getRotX());
 					bone.setRotY((float)EasingType.lerpWithOverride(rotYPoint, easingType) + initialSnapshot.getRotY());
 					bone.setRotZ((float)EasingType.lerpWithOverride(rotZPoint, easingType) + initialSnapshot.getRotZ());
-
 					snapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
 					snapshot.startRotAnim();
-
 					bone.markRotationAsChanged();
 					modifiedBones.add(bone);
 				}
 
 				if (posXPoint != null && posYPoint != null && posZPoint != null) {
-					bone.setPosX(
-							(float)EasingType.lerpWithOverride(posXPoint, easingType));
-					bone.setPosY(
-							(float)EasingType.lerpWithOverride(posYPoint, easingType));
-					bone.setPosZ(
-							(float)EasingType.lerpWithOverride(posZPoint, easingType));
+					bone.setPosX((float)EasingType.lerpWithOverride(posXPoint, easingType));
+					bone.setPosY((float)EasingType.lerpWithOverride(posYPoint, easingType));
+					bone.setPosZ((float)EasingType.lerpWithOverride(posZPoint, easingType));
 					snapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
 					snapshot.startPosAnim();
-
 					bone.markPositionAsChanged();
 					modifiedBones.add(bone);
 				}
@@ -123,7 +118,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					bone.setScaleZ((float)EasingType.lerpWithOverride(scaleZPoint, easingType));
 					snapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 					snapshot.startScaleAnim();
-
 					bone.markScaleAsChanged();
 					modifiedBones.add(bone);
 				}

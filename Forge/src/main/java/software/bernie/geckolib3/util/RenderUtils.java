@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
@@ -205,6 +206,27 @@ public final class RenderUtils {
 		};
 	}
 
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link EntityType}.<br>
+	 * This only works if you're calling this method for an EntityType known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param entityType The {@code EntityType} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@Nullable
+	public static GeoModel<?> getGeoModelForEntityType(EntityType<?> entityType) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
+
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Entity}.<br>
+	 * This only works if you're calling this method for an Entity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param entity The {@code Entity} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
@@ -212,6 +234,13 @@ public final class RenderUtils {
 		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
 	}
 
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
+	 * This only works if you're calling this method for an Item known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param item The {@code Item} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
 		if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
@@ -220,6 +249,13 @@ public final class RenderUtils {
 		return null;
 	}
 
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link BlockEntity}.<br>
+	 * This only works if you're calling this method for a BlockEntity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param blockEntity The {@code BlockEntity} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);

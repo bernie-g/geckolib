@@ -1,6 +1,5 @@
 package software.bernie.geckolib3.loading.object;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.animation.Animation;
 
 import javax.annotation.Nullable;
@@ -11,10 +10,6 @@ import java.util.Map;
  * Kept as a unique object so that it can be registered as a {@link com.google.gson.JsonDeserializer deserializer} for {@link com.google.gson.Gson}
  */
 public record BakedAnimations(Map<String, Animation> animations) {
-	public BakedAnimations() {
-		this(new Object2ObjectOpenHashMap<>());
-	}
-
 	/**
 	 * Gets an {@link Animation} by its name, if present
 	 */

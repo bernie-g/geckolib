@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Functional interface defining an easing function.<br>
- * {@code value} is the easing value provided from the keyframe's {@link Keyframe#easingArgs}
+ * {@code value} is the easing value provided from the keyframe's {@link Keyframe#easingArgs()}
  * <br><br>
  * For more information on easings, see:<br>
  * <a href="https://easings.net/">Easings.net</a><br>
@@ -60,11 +60,21 @@ public interface EasingType {
 	Double2DoubleFunction buildTransformer(Double value);
 
 	static double lerpWithOverride(AnimationPoint animationPoint, EasingType override) {
-		return override == null ? animationPoint.keyFrame().easingType().apply(animationPoint) : override.apply(animationPoint);
+		EasingType easingType = override;
+
+		if (override == null)
+			easingType = animationPoint.keyFrame() == null ? LINEAR : animationPoint.keyFrame().easingType();
+
+		return easingType.apply(animationPoint);
 	}
 
 	default double apply(AnimationPoint animationPoint) {
-		return apply(animationPoint, animationPoint.keyFrame().easingArgs() == null ? null : (Double)animationPoint.keyFrame().easingArgs().get(0), animationPoint.currentTick() / animationPoint.transitionLength());
+		Double easingVariable = null;
+
+		if (animationPoint.keyFrame() != null && animationPoint.keyFrame().easingArgs().size() > 0)
+			easingVariable = animationPoint.keyFrame().easingArgs().get(0).get();
+
+		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength());
 	}
 
 	default double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {

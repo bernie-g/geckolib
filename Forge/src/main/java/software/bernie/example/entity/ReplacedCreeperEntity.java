@@ -1,6 +1,8 @@
 package software.bernie.example.entity;
 
+import net.minecraft.world.entity.EntityType;
 import software.bernie.geckolib3.animatable.GeoEntity;
+import software.bernie.geckolib3.animatable.GeoReplacedEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animation.AnimationData;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
@@ -13,7 +15,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
  * @see software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer
  * @see software.bernie.example.client.model.entity.ReplacedCreeperModel
  */
-public class ReplacedCreeperEntity implements GeoEntity {
+public class ReplacedCreeperEntity implements GeoReplacedEntity {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	/**
@@ -29,5 +31,10 @@ public class ReplacedCreeperEntity implements GeoEntity {
 	@Override
 	public AnimationFactory getFactory() {
 		return factory;
+	}
+
+	@Override
+	public EntityType<?> getReplacingEntityType() {
+		return EntityType.CREEPER;
 	}
 }

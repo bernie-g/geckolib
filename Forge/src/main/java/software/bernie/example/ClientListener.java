@@ -30,7 +30,7 @@ public final class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), BatRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.BIKE_ENTITY.get(), BikeRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.CAR_ENTITY.get(), RaceCarRenderer::new);
-			event.registerEntityRenderer(EntityRegistry.TEST_ENTITY.get(), ParasiteRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.PARASITE.get(), ParasiteRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.GEOLAYERENTITY.get(), LERenderer::new);
 			//event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
 			//event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), TexturePerBoneTestEntityRenderer::new);
