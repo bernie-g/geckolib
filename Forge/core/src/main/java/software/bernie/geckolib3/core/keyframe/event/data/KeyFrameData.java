@@ -25,7 +25,7 @@ public abstract class KeyFrameData {
 	 * Gets the start tick of the keyframe instruction
 	 */
 	public double getStartTick() {
-		return startTick;
+		return this.startTick;
 	}
 
 	@Override
@@ -41,6 +41,6 @@ public abstract class KeyFrameData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hashCode(startTick);
+		return Objects.hashCode(this.startTick);
 	}
 }

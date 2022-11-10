@@ -25,6 +25,6 @@ public class SoundKeyframeData extends KeyFrameData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getStartTick(), sound);
+		return Objects.hash(getStartTick(), this.sound);
 	}
 }

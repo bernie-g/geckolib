@@ -18,11 +18,13 @@ import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animation.AnimationProcessor;
 import software.bernie.geckolib3.core.molang.MolangParser;
 import software.bernie.geckolib3.core.molang.MolangQueries;
+import software.bernie.geckolib3.core.object.DataTicket;
 import software.bernie.geckolib3.loading.object.BakedAnimations;
 import software.bernie.geckolib3.renderer.GeoRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 /**
  * Base class for all code-based model objects.<br>
@@ -146,12 +148,21 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
 		processor.preAnimationSetup(animationEvent.getAnimatable(), this.seekTime);
+		addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 
 		if (!processor.getRegisteredBones().isEmpty())
 			processor.tickAnimation(animatable, this, animationData, this.seekTime, animationEvent, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationEvent);
 	}
+
+	/**
+	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationEvent} to be handled by your animation handler at render time
+	 * @param animatable The animatable instance currently being animated
+	 * @param instanceId The unique instance id of the animatable being animated
+	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationEvent
+	 */
+	protected void addAdditionalEventData(T animatable, int instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
 
 	@Override
 	public void applyMolangQueries(T animatable, double seekTime) {

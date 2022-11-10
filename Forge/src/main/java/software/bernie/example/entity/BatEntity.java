@@ -16,7 +16,6 @@ import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimationData;
-import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.keyframe.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.object.PlayState;
@@ -28,11 +27,9 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
  * @see software.bernie.example.client.model.entity.BatModel
  */
 public class BatEntity extends PathfinderMob implements GeoEntity {
-	private static final RawAnimation FLYING_ANIM = RawAnimation.begin().thenPlay("move.fly").thenPlay("misc.idle");
-
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	private boolean isAnimating = false;
+	private boolean isFlying = false;
 
 	public BatEntity(EntityType<? extends PathfinderMob> type, Level worldIn) {
 		super(type, worldIn);
@@ -41,7 +38,7 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	// Have the bat look at the player
 	@Override
 	protected void registerGoals() {
-		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+		this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 12.0F));
 		super.registerGoals();
 	}
 
@@ -49,7 +46,7 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	@Override
 	public InteractionResult interactAt(Player player, Vec3 hitPos, InteractionHand hand) {
 		if (hand == InteractionHand.MAIN_HAND)
-			this.isAnimating = !this.isAnimating;
+			this.isFlying = !this.isFlying;
 
 		return super.interactAt(player, hitPos, hand);
 	}
@@ -58,17 +55,14 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	public void registerControllers(AnimationData<?> data) {
 		// Add our flying animation controller
 		data.addAnimationController(new AnimationController<>(this, event -> {
-			if (this.isAnimating) {
-				event.getController().setAnimation(FLYING_ANIM);
-
-				return PlayState.CONTINUE;
+			if (this.isFlying) {
+				event.getController().setAnimation(DefaultAnimations.FLY);
 			}
 			else {
-				// Reset the animation so the next time it starts, we start from the first animation
-				event.getController().markNeedsReload();
-
-				return PlayState.STOP;
+				event.getController().setAnimation(DefaultAnimations.IDLE);
 			}
+
+			return PlayState.CONTINUE;
 			// Handle the custom instruction keyframe that is part of our animation json, in a new class instance for server-safety
 		}).setCustomInstructionKeyframeHandler(new AnimationController.CustomKeyframeHandler<BatEntity>() {
 			@Override

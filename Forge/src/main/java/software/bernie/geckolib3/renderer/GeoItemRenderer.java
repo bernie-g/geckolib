@@ -167,7 +167,7 @@ public abstract class GeoItemRenderer<T extends Item & GeoAnimatable> extends Bl
 		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
 
 		animationEvent.setData(DataTickets.ITEMSTACK, this.currentItemStack);
-		this.model.setCustomAnimations(animatable, getInstanceId(animatable), animationEvent);
+		this.model.handleAnimations(animatable, getInstanceId(animatable), animationEvent);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);

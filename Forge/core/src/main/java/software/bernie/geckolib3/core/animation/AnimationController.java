@@ -293,11 +293,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(GeoModel<T> model, AnimationEvent<T> event, Collection<GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
+	public void process(GeoModel<T> model, AnimationEvent<T> event, Map<String, GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
-		createInitialQueues(bones);
+		createInitialQueues(bones.values());
 
 		if (animationState == State.TRANSITIONING && adjustedTick >= this.transitionLength) {
 			this.shouldResetTick = true;
@@ -339,7 +339,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 				resetEventKeyFrames();
 
-				if (currentAnimation == null)
+				if (this.currentAnimation == null)
 					return;
 
 				saveSnapshotsForAnimation(this.currentAnimation, snapshots);
@@ -351,17 +351,9 @@ public class AnimationController<T extends GeoAnimatable> {
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
-					Optional<GeoBone> bone = Optional.empty();
+					GeoBone bone = bones.get(boneAnimation.boneName());
 
-					for (GeoBone testBone : bones) {
-						if (testBone.getName().equals(boneAnimation.boneName())) {
-							bone = Optional.of(testBone);
-
-							break;
-						}
-					}
-
-					if (bone.isEmpty()) {
+					if (bone == null) {
 						if (crashWhenCantFindBone)
 							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName());
 
@@ -373,7 +365,7 @@ public class AnimationController<T extends GeoAnimatable> {
 					KeyframeStack<Keyframe<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 					if (!rotationKeyFrames.xKeyframes().isEmpty()) {
-						boneAnimationQueue.addNextRotation(null, adjustedTick, this.transitionLength, boneSnapshot, bone.get().getInitialSnapshot(),
+						boneAnimationQueue.addNextRotation(null, adjustedTick, this.transitionLength, boneSnapshot, bone.getInitialSnapshot(),
 								getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), 0, true, Axis.X),
 								getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), 0, true, Axis.Y),
 								getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), 0, true, Axis.Z));
@@ -423,12 +415,14 @@ public class AnimationController<T extends GeoAnimatable> {
 				else {
 					this.animationState = State.TRANSITIONING;
 					this.shouldResetTick = true;
-					this.currentAnimation = this.animationQueue.peek();
+					this.currentAnimation = nextAnimation;
 				}
 			}
 		}
 
-		MolangParser.INSTANCE.setValue(MolangQueries.ANIM_TIME, () -> 0);
+		final double finalAdjustedTick = adjustedTick;
+
+		MolangParser.INSTANCE.setValue(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
 
 		for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 			BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
@@ -466,51 +460,39 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 		}
 
-		for (SoundKeyframeData keyFrameData : this.currentAnimation.animation().keyFrames().sounds()) {
-			if (this.soundKeyframeHandler == null) {
-				System.out.println("Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().sounds()) {
+			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
+				if (this.soundKeyframeHandler == null) {
+					System.out.println("Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
-				break;
-			}
+					break;
+				}
 
-			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
-				SoundKeyframeEvent<T> event = new SoundKeyframeEvent<>(this.animatable,
-						adjustedTick, this, keyFrameData);
-
-				this.soundKeyframeHandler.handle(event);
-				this.executedKeyFrames.add(keyFrameData);
+				this.soundKeyframeHandler.handle(new SoundKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
 			}
 		}
 
-		for (ParticleKeyframeData keyFrameData : this.currentAnimation.animation().keyFrames().particles()) {
-			if (this.particleKeyframeHandler == null) {
-				System.out.println("Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+		for (ParticleKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().particles()) {
+			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
+				if (this.particleKeyframeHandler == null) {
+					System.out.println("Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
-				break;
-			}
+					break;
+				}
 
-			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
-				ParticleKeyframeEvent<T> event = new ParticleKeyframeEvent<>(this.animatable,
-						adjustedTick, this, keyFrameData);
-
-				this.particleKeyframeHandler.handle(event);
-				this.executedKeyFrames.add(keyFrameData);
+				this.particleKeyframeHandler.handle(new ParticleKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
 			}
 		}
 
-		for (CustomInstructionKeyframeData keyFrameData : currentAnimation.animation().keyFrames().customInstructions()) {
-			if (this.customKeyframeHandler == null) {
-				System.out.println("Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+		for (CustomInstructionKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().customInstructions()) {
+			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
+				if (this.customKeyframeHandler == null) {
+					System.out.println("Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
-				break;
-			}
+					break;
+				}
 
-			if (!this.executedKeyFrames.contains(keyFrameData) && adjustedTick >= keyFrameData.getStartTick()) {
-				CustomInstructionKeyframeEvent<T> event = new CustomInstructionKeyframeEvent<>(this.animatable,
-						adjustedTick, this, keyFrameData);
-
-				this.customKeyframeHandler.handle(event);
-				this.executedKeyFrames.add(keyFrameData);
+				this.customKeyframeHandler.handle(new CustomInstructionKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
 			}
 		}
 

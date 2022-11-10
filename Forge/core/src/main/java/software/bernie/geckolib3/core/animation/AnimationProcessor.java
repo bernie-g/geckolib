@@ -2,7 +2,6 @@ package software.bernie.geckolib3.core.animation;
 
 import com.eliotlash.mclib.utils.Interpolations;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.BakedGeoModel;
 import software.bernie.geckolib3.core.animatable.model.GeoBone;
@@ -11,7 +10,10 @@ import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Queue;
 
 public class AnimationProcessor<T extends GeoAnimatable> {
 	private final Map<String, GeoBone> bones = new Object2ObjectOpenHashMap<>();
@@ -61,7 +63,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 */
 	public void tickAnimation(T animatable, GeoModel<T> model, AnimationData<T> animationData, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
 		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animationData.getBoneSnapshotCollection());
-		List<GeoBone> modifiedBones = new ObjectArrayList<>();
 
 		resetBoneTransformationMarkers();
 
@@ -74,7 +75,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			controller.isJustStarting = animationData.isFirstTick();
 
 			event.withController(controller);
-			controller.process(model, event, this.bones.values(), boneSnapshots, seekTime, crashWhenCantFindBone);
+			controller.process(model, event, this.bones, boneSnapshots, seekTime, crashWhenCantFindBone);
 
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				GeoBone bone = boneAnimation.bone();
@@ -99,7 +100,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					snapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
 					snapshot.startRotAnim();
 					bone.markRotationAsChanged();
-					modifiedBones.add(bone);
 				}
 
 				if (posXPoint != null && posYPoint != null && posZPoint != null) {
@@ -109,7 +109,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					snapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
 					snapshot.startPosAnim();
 					bone.markPositionAsChanged();
-					modifiedBones.add(bone);
 				}
 
 				if (scaleXPoint != null && scaleYPoint != null && scaleZPoint != null) {
@@ -119,7 +118,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					snapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 					snapshot.startScaleAnim();
 					bone.markScaleAsChanged();
-					modifiedBones.add(bone);
 				}
 			}
 		}
@@ -127,57 +125,45 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		this.reloadAnimations = false;
 		double resetTickLength = animatable.getBoneResetTime();
 
-		for (GeoBone bone : modifiedBones) {
-			BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
-			BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
-
-			if (saveSnapshot == null) {
-				if (crashWhenCantFindBone) {
-					throw new RuntimeException(
-							"Could not find save snapshot for bone: " + bone.getName() + ". Please don't add bones that are used in an animation at runtime.");
-				}
-				else {
-					continue;
-				}
-			}
-
+		for (GeoBone bone : getRegisteredBones()) {
 			if (!bone.hasRotationChanged()) {
+				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
+
 				if (saveSnapshot.isRotAnimInProgress())
 					saveSnapshot.stopRotAnim(seekTime);
 
-				double percentageReset = Math
-						.min((seekTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
+				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
-				bone.setRotX((float)Interpolations.lerp(saveSnapshot.getRotX(),
-						initialSnapshot.getRotX(), percentageReset));
-				bone.setRotY((float)Interpolations.lerp(saveSnapshot.getRotY(),
-						initialSnapshot.getRotY(), percentageReset));
-				bone.setRotZ((float)Interpolations.lerp(saveSnapshot.getRotZ(),
-						initialSnapshot.getRotZ(), percentageReset));
+				bone.setRotX((float)Interpolations.lerp(saveSnapshot.getRotX(), initialSnapshot.getRotX(), percentageReset));
+				bone.setRotY((float)Interpolations.lerp(saveSnapshot.getRotY(), initialSnapshot.getRotY(), percentageReset));
+				bone.setRotZ((float)Interpolations.lerp(saveSnapshot.getRotZ(), initialSnapshot.getRotZ(), percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
 			}
 
 			if (!bone.hasPositionChanged()) {
+				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
+
 				if (saveSnapshot.isPosAnimInProgress())
 					saveSnapshot.stopPosAnim(seekTime);
 
-				double percentageReset = Math
-						.min((seekTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
+				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
-				bone.setPosX((float)Interpolations.lerp(saveSnapshot.getOffsetX(),
-						initialSnapshot.getOffsetX(), percentageReset));
-				bone.setPosY((float)Interpolations.lerp(saveSnapshot.getOffsetY(),
-						initialSnapshot.getOffsetY(), percentageReset));
-				bone.setPosZ((float)Interpolations.lerp(saveSnapshot.getOffsetZ(),
-						initialSnapshot.getOffsetZ(), percentageReset));
+				bone.setPosX((float)Interpolations.lerp(saveSnapshot.getOffsetX(), initialSnapshot.getOffsetX(), percentageReset));
+				bone.setPosY((float)Interpolations.lerp(saveSnapshot.getOffsetY(), initialSnapshot.getOffsetY(), percentageReset));
+				bone.setPosZ((float)Interpolations.lerp(saveSnapshot.getOffsetZ(), initialSnapshot.getOffsetZ(), percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
 			}
 
 			if (!bone.hasScaleChanged()) {
+				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
+
 				if (saveSnapshot.isScaleAnimInProgress())
 					saveSnapshot.stopScaleAnim(seekTime);
 

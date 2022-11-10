@@ -9,6 +9,7 @@ import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Mutable bone object representing a set of cubes, as well as child bones.<br>
@@ -420,5 +421,21 @@ public class GeoBone implements software.bernie.geckolib3.core.animatable.model.
 		setRotX(getRotX() + source.getRotX() - source.getInitialSnapshot().getRotX());
 		setRotY(getRotY() + source.getRotY() - source.getInitialSnapshot().getRotY());
 		setRotZ(getRotZ() + source.getRotZ() - source.getInitialSnapshot().getRotZ());
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+
+		if (obj == null || getClass() != obj.getClass())
+			return false;
+
+		return hashCode() == obj.hashCode();
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getName(), (getParent() != null ? getParent().getName() : 0), getCubes().size(), getChildBones().size());
 	}
 }
