@@ -1,0 +1,36 @@
+package software.bernie.example.registry;
+
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import software.bernie.example.GeckoLibMod;
+import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.geckolib3.GeckoLib;
+
+public final class ItemRegistry {
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.MOD_ID);
+
+	public static final RegistryObject<BlockItem> HABITAT = ITEMS.register("habitat",
+			() -> new BlockItem(BlockRegistry.HABITAT_BLOCK.get(),
+					new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+	public static final RegistryObject<BlockItem> FERTILIZER = ITEMS.register("fertilizer",
+			() -> new BlockItem(BlockRegistry.FERTILIZER_BLOCK.get(),
+					new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+
+	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jack_in_the_box",
+			() -> new JackInTheBoxItem(new Item.Properties()));
+
+	/*public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());
+
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_HEAD = ITEMS.register("geckoarmor_head",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.HEAD, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_CHEST = ITEMS.register("geckoarmor_chest",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.CHEST, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_LEGGINGS = ITEMS.register("geckoarmor_leggings",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties()));
+	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_BOOTS = ITEMS.register("geckoarmor_boots",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties()));*/
+
+}

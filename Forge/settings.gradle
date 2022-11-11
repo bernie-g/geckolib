@@ -1,0 +1,3 @@
+rootProject.name = 'geckolib-forge-1.19'
+include ':geckolib-core'
+project(':geckolib-core').projectDir = new File('./core')

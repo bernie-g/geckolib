@@ -1,0 +1,7 @@
+{
+  "parent": "geckolib3:block/default_box",
+  "textures": {
+    "1": "geckolib3:block/botarium_side",
+    "particle": "geckolib3:block/botarium_side"
+  }
+}

@@ -1,0 +1,87 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.geoLayerEntity.idle": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"root": {
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"body": {
+					"rotation": {
+						"vector": ["Math.cos((query.anim_time - 0.0) * 180) * 2", 0, 0]
+					}
+				},
+				"leftTendrils": {
+					"rotation": {
+						"vector": [0, "Math.sin((query.anim_time + 0.0) * 180) * 4", 0]
+					}
+				},
+				"rightTendrils": {
+					"rotation": {
+						"vector": [0, "Math.sin((query.anim_time + 0.0) * 180) * -4", 0]
+					}
+				}
+			}
+		},
+		"animation.geoLayerEntity.walk": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"root": {
+					"rotation": {
+						"vector": [0, "Math.cos((query.anim_time - 0.1) * 360) * -2", 0]
+					},
+					"position": {
+						"vector": [0, "Math.cos(query.anim_time * 720) * -0.05", 0]
+					}
+				},
+				"body": {
+					"rotation": {
+						"vector": [0, "Math.cos((query.anim_time - 0.2) * 360) * -3", "Math.cos(query.anim_time * 360) * 5"]
+					}
+				},
+				"leftTendrils": {
+					"rotation": {
+						"vector": [0, "Math.cos((query.anim_time - 0.4) * 360) * -8", 0]
+					}
+				},
+				"rightTendrils": {
+					"rotation": {
+						"vector": [0, "Math.cos((query.anim_time - 0.4) * 360) * -8", 0]
+					}
+				},
+				"leftLeg": {
+					"rotation": {
+						"vector": ["Math.cos(query.anim_time * 360) * -17", 0, 0]
+					},
+					"position": {
+						"0.25": {
+							"vector": [0, 0, 0]
+						},
+						"0.5": {
+							"vector": [0, 0, 0]
+						}
+					}
+				},
+				"rightLeg": {
+					"rotation": {
+						"vector": ["Math.cos(query.anim_time * 360) * 17", 0, 0]
+					},
+					"position": {
+						"0.0": {
+							"vector": [0, 0, 0]
+						},
+						"0.75": {
+							"vector": [0, 0, 0]
+						}
+					}
+				}
+			}
+		}
+	},
+	"geckolib_format_version": 2
+}
