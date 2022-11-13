@@ -1,3 +1,7 @@
+v3.1.36
+
+- Updated to 22w45a, likely last build of 3.x branches for the snapshots, soon will move this to 4.0 rewrite. 
+
 v3.1.35
 
 - Deprecate getPackedOverlay for getOverlay, move to non-static to allow Overriding.
