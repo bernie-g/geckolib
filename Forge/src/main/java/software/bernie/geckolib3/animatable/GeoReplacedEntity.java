@@ -13,7 +13,6 @@ import software.bernie.geckolib3.network.packet.EntityAnimTriggerPacket;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -26,20 +25,6 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	@Override
 	default Supplier<GeoModel<?>> getGeoModel() {
 		return () -> RenderUtils.getGeoModelForEntityType(getReplacingEntityType());
-	}
-
-	/**
-	 * We don't need this for replaced entities
-	 */
-	@Override
-	default void createRenderer(Consumer<RenderProvider> consumer) {}
-
-	/**
-	 * We don't need this for replaced entities
-	 */
-	@Override
-	default Supplier<RenderProvider> getRenderProvider() {
-		return () -> null;
 	}
 
 	/**

@@ -2,12 +2,18 @@ package software.bernie.example.item;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.client.extensions.common.IClientItemExtensions;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
@@ -18,7 +24,6 @@ import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.item.GeoArmorItem;
 import software.bernie.geckolib3.renderer.GeoArmorRenderer;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
@@ -26,30 +31,37 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Example {@link GeoArmor} implementation.<br>
- * @see GeoArmorItem
+ * Example {@link GeoArmor} implementation
  * @see GeoArmor
  * @see GeckoArmorRenderer
  */
-public final class GeckoArmorItem extends GeoArmorItem {
+public final class GeckoArmorItem extends ArmorItem implements GeoArmor {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public GeckoArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
 		super(armorMaterial, slot, properties.tab(GeckoLibMod.ITEM_GROUP));
 	}
 
-	// Let's return our armor renderer for this item.
-	// This is for the in-world rendering (when equipped)
 	@Override
-	public void createRenderer(Consumer<RenderProvider> consumer) {
-		consumer.accept(new RenderProvider() {
-			private final GeoArmorRenderer<?> renderer = new GeckoArmorRenderer();
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			private GeoArmorRenderer<?> renderer;
 
 			@Override
-			public GeoArmorRenderer<?> getArmorRenderer(GeoArmor armor) {
-				return renderer;
+			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+				if (this.renderer == null)
+					this.renderer = new GeckoArmorRenderer();
+
+				this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
+
+				return this.renderer;
 			}
 		});
+	}
+
+	@Override
+	public @Nullable String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
+		return super.getArmorTexture(stack, entity, slot, type);
 	}
 
 	// Let's add our animation controller

@@ -24,12 +24,10 @@ import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.renderer.GeoItemRenderer;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Example {@link GeoItem} in the form of a "shootable" pistol.
@@ -37,7 +35,6 @@ import java.util.function.Supplier;
  */
 public class PistolItem extends Item implements GeoItem {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
-	private final Supplier<RenderProvider> renderer = GeoItem.makeRenderer(this);
 
 	public PistolItem() {
 		super(new Item.Properties().tab(GeckoLibMod.ITEM_GROUP).stacksTo(1).durability(201));
@@ -47,32 +44,15 @@ public class PistolItem extends Item implements GeoItem {
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 	}
 
-	// Set up our getter for the render provider
-	@Override
-	public Supplier<SingletonGeoAnimatable.RenderProvider> getRenderProvider() {
-		return this.renderer;
-	}
-
-	// Create and cache our itemstack renderer for use later
-	@Override
-	public void createRenderer(Consumer<SingletonGeoAnimatable.RenderProvider> consumer) {
-		consumer.accept(new SingletonGeoAnimatable.RenderProvider() {
-			private final PistolRenderer renderer = new PistolRenderer();
-
-			@Override
-			public GeoItemRenderer<?> getItemRenderer() {
-				return renderer;
-			}
-		});
-	}
-
 	// Utilise the existing forge hook to define our custom renderer (which we created in createRenderer)
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
+			private final PistolRenderer renderer = new PistolRenderer();
+
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return PistolItem.this.renderer.get().getItemRenderer();
+				return this.renderer;
 			}
 		});
 	}

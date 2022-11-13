@@ -1,14 +1,14 @@
 package software.bernie.geckolib3.animatable;
 
-import com.google.common.base.Suppliers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3.cache.AnimatableIdCache;
 import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib3.util.RenderUtils;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -21,21 +21,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 	@Override
 	default Supplier<GeoModel<?>> getGeoModel() {
-		return () -> makeRenderer(this).get().getItemRenderer().getGeoModel();
-	}
-
-	/**
-	 * Safety wrapper to distance the client-side code from common code.<br>
-	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
-	 */
-	static Supplier<RenderProvider> makeRenderer(GeoItem item) {
-		return Suppliers.memoize(() -> {
-			AtomicReference<RenderProvider> renderProvider = new AtomicReference<>();
-
-			item.createRenderer(renderProvider::set);
-
-			return renderProvider.get();
-		});
+		return () -> RenderUtils.getGeoModelForItem((Item)this);
 	}
 
 	/**

@@ -10,6 +10,8 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
@@ -184,6 +186,16 @@ public class GeoArmorRenderer<T extends Item & GeoArmor> extends HumanoidModel i
 	}
 
 	/**
+	 * Gets the {@link RenderType} to render the given animatable with.<br>
+	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default.<br>
+	 * Override this to change the way a model will render (such as translucent models, etc)
+	 */
+	@Override
+	public RenderType getRenderType(PoseStack poseStack, T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		return RenderType.armorCutoutNoCull(texture);
+	}
+
+	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
@@ -206,8 +218,12 @@ public class GeoArmorRenderer<T extends Item & GeoArmor> extends HumanoidModel i
 		if (mc.levelRenderer.shouldShowEntityOutlines() && mc.shouldEntityAppearGlowing(this.currentEntity))
 			bufferSource = mc.renderBuffers().outlineBufferSource();
 
+		float partialTick = mc.getFrameTime();
+		RenderType renderType = getRenderType(poseStack, this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick, packedLight);
+		buffer = ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, false, this.currentStack.hasFoil());
+
 		defaultRender(poseStack, this.animatable, bufferSource, null, buffer,
-				0, Minecraft.getInstance().getFrameTime(), packedLight);
+				0, partialTick, packedLight);
 	}
 
 	/**

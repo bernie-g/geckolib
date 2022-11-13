@@ -1,9 +1,6 @@
 package software.bernie.geckolib3.animatable;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimatableManager;
@@ -11,12 +8,8 @@ import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.SerializableDataTicket;
 import software.bernie.geckolib3.network.packet.AnimDataSyncPacket;
 import software.bernie.geckolib3.network.packet.AnimTriggerPacket;
-import software.bernie.geckolib3.renderer.GeoArmorRenderer;
-import software.bernie.geckolib3.renderer.GeoItemRenderer;
 
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to singleton objects.
@@ -107,65 +100,4 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, PacketDistributor.PacketTarget packetTarget) {
 		GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), packetTarget);
 	}
-
-	/**
-	 * Internal interface for safely providing a custom renderer instances at runtime.<br>
-	 * This can be safely instantiated as a new anonymous class inside your {@link Item} class
-	 */
-	interface RenderProvider {
-		/**
-		 * Return a cached instance of the armor renderer for this armor
-		 * @param armor The armor for the renderer
-		 */
-		default GeoArmorRenderer<?> getArmorRenderer(GeoArmor armor) {
-			return null;
-		}
-
-		/**
-		 * Returns a cached instance of the item renderer for this item
-		 */
-		default GeoItemRenderer<?> getItemRenderer() {
-			return null;
-		}
-
-		/**
-		 * Return the texture path of the armor texture for this model
-		 * @param entity The entity related to this render (E.G. The player wearing the armor)
-		 * @param stack The ItemStack for this specific armor slot
-		 * @param slot The slot being rendered currently
-		 * @param type The optional type of the texture. By default is either null or "overlay". See {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#getArmorResource HumanoidArmorLayer.getArmorResource}
-		 */
-		default <T extends Item & GeoArmor> String getArmorTexture(Entity entity, ItemStack stack, EquipmentSlot slot, @Nullable String type) {
-			GeoArmor armor = (GeoArmor)stack.getItem();
-			GeoArmorRenderer<T> renderer = (GeoArmorRenderer<T>)getArmorRenderer(armor);
-
-			return renderer.getTextureLocation((T)armor).toString();
-		}
-	}
-
-	/**
-	 * Create your {@link RenderProvider} reference here.<br>
-	 * <b><u>MUST provide an anonymous class</u></b><br>
-	 * Example Code:
-	 * <pre>{@code
-	 * @Override
-	 * public void createRenderer(Consumer<RenderProvider> consumer) {
-	 * 	consumer.accept(new RenderProvider() {
-	 * 		private final GeoArmorRenderer<?> renderer = new MyArmorRenderer();
-	 *
-	 * 		@Override
-	 * 		GeoArmorRenderer<?> getRenderer(GeoArmor armor) {
-	 * 			return this.renderer;
-	 * 		}
-	 * 	}
-	 * }
-	 * }</pre>
-	 * @param consumer
-	 */
-	void createRenderer(Consumer<RenderProvider> consumer);
-
-	/**
-	 * Getter for the cached RenderProvider in your class
-	 */
-	Supplier<RenderProvider> getRenderProvider();
 }
