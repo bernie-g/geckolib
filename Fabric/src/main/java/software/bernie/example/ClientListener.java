@@ -20,7 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -84,7 +84,7 @@ public class ClientListener implements ClientModInitializer {
 	public class EntityPacketOnClient {
 		@Environment(EnvType.CLIENT)
 		public static void onPacket(Minecraft context, FriendlyByteBuf byteBuf) {
-			EntityType<?> type = Registry.ENTITY_TYPE.byId(byteBuf.readVarInt());
+			EntityType<?> type = BuiltInRegistries.ENTITY_TYPE.byId(byteBuf.readVarInt());
 			UUID entityUUID = byteBuf.readUUID();
 			int entityID = byteBuf.readVarInt();
 			double x = byteBuf.readDouble();
@@ -113,7 +113,7 @@ public class ClientListener implements ClientModInitializer {
 
 		public static Packet<ClientGamePacketListener> createPacket(Entity entity) {
 			FriendlyByteBuf buf = createBuffer();
-			buf.writeVarInt(Registry.ENTITY_TYPE.getId(entity.getType()));
+			buf.writeVarInt(BuiltInRegistries.ENTITY_TYPE.getId(entity.getType()));
 			buf.writeUUID(entity.getUUID());
 			buf.writeVarInt(entity.getId());
 			buf.writeDouble(entity.getX());

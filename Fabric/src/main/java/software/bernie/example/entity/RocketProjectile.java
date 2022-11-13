@@ -18,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
@@ -154,7 +153,7 @@ public class RocketProjectile extends AbstractArrow implements IAnimatable {
 		if (!this.level.isClientSide) {
 			this.doDamage();
 			this.level.explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 0.0F,
-					Explosion.BlockInteraction.BREAK);
+					 Level.ExplosionInteraction.BLOCK);
 			this.remove(Entity.RemovalReason.DISCARDED);
 		}
 		this.setSoundEvent(SoundEvents.GENERIC_EXPLODE);
@@ -165,7 +164,7 @@ public class RocketProjectile extends AbstractArrow implements IAnimatable {
 		if (!this.level.isClientSide) {
 			this.doDamage();
 			this.level.explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 0.0F,
-					Explosion.BlockInteraction.BREAK);
+					Level.ExplosionInteraction.BLOCK);
 			this.remove(Entity.RemovalReason.DISCARDED);
 		}
 	}
@@ -200,7 +199,7 @@ public class RocketProjectile extends AbstractArrow implements IAnimatable {
 					entity.hurt(DamageSource.playerAttack((Player) this.shooter), 20);
 				}
 				this.level.explode(this, this.getX(), this.getY(0.0625D), this.getZ(), 0.0F,
-						Explosion.BlockInteraction.NONE);
+						Level.ExplosionInteraction.NONE);
 			}
 		}
 	}

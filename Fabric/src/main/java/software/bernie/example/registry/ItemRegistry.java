@@ -3,7 +3,6 @@ package software.bernie.example.registry;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -16,25 +15,19 @@ import software.bernie.geckolib3.GeckoLib;
 
 public class ItemRegistry {
 
-	protected static final CreativeModeTab geckolibItemGroup = new FabricItemGroup(
-			new ResourceLocation(GeckoLib.ModID, "geckolib_examples")) {
-		@Override
-		public ItemStack makeIcon() {
-			return new ItemStack(JACK_IN_THE_BOX);
-		}
-
-		@Override
-		protected void generateDisplayItems(FeatureFlagSet enabledFeatures, Output entries) {
-			entries.accept(JACK_IN_THE_BOX);
-			entries.accept(PISTOL);
-			entries.accept(GECKOARMOR_HEAD);
-			entries.accept(GECKOARMOR_CHEST);
-			entries.accept(GECKOARMOR_LEGGINGS);
-			entries.accept(GECKOARMOR_BOOTS);
-			entries.accept(HABITAT);
-			entries.accept(FERTILIZER);
-		}
-	};
+	public static final CreativeModeTab geckolibItemGroup = FabricItemGroup
+			.builder(new ResourceLocation(GeckoLib.ModID, "geckolib_examples"))
+			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
+			.displayItems((enabledFeatures, entries, operatorEnabled) -> {
+				entries.accept(ItemRegistry.JACK_IN_THE_BOX);
+				entries.accept(ItemRegistry.PISTOL);
+				entries.accept(ItemRegistry.GECKOARMOR_HEAD);
+				entries.accept(ItemRegistry.GECKOARMOR_CHEST);
+				entries.accept(ItemRegistry.GECKOARMOR_LEGGINGS);
+				entries.accept(ItemRegistry.GECKOARMOR_BOOTS);
+				entries.accept(ItemRegistry.HABITAT);
+				entries.accept(ItemRegistry.FERTILIZER);
+			}).build();
 
 	public static final JackInTheBoxItem JACK_IN_THE_BOX = RegistryUtils.registerItem("jackintheboxitem",
 			new JackInTheBoxItem(new Item.Properties()));

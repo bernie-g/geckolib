@@ -3,6 +3,7 @@ package software.bernie.example.registry;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -25,38 +26,38 @@ public class RegistryUtils {
 
 	public static <B extends Block> B register(B block, ResourceLocation name) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			Registry.register(Registry.BLOCK, name, block);
+			Registry.register(BuiltInRegistries.BLOCK, name, block);
 			BlockItem item = new BlockItem(block, (new Properties()));
 			item.registerBlocks(Item.BY_BLOCK, item);
-			Registry.register(Registry.ITEM, name, item);
+			Registry.register(BuiltInRegistries.ITEM, name, item);
 		}
 		return block;
 	}
 
 	public static <B extends Block> B registerBlockWithoutItem(B block, ResourceLocation ResourceLocation) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			Registry.register(Registry.BLOCK, ResourceLocation, block);
+			Registry.register(BuiltInRegistries.BLOCK, ResourceLocation, block);
 		}
 		return block;
 	}
 
 	public static <B extends Block> B registerBlockWithoutItem(String name, B block) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			Registry.register(Registry.BLOCK, new ResourceLocation(GeckoLib.ModID, name), block);
+			Registry.register(BuiltInRegistries.BLOCK, new ResourceLocation(GeckoLib.ModID, name), block);
 		}
 		return block;
 	}
 
 	public static <I extends Item> I registerItem(I item, ResourceLocation name) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			return Registry.register(Registry.ITEM, name, item);
+			return Registry.register(BuiltInRegistries.ITEM, name, item);
 		}
 		return null;
 	}
 
 	public static <I extends Item> I registerItem(String name, I item) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
-			return Registry.register(Registry.ITEM, new ResourceLocation(GeckoLib.ModID, name), item);
+			return Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(GeckoLib.ModID, name), item);
 		}
 		return null;
 	}
@@ -65,7 +66,7 @@ public class RegistryUtils {
 			BlockEntityType.Builder<T> builder) {
 		if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
 			BlockEntityType<T> blockEntityType = builder.build(null);
-			Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(GeckoLib.ModID, name), blockEntityType);
+			Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, new ResourceLocation(GeckoLib.ModID, name), blockEntityType);
 			return blockEntityType;
 		}
 		return null;

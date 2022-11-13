@@ -7,6 +7,7 @@ package software.bernie.example.registry;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -89,7 +90,7 @@ public class EntityRegistryBuilder<E extends Entity> {
 					.forceTrackedVelocityUpdates(this.alwaysUpdateVelocity).build();
 		}
 
-		EntityType<E> entityType = Registry.register(Registry.ENTITY_TYPE, name, entityBuilder.build(name.getPath()));
+		EntityType<E> entityType = Registry.register(BuiltInRegistries.ENTITY_TYPE, name, entityBuilder.build(name.getPath()));
 
 		if (this.hasEgg) {
 			RegistryUtils.registerItem(
