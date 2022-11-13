@@ -24,9 +24,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.cache.object.GeoCube;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.renderer.GeoRenderer;
+import software.bernie.geckolib3.renderer.GeoReplacedEntityRenderer;
 
 import javax.annotation.Nullable;
 
@@ -34,11 +36,11 @@ import javax.annotation.Nullable;
  * Helper class for various methods and functions useful while rendering
  */
 public final class RenderUtils {
-	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
+	public static void translateMatrixToBone(PoseStack poseStack, CoreGeoBone bone) {
 		poseStack.translate(-bone.getPosX() / 16f, bone.getPosY() / 16f, bone.getPosZ() / 16f);
 	}
 
-	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
+	public static void rotateMatrixAroundBone(PoseStack poseStack, CoreGeoBone bone) {
 		if (bone.getRotZ() != 0)
 			poseStack.mulPose(Vector3f.ZP.rotation(bone.getRotZ()));
 
@@ -57,7 +59,7 @@ public final class RenderUtils {
 		poseStack.mulPose(new Quaternion((float)rotation.x(), 0, 0, false));
 	}
 
-	public static void scaleMatrixForBone(PoseStack poseStack, GeoBone bone) {
+	public static void scaleMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
 		poseStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 	}
 
@@ -66,7 +68,7 @@ public final class RenderUtils {
 		poseStack.translate(pivot.x() / 16f, pivot.y() / 16f, pivot.z() / 16f);
 	}
 
-	public static void translateToPivotPoint(PoseStack poseStack, GeoBone bone) {
+	public static void translateToPivotPoint(PoseStack poseStack, CoreGeoBone bone) {
 		poseStack.translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);
 	}
 
@@ -76,16 +78,16 @@ public final class RenderUtils {
 		poseStack.translate(-pivot.x() / 16f, -pivot.y() / 16f, -pivot.z() / 16f);
 	}
 
-	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoBone bone) {
+	public static void translateAwayFromPivotPoint(PoseStack poseStack, CoreGeoBone bone) {
 		poseStack.translate(-bone.getPivotX() / 16f, -bone.getPivotY() / 16f, -bone.getPivotZ() / 16f);
 	}
 
-	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
+	public static void translateAndRotateMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
 		translateToPivotPoint(poseStack, bone);
 		rotateMatrixAroundBone(poseStack, bone);
 	}
 
-	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
+	public static void prepMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
 		translateMatrixToBone(poseStack, bone);
 		translateToPivotPoint(poseStack, bone);
 		rotateMatrixAroundBone(poseStack, bone);
@@ -169,13 +171,11 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations.<br>
+	 * Rotates a {@link CoreGeoBone} to match a provided {@link ModelPart}'s rotations.<br>
 	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts.
 	 */
-	public static void matchModelPartRot(ModelPart from, GeoBone to) {
-		to.setRotX(-from.xRot);
-		to.setRotY(-from.yRot);
-		to.setRotZ(from.zRot);
+	public static void matchModelPartRot(ModelPart from, CoreGeoBone to) {
+		to.updateRotation(-from.xRot, -from.yRot, from.zRot);
 	}
 
 	/**
@@ -218,6 +218,18 @@ public final class RenderUtils {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
 
 		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a GeoAnimatable instance that has been registered as the replacement renderer for a given {@link EntityType}
+	 * @param entityType The {@code EntityType} to retrieve the replaced {@link GeoAnimatable} for
+	 * @return The {@code GeoAnimatable} instance, or null if one isn't found
+	 */
+	@Nullable
+	public static GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
+
+		return renderer instanceof GeoReplacedEntityRenderer<?, ?> replacedEntityRenderer ? replacedEntityRenderer.getAnimatable() : null;
 	}
 
 	/**

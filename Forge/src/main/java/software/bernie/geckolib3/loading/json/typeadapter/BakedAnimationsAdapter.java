@@ -50,7 +50,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws MolangException {
 		double length = animationObj.has("animation_length") ? GsonHelper.getAsDouble(animationObj, "animation_length") * 20d : -1;
 		Animation.LoopType loopType = Animation.LoopType.fromJson(animationObj.get("loop"));
-		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()), context);
+		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()));
 		Animation.Keyframes keyframes = context.deserialize(animationObj, Animation.Keyframes.class);
 
 		if (length == -1)
@@ -59,7 +59,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return new Animation(name, length, loopType, boneAnimations, keyframes);
 	}
 
-	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj, JsonDeserializationContext context) throws MolangException {
+	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws MolangException {
 		BoneAnimation[] animations = new BoneAnimation[bonesObj.size()];
 		int index = 0;
 
@@ -81,7 +81,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 
 	private static List<Pair<String, JsonElement>> getTripletObj(JsonElement element) {
 		if (element == null)
-			element = new JsonPrimitive(1);
+			return List.of();
 
 		if (element instanceof JsonPrimitive primitive) {
 			JsonArray array = new JsonArray(3);

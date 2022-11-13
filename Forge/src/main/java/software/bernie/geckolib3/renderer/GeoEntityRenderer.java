@@ -44,8 +44,8 @@ import java.util.List;
  */
 @SuppressWarnings("JavadocReference")
 public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
-	protected final GeoModel<T> model;
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
+	protected final GeoModel<T> model;
 
 	protected T animatable;
 
@@ -75,11 +75,11 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	}
 
 	/**
-	 * Gets the {@code int} id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
-	public int getInstanceId(T animatable) {
+	public long getInstanceId(T animatable) {
 		return animatable.getId();
 	}
 
@@ -115,7 +115,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer,
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
@@ -195,9 +195,11 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		float motionThreshold = getMotionAnimThreshold(animatable);
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
 				(limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold));
+		long instanceId = getInstanceId(animatable);
 
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.handleAnimations(animatable, getInstanceId(animatable), animationEvent);
+		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
+		this.model.handleAnimations(animatable, instanceId, animationEvent);
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
@@ -225,8 +227,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer,
-						   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
 	}
 

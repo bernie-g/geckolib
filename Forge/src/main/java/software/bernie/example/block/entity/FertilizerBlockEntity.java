@@ -5,9 +5,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.registry.TileRegistry;
-import software.bernie.geckolib3.animatable.GeoBlock;
+import software.bernie.geckolib3.animatable.GeoBlockEntity;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.RawAnimation;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.object.PlayState;
@@ -18,7 +18,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
  * @see software.bernie.example.client.model.block.FertilizerModel
  * @see FertilizerBlockRenderer
  */
-public class FertilizerBlockEntity extends BlockEntity implements GeoBlock {
+public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	// We statically instantiate our RawAnimations for efficiency, consistency, and error-proofing
@@ -35,8 +35,8 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlock {
 	 * or switch to a botarium if it's not.
 	 */
 	@Override
-	public void registerControllers(AnimationData<?> data) {
-		data.addAnimationController(new AnimationController<>(this, event -> {
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(new AnimationController<>(this, event -> {
 			if (event.getAnimatable().getLevel().isRaining()) {
 				event.getController().setAnimation(FERTILIZER_ANIMS);
 			}

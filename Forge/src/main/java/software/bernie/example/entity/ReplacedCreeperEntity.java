@@ -4,7 +4,7 @@ import net.minecraft.world.entity.EntityType;
 import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.animatable.GeoReplacedEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
@@ -24,8 +24,8 @@ public class ReplacedCreeperEntity implements GeoReplacedEntity {
 	 * @see software.bernie.geckolib3.constant.DefaultAnimations
 	 */
 	@Override
-	public void registerControllers(AnimationData<?> data) {
-		data.addAnimationController(DefaultAnimations.genericWalkIdleController(this));
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(DefaultAnimations.genericWalkIdleController(this));
 	}
 
 	@Override

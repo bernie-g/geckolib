@@ -22,10 +22,6 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	protected AnimationController<T> controller;
 	public double animationTick;
 
-	public AnimationEvent(T animatable, float partialTick) {
-		this(animatable, 0, 0, partialTick, false);
-	}
-
 	public AnimationEvent(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
 		this.animatable = animatable;
 		this.limbSwing = limbSwing;

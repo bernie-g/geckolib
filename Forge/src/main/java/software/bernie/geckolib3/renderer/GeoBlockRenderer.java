@@ -59,11 +59,11 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	}
 
 	/**
-	 * Gets the {@code int} id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
-	public int getInstanceId(T animatable) {
+	public long getInstanceId(T animatable) {
 		return animatable.getBlockPos().hashCode();
 	}
 
@@ -90,7 +90,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer,
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
@@ -116,11 +116,13 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 
 		this.renderStartPose = poseStack.last().pose().copy();
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, 0, 0, partialTick, false);
+		long instanceId = getInstanceId(animatable);
 
+		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		poseStack.translate(0, 0.01f, 0);
 		poseStack.translate(0.5, 0, 0.5);
 		rotateBlock(getFacing(animatable), poseStack);
-		this.model.handleAnimations(animatable, getInstanceId(animatable), animationEvent);
+		this.model.handleAnimations(animatable, instanceId, animationEvent);
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick,

@@ -5,7 +5,7 @@
   "item.geckolib3.geckoarmor_chest": "Gecko Armor Chestplate",
   "item.geckolib3.geckoarmor_leggings": "Gecko Armor Leggings",
   "item.geckolib3.geckoarmor_boots": "Gecko Armor Boots",
-  "item.geckolib3.jack_in_the_box": "Jack In The Box",
+  "item.geckolib3.jack_in_the_box": "Jack-in-the-Box",
   "item.geckolib3.pistol": "Pistol",
   "entity.geckolib3.parasite": "Parasite",
   "entity.geckolib3.bike": "Bike",
@@ -14,5 +14,7 @@
   "entity.geckolib3.example_render_layer_entity": "Example RenderLayer Entity",
   "block.geckolib3.habitat_block": "Gecko Habitat",
   "block.geckolib3.fertilizer_block": "Fertilizer",
-  "block.geckolib3.fertilizer_block.tooltip": "Turn on rain to see the fertilizer model!"
+  "block.geckolib3.fertilizer_block.tooltip": "Turn on rain to see the fertilizer model!",
+  "item.geckolib3.jack_in_the_box.opening": "Opening the Jack-in-the-Box!",
+  "item.geckolib3.pistol.ammo": "Ammo: %1$s/%2$s"
 }

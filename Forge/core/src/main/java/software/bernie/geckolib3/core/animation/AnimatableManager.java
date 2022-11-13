@@ -14,11 +14,11 @@ import java.util.Map;
 
 /**
  * The animation data collection for a given animatable instance.<br>
- * Generally speaking, a single working-instance of an {@link software.bernie.geckolib3.core.animatable.GeoAnimatable Animatable}
- * will have a single instance of {@code AnimationData} associated with it.<br>
+ * Generally speaking, a single working-instance of an {@link GeoAnimatable Animatable}
+ * will have a single instance of {@code AnimatableManager} associated with it.<br>
  *
  */
-public class AnimationData<T extends GeoAnimatable> {
+public class AnimatableManager<T extends GeoAnimatable> {
 	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
 	private final Map<String, AnimationController<T>> animationControllers = new Object2ObjectOpenHashMap<>();
 	private Map<DataTicket<?>, Object> extraData;
@@ -88,5 +88,25 @@ public class AnimationData<T extends GeoAnimatable> {
 	 */
 	public <D> D getData(DataTicket<D> dataTicket) {
 		return this.extraData != null ? dataTicket.getData(this.extraData) : null;
+	}
+
+	/**
+	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
+	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib3.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
+	 */
+	public void tryTriggerAnimation(String controllerName, String animName) {
+		if (controllerName != null) {
+			AnimationController<?> controller = getAnimationControllers().get(controllerName);
+
+			if (controller != null)
+				controller.tryTriggerAnimation(animName);
+		}
+		else {
+			for (AnimationController<?> controller : getAnimationControllers().values()) {
+				if (controller.tryTriggerAnimation(animName))
+					return;
+			}
+		}
 	}
 }

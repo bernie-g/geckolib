@@ -80,10 +80,10 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the {@code int} id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
-	default int getInstanceId(T animatable) {
+	default long getInstanceId(T animatable) {
 		return animatable.hashCode();
 	}
 
@@ -125,7 +125,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		if (buffer == null)
 			buffer = bufferSource.getBuffer(renderType);
 
-		preRender(poseStack, animatable, bufferSource, buffer, partialTick, packedLight,
+		preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight,
 				packedOverlay, red, green, blue, alpha);
 
 		actuallyRender(poseStack, animatable, model, renderType,
@@ -133,7 +133,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
-		postRender(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+		postRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight,
 				packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
@@ -168,15 +168,14 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
-	default void preRender(PoseStack poseStack, T animatable, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight,
+	default void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight,
 						   int packedOverlay, float red, float green, float blue, float alpha) {}
 
 	/**
 	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
-	default void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-							VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 							float alpha) {}
 
 	/**

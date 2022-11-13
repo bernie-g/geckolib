@@ -1,7 +1,5 @@
 package software.bernie.example.entity;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -15,10 +13,10 @@ import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.keyframe.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.object.PlayState;
+import software.bernie.geckolib3.util.ClientUtils;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 /**
@@ -52,9 +50,9 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	@Override
-	public void registerControllers(AnimationData<?> data) {
+	public void registerControllers(AnimatableManager<?> manager) {
 		// Add our flying animation controller
-		data.addAnimationController(new AnimationController<>(this, event -> {
+		manager.addAnimationController(new AnimationController<>(this, event -> {
 			if (this.isFlying) {
 				event.getController().setAnimation(DefaultAnimations.FLY);
 			}
@@ -63,19 +61,16 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 			}
 
 			return PlayState.CONTINUE;
-			// Handle the custom instruction keyframe that is part of our animation json, in a new class instance for server-safety
-		}).setCustomInstructionKeyframeHandler(new AnimationController.CustomKeyframeHandler<BatEntity>() {
-			@Override
-			public void handle(CustomInstructionKeyframeEvent<BatEntity> event) {
-				final LocalPlayer player = Minecraft.getInstance().player;
+			// Handle the custom instruction keyframe that is part of our animation json
+		}).setCustomInstructionKeyframeHandler(event -> {
+			Player player = ClientUtils.getClientPlayer();
 
-				if (player != null)
-					player.displayClientMessage(Component.literal("KeyFraming"), true);
-			}
+			if (player != null)
+				player.displayClientMessage(Component.literal("KeyFraming"), true);
 		}));
 
 		// Add our generic living animation controller
-		data.addAnimationController(DefaultAnimations.genericLivingController(this));
+		manager.addAnimationController(DefaultAnimations.genericLivingController(this));
 	}
 
 	@Override

@@ -22,11 +22,12 @@ public class GeckoLib {
 	/**
 	 * This method <u><b>MUST</b></u> be called in your mod's constructor or during {@code onInitializeClient} in Fabric/Quilt.<br>
 	 * If shadowing {@code GeckoLib}, you should instead call {@link GeckoLib#shadowInit}
+	 * Note that doing so will prevent {@link software.bernie.geckolib3.renderer.GeoItemRenderer Items} from animating properly
 	 */
 	synchronized public static void initialize() {
 		if (!hasInitialized) {
 			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
-			GeckoLibNetwork.initialize();
+			GeckoLibNetwork.init();
 		}
 
 		hasInitialized = true;

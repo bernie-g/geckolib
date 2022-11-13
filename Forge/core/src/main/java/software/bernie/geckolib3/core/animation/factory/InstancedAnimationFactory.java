@@ -1,31 +1,31 @@
 package software.bernie.geckolib3.core.animation.factory;
 
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 
 /**
- * AnimationFactory implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimationData} instance per factory.
+ * AnimationFactory implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimatableManager} instance per factory.
  */
 public class InstancedAnimationFactory extends AnimationFactory {
-	private AnimationData<?> animationData;
+	private AnimatableManager<?> manager;
 
 	public InstancedAnimationFactory(GeoAnimatable animatable) {
 		super(animatable);
 	}
 
 	/**
-	 * Gets the {@link AnimationData} instance for this factory.
+	 * Gets the {@link AnimatableManager} instance for this factory.
 	 * Because this factory subclass expects a 1:1 relationship of factory to animatable,
-	 * only one {@code AnimationData} instance is used
+	 * only one {@code AnimatableManager} instance is used
 	 */
 	@Override
-	public AnimationData<?> getAnimationData(int uniqueId) {
-		if (this.animationData == null) {
-			this.animationData = new AnimationData<>();
+	public AnimatableManager<?> getManagerForId(long uniqueId) {
+		if (this.manager == null) {
+			this.manager = new AnimatableManager<>();
 
-			this.animatable.registerControllers(this.animationData);
+			this.animatable.registerControllers(this.manager);
 		}
 
-		return this.animationData;
+		return this.manager;
 	}
 }

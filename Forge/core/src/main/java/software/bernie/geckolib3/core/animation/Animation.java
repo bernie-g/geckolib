@@ -23,7 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Keyframes keyFrames) {
 	public record Keyframes(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
 
-	// TODO check hashcodes for LoopType implementations
 	/**
 	 * Loop type functional interface to define post-play handling for a given animation. <br>
 	 * Custom loop types are supported by extending this class and providing the extended class instance as the loop type for the animation

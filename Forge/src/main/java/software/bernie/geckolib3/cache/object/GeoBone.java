@@ -5,6 +5,7 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3d;
 import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
 
 import javax.annotation.Nullable;
@@ -15,7 +16,7 @@ import java.util.Objects;
  * Mutable bone object representing a set of cubes, as well as child bones.<br>
  * This is the object that is directly modified by animations to handle movement
  */
-public class GeoBone implements software.bernie.geckolib3.core.animatable.model.GeoBone {
+public class GeoBone implements CoreGeoBone {
 	private final GeoBone parent;
 	private final String name;
 
@@ -132,46 +133,64 @@ public class GeoBone implements software.bernie.geckolib3.core.animatable.model.
 	@Override
 	public void setRotX(float value) {
 		this.rotX = value;
+
+		markRotationAsChanged();
 	}
 
 	@Override
 	public void setRotY(float value) {
 		this.rotY = value;
+
+		markRotationAsChanged();
 	}
 
 	@Override
 	public void setRotZ(float value) {
 		this.rotZ = value;
+
+		markRotationAsChanged();
 	}
 
 	@Override
 	public void setPosX(float value) {
 		this.positionX = value;
+
+		markPositionAsChanged();
 	}
 
 	@Override
 	public void setPosY(float value) {
 		this.positionY = value;
+
+		markPositionAsChanged();
 	}
 
 	@Override
 	public void setPosZ(float value) {
 		this.positionZ = value;
+
+		markPositionAsChanged();
 	}
 
 	@Override
 	public void setScaleX(float value) {
 		this.scaleX = value;
+
+		markScaleAsChanged();
 	}
 
 	@Override
 	public void setScaleY(float value) {
 		this.scaleY = value;
+
+		markScaleAsChanged();
 	}
 
 	@Override
 	public void setScaleZ(float value) {
 		this.scaleZ = value;
+
+		markScaleAsChanged();
 	}
 
 	@Override

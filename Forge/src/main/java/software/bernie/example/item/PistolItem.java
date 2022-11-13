@@ -1,4 +1,3 @@
-/*
 package software.bernie.example.item;
 
 import net.minecraft.ChatFormatting;
@@ -7,7 +6,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.AnimationState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
@@ -17,129 +15,117 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import net.minecraftforge.network.PacketDistributor;
 import software.bernie.example.GeckoLibMod;
-import software.bernie.example.client.renderer.item.PistolRender;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.example.client.renderer.item.PistolRenderer;
+import software.bernie.geckolib3.animatable.GeoItem;
+import software.bernie.geckolib3.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib3.constant.DefaultAnimations;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationData;
-import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.network.GeckoLibNetwork;
-import software.bernie.geckolib3.network.ISyncable;
+import software.bernie.geckolib3.renderer.GeoItemRenderer;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
-public class PistolItem extends Item implements GeoAnimatable, ISyncable {
-
-	public AnimationFactory factory = GeckoLibUtil.createFactory(this);
-	public String controllerName = "controller";
-	public static final int ANIM_OPEN = 0;
+/**
+ * Example {@link GeoItem} in the form of a "shootable" pistol.
+ * @see PistolRenderer
+ */
+public class PistolItem extends Item implements GeoItem {
+	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final Supplier<RenderProvider> renderer = GeoItem.makeRenderer(this);
 
 	public PistolItem() {
 		super(new Item.Properties().tab(GeckoLibMod.ITEM_GROUP).stacksTo(1).durability(201));
-		GeckoLibNetwork.registerSyncable(this);
+
+		// Register our item as server-side handled.
+		// This enables both animation data syncing and server-side animation triggering
+		SingletonGeoAnimatable.registerSyncedAnimatable(this);
 	}
 
+	// Set up our getter for the render provider
 	@Override
-	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-		super.initializeClient(consumer);
-		consumer.accept(new IClientItemExtensions() {
-			private final BlockEntityWithoutLevelRenderer renderer = new PistolRender();
+	public Supplier<SingletonGeoAnimatable.RenderProvider> getRenderProvider() {
+		return this.renderer;
+	}
+
+	// Create and cache our itemstack renderer for use later
+	@Override
+	public void createRenderer(Consumer<SingletonGeoAnimatable.RenderProvider> consumer) {
+		consumer.accept(new SingletonGeoAnimatable.RenderProvider() {
+			private final PistolRenderer renderer = new PistolRenderer();
 
 			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+			public GeoItemRenderer<?> getItemRenderer() {
 				return renderer;
 			}
 		});
 	}
 
+	// Utilise the existing forge hook to define our custom renderer (which we created in createRenderer)
 	@Override
-	public void releaseUsing(ItemStack stack, Level worldIn, LivingEntity entityLiving, int timeLeft) {
-		if (entityLiving instanceof Player) {
-			Player playerentity = (Player) entityLiving;
-			if (stack.getDamageValue() < (stack.getMaxDamage() - 1)) {
-				playerentity.getCooldowns().addCooldown(this, 5);
-				if (!worldIn.isClientSide) {
-					Arrow abstractarrowentity = createArrow(worldIn, stack, playerentity);
-					abstractarrowentity = customeArrow(abstractarrowentity);
-					abstractarrowentity.shootFromRotation(playerentity, playerentity.getXRot(), playerentity.getYRot(),
-							0.0F, 1.0F * 3.0F, 1.0F);
+	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
+		consumer.accept(new IClientItemExtensions() {
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return PistolItem.this.renderer.get().getItemRenderer();
+			}
+		});
+	}
 
-					abstractarrowentity.setBaseDamage(2.5);
-					abstractarrowentity.tickCount = 35;
-					abstractarrowentity.isNoGravity();
+	// Register our animation controllers
+	@Override
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(new AnimationController<>(this, "shoot_controller", event -> PlayState.CONTINUE)
+				.triggerableAnim("shoot", DefaultAnimations.ITEM_ON_USE));
+		// We've marked the "shoot" animation as being triggerable from the server
+	}
 
-					stack.hurtAndBreak(1, entityLiving, p -> p.broadcastBreakEvent(entityLiving.getUsedItemHand()));
-					worldIn.addFreshEntity(abstractarrowentity);
-				}
-				if (!worldIn.isClientSide) {
-					final int id = GeckoLibUtil.guaranteeIDForStack(stack, (ServerLevel) worldIn);
-					final PacketDistributor.PacketTarget target = PacketDistributor.TRACKING_ENTITY_AND_SELF
-							.with(() -> playerentity);
-					GeckoLibNetwork.syncAnimation(target, this, id, ANIM_OPEN);
-				}
+	// Start "using" the item once clicked
+	@Override
+	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
+		player.startUsingItem(hand);
+
+		return InteractionResultHolder.consume(player.getItemInHand(hand));
+	}
+
+	// Fire an arrow and play the animation when releasing the mouse button
+	@Override
+	public void releaseUsing(ItemStack stack, Level level, LivingEntity shooter, int ticksRemaining) {
+		if (shooter instanceof Player player) {
+			if (stack.getDamageValue() >= stack.getMaxDamage() - 1)
+				return;
+
+			// Add a cooldown so you can't fire rapidly
+			player.getCooldowns().addCooldown(this, 5);
+
+			if (!level.isClientSide) {
+				Arrow arrow = new Arrow(level, player);
+				arrow.tickCount = 35;
+
+				arrow.shootFromRotation(player, player.getXRot(), player.getYRot(), 0, 1, 1);
+				arrow.setBaseDamage(2.5);
+				arrow.isNoGravity();
+
+				stack.hurtAndBreak(1, shooter, p -> p.broadcastBreakEvent(shooter.getUsedItemHand()));
+				level.addFreshEntity(arrow);
+
+				// Trigger our animation
+				// We could trigger this outside of the client-side check if only wanted the animation to play for the shooter
+				// But we'll fire it on the server so all nearby players can see it
+				triggerAnim(player, GeoItem.getOrAssignId(stack, (ServerLevel)level), "shoot_controller", "shoot");
 			}
 		}
 	}
 
-	public Arrow createArrow(Level worldIn, ItemStack stack, LivingEntity shooter) {
-		Arrow arrowentity = new Arrow(worldIn, shooter);
-		return arrowentity;
-	}
-
-	public static float getArrowVelocity(int charge) {
-		float f = (float) charge / 20.0F;
-		f = (f * f + f * 2.0F) / 3.0F;
-		if (f > 1.0F) {
-			f = 1.0F;
-		}
-
-		return f;
-	}
-
+	// Use vanilla animation to 'pull back' the pistol while charging it
 	@Override
 	public UseAnim getUseAnimation(ItemStack stack) {
 		return UseAnim.BOW;
-	}
-
-	public Arrow customeArrow(Arrow arrow) {
-		return arrow;
-	}
-
-	public <P extends Item & GeoAnimatable> PlayState predicate(AnimationEvent<P> event) {
-		return PlayState.CONTINUE;
-	}
-
-	@Override
-	public void registerControllers(AnimationData data) {
-		data.addAnimationController(new AnimationController(this, controllerName, 1, this::predicate));
-	}
-
-	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
-	}
-
-	@Override
-	public void onAnimationSync(int id, int state) {
-		if (state == ANIM_OPEN) {
-			final AnimationController<?> controller = GeckoLibUtil.getControllerForID(this.factory, id, controllerName);
-			if (controller.getAnimationState() == AnimationState.STOPPED) {
-				controller.markNeedsReload();
-				controller.setAnimation(new AnimationBuilder().addAnimation("firing", EDefaultLoopTypes.PLAY_ONCE));
-			}
-		}
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand hand) {
-		ItemStack itemstack = player.getItemInHand(hand);
-		player.startUsingItem(hand);
-		return InteractionResultHolder.consume(itemstack);
 	}
 
 	@Override
@@ -152,10 +138,17 @@ public class PistolItem extends Item implements GeoAnimatable, ISyncable {
 		return 72000;
 	}
 
+	// Let's add some ammo text to the tooltip
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.literal(
-				"Ammo: " + (stack.getMaxDamage() - stack.getDamageValue() - 1) + " / " + (stack.getMaxDamage() - 1))
+		tooltip.add(Component.translatable("item.geckolib3.pistol.ammo",
+				stack.getMaxDamage() - stack.getDamageValue() - 1,
+				stack.getMaxDamage() - 1)
 				.withStyle(ChatFormatting.ITALIC));
 	}
-}*/
+
+	@Override
+	public AnimationFactory getFactory() {
+		return this.factory;
+	}
+}

@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"Soaryn_chest_popup": {
+		"use.popup": {
 			"animation_length": 15.44,
 			"bones": {
 				"Top": {

@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.potato_armor.new": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 2,
 			"bones": {

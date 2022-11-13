@@ -3,9 +3,9 @@ package software.bernie.geckolib3.core.animation;
 import com.eliotlash.mclib.utils.Interpolations;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animatable.model.BakedGeoModel;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.core.animatable.model.GeoModel;
+import software.bernie.geckolib3.core.animatable.model.CoreBakedGeoModel;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib3.core.keyframe.AnimationPoint;
 import software.bernie.geckolib3.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib3.core.state.BoneSnapshot;
@@ -16,12 +16,12 @@ import java.util.Map;
 import java.util.Queue;
 
 public class AnimationProcessor<T extends GeoAnimatable> {
-	private final Map<String, GeoBone> bones = new Object2ObjectOpenHashMap<>();
-	private final GeoModel<T> model;
+	private final Map<String, CoreGeoBone> bones = new Object2ObjectOpenHashMap<>();
+	private final CoreGeoModel<T> model;
 
 	public boolean reloadAnimations = false;
 
-	public AnimationProcessor(GeoModel<T> model) {
+	public AnimationProcessor(CoreGeoModel<T> model) {
 		this.model = model;
 	}
 
@@ -56,29 +56,27 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 *
 	 * @param animatable            The animatable object relevant to the animation being played
 	 * @param model                 The model currently being processed
-	 * @param animationData			The AnimationData instance being used for this animation processor
+	 * @param animatableManager			The AnimatableManager instance being used for this animation processor
 	 * @param seekTime              The current lerped tick (current tick + partial tick)
 	 * @param event                 An {@link AnimationEvent} instance applied to this render frame
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
-	public void tickAnimation(T animatable, GeoModel<T> model, AnimationData<T> animationData, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
-		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animationData.getBoneSnapshotCollection());
+	public void tickAnimation(T animatable, CoreGeoModel<T> model, AnimatableManager<T> animatableManager, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
+		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animatableManager.getBoneSnapshotCollection());
 
-		resetBoneTransformationMarkers();
-
-		for (AnimationController<T> controller : animationData.getAnimationControllers().values()) {
+		for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
 			if (this.reloadAnimations) {
 				controller.markNeedsReload();
 				controller.getBoneAnimationQueues().clear();
 			}
 
-			controller.isJustStarting = animationData.isFirstTick();
+			controller.isJustStarting = animatableManager.isFirstTick();
 
 			event.withController(controller);
 			controller.process(model, event, this.bones, boneSnapshots, seekTime, crashWhenCantFindBone);
 
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
-				GeoBone bone = boneAnimation.bone();
+				CoreGeoBone bone = boneAnimation.bone();
 				BoneSnapshot snapshot = boneSnapshots.get(bone.getName());
 				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 
@@ -125,7 +123,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		this.reloadAnimations = false;
 		double resetTickLength = animatable.getBoneResetTime();
 
-		for (GeoBone bone : getRegisteredBones()) {
+		for (CoreGeoBone bone : getRegisteredBones()) {
 			if (!bone.hasRotationChanged()) {
 				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
@@ -178,24 +176,25 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			}
 		}
 
-		animationData.finishFirstTick();
+		resetBoneTransformationMarkers();
+		animatableManager.finishFirstTick();
 	}
 
 	/**
-	 * Reset the transformation markers applied to each {@link GeoBone} ready for the next render frame
+	 * Reset the transformation markers applied to each {@link CoreGeoBone} ready for the next render frame
 	 */
 	private void resetBoneTransformationMarkers() {
-		getRegisteredBones().forEach(GeoBone::resetStateChanges);
+		getRegisteredBones().forEach(CoreGeoBone::resetStateChanges);
 	}
 
 	/**
-	 * Create new bone {@link BoneSnapshot} based on the bone's initial snapshot for the currently registered {@link GeoBone GeoBones},
+	 * Create new bone {@link BoneSnapshot} based on the bone's initial snapshot for the currently registered {@link CoreGeoBone GeoBones},
 	 * filtered by the bones already present in the master snapshots map
-	 * @param snapshots The master bone snapshots map from the related {@link AnimationData}
+	 * @param snapshots The master bone snapshots map from the related {@link AnimatableManager}
 	 * @return The input snapshots map, for easy assignment
 	 */
 	private Map<String, BoneSnapshot> updateBoneSnapshots(Map<String, BoneSnapshot> snapshots) {
-		for (GeoBone bone : getRegisteredBones()) {
+		for (CoreGeoBone bone : getRegisteredBones()) {
 			if (!snapshots.containsKey(bone.getName()))
 				snapshots.put(bone.getName(), BoneSnapshot.copy(bone.getInitialSnapshot()));
 		}
@@ -209,7 +208,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param boneName The bone name
 	 * @return the bone
 	 */
-	public GeoBone getBone(String boneName) {
+	public CoreGeoBone getBone(String boneName) {
 		return this.bones.get(boneName);
 	}
 
@@ -218,32 +217,32 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * This is normally handled automatically by Geckolib.<br>
 	 * Failure to properly register a bone will break things.
 	 */
-	public void registerGeoBone(GeoBone bone) {
+	public void registerGeoBone(CoreGeoBone bone) {
 		bone.saveInitialSnapshot();
 		this.bones.put(bone.getName(), bone);
 
-		for (GeoBone child : bone.getChildBones()) {
+		for (CoreGeoBone child : bone.getChildBones()) {
 			registerGeoBone(child);
 		}
 	}
 
 	/**
-	 * Clear the {@link GeoBone GeoBones} currently registered to the processor,
+	 * Clear the {@link CoreGeoBone GeoBones} currently registered to the processor,
 	 * then prepares the processor for a new model.<br>
 	 * Should be called whenever switching models to render/animate
 	 */
-	public void setActiveModel(BakedGeoModel model) {
+	public void setActiveModel(CoreBakedGeoModel model) {
 		this.bones.clear();
 
-		for (GeoBone bone : model.getBones()) {
+		for (CoreGeoBone bone : model.getBones()) {
 			registerGeoBone(bone);
 		}
 	}
 
 	/**
-	 * Get an iterable collection of the {@link GeoBone GeoBones} currently registered to the processor
+	 * Get an iterable collection of the {@link CoreGeoBone GeoBones} currently registered to the processor
 	 */
-	public Collection<GeoBone> getRegisteredBones() {
+	public Collection<CoreGeoBone> getRegisteredBones() {
 		return this.bones.values();
 	}
 
@@ -256,7 +255,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 	/**
 	 * {@link Animation} and {@link software.bernie.geckolib3.core.animation.Animation.LoopType} override pair,
-	 * used to define a playable animation stage for a {@link software.bernie.geckolib3.core.animatable.GeoAnimatable}
+	 * used to define a playable animation stage for a {@link GeoAnimatable}
 	 */
 	public record QueuedAnimation(Animation animation, Animation.LoopType loopType) {}
 }

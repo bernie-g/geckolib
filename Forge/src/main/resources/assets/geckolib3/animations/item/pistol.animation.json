@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"firing": {
+		"item.use": {
 			"animation_length": 0.16,
 			"bones": {
 				"group": {

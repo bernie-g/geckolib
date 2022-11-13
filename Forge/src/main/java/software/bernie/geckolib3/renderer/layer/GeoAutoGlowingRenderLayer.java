@@ -7,8 +7,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.cache.texture.AutoGlowingTexture;
+import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.renderer.GeoRenderer;
 
 /**

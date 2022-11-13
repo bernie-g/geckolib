@@ -56,11 +56,11 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	}
 
 	/**
-	 * Gets the {@code int} id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
-	public int getInstanceId(T animatable) {
+	public long getInstanceId(T animatable) {
 		return animatable.getId();
 	}
 
@@ -96,7 +96,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, VertexConsumer buffer,
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
@@ -144,8 +144,7 @@ public class GeoProjectilesRenderer<T extends Entity & GeoAnimatable> extends En
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer,
-						   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
 	}
 

@@ -1,12 +1,16 @@
 package software.bernie.example.registry;
 
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorMaterials;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.GeckoLibMod;
+import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.example.item.PistolItem;
 import software.bernie.geckolib3.GeckoLib;
 
 public final class ItemRegistry {
@@ -22,7 +26,7 @@ public final class ItemRegistry {
 	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jack_in_the_box",
 			() -> new JackInTheBoxItem(new Item.Properties()));
 
-	/*public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", () -> new PistolItem());
+	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", PistolItem::new);
 
 	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_HEAD = ITEMS.register("geckoarmor_head",
 			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.HEAD, new Item.Properties()));
@@ -31,6 +35,6 @@ public final class ItemRegistry {
 	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_LEGGINGS = ITEMS.register("geckoarmor_leggings",
 			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties()));
 	public static final RegistryObject<GeckoArmorItem> GECKOARMOR_BOOTS = ITEMS.register("geckoarmor_boots",
-			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties()));*/
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties()));
 
 }

@@ -8,6 +8,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import software.bernie.example.client.model.entity.BatModel;
 import software.bernie.example.entity.BatEntity;
+import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.renderer.GeoEntityRenderer;
 
 /**
@@ -23,8 +24,7 @@ public class BatRenderer extends GeoEntityRenderer<BatEntity> {
 
 	// Add some particles around the ear when rendering
 	@Override
-	public void postRender(BatEntity animatable, PoseStack poseStack, float partialTick,
-						   MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight,
+	public void postRender(PoseStack poseStack, BatEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 						   int packedOverlay, float red, float green, float blue, float alpha) {
 		if (this.currentTick < 0 || this.currentTick != animatable.tickCount) {
 			this.currentTick = animatable.tickCount;
@@ -43,7 +43,7 @@ public class BatRenderer extends GeoEntityRenderer<BatEntity> {
 			});
 		}
 
-		super.postRender(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
+		super.postRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight,
 				packedOverlay, red, green, blue, alpha);
 	}
 }

@@ -12,8 +12,9 @@ import software.bernie.geckolib3.cache.GeckoLibCache;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib3.core.animation.Animation;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.core.animation.AnimationProcessor;
 import software.bernie.geckolib3.core.molang.MolangParser;
@@ -31,7 +32,7 @@ import java.util.function.BiConsumer;
  * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses.
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
-public abstract class GeoModel<T extends GeoAnimatable> implements software.bernie.geckolib3.core.animatable.model.GeoModel<T> {
+public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<T> {
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
@@ -119,50 +120,46 @@ public abstract class GeoModel<T extends GeoAnimatable> implements software.bern
 		return this.processor;
 	}
 
-	@Override
-	public final void handleAnimations(T animatable, int instanceId, AnimationEvent<T> animationEvent) {
-		Minecraft mc = Minecraft.getInstance();
-		AnimationData<T> animationData = animatable.getFactory().getAnimationData(instanceId);
-		double currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
-
-		if (animationData.getFirstTickTime() == -1)
-			animationData.startedAt(currentTick + mc.getFrameTime());
-
-		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
-			if (animatable instanceof LivingEntity) {
-				animationData.updatedAt(currentTick + mc.getFrameTime());
-			}
-			else {
-				animationData.updatedAt(currentTick - animationData.getFirstTickTime());
-			}
-
-			double gameTick = animationData.getLastUpdateTime();
-			this.seekTime += gameTick - this.lastGameTickTime;
-			this.lastGameTickTime = gameTick;
-		}
-
-		if (animationEvent == null)
-			animationEvent = new AnimationEvent<T>(animatable, (float)(animationData.getLastUpdateTime() - this.lastGameTickTime));
-
-		animationEvent.animationTick = this.seekTime;
-		AnimationProcessor<T> processor = getAnimationProcessor();
-
-		processor.preAnimationSetup(animationEvent.getAnimatable(), this.seekTime);
-		addAdditionalEventData(animatable, instanceId, animationEvent::setData);
-
-		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animationData, this.seekTime, animationEvent, crashIfBoneMissing());
-
-		setCustomAnimations(animatable, instanceId, animationEvent);
-	}
-
 	/**
 	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationEvent} to be handled by your animation handler at render time
 	 * @param animatable The animatable instance currently being animated
 	 * @param instanceId The unique instance id of the animatable being animated
 	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationEvent
 	 */
-	protected void addAdditionalEventData(T animatable, int instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
+	public void addAdditionalEventData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
+
+	@Override
+	public final void handleAnimations(T animatable, long instanceId, AnimationEvent<T> animationEvent) {
+		Minecraft mc = Minecraft.getInstance();
+		AnimatableManager<T> animatableManager = animatable.getFactory().getManagerForId(instanceId);
+		double currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
+
+		if (animatableManager.getFirstTickTime() == -1)
+			animatableManager.startedAt(currentTick + mc.getFrameTime());
+
+		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
+			if (animatable instanceof LivingEntity) {
+				animatableManager.updatedAt(currentTick + mc.getFrameTime());
+			}
+			else {
+				animatableManager.updatedAt(currentTick - animatableManager.getFirstTickTime());
+			}
+
+			double gameTick = animatableManager.getLastUpdateTime();
+			this.seekTime += gameTick - this.lastGameTickTime;
+			this.lastGameTickTime = gameTick;
+		}
+
+		animationEvent.animationTick = this.seekTime;
+		AnimationProcessor<T> processor = getAnimationProcessor();
+
+		processor.preAnimationSetup(animationEvent.getAnimatable(), this.seekTime);
+
+		if (!processor.getRegisteredBones().isEmpty())
+			processor.tickAnimation(animatable, this, animatableManager, this.seekTime, animationEvent, crashIfBoneMissing());
+
+		setCustomAnimations(animatable, instanceId, animationEvent);
+	}
 
 	@Override
 	public void applyMolangQueries(T animatable, double seekTime) {

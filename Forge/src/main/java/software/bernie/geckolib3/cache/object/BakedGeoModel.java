@@ -1,5 +1,7 @@
 package software.bernie.geckolib3.cache.object;
 
+import software.bernie.geckolib3.core.animatable.model.CoreBakedGeoModel;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.loading.json.raw.ModelProperties;
 
 import java.util.List;
@@ -8,13 +10,13 @@ import java.util.Optional;
 /**
  * Baked model object for Geckolib models.
  */
-public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties properties) implements software.bernie.geckolib3.core.animatable.model.BakedGeoModel {
+public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties properties) implements CoreBakedGeoModel {
 	/**
 	 * Gets the list of top-level bones for this model.
 	 * Identical to calling {@link BakedGeoModel#topLevelBones()}
 	 */
 	@Override
-	public List<? extends software.bernie.geckolib3.core.animatable.model.GeoBone> getBones() {
+	public List<? extends CoreGeoBone> getBones() {
 		return this.topLevelBones;
 	}
 
@@ -25,8 +27,8 @@ public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties propert
 	 * @return An {@link Optional} containing the {@link GeoBone} if one matches, otherwise an empty Optional
 	 */
 	public Optional<GeoBone> getBone(String name) {
-		for (GeoBone bone : topLevelBones) {
-			software.bernie.geckolib3.core.animatable.model.GeoBone childBone = searchForChildBone(bone, name);
+		for (GeoBone bone : this.topLevelBones) {
+			CoreGeoBone childBone = searchForChildBone(bone, name);
 
 			if (childBone != null)
 				return Optional.of((GeoBone)childBone);

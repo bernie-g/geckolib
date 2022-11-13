@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib3.constant.DataTickets;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.core.animation.AnimationEvent;
 import software.bernie.geckolib3.model.data.EntityModelData;
 
@@ -40,11 +40,11 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 	}
 
 	@Override
-	public void setCustomAnimations(T animatable, int instanceId, AnimationEvent<T> animationEvent) {
+	public void setCustomAnimations(T animatable, long instanceId, AnimationEvent<T> animationEvent) {
 		if (!this.turnsHead)
 			return;
 
-		GeoBone head = getAnimationProcessor().getBone("head");
+		CoreGeoBone head = getAnimationProcessor().getBone("head");
 
 		if (head != null) {
 			EntityModelData entityData = animationEvent.getData(DataTickets.ENTITY_MODEL_DATA);

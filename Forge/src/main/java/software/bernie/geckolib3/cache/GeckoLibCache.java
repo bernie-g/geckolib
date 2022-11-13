@@ -12,6 +12,7 @@ import net.minecraftforge.fml.ModLoader;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.GeckoLibException;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib3.loading.FileLoader;
 import software.bernie.geckolib3.loading.json.FormatVersion;
 import software.bernie.geckolib3.loading.json.raw.Model;
@@ -31,7 +32,7 @@ import java.util.function.Function;
 
 /**
  * Cache class for holding loaded {@link software.bernie.geckolib3.core.animation.Animation Animations}
- * and {@link software.bernie.geckolib3.core.animatable.model.GeoModel Models}
+ * and {@link CoreGeoModel Models}
  */
 public final class GeckoLibCache {
 	private static final Set<String> EXCLUDED_NAMESPACES = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
@@ -54,14 +55,16 @@ public final class GeckoLibCache {
 	}
 
 	public static void registerReloadListener() {
-		if (Minecraft.getInstance() == null) {
+		Minecraft mc = Minecraft.getInstance();
+
+		if (mc == null) {
 			if (!ModLoader.isDataGenRunning())
 				GeckoLib.LOGGER.warn("Minecraft.getInstance() was null, could not register reload listeners");
 
 			return;
 		}
 
-		if (!(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager resourceManager))
+		if (!(mc.getResourceManager() instanceof ReloadableResourceManager resourceManager))
 			throw new RuntimeException("GeckoLib was initialized too early!");
 
 		resourceManager.registerReloadListener(GeckoLibCache::reload);

@@ -43,13 +43,6 @@ public final class ClientListener {
 	}
 
 	@SubscribeEvent
-	public static void registerRenderers(final EntityRenderersEvent.AddLayers event) {
-		if (GeckoLibMod.shouldRegisterExamples()) {
-			//GeoArmorRenderer.registerArmorRenderer(GeckoArmorItem.class, () -> new GeckoArmorRenderer());
-		}
-	}
-
-	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
 		if (GeckoLibMod.shouldRegisterExamples())
 			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.HABITAT_BLOCK.get(), RenderType.translucent());

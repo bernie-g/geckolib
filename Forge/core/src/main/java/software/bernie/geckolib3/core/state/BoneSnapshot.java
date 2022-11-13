@@ -5,15 +5,15 @@
 
 package software.bernie.geckolib3.core.state;
 
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 
 /**
- * A state monitoring class for a given {@link GeoBone}.<br>
+ * A state monitoring class for a given {@link CoreGeoBone}.<br>
  * Transformations applied to the bone is monitored by the {@link software.bernie.geckolib3.core.animation.AnimationProcessor}
  * in the course of animations, and stored here for monitoring.
  */
 public class BoneSnapshot {
-	private final GeoBone bone;
+	private final CoreGeoBone bone;
 
 	private float scaleX;
 	private float scaleY;
@@ -35,7 +35,7 @@ public class BoneSnapshot {
 	private boolean posAnimInProgress = true;
 	private boolean scaleAnimInProgress = true;
 
-	public BoneSnapshot(GeoBone bone) {
+	public BoneSnapshot(CoreGeoBone bone) {
 		this.rotX = bone.getRotX();
 		this.rotY = bone.getRotY();
 		this.rotZ = bone.getRotZ();
@@ -69,7 +69,7 @@ public class BoneSnapshot {
 		return newSnapshot;
 	}
 
-	public GeoBone getBone() {
+	public CoreGeoBone getBone() {
 		return this.bone;
 	}
 

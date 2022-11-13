@@ -5,9 +5,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.renderer.block.HabitatBlockRenderer;
 import software.bernie.example.registry.TileRegistry;
-import software.bernie.geckolib3.animatable.GeoBlock;
+import software.bernie.geckolib3.animatable.GeoBlockEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
@@ -16,7 +16,7 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
  * @see software.bernie.example.client.model.block.HabitatModel
  * @see HabitatBlockRenderer
  */
-public class HabitatBlockEntity extends BlockEntity implements GeoBlock {
+public class HabitatBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public HabitatBlockEntity(BlockPos pos, BlockState state) {
@@ -27,8 +27,8 @@ public class HabitatBlockEntity extends BlockEntity implements GeoBlock {
 	 * We just want a permanent idle animation happening here
 	 */
 	@Override
-	public void registerControllers(AnimationData<?> data) {
-		data.addAnimationController(DefaultAnimations.genericIdleController(this));
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(DefaultAnimations.genericIdleController(this));
 	}
 
 	@Override

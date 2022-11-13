@@ -9,7 +9,7 @@ import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.util.GeckoLibUtil;
@@ -33,8 +33,8 @@ public class ExampleRenderLayerEntity extends PathfinderMob implements GeoEntity
 
     // Add a generic idle controller, with a 5-tick transition time
 	@Override
-    public void registerControllers(AnimationData<?> data) {
-        data.addAnimationController(new AnimationController<>(this, "idle", 5, event -> {
+    public void registerControllers(AnimatableManager<?> manager) {
+        manager.addAnimationController(new AnimationController<>(this, "idle", 5, event -> {
             event.getController().setAnimation(DefaultAnimations.IDLE);
 
             return PlayState.CONTINUE;

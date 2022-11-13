@@ -14,9 +14,8 @@ import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.object.PlayState;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
@@ -101,8 +100,8 @@ public class RaceCarEntity extends Animal implements GeoEntity {
 
 	// Add our idle/moving animation controller
 	@Override
-	public void registerControllers(AnimationData<?> data) {
-		data.addAnimationController(new AnimationController<>(this, "controller", 2, event -> {
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(new AnimationController<>(this, "controller", 2, event -> {
 			if (event.isMoving() && getControllingPassenger() != null) {
 				event.getController().setAnimation(DefaultAnimations.DRIVE);
 			}
@@ -111,12 +110,9 @@ public class RaceCarEntity extends Animal implements GeoEntity {
 			}
 
 			return PlayState.CONTINUE;
-			// Handle the sound keyframe that is part of our animation json, in a new class instance for server-safety
-		}).setSoundKeyframeHandler(new AnimationController.SoundKeyframeHandler<RaceCarEntity>() {
-			@Override
-			public void handle(SoundKeyframeEvent<RaceCarEntity> event) {
-				// We don't have a sound for this yet :(
-			}
+			// Handle the sound keyframe that is part of our animation json
+		}).setSoundKeyframeHandler(event -> {
+			// We don't have a sound for this yet :(
 		}));
 	}
 

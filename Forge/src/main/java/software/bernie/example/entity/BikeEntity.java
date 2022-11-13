@@ -17,7 +17,7 @@ import software.bernie.example.client.renderer.entity.BikeRenderer;
 import software.bernie.geckolib3.animatable.GeoEntity;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimationData;
+import software.bernie.geckolib3.core.animation.AnimatableManager;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
@@ -94,8 +94,8 @@ public class BikeEntity extends Animal implements GeoEntity {
 
 	// Add our generic idle animation controller
 	@Override
-	public void registerControllers(AnimationData<?> data) {
-		data.addAnimationController(DefaultAnimations.genericIdleController(this));
+	public void registerControllers(AnimatableManager<?> manager) {
+		manager.addAnimationController(DefaultAnimations.genericIdleController(this));
 	}
 
 	@Override

@@ -10,8 +10,8 @@ import com.eliotlash.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
-import software.bernie.geckolib3.core.animatable.model.GeoModel;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib3.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib3.core.keyframe.*;
 import software.bernie.geckolib3.core.keyframe.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib3.core.keyframe.event.ParticleKeyframeEvent;
@@ -46,12 +46,15 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected boolean isJustStarting = false;
 	protected boolean needsAnimationReload = false;
 	protected boolean shouldResetTick = false;
-	private boolean justStopped = false;
+	private boolean justStopped = true;
 	protected boolean justStartedTransition = false;
 
 	protected SoundKeyframeHandler<T> soundKeyframeHandler = null;
 	protected ParticleKeyframeHandler<T> particleKeyframeHandler = null;
 	protected CustomKeyframeHandler<T> customKeyframeHandler = null;
+
+	protected final Map<String, RawAnimation> triggerableAnimations = new Object2ObjectOpenHashMap<>(0);
+	protected RawAnimation triggeredAnimation = null;
 
 	protected double transitionLength;
 	protected RawAnimation currentRawAnimation;
@@ -61,7 +64,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
 	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
-	private GeoModel<T> lastModel;
+	private CoreGeoModel<T> lastModel;
 
 	/**
 	 * Instantiates a new {@code AnimationController}.<br>
@@ -186,6 +189,19 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Registers a triggerable {@link RawAnimation} with the controller.<br>
+	 * These can then be triggered by the various {@code triggerAnim} methods in {@code GeoAnimatable's} subclasses
+	 * @param name The name of the triggerable animation
+	 * @param animation The RawAnimation for this triggerable animation
+	 * @return this
+	 */
+	public AnimationController<T> triggerableAnim(String name, RawAnimation animation) {
+		this.triggerableAnimations.put(name, animation);
+
+		return this;
+	}
+
+	/**
 	 * Gets the controller's name.
 	 * @return The name
 	 */
@@ -250,6 +266,17 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Checks whether the last animation that was playing on this controller has finished or not.<br>
+	 * This will return true if the controller has had an animation set previously, and it has finished playing
+	 * and isn't going to loop or proceed to another animation.<br>
+	 *
+	 * @return Whether the previous animation finished or not
+	 */
+	public boolean hasAnimationFinished() {
+		return this.currentRawAnimation != null && this.animationState == State.STOPPED;
+	}
+
+	/**
 	 * Sets the currently loaded animation to the one provided.<br>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
 	 * Pass null to this method to tell the controller to stop.<br>
@@ -283,17 +310,55 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Attempt to trigger an animation from the list of {@link AnimationController#triggerableAnimations triggerable animations} this controller contains.
+	 * @param animName The name of the animation to trigger
+	 * @return Whether the controller triggered an animation or not
+	 */
+	public boolean tryTriggerAnimation(String animName) {
+		RawAnimation anim = this.triggerableAnimations.get(animName);
+
+		if (anim == null)
+			return false;
+
+		this.triggeredAnimation = anim;
+
+		if (this.animationState == State.STOPPED)
+			this.animationState = State.TRANSITIONING;
+
+		return true;
+	}
+
+	/**
+	 * Handle a given AnimationEvent, alongside the current triggered animation if applicable
+	 */
+	protected PlayState handleAnimationEvent(AnimationEvent<T> event) {
+		if (this.triggeredAnimation != null) {
+			if (this.currentRawAnimation != this.triggeredAnimation)
+				this.currentAnimation = null;
+
+			setAnimation(this.triggeredAnimation);
+
+			if (!hasAnimationFinished())
+				return PlayState.CONTINUE;
+
+			this.triggeredAnimation = null;
+		}
+
+		return this.stateHandler.handle(event);
+	}
+
+	/**
 	 * This method is called every frame in order to populate the animation point
 	 * queues, and process animation state logic.
 	 *
 	 * @param model					The model currently being processed
 	 * @param event                 The animation test event
-	 * @param bones                 The registered {@link GeoBone bones} for this model
+	 * @param bones                 The registered {@link CoreGeoBone bones} for this model
 	 * @param snapshots             The {@link BoneSnapshot} map
 	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(GeoModel<T> model, AnimationEvent<T> event, Map<String, GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
+	public void process(CoreGeoModel<T> model, AnimationEvent<T> event, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
@@ -305,7 +370,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			adjustedTick = adjustTick(seekTime);
 		}
 
-		PlayState playState = this.stateHandler.handle(event);
+		PlayState playState = handleAnimationEvent(event);
 
 		if (playState == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.isEmpty())) {
 			this.animationState = State.STOPPED;
@@ -351,7 +416,7 @@ public class AnimationController<T extends GeoAnimatable> {
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
-					GeoBone bone = bones.get(boneAnimation.boneName());
+					CoreGeoBone bone = bones.get(boneAnimation.boneName());
 
 					if (bone == null) {
 						if (crashWhenCantFindBone)
@@ -505,10 +570,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * Prepare the {@link BoneAnimationQueue} map for the current render frame
 	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
 	 */
-	private void createInitialQueues(Collection<GeoBone> modelRendererList) {
+	private void createInitialQueues(Collection<CoreGeoBone> modelRendererList) {
 		this.boneAnimationQueues.clear();
 
-		for (GeoBone modelRenderer : modelRendererList) {
+		for (CoreGeoBone modelRenderer : modelRendererList) {
 			this.boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
 		}
 	}

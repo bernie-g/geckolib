@@ -5,13 +5,13 @@ import software.bernie.geckolib3.core.state.BoneSnapshot;
 import java.util.List;
 
 /**
- * Base class for Geckolib {@link GeoModel model} bones.<br>
+ * Base class for Geckolib {@link CoreGeoModel model} bones.<br>
  * Mostly a placeholder to allow for splitting up core (non-Minecraft) libraries
  */
-public interface GeoBone {
+public interface CoreGeoBone {
 	String getName();
 
-	GeoBone getParent();
+	CoreGeoBone getParent();
 
 	float getRotX();
 
@@ -111,7 +111,7 @@ public interface GeoBone {
 
 	BoneSnapshot getInitialSnapshot();
 
-	List<? extends GeoBone> getChildBones();
+	List<? extends CoreGeoBone> getChildBones();
 
 	default BoneSnapshot saveSnapshot() {
 		return new BoneSnapshot(this);
