@@ -1,4 +1,4 @@
-v3.0.103
+v3.0.104
 
-- Deprecate getPackedOverlay for getOverlay, move to non-static to allow Overriding.
-- Move example resources to constants
+- MClib updated, Fixed -() group not working - Hiroku https://github.com/fadookie/particleman/pull/7
+- Fixes crash with Layer Example animation location call.
