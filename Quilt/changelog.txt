@@ -1,3 +1,8 @@
+v3.0.42
+
+- MClib updated, Fixed -() group not working - Hiroku https://github.com/fadookie/particleman/pull/7
+- Fixes crash with Layer Example animation location call.
+
 v3.0.41
 
 - Fixes crashes due to getUniqueID
