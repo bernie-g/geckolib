@@ -65,7 +65,7 @@ public class EntityResources {
 	public static final ResourceLocation LAYER_EXAMPLE_TEXTURE = new ResourceLocation(GeckoLib.ModID,
 			"textures/entity/le.png");
 	public static final ResourceLocation LAYER_EXAMPLE_ANIMATIONS = new ResourceLocation(GeckoLib.ModID,
-			"animations/le.animation.json");
+			"animations/le.animations.json");
 
 	public static final ResourceLocation CREEPER_MODEL = new ResourceLocation(GeckoLib.ModID, "geo/creeper.geo.json");
 	public static final ResourceLocation CREEPER_TEXTURE = new ResourceLocation(GeckoLib.ModID,

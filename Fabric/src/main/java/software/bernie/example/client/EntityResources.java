@@ -51,7 +51,7 @@ public class EntityResources {
 	public static final Identifier LAYER_EXAMPLE_MODEL = new Identifier(GeckoLib.ModID, "geo/le.geo.json");
 	public static final Identifier LAYER_EXAMPLE_TEXTURE = new Identifier(GeckoLib.ModID, "textures/entity/le.png");
 	public static final Identifier LAYER_EXAMPLE_ANIMATIONS = new Identifier(GeckoLib.ModID,
-			"animations/le.animation.json");
+			"animations/le.animations.json");
 
 	public static final Identifier CREEPER_MODEL = new Identifier(GeckoLib.ModID, "geo/creeper.geo.json");
 	public static final Identifier CREEPER_TEXTURE = new Identifier(GeckoLib.ModID,
