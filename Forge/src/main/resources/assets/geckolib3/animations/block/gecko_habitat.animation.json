@@ -1,8 +1,8 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"move.crawl": {
-			"loop": false,
+		"misc.rest": {
+			"loop": "hold_on_last_frame",
 			"animation_length": 18,
 			"bones": {
 				"gecko": {

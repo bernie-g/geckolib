@@ -23,6 +23,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Keyframes keyFrames) {
 	public record Keyframes(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
 
+	static Animation generateWaitAnimation(double length) {
+		return new Animation(RawAnimation.Stage.WAIT, length, LoopType.PLAY_ONCE, new BoneAnimation[0],
+				new Keyframes(new SoundKeyframeData[0], new ParticleKeyframeData[0], new CustomInstructionKeyframeData[0]));
+	}
+
 	/**
 	 * Loop type functional interface to define post-play handling for a given animation. <br>
 	 * Custom loop types are supported by extending this class and providing the extended class instance as the loop type for the animation
@@ -33,6 +38,11 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 
 		LoopType DEFAULT = (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation);
 		LoopType PLAY_ONCE = register("play_once", register("false", (animatable, controller, currentAnimation) -> false));
+		LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (animatable, controller, currentAnimation) -> {
+			controller.animationState = AnimationController.State.PAUSED;
+
+			return true;
+		});
 		LoopType LOOP = register("loop", register("true", (animatable, controller, currentAnimation) -> true));
 
 		/**

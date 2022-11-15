@@ -5,15 +5,12 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.SerializableDataTicket;
 import software.bernie.geckolib3.network.packet.EntityAnimDataSyncPacket;
 import software.bernie.geckolib3.network.packet.EntityAnimTriggerPacket;
-import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link Entity Entities}.
@@ -22,11 +19,6 @@ import java.util.function.Supplier;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Entity-Animations">GeckoLib Wiki - Entity Animations</a>
  */
 public interface GeoReplacedEntity extends SingletonGeoAnimatable {
-	@Override
-	default Supplier<GeoModel<?>> getGeoModel() {
-		return () -> RenderUtils.getGeoModelForEntityType(getReplacingEntityType());
-	}
-
 	/**
 	 * Returns the {@link EntityType} this entity is intending to replace.<br>
 	 * This is used for rendering an animation purposes.

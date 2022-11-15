@@ -23,6 +23,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("misc.spawn");
 	public static final RawAnimation INTERACT = RawAnimation.begin().thenPlay("misc.interact");
 	public static final RawAnimation DEPLOY = RawAnimation.begin().thenPlay("misc.deploy");
+	public static final RawAnimation REST = RawAnimation.begin().thenPlay("misc.rest");
 
 	public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
 	public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("move.swim");

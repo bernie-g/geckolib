@@ -35,8 +35,8 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 
 	@Nullable
 	@Override
-	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return TileRegistry.FERTILIZER.get().create(blockPos, blockState);
+	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+		return TileRegistry.FERTILIZER.get().create(pos, state);
 	}
 
 	@Override
@@ -55,9 +55,9 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	}
 
 	@Override
-	public void appendHoverText(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.translatable("block.geckolib3.fertilizerblock.tooltip"));
+	public void appendHoverText(ItemStack stack, BlockGetter blockGetter, List<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.add(Component.translatable("block.geckolib3.fertilizer.tooltip"));
 
-		super.appendHoverText(stack, worldIn, tooltip, flagIn);
+		super.appendHoverText(stack, blockGetter, tooltip, tooltipFlag);
 	}
 }

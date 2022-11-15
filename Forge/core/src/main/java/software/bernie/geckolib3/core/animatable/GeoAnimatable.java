@@ -5,12 +5,9 @@
 package software.bernie.geckolib3.core.animatable;
 
 import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib3.core.animatable.model.CoreGeoModel;
-import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.AnimatableManager;
+import software.bernie.geckolib3.core.animation.AnimationController;
 import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-
-import java.util.function.Supplier;
 
 /**
  * This is the root interface for all animatable objects in Geckolib.
@@ -41,13 +38,6 @@ public interface GeoAnimatable {
 	 * @return A cached instance of an {@code AnimationFactory}
 	 */
 	AnimationFactory getFactory();
-
-	/**
-	 * Animatables must be able to supply the {@link CoreGeoModel} that their animatable object is relevant to.
-	 * The supplier is important to allow custom implementations to not need sided code to be immediately present.
-	 * @return A {@link Supplier} of a new or cached Geckolib model
-	 */
-	Supplier<? extends CoreGeoModel<? extends GeoAnimatable>> getGeoModel();
 
 	/**
 	 * Defines the speed in which the {@link software.bernie.geckolib3.core.animation.AnimationProcessor} should return

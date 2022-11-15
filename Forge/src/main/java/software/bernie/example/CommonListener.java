@@ -28,11 +28,11 @@ public final class CommonListener {
 					.add(Attributes.MOVEMENT_SPEED, 0.25f)
 					.add(Attributes.ATTACK_DAMAGE, 5);
 
-			event.put(EntityRegistry.BIKE_ENTITY.get(), genericAttribs.build());
-			event.put(EntityRegistry.CAR_ENTITY.get(), genericAttribs.build());
-			event.put(EntityRegistry.GEO_EXAMPLE_ENTITY.get(), genericAttribs.build());
+			event.put(EntityRegistry.BIKE.get(), genericAttribs.build());
+			event.put(EntityRegistry.RACE_CAR.get(), genericAttribs.build());
+			event.put(EntityRegistry.BAT.get(), genericAttribs.build());
 			//event.put(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), genericAttribs.build());
-			event.put(EntityRegistry.GEOLAYERENTITY.get(), genericMovingAttribs.build());
+			event.put(EntityRegistry.COOL_KID.get(), genericMovingAttribs.build());
 			event.put(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), genericMovingAttribs.build());
 			event.put(EntityRegistry.PARASITE.get(), genericMonsterAttribs.build());
 		}

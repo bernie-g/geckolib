@@ -29,11 +29,9 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity
 		super(TileRegistry.FERTILIZER.get(), pos, state);
 	}
 
-	/**
-	 * Let's set our animations up.<br>
-	 * For this one, we want it to play the "Fertilizer" animation set if it's raining,
-	 * or switch to a botarium if it's not.
-	 */
+	// Let's set our animations up
+	// For this one, we want it to play the "Fertilizer" animation set if it's raining,
+	// or switch to a botarium if it's not.
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
 		manager.addAnimationController(new AnimationController<>(this, event -> {

@@ -6,24 +6,24 @@ package software.bernie.example.client.model.block;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.example.block.entity.HabitatBlockEntity;
-import software.bernie.example.client.renderer.block.HabitatBlockRenderer;
+import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
+import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib3.model.GeoModel;
 
 /**
- * Example {@link GeoModel} for the {@link HabitatBlockEntity}
- * @see HabitatBlockEntity
- * @see HabitatBlockRenderer
+ * Example {@link GeoModel} for the {@link GeckoHabitatBlockEntity}
+ * @see GeckoHabitatBlockEntity
+ * @see GeckoHabitatBlockRenderer
  */
-public class HabitatModel extends DefaultedBlockGeoModel<HabitatBlockEntity> {
-	public HabitatModel() {
+public class GeckoHabitatModel extends DefaultedBlockGeoModel<GeckoHabitatBlockEntity> {
+	public GeckoHabitatModel() {
 		super(new ResourceLocation(GeckoLib.MOD_ID, "gecko_habitat"));
 	}
 
 	@Override
-	public RenderType getRenderType(HabitatBlockEntity animatable, ResourceLocation texture) {
+	public RenderType getRenderType(GeckoHabitatBlockEntity animatable, ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureResource(animatable));
 	}
 }

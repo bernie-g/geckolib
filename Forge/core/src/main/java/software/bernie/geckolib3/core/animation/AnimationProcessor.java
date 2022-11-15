@@ -36,7 +36,14 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		boolean error = false;
 
 		for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
-			Animation animation = this.model.getAnimation(animatable, stage.animationName());
+			Animation animation;
+
+			if (stage.animationName().equals(RawAnimation.Stage.WAIT)) {
+				animation = Animation.generateWaitAnimation(stage.additionalTicks());
+			}
+			else {
+				animation = this.model.getAnimation(animatable, stage.animationName());
+			}
 
 			if (animation == null) {
 				System.out.println("Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
@@ -57,11 +64,11 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param animatable            The animatable object relevant to the animation being played
 	 * @param model                 The model currently being processed
 	 * @param animatableManager			The AnimatableManager instance being used for this animation processor
-	 * @param seekTime              The current lerped tick (current tick + partial tick)
+	 * @param animTime              The internal tick counter kept by the {@link AnimatableManager} for this animatable
 	 * @param event                 An {@link AnimationEvent} instance applied to this render frame
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
-	public void tickAnimation(T animatable, CoreGeoModel<T> model, AnimatableManager<T> animatableManager, double seekTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
+	public void tickAnimation(T animatable, CoreGeoModel<T> model, AnimatableManager<T> animatableManager, double animTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
 		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animatableManager.getBoneSnapshotCollection());
 
 		for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
@@ -73,7 +80,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			controller.isJustStarting = animatableManager.isFirstTick();
 
 			event.withController(controller);
-			controller.process(model, event, this.bones, boneSnapshots, seekTime, crashWhenCantFindBone);
+			controller.process(model, event, this.bones, boneSnapshots, animTime, crashWhenCantFindBone);
 
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				CoreGeoBone bone = boneAnimation.bone();
@@ -129,9 +136,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
 
 				if (saveSnapshot.isRotAnimInProgress())
-					saveSnapshot.stopRotAnim(seekTime);
+					saveSnapshot.stopRotAnim(animTime);
 
-				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
+				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
 				bone.setRotX((float)Interpolations.lerp(saveSnapshot.getRotX(), initialSnapshot.getRotX(), percentageReset));
 				bone.setRotY((float)Interpolations.lerp(saveSnapshot.getRotY(), initialSnapshot.getRotY(), percentageReset));
@@ -146,9 +153,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
 
 				if (saveSnapshot.isPosAnimInProgress())
-					saveSnapshot.stopPosAnim(seekTime);
+					saveSnapshot.stopPosAnim(animTime);
 
-				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
+				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
 				bone.setPosX((float)Interpolations.lerp(saveSnapshot.getOffsetX(), initialSnapshot.getOffsetX(), percentageReset));
 				bone.setPosY((float)Interpolations.lerp(saveSnapshot.getOffsetY(), initialSnapshot.getOffsetY(), percentageReset));
@@ -163,9 +170,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
 
 				if (saveSnapshot.isScaleAnimInProgress())
-					saveSnapshot.stopScaleAnim(seekTime);
+					saveSnapshot.stopScaleAnim(animTime);
 
-				double percentageReset = Math.min((seekTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
+				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
 
 				bone.setScaleX((float)Interpolations.lerp(saveSnapshot.getScaleX(), initialSnapshot.getScaleX(), percentageReset));
 				bone.setScaleY((float)Interpolations.lerp(saveSnapshot.getScaleY(), initialSnapshot.getScaleY(), percentageReset));
@@ -249,8 +256,8 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	/**
 	 * Apply transformations and settings prior to acting on any animation-related functionality
 	 */
-	public void preAnimationSetup(T animatable, double seekTime) {
-		this.model.applyMolangQueries(animatable, seekTime);
+	public void preAnimationSetup(T animatable, double animTime) {
+		this.model.applyMolangQueries(animatable, animTime);
 	}
 
 	/**

@@ -17,10 +17,10 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 /**
  * Example {@link GeoAnimatable} implementation of an entity that uses a render layer
  */
-public class ExampleRenderLayerEntity extends PathfinderMob implements GeoEntity {
+public class CoolKidEntity extends PathfinderMob implements GeoEntity {
     private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-    public ExampleRenderLayerEntity(EntityType<? extends PathfinderMob> type, Level level) {
+    public CoolKidEntity(EntityType<? extends PathfinderMob> type, Level level) {
         super(type, level);
     }
 

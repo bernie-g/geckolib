@@ -64,7 +64,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
 	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
-	private CoreGeoModel<T> lastModel;
+	protected CoreGeoModel<T> lastModel;
 
 	/**
 	 * Instantiates a new {@code AnimationController}.<br>
@@ -322,8 +322,11 @@ public class AnimationController<T extends GeoAnimatable> {
 
 		this.triggeredAnimation = anim;
 
-		if (this.animationState == State.STOPPED)
+		if (this.animationState == State.STOPPED) {
 			this.animationState = State.TRANSITIONING;
+			this.shouldResetTick = true;
+			this.justStartedTransition = true;
+		}
 
 		return true;
 	}
@@ -342,6 +345,7 @@ public class AnimationController<T extends GeoAnimatable> {
 				return PlayState.CONTINUE;
 
 			this.triggeredAnimation = null;
+			this.needsAnimationReload = true;
 		}
 
 		return this.stateHandler.handle(event);
@@ -362,8 +366,6 @@ public class AnimationController<T extends GeoAnimatable> {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
-		createInitialQueues(bones.values());
-
 		if (animationState == State.TRANSITIONING && adjustedTick >= this.transitionLength) {
 			this.shouldResetTick = true;
 			this.animationState = State.RUNNING;
@@ -378,6 +380,8 @@ public class AnimationController<T extends GeoAnimatable> {
 
 			return;
 		}
+
+		createInitialQueues(bones.values());
 
 		if (this.justStartedTransition && (this.shouldResetTick || this.justStopped)) {
 			this.justStopped = false;
@@ -462,15 +466,18 @@ public class AnimationController<T extends GeoAnimatable> {
 	 */
 	private void processCurrentAnimation(double adjustedTick, double seekTime, boolean crashWhenCantFindBone) {
 		if (adjustedTick >= this.currentAnimation.animation().length()) {
-			resetEventKeyFrames();
-
 			if (this.currentAnimation.loopType().shouldPlayAgain(this.animatable, this, this.currentAnimation.animation())) {
-				this.shouldResetTick = true;
+				if (this.animationState != State.PAUSED) {
+					this.shouldResetTick = true;
 
-				adjustedTick = adjustTick(seekTime);
+					adjustedTick = adjustTick(seekTime);
+					resetEventKeyFrames();
+				}
 			}
 			else {
 				AnimationProcessor.QueuedAnimation nextAnimation = this.animationQueue.peek();
+
+				resetEventKeyFrames();
 
 				if (nextAnimation == null) {
 					this.animationState = State.STOPPED;
@@ -525,6 +532,8 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 		}
 
+		adjustedTick += this.transitionLength;
+
 		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().sounds()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.soundKeyframeHandler == null) {
@@ -565,7 +574,6 @@ public class AnimationController<T extends GeoAnimatable> {
 			this.currentAnimation = this.animationQueue.poll();
 	}
 
-	// TODO: Look into replacing the BoneAnimationQueue functionality, it is very inefficient
 	/**
 	 * Prepare the {@link BoneAnimationQueue} map for the current render frame
 	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
@@ -731,6 +739,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	public enum State {
 		RUNNING,
 		TRANSITIONING,
+		PAUSED,
 		STOPPED;
 	}
 }

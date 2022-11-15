@@ -61,7 +61,7 @@ public interface CoreGeoModel<E extends GeoAnimatable> {
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
 	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
-	 * @param seekTime The time (in partial ticks) since last rendered tick
+	 * @param animTime The internal tick counter kept by the {@link software.bernie.geckolib3.core.animation.AnimatableManager manager} for this animatable
 	 */
-	default void applyMolangQueries(E animatable, double seekTime) {}
+	default void applyMolangQueries(E animatable, double animTime) {}
 }

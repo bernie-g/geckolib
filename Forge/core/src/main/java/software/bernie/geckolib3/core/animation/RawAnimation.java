@@ -66,6 +66,17 @@ public final class RawAnimation {
 	}
 
 	/**
+	 * Appends a 'wait' animation to the animation chain.<br>
+	 * This causes the animatable to do nothing for a set period of time before performing the next animation.
+	 * @param ticks The number of ticks to 'wait' for
+	 */
+	public RawAnimation thenWait(int ticks) {
+		this.animationList.add(new Stage(Stage.WAIT, Animation.LoopType.PLAY_ONCE, ticks));
+
+		return this;
+	}
+
+	/**
 	 * Append an animation to the animation chain, playing the named animation and proceeding based on the <code>loopType</code> parameter provided.
 	 * @param animationName The name of the animation to play. <u>MUST</u> match the name of the animation in the <code>.animation.json</code> file.
 	 * @param loopType The loop type handler for the animation, overriding the default value set in the animation json
@@ -112,9 +123,15 @@ public final class RawAnimation {
 
 	/**
 	 * An animation stage for a {@link RawAnimation} builder.<br>
-	 * This is a single animation and loop pair representing a single animation stage of the final compiled animation.
+	 * This is an entry object representing a single animation stage of the final compiled animation.
 	 */
-	public record Stage(String animationName, Animation.LoopType loopType) {
+	public record Stage(String animationName, Animation.LoopType loopType, int additionalTicks) {
+		static final String WAIT = "internal.wait";
+
+		public Stage(String animationName, Animation.LoopType loopType) {
+			this(animationName, loopType, 0);
+		}
+
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)

@@ -7,26 +7,18 @@ import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib3.GeckoLib;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.network.GeckoLibNetwork;
 import software.bernie.geckolib3.network.SerializableDataTicket;
 import software.bernie.geckolib3.network.packet.BlockEntityAnimDataSyncPacket;
 import software.bernie.geckolib3.network.packet.BlockEntityAnimTriggerPacket;
-import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link BlockEntity BlockEntities}
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Block-Animations">GeckoLib Wiki - Block Animations</a>
  */
 public interface GeoBlockEntity extends GeoAnimatable {
-	@Override
-	default Supplier<GeoModel<?>> getGeoModel() {
-		return () -> RenderUtils.getGeoModelForBlock((BlockEntity)this);
-	}
-
 	/**
 	 * Get server-synced animation data via its relevant {@link SerializableDataTicket}.<br>
 	 * Should only be used on the <u>client-side</u>.<br>

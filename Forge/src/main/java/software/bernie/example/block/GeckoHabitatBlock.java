@@ -16,8 +16,9 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import software.bernie.example.block.entity.HabitatBlockEntity;
-import software.bernie.example.client.renderer.block.HabitatBlockRenderer;
+import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
+import software.bernie.example.client.model.block.GeckoHabitatModel;
+import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.example.registry.TileRegistry;
 
 import javax.annotation.Nullable;
@@ -25,14 +26,14 @@ import javax.annotation.Nullable;
 /**
  * Example animated block using GeckoLib animations.<br>
  * There's nothing to see here since the {@link Block} class itself has little to do with animations
- * @see software.bernie.example.client.model.block.HabitatModel
- * @see HabitatBlockEntity
- * @see HabitatBlockRenderer
+ * @see GeckoHabitatModel
+ * @see GeckoHabitatBlockEntity
+ * @see GeckoHabitatBlockRenderer
  */
-public class HabitatBlock extends BaseEntityBlock implements EntityBlock {
+public class GeckoHabitatBlock extends BaseEntityBlock implements EntityBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.FACING;
 
-	public HabitatBlock() {
+	public GeckoHabitatBlock() {
 		super(Properties.of(Material.STONE).noOcclusion());
 	}
 

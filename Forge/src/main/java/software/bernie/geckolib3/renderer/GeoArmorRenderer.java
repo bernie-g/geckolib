@@ -16,7 +16,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.animatable.GeoArmor;
 import software.bernie.geckolib3.animatable.GeoItem;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
@@ -30,12 +29,12 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} for rendering in-world {@link GeoArmor Armor} specifically.<br>
+ * Base {@link GeoRenderer} for rendering in-world armor specifically.<br>
  * All custom armor added to be rendered in-world by GeckoLib should use an instance of this class.
- * @see software.bernie.geckolib3.item.GeoArmorItem
+ * @see GeoItem
  * @param <T>
  */
-public class GeoArmorRenderer<T extends Item & GeoArmor> extends HumanoidModel implements GeoRenderer<T> {
+public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel implements GeoRenderer<T> {
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 	protected final GeoModel<T> model;
 
@@ -73,7 +72,7 @@ public class GeoArmorRenderer<T extends Item & GeoArmor> extends HumanoidModel i
 	}
 
 	/**
-	 * Gets the {@link GeoArmor} instance currently being rendered
+	 * Gets the {@link GeoItem} instance currently being rendered
 	 */
 	public T getAnimatable() {
 		return this.animatable;
@@ -85,7 +84,7 @@ public class GeoArmorRenderer<T extends Item & GeoArmor> extends HumanoidModel i
 	 */
 	@Override
 	public long getInstanceId(T animatable) {
-		return GeoItem.getId(this.currentStack);
+		return GeoItem.getId(this.currentStack) + this.currentEntity.getId();
 	}
 
 	/**

@@ -13,11 +13,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.example.GeckoLibMod;
-import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
+import software.bernie.example.client.renderer.armor.WolfArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
-import software.bernie.geckolib3.animatable.GeoArmor;
+import software.bernie.geckolib3.animatable.GeoItem;
 import software.bernie.geckolib3.constant.DataTickets;
 import software.bernie.geckolib3.constant.DefaultAnimations;
 import software.bernie.geckolib3.core.animation.AnimatableManager;
@@ -31,17 +30,18 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Example {@link GeoArmor} implementation
- * @see GeoArmor
- * @see GeckoArmorRenderer
+ * Example {@link software.bernie.geckolib3.core.animatable.GeoAnimatable GeoAnimatable} {@link ArmorItem} implementation
+ * @see GeoItem
+ * @see WolfArmorRenderer
  */
-public final class GeckoArmorItem extends ArmorItem implements GeoArmor {
+public final class WolfArmorItem extends ArmorItem implements GeoItem {
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
-	public GeckoArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
+	public WolfArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
 		super(armorMaterial, slot, properties.tab(GeckoLibMod.ITEM_GROUP));
 	}
 
+	// Create our armor model/renderer for forge and return it
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
@@ -50,18 +50,13 @@ public final class GeckoArmorItem extends ArmorItem implements GeoArmor {
 			@Override
 			public @NotNull HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
 				if (this.renderer == null)
-					this.renderer = new GeckoArmorRenderer();
+					this.renderer = new WolfArmorRenderer();
 
 				this.renderer.prepForRender(livingEntity, itemStack, equipmentSlot, original);
 
 				return this.renderer;
 			}
 		});
-	}
-
-	@Override
-	public @Nullable String getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, String type) {
-		return super.getArmorTexture(stack, entity, slot, type);
 	}
 
 	// Let's add our animation controller
@@ -94,10 +89,10 @@ public final class GeckoArmorItem extends ArmorItem implements GeoArmor {
 
 			// Check each of the pieces match our set
 			boolean isFullSet = wornArmor.containsAll(ObjectArrayList.of(
-					ItemRegistry.GECKOARMOR_BOOTS.get(),
-					ItemRegistry.GECKOARMOR_LEGGINGS.get(),
-					ItemRegistry.GECKOARMOR_CHEST.get(),
-					ItemRegistry.GECKOARMOR_HEAD.get()));
+					ItemRegistry.WOLF_ARMOR_BOOTS.get(),
+					ItemRegistry.WOLF_ARMOR_LEGGINGS.get(),
+					ItemRegistry.WOLF_ARMOR_CHESTPLATE.get(),
+					ItemRegistry.WOLF_ARMOR_HELMET.get()));
 
 			// Play the animation if the full set is being worn, otherwise stop
 			return isFullSet ? PlayState.CONTINUE : PlayState.STOP;

@@ -36,7 +36,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
-	private double seekTime;
+	private double animTime;
 	private double lastGameTickTime;
 
 	/**
@@ -145,29 +145,29 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 				animatableManager.updatedAt(currentTick - animatableManager.getFirstTickTime());
 			}
 
-			double gameTick = animatableManager.getLastUpdateTime();
-			this.seekTime += gameTick - this.lastGameTickTime;
-			this.lastGameTickTime = gameTick;
+			double lastUpdateTime = animatableManager.getLastUpdateTime();
+			this.animTime += lastUpdateTime - this.lastGameTickTime;
+			this.lastGameTickTime = lastUpdateTime;
 		}
 
-		animationEvent.animationTick = this.seekTime;
+		animationEvent.animationTick = this.animTime;
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationEvent.getAnimatable(), this.seekTime);
+		processor.preAnimationSetup(animationEvent.getAnimatable(), this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.seekTime, animationEvent, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationEvent, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationEvent);
 	}
 
 	@Override
-	public void applyMolangQueries(T animatable, double seekTime) {
+	public void applyMolangQueries(T animatable, double animTime) {
 		MolangParser parser = MolangParser.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
 
-		parser.setValue(MolangQueries.ANIM_TIME, () -> seekTime / 20d);
-		parser.setValue(MolangQueries.LIFE_TIME, () -> seekTime / 20d);
+		parser.setValue(MolangQueries.ANIM_TIME, () -> animTime / 20d);
+		parser.setValue(MolangQueries.LIFE_TIME, () -> animTime / 20d);
 		parser.setValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
 		parser.setValue(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);
 		parser.setValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
@@ -187,7 +187,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				});
-				parser.setValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)seekTime - livingEntity.getViewYRot((float)seekTime - 0.1f)));
+				parser.setValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)animTime - livingEntity.getViewYRot((float)animTime - 0.1f)));
 			}
 		}
 	}
