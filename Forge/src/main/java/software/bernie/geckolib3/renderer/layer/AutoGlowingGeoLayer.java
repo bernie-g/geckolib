@@ -16,8 +16,8 @@ import software.bernie.geckolib3.renderer.GeoRenderer;
  * the <i>_glowing</i> appendixed texture files.
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
-public class GeoAutoGlowingRenderLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
-	public GeoAutoGlowingRenderLayer(GeoRenderer<T> renderer) {
+public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
+	public AutoGlowingGeoLayer(GeoRenderer<T> renderer) {
 		super(renderer);
 	}
 

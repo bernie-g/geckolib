@@ -134,7 +134,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
@@ -150,7 +150,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 

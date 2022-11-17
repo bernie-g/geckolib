@@ -1,4 +1,3 @@
-/*
 package software.bernie.example.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,10 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.DefaultBipedBoneIdents;
-import software.bernie.example.client.model.entity.ExampleExtendedRendererEntityModel;
 import software.bernie.example.entity.ExtendedRendererEntity;
 import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.core.animatable.model.GeoBone;
+import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
 
 public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRenderer<ExtendedRendererEntity> {
@@ -173,4 +171,3 @@ public class ExampleExtendedRendererEntityRenderer extends ExtendedGeoEntityRend
 	}
 
 }
-*/

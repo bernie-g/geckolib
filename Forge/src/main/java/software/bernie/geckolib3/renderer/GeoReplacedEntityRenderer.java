@@ -233,7 +233,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -258,7 +258,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		renderChildBones(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		renderChildBones(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}

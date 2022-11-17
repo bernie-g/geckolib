@@ -190,7 +190,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Override this to change the way a model will render (such as translucent models, etc)
 	 */
 	@Override
-	public RenderType getRenderType(PoseStack poseStack, T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick, int packedLight) {
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
 		return RenderType.armorCutoutNoCull(texture);
 	}
 
@@ -218,7 +218,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			bufferSource = mc.renderBuffers().outlineBufferSource();
 
 		float partialTick = mc.getFrameTime();
-		RenderType renderType = getRenderType(poseStack, this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick, packedLight);
+		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick);
 		buffer = ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, false, this.currentStack.hasFoil());
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, buffer,
@@ -254,7 +254,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose();
@@ -263,7 +263,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		GeoRenderer.super.renderRecursively(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	/**
@@ -286,13 +286,18 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 	/**
 	 * Prepare the renderer for the current render cycle.<br>
-	 * Must be called prior to render as the default HumanoidModel doesn't give render context.
+	 * Must be called prior to render as the default HumanoidModel doesn't give render context.<br>
+	 * Params have been left nullable so that the renderer can be called for model/texture purposes safely.
+	 * If you do grab the renderer using null parameters, you should not use it for actual rendering.
 	 * @param entity The entity being rendered with the armor on
 	 * @param stack The ItemStack being rendered
 	 * @param slot The slot being rendered
 	 * @param baseModel The default (vanilla) model that would have been rendered if this model hadn't replaced it
 	 */
-	public void prepForRender(Entity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> baseModel) {
+	public void prepForRender(@Nullable Entity entity, ItemStack stack, @Nullable EquipmentSlot slot, @Nullable HumanoidModel<?> baseModel) {
+		if (entity == null || slot == null || baseModel == null)
+			return;
+
 		this.currentEntity = entity;
 		this.currentStack = stack;
 		this.animatable = (T)stack.getItem();

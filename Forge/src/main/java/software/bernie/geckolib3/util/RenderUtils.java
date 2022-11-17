@@ -19,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -27,6 +28,7 @@ import software.bernie.geckolib3.cache.object.GeoCube;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib3.renderer.GeoArmorRenderer;
 import software.bernie.geckolib3.renderer.GeoRenderer;
 import software.bernie.geckolib3.renderer.GeoReplacedEntityRenderer;
 
@@ -273,5 +275,20 @@ public final class RenderUtils {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
 
 		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
+	 * This only works if you're calling this method for an Item known to be using a {@link software.bernie.geckolib3.renderer.GeoArmorRenderer GeoArmorRenderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param stack The ItemStack to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@Nullable
+	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
+		if (IClientItemExtensions.of(stack).getHumanoidArmorModel(null, stack, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+			return armorRenderer.getGeoModel();
+
+		return null;
 	}
 }

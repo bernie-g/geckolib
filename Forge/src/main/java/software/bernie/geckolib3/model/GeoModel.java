@@ -92,8 +92,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	}
 
 	/**
-	 * Gets a bone from this model by name.<br>
-	 * Generally not a very efficient method, should be avoided where possible.
+	 * Gets a bone from this model by name
 	 * @param name The name of the bone
 	 * @return An {@link Optional} containing the {@link software.bernie.geckolib3.cache.object.GeoBone} if one matches, otherwise an empty Optional
 	 */

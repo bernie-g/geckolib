@@ -53,6 +53,14 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called.<br>
+	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
+	 */
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
+						  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
+						  int packedLight, int packedOverlay) {}
+
+	/**
 	 * This is the method that is actually called by the render for your render layer to function.<br>
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags.
 	 */
@@ -64,7 +72,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * Renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}.<br>
 	 * Usually you'd use this for rendering alternate {@link RenderType} layers or for sub-model rendering
 	 */
-	protected void renderModel(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
+	protected final void renderModel(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
 							   RenderType renderType, VertexConsumer buffer, float partialTick,
 							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
