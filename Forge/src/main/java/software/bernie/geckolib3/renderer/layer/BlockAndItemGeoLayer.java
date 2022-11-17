@@ -17,27 +17,42 @@ import software.bernie.geckolib3.renderer.GeoRenderer;
 import software.bernie.geckolib3.util.RenderUtils;
 
 import javax.annotation.Nullable;
+import java.util.function.BiFunction;
 
 /**
  * {@link GeoRenderLayer} for rendering {@link net.minecraft.world.level.block.state.BlockState BlockStates}
  * or {@link net.minecraft.world.item.ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
 public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
+	protected final BiFunction<GeoBone, T, ItemStack> stackForBone;
+	protected final BiFunction<GeoBone, T, BlockState> blockForBone;
+
 	public BlockAndItemGeoLayer(GeoRenderer<T> renderer) {
+		this(renderer, (bone, animatable) -> null, (bone, animatable) -> null);
+	}
+
+	public BlockAndItemGeoLayer(GeoRenderer<T> renderer, BiFunction<GeoBone, T, ItemStack> stackForBone, BiFunction<GeoBone, T, BlockState> blockForBone) {
 		super(renderer);
+
+		this.stackForBone = stackForBone;
+		this.blockForBone = blockForBone;
 	}
 
 	/**
 	 * Return an ItemStack relevant to this bone for rendering, or null if no ItemStack to render
 	 */
 	@Nullable
-	protected abstract ItemStack getStackForBone(GeoBone bone, T animatable);
+	protected ItemStack getStackForBone(GeoBone bone, T animatable) {
+		return this.stackForBone.apply(bone, animatable);
+	}
 
 	/**
 	 * Return a BlockState relevant to this bone for rendering, or null if no BlockState to render
 	 */
 	@Nullable
-	protected abstract BlockState getBlockForBone(GeoBone bone, T animatable);
+	protected BlockState getBlockForBone(GeoBone bone, T animatable) {
+		return this.blockForBone.apply(bone, animatable);
+	}
 
 	/**
 	 * Return a specific TransFormType for this {@link ItemStack} render for this bone.

@@ -39,6 +39,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 	protected ItemStack currentItemStack;
 	protected T animatable;
+	protected float scaleWidth = 1;
+	protected float scaleHeight = 1;
 
 	protected Matrix4f renderStartPose = new Matrix4f();
 	protected Matrix4f preRenderPose = new Matrix4f();
@@ -106,6 +108,23 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
+	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+	 */
+	public GeoItemRenderer<T> withScale(float scale) {
+		return withScale(scale, scale);
+	}
+
+	/**
+	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+	 */
+	public GeoItemRenderer<T> withScale(float scaleWidth, float scaleHeight) {
+		this.scaleWidth = scaleWidth;
+		this.scaleHeight = scaleHeight;
+
+		return this;
+	}
+
+	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
@@ -115,6 +134,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
+
+		if (this.scaleWidth != 1 && this.scaleHeight != 1)
+			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
+
 		poseStack.translate(0.5f, 0.51f, 0.5f);
 	}
 

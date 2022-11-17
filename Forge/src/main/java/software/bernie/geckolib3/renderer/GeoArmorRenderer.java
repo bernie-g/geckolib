@@ -39,6 +39,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected final GeoModel<T> model;
 
 	protected T animatable;
+	protected float scaleWidth = 1;
+	protected float scaleHeight = 1;
 
 	protected Matrix4f renderStartPose = new Matrix4f();
 	protected Matrix4f preRenderPose = new Matrix4f();
@@ -88,6 +90,16 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
+	 * Gets the {@link RenderType} to render the given animatable with.<br>
+	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default.<br>
+	 * Override this to change the way a model will render (such as translucent models, etc)
+	 */
+	@Override
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+		return RenderType.armorCutoutNoCull(texture);
+	}
+
+	/**
 	 * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
 	 */
 	@Override
@@ -100,6 +112,23 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	public GeoArmorRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
 		this.renderLayers.add(renderLayer);
+
+		return this;
+	}
+
+	/**
+	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+	 */
+	public GeoArmorRenderer<T> withScale(float scale) {
+		return withScale(scale, scale);
+	}
+
+	/**
+	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+	 */
+	public GeoArmorRenderer<T> withScale(float scaleWidth, float scaleHeight) {
+		this.scaleWidth = scaleWidth;
+		this.scaleHeight = scaleHeight;
 
 		return this;
 	}
@@ -185,16 +214,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Gets the {@link RenderType} to render the given animatable with.<br>
-	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default.<br>
-	 * Override this to change the way a model will render (such as translucent models, etc)
-	 */
-	@Override
-	public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
-		return RenderType.armorCutoutNoCull(texture);
-	}
-
-	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
@@ -204,6 +223,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 						  @Nullable VertexConsumer buffer, float partialTick, int packedLight,
 						  int packedOverlay, float red, float green, float blue, float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
+
+		if (this.scaleWidth != 1 && this.scaleHeight != 1)
+			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
 
 		applyBoneVisibility(this.currentSlot);
 	}

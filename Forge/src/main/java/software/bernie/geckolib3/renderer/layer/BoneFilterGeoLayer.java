@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import org.apache.logging.log4j.util.TriConsumer;
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
@@ -16,15 +17,25 @@ import software.bernie.geckolib3.renderer.GeoRenderer;
  * NOTE: Despite this layer existing, it is much more efficient to use {@link FastBoneFilterGeoLayer} instead
  */
 public abstract class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
+	protected final TriConsumer<GeoBone, T, Float> checkAndApply;
+
 	public BoneFilterGeoLayer(GeoRenderer<T> renderer) {
+		this(renderer, (bone, animatable, partialTick) -> {});
+	}
+
+	public BoneFilterGeoLayer(GeoRenderer<T> renderer, TriConsumer<GeoBone, T, Float> checkAndApply) {
 		super(renderer);
+
+		this.checkAndApply = checkAndApply;
 	}
 
 	/**
 	 * This method is called for each bone in the model.<br>
 	 * Check whether the bone should be affected and apply the modification as needed.
 	 */
-	protected abstract void checkAndApply(GeoBone bone, T animatable, float partialTick);
+	protected void checkAndApply(GeoBone bone, T animatable, float partialTick) {
+		this.checkAndApply.accept(bone, animatable, partialTick);
+	}
 
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
