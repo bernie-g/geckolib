@@ -16,21 +16,21 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.armor.WolfArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
-import software.bernie.geckolib3.animatable.GeoItem;
-import software.bernie.geckolib3.constant.DataTickets;
-import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.renderer.GeoArmorRenderer;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * Example {@link software.bernie.geckolib3.core.animatable.GeoAnimatable GeoAnimatable} {@link ArmorItem} implementation
+ * Example {@link software.bernie.geckolib.core.animatable.GeoAnimatable GeoAnimatable} {@link ArmorItem} implementation
  * @see GeoItem
  * @see WolfArmorRenderer
  */

@@ -8,10 +8,11 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.GeckoLibMod;
+import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.PistolItem;
 import software.bernie.example.item.WolfArmorItem;
-import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib.GeckoLib;
 
 public final class ItemRegistry {
 	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.MOD_ID);
@@ -36,4 +37,13 @@ public final class ItemRegistry {
 			() -> new WolfArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
 	public static final RegistryObject<WolfArmorItem> WOLF_ARMOR_BOOTS = ITEMS.register("wolf_armor_boots",
 			() -> new WolfArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+
+	public static final RegistryObject<GeckoArmorItem> GECKO_ARMOR_HELMET = ITEMS.register("gecko_armor_helmet",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.HEAD, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+	public static final RegistryObject<GeckoArmorItem> GECKO_ARMOR_CHESTPLATE = ITEMS.register("gecko_armor_chestplate",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.CHEST, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+	public static final RegistryObject<GeckoArmorItem> GECKO_ARMOR_LEGGINGS = ITEMS.register("gecko_armor_leggings",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.LEGS, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
+	public static final RegistryObject<GeckoArmorItem> GECKO_ARMOR_BOOTS = ITEMS.register("gecko_armor_boots",
+			() -> new GeckoArmorItem(ArmorMaterials.DIAMOND, EquipmentSlot.FEET, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
 }

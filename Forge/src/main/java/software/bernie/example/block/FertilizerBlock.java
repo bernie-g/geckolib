@@ -17,6 +17,7 @@ import net.minecraft.world.level.material.Material;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.registry.TileRegistry;
+import software.bernie.geckolib.GeckoLib;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -56,7 +57,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 
 	@Override
 	public void appendHoverText(ItemStack stack, BlockGetter blockGetter, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Component.translatable("block.geckolib3.fertilizer.tooltip"));
+		tooltip.add(Component.translatable("block." + GeckoLib.MOD_ID + ".fertilizer.tooltip"));
 
 		super.appendHoverText(stack, blockGetter, tooltip, tooltipFlag);
 	}

@@ -8,9 +8,9 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.model.DefaultedBlockGeoModel;
-import software.bernie.geckolib3.model.GeoModel;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.model.DefaultedBlockGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
 /**
  * Example {@link GeoModel} for the {@link GeckoHabitatBlockEntity}

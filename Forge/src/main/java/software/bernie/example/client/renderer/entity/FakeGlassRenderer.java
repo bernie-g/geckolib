@@ -5,8 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.example.client.model.entity.FakeGlassModel;
 import software.bernie.example.entity.FakeGlassEntity;
-import software.bernie.geckolib3.cache.object.GeoBone;
-import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer;
 
 /**
  * Example {@link ExtendedGeoEntityRenderer} implementation that makes use of the per-bone texture overrides feature

@@ -5,15 +5,15 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.Level;
 import software.bernie.example.client.model.entity.FakeGlassModel;
 import software.bernie.example.client.renderer.entity.FakeGlassRenderer;
-import software.bernie.geckolib3.animatable.GeoEntity;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Example {@link GeoAnimatable} implementation of an entity that uses the texture-per-bone feature of
- * {@link software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer ExtendedGeoEntityRenderer}
+ * {@link software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer ExtendedGeoEntityRenderer}
  * @see FakeGlassModel
  * @see FakeGlassRenderer
  */

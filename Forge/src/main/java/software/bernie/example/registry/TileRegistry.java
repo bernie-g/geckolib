@@ -6,7 +6,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
-import software.bernie.geckolib3.GeckoLib;
+import software.bernie.geckolib.GeckoLib;
 
 public final class TileRegistry {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister

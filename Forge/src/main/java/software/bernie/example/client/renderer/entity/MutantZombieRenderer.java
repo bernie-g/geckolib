@@ -14,12 +14,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import software.bernie.example.client.model.entity.MutantZombieModel;
 import software.bernie.example.entity.MutantZombieEntity;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.cache.object.GeoBone;
-import software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer;
-import software.bernie.geckolib3.renderer.layer.BlockAndItemGeoLayer;
-import software.bernie.geckolib3.renderer.layer.ItemArmorGeoLayer;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
+import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,8 +88,8 @@ public class MutantZombieRenderer extends ExtendedGeoEntityRenderer<MutantZombie
 			@Override
 			protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, MutantZombieEntity animatable, HumanoidModel<?> baseModel) {
 				return switch (bone.getName()) {
-					case LEFT_BOOT, RIGHT_BOOT, LEFT_BOOT_2, RIGHT_BOOT_2 -> baseModel.leftLeg;
-					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG, LEFT_ARMOR_LEG_2, RIGHT_ARMOR_LEG_2 -> baseModel.rightLeg;
+					case LEFT_BOOT, LEFT_BOOT_2, LEFT_ARMOR_LEG, LEFT_ARMOR_LEG_2 -> baseModel.leftLeg;
+					case RIGHT_BOOT, RIGHT_BOOT_2, RIGHT_ARMOR_LEG, RIGHT_ARMOR_LEG_2 -> baseModel.rightLeg;
 					case RIGHT_SLEEVE -> baseModel.rightArm;
 					case LEFT_SLEEVE -> baseModel.leftArm;
 					case CHESTPLATE -> baseModel.body;

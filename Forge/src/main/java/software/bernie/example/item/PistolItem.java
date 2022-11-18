@@ -17,14 +17,15 @@ import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRenderer;
-import software.bernie.geckolib3.animatable.GeoItem;
-import software.bernie.geckolib3.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -121,7 +122,7 @@ public class PistolItem extends Item implements GeoItem {
 	// Let's add some ammo text to the tooltip
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.translatable("item.geckolib3.pistol.ammo",
+		tooltip.add(Component.translatable("item." + GeckoLib.MOD_ID + ".pistol.ammo",
 				stack.getMaxDamage() - stack.getDamageValue() - 1,
 				stack.getMaxDamage() - 1)
 				.withStyle(ChatFormatting.ITALIC));

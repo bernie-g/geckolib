@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -11,20 +12,21 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import software.bernie.example.client.renderer.entity.MutantZombieRenderer;
-import software.bernie.geckolib3.animatable.GeoEntity;
-import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimationEvent;
-import software.bernie.geckolib3.core.animation.RawAnimation;
-import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Example extended-support entity for GeckoLib advanced rendering
- * @see software.bernie.geckolib3.renderer.ExtendedGeoEntityRenderer
+ * @see software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer
  * @see MutantZombieRenderer
  */
 public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
@@ -173,9 +175,13 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 		if (this.level.isClientSide() || stack.isEmpty())
 			return super.mobInteract(player, hand);
 
-		setItemSlot(LivingEntity.getEquipmentSlotForItem(stack), stack.copy());
-		player.sendSystemMessage(Component.translatable("entity.geckolib3.example_extended_entity.equip", stack.getDisplayName()));
-		triggerAnim(getLeftHand() == hand ? "Left Hand" : "Right Hand", "interact");
+		EquipmentSlot slot = LivingEntity.getEquipmentSlotForItem(stack);
+
+		setItemSlot(slot, stack.copy());
+		player.sendSystemMessage(Component.translatable("entity." + GeckoLib.MOD_ID + ".mutant_zombie.equip", stack.getDisplayName()));
+
+		if (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND)
+			triggerAnim(getLeftHand() == hand ? "Left Hand" : "Right Hand", "interact");
 
 		return InteractionResult.SUCCESS;
 	}

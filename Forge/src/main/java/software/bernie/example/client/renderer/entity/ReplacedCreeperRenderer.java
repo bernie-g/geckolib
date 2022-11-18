@@ -8,8 +8,8 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.monster.Creeper;
 import software.bernie.example.client.model.entity.ReplacedCreeperModel;
 import software.bernie.example.entity.ReplacedCreeperEntity;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.renderer.GeoReplacedEntityRenderer;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 /**
  * Example replacement renderer for a {@link Creeper}.<br>

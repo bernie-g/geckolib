@@ -3,10 +3,10 @@ package software.bernie.example.client.renderer.entity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.example.client.model.entity.RaceCarModel;
 import software.bernie.example.entity.RaceCarEntity;
-import software.bernie.geckolib3.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Example {@link software.bernie.geckolib3.renderer.GeoRenderer} implementation of an entity
+ * Example {@link software.bernie.geckolib.renderer.GeoRenderer} implementation of an entity
  * @see RaceCarModel
  * @see RaceCarEntity
  */

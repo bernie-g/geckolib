@@ -2,7 +2,7 @@ package software.bernie.example.client.renderer.block;
 
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.model.block.FertilizerModel;
-import software.bernie.geckolib3.renderer.GeoBlockRenderer;
+import software.bernie.geckolib.renderer.GeoBlockRenderer;
 
 /**
  * Example {@link net.minecraft.world.level.block.entity.BlockEntity} renderer for {@link FertilizerBlockEntity}

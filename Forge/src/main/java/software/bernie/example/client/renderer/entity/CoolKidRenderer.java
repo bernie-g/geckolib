@@ -4,12 +4,12 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.layer.CoolKidGlassesLayer;
 import software.bernie.example.entity.CoolKidEntity;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.model.DefaultedEntityGeoModel;
-import software.bernie.geckolib3.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Example {@link software.bernie.geckolib3.renderer.GeoRenderer} implementation of an entity that uses a {@link software.bernie.geckolib3.renderer.layer.GeoRenderLayer render layer}
+ * Example {@link software.bernie.geckolib.renderer.GeoRenderer} implementation of an entity that uses a {@link software.bernie.geckolib.renderer.layer.GeoRenderLayer render layer}
  * @see CoolKidGlassesLayer
  * @see CoolKidEntity
  */

@@ -1,0 +1,10 @@
+{
+  "jack_in_the_box_music": {
+    "sounds": [
+      {
+        "name": "geckolib:jack_in_the_box_music",
+        "stream": true
+      }
+    ]
+  }
+}

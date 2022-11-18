@@ -7,10 +7,10 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.entity.CoolKidEntity;
-import software.bernie.geckolib3.GeckoLib;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.renderer.GeoRenderer;
-import software.bernie.geckolib3.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 /**
  * Example implementation of a {@link GeoRenderLayer}.<br>

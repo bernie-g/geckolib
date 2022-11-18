@@ -8,11 +8,11 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.util.RandomSource;
 import software.bernie.example.client.model.entity.BatModel;
 import software.bernie.example.entity.BatEntity;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
-import software.bernie.geckolib3.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 /**
- * Example {@link software.bernie.geckolib3.renderer.GeoRenderer} for {@link BatEntity}
+ * Example {@link software.bernie.geckolib.renderer.GeoRenderer} for {@link BatEntity}
  * @see BatModel
  */
 public class BatRenderer extends GeoEntityRenderer<BatEntity> {

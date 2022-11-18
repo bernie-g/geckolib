@@ -5,14 +5,14 @@ import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib3.animatable.GeoEntity;
-import software.bernie.geckolib3.constant.DefaultAnimations;
-import software.bernie.geckolib3.core.animatable.GeoAnimatable;
-import software.bernie.geckolib3.core.animation.AnimationController;
-import software.bernie.geckolib3.core.animation.AnimatableManager;
-import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib3.core.object.PlayState;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Example {@link GeoAnimatable} implementation of an entity that uses a render layer
