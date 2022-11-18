@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.extendedrendererentity",
+				"identifier": "geometry.mutant_zombie",
 				"texture_width": 64,
 				"texture_height": 64,
 				"visible_bounds_width": 4,

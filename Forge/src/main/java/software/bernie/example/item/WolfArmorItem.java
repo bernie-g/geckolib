@@ -64,7 +64,7 @@ public final class WolfArmorItem extends ArmorItem implements GeoItem {
 	// Let's add our animation controller
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addAnimationController(new AnimationController<>(this, 20, event -> {
+		manager.addController(new AnimationController<>(this, 20, event -> {
 			// Apply our generic idle animation.
 			// Whether it plays or not is decided down below.
 			event.getController().setAnimation(DefaultAnimations.IDLE);

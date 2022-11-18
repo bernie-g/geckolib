@@ -157,7 +157,7 @@ public interface BakedModelFactory {
 			double inflate = cube.inflate() != null ? cube.inflate() / 16f : (bone.getInflate() == null ? 0 : bone.getInflate() / 16f);
 			Vec3 size = RenderUtils.arrayToVec(cube.size());
 			Vec3 origin = RenderUtils.arrayToVec(cube.origin());
-			Vec3 rotation = RenderUtils.arrayToVec(cube.rotatation());
+			Vec3 rotation = RenderUtils.arrayToVec(cube.rotation());
 			Vec3 pivot = RenderUtils.arrayToVec(cube.pivot());
 			origin = new Vec3(-(origin.x + size.x) / 16d, origin.y / 16d, origin.z / 16d);
 			size = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);

@@ -32,8 +32,8 @@ public final class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.RACE_CAR.get(), RaceCarRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.PARASITE.get(), ParasiteRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.COOL_KID.get(), CoolKidRenderer::new);
-			//event.registerEntityRenderer(EntityRegistry.EXTENDED_RENDERER_EXAMPLE.get(), ExampleExtendedRendererEntityRenderer::new);
-			//event.registerEntityRenderer(EntityRegistry.TEXTURE_PER_BONE_EXAMPLE.get(), TexturePerBoneTestEntityRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.MUTANT_ZOMBIE.get(), MutantZombieRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.FAKE_GLASS.get(), FakeGlassRenderer::new);
 
 			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 

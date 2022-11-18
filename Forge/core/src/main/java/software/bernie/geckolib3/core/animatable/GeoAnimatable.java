@@ -22,7 +22,7 @@ import software.bernie.geckolib3.core.animation.factory.AnimationFactory;
 public interface GeoAnimatable {
 	/**
 	 * Register your {@link AnimationController AnimationControllers} and their respective animations and conditions.
-	 * Override this method in your animatable object and add your controllers via {@link AnimatableManager#addAnimationController(AnimationController)}.
+	 * Override this method in your animatable object and add your controllers via {@link AnimatableManager#addController(AnimationController)}.
 	 * You may add as many controllers as wanted.
 	 * <br><br>
 	 * Each controller can only play <u>one</u> animation at a time, and so animations that you intend to play concurrently should be handled in independent controllers.

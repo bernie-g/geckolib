@@ -24,6 +24,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation INTERACT = RawAnimation.begin().thenPlay("misc.interact");
 	public static final RawAnimation DEPLOY = RawAnimation.begin().thenPlay("misc.deploy");
 	public static final RawAnimation REST = RawAnimation.begin().thenPlay("misc.rest");
+	public static final RawAnimation SIT = RawAnimation.begin().thenPlayAndHold("misc.sit");
 
 	public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
 	public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("move.swim");
@@ -31,7 +32,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation DRIVE = RawAnimation.begin().thenLoop("move.drive");
 	public static final RawAnimation FLY = RawAnimation.begin().thenLoop("move.fly");
 	public static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("move.crawl");
-	public static final RawAnimation JUMP = RawAnimation.begin().thenLoop("move.jump");
+	public static final RawAnimation JUMP = RawAnimation.begin().thenPlay("move.jump");
 	public static final RawAnimation SNEAK = RawAnimation.begin().thenLoop("move.sneak");
 
 	public static final RawAnimation ATTACK_SWING = RawAnimation.begin().thenPlay("attack.swing");
@@ -56,7 +57,7 @@ public final class DefaultAnimations {
 	 * null  -> Stop Controller</pre>
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> basicPredicateController(T animatable, RawAnimation optionA, RawAnimation optionB, BiFunction<T, AnimationEvent<T>, Boolean> predicate) {
-		return new AnimationController<T>(animatable, "generic", 0, event -> {
+		return new AnimationController<T>(animatable, "Generic", 10, event -> {
 			Boolean result = predicate.apply(animatable, event);
 
 			if (result == null)
@@ -78,7 +79,7 @@ public final class DefaultAnimations {
 	 * Continuously plays the living animation
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericLivingController(T animatable) {
-		return new AnimationController<>(animatable, "living", 0, event -> {
+		return new AnimationController<>(animatable, "Living", 10, event -> {
 			event.getController().setAnimation(LIVING);
 
 			return PlayState.CONTINUE;
@@ -90,7 +91,7 @@ public final class DefaultAnimations {
 	 * Continuously plays the idle animation
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericIdleController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Idle", 10, event -> {
 			event.getController().setAnimation(IDLE);
 
 			return PlayState.CONTINUE;
@@ -102,7 +103,7 @@ public final class DefaultAnimations {
 	 * Will play the walk animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericWalkController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Walk", 10, event -> {
 			if (event.isMoving()) {
 				event.getController().setAnimation(WALK);
 
@@ -122,7 +123,7 @@ public final class DefaultAnimations {
 	 * @return A new {@link AnimationController} instance to use
 	 */
 	public static <T extends LivingEntity & GeoAnimatable> AnimationController<T> genericAttackAnimation(T animatable, RawAnimation attackAnimation) {
-		return new AnimationController<>(animatable, "attacking", 0, event -> {
+		return new AnimationController<>(animatable, "Attack", 0, event -> {
 			if (animatable.swinging) {
 				event.getController().setAnimation(attackAnimation);
 
@@ -140,7 +141,7 @@ public final class DefaultAnimations {
 	 * Will play the walk animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericWalkIdleController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Walk/Idle", 10, event -> {
 			if (event.isMoving()) {
 				event.getController().setAnimation(WALK);
 			}
@@ -157,7 +158,7 @@ public final class DefaultAnimations {
 	 * Will play the swim animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericSwimController(T entity) {
-		return new AnimationController<T>(entity, "movement", 0, event -> {
+		return new AnimationController<T>(entity, "Swim", 10, event -> {
 			if (event.isMoving()) {
 				event.getController().setAnimation(SWIM);
 
@@ -173,7 +174,7 @@ public final class DefaultAnimations {
 	 * Will play the swim animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericSwimIdleController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Swim/Idle", 10, event -> {
 			if (event.isMoving()) {
 				event.getController().setAnimation(SWIM);
 			}
@@ -190,7 +191,7 @@ public final class DefaultAnimations {
 	 * Will play the fly animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Fly", 10, event -> {
 			event.getController().setAnimation(FLY);
 
 			return PlayState.CONTINUE;
@@ -202,7 +203,7 @@ public final class DefaultAnimations {
 	 * Will play the walk animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyIdleController(T animatable) {
-		return new AnimationController<T>(animatable, "movement", 0, event -> {
+		return new AnimationController<T>(animatable, "Fly/Idle", 10, event -> {
 			if (event.isMoving()) {
 				event.getController().setAnimation(FLY);
 			}
@@ -219,7 +220,7 @@ public final class DefaultAnimations {
 	 * If the entity is considered moving, will either walk or run depending on the {@link Entity#isSprinting()} method, otherwise it will idle
 	 */
 	public static <T extends Entity & GeoAnimatable> AnimationController<T> genericWalkRunIdleController(T entity) {
-		return new AnimationController<T>(entity, "movement", 0, event -> {
+		return new AnimationController<T>(entity, "Walk/Run/Idle", 10, event -> {
 			if (event.isMoving()) {
 				if (entity.isSprinting()) {
 					event.getController().setAnimation(RUN);

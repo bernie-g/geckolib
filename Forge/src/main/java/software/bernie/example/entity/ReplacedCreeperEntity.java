@@ -25,7 +25,7 @@ public class ReplacedCreeperEntity implements GeoReplacedEntity {
 	 */
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addAnimationController(DefaultAnimations.genericWalkIdleController(this));
+		manager.addController(DefaultAnimations.genericWalkIdleController(this));
 	}
 
 	@Override

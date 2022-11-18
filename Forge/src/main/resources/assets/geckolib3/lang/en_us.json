@@ -8,6 +8,8 @@
   "entity.geckolib3.parasite": "Parasite",
   "entity.geckolib3.race_car": "Race Car",
   "entity.geckolib3.texture_per_bone_entity": "Texture-Per-Bone Entity",
+  "entity.geckolib3.example_extended_entity": "Example Extended Entity",
+  "entity.geckolib3.example_extended_entity.equip": "Gave %1$s to the entity",
   "item.geckolib3.bat_spawn_egg": "Bat Spawn Egg",
   "item.geckolib3.bike_spawn_egg": "Bike Spawn Egg",
   "item.geckolib3.cool_kid_spawn_egg": "Cool Kid Spawn Egg",

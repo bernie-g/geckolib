@@ -52,6 +52,26 @@ public final class RawAnimation {
 	}
 
 	/**
+	 * Appends a 'wait' animation to the animation chain.<br>
+	 * This causes the animatable to do nothing for a set period of time before performing the next animation.
+	 * @param ticks The number of ticks to 'wait' for
+	 */
+	public RawAnimation thenWait(int ticks) {
+		this.animationList.add(new Stage(Stage.WAIT, Animation.LoopType.PLAY_ONCE, ticks));
+
+		return this;
+	}
+
+	/**
+	 * Appends an animation to the animation chain, then has the animatable hold the pose at the end of the
+	 * animation until it is stopped by external sources.
+	 * @param animation The name of the animation to play and hold
+	 */
+	public RawAnimation thenPlayAndHold(String animation) {
+		return then(animation, Animation.LoopType.HOLD_ON_LAST_FRAME);
+	}
+
+	/**
 	 * Append an animation to the animation chain, playing the named animation <code>playCount</code> times,
 	 * then stopping or progressing to the next chained animation depending on the loop type set in the animation json
 	 * @param animationName The name of the animation to play X times
@@ -61,17 +81,6 @@ public final class RawAnimation {
 		for (int i = 0; i < playCount; i++) {
 			then(animationName, i == playCount - 1 ? Animation.LoopType.DEFAULT : Animation.LoopType.PLAY_ONCE);
 		}
-
-		return this;
-	}
-
-	/**
-	 * Appends a 'wait' animation to the animation chain.<br>
-	 * This causes the animatable to do nothing for a set period of time before performing the next animation.
-	 * @param ticks The number of ticks to 'wait' for
-	 */
-	public RawAnimation thenWait(int ticks) {
-		this.animationList.add(new Stage(Stage.WAIT, Animation.LoopType.PLAY_ONCE, ticks));
 
 		return this;
 	}

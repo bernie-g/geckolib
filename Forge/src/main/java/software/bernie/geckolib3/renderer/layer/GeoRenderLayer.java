@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 
 import software.bernie.geckolib3.cache.object.BakedGeoModel;
+import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.model.GeoModel;
 import software.bernie.geckolib3.renderer.GeoRenderer;
@@ -64,9 +65,23 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * This is the method that is actually called by the render for your render layer to function.<br>
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags.
 	 */
-	public abstract void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
+	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
 								MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
-								int packedLight, int packedOverlay);
+								int packedLight, int packedOverlay) {}
+
+	/**
+	 * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
+	 * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
+	 * It's recommended to avoid using this unless necessary.<br>
+	 * <br>
+	 * The {@link GeoBone} in question has already been rendered by this stage.<br>
+	 * <br>
+	 * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
+	 * using {@link MultiBufferSource#getBuffer} before ending the method
+	 */
+	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType,
+							  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {}
 
 	/**
 	 * Renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}.<br>

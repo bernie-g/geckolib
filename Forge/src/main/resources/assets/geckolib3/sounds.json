@@ -1,6 +1,5 @@
 {
   "jack_in_the_box_music": {
-    "category": "record",
     "sounds": [
       {
         "name": "geckolib3:jack_in_the_box_music",

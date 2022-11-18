@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 /**
  * Container class for cube information, only used in deserialization at startup
  */
-public record Cube(@Nullable Double inflate, @Nullable Boolean mirror, double[] origin, double[] pivot, double[] rotatation, double[] size, UVUnion uv) {
+public record Cube(@Nullable Double inflate, @Nullable Boolean mirror, double[] origin, double[] pivot, double[] rotation, double[] size, UVUnion uv) {
 	public static JsonDeserializer<Cube> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			JsonObject obj = json.getAsJsonObject();

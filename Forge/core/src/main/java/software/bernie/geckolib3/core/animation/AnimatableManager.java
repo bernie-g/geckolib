@@ -31,8 +31,10 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * Add an {@link AnimationController} to this animatable's data.<br>
 	 * Only controllers added via this method will be acted upon.
 	 */
-	public void addAnimationController(AnimationController controller) {
+	public AnimatableManager<T> addController(AnimationController controller) {
 		this.animationControllers.put(controller.getName(), controller);
+
+		return this;
 	}
 
 	public Map<String, AnimationController<T>> getAnimationControllers() {

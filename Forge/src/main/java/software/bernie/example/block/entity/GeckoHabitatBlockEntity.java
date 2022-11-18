@@ -30,7 +30,7 @@ public class GeckoHabitatBlockEntity extends BlockEntity implements GeoBlockEnti
 	// But if it's day time we want him to take a nap
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addAnimationController(new AnimationController<>(this, event -> {
+		manager.addController(new AnimationController<>(this, event -> {
 			if (getLevel().getDayTime() > 23000 || getLevel().getDayTime() < 13000) {
 				event.getController().setAnimation(DefaultAnimations.REST);
 			}

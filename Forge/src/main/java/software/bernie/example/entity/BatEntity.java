@@ -52,7 +52,7 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
 		// Add our flying animation controller
-		manager.addAnimationController(new AnimationController<>(this, event -> {
+		manager.addController(new AnimationController<>(this, event -> {
 			if (this.isFlying) {
 				event.getController().setAnimation(DefaultAnimations.FLY);
 			}
@@ -70,7 +70,7 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 		}));
 
 		// Add our generic living animation controller
-		manager.addAnimationController(DefaultAnimations.genericLivingController(this));
+		manager.addController(DefaultAnimations.genericLivingController(this));
 	}
 
 	@Override

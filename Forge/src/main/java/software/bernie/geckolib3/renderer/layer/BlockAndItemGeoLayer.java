@@ -10,7 +10,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
-import software.bernie.geckolib3.cache.object.BakedGeoModel;
 import software.bernie.geckolib3.cache.object.GeoBone;
 import software.bernie.geckolib3.core.animatable.GeoAnimatable;
 import software.bernie.geckolib3.renderer.GeoRenderer;
@@ -62,37 +61,19 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoR
 	}
 
 	/**
-	 * This is the method that is actually called by the render for your render layer to function.<br>
-	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags.
+	 * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
+	 * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
+	 * It's recommended to avoid using this unless necessary.<br>
+	 * <br>
+	 * The {@link GeoBone} in question has already been rendered by this stage.<br>
+	 * <br>
+	 * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
+	 * using {@link MultiBufferSource#getBuffer} before ending the method
 	 */
 	@Override
-	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource,
-					   VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		for (GeoBone bone : bakedModel.topLevelBones()) {
-			checkChildBones(poseStack, bone, animatable, bufferSource, partialTick, packedLight, packedOverlay);
-		}
-	}
-
-	private void checkChildBones(PoseStack poseStack, GeoBone parentBone, T animatable, MultiBufferSource bufferSource,
-								 float partialTick, int packedLight, int packedOverlay) {
-		poseStack.pushPose();
-		RenderUtils.prepMatrixForBone(poseStack, parentBone);
-
-		tryRenderForBone(poseStack, parentBone, animatable, bufferSource, partialTick, packedLight, packedOverlay);
-
-		for (GeoBone bone : parentBone.getChildBones()) {
-			checkChildBones(poseStack, bone, animatable, bufferSource, partialTick, packedLight, packedOverlay);
-		}
-
-		poseStack.popPose();
-	}
-
-	/**
-	 * This method is called for each bone in the model.<br>
-	 * Check whether the bone is relevant and render as needed.
-	 */
-	protected void tryRenderForBone(PoseStack poseStack, GeoBone bone, T animatable, MultiBufferSource bufferSource,
-									float partialTick, int packedLight, int packedOverlay) {
+	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
+							  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		ItemStack stack = getStackForBone(bone, animatable);
 		BlockState blockState = getBlockForBone(bone, animatable);
 
@@ -107,6 +88,8 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoR
 
 		if (blockState != null)
 			renderBlockForBone(poseStack, bone, blockState, animatable, bufferSource, partialTick, packedLight, packedOverlay);
+
+		buffer = bufferSource.getBuffer(renderType);
 
 		poseStack.popPose();
 	}

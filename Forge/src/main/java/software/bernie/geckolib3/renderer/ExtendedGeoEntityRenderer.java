@@ -71,7 +71,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
 								  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -110,6 +110,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 
 		if (renderTypeOverride != null)
 			buffer = bufferSource.getBuffer(getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick));
+
+		applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+		super.renderChildBones(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}

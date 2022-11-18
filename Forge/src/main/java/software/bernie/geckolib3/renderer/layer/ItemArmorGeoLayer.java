@@ -68,16 +68,16 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * This is what determines the base model to use for rendering a particular stack
 	 */
 	@Nonnull
-	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable, BakedGeoModel model) {
+	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable) {
 		return EquipmentSlot.CHEST;
 	}
 
 	/**
 	 * Return a ModelPart for a given {@link GeoBone}.<br>
-	 * This is then used to determine the scale, rotation, and positions of the final item render
+	 * This is then transformed into position for the final render
 	 */
 	@Nonnull
-	protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable, BakedGeoModel model, HumanoidModel<?> baseModel) {
+	protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable, HumanoidModel<?> baseModel) {
 		return baseModel.body;
 	}
 
@@ -91,21 +91,66 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * This is the method that is actually called by the render for your render layer to function.<br>
-	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags.
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called.<br>
+	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
 	 */
 	@Override
-	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource,
+						  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		this.mainHandStack = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offhandStack = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmetStack = animatable.getItemBySlot(EquipmentSlot.HEAD);
 		this.chestplateStack = animatable.getItemBySlot(EquipmentSlot.CHEST);
 		this.leggingsStack = animatable.getItemBySlot(EquipmentSlot.LEGS);
 		this.bootsStack = animatable.getItemBySlot(EquipmentSlot.FEET);
+	}
 
-		for (GeoBone bone : bakedModel.topLevelBones()) {
-			renderForBone(poseStack, bone, animatable, bakedModel, bufferSource, renderType, buffer, partialTick, packedLight, packedOverlay);
+	/**
+	 * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
+	 * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
+	 * It's recommended to avoid using this unless necessary.<br>
+	 * <br>
+	 * The {@link GeoBone} in question has already been rendered by this stage.<br>
+	 * <br>
+	 * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
+	 * using {@link MultiBufferSource#getBuffer} before ending the method
+	 */
+	@Override
+	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
+							  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+		ItemStack armorStack = getArmorItemForBone(bone, animatable);
+
+		if (armorStack == null)
+			return;
+
+		if (armorStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock skullBlock) {
+			renderSkullAsArmor(poseStack, bone, armorStack, skullBlock, bufferSource, packedLight);
 		}
+		else {
+			EquipmentSlot slot = getEquipmentSlotForBone(bone, armorStack, animatable);
+			HumanoidModel<?> model = getModelForItem(bone, slot, armorStack, animatable);
+			ModelPart modelPart = getModelPartForBone(bone, slot, armorStack, animatable, model);
+
+			if (!modelPart.cubes.isEmpty()) {
+				poseStack.pushPose();
+				poseStack.scale(-1, -1, 1);
+
+				if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
+					prepModelPartForRender(poseStack, bone, modelPart, true, slot == EquipmentSlot.CHEST);
+					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
+					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 1, 1, 1, 1);
+				}
+				else if (armorStack.getItem() instanceof ArmorItem) {
+					prepModelPartForRender(poseStack, bone, modelPart, false, false);
+					renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
+				}
+
+				poseStack.popPose();
+			}
+		}
+
+		buffer = bufferSource.getBuffer(renderType);
 	}
 
 	/**
@@ -114,44 +159,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	protected void renderForBone(PoseStack poseStack, GeoBone bone, T animatable, BakedGeoModel bakedModel,
 								 MultiBufferSource bufferSource, RenderType renderType, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		ItemStack armorStack = getArmorItemForBone(bone, animatable);
 
-		poseStack.pushPose();
-		RenderUtils.prepMatrixForBone(poseStack, bone);
-
-		if (armorStack != null) {
-			if (armorStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock skullBlock) {
-				renderSkullAsArmor(poseStack, bone, armorStack, skullBlock, bufferSource, packedLight);
-			}
-			else {
-				EquipmentSlot slot = getEquipmentSlotForBone(bone, armorStack, animatable, bakedModel);
-				HumanoidModel<?> model = getModelForItem(bone, slot, armorStack, animatable, bakedModel);
-				ModelPart modelPart = getModelPartForBone(bone, slot, armorStack, animatable, bakedModel, model);
-
-				if (!modelPart.cubes.isEmpty()) {
-					poseStack.pushPose();
-					poseStack.scale(-1, -1, 1);
-
-					if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
-						prepModelPartForRender(poseStack, bone, modelPart, true, slot == EquipmentSlot.CHEST);
-						geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
-						geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 1, 1, 1, 1);
-					}
-					else {
-						prepModelPartForRender(poseStack, bone, modelPart, false, false);
-						renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
-					}
-
-					poseStack.popPose();
-				}
-			}
-		}
-
-		for (GeoBone childBone : bone.getChildBones()) {
-			renderForBone(poseStack, childBone, animatable, bakedModel, bufferSource, renderType, buffer, partialTick, packedLight, packedOverlay);
-		}
-
-		poseStack.popPose();
 	}
 
 	/**
@@ -160,7 +168,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected <I extends Item & GeoItem> void renderVanillaArmorPiece(PoseStack poseStack, T animatable, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
 															   ModelPart modelPart, MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 			ResourceLocation texture = getVanillaArmorResource(animatable, armorStack, slot, "");
-			VertexConsumer buffer = getArmorBuffer(bufferSource, null, texture, false);
+			VertexConsumer buffer = getArmorBuffer(bufferSource, null, texture, armorStack.hasFoil());
 
 			if (armorStack.getItem() instanceof DyeableArmorItem dyable) {
 				int color = dyable.getColor(armorStack);
@@ -186,14 +194,14 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		if (renderType == null)
 			renderType = RenderType.armorCutoutNoCull(texturePath);
 
-		return ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, false, enchanted);
+		return ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, true, enchanted);
 	}
 
 	/**
 	 * Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided {@link ItemStack}
 	 */
 	@Nonnull
-	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable, BakedGeoModel model) {
+	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<?> defaultModel = slot == EquipmentSlot.LEGS ? DEFAULT_INNER_ARMOR_MODEL : DEFAULT_OUTER_ARMOR_MODEL;
 
 		return IClientItemExtensions.of(stack).getHumanoidArmorModel(null, stack, null, defaultModel);

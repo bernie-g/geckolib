@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -151,7 +152,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			renderInGui(transformType, poseStack, bufferSource, packedLight, packedOverlay);
 		}
 		else {
-			defaultRender(poseStack, this.animatable, bufferSource, null, null,
+			RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, Minecraft.getInstance().getFrameTime());
+			VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
+
+			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer,
 					0, Minecraft.getInstance().getFrameTime(), packedLight);
 		}
 	}
@@ -165,10 +169,12 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ?
 				bufferSource2 : Minecraft.getInstance().renderBuffers().bufferSource();
+		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), defaultBufferSource, Minecraft.getInstance().getFrameTime());
+		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
 		poseStack.pushPose();
 		Lighting.setupForFlatItems();
-		defaultRender(poseStack, this.animatable, defaultBufferSource, null, null,
+		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer,
 				0, Minecraft.getInstance().getFrameTime(), packedLight);
 		defaultBufferSource.endBatch();
 		RenderSystem.enableDepthTest();
@@ -203,7 +209,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
@@ -212,7 +218,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 }

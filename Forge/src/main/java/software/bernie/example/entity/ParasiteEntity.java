@@ -38,8 +38,8 @@ public class ParasiteEntity extends Monster implements GeoEntity {
 	// Add our animations
 	@Override
 	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addAnimationController(DefaultAnimations.genericWalkIdleController(this));
-		manager.addAnimationController(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE));
+		manager.addController(DefaultAnimations.genericWalkIdleController(this));
+		manager.addController(DefaultAnimations.genericAttackAnimation(this, DefaultAnimations.ATTACK_STRIKE));
 	}
 
 	@Override
