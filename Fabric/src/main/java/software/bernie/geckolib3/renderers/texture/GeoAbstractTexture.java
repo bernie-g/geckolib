@@ -49,11 +49,13 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		Identifier location = appendBeforeEnding(originalLocation, appendix);
 		TextureManager texManager = MinecraftClient.getInstance().getTextureManager();
 		// Necessary, some time after 1.16 this was changed. Method with just the
-		// location will try to create a new simpletexture fromt aht which will fail
+		// location will try to create a new simpletexture from that which will fail
 		// here
 		// Overload with second param (default value) will just call getOrDefault() on
 		// the internal map
-		texManager.getOrDefault(location, MissingSprite.getMissingSpriteTexture());
+		if (texManager.getOrDefault(location, MissingSprite.getMissingSpriteTexture()) == null) {
+			texManager.registerTexture(location, constructor.apply(originalLocation, location));
+		}
 		return location;
 	}
 
