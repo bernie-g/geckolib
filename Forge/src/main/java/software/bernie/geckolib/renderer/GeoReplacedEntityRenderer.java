@@ -42,7 +42,6 @@ import java.util.List;
  * An alternate to {@link GeoEntityRenderer}, used specifically for replacing existing non-geckolib
  * entities with geckolib rendering dynamically, without the need for an additional entity class
  */
-@SuppressWarnings("JavadocReference")
 public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable> extends EntityRenderer<E> implements GeoRenderer<T> {
 	protected final GeoModel<T> model;
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();

@@ -1,11 +1,11 @@
 {
 	"schemaVersion": 1,
-	"id": "geckolib3",
+	"id": "geckolib",
 	"version": "${version}",
 	"name": "Geckolib",
 	"description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.",
 	"authors": [
-		"Gecko, Eliot, AzureDoom, Hydos, DerToaster"
+		"Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat"
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/geckolib",
@@ -21,15 +21,15 @@
 		],
 		"client": [
 			"software.bernie.example.ClientListener",
-			"software.bernie.geckolib3.network.ClientPackets"
+			"software.bernie.geckolib.network.ClientPackets"
 		]
 	},
 	"mixins": [
-		"geckolib3.mixins.json"
+		"geckolib.mixins.json"
 	],
 	"accessWidener": "geckolib.aw",
 	"depends": {
-   		"fabricloader": ">=0.14.9",
+   		"fabricloader": ">=0.14.10",
 		"fabric": "*",
 		"java": ">=17",
 		"minecraft": ">=1.19.2"

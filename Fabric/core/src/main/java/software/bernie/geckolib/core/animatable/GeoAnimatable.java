@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2020.
+ * Author: Bernie G. (Gecko)
+ */
+package software.bernie.geckolib.core.animatable;
+
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+
+/**
+ * This is the root interface for all animatable objects in Geckolib.
+ * Generally speaking you should use one of the sub-interfaces relevant to your specific object so that your model can be automatically handled.<br>
+ * See:<br>
+ * <ul>
+ *     <li>{@code GeoBlock}</li>
+ *     <li>{@code GeoEntity}</li>
+ *     <li>{@code GeoItem}</li>
+ * </ul>
+ */
+public interface GeoAnimatable {
+	/**
+	 * Register your {@link AnimationController AnimationControllers} and their respective animations and conditions.
+	 * Override this method in your animatable object and add your controllers via {@link AnimatableManager#addController(AnimationController)}.
+	 * You may add as many controllers as wanted.
+	 * <br><br>
+	 * Each controller can only play <u>one</u> animation at a time, and so animations that you intend to play concurrently should be handled in independent controllers.
+	 * Note having multiple animations playing via multiple controllers can override parts of one animation with another if both animations use the same bones or child bones.
+	 *
+	 * @param manager The object to register your controller instances to
+	 */
+	void registerControllers(AnimatableManager<?> manager);
+
+	/**
+	 * Each instance of a {@code GeoAnimatable} must return an instance of an {@link AnimationFactory}, which handles instance-specific animation info.
+	 * Generally speaking, you should create your factory using {@code GeckoLibUtil#createFactory} and store it in your animatable instance, returning that cached instance when called.
+	 * @return A cached instance of an {@code AnimationFactory}
+	 */
+	AnimationFactory getFactory();
+
+	/**
+	 * Defines the speed in which the {@link software.bernie.geckolib.core.animation.AnimationProcessor} should return
+	 * {@link CoreGeoBone GeoBones} that currently have no animations
+	 * to their default position.
+	 */
+	default double getBoneResetTime() {
+		return 1;
+	}
+
+	/**
+	 * Defines whether the animations for this animatable should continue playing in the background when the game is paused.<br>
+	 * By default, animation progress will be stalled while the game is paused.
+	 */
+	default boolean shouldPlayAnimsWhileGamePaused() {
+		return false;
+	}
+}

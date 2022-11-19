@@ -43,7 +43,6 @@ import java.util.List;
  * All entities added to be rendered by GeckoLib should use an instance of this class.<br>
  * This also includes {@link net.minecraft.world.entity.projectile.Projectile Projectiles}
  */
-@SuppressWarnings("JavadocReference")
 public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 	protected final GeoModel<T> model;

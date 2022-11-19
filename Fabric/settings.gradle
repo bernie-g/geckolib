@@ -9,6 +9,6 @@ pluginManagement {
         mavenCentral()
     }
 }
-rootProject.name = 'geckolib-fabric-1.19'
+rootProject.name = 'geckolib-fabric-4.0'
 include ':geckolib-core'
 project(':geckolib-core').projectDir = new File('./core')
