@@ -31,7 +31,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 
 		TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
-		if (textureManager.getTexture(texturePath, MissingTextureAtlasSprite.getTexture()) == MissingTextureAtlasSprite.getTexture())
+		if (!(textureManager.getTexture(texturePath, MissingTextureAtlasSprite.getTexture()) instanceof GeoAbstractTexture))
 			textureManagerConsumer.accept(textureManager);
 	}
 
