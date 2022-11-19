@@ -112,16 +112,10 @@ dependencies {
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
-    //library group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    //library group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-
     shade 'com.eliotlash.mclib:mclib:20'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
-    //shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-   // shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-
 
     //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
     //testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
@@ -141,7 +135,6 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    //relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier ''
 }
 
@@ -159,7 +152,7 @@ jar {
         attributes([
                 "Specification-Title"     : "GeckoLib",
                 "Specification-Vendor"    : "Gecko",
-                "Specification-Version"   : "4", // We are version 1 of ourselves
+                "Specification-Version"   : "4",
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "Gecko",
@@ -175,7 +168,6 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    //relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier = 'sources'
 }
 
