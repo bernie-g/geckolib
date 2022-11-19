@@ -1,3 +1,8 @@
+v3.1.37
+
+- Updates Geckolib default armor with new Gecko armor made by VoutVouniern
+- Fixes issues Glow Layer issue.
+
 v3.1.36
 
 - MClib updated, Fixed -() group not working - Hiroku https://github.com/fadookie/particleman/pull/7
