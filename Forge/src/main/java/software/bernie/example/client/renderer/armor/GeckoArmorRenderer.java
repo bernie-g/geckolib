@@ -12,13 +12,13 @@ public class GeckoArmorRenderer extends GeoArmorRenderer<GeckoArmorItem> {
 		// is named "bone545", make sure to do this.headBone = "bone545";
 		// The default values are the ones that come with the default armor template in
 		// the geckolib blockbench plugin.
-		this.headBone = "helmet";
-		this.bodyBone = "chestplate";
-		this.rightArmBone = "rightArm";
-		this.leftArmBone = "leftArm";
-		this.rightLegBone = "rightLeg";
-		this.leftLegBone = "leftLeg";
-		this.rightBootBone = "rightBoot";
-		this.leftBootBone = "leftBoot";
+		this.headBone = "armorHead";
+		this.bodyBone = "armorBody";
+		this.rightArmBone = "armorRightArm";
+		this.leftArmBone = "armorLeftArm";
+		this.rightLegBone = "armorRightLeg";
+		this.leftLegBone = "armorLeftLeg";
+		this.rightBootBone = "armorRightBoot";
+		this.leftBootBone = "armorLeftBoot";
 	}
 }
