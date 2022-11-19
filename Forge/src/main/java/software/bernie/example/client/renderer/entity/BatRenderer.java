@@ -10,6 +10,7 @@ import software.bernie.example.client.model.entity.BatModel;
 import software.bernie.example.entity.BatEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 /**
  * Example {@link software.bernie.geckolib.renderer.GeoRenderer} for {@link BatEntity}
@@ -20,6 +21,9 @@ public class BatRenderer extends GeoEntityRenderer<BatEntity> {
 
 	public BatRenderer(EntityRendererProvider.Context context) {
 		super(context, new BatModel());
+
+		// Add the glow layer to the bat so that it can live out its dreams of being rudolph
+		addRenderLayer(new AutoGlowingGeoLayer<>(this));
 	}
 
 	// Add some particles around the ear when rendering

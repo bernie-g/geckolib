@@ -39,6 +39,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected final GeoModel<T> model;
 
 	protected T animatable;
+	protected HumanoidModel<?> baseModel;
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
@@ -224,6 +225,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 						  int packedOverlay, float red, float green, float blue, float alpha) {
 		this.preRenderPose = poseStack.last().pose().copy();
 
+		applyBaseModel(this.baseModel);
+		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
+		applyBaseTransformations(this.baseModel);
+
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
 
@@ -248,7 +253,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -320,14 +325,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (entity == null || slot == null || baseModel == null)
 			return;
 
+		this.baseModel = baseModel;
 		this.currentEntity = entity;
 		this.currentStack = stack;
 		this.animatable = (T)stack.getItem();
 		this.currentSlot = slot;
-
-		applyBaseModel(baseModel);
-		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
-		applyBaseTransformations(baseModel);
 	}
 
 	/**

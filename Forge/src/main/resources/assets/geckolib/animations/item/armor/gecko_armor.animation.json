@@ -12,7 +12,7 @@
 				},
 				"r_finger_2": {
 					"rotation": {
-						"vector": [0, 0, "-10+math.sin(+query.anim_time*180)*10"]
+						"vector": [0, 0, "-10+math.sin(query.anim_time*180)*10"]
 					}
 				},
 				"r_finger_3": {
@@ -70,7 +70,7 @@
 				},
 				"r_finger_5": {
 					"rotation": {
-						"vector": [0, 0, "10+math.sin(+query.anim_time*180)*-10"]
+						"vector": [0, 0, "10+math.sin(query.anim_time*180)*-10"]
 					}
 				},
 				"r_finger_6": {

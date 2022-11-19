@@ -91,7 +91,9 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 							   RenderType renderType, VertexConsumer buffer, float partialTick,
 							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
+		getRenderer().preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		getRenderer().actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		getRenderer().postRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
 }

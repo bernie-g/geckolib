@@ -9,10 +9,11 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
 import net.minecraft.util.GsonHelper;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Metadata class that stores the glowing sections of GeckoLib's emissive texture feature for a given texture
+ * Metadata class that stores the data for GeckoLib's {@link software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer emissive texture feature} for a given texture
  */
 public class GeoGlowingTextureMeta {
 	public static final MetadataSectionSerializer<GeoGlowingTextureMeta> DESERIALIZER = new MetadataSectionSerializer<>() {
@@ -23,12 +24,22 @@ public class GeoGlowingTextureMeta {
 
 		@Override
 		public GeoGlowingTextureMeta fromJson(JsonObject json) {
-			JsonArray sectionsArray = GsonHelper.getAsJsonArray(json, "sections", null);
+			List<Pixel> pixels = fromSections(GsonHelper.getAsJsonArray(json, "sections", null));
 
+			if (pixels.isEmpty())
+				throw new JsonParseException("Empty glowlayer sections file. Must have at least one glow section!");
+
+			return new GeoGlowingTextureMeta(pixels);
+		}
+
+		/**
+		 * Generate a {@link Pixel} collection from the "sections" array of the mcmeta file
+		 */
+		private List<Pixel> fromSections(@Nullable JsonArray sectionsArray) {
 			if (sectionsArray == null)
-				return null;
+				return List.of();
 
-			List<Section> list = new ObjectArrayList<>(sectionsArray.size());
+			List<Pixel> pixels = new ObjectArrayList<>();
 
 			for (JsonElement element : sectionsArray) {
 				if (!(element instanceof JsonObject obj))
@@ -38,47 +49,69 @@ public class GeoGlowingTextureMeta {
 				int y1 = GsonHelper.getAsInt(obj, "y1", GsonHelper.getAsInt(obj, "y", 0));
 				int x2 = GsonHelper.getAsInt(obj, "x2", GsonHelper.getAsInt(obj, "w", 0) + x1);
 				int y2 = GsonHelper.getAsInt(obj, "y2", GsonHelper.getAsInt(obj, "h", 0) + y1);
+				int alpha = GsonHelper.getAsInt(obj, "alpha", GsonHelper.getAsInt(obj, "a", 0));
 
 				if (x1 + y1 + x2 + y2 == 0)
 					throw new IllegalArgumentException("Invalid glowsections section object, section must be at least one pixel in size");
 
-				list.add(new Section(x1, y1, x2, y2));
+				for (int x = x1; x <= x2; x++) {
+					for (int y = y1; y <= y2; y++) {
+						pixels.add(new Pixel(x, y, alpha));
+					}
+				}
 			}
 
-			return new GeoGlowingTextureMeta(list);
+			return pixels;
 		}
 	};
 
-	private final List<Section> sections;
+	private final List<Pixel> pixels;
 
-	public GeoGlowingTextureMeta(List<Section> sections) {
-		this.sections = sections;
+	public GeoGlowingTextureMeta(List<Pixel> pixels) {
+		this.pixels = pixels;
 	}
 
 	/**
-	 * Remap the color channels of the input image to mask for only the applicable pixels.
+	 * Generate the GlowLayer pixels list from an existing image resource, instead of using the .png.mcmeta file
 	 */
-	public void createImageMask(NativeImage originalImage, NativeImage newImage) {
-		for (Section section : sections) {
-			section.createImageMask(originalImage, newImage);
-		}
-	}
+	public static GeoGlowingTextureMeta fromExistingImage(NativeImage glowLayer) {
+		List<Pixel> pixels = new ObjectArrayList<>();
 
-	/**
-	 * Section object that contains the rectangular bounds of a glowing texture section on a given sprite
-	 */
-	public record Section(int x1, int y1, int x2, int y2) {
-		/**
-		 * Remap the color channels of the input image to mask for only the applicable pixels.
-		 */
-		public void createImageMask(NativeImage originalImage, NativeImage newImage) {
-			for (int x = this.x1; x < this.x2; x++) {
-				for (int y = this.y1; y < this.y2; y++) {
-					newImage.setPixelRGBA(x, y, originalImage.getPixelRGBA(x, y));
-					originalImage.setPixelRGBA(x, y, 0);
-				}
+		for (int x = 0; x < glowLayer.getWidth(); x++) {
+			for (int y = 0; y < glowLayer.getHeight(); y++) {
+				int color = glowLayer.getPixelRGBA(x, y);
+
+				if (color != 0)
+					pixels.add(new Pixel(x, y, NativeImage.getA(color)));
 			}
 		}
+
+		if (pixels.isEmpty())
+			throw new IllegalStateException("Invalid glow layer texture provided, must have at least one pixel!");
+
+		return new GeoGlowingTextureMeta(pixels);
 	}
 
+	/**
+	 * Create a new mask image based on the pre-determined pixel data
+	 */
+	public void createImageMask(NativeImage originalImage, NativeImage newImage) {
+		for (Pixel pixel : this.pixels) {
+			int color = originalImage.getPixelRGBA(pixel.x, pixel.y);
+
+			if (pixel.alpha > 0)
+				color = NativeImage.combine(pixel.alpha, NativeImage.getB(color), NativeImage.getG(color), NativeImage.getR(color));
+
+			newImage.setPixelRGBA(pixel.x, pixel.y, color);
+			originalImage.setPixelRGBA(pixel.x, pixel.y, 0);
+		}
+	}
+
+	/**
+	 * A pixel marker for a glowlayer mask
+	 * @param x The X coordinate of the pixel
+	 * @param y The Y coordinate of the pixel
+	 * @param alpha The alpha value of the mask
+	 */
+	private record Pixel(int x, int y, int alpha) {}
 }
