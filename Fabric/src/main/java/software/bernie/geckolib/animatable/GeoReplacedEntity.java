@@ -2,7 +2,6 @@ package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
@@ -50,7 +49,8 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getFactory().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimDataSyncPacket, relatedEntity);
 		}
 	}
 
@@ -66,7 +66,8 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getFactory().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(relatedEntity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, relatedEntity);
 		}
 	}
 }

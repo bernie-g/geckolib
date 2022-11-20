@@ -1,7 +1,6 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
@@ -51,7 +50,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 			getFactory().getManagerForId(instanceId).setData(dataTicket, data);
 		}
 		else {
-			syncAnimData(instanceId, dataTicket, data, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			syncAnimData(instanceId, dataTicket, data, relatedEntity);
 		}
 	}
 
@@ -63,10 +62,10 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param instanceId   The unique id that identifies the specific animatable instance
 	 * @param dataTicket   The DataTicket to sync the data for
 	 * @param data         The data to sync
-	 * @param packetTarget The distribution method determining which players to sync the data to
 	 */
-	default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, PacketDistributor.PacketTarget packetTarget) {
-		GeckoLibNetwork.send(new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data), packetTarget);
+	default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
+		AnimDataSyncPacket<D> animDataSyncPacket = new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data);
+		GeckoLibNetwork.sendToTrackingEntityAndSelf(animDataSyncPacket, entityToTrack);
 	}
 
 	/**
@@ -83,7 +82,8 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 			getFactory().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			AnimTriggerPacket animTriggerPacket = new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(animTriggerPacket, relatedEntity);
 		}
 	}
 
@@ -95,9 +95,10 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param instanceId     The unique id that identifies the specific animatable instance
 	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
 	 * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
-	 * @param packetTarget   The distribution method determining which players to sync the data to
 	 */
-	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, PacketDistributor.PacketTarget packetTarget) {
-		GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), packetTarget);
+	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName) {
+		AnimTriggerPacket animTriggerPacket = new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName);
+		//We need to create a Helper class for PacketDistributor (They do not exist in Fabric)
+		//GeckoLibNetwork.send(new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName), packetTarget);
 	}
 }

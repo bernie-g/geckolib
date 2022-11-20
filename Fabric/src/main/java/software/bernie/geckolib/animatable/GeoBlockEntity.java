@@ -1,9 +1,9 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -53,7 +53,8 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
 
-			GeckoLibNetwork.send(new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, data), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+			BlockEntityAnimDataSyncPacket<D> blockEntityAnimDataSyncPacket = new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, data);
+			GeckoLibNetwork.sendToTrackingChunkAndSelf(blockEntityAnimDataSyncPacket, (ServerLevel) level, pos);
 		}
 	}
 
@@ -79,7 +80,8 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
 
-			GeckoLibNetwork.send(new BlockEntityAnimTriggerPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+			BlockEntityAnimTriggerPacket blockEntityAnimTriggerPacket = new BlockEntityAnimTriggerPacket(pos, controllerName, animName);
+			GeckoLibNetwork.sendToTrackingChunkAndSelf(blockEntityAnimTriggerPacket, (ServerLevel) level, pos);
 		}
 	}
 }

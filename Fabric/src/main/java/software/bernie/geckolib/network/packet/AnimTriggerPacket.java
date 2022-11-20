@@ -2,46 +2,68 @@ package software.bernie.geckolib.network.packet;
 
 import javax.annotation.Nullable;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the
  * server
  */
-public class AnimTriggerPacket<D> {
-	private final String syncableId;
-	private final long instanceId;
-	private final String controllerName;
-	private final String animName;
+public class AnimTriggerPacket extends AbstractPacket {
 
-	public AnimTriggerPacket(String syncableId, long instanceId, @Nullable String controllerName, String animName) {
-		this.syncableId = syncableId;
-		this.instanceId = instanceId;
-		this.controllerName = controllerName == null ? "" : controllerName;
-		this.animName = animName;
-	}
+    private final String SYNCABLE_ID;
+    private final long INSTANCE_ID;
+    private final String CONTROLLER_NAME;
+    private final String ANIM_NAME;
 
-	public void encode(FriendlyByteBuf buffer) {
-		buffer.writeUtf(this.syncableId);
-		buffer.writeVarLong(this.instanceId);
-		buffer.writeUtf(this.controllerName);
-		buffer.writeUtf(this.animName);
-	}
+    public AnimTriggerPacket(String syncableId, long instanceId, @Nullable String controllerName, String animName) {
+        this.SYNCABLE_ID = syncableId;
+        this.INSTANCE_ID = instanceId;
+        this.CONTROLLER_NAME = controllerName == null ? "" : controllerName;
+        this.ANIM_NAME = animName;
+    }
 
-	public static <D> AnimTriggerPacket<D> decode(FriendlyByteBuf buffer) {
-		return new AnimTriggerPacket<>(buffer.readUtf(), buffer.readVarLong(), buffer.readUtf(), buffer.readUtf());
-	}
+    public FriendlyByteBuf encode() {
+        FriendlyByteBuf buf = PacketByteBufs.create();
+        buf.writeUtf(this.SYNCABLE_ID);
 
-	public void receivePacket() {
-		GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+        buf.writeVarLong(this.INSTANCE_ID);
+        buf.writeUtf(this.CONTROLLER_NAME);
 
-		if (animatable != null) {
-			AnimatableManager<?> manager = animatable.getFactory().getManagerForId(this.instanceId);
+        buf.writeUtf(this.ANIM_NAME);
+        return buf;
+    }
 
-			manager.tryTriggerAnimation(this.controllerName, this.animName);
-		}
-	}
+    @Override
+    public ResourceLocation getPacketID() {
+        return GeckoLibNetwork.ANIM_TRIGGER_SYNC_PACKET_ID;
+    }
+
+    public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+        final String SYNCABLE_ID = buf.readUtf();
+        final long INSTANCE_ID = buf.readLong();
+
+        final String CONTROLLER_NAME = buf.readUtf();
+        final String ANIM_NAME = buf.readUtf();
+
+        client.execute(() -> runOnThread(SYNCABLE_ID, INSTANCE_ID, CONTROLLER_NAME, ANIM_NAME));
+    }
+
+    private static <D> void runOnThread(String syncableId, long instanceId, String controllerName, String animName) {
+        GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(syncableId);
+
+        if (animatable != null) {
+            AnimatableManager<?> manager = animatable.getFactory().getManagerForId(instanceId);
+
+            manager.tryTriggerAnimation(controllerName, animName);
+        }
+    }
 }

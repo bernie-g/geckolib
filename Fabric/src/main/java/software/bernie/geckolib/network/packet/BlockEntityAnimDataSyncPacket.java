@@ -1,10 +1,17 @@
 package software.bernie.geckolib.network.packet;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.network.AbstractPacket;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
 
@@ -12,34 +19,45 @@ import software.bernie.geckolib.util.ClientUtils;
  * Packet for syncing user-definable animation data for {@link BlockEntity
  * BlockEntities}
  */
-public class BlockEntityAnimDataSyncPacket<D> {
-	private final BlockPos pos;
-	private final SerializableDataTicket<D> dataTicket;
-	private final D data;
+public class BlockEntityAnimDataSyncPacket<D> extends AbstractPacket {
+	private final BlockPos BLOCK_POS;
+	private final SerializableDataTicket<D> DATA_TICKET;
+	private final D DATA;
 
 	public BlockEntityAnimDataSyncPacket(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) {
-		this.pos = pos;
-		this.dataTicket = dataTicket;
-		this.data = data;
+		this.BLOCK_POS = pos;
+		this.DATA_TICKET = dataTicket;
+		this.DATA = data;
 	}
 
-	public void encode(FriendlyByteBuf buffer) {
-		buffer.writeBlockPos(this.pos);
-		buffer.writeUtf(this.dataTicket.id());
-		this.dataTicket.encode(this.data, buffer);
+	@Override
+	public FriendlyByteBuf encode() {
+		FriendlyByteBuf buf = PacketByteBufs.create();
+
+		buf.writeBlockPos(this.BLOCK_POS);
+		buf.writeUtf(this.DATA_TICKET.id());
+		this.DATA_TICKET.encode(this.DATA, buf);
+
+		return buf;
 	}
 
-	public static <D> BlockEntityAnimDataSyncPacket<D> decode(FriendlyByteBuf buffer) {
-		BlockPos pos = buffer.readBlockPos();
-		SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buffer.readUtf());
-
-		return new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, dataTicket.decode(buffer));
+	@Override
+	public ResourceLocation getPacketID() {
+		return GeckoLibNetwork.BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID;
 	}
 
-	public void receivePacket() {
-		BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
+	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
+		final BlockPos BLOCK_POS = buf.readBlockPos();
+		final SerializableDataTicket<D> DATA_TICKET = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
+		final D DATA = DATA_TICKET.decode(buf);
+
+		client.execute(() -> runOnThread(BLOCK_POS, DATA_TICKET, DATA));
+	}
+
+	private static <D> void runOnThread(BlockPos blockPos, SerializableDataTicket<D> dataTicket, D data) {
+		BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(blockPos);
 
 		if (blockEntity instanceof GeoBlockEntity geoBlockEntity)
-			geoBlockEntity.setAnimData(this.dataTicket, this.data);
+			geoBlockEntity.setAnimData(dataTicket, data);
 	}
 }
