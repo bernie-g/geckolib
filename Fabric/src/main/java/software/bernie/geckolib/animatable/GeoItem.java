@@ -12,7 +12,7 @@ import software.bernie.geckolib.cache.AnimatableIdCache;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
-public interface GeoItem extends SingletonGeoAnimatable {
+public interface GeoItem extends SingletonGeoAnimatable, SingletonGeoAnimatable.RenderProvider {
 	static final String ID_NBT_KEY = "GeckoLibID";
 
 	/**

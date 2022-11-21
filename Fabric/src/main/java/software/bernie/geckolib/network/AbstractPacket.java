@@ -8,5 +8,4 @@ public abstract class AbstractPacket {
     public abstract FriendlyByteBuf encode();
 
     public abstract ResourceLocation getPacketID();
-
 }
