@@ -35,7 +35,7 @@ public final class GeckoLibNetwork {
     /**
      * Used to register packets that the server sends
      **/
-    public static void registerServerToClientPackets() {
+    public static void registerClientReceiverPackets() {
         ClientPlayNetworking.registerGlobalReceiver(ANIM_DATA_SYNC_PACKET_ID, AnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(ANIM_TRIGGER_SYNC_PACKET_ID, AnimTriggerPacket::receive);
 
@@ -54,13 +54,13 @@ public final class GeckoLibNetwork {
         GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
 
         if (existing == null)
-            GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass().toString());
+            GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
     }
 
     /**
      * Gets a registered synced {@link GeoAnimatable} object by name
      *
-     * @param className
+     * @param className the className
      */
     @Nullable
     public static GeoAnimatable getSyncedAnimatable(String className) {

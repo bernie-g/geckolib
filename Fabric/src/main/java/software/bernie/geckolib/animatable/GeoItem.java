@@ -1,10 +1,14 @@
 package software.bernie.geckolib.animatable;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.AnimatableIdCache;
+
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 /**
  * The {@link software.bernie.geckolib.core.animatable.GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}.
@@ -13,7 +17,19 @@ import software.bernie.geckolib.cache.AnimatableIdCache;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
 public interface GeoItem extends SingletonGeoAnimatable, SingletonGeoAnimatable.RenderProvider {
-	static final String ID_NBT_KEY = "GeckoLibID";
+	String ID_NBT_KEY = "GeckoLibID";
+
+	/**
+	 * Safety wrapper to distance the client-side code from common code.<br>
+	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
+	 */
+	static Supplier<RenderProvider> makeRenderer(GeoItem item) {
+		return Suppliers.memoize(() -> {
+			AtomicReference<RenderProvider> renderProvider = new AtomicReference<>();
+			item.createRenderer(renderProvider::set);
+			return renderProvider.get();
+		});
+	}
 
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link net.minecraft.nbt.Tag NBT},
