@@ -9,6 +9,7 @@
   ],
   "client": [
     "MixinArmorFeatureRenderer",
-    "MixinHumanoidArmorLayer"
+    "MixinHumanoidArmorLayer",
+    "ItemRendererAccessor"
     ]
 }

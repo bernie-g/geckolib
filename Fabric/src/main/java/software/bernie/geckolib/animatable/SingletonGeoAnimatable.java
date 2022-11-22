@@ -1,7 +1,9 @@
 package software.bernie.geckolib.animatable;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +15,7 @@ import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.AnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.AnimTriggerPacket;
+import software.bernie.geckolib.mixins.fabric.ItemRendererAccessor;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -119,23 +122,31 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     interface RenderProvider {
 
         static RenderProvider of(ItemStack itemStack) {
-            GeoItem geoItem = (GeoItem) itemStack.getItem();
+            return of(itemStack.getItem());
+        }
+
+        static RenderProvider of(Item item) {
+            GeoItem geoItem = (GeoItem) item;
             return geoItem.getRenderProvider().get();
         }
 
+        default BlockEntityWithoutLevelRenderer getCustomRenderer(){
+            return ((ItemRendererAccessor) Minecraft.getInstance().getItemRenderer()).getBlockEntityRenderer();
+        }
 
-        default Model getGenericArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-            HumanoidModel<?> replacement = getHumanoidArmorModel(livingEntity, itemStack, equipmentSlot, original);
+
+        default Model getGenericArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
+            HumanoidModel<LivingEntity> replacement = getHumanoidArmorModel(livingEntity, itemStack, equipmentSlot, original);
 
             if (replacement != original) {
-                //copyModelProperties
+                original.copyPropertiesTo(replacement);
                 return replacement;
             }
 
             return original;
         }
 
-        default HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
+        default HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
             return original;
         }
     }

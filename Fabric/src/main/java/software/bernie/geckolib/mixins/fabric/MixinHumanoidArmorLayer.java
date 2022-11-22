@@ -19,6 +19,6 @@ public class MixinHumanoidArmorLayer<T extends LivingEntity, A extends HumanoidM
     @Inject(method = "renderArmorPiece", at = @At(value = "INVOKE", shift = At.Shift.AFTER, target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;setPartVisibility(Lnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/world/entity/EquipmentSlot;)V"))
     public void armorModelHook(PoseStack poseStack, MultiBufferSource multiBufferSource, T livingEntity, EquipmentSlot equipmentSlot, int i, A humanoidModel, CallbackInfo ci){
         ItemStack itemStack = livingEntity.getItemBySlot(equipmentSlot);
-        humanoidModel = (A) SingletonGeoAnimatable.RenderProvider.of(itemStack).getGenericArmorModel(livingEntity, itemStack, equipmentSlot, humanoidModel);
+        humanoidModel = (A) SingletonGeoAnimatable.RenderProvider.of(itemStack).getGenericArmorModel(livingEntity, itemStack, equipmentSlot, (HumanoidModel<LivingEntity>) humanoidModel);
     }
 }
