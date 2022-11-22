@@ -1,7 +1,7 @@
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_header.png" alt="logo"/> 
 
 <p align="center">
-  <a href="https://discord.gg/rVVRg8T"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
+  <a href="https://discord.gg/uDnmREgexb"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
 </p>
 
 <h1 style="font-size:10vw" align="center">GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12/1.15/1.16/1.17/1.18/1.19, Fabric 1.16/1.17/1.18/1.19, and Quilt 1.18/1.19.</h1>
