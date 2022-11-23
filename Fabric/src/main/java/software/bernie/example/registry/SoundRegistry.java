@@ -9,6 +9,6 @@ import software.bernie.geckolib.GeckoLib;
 public final class SoundRegistry {
 
 	public static SoundEvent JACK_MUSIC = Registry.register(BuiltInRegistries.SOUND_EVENT, "jack_in_the_box_music",
-			new SoundEvent(new ResourceLocation(GeckoLib.ModID, "jack_in_the_box_music")));
+			SoundEvent.createFixedRangeEvent(new ResourceLocation(GeckoLib.ModID, "jack_in_the_box_music"), 0));
 
 }
