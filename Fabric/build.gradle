@@ -55,14 +55,10 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     // Actual dependencies
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     implementation(include('com.eliotlash.mclib:mclib:20'))
     implementation project(':geckolib-core')
 
     // Shaded dependencies
-    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
     shade 'com.eliotlash.mclib:mclib:20'
     shade project(':geckolib-core')
 
@@ -86,7 +82,6 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
     classifier 'dev'
 }
 
