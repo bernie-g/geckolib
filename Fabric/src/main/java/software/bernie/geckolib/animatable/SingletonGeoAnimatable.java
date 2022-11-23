@@ -121,13 +121,18 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      */
     interface RenderProvider {
 
+        RenderProvider DEFAULT = new RenderProvider() {};
+
         static RenderProvider of(ItemStack itemStack) {
             return of(itemStack.getItem());
         }
 
         static RenderProvider of(Item item) {
-            GeoItem geoItem = (GeoItem) item;
-            return geoItem.getRenderProvider().get();
+            if(item instanceof GeoItem geoItem){
+                return geoItem.getRenderProvider().get();
+            }
+
+            return DEFAULT;
         }
 
         default BlockEntityWithoutLevelRenderer getCustomRenderer(){

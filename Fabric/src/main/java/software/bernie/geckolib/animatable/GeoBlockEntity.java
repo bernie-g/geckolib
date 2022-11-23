@@ -54,7 +54,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			BlockPos pos = blockEntity.getBlockPos();
 
 			BlockEntityAnimDataSyncPacket<D> blockEntityAnimDataSyncPacket = new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, data);
-			GeckoLibNetwork.sendToTrackingChunkAndSelf(blockEntityAnimDataSyncPacket, (ServerLevel) level, pos);
+			GeckoLibNetwork.sendToEntitiesTrackingChunk(blockEntityAnimDataSyncPacket, (ServerLevel) level, pos);
 		}
 	}
 
@@ -81,7 +81,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			BlockPos pos = blockEntity.getBlockPos();
 
 			BlockEntityAnimTriggerPacket blockEntityAnimTriggerPacket = new BlockEntityAnimTriggerPacket(pos, controllerName, animName);
-			GeckoLibNetwork.sendToTrackingChunkAndSelf(blockEntityAnimTriggerPacket, (ServerLevel) level, pos);
+			GeckoLibNetwork.sendToEntitiesTrackingChunk(blockEntityAnimTriggerPacket, (ServerLevel) level, pos);
 		}
 	}
 }

@@ -80,9 +80,12 @@ public final class GeckoLibNetwork {
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(entityToTrack)) {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }
+
+        if(entityToTrack instanceof ServerPlayer serverPlayer)
+            ServerPlayNetworking.send(serverPlayer, packet.getPacketID(), packet.encode());
     }
 
-    public static void sendToTrackingChunkAndSelf(AbstractPacket packet, ServerLevel level, BlockPos blockPos) {
+    public static void sendToEntitiesTrackingChunk(AbstractPacket packet, ServerLevel level, BlockPos blockPos) {
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(level, blockPos)) {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }

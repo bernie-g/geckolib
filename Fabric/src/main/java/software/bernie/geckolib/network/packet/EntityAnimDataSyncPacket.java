@@ -46,7 +46,7 @@ public class EntityAnimDataSyncPacket<D> extends AbstractPacket {
 	}
 
 	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		final int ENTITY_ID = buf.readInt();
+		final int ENTITY_ID = buf.readVarInt();
 		final SerializableDataTicket<D> DATA_TICKET = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
 		final D DATA = DATA_TICKET.decode(buf);
 

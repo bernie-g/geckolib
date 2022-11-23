@@ -49,7 +49,7 @@ public class AnimTriggerPacket extends AbstractPacket {
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
         final String SYNCABLE_ID = buf.readUtf();
-        final long INSTANCE_ID = buf.readLong();
+        final long INSTANCE_ID = buf.readVarLong();
 
         final String CONTROLLER_NAME = buf.readUtf();
         final String ANIM_NAME = buf.readUtf();

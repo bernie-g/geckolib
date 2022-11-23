@@ -59,7 +59,7 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
     }
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        final int ENTITY_ID = buf.readInt();
+        final int ENTITY_ID = buf.readVarInt();
         final boolean IS_REPLACED_ENTITY = buf.readBoolean();
 
         final String CONTROLLER_NAME = buf.readUtf();

@@ -51,7 +51,7 @@ public class AnimDataSyncPacket<D> extends AbstractPacket {
 
 	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
 		final String SYNCABLE_ID = buf.readUtf();
-		final long INSTANCE_ID = buf.readLong();
+		final long INSTANCE_ID = buf.readVarLong();
 
 		final SerializableDataTicket<D> DATA_TICKET = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
 		final D DATA = DATA_TICKET.decode(buf);
