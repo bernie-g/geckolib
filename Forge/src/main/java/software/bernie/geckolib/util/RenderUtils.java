@@ -97,6 +97,15 @@ public final class RenderUtils {
 		translateAwayFromPivotPoint(poseStack, bone);
 	}
 
+	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
+		inputMatrix = inputMatrix.copy();
+
+		inputMatrix.invert();
+		inputMatrix.multiply(baseMatrix);
+
+		return inputMatrix;
+	}
+
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path.<br>
 	 * Not performance-efficient, and should not be relied upon
@@ -136,19 +145,14 @@ public final class RenderUtils {
 		return image == null ? null : IntIntImmutablePair.of(image.getWidth(), image.getHeight());
 	}
 
-	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
-		inputMatrix = inputMatrix.copy();
-
-		inputMatrix.invert();
-		inputMatrix.multiply(baseMatrix);
-
-		return inputMatrix;
-	}
-
 	public static double getCurrentSystemTick() {
 		return System.nanoTime() / 1E6 / 50d;
 	}
 
+	/**
+	 * Returns the current time (in ticks) that the {@link org.lwjgl.glfw.GLFW GLFW} instance has been running.
+	 * This is effectively a permanent timer that counts up since the game was launched.
+	 */
 	public static double getCurrentTick() {
 		return Blaze3D.getTime() * 20d;
 	}

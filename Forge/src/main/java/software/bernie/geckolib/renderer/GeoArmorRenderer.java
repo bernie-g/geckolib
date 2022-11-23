@@ -268,6 +268,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
+		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
 		animationEvent.setData(DataTickets.ITEMSTACK, this.currentStack);
 		animationEvent.setData(DataTickets.ENTITY, this.currentEntity);
 		animationEvent.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);

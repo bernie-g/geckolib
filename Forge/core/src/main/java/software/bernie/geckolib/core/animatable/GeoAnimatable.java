@@ -55,4 +55,12 @@ public interface GeoAnimatable {
 	default boolean shouldPlayAnimsWhileGamePaused() {
 		return false;
 	}
+
+	/**
+	 * Returns the current age/tick of the animatable instance.<br>
+	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * @param object An object related to this animatable relevant to tick calculation. Different subclasses will use this differently
+	 * @return The current tick/age of the animatable, for animation purposes
+	 */
+	double getTick(Object object);
 }
