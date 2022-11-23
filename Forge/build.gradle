@@ -50,7 +50,7 @@ minecraft {
         client {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'GeckoLib Client (Forge)'
+            taskName 'geckolib-forge4.0-Client'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
@@ -67,14 +67,14 @@ minecraft {
         clientAlt {
             parent minecraft.runs.client
             workingDirectory project.file('runs/' + name)
-            taskName 'GeckoLib Client-2 (Forge)'
+            taskName 'geckolib-forge4.0-Client-2'
             args '--username', 'Alt'
         }
 
         server {
             workingDirectory project.file('runs/' + name)
             singleInstance true
-            taskName 'GeckoLib Server (Forge)'
+            taskName 'geckolib-forge4.0-Server'
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
