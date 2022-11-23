@@ -11,7 +11,7 @@ import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.example.client.renderer.entity.*;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 
 public final class ClientListener implements ClientModInitializer {
@@ -38,8 +38,8 @@ public final class ClientListener implements ClientModInitializer {
         EntityRendererRegistry.register(EntityRegistry.FAKE_GLASS, FakeGlassRenderer::new);
         EntityRendererRegistry.register(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 
-        BlockEntityRendererRegistry.register(TileRegistry.HABITAT_TILE, context -> new GeckoHabitatBlockRenderer());
-        BlockEntityRendererRegistry.register(TileRegistry.FERTILIZER, context -> new FertilizerBlockRenderer());
+        BlockEntityRendererRegistry.register(BlockEntityRegistry.GECKO_HABITAT, context -> new GeckoHabitatBlockRenderer());
+        BlockEntityRendererRegistry.register(BlockEntityRegistry.FERTILIZER_BLOCK, context -> new FertilizerBlockRenderer());
 
         BlockRenderLayerMapImpl.INSTANCE.putBlock(BlockRegistry.GECKO_HABITAT_BLOCK, RenderType.translucent());
     }

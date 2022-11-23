@@ -165,7 +165,6 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		MolangParser parser = MolangParser.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
 
-		parser.setValue(MolangQueries.ANIM_TIME, () -> animTime / 20d);
 		parser.setValue(MolangQueries.LIFE_TIME, () -> animTime / 20d);
 		parser.setValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
 		parser.setValue(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);

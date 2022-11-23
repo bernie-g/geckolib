@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.Material;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.GeckoLib;
 
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return TileRegistry.FERTILIZER.create(pos, state);
+		return BlockEntityRegistry.FERTILIZER_BLOCK.create(pos, state);
 	}
 
 	@Override

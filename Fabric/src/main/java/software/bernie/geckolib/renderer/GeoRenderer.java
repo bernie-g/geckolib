@@ -104,7 +104,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Particularly low values may have adverse effects however
 	 */
 	default float getMotionAnimThreshold(T animatable) {
-		return 0.15f;
+		return 0.015f;
 	}
 
 	/**

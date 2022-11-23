@@ -1,5 +1,9 @@
 package software.bernie.example.item;
 
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.client.model.HumanoidModel;
@@ -11,8 +15,6 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -24,10 +26,6 @@ import software.bernie.geckolib.core.animation.factory.AnimationFactory;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * Example {@link software.bernie.geckolib.core.animatable.GeoAnimatable GeoAnimatable} {@link ArmorItem} implementation

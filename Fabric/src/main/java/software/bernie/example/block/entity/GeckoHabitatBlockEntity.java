@@ -5,7 +5,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.model.block.GeckoHabitatModel;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -23,7 +23,7 @@ public class GeckoHabitatBlockEntity extends BlockEntity implements GeoBlockEnti
 	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
 
 	public GeckoHabitatBlockEntity(BlockPos pos, BlockState state) {
-		super(TileRegistry.HABITAT_TILE, pos, state);
+		super(BlockEntityRegistry.GECKO_HABITAT, pos, state);
 	}
 
 	// We just want a permanent idle animation happening here

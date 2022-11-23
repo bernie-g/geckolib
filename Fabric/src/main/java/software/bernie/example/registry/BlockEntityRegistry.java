@@ -8,13 +8,13 @@ import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.geckolib.GeckoLib;
 
-public final class TileRegistry {
+public final class BlockEntityRegistry {
 
-	public static final BlockEntityType<GeckoHabitatBlockEntity> HABITAT_TILE = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+	public static final BlockEntityType<GeckoHabitatBlockEntity> GECKO_HABITAT = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
 			GeckoLib.ModID + ":habitat",
 			FabricBlockEntityTypeBuilder.create(GeckoHabitatBlockEntity::new, BlockRegistry.GECKO_HABITAT_BLOCK).build(null));
 
-	public static final BlockEntityType<FertilizerBlockEntity> FERTILIZER = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
+	public static final BlockEntityType<FertilizerBlockEntity> FERTILIZER_BLOCK = Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE,
 			GeckoLib.ModID + ":fertilizer",
 			FabricBlockEntityTypeBuilder.create(FertilizerBlockEntity::new, BlockRegistry.FERTILIZER_BLOCK).build(null));
 }

@@ -241,16 +241,18 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Marks the controller as needing to reset its animation and state the next time {@link AnimationController#setAnimation(RawAnimation)} is called.
+	 * Marks the controller as needing to reset its animation and state the next time {@link AnimationController#setAnimation(RawAnimation)} is called.<br>
+	 * <br>
+	 * Use this if you have a {@link RawAnimation} with multiple stages and you want it to start again from the first stage, or if you want to reset the currently playing animation to the start
 	 */
-	public void markNeedsReload() {
+	public void forceAnimationReset() {
 		this.needsAnimationReload = true;
 	}
 
 	/**
 	 * Tells the controller to stop all animations until told otherwise.<br>
 	 * Calling this will prevent the controller from continuing to play the currently loaded animation until
-	 * either {@link AnimationController#markNeedsReload()} is called, or
+	 * either {@link AnimationController#forceAnimationReset()} is called, or
 	 * {@link AnimationController#setAnimation(RawAnimation)} is called with a different animation
 	 */
 	public void stop() {
@@ -279,7 +281,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * Sets the currently loaded animation to the one provided.<br>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
 	 * Pass null to this method to tell the controller to stop.<br>
-	 * If {@link AnimationController#markNeedsReload()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
+	 * If {@link AnimationController#forceAnimationReset()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
 	 */
 	public void setAnimation(RawAnimation rawAnimation) {
 		if (rawAnimation == null || rawAnimation.getAnimationStages().isEmpty()) {

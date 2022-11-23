@@ -217,10 +217,20 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 				limbSwingAmount = 1f;
 		}
 
-		float headPitch = Mth.lerp(partialTick, this.currentEntity.xRotO, this.currentEntity.getXRot());
-		float motionThreshold = getMotionAnimThreshold(this.animatable);
-		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick,
-				(limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold));
+		float headPitch = Mth.lerp(partialTick, this.currentEntity.xRotO, this.currentEntity.getXRot());float motionThreshold = getMotionAnimThreshold(animatable);
+		boolean isMoving;
+
+		if (livingEntity != null) {
+			Vec3 velocity = livingEntity.getDeltaMovement();
+			float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f;
+
+			isMoving = avgVelocity >= motionThreshold;
+		}
+		else {
+			isMoving = (limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold);
+		}
+
+		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
 		long instanceId = getInstanceId(animatable);
 
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));

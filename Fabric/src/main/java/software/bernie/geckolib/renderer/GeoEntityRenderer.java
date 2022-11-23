@@ -219,7 +219,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
 		float motionThreshold = getMotionAnimThreshold(animatable);
 		Vec3 velocity = animatable.getDeltaMovement();
-		float avgVelocity = ((float)Math.abs(velocity.x) + (float)Math.abs(velocity.z) / 2f);
+		float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold);
 		long instanceId = getInstanceId(animatable);
 
