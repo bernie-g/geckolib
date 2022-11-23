@@ -130,7 +130,7 @@ public final class DefaultAnimations {
 				return PlayState.CONTINUE;
 			}
 
-			event.getController().markNeedsReload();
+			event.getController().forceAnimationReset();
 
 			return PlayState.STOP;
 		});
