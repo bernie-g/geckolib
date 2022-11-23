@@ -26,7 +26,8 @@ public final class CommonListener {
 					.add(Attributes.FOLLOW_RANGE, 16)
 					.add(Attributes.MAX_HEALTH, 1)
 					.add(Attributes.MOVEMENT_SPEED, 0.25f)
-					.add(Attributes.ATTACK_DAMAGE, 5);
+					.add(Attributes.ATTACK_DAMAGE, 5)
+					.add(Attributes.ATTACK_KNOCKBACK, 0.1);
 
 			event.put(EntityRegistry.BIKE.get(), genericAttribs.build());
 			event.put(EntityRegistry.RACE_CAR.get(), genericAttribs.build());
