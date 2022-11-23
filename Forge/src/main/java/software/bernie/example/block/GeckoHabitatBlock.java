@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.example.client.model.block.GeckoHabitatModel;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 
 import javax.annotation.Nullable;
 
@@ -57,7 +57,7 @@ public class GeckoHabitatBlock extends BaseEntityBlock implements EntityBlock {
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return TileRegistry.HABITAT_TILE.get().create(blockPos, blockState);
+		return BlockEntityRegistry.GECKO_HABITAT.get().create(blockPos, blockState);
 	}
 
 	@Override

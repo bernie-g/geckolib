@@ -29,7 +29,7 @@ public final class GeckoLibMod {
 
 			EntityRegistry.ENTITIES.register(bus);
 			ItemRegistry.ITEMS.register(bus);
-			TileRegistry.TILES.register(bus);
+			BlockEntityRegistry.TILES.register(bus);
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
 

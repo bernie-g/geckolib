@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -26,7 +26,7 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity
 	private static final RawAnimation BOTARIUM_ANIMS = RawAnimation.begin().thenPlay("botarium.deploy").thenLoop("botarium.idle");
 
 	public FertilizerBlockEntity(BlockPos pos, BlockState state) {
-		super(TileRegistry.FERTILIZER.get(), pos, state);
+		super(BlockEntityRegistry.FERTILIZER_BLOCK.get(), pos, state);
 	}
 
 	// Let's set our animations up

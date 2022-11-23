@@ -18,7 +18,7 @@ import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.example.client.renderer.entity.*;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.example.registry.TileRegistry;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.GeckoLib;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -37,8 +37,8 @@ public final class ClientListener {
 
 			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);
 
-			event.registerBlockEntityRenderer(TileRegistry.HABITAT_TILE.get(), context -> new GeckoHabitatBlockRenderer());
-			event.registerBlockEntityRenderer(TileRegistry.FERTILIZER.get(), context -> new FertilizerBlockRenderer());
+			event.registerBlockEntityRenderer(BlockEntityRegistry.GECKO_HABITAT.get(), context -> new GeckoHabitatBlockRenderer());
+			event.registerBlockEntityRenderer(BlockEntityRegistry.FERTILIZER_BLOCK.get(), context -> new FertilizerBlockRenderer());
 		}
 	}
 
