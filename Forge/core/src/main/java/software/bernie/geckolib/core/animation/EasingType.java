@@ -257,13 +257,13 @@ public interface EasingType {
 
 	/**
 	 * A negative elastic function, equivalent to inverting briefly before increasing.<br>
-	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t * n * 1.70158)</code><br>
+	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)</code><br>
 	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	 */
 	static Double2DoubleFunction back(Double n) {
-		final double n2 = n == null ? 1d : n;
+		final double n2 = n == null ? 1.70158d : n * 1.70158d;
 
-		return t -> t * t * ((n2 * 1.70158d + 1) * t * n2 * 1.70158d);
+		return t -> t * t * ((n2 + 1) * t - n2);
 	}
 
 	/**
