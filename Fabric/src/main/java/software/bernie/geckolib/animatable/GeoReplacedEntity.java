@@ -70,4 +70,15 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, relatedEntity);
 		}
 	}
+	
+	/**
+	 * Returns the current age/tick of the animatable instance.<br>
+	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * @param entity The Entity representing this animatable
+	 * @return The current tick/age of the animatable, for animation purposes
+	 */
+	@Override
+	default double getTick(Object entity) {
+		return ((Entity)entity).tickCount;
+	}
 }

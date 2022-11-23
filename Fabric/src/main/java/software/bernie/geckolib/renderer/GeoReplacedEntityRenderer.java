@@ -233,6 +233,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
 		long instanceId = getInstanceId(animatable);
 
+		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+		animationEvent.setData(DataTickets.ENTITY, this.currentEntity);
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		this.model.handleAnimations(animatable, instanceId, animationEvent);

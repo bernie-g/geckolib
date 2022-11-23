@@ -198,6 +198,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
+		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
 		animationEvent.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		this.model.handleAnimations(animatable, instanceId, animationEvent);

@@ -1,5 +1,8 @@
 package software.bernie.geckolib.model;
 
+import java.util.Optional;
+import java.util.function.BiConsumer;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -11,10 +14,11 @@ import software.bernie.geckolib.GeckoLibException;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
-import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.core.animation.AnimationProcessor;
 import software.bernie.geckolib.core.molang.MolangParser;
@@ -23,9 +27,6 @@ import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtils;
-
-import java.util.Optional;
-import java.util.function.BiConsumer;
 
 /**
  * Base class for all code-based model objects.<br>
@@ -131,7 +132,10 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	public final void handleAnimations(T animatable, long instanceId, AnimationEvent<T> animationEvent) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getFactory().getManagerForId(instanceId);
-		double currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
+		Double currentTick = animationEvent.getData(DataTickets.TICK);
+
+		if (currentTick == null)
+			currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
 
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());

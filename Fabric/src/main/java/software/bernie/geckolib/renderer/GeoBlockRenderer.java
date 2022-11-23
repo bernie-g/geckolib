@@ -22,6 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
@@ -142,7 +143,9 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		this.renderStartPose = poseStack.last().pose();
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
-
+		
+		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
+		animationEvent.setData(DataTickets.BLOCK_ENTITY, animatable);
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		poseStack.translate(0, 0.01f, 0);
 		poseStack.translate(0.5, 0, 0.5);
