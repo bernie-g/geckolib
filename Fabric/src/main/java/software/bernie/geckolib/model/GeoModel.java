@@ -135,7 +135,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		Double currentTick = animationEvent.getData(DataTickets.TICK);
 
 		if (currentTick == null)
-			currentTick = animatable instanceof Entity livingEntity ? livingEntity.tickCount : RenderUtils.getCurrentTick();
+			currentTick = animatable instanceof Entity livingEntity ? (double) livingEntity.tickCount : RenderUtils.getCurrentTick();
 
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
