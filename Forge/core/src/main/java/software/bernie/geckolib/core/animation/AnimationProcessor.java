@@ -38,7 +38,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
 			Animation animation;
 
-			if (stage.animationName().equals(RawAnimation.Stage.WAIT)) {
+			if (stage.animationName() == RawAnimation.Stage.WAIT) {
 				animation = Animation.generateWaitAnimation(stage.additionalTicks());
 			}
 			else {
@@ -73,7 +73,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 		for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
 			if (this.reloadAnimations) {
-				controller.markNeedsReload();
+				controller.forceAnimationReset();
 				controller.getBoneAnimationQueues().clear();
 			}
 
