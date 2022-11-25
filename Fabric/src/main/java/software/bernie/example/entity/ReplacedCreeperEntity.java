@@ -5,7 +5,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @see software.bernie.example.client.model.entity.ReplacedCreeperModel
  */
 public class ReplacedCreeperEntity implements GeoReplacedEntity {
-	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	/**
 	 * Register the idle + walk animations for the entity.<br>
@@ -32,19 +32,18 @@ public class ReplacedCreeperEntity implements GeoReplacedEntity {
 	}
 
 	@Override
-	public AnimationFactory getFactory() {
-		return factory;
-	}
-
-	@Override
 	public EntityType<?> getReplacingEntityType() {
 		return EntityType.CREEPER;
 	}
 
 	@Override
-	public void createRenderer(Consumer<RenderProvider> consumer) {
-
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
+
+	// We don't need these in this case since we'll just be using an entity renderer
+	@Override
+	public void createRenderer(Consumer<RenderProvider> consumer) {}
 
 	@Override
 	public Supplier<RenderProvider> getRenderProvider() {

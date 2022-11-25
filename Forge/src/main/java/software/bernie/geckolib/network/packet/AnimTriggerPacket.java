@@ -43,7 +43,7 @@ public class AnimTriggerPacket<D> {
 			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
 
 			if (animatable != null) {
-				AnimatableManager<?> manager = animatable.getFactory().getManagerForId(this.instanceId);
+				AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
 
 				manager.tryTriggerAnimation(this.controllerName, this.animName);
 			}

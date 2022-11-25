@@ -71,10 +71,19 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 	/**
 	 * Gets the {@link GeoAnimatable} instance currently being rendered
+	 * @see GeoReplacedEntityRenderer#getCurrentEntity()
 	 */
 	@Override
 	public T getAnimatable() {
 		return this.animatable;
+	}
+
+	/**
+	 * Returns the current entity having its rendering replaced by this renderer
+	 * @see GeoReplacedEntityRenderer#getAnimatable()
+	 */
+	public E getCurrentEntity() {
+		return this.currentEntity;
 	}
 
 	/**
@@ -268,7 +277,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -293,7 +302,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		renderChildBones(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}

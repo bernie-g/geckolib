@@ -11,6 +11,7 @@ import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.BlockEntityAnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.BlockEntityAnimTriggerPacket;
+import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
 
@@ -28,7 +29,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(0).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(0).getData(dataTicket);
 	}
 
 	/**
@@ -48,7 +49,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getFactory().getManagerForId(0).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(0).setData(dataTicket, data);
 		}
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
@@ -75,7 +76,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getFactory().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
@@ -83,5 +84,16 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			BlockEntityAnimTriggerPacket blockEntityAnimTriggerPacket = new BlockEntityAnimTriggerPacket(pos, controllerName, animName);
 			GeckoLibNetwork.sendToEntitiesTrackingChunk(blockEntityAnimTriggerPacket, (ServerLevel) level, pos);
 		}
+	}
+
+	/**
+	 * Returns the current age/tick of the animatable instance.<br>
+	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * @param blockEntity The BlockEntity representing this animatable
+	 * @return The current tick/age of the animatable, for animation purposes
+	 */
+	@Override
+	default double getTick(Object blockEntity) {
+		return RenderUtils.getCurrentTick();
 	}
 }

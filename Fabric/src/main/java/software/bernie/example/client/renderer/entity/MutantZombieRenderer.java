@@ -17,7 +17,7 @@ import software.bernie.example.entity.MutantZombieEntity;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer;
+import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
 
@@ -25,10 +25,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Example {@link ExtendedGeoEntityRenderer} implementation
+ * Example {@link DynamicGeoEntityRenderer} implementation
  * @see MutantZombieEntity
  */
-public class MutantZombieRenderer extends ExtendedGeoEntityRenderer<MutantZombieEntity> {
+public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity> {
 	// Pre-define our bone names for easy and consistent reference later
 	private static final String LEFT_HAND = "bipedHandLeft";
 	private static final String RIGHT_HAND = "bipedHandRight";

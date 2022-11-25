@@ -5,11 +5,12 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.level.storage.DimensionDataStorage;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 
 /**
  * Storage class that keeps track of the last animatable id used, and provides new ones on request.<br>
  * Generally only used for {@link net.minecraft.world.item.Item Items}, but any
- * {@link software.bernie.geckolib.core.animation.factory.SingletonAnimationFactory singleton} will likely use this.
+ * {@link SingletonAnimatableInstanceCache singleton} will likely use this.
  */
 public final class AnimatableIdCache extends SavedData {
 	private static final String DATA_KEY = "geckolib_id_cache";

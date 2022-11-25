@@ -15,7 +15,7 @@ import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 public final class JackInTheBoxItem extends Item implements GeoItem {
 
 	private static final RawAnimation POPUP_ANIM = RawAnimation.begin().thenPlay("use.popup");
-	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private final Supplier<RenderProvider> renderProvider = GeoItem.makeRenderer(this);
 
 	public JackInTheBoxItem(Properties properties) {
@@ -38,11 +38,6 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 		// Register our item as server-side handled.
 		// This enables both animation data syncing and server-side animation triggering
 		SingletonGeoAnimatable.registerSyncedAnimatable(this);
-	}
-
-	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
 	}
 
 	// Utilise our own render hook to define our custom renderer
@@ -85,5 +80,10 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 			triggerAnim(player, GeoItem.getOrAssignId(player.getItemInHand(hand), serverLevel), "popup_controller", "box_open");
 
 		return super.use(level, player, hand);
+	}
+
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 }

@@ -1,14 +1,9 @@
 package software.bernie.geckolib.renderer;
 
-import java.util.List;
-
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -22,6 +17,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -31,6 +27,8 @@ import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.List;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically.<br>
@@ -198,6 +196,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
+		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
 		animationEvent.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		this.model.handleAnimations(animatable, instanceId, animationEvent);
@@ -211,7 +210,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose();
@@ -220,7 +219,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 }

@@ -20,13 +20,14 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Example extended-support entity for GeckoLib advanced rendering
- * @see software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer
+ * @see DynamicGeoEntityRenderer
  * @see MutantZombieRenderer
  */
 public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
@@ -41,7 +42,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 	private static final RawAnimation INTERACT_RIGHT = RawAnimation.begin().thenPlay("misc.interact.right");
 	private static final RawAnimation SPEAR_SWING = RawAnimation.begin().thenPlay("attack.spear");
 
-	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public MutantZombieEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
 		super(entityType, level);
@@ -187,7 +188,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 }

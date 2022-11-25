@@ -8,17 +8,18 @@ import software.bernie.example.client.renderer.entity.FakeGlassRenderer;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Example {@link GeoAnimatable} implementation of an entity that uses the texture-per-bone feature of
- * {@link software.bernie.geckolib.renderer.ExtendedGeoEntityRenderer ExtendedGeoEntityRenderer}
+ * {@link DynamicGeoEntityRenderer}
  * @see FakeGlassModel
  * @see FakeGlassRenderer
  */
 public class FakeGlassEntity extends PathfinderMob implements GeoEntity {
-	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public FakeGlassEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
 		super(entityType, level);
@@ -29,7 +30,7 @@ public class FakeGlassEntity extends PathfinderMob implements GeoEntity {
 	public void registerControllers(AnimatableManager<?> manager) {}
 
 	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 }

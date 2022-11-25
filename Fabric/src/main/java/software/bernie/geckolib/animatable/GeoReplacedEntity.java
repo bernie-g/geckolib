@@ -34,7 +34,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(Entity entity, SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(entity.getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(entity.getId()).getData(dataTicket);
 	}
 
 	/**
@@ -46,7 +46,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	default <D> void setAnimData(Entity relatedEntity, SerializableDataTicket<D> dataTicket, D data) {
 		if (relatedEntity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
 			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data);
@@ -63,11 +63,22 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	default void triggerAnim(Entity relatedEntity, @Nullable String controllerName, String animName) {
 		if (relatedEntity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName);
 			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, relatedEntity);
 		}
+	}
+
+	/**
+	 * Returns the current age/tick of the animatable instance.<br>
+	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * @param entity The Entity representing this animatable
+	 * @return The current tick/age of the animatable, for animation purposes
+	 */
+	@Override
+	default double getTick(Object entity) {
+		return ((Entity)entity).tickCount;
 	}
 }

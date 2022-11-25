@@ -61,7 +61,7 @@ public class AnimTriggerPacket extends AbstractPacket {
         GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(syncableId);
 
         if (animatable != null) {
-            AnimatableManager<?> manager = animatable.getFactory().getManagerForId(instanceId);
+            AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 
             manager.tryTriggerAnimation(controllerName, animName);
         }

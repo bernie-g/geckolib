@@ -17,7 +17,7 @@ import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -29,7 +29,7 @@ import java.util.function.Consumer;
  */
 public final class JackInTheBoxItem extends Item implements GeoItem {
 	private static final RawAnimation POPUP_ANIM = RawAnimation.begin().thenPlay("use.popup");
-	private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public JackInTheBoxItem(Properties properties) {
 		super(properties.tab(GeckoLibMod.ITEM_GROUP));
@@ -80,7 +80,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 	}
 
 	@Override
-	public AnimationFactory getFactory() {
-		return this.factory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return this.cache;
 	}
 }

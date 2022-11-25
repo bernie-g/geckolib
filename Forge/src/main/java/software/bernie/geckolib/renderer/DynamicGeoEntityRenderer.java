@@ -1,16 +1,10 @@
 package software.bernie.geckolib.renderer;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -18,26 +12,26 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.cache.object.GeoCube;
-import software.bernie.geckolib.cache.object.GeoQuad;
-import software.bernie.geckolib.cache.object.GeoVertex;
+import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.RenderUtils;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 /**
- * Extended special-entity renderer for more advanced or dynamic models.<br>
+ * Extended special-entity renderer for more dynamic entity rendering.<br>
+ * Primarily handles per-bone textures and/or {@link RenderType RenderTypes}
  * Because of the extra performance cost of this renderer, it is advised to avoid using it unnecessarily,
  * and consider whether the benefits are worth the cost for your needs.
  */
-public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable> extends GeoEntityRenderer<T> {
+public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable> extends GeoEntityRenderer<T> {
 	protected static Map<ResourceLocation, IntIntPair> TEXTURE_DIMENSIONS_CACHE = new Object2ObjectOpenHashMap<>();
 
 	protected ResourceLocation textureOverride = null;
 
-	public ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
+	public DynamicGeoEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
 		super(renderManager, model);
 	}
 
@@ -78,7 +72,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
 								  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -87,16 +81,16 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = poseStack.last().pose().copy();
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
-			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
+			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1)));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			Matrix4f worldState = localMatrix;
+			Matrix4f worldState = localMatrix.copy();
 
-			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
+			worldState.translate(new Vector3f(this.animatable.position()));
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
@@ -118,8 +112,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 		if (renderTypeOverride != null)
 			buffer = bufferSource.getBuffer(getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick));
 
-		applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-		super.renderChildBones(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}
@@ -160,11 +154,11 @@ public abstract class ExtendedGeoEntityRenderer<T extends Entity & GeoAnimatable
 		}
 
 		for (GeoVertex vertex : quad.vertices()) {
-			Vector4f vector4f = poseState
-					.transform(new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1.0f));
+			Vector4f vector4f = new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1);
 			float texU = (vertex.texU() * entityTextureSize.firstInt()) / boneTextureSize.firstInt();
 			float texV = (vertex.texV() * entityTextureSize.secondInt()) / boneTextureSize.secondInt();
 
+			vector4f.transform(poseState);
 			buffer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, texU, texV,
 					packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}

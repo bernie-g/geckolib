@@ -27,7 +27,7 @@ public interface GeoEntity extends GeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(((Entity)this).getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getData(dataTicket);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(entity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
 			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data);
@@ -58,11 +58,22 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(entity.getId(), controllerName, animName);
 			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, entity);
 		}
+	}
+
+	/**
+	 * Returns the current age/tick of the animatable instance.<br>
+	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * @param entity The Entity representing this animatable
+	 * @return The current tick/age of the animatable, for animation purposes
+	 */
+	@Override
+	default double getTick(Object entity) {
+		return ((Entity)entity).tickCount;
 	}
 }
