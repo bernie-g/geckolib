@@ -8,8 +8,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.SpawnEggItem;
 import software.bernie.example.entity.BatEntity;
 import software.bernie.example.entity.BikeEntity;
 import software.bernie.example.entity.CoolKidEntity;
@@ -43,7 +41,6 @@ public class EntityRegistry {
                                                             float width, float height, int primaryEggColor, int secondaryEggColor) {
     	EntityType<T> entityType = Registry.register(BuiltInRegistries.ENTITY_TYPE,
     			new ResourceLocation(GeckoLib.ModID, name),FabricEntityTypeBuilder.create(MobCategory.CREATURE, entity).dimensions(EntityDimensions.scalable(width, height)).build());
-        ItemRegistry.registerItem(name + "_spawn_egg", new SpawnEggItem(entityType, primaryEggColor, secondaryEggColor, new Item.Properties()));
         return entityType;
     }
 }

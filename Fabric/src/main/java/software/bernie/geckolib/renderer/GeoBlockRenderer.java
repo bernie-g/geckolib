@@ -141,7 +141,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		this.renderStartPose = poseStack.last().pose();
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
-
+		
 		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
 		animationEvent.setData(DataTickets.BLOCK_ENTITY, animatable);
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);

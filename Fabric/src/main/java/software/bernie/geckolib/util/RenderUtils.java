@@ -1,9 +1,16 @@
 package software.bernie.geckolib.util;
 
+import javax.annotation.Nullable;
+
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
@@ -20,9 +27,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoCube;
@@ -32,8 +36,6 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
-
-import javax.annotation.Nullable;
 
 /**
  * Helper class for various methods and functions useful while rendering
@@ -97,16 +99,16 @@ public final class RenderUtils {
 		scaleMatrixForBone(poseStack, bone);
 		translateAwayFromPivotPoint(poseStack, bone);
 	}
-
+	
 	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
 		inputMatrix = new Matrix4f(inputMatrix);
-
+		
 		inputMatrix.invert();
 		inputMatrix.mul(baseMatrix);
 
 		return inputMatrix;
 	}
-
+	
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path.<br>
 	 * Not performance-efficient, and should not be relied upon

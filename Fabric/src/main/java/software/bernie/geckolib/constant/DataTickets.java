@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
-
+	
 	// Builtin tickets
 	// These tickets are used by GeckoLib by default, usually added in by the GeoRenderer for use in animations
 	public static final DataTicket<BlockEntity> BLOCK_ENTITY = new DataTicket<>("block_entity", BlockEntity.class);
@@ -31,7 +31,7 @@ public final class DataTickets {
 	public static final DataTicket<EquipmentSlot> EQUIPMENT_SLOT = new DataTicket<>("equipment_slot", EquipmentSlot.class);
 	public static final DataTicket<EntityModelData> ENTITY_MODEL_DATA = new DataTicket<>("entity_model_data", EntityModelData.class);
 	public static final DataTicket<Double> TICK = new DataTicket<>("tick", Double.class);
-
+	
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples
 	// and for ease of use

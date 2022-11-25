@@ -220,7 +220,6 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold);
 		long instanceId = getInstanceId(animatable);
-
 		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
 		animationEvent.setData(DataTickets.ENTITY, animatable);
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));

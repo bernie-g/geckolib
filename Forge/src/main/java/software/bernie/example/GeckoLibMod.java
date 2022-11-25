@@ -33,7 +33,7 @@ public final class GeckoLibMod {
 			BlockRegistry.BLOCKS.register(bus);
 			SoundRegistry.SOUNDS.register(bus);
 
-			ITEM_GROUP = new CreativeModeTab("geckolib_examples") {
+			ITEM_GROUP = new CreativeModeTab("geckolib.geckolib_examples") {
 				@Override
 				public ItemStack makeIcon() {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get());

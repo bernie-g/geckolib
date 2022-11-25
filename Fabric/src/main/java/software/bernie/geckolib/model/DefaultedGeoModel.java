@@ -107,6 +107,10 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	public ResourceLocation getTextureResource(T animatable) {
 		return this.texturePath;
 	}
+	
+	public ResourceLocation getTexture(T animatable) {
+		return this.texturePath;
+	}
 
 	@Override
 	public ResourceLocation getAnimationResource(T animatable) {

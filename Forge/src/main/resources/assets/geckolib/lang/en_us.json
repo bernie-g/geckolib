@@ -29,5 +29,5 @@
   "item.geckolib.gecko_armor_chestplate": "Gecko Armor Chestplate",
   "item.geckolib.gecko_armor_helmet": "Gecko Armor Helmet",
   "item.geckolib.gecko_armor_leggings": "Gecko Armor Leggings",
-  "itemGroup.geckolib_examples": "Geckolib Examples"
+  "itemGroup.geckolib.geckolib_examples": "Geckolib Examples"
 }

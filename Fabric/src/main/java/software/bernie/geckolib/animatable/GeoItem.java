@@ -1,15 +1,16 @@
 package software.bernie.geckolib.animatable;
 
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
+
 import com.google.common.base.Suppliers;
+
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.util.RenderUtils;
-
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 /**
  * The {@link software.bernie.geckolib.core.animatable.GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}.
@@ -62,7 +63,7 @@ public interface GeoItem extends SingletonGeoAnimatable, SingletonGeoAnimatable.
 
 		return id;
 	}
-
+	
 	/**
 	 * Returns the current age/tick of the animatable instance.<br>
 	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
