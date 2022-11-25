@@ -29,7 +29,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(0).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(0).getData(dataTicket);
 	}
 
 	/**
@@ -49,7 +49,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getFactory().getManagerForId(0).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(0).setData(dataTicket, data);
 		}
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
@@ -76,7 +76,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getFactory().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			BlockPos pos = blockEntity.getBlockPos();

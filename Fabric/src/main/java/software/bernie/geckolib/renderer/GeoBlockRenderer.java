@@ -1,15 +1,9 @@
 package software.bernie.geckolib.renderer;
 
-import java.util.List;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -20,6 +14,8 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -28,6 +24,8 @@ import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.List;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically.<br>
@@ -162,7 +160,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose();
@@ -172,13 +170,11 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			Matrix4f worldState = localMatrix;
-
-			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
-			bone.setWorldSpaceMatrix(worldState);
+			localMatrix.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
+			bone.setWorldSpaceMatrix(localMatrix);
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
@@ -201,14 +197,13 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 */
 	protected Direction getFacing(T block) {
 		BlockState blockState = block.getBlockState();
-		if (blockState.hasProperty(HorizontalDirectionalBlock.FACING)) {
+
+		if (blockState.hasProperty(HorizontalDirectionalBlock.FACING))
 			return blockState.getValue(HorizontalDirectionalBlock.FACING);
-		}
-		else if (blockState.hasProperty(DirectionalBlock.FACING)) {
+
+		if (blockState.hasProperty(DirectionalBlock.FACING))
 			return blockState.getValue(DirectionalBlock.FACING);
-		}
-		else {
-			return Direction.NORTH;
-		}
+
+		return Direction.NORTH;
 	}
 }

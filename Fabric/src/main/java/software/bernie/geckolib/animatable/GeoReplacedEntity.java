@@ -34,7 +34,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(Entity entity, SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(entity.getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(entity.getId()).getData(dataTicket);
 	}
 
 	/**
@@ -46,7 +46,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	default <D> void setAnimData(Entity relatedEntity, SerializableDataTicket<D> dataTicket, D data) {
 		if (relatedEntity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
 			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data);
@@ -63,7 +63,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 */
 	default void triggerAnim(Entity relatedEntity, @Nullable String controllerName, String animName) {
 		if (relatedEntity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName);

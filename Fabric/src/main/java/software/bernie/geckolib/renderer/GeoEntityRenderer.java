@@ -1,15 +1,9 @@
 package software.bernie.geckolib.renderer;
 
-import java.util.List;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -31,6 +25,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -40,6 +36,8 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
+
+import java.util.List;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link Entity Entities} specifically.<br>
@@ -222,7 +220,6 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
 		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold);
 		long instanceId = getInstanceId(animatable);
-		
 		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
 		animationEvent.setData(DataTickets.ENTITY, animatable);
 		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
@@ -263,7 +260,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -288,7 +285,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		renderChildBones(poseStack, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 
 		poseStack.popPose();

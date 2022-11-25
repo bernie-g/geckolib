@@ -6,9 +6,9 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.EasingType;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
-import software.bernie.geckolib.core.animation.factory.InstancedAnimationFactory;
-import software.bernie.geckolib.core.animation.factory.SingletonAnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.InstancedAnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.network.SerializableDataTicket;
 
@@ -17,23 +17,21 @@ import software.bernie.geckolib.network.SerializableDataTicket;
  */
 public final class GeckoLibUtil {
 	/**
-	 * Creates a new AnimationFactory for the given animatable object
+	 * Creates a new AnimatableInstanceCache for the given animatable object
 	 * @param animatable The animatable object
-	 * @return A new AnimationFactory instance
 	 */
-	public static AnimationFactory createFactory(GeoAnimatable animatable) {
-		return createFactory(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
+	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable) {
+		return createInstanceCache(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
 	}
 
 	/**
-	 * Creates a new AnimationFactory for the given animatable object. <br>
-	 * Recommended to use {@link GeckoLibUtil#createFactory(GeoAnimatable)} unless you know what you're doing.
+	 * Creates a new AnimatableInstanceCache for the given animatable object. <br>
+	 * Recommended to use {@link GeckoLibUtil#createInstanceCache(GeoAnimatable)} unless you know what you're doing.
 	 * @param animatable The animatable object
 	 * @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
-	 * @return A new AnimationFactory instance
 	 */
-	public static AnimationFactory createFactory(GeoAnimatable animatable, boolean singletonObject) {
-		return singletonObject ? new SingletonAnimationFactory(animatable) : new InstancedAnimationFactory(animatable);
+	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable, boolean singletonObject) {
+		return singletonObject ? new SingletonAnimatableInstanceCache(animatable) : new InstancedAnimatableInstanceCache(animatable);
 	}
 
 	/**

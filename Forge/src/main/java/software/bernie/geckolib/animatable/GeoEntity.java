@@ -28,7 +28,7 @@ public interface GeoEntity extends GeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(((Entity)this).getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getData(dataTicket);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(entity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
 			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
@@ -58,7 +58,7 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.getLevel().isClientSide()) {
-			getFactory().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));

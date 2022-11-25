@@ -35,7 +35,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 */
 	@Nullable
 	default <D> D getAnimData(long instanceId, SerializableDataTicket<D> dataTicket) {
-		return getFactory().getManagerForId(instanceId).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(instanceId).getData(dataTicket);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 */
 	default <D> void setAnimData(Entity relatedEntity, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
 		if (relatedEntity.level.isClientSide()) {
-			getFactory().getManagerForId(instanceId).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(instanceId).setData(dataTicket, data);
 		}
 		else {
 			syncAnimData(instanceId, dataTicket, data, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
@@ -80,7 +80,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 */
 	default <D> void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
 		if (relatedEntity.level.isClientSide()) {
-			getFactory().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
+			getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
 			GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));

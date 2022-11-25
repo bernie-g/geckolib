@@ -1,44 +1,36 @@
 package software.bernie.geckolib.renderer;
 
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically.<br>
- * All items added to be rendered by GeckoLib should use an instance of this class.
+ * Base {@link GeoRenderer} class for rendering anything that isn't already handled by the other builtin GeoRenderer subclasses.<br>
+ * Before using this class you should ensure your use-case isn't already covered by one of the other existing renderers.<br>
+ * <br>
+ * It is <b>strongly</b> recommended you override {@link GeoRenderer#getInstanceId} if using this renderer
  */
-public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntityWithoutLevelRenderer implements GeoRenderer<T> {
+public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T> {
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 	protected final GeoModel<T> model;
 
-	protected ItemStack currentItemStack;
 	protected T animatable;
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
@@ -46,14 +38,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	protected Matrix4f renderStartPose = new Matrix4f();
 	protected Matrix4f preRenderPose = new Matrix4f();
 
-	public GeoItemRenderer(GeoModel<T> model) {
-		this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels(),
-				model);
-	}
-
-	public GeoItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet, GeoModel<T> model) {
-		super(dispatcher, modelSet);
-
+	public GeoObjectRenderer(GeoModel<T> model) {
 		this.model = model;
 	}
 
@@ -71,15 +56,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	@Override
 	public T getAnimatable() {
 		return this.animatable;
-	}
-
-	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
-	 * This is mostly useful for things like items, which have a single registered instance for all objects
-	 */
-	@Override
-	public long getInstanceId(T animatable) {
-		return GeoItem.getId(this.currentItemStack);
 	}
 
 	/**
@@ -102,7 +78,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	/**
 	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
 	 */
-	public GeoItemRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
+	public GeoObjectRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
 		this.renderLayers.add(renderLayer);
 
 		return this;
@@ -111,18 +87,39 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	/**
 	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
 	 */
-	public GeoItemRenderer<T> withScale(float scale) {
+	public GeoObjectRenderer<T> withScale(float scale) {
 		return withScale(scale, scale);
 	}
 
 	/**
 	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
 	 */
-	public GeoItemRenderer<T> withScale(float scaleWidth, float scaleHeight) {
+	public GeoObjectRenderer<T> withScale(float scaleWidth, float scaleHeight) {
 		this.scaleWidth = scaleWidth;
 		this.scaleHeight = scaleHeight;
 
 		return this;
+	}
+
+	/**
+	 * The entry render point for this renderer.<br>
+	 * Call this whenever you want to render your object
+	 * @param poseStack The PoseStack to render under
+	 * @param animatable The {@link T} instance to render
+	 * @param bufferSource The BufferSource to render with, or null to use the default
+	 * @param renderType The specific RenderType to use, or null to fall back to {@link GeoRenderer#getRenderType}
+	 * @param buffer The VertexConsumer to use for rendering, or null to use the default for the RenderType
+	 * @param packedLight The light level at the given render position for rendering
+	 */
+	public void render(PoseStack poseStack, T animatable, @Nullable MultiBufferSource bufferSource, @Nullable RenderType renderType,
+					   @Nullable VertexConsumer buffer, int packedLight) {
+		this.animatable = animatable;
+		Minecraft mc = Minecraft.getInstance();
+
+		if (buffer == null)
+			bufferSource = mc.renderBuffers().bufferSource();
+
+		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, 0, mc.getFrameTime(), packedLight);
 	}
 
 	/**
@@ -142,46 +139,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		poseStack.translate(0.5f, 0.51f, 0.5f);
 	}
 
-	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		this.animatable = (T)stack.getItem();
-		this.currentItemStack = stack;
-
-		if (transformType == ItemTransforms.TransformType.GUI) {
-			renderInGui(transformType, poseStack, bufferSource, packedLight, packedOverlay);
-		}
-		else {
-			RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, Minecraft.getInstance().getFrameTime());
-			VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
-
-			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer,
-					0, Minecraft.getInstance().getFrameTime(), packedLight);
-		}
-	}
-
-	/**
-	 * Wrapper method to handle rendering the item in a GUI context
-	 * (defined by {@link net.minecraft.client.renderer.block.model.ItemTransforms.TransformType#GUI} normally).<br>
-	 * Just includes some additional required transformations and settings.
-	 */
-	protected void renderInGui(ItemTransforms.TransformType transformType, PoseStack poseStack,
-							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ?
-				bufferSource2 : Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), defaultBufferSource, Minecraft.getInstance().getFrameTime());
-		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
-
-		poseStack.pushPose();
-		Lighting.setupForFlatItems();
-		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer,
-				0, Minecraft.getInstance().getFrameTime(), packedLight);
-		defaultBufferSource.endBatch();
-		RenderSystem.enableDepthTest();
-		Lighting.setupFor3DItems();
-		poseStack.popPose();
-	}
-
 	/**
 	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
@@ -196,8 +153,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
-		animationEvent.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
 		this.model.handleAnimations(animatable, instanceId, animationEvent);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
@@ -213,7 +168,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose().copy();
+			Matrix4f poseState = poseStack.last().pose();
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));

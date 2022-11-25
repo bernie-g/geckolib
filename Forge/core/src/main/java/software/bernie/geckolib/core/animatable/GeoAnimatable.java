@@ -7,7 +7,7 @@ package software.bernie.geckolib.core.animatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.factory.AnimationFactory;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 
 /**
  * This is the root interface for all animatable objects in Geckolib.
@@ -33,11 +33,11 @@ public interface GeoAnimatable {
 	void registerControllers(AnimatableManager<?> manager);
 
 	/**
-	 * Each instance of a {@code GeoAnimatable} must return an instance of an {@link AnimationFactory}, which handles instance-specific animation info.
-	 * Generally speaking, you should create your factory using {@code GeckoLibUtil#createFactory} and store it in your animatable instance, returning that cached instance when called.
-	 * @return A cached instance of an {@code AnimationFactory}
+	 * Each instance of a {@code GeoAnimatable} must return an instance of an {@link AnimatableInstanceCache}, which handles instance-specific animation info.
+	 * Generally speaking, you should create your cache using {@code GeckoLibUtil#createInstanceCache} and store it in your animatable instance, returning that cached instance when called.
+	 * @return A cached instance of an {@code AnimatableInstanceCache}
 	 */
-	AnimationFactory getFactory();
+	AnimatableInstanceCache getAnimatableInstanceCache();
 
 	/**
 	 * Defines the speed in which the {@link software.bernie.geckolib.core.animation.AnimationProcessor} should return
