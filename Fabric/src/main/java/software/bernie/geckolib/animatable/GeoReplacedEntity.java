@@ -10,6 +10,8 @@ import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
 
 import javax.annotation.Nullable;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link Entity Entities}.
@@ -80,5 +82,15 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	@Override
 	default double getTick(Object entity) {
 		return ((Entity)entity).tickCount;
+	}
+
+	// These methods aren't used for GeoReplacedEntity
+	@Override
+	default void createRenderer(Consumer<RenderProvider> consumer) {}
+
+	// These methods aren't used for GeoReplacedEntity
+	@Override
+	default Supplier<RenderProvider> getRenderProvider() {
+		return null;
 	}
 }
