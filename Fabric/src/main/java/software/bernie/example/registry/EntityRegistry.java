@@ -29,6 +29,8 @@ public class EntityRegistry {
     public static final EntityType<ParasiteEntity> PARASITE = registerMob("parasite", ParasiteEntity::new,
             1.5f, 1.5f, 0x302219, 0xACACAC);
 
+    public static final EntityType<MutantZombieEntity> GREMLIN = registerMob("gremlin", MutantZombieEntity::new,
+            0.5f, 1.9f, 0x3C6236, 0x579989);
     public static final EntityType<MutantZombieEntity> MUTANT_ZOMBIE = registerMob("mutant_zombie", MutantZombieEntity::new,
             0.5f, 1.9f, 0x3C6236, 0x579989);
     public static final EntityType<FakeGlassEntity> FAKE_GLASS = registerMob("fake_glass", FakeGlassEntity::new,

@@ -33,6 +33,7 @@ public final class CommonListener {
 			event.put(EntityRegistry.RACE_CAR.get(), genericAttribs.build());
 			event.put(EntityRegistry.BAT.get(), genericAttribs.build());
 			event.put(EntityRegistry.MUTANT_ZOMBIE.get(), genericAttribs.build());
+			event.put(EntityRegistry.GREMLIN.get(), genericAttribs.build());
 			event.put(EntityRegistry.COOL_KID.get(), genericMovingAttribs.build());
 			event.put(EntityRegistry.FAKE_GLASS.get(), genericMovingAttribs.build());
 			event.put(EntityRegistry.PARASITE.get(), genericMonsterAttribs.build());

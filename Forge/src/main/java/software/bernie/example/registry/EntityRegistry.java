@@ -30,6 +30,8 @@ public final class EntityRegistry {
 			1, 1, 0xDD0000, 0xD8FFF7);
 	public static final RegistryObject<EntityType<CoolKidEntity>> COOL_KID = registerMob("cool_kid", CoolKidEntity::new,
 			0.45f, 1f, 0x5F2A31, 0x6F363E);
+    public static final RegistryObject<EntityType<MutantZombieEntity>> GREMLIN = registerMob("gremlin", MutantZombieEntity::new,
+            0.5f, 1.9f, 0x3C6236, 0x579989);
 
 	public static <T extends Mob> RegistryObject<EntityType<T>> registerMob(String name, EntityType.EntityFactory<T> entity,
 																			float width, float height, int primaryEggColor, int secondaryEggColor) {

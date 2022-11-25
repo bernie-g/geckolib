@@ -41,6 +41,7 @@ public final class GeckoLibMod implements ModInitializer {
 
 		FabricDefaultAttributeRegistry.register(EntityRegistry.BAT, createGenericEntityAttributes());
 		FabricDefaultAttributeRegistry.register(EntityRegistry.MUTANT_ZOMBIE, createGenericEntityAttributes());
+		FabricDefaultAttributeRegistry.register(EntityRegistry.GREMLIN, createGenericEntityAttributes());
 
 		FabricDefaultAttributeRegistry.register(EntityRegistry.COOL_KID, createGenericEntityAttributes());
 		FabricDefaultAttributeRegistry.register(EntityRegistry.FAKE_GLASS, createGenericEntityAttributes());

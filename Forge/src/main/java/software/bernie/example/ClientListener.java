@@ -15,10 +15,18 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
-import software.bernie.example.client.renderer.entity.*;
+import software.bernie.example.client.renderer.entity.BatRenderer;
+import software.bernie.example.client.renderer.entity.BikeRenderer;
+import software.bernie.example.client.renderer.entity.CoolKidRenderer;
+import software.bernie.example.client.renderer.entity.FakeGlassRenderer;
+import software.bernie.example.client.renderer.entity.GremlinRenderer;
+import software.bernie.example.client.renderer.entity.MutantZombieRenderer;
+import software.bernie.example.client.renderer.entity.ParasiteRenderer;
+import software.bernie.example.client.renderer.entity.RaceCarRenderer;
+import software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer;
+import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.GeckoLib;
 
 @Mod.EventBusSubscriber(modid = GeckoLib.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -33,6 +41,7 @@ public final class ClientListener {
 			event.registerEntityRenderer(EntityRegistry.PARASITE.get(), ParasiteRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.COOL_KID.get(), CoolKidRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.MUTANT_ZOMBIE.get(), MutantZombieRenderer::new);
+			event.registerEntityRenderer(EntityRegistry.GREMLIN.get(), GremlinRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.FAKE_GLASS.get(), FakeGlassRenderer::new);
 
 			event.registerEntityRenderer(EntityType.CREEPER, ReplacedCreeperRenderer::new);

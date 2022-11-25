@@ -34,6 +34,7 @@ public final class ClientListener implements ClientModInitializer {
         EntityRendererRegistry.register(EntityRegistry.PARASITE, ParasiteRenderer::new);
         EntityRendererRegistry.register(EntityRegistry.COOL_KID, CoolKidRenderer::new);
         EntityRendererRegistry.register(EntityRegistry.MUTANT_ZOMBIE, MutantZombieRenderer::new);
+        EntityRendererRegistry.register(EntityRegistry.GREMLIN, GremlinRenderer::new);
 
         EntityRendererRegistry.register(EntityRegistry.FAKE_GLASS, FakeGlassRenderer::new);
         EntityRendererRegistry.register(EntityType.CREEPER, ReplacedCreeperRenderer::new);

@@ -34,6 +34,7 @@ public class ItemRegistry {
     public static final SpawnEggItem MUTANT_ZOMBIE_SPAWN_EGG = registerItem("mutant_zombie_spawn_egg", new SpawnEggItem(EntityRegistry.MUTANT_ZOMBIE, 0x3C6236, 0x579989, new Item.Properties()));
     public static final SpawnEggItem FAKE_GLASS_SPAWN_EGG = registerItem("fake_glass_spawn_egg", new SpawnEggItem(EntityRegistry.FAKE_GLASS, 0xDD0000, 0xD8FFF7, new Item.Properties()));
     public static final SpawnEggItem COOL_KID_SPAWN_EGG = registerItem("cool_kid_spawn_egg", new SpawnEggItem(EntityRegistry.COOL_KID, 0x5F2A31, 0x6F363E, new Item.Properties()));
+    public static final SpawnEggItem GREMLIN_SPAWN_EGG = registerItem("gremlin_spawn_egg", new SpawnEggItem(EntityRegistry.GREMLIN, 0x5F2A31, 0x6F363E, new Item.Properties()));
     
     public static final CreativeModeTab ITEMS_GROUP = FabricItemGroup
             .builder(new ResourceLocation(GeckoLib.ModID, "geckolib_examples"))
@@ -56,6 +57,7 @@ public class ItemRegistry {
                 entries.accept(ItemRegistry.RACE_CAR_SPAWN_EGG);
                 entries.accept(ItemRegistry.PARASITE_SPAWN_EGG);
                 entries.accept(ItemRegistry.MUTANT_ZOMBIE_SPAWN_EGG);
+                entries.accept(ItemRegistry.GREMLIN_SPAWN_EGG);
                 entries.accept(ItemRegistry.FAKE_GLASS_SPAWN_EGG);
                 entries.accept(ItemRegistry.COOL_KID_SPAWN_EGG);
             }).build();
