@@ -35,12 +35,8 @@ public class GremlinRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity
 	private static final String RIGHT_HAND = "bipedHandRight";
 	private static final String LEFT_BOOT = "armorBipedLeftFoot";
 	private static final String RIGHT_BOOT = "armorBipedRightFoot";
-	private static final String LEFT_BOOT_2 = "armorBipedLeftFoot2";
-	private static final String RIGHT_BOOT_2 = "armorBipedRightFoot2";
 	private static final String LEFT_ARMOR_LEG = "armorBipedLeftLeg";
 	private static final String RIGHT_ARMOR_LEG = "armorBipedRightLeg";
-	private static final String LEFT_ARMOR_LEG_2 = "armorBipedLeftLeg2";
-	private static final String RIGHT_ARMOR_LEG_2 = "armorBipedRightLeg2";
 	private static final String CHESTPLATE = "armorBipedBody";
 	private static final String RIGHT_SLEEVE = "armorBipedRightArm";
 	private static final String LEFT_SLEEVE = "armorBipedLeftArm";
@@ -61,8 +57,8 @@ public class GremlinRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity
 			protected ItemStack getArmorItemForBone(GeoBone bone, MutantZombieEntity animatable) {
 				// Return the items relevant to the bones being rendered for additional rendering
 				return switch (bone.getName()) {
-					case LEFT_BOOT, RIGHT_BOOT, LEFT_BOOT_2, RIGHT_BOOT_2 -> this.bootsStack;
-					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG, LEFT_ARMOR_LEG_2, RIGHT_ARMOR_LEG_2 -> this.leggingsStack;
+					case LEFT_BOOT, RIGHT_BOOT -> this.bootsStack;
+					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG -> this.leggingsStack;
 					case CHESTPLATE, RIGHT_SLEEVE, LEFT_SLEEVE -> this.chestplateStack;
 					case HELMET -> this.helmetStack;
 					default -> null;
@@ -74,8 +70,8 @@ public class GremlinRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity
 			@Override
 			protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, MutantZombieEntity animatable) {
 				return switch (bone.getName()) {
-					case LEFT_BOOT, RIGHT_BOOT, LEFT_BOOT_2, RIGHT_BOOT_2 -> EquipmentSlot.FEET;
-					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG, LEFT_ARMOR_LEG_2, RIGHT_ARMOR_LEG_2 -> EquipmentSlot.LEGS;
+					case LEFT_BOOT, RIGHT_BOOT -> EquipmentSlot.FEET;
+					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG -> EquipmentSlot.LEGS;
 					case RIGHT_SLEEVE -> !animatable.isLeftHanded() ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 					case LEFT_SLEEVE -> animatable.isLeftHanded() ? EquipmentSlot.OFFHAND : EquipmentSlot.MAINHAND;
 					case CHESTPLATE -> EquipmentSlot.CHEST;
@@ -89,8 +85,8 @@ public class GremlinRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity
 			@Override
 			protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, MutantZombieEntity animatable, HumanoidModel<?> baseModel) {
 				return switch (bone.getName()) {
-					case LEFT_BOOT, LEFT_BOOT_2, LEFT_ARMOR_LEG, LEFT_ARMOR_LEG_2 -> baseModel.leftLeg;
-					case RIGHT_BOOT, RIGHT_BOOT_2, RIGHT_ARMOR_LEG, RIGHT_ARMOR_LEG_2 -> baseModel.rightLeg;
+					case LEFT_BOOT, LEFT_ARMOR_LEG -> baseModel.leftLeg;
+					case RIGHT_BOOT, RIGHT_ARMOR_LEG -> baseModel.rightLeg;
 					case RIGHT_SLEEVE -> baseModel.rightArm;
 					case LEFT_SLEEVE -> baseModel.leftArm;
 					case CHESTPLATE -> baseModel.body;
