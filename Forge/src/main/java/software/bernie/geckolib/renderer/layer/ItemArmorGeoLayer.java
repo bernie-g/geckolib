@@ -287,43 +287,57 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		final GeoCube firstCube = bone.getCubes().get(0);
 		final Cube armorCube = sourcePart.cubes.get(0);
 
-		final double targetSizeX = firstCube.size().x();
-		final double targetSizeY = firstCube.size().y();
-		final double targetSizeZ = firstCube.size().z();
+		final double armorBoneSizeX = firstCube.size().x();
+		final double armorBoneSizeY = firstCube.size().y();
+		final double armorBoneSizeZ = firstCube.size().z();
 
-		final double sourceSizeX = Math.abs(armorCube.maxX - armorCube.minX);
-		final double sourceSizeY = Math.abs(armorCube.maxY - armorCube.minY);
-		final double sourceSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+		final double actualArmorSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+		final double actualArmorSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+		final double actualArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
 
-		float scaleX = (float)(targetSizeX / sourceSizeX);
-		float scaleY = (float)(targetSizeY / sourceSizeY);
-		float scaleZ = (float)(targetSizeZ / sourceSizeZ);
+		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
+		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
+		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
 
 		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
 				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (isGeoArmor) {
-			float xRot = bone.getRotX();
-			float yRot = bone.getRotY();
+			float xRot = -bone.getRotX();
+			float yRot = -bone.getRotY();
 			float zRot = bone.getRotZ();
-			GeoBone parent = bone.getParent();
 
-			if (parent != null) {
-				xRot -= parent.getRotX();
-				yRot -= parent.getRotY();
-				zRot += parent.getRotZ();
+			/*float modX = 0;
+			float modY = 0;
+			float modZ = 0;
+			GeoBone tmpBone = bone.getParent();
+			while (tmpBone != null) {
+				if(modX == 0 && tmpBone.getRotX() != modX) {
+					modX = tmpBone.getRotX();
+				}
+				if(modY == 0 && tmpBone.getRotY() != modY) {
+					modY = tmpBone.getRotY();
+				}
+				if(modZ == 0 && tmpBone.getRotZ() != modZ) {
+					modZ = tmpBone.getRotZ();
+				}
+				tmpBone = tmpBone.getParent();
 			}
+			xRot += modX;
+			yRot += modY;
+			zRot += modZ;*/
 
-			sourcePart.xRot = xRot;
-			sourcePart.yRot = yRot;
-			sourcePart.zRot = zRot;
 
-			if (rotPoseStack) {
-				poseStack.mulPose(new Quaternion(0, 0, zRot, true));
-				poseStack.mulPose(new Quaternion(0, yRot, 0, true));
-				poseStack.mulPose(new Quaternion(xRot, 0, 0, true));
-			}
+			/*if (rotPoseStack || true) {
+				poseStack.mulPose(new Quaternion(0, 0, zRot, false));
+				poseStack.mulPose(new Quaternion(0, yRot, 0, false));
+				poseStack.mulPose(new Quaternion(xRot, 0, 0, false));
+			} else {*/
+				//sourcePart.xRot = xRot;
+				//sourcePart.yRot = yRot;
+				//sourcePart.zRot = zRot;
+			//}
 		}
 		else {
 			sourcePart.xRot = -bone.getRotX();
