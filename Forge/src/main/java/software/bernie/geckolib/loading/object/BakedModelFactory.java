@@ -160,20 +160,20 @@ public interface BakedModelFactory {
 			Vec3 rotation = RenderUtils.arrayToVec(cube.rotation());
 			Vec3 pivot = RenderUtils.arrayToVec(cube.pivot());
 			origin = new Vec3(-(origin.x + size.x) / 16d, origin.y / 16d, origin.z / 16d);
-			size = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);
+			Vec3 vertexSize = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);
 
 			rotation = rotation.multiply(-1, -1, 1);
 			pivot = pivot.multiply(-1, 1, 1);
 			rotation = new Vec3(Math.toRadians(rotation.x), Math.toRadians(rotation.y), Math.toRadians(rotation.z));
 
 			GeoVertex bottomLeftBack = new GeoVertex(origin.x - inflate, origin.y - inflate, origin.z - inflate);
-			GeoVertex bottomRightBack = new GeoVertex(origin.x - inflate, origin.y - inflate, origin.z + size.z + inflate);
-			GeoVertex topLeftBack = new GeoVertex(origin.x - inflate, origin.y + size.y + inflate, origin.z - inflate);
-			GeoVertex topRightBack = new GeoVertex(origin.x - inflate, origin.y + size.y + inflate, origin.z + size.z + inflate);
-			GeoVertex topLeftFront = new GeoVertex(origin.x + size.x + inflate, origin.y + size.y + inflate, origin.z - inflate);
-			GeoVertex topRightFront = new GeoVertex(origin.x + size.x + inflate, origin.y + size.y + inflate, origin.z + size.z + inflate);
-			GeoVertex bottomLeftFront = new GeoVertex(origin.x + size.x + inflate, origin.y - inflate, origin.z - inflate);
-			GeoVertex bottomRightFront = new GeoVertex(origin.x + size.x + inflate, origin.y - inflate, origin.z + size.z + inflate);
+			GeoVertex bottomRightBack = new GeoVertex(origin.x - inflate, origin.y - inflate, origin.z + vertexSize.z + inflate);
+			GeoVertex topLeftBack = new GeoVertex(origin.x - inflate, origin.y + vertexSize.y + inflate, origin.z - inflate);
+			GeoVertex topRightBack = new GeoVertex(origin.x - inflate, origin.y + vertexSize.y + inflate, origin.z + vertexSize.z + inflate);
+			GeoVertex topLeftFront = new GeoVertex(origin.x + vertexSize.x + inflate, origin.y + vertexSize.y + inflate, origin.z - inflate);
+			GeoVertex topRightFront = new GeoVertex(origin.x + vertexSize.x + inflate, origin.y + vertexSize.y + inflate, origin.z + vertexSize.z + inflate);
+			GeoVertex bottomLeftFront = new GeoVertex(origin.x + vertexSize.x + inflate, origin.y - inflate, origin.z - inflate);
+			GeoVertex bottomRightFront = new GeoVertex(origin.x + vertexSize.x + inflate, origin.y - inflate, origin.z + vertexSize.z + inflate);
 
 			GeoQuad[] quads = buildQuads(cube.uv(),
 					(mirror ?
