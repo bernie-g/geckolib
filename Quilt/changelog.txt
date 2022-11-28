@@ -1,3 +1,7 @@
+v3.1.38
+
+- Fixes Access Widener
+
 v3.1.37
 
 - Updates Geckolib default armor with new Gecko armor made by VoutVouniern
