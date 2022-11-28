@@ -34,10 +34,10 @@ public class ItemRegistry {
     public static final SpawnEggItem MUTANT_ZOMBIE_SPAWN_EGG = registerItem("mutant_zombie_spawn_egg", new SpawnEggItem(EntityRegistry.MUTANT_ZOMBIE, 0x3C6236, 0x579989, new Item.Properties()));
     public static final SpawnEggItem FAKE_GLASS_SPAWN_EGG = registerItem("fake_glass_spawn_egg", new SpawnEggItem(EntityRegistry.FAKE_GLASS, 0xDD0000, 0xD8FFF7, new Item.Properties()));
     public static final SpawnEggItem COOL_KID_SPAWN_EGG = registerItem("cool_kid_spawn_egg", new SpawnEggItem(EntityRegistry.COOL_KID, 0x5F2A31, 0x6F363E, new Item.Properties()));
-    public static final SpawnEggItem GREMLIN_SPAWN_EGG = registerItem("gremlin_spawn_egg", new SpawnEggItem(EntityRegistry.GREMLIN, 0x5F2A31, 0x6F363E, new Item.Properties()));
+    public static final SpawnEggItem GREMLIN_SPAWN_EGG = registerItem("gremlin_spawn_egg", new SpawnEggItem(EntityRegistry.GREMLIN, 0x505050, 0x606060, new Item.Properties()));
     
-    public static final CreativeModeTab ITEMS_GROUP = FabricItemGroup
-            .builder(new ResourceLocation(GeckoLib.ModID, "geckolib_examples"))
+    public static final CreativeModeTab ITEM_GROUP = FabricItemGroup
+            .builder(new ResourceLocation(GeckoLib.MOD_ID, "geckolib_examples"))
             .icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
             .displayItems((enabledFeatures, entries, operatorEnabled) -> {
                 entries.accept(ItemRegistry.JACK_IN_THE_BOX);
@@ -63,6 +63,6 @@ public class ItemRegistry {
             }).build();
 
     public static <I extends Item> I registerItem(String name, I item) {
-        return Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(GeckoLib.ModID, name), item);
+        return Registry.register(BuiltInRegistries.ITEM, new ResourceLocation(GeckoLib.MOD_ID, name), item);
     }
 }

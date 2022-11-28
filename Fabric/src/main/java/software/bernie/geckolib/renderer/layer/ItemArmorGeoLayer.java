@@ -30,6 +30,7 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -66,6 +67,13 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	@Nonnull
 	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable) {
+		for(EquipmentSlot slot : EquipmentSlot.values()) {
+			if(slot.getType() == EquipmentSlot.Type.ARMOR) {
+				if(stack == animatable.getItemBySlot(slot))
+					return slot;
+			}
+		}
+
 		return EquipmentSlot.CHEST;
 	}
 
@@ -270,25 +278,43 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param rotPoseStack If the render is for a GeoArmor piece, whether the {@link PoseStack} should be manipulated, as opposed to directly setting the sourcePart rotation
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart, boolean isGeoArmor, boolean rotPoseStack) {
-		sourcePart.setPos(-bone.getPivotX(), -bone.getPivotY(), bone.getPivotZ());
+		final GeoCube firstCube = bone.getCubes().get(0);
+		final ModelPart.Cube armorCube = sourcePart.cubes.get(0);
+		final double armorBoneSizeX = firstCube.size().x();
+		final double armorBoneSizeY = firstCube.size().y();
+		final double armorBoneSizeZ = firstCube.size().z();
+		final double actualArmorSizeX = Math.abs(armorCube.maxX - armorCube.minX);
+		final double actualArmorSizeY = Math.abs(armorCube.maxY - armorCube.minY);
+		final double actualArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
+		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
+		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
+		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
+
+		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
+				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
+				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (isGeoArmor) {
 			float xRot = bone.getRotX();
 			float yRot = bone.getRotY();
 			float zRot = bone.getRotZ();
-			GeoBone parent = bone.getParent();
 
-			if (parent != null) {
-				xRot -= parent.getRotX();
-				yRot -= parent.getRotY();
-				zRot += parent.getRotZ();
+			if (!rotPoseStack) {
+				GeoBone parent = bone.getParent();
+
+				while (parent != null) {
+					xRot -= parent.getRotX();
+					yRot -= parent.getRotY();
+					zRot += parent.getRotZ();
+					parent = parent.getParent();
+				}
 			}
 
 			sourcePart.xRot = xRot;
 			sourcePart.yRot = yRot;
 			sourcePart.zRot = zRot;
 
-			if (rotPoseStack) {
+			if (!rotPoseStack) {
 				poseStack.mulPose(new Quaternionf().rotationXYZ(0, 0, zRot));
 				poseStack.mulPose(new Quaternionf().rotationXYZ(0, yRot, 0));
 				poseStack.mulPose(new Quaternionf().rotationXYZ(xRot, 0, 0));
@@ -299,5 +325,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 			sourcePart.yRot = -bone.getRotY();
 			sourcePart.zRot = bone.getRotZ();
 		}
+
+		poseStack.scale(scaleX, scaleY, scaleZ);
 	}
 }

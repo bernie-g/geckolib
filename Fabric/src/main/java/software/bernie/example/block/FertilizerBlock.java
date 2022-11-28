@@ -57,7 +57,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 
 	@Override
 	public void appendHoverText(ItemStack stack, BlockGetter blockGetter, List<Component> tooltip, TooltipFlag tooltipFlag) {
-		tooltip.add(Component.translatable("block." + GeckoLib.ModID + ".fertilizer.tooltip"));
+		tooltip.add(Component.translatable("block." + GeckoLib.MOD_ID + ".fertilizer.tooltip"));
 
 		super.appendHoverText(stack, blockGetter, tooltip, tooltipFlag);
 	}

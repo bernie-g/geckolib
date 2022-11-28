@@ -13,7 +13,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import software.bernie.example.client.model.entity.MutantZombieModel;
-import software.bernie.example.entity.MutantZombieEntity;
+import software.bernie.example.entity.DynamicExampleEntity;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -26,9 +26,9 @@ import javax.annotation.Nullable;
 
 /**
  * Example {@link DynamicGeoEntityRenderer} implementation
- * @see MutantZombieEntity
+ * @see DynamicExampleEntity
  */
-public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieEntity> {
+public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampleEntity> {
 	// Pre-define our bone names for easy and consistent reference later
 	private static final String LEFT_HAND = "bipedHandLeft";
 	private static final String RIGHT_HAND = "bipedHandRight";
@@ -45,7 +45,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 	private static final String LEFT_SLEEVE = "armorBipedLeftArm";
 	private static final String HELMET = "armorBipedHead";
 
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.ModID, "textures/entity/mutant_zombie_cape.png");
+	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/dynamic_entity_cape.png");
 
 	protected ItemStack mainHandItem;
 	protected ItemStack offhandItem;
@@ -57,7 +57,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 		addRenderLayer(new ItemArmorGeoLayer<>(this) {
 			@Nullable
 			@Override
-			protected ItemStack getArmorItemForBone(GeoBone bone, MutantZombieEntity animatable) {
+			protected ItemStack getArmorItemForBone(GeoBone bone, DynamicExampleEntity animatable) {
 				// Return the items relevant to the bones being rendered for additional rendering
 				return switch (bone.getName()) {
 					case LEFT_BOOT, RIGHT_BOOT, LEFT_BOOT_2, RIGHT_BOOT_2 -> this.bootsStack;
@@ -71,7 +71,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 			// Return the equipment slot relevant to the bone we're using
 			@Nonnull
 			@Override
-			protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, MutantZombieEntity animatable) {
+			protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, DynamicExampleEntity animatable) {
 				return switch (bone.getName()) {
 					case LEFT_BOOT, RIGHT_BOOT, LEFT_BOOT_2, RIGHT_BOOT_2 -> EquipmentSlot.FEET;
 					case LEFT_ARMOR_LEG, RIGHT_ARMOR_LEG, LEFT_ARMOR_LEG_2, RIGHT_ARMOR_LEG_2 -> EquipmentSlot.LEGS;
@@ -86,7 +86,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 			// Return the ModelPart responsible for the armor pieces we want to render
 			@Nonnull
 			@Override
-			protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, MutantZombieEntity animatable, HumanoidModel<?> baseModel) {
+			protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, DynamicExampleEntity animatable, HumanoidModel<?> baseModel) {
 				return switch (bone.getName()) {
 					case LEFT_BOOT, LEFT_BOOT_2, LEFT_ARMOR_LEG, LEFT_ARMOR_LEG_2 -> baseModel.leftLeg;
 					case RIGHT_BOOT, RIGHT_BOOT_2, RIGHT_ARMOR_LEG, RIGHT_ARMOR_LEG_2 -> baseModel.rightLeg;
@@ -103,7 +103,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 		addRenderLayer(new BlockAndItemGeoLayer<>(this) {
 			@Nullable
 			@Override
-			protected ItemStack getStackForBone(GeoBone bone, MutantZombieEntity animatable) {
+			protected ItemStack getStackForBone(GeoBone bone, DynamicExampleEntity animatable) {
 				// Retrieve the items in the entity's hands for the relevant bone
 				return switch (bone.getName()) {
 					case LEFT_HAND -> animatable.isLeftHanded() ?
@@ -115,7 +115,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 			}
 
 			@Override
-			protected TransformType getTransformTypeForStack(GeoBone bone, ItemStack stack, MutantZombieEntity animatable) {
+			protected TransformType getTransformTypeForStack(GeoBone bone, ItemStack stack, DynamicExampleEntity animatable) {
 				// Apply the camera transform for the given hand
 				return switch (bone.getName()) {
 					case LEFT_HAND, RIGHT_HAND -> TransformType.THIRD_PERSON_RIGHT_HAND;
@@ -125,7 +125,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 
 			// Do some quick render modifications depending on what the item is
 			@Override
-			protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, MutantZombieEntity animatable,
+			protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, DynamicExampleEntity animatable,
 											  MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 				if (stack == MutantZombieRenderer.this.mainHandItem) {
 					poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
@@ -150,12 +150,12 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<MutantZombieE
 	// Apply the cape texture for the cape bone
 	@Nullable
 	@Override
-	protected ResourceLocation getTextureOverrideForBone(GeoBone bone, MutantZombieEntity animatable, float partialTick) {
+	protected ResourceLocation getTextureOverrideForBone(GeoBone bone, DynamicExampleEntity animatable, float partialTick) {
 		return "bipedCape".equals(bone.getName()) ? CAPE_TEXTURE : null;
 	}
 
 	@Override
-	public void preRender(PoseStack poseStack, MutantZombieEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void preRender(PoseStack poseStack, DynamicExampleEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		super.preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		this.mainHandItem = animatable.getMainHandItem();

@@ -35,6 +35,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation JUMP = RawAnimation.begin().thenPlay("move.jump");
 	public static final RawAnimation SNEAK = RawAnimation.begin().thenLoop("move.sneak");
 
+	public static final RawAnimation ATTACK_CAST = RawAnimation.begin().thenPlay("attack.cast");
 	public static final RawAnimation ATTACK_SWING = RawAnimation.begin().thenPlay("attack.swing");
 	public static final RawAnimation ATTACK_THROW = RawAnimation.begin().thenPlay("attack.throw");
 	public static final RawAnimation ATTACK_BITE = RawAnimation.begin().thenPlay("attack.bite");

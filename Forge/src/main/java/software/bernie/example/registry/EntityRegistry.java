@@ -24,14 +24,14 @@ public final class EntityRegistry {
 			1.5f, 1.5f, 0x9E1616, 0x595959);
 	public static final RegistryObject<EntityType<ParasiteEntity>> PARASITE = registerMob("parasite", ParasiteEntity::new,
 			1.5f, 1.5f, 0x302219, 0xACACAC);
-	public static final RegistryObject<EntityType<MutantZombieEntity>> MUTANT_ZOMBIE = registerMob("mutant_zombie", MutantZombieEntity::new,
+	public static final RegistryObject<EntityType<DynamicExampleEntity>> MUTANT_ZOMBIE = registerMob("mutant_zombie", DynamicExampleEntity::new,
 	0.5f, 1.9f, 0x3C6236, 0x579989);
 	public static final RegistryObject<EntityType<FakeGlassEntity>> FAKE_GLASS = registerMob("fake_glass", FakeGlassEntity::new,
 			1, 1, 0xDD0000, 0xD8FFF7);
 	public static final RegistryObject<EntityType<CoolKidEntity>> COOL_KID = registerMob("cool_kid", CoolKidEntity::new,
 			0.45f, 1f, 0x5F2A31, 0x6F363E);
-    public static final RegistryObject<EntityType<MutantZombieEntity>> GREMLIN = registerMob("gremlin", MutantZombieEntity::new,
-            0.5f, 1.9f, 0x3C6236, 0x579989);
+    public static final RegistryObject<EntityType<DynamicExampleEntity>> GREMLIN = registerMob("gremlin", DynamicExampleEntity::new,
+            0.5f, 1.9f, 0x505050, 0x606060);
 
 	public static <T extends Mob> RegistryObject<EntityType<T>> registerMob(String name, EntityType.EntityFactory<T> entity,
 																			float width, float height, int primaryEggColor, int secondaryEggColor) {

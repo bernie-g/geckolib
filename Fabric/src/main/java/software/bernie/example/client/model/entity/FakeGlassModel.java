@@ -17,7 +17,7 @@ public class FakeGlassModel extends DefaultedEntityGeoModel<FakeGlassEntity> {
 			new ResourceLocation("minecraft", "textures/block/redstone_block.png");
 
 	public FakeGlassModel() {
-		super(new ResourceLocation(GeckoLib.ModID, "fake_glass"));
+		super(new ResourceLocation(GeckoLib.MOD_ID, "fake_glass"));
 	}
 
 	// We just want our texture to be the Redstone Block texture

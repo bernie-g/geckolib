@@ -29,8 +29,9 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * Example extended-support entity for GeckoLib advanced rendering
  * @see DynamicGeoEntityRenderer
  * @see MutantZombieRenderer
+ * @see software.bernie.example.client.renderer.entity.GremlinRenderer
  */
-public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
+public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	// Pre-define our RawAnimations for use later
 	private static final RawAnimation BLOCK_LEFT = RawAnimation.begin().thenPlay("attack.block.left");
 	private static final RawAnimation BLOCK_RIGHT = RawAnimation.begin().thenPlay("attack.block.right");
@@ -44,7 +45,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public MutantZombieEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
+	public DynamicExampleEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
 		super(entityType, level);
 	}
 
@@ -68,7 +69,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for the body segment
-	protected PlayState poseBody(AnimationEvent<MutantZombieEntity> event) {
+	protected PlayState poseBody(AnimationEvent<DynamicExampleEntity> event) {
 		if (isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
@@ -83,7 +84,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for each hand
-	protected PlayState predicateHandPose(InteractionHand hand, AnimationEvent<MutantZombieEntity> event) {
+	protected PlayState predicateHandPose(InteractionHand hand, AnimationEvent<DynamicExampleEntity> event) {
 		ItemStack heldStack = getItemInHand(hand);
 
 		if (heldStack.isEmpty() || isWieldingTwoHandedWeapon())
@@ -101,7 +102,7 @@ public class MutantZombieEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for posing with a dual-wielded weapon
-	private  PlayState poseDualWield(AnimationEvent<MutantZombieEntity> event) {
+	private  PlayState poseDualWield(AnimationEvent<DynamicExampleEntity> event) {
 		if (!isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 

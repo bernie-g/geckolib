@@ -1,15 +1,9 @@
 package software.bernie.geckolib.renderer.layer;
 
-import java.util.Map;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Quaternion;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -21,7 +15,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.StringTag;
@@ -30,12 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.DyeableArmorItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PlayerHeadItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
@@ -49,6 +37,10 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtils;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Builtin class for handling dynamic armor rendering on GeckoLib entities.<br>
@@ -79,11 +71,11 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable) {
 		for(EquipmentSlot slot : EquipmentSlot.values()) {
 			if(slot.getType() == EquipmentSlot.Type.ARMOR) {
-				if(stack == animatable.getItemBySlot(slot)) {
+				if(stack == animatable.getItemBySlot(slot))
 					return slot;
-				}
 			}
 		}
+
 		return EquipmentSlot.CHEST;
 	}
 
@@ -286,15 +278,12 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart, boolean isGeoArmor, boolean rotPoseStack) {
 		final GeoCube firstCube = bone.getCubes().get(0);
 		final Cube armorCube = sourcePart.cubes.get(0);
-
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
-
 		final double actualArmorSizeX = Math.abs(armorCube.maxX - armorCube.minX);
 		final double actualArmorSizeY = Math.abs(armorCube.maxY - armorCube.minY);
 		final double actualArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
-
 		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
 		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
 		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
@@ -304,46 +293,37 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (isGeoArmor) {
-			float xRot = -bone.getRotX();
-			float yRot = -bone.getRotY();
+			float xRot = bone.getRotX();
+			float yRot = bone.getRotY();
 			float zRot = bone.getRotZ();
 
-			/*float modX = 0;
-			float modY = 0;
-			float modZ = 0;
-			GeoBone tmpBone = bone.getParent();
-			while (tmpBone != null) {
-				if(modX == 0 && tmpBone.getRotX() != modX) {
-					modX = tmpBone.getRotX();
+			if (!rotPoseStack) {
+				GeoBone parent = bone.getParent();
+
+				while (parent != null) {
+					xRot -= parent.getRotX();
+					yRot -= parent.getRotY();
+					zRot += parent.getRotZ();
+					parent = parent.getParent();
 				}
-				if(modY == 0 && tmpBone.getRotY() != modY) {
-					modY = tmpBone.getRotY();
-				}
-				if(modZ == 0 && tmpBone.getRotZ() != modZ) {
-					modZ = tmpBone.getRotZ();
-				}
-				tmpBone = tmpBone.getParent();
 			}
-			xRot += modX;
-			yRot += modY;
-			zRot += modZ;*/
 
+			sourcePart.xRot = xRot;
+			sourcePart.yRot = yRot;
+			sourcePart.zRot = zRot;
 
-			/*if (rotPoseStack || true) {
-				poseStack.mulPose(new Quaternion(0, 0, zRot, false));
-				poseStack.mulPose(new Quaternion(0, yRot, 0, false));
-				poseStack.mulPose(new Quaternion(xRot, 0, 0, false));
-			} else {*/
-				//sourcePart.xRot = xRot;
-				//sourcePart.yRot = yRot;
-				//sourcePart.zRot = zRot;
-			//}
+			if (!rotPoseStack) {
+				poseStack.mulPose(new Quaternion(0, 0, zRot, true));
+				poseStack.mulPose(new Quaternion(0, yRot, 0, true));
+				poseStack.mulPose(new Quaternion(xRot, 0, 0, true));
+			}
 		}
 		else {
 			sourcePart.xRot = -bone.getRotX();
 			sourcePart.yRot = -bone.getRotY();
 			sourcePart.zRot = bone.getRotZ();
 		}
+
 		poseStack.scale(scaleX, scaleY, scaleZ);
 	}
 }

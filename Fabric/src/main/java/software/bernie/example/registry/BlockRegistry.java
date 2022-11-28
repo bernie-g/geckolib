@@ -16,7 +16,7 @@ public class BlockRegistry {
     public static final FertilizerBlock FERTILIZER_BLOCK = registerBlock("fertilizer", new FertilizerBlock());
 
     public static <B extends Block> B registerBlock(String name, B block) {
-        return register(block, new ResourceLocation(GeckoLib.ModID, name));
+        return register(block, new ResourceLocation(GeckoLib.MOD_ID, name));
     }
 
     private static <B extends Block> B register(B block, ResourceLocation name) {

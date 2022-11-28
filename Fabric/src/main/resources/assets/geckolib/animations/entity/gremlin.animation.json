@@ -1,7 +1,7 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"animation.biped.idle": {
+		"misc.idle": {
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -51,10 +51,10 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.greatsword": {
+		"pose.greatsword.right": {
 			"loop": true
 		},
-		"animation.biped.sit": {
+		"misc.sit": {
 			"loop": true,
 			"animation_length": 8.64,
 			"bones": {
@@ -90,7 +90,7 @@
 				}
 			}
 		},
-		"animation.biped.legs.walk": {
+		"move.walk": {
 			"loop": true,
 			"animation_length": 2.08,
 			"bones": {
@@ -204,7 +204,7 @@
 				}
 			}
 		},
-		"animation.biped.body.sneak": {
+		"move.sneak": {
 			"loop": true,
 			"bones": {
 				"bipedArms": {
@@ -214,7 +214,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.block": {
+		"attack.block.left": {
 			"loop": true,
 			"bones": {
 				"bipedArmLeft": {
@@ -224,7 +224,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.block": {
+		"attack.block.right": {
 			"loop": true,
 			"bones": {
 				"bipedArmRight": {
@@ -234,7 +234,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.spear": {
+		"pose.spear.left": {
 			"loop": true,
 			"bones": {
 				"bipedBody": {
@@ -262,7 +262,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.spear": {
+		"pose.spear.right": {
 			"loop": true,
 			"bones": {
 				"bipedBody": {
@@ -290,7 +290,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.greatsword": {
+		"pose.greatsword.left": {
 			"loop": true,
 			"bones": {
 				"bipedArmLeft": {
@@ -315,7 +315,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.reload-crossbow": {
+		"misc.crossbow_reload.left": {
 			"animation_length": 1.24,
 			"bones": {
 				"bipedArmRight": {
@@ -330,7 +330,22 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.firearm": {
+		"misc.crossbow_reload.right": {
+			"animation_length": 1.24,
+			"bones": {
+				"bipedArmLeft": {
+					"rotation": {
+						"0.0": {
+							"vector": [-7.5, 0, 0]
+						},
+						"1.24": {
+							"vector": [-7.5, 90, 0]
+						}
+					}
+				}
+			}
+		},
+		"pose.gun.left": {
 			"loop": true,
 			"bones": {
 				"bipedArmLeft": {
@@ -348,7 +363,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.firearm": {
+		"pose.gun.right": {
 			"loop": true,
 			"bones": {
 				"bipedArmLeft": {
@@ -366,7 +381,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.firearm-small": {
+		"pose.small_gun.left": {
 			"loop": true,
 			"bones": {
 				"bipedArmLeft": {
@@ -376,7 +391,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.firearm-small": {
+		"pose.small_gun.right": {
 			"loop": true,
 			"bones": {
 				"bipedArmRight": {
@@ -386,7 +401,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.left.item-use": {
+		"misc.interact.left": {
 			"animation_length": 0.36,
 			"bones": {
 				"bipedArmLeft": {
@@ -407,7 +422,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.right.item-use": {
+		"misc.interact.right": {
 			"animation_length": 0.4,
 			"bones": {
 				"bipedArmRight": {
@@ -428,7 +443,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.cast-spell": {
+		"attack.cast": {
 			"loop": true,
 			"animation_length": 1.04,
 			"bones": {
@@ -538,7 +553,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.spin-to-win": {
+		"misc.spin_hands": {
 			"loop": true,
 			"animation_length": 0.48,
 			"bones": {
@@ -570,7 +585,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.attack-greatsword": {
+		"attack.greatsword": {
 			"animation_length": 0.32,
 			"bones": {
 				"bipedArms": {
@@ -590,7 +605,7 @@
 				}
 			}
 		},
-		"animation.biped.arms.attack-spear": {
+		"attack.spear": {
 			"animation_length": 0.44,
 			"bones": {
 				"bipedArmLeft": {
@@ -616,21 +631,6 @@
 						},
 						"0.44": {
 							"vector": [0, 0, 0]
-						}
-					}
-				}
-			}
-		},
-		"animation.biped.arms.right.reload-crossbow": {
-			"animation_length": 1.24,
-			"bones": {
-				"bipedArmLeft": {
-					"rotation": {
-						"0.0": {
-							"vector": [-7.5, 0, 0]
-						},
-						"1.24": {
-							"vector": [-7.5, 90, 0]
 						}
 					}
 				}

@@ -127,7 +127,7 @@ public class PistolItem extends Item implements GeoItem {
 	// Let's add some ammo text to the tooltip
 	@Override
 	public void appendHoverText(ItemStack stack, Level worldIn, List<Component> tooltip, TooltipFlag flagIn) {
-		tooltip.add(Component.translatable("item." + GeckoLib.ModID + ".pistol.ammo",
+		tooltip.add(Component.translatable("item." + GeckoLib.MOD_ID + ".pistol.ammo",
 				stack.getMaxDamage() - stack.getDamageValue() - 1,
 				stack.getMaxDamage() - 1)
 				.withStyle(ChatFormatting.ITALIC));

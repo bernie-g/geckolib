@@ -67,7 +67,7 @@ public interface BakedModelFactory {
 		if (!uvUnion.isBoxUV()) {
 			FaceUV faceUV = uvUnion.faceUV().fromDirection(direction);
 
-			return GeoQuad.build(vertices, faceUV.uv(), faceUV.uvSize(), textureWidth, textureHeight, mirror, direction);
+			return faceUV == null ? null : GeoQuad.build(vertices, faceUV.uv(), faceUV.uvSize(), textureWidth, textureHeight, mirror, direction);
 		}
 
 		double[] uv = cube.uv().boxUVCoords();

@@ -18,12 +18,12 @@ import software.bernie.geckolib.model.GeoModel;
  * @see FertilizerBlockRenderer
  */
 public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntity> {
-	private final ResourceLocation BOTARIUM_MODEL = buildFormattedModelPath(new ResourceLocation(GeckoLib.ModID, "botarium"));
-	private final ResourceLocation BOTARIUM_TEXTURE = buildFormattedTexturePath(new ResourceLocation(GeckoLib.ModID, "botarium"));
-	private final ResourceLocation BOTARIUM_ANIMATIONS = buildFormattedAnimationPath(new ResourceLocation(GeckoLib.ModID, "botarium"));
+	private final ResourceLocation BOTARIUM_MODEL = buildFormattedModelPath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
+	private final ResourceLocation BOTARIUM_TEXTURE = buildFormattedTexturePath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
+	private final ResourceLocation BOTARIUM_ANIMATIONS = buildFormattedAnimationPath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
 
 	public FertilizerModel() {
-		super(new ResourceLocation(GeckoLib.ModID, "fertilizer"));
+		super(new ResourceLocation(GeckoLib.MOD_ID, "fertilizer"));
 	}
 
 	/**

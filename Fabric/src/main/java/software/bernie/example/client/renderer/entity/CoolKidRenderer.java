@@ -15,7 +15,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  */
 public class CoolKidRenderer extends GeoEntityRenderer<CoolKidEntity> {
 	public CoolKidRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new DefaultedEntityGeoModel<>(new ResourceLocation(GeckoLib.ModID, "cool_kid")));
+        super(renderManager, new DefaultedEntityGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "cool_kid")));
 
 		this.shadowRadius = 0.25f;
 

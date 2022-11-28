@@ -136,7 +136,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
         }
 
         default BlockEntityWithoutLevelRenderer getCustomRenderer(){
-            return ((ItemRendererAccessor) Minecraft.getInstance().getItemRenderer()).getBlockEntityRenderer();
+            return ((ItemRendererAccessor)Minecraft.getInstance().getItemRenderer()).getBlockEntityRenderer();
         }
 
 

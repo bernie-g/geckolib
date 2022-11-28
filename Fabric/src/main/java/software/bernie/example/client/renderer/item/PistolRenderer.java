@@ -11,6 +11,6 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
  */
 public class PistolRenderer extends GeoItemRenderer<PistolItem> {
 	public PistolRenderer() {
-		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLib.ModID, "pistol")));
+		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "pistol")));
 	}
 }

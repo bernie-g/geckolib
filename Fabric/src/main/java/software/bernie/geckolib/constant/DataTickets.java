@@ -35,13 +35,13 @@ public final class DataTickets {
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples
 	// and for ease of use
-	public static final SerializableDataTicket<Integer> ANIM_STATE = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(new ResourceLocation(GeckoLib.ModID, "anim_state")));
-	public static final SerializableDataTicket<String> ANIM = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofString(new ResourceLocation(GeckoLib.ModID, "anim")));
-	public static final SerializableDataTicket<Integer> USE_TICKS = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(new ResourceLocation(GeckoLib.ModID, "use_ticks")));
-	public static final SerializableDataTicket<Boolean> ACTIVE = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.ModID, "active")));
-	public static final SerializableDataTicket<Boolean> OPEN = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.ModID, "open")));
-	public static final SerializableDataTicket<Boolean> CLOSED = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.ModID, "closed")));
-	public static final SerializableDataTicket<Direction> DIRECTION = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofEnum(new ResourceLocation(GeckoLib.ModID, "direction"), Direction.class));
+	public static final SerializableDataTicket<Integer> ANIM_STATE = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(new ResourceLocation(GeckoLib.MOD_ID, "anim_state")));
+	public static final SerializableDataTicket<String> ANIM = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofString(new ResourceLocation(GeckoLib.MOD_ID, "anim")));
+	public static final SerializableDataTicket<Integer> USE_TICKS = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(new ResourceLocation(GeckoLib.MOD_ID, "use_ticks")));
+	public static final SerializableDataTicket<Boolean> ACTIVE = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.MOD_ID, "active")));
+	public static final SerializableDataTicket<Boolean> OPEN = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.MOD_ID, "open")));
+	public static final SerializableDataTicket<Boolean> CLOSED = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofBoolean(new ResourceLocation(GeckoLib.MOD_ID, "closed")));
+	public static final SerializableDataTicket<Direction> DIRECTION = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofEnum(new ResourceLocation(GeckoLib.MOD_ID, "direction"), Direction.class));
 
 	@Nullable
 	public static SerializableDataTicket<?> byName(String id) {
