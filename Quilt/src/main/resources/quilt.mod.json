@@ -42,5 +42,6 @@
 	],
 	"minecraft": {
 		"environment": "*"
-	}
+	},
+	"access_widener": "geckolib.aw"
 }
