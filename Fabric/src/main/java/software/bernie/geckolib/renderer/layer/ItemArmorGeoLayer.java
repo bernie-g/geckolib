@@ -1,14 +1,23 @@
 package software.bernie.geckolib.renderer.layer;
 
+import java.util.Map;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.joml.Quaternionf;
+
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.ModelPart.Cube;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
@@ -21,11 +30,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.PlayerHeadItem;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
-import org.joml.Quaternionf;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -35,10 +48,6 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtils;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.Map;
 
 /**
  * Builtin class for handling dynamic armor rendering on GeckoLib entities.<br>
@@ -199,12 +208,13 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	@Nonnull
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
+		
 		return SingletonGeoAnimatable.RenderProvider.of(stack).getHumanoidArmorModel(null, stack, null, defaultModel);
 	}
 
 	/**
 	 * Gets a cached resource path for the vanilla armor layer texture for this armor piece.<br>
-	 * Equivalent to {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#getArmorLocation(ArmorItem, boolean, String)} 
+	 * Equivalent to {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#getArmorResource HumanoidArmorLayer.getArmorResource}
 	 */
 	public ResourceLocation getVanillaArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type) {
 		String domain = "minecraft";
@@ -279,7 +289,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart, boolean isGeoArmor, boolean rotPoseStack) {
 		final GeoCube firstCube = bone.getCubes().get(0);
-		final ModelPart.Cube armorCube = sourcePart.cubes.get(0);
+		final Cube armorCube = sourcePart.cubes.get(0);
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
@@ -295,8 +305,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (isGeoArmor) {
-			float xRot = bone.getRotX();
-			float yRot = bone.getRotY();
+			float xRot = -bone.getRotX();
+			float yRot = -bone.getRotY();
 			float zRot = bone.getRotZ();
 
 			if (!rotPoseStack) {
