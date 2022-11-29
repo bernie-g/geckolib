@@ -100,6 +100,19 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			List<Pair<String, JsonElement>> list = new ObjectArrayList<>();
 
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
+				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
+					String timestamp = entry.getKey();
+					double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
+
+					if (entryObj.has("pre"))
+						list.add(Pair.of(timestamp, GsonHelper.getAsJsonArray(entryObj, "pre")));
+
+					if (entryObj.has("post"))
+						list.add(Pair.of(String.valueOf(time + 0.0000001), GsonHelper.getAsJsonArray(entryObj, "post")));
+
+					continue;
+				}
+
 				list.add(Pair.of(entry.getKey(), entry.getValue()));
 			}
 

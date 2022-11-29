@@ -293,8 +293,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		if (isGeoArmor) {
-			float xRot = bone.getRotX();
-			float yRot = bone.getRotY();
+			float xRot = -bone.getRotX();
+			float yRot = -bone.getRotY();
 			float zRot = bone.getRotZ();
 
 			if (!rotPoseStack) {
