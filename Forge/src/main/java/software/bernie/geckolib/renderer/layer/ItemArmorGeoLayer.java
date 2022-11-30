@@ -144,7 +144,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				poseStack.scale(-1, -1, 1);
 
 				if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
-					prepModelPartForRender(poseStack, bone, modelPart, true, slot == EquipmentSlot.CHEST);
+					prepModelPartForRender(poseStack, bone, modelPart);
 					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
 
 					//Yes, this is absolutely janky, basically just hide all other modelparts, make sure they don't get visible again during render and make the current modelPart visible again
@@ -156,7 +156,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 					geoArmorRenderer.skipBoneVisibility(false);
 				}
 				else if (armorStack.getItem() instanceof ArmorItem) {
-					prepModelPartForRender(poseStack, bone, modelPart, false, false);
+					prepModelPartForRender(poseStack, bone, modelPart);
 					renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
 				}
 
@@ -318,10 +318,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param poseStack The PoseStack being used for rendering
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
-	 * @param isGeoArmor Whether the render is for a GeoArmor piece
-	 * @param rotPoseStack If the render is for a GeoArmor piece, whether the {@link PoseStack} should be manipulated, as opposed to directly setting the sourcePart rotation
 	 */
-	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart, boolean isGeoArmor, boolean rotPoseStack) {
+	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.getCubes().get(0);
 		final Cube armorCube = sourcePart.cubes.get(0);
 		final double armorBoneSizeX = firstCube.size().x();
