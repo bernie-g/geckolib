@@ -193,7 +193,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		if (renderType == null)
 			renderType = RenderType.armorCutoutNoCull(texturePath);
 
-		return ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, true, enchanted);
+		return ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, false, enchanted);
 	}
 
 	/**
