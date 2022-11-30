@@ -20,6 +20,7 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -59,8 +60,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected Entity currentEntity = null;
 	protected ItemStack currentStack = null;
 	protected EquipmentSlot currentSlot = null;
-
-	private boolean skipBoneVisibility = false;
 
 	public GeoArmorRenderer(GeoModel<T> model) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
@@ -234,7 +233,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
 
-		applyBoneVisibility(this.currentSlot);
+		if (!(this.currentEntity instanceof GeoAnimatable))
+			applyBoneVisibilityBySlot(this.currentSlot);
 	}
 
 	@Override
@@ -333,8 +333,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.currentStack = stack;
 		this.animatable = (T)stack.getItem();
 		this.currentSlot = slot;
-
-		this.skipBoneVisibility(false);
 	}
 
 	/**
@@ -348,25 +346,14 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.leftArmPose = baseModel.leftArmPose;
 	}
 
-	public void skipBoneVisibility(boolean skip) {
-		this.skipBoneVisibility = skip;
-	}
-
 	/**
-	 * Resets the bone visibility for the model, and then sets the current slot as visible for rendering.
+	 * Resets the bone visibility for the model based on the currently rendering slot,
+	 * and then sets bones relevant to the current slot as visible for rendering.<br>
+	 * <br>
+	 * This is only called by default for non-geo entities (I.E. players or vanilla mobs)
 	 */
-	protected void applyBoneVisibility(EquipmentSlot currentSlot) {
-		if(this.skipBoneVisibility) {
-			return;
-		}
-		setBoneVisible(this.head, false);
-		setBoneVisible(this.body, false);
-		setBoneVisible(this.rightArm, false);
-		setBoneVisible(this.leftArm, false);
-		setBoneVisible(this.rightLeg, false);
-		setBoneVisible(this.leftLeg, false);
-		setBoneVisible(this.rightBoot, false);
-		setBoneVisible(this.leftBoot, false);
+	protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
+		setAllVisible(false);
 
 		switch (currentSlot) {
 			case HEAD -> setBoneVisible(this.head, true);
@@ -388,6 +375,41 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
+	 * Resets the bone visibility for the model based on the current {@link ModelPart} and {@link EquipmentSlot},
+	 * and then sets the bones relevant to the current part as visible for rendering.<br>
+	 * <br>
+	 * If you are rendering a geo entity with armor, you should probably be calling this prior to rendering
+	 */
+	public void applyBoneVisibilityByPart(EquipmentSlot currentSlot, ModelPart currentPart, HumanoidModel<?> model) {
+		setAllVisible(false);
+
+		currentPart.visible = true;
+		GeoBone bone = null;
+
+		if (currentPart == model.hat || currentPart == model.head) {
+			bone = this.head;
+		}
+		else if (currentPart == model.body) {
+			bone = this.body;
+		}
+		else if (currentPart == model.leftArm) {
+			bone = this.leftArm;
+		}
+		else if (currentPart == model.rightArm) {
+			bone = this.rightArm;
+		}
+		else if (currentPart == model.leftLeg) {
+			bone = currentSlot == EquipmentSlot.FEET ? this.leftBoot : this.leftLeg;
+		}
+		else if (currentPart == model.rightLeg) {
+			bone = currentSlot == EquipmentSlot.FEET ? this.rightBoot : this.rightLeg;
+		}
+
+		if (bone != null)
+			bone.setHidden(false);
+	}
+
+	/**
 	 * Transform the currently rendering {@link GeoModel} to match the positions and rotations of the base model
 	 */
 	protected void applyBaseTransformations(HumanoidModel<?> baseModel) {
@@ -395,7 +417,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart headPart = baseModel.head;
 
 			RenderUtils.matchModelPartRot(headPart, this.head);
-			this.head.setHidden(!headPart.visible);
 			this.head.updatePosition(headPart.x, -headPart.y, headPart.z);
 		}
 
@@ -403,7 +424,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart bodyPart = baseModel.body;
 
 			RenderUtils.matchModelPartRot(bodyPart, this.body);
-			this.body.setHidden(!bodyPart.visible);
 			this.body.updatePosition(bodyPart.x, -bodyPart.y, bodyPart.z);
 		}
 
@@ -411,7 +431,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightArmPart = baseModel.rightArm;
 
 			RenderUtils.matchModelPartRot(rightArmPart, this.rightArm);
-			this.rightArm.setHidden(!rightArmPart.visible);
 			this.rightArm.updatePosition(rightArmPart.x + 5, 2 - rightArmPart.y, rightArmPart.z);
 		}
 
@@ -419,7 +438,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftArmPart = baseModel.leftArm;
 
 			RenderUtils.matchModelPartRot(leftArmPart, this.leftArm);
-			this.leftArm.setHidden(!leftArmPart.visible);
 			this.leftArm.updatePosition(leftArmPart.x - 5f, 2f - leftArmPart.y, leftArmPart.z);
 		}
 
@@ -427,7 +445,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightLegPart = baseModel.rightLeg;
 
 			RenderUtils.matchModelPartRot(rightLegPart, this.rightLeg);
-			this.rightLeg.setHidden(!rightLegPart.visible);
 			this.rightLeg.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 
 			if (this.rightBoot != null) {
@@ -440,12 +457,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftLegPart = baseModel.leftLeg;
 
 			RenderUtils.matchModelPartRot(leftLegPart, this.leftLeg);
-			this.leftLeg.setHidden(!leftLegPart.visible);
 			this.leftLeg.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 
 			if (this.leftBoot != null) {
 				RenderUtils.matchModelPartRot(leftLegPart, this.leftBoot);
-				this.leftBoot.setHidden(!leftLegPart.visible);
 				this.leftBoot.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 			}
 		}

@@ -20,6 +20,7 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -140,7 +141,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the head model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getHeadBone() {
+	public GeoBone getHeadBone() {
 		return this.model.getBone("armorHead").orElse(null);
 	}
 
@@ -150,7 +151,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the body model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getBodyBone() {
+	public GeoBone getBodyBone() {
 		return this.model.getBone("armorBody").orElse(null);
 	}
 
@@ -160,7 +161,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right arm model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightArmBone() {
+	public GeoBone getRightArmBone() {
 		return this.model.getBone("armorRightArm").orElse(null);
 	}
 
@@ -170,7 +171,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left arm model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftArmBone() {
+	public GeoBone getLeftArmBone() {
 		return this.model.getBone("armorLeftArm").orElse(null);
 	}
 
@@ -180,7 +181,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right leg model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightLegBone() {
+	public GeoBone getRightLegBone() {
 		return this.model.getBone("armorRightLeg").orElse(null);
 	}
 
@@ -190,7 +191,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left leg model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftLegBone() {
+	public GeoBone getLeftLegBone() {
 		return this.model.getBone("armorLeftLeg").orElse(null);
 	}
 
@@ -200,7 +201,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right boot model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightBootBone() {
+	public GeoBone getRightBootBone() {
 		return this.model.getBone("armorRightBoot").orElse(null);
 	}
 
@@ -210,7 +211,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left boot model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftBootBone() {
+	public GeoBone getLeftBootBone() {
 		return this.model.getBone("armorLeftBoot").orElse(null);
 	}
 
@@ -232,7 +233,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
 
-		applyBoneVisibility(this.currentSlot);
+		if (!(this.currentEntity instanceof GeoAnimatable))
+			applyBoneVisibilityBySlot(this.currentSlot);
 	}
 
 	@Override
@@ -345,17 +347,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Resets the bone visibility for the model, and then sets the current slot as visible for rendering.
+	 * Resets the bone visibility for the model based on the currently rendering slot,
+	 * and then sets bones relevant to the current slot as visible for rendering.<br>
+	 * <br>
+	 * This is only called by default for non-geo entities (I.E. players or vanilla mobs)
 	 */
-	protected void applyBoneVisibility(EquipmentSlot currentSlot) {
-		setBoneVisible(this.head, false);
-		setBoneVisible(this.body, false);
-		setBoneVisible(this.rightArm, false);
-		setBoneVisible(this.leftArm, false);
-		setBoneVisible(this.rightLeg, false);
-		setBoneVisible(this.leftLeg, false);
-		setBoneVisible(this.rightBoot, false);
-		setBoneVisible(this.leftBoot, false);
+	protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
+		setAllVisible(false);
 
 		switch (currentSlot) {
 			case HEAD -> setBoneVisible(this.head, true);
@@ -374,6 +372,41 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			}
 			default -> {}
 		}
+	}
+
+	/**
+	 * Resets the bone visibility for the model based on the current {@link ModelPart} and {@link EquipmentSlot},
+	 * and then sets the bones relevant to the current part as visible for rendering.<br>
+	 * <br>
+	 * If you are rendering a geo entity with armor, you should probably be calling this prior to rendering
+	 */
+	public void applyBoneVisibilityByPart(EquipmentSlot currentSlot, ModelPart currentPart, HumanoidModel<?> model) {
+		setAllVisible(false);
+
+		currentPart.visible = true;
+		GeoBone bone = null;
+
+		if (currentPart == model.hat || currentPart == model.head) {
+			bone = this.head;
+		}
+		else if (currentPart == model.body) {
+			bone = this.body;
+		}
+		else if (currentPart == model.leftArm) {
+			bone = this.leftArm;
+		}
+		else if (currentPart == model.rightArm) {
+			bone = this.rightArm;
+		}
+		else if (currentPart == model.leftLeg) {
+			bone = currentSlot == EquipmentSlot.FEET ? this.leftBoot : this.leftLeg;
+		}
+		else if (currentPart == model.rightLeg) {
+			bone = currentSlot == EquipmentSlot.FEET ? this.rightBoot : this.rightLeg;
+		}
+
+		if (bone != null)
+			bone.setHidden(false);
 	}
 
 	/**
@@ -431,6 +464,20 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 				this.leftBoot.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 			}
 		}
+	}
+
+	@Override
+	public void setAllVisible(boolean pVisible) {
+		super.setAllVisible(pVisible);
+
+		setBoneVisible(this.head, pVisible);
+		setBoneVisible(this.body, pVisible);
+		setBoneVisible(this.rightArm, pVisible);
+		setBoneVisible(this.leftArm, pVisible);
+		setBoneVisible(this.rightLeg, pVisible);
+		setBoneVisible(this.leftLeg, pVisible);
+		setBoneVisible(this.rightBoot, pVisible);
+		setBoneVisible(this.leftBoot, pVisible);
 	}
 
 	/**

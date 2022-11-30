@@ -3,7 +3,6 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.authlib.GameProfile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -146,14 +145,9 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
 					prepModelPartForRender(poseStack, bone, modelPart);
 					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
-
-					//Yes, this is absolutely janky, basically just hide all other modelparts, make sure they don't get visible again during render and make the current modelPart visible again
-					setupGeoArmorBoneVisibility(geoArmorRenderer, modelPart, model, slot);
-					geoArmorRenderer.skipBoneVisibility(true);
-
+					geoArmorRenderer.setAllVisible(false);
+					geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, model);
 					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 1, 1, 1, 1);
-
-					geoArmorRenderer.skipBoneVisibility(false);
 				}
 				else if (armorStack.getItem() instanceof ArmorItem) {
 					prepModelPartForRender(poseStack, bone, modelPart);
@@ -165,45 +159,6 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		}
 
 		buffer = bufferSource.getBuffer(renderType);
-	}
-
-	protected void setupGeoArmorBoneVisibility(GeoArmorRenderer<?> geoArmorRenderer, ModelPart modelPart, HumanoidModel<?> model, EquipmentSlot slot) {
-		//First: Hide them all
-		geoArmorRenderer.setAllVisible(false);
-		//Only set certain parts visible
-		GeoBone bone = null;
-		if (modelPart == model.hat || modelPart == model.head) {
-			bone = geoArmorRenderer.getHeadBone();
-		}
-		if (modelPart == model.body) {
-			bone = geoArmorRenderer.getBodyBone();
-		}
-		if (modelPart == model.leftLeg) {
-			if (slot == EquipmentSlot.FEET) {
-				bone = geoArmorRenderer.getLeftBootBone();
-			} else {
-				bone = geoArmorRenderer.getLeftLegBone();
-			}
-		}
-		if (modelPart == model.rightLeg) {
-			if (slot == EquipmentSlot.FEET) {
-				bone = geoArmorRenderer.getRightBootBone();
-			} else {
-				bone = geoArmorRenderer.getRightLegBone();
-			}
-		}
-		if (modelPart == model.leftArm) {
-			bone = geoArmorRenderer.getLeftArmBone();
-		}
-		if (modelPart == model.rightArm) {
-			bone = geoArmorRenderer.getRightArmBone();
-		}
-
-		//Finally, set the current part to be visible
-		if (bone != null)
-			bone.setHidden(false);
-
-		modelPart.visible = true;
 	}
 
 	/**
