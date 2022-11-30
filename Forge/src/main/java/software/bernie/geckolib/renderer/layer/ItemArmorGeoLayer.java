@@ -146,7 +146,14 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
 					prepModelPartForRender(poseStack, bone, modelPart, true, slot == EquipmentSlot.CHEST);
 					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
+
+					//Yes, this is absolutely janky, basically just hide all other modelparts, make sure they don't get visible again during render and make the current modelPart visible again
+					setupGeoArmorBoneVisibility(geoArmorRenderer, modelPart, model, slot);
+					geoArmorRenderer.skipBoneVisibility(true);
+
 					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 1, 1, 1, 1);
+
+					geoArmorRenderer.skipBoneVisibility(false);
 				}
 				else if (armorStack.getItem() instanceof ArmorItem) {
 					prepModelPartForRender(poseStack, bone, modelPart, false, false);
@@ -158,6 +165,45 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		}
 
 		buffer = bufferSource.getBuffer(renderType);
+	}
+
+	protected void setupGeoArmorBoneVisibility(GeoArmorRenderer<?> geoArmorRenderer, ModelPart modelPart, HumanoidModel<?> model, EquipmentSlot slot) {
+		//First: Hide them all
+		geoArmorRenderer.setAllVisible(false);
+		//Only set certain parts visible
+		GeoBone bone = null;
+		if (modelPart == model.hat || modelPart == model.head) {
+			bone = geoArmorRenderer.getHeadBone();
+		}
+		if (modelPart == model.body) {
+			bone = geoArmorRenderer.getBodyBone();
+		}
+		if (modelPart == model.leftLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				bone = geoArmorRenderer.getLeftBootBone();
+			} else {
+				bone = geoArmorRenderer.getLeftLegBone();
+			}
+		}
+		if (modelPart == model.rightLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				bone = geoArmorRenderer.getRightBootBone();
+			} else {
+				bone = geoArmorRenderer.getRightLegBone();
+			}
+		}
+		if (modelPart == model.leftArm) {
+			bone = geoArmorRenderer.getLeftArmBone();
+		}
+		if (modelPart == model.rightArm) {
+			bone = geoArmorRenderer.getRightArmBone();
+		}
+
+		//Finally, set the current part to be visible
+		if (bone != null)
+			bone.setHidden(false);
+
+		modelPart.visible = true;
 	}
 
 	/**
@@ -292,37 +338,9 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
 				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
-		if (isGeoArmor) {
-			float xRot = -bone.getRotX();
-			float yRot = -bone.getRotY();
-			float zRot = bone.getRotZ();
-
-			if (!rotPoseStack) {
-				GeoBone parent = bone.getParent();
-
-				while (parent != null) {
-					xRot -= parent.getRotX();
-					yRot -= parent.getRotY();
-					zRot += parent.getRotZ();
-					parent = parent.getParent();
-				}
-			}
-
-			sourcePart.xRot = xRot;
-			sourcePart.yRot = yRot;
-			sourcePart.zRot = zRot;
-
-			if (!rotPoseStack) {
-				poseStack.mulPose(new Quaternion(0, 0, zRot, true));
-				poseStack.mulPose(new Quaternion(0, yRot, 0, true));
-				poseStack.mulPose(new Quaternion(xRot, 0, 0, true));
-			}
-		}
-		else {
-			sourcePart.xRot = -bone.getRotX();
-			sourcePart.yRot = -bone.getRotY();
-			sourcePart.zRot = bone.getRotZ();
-		}
+		sourcePart.xRot = -bone.getRotX();
+		sourcePart.yRot = -bone.getRotY();
+		sourcePart.zRot = bone.getRotZ();
 
 		poseStack.scale(scaleX, scaleY, scaleZ);
 	}

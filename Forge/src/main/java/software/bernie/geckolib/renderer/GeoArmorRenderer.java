@@ -60,6 +60,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected ItemStack currentStack = null;
 	protected EquipmentSlot currentSlot = null;
 
+	private boolean skipBoneVisibility = false;
+
 	public GeoArmorRenderer(GeoModel<T> model) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 
@@ -140,7 +142,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the head model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getHeadBone() {
+	public GeoBone getHeadBone() {
 		return this.model.getBone("armorHead").orElse(null);
 	}
 
@@ -150,7 +152,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the body model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getBodyBone() {
+	public GeoBone getBodyBone() {
 		return this.model.getBone("armorBody").orElse(null);
 	}
 
@@ -160,7 +162,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right arm model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightArmBone() {
+	public GeoBone getRightArmBone() {
 		return this.model.getBone("armorRightArm").orElse(null);
 	}
 
@@ -170,7 +172,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left arm model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftArmBone() {
+	public GeoBone getLeftArmBone() {
 		return this.model.getBone("armorLeftArm").orElse(null);
 	}
 
@@ -180,7 +182,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right leg model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightLegBone() {
+	public GeoBone getRightLegBone() {
 		return this.model.getBone("armorRightLeg").orElse(null);
 	}
 
@@ -190,7 +192,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left leg model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftLegBone() {
+	public GeoBone getLeftLegBone() {
 		return this.model.getBone("armorLeftLeg").orElse(null);
 	}
 
@@ -200,7 +202,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right boot model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getRightBootBone() {
+	public GeoBone getRightBootBone() {
 		return this.model.getBone("armorRightBoot").orElse(null);
 	}
 
@@ -210,7 +212,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left boot model piece, or null if not using it
 	 */
 	@Nullable
-	protected GeoBone getLeftBootBone() {
+	public GeoBone getLeftBootBone() {
 		return this.model.getBone("armorLeftBoot").orElse(null);
 	}
 
@@ -331,6 +333,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.currentStack = stack;
 		this.animatable = (T)stack.getItem();
 		this.currentSlot = slot;
+
+		this.skipBoneVisibility(false);
 	}
 
 	/**
@@ -344,10 +348,17 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.leftArmPose = baseModel.leftArmPose;
 	}
 
+	public void skipBoneVisibility(boolean skip) {
+		this.skipBoneVisibility = skip;
+	}
+
 	/**
 	 * Resets the bone visibility for the model, and then sets the current slot as visible for rendering.
 	 */
 	protected void applyBoneVisibility(EquipmentSlot currentSlot) {
+		if(this.skipBoneVisibility) {
+			return;
+		}
 		setBoneVisible(this.head, false);
 		setBoneVisible(this.body, false);
 		setBoneVisible(this.rightArm, false);
@@ -384,6 +395,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart headPart = baseModel.head;
 
 			RenderUtils.matchModelPartRot(headPart, this.head);
+			this.head.setHidden(!headPart.visible);
 			this.head.updatePosition(headPart.x, -headPart.y, headPart.z);
 		}
 
@@ -391,6 +403,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart bodyPart = baseModel.body;
 
 			RenderUtils.matchModelPartRot(bodyPart, this.body);
+			this.body.setHidden(!bodyPart.visible);
 			this.body.updatePosition(bodyPart.x, -bodyPart.y, bodyPart.z);
 		}
 
@@ -398,6 +411,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightArmPart = baseModel.rightArm;
 
 			RenderUtils.matchModelPartRot(rightArmPart, this.rightArm);
+			this.rightArm.setHidden(!rightArmPart.visible);
 			this.rightArm.updatePosition(rightArmPart.x + 5, 2 - rightArmPart.y, rightArmPart.z);
 		}
 
@@ -405,6 +419,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftArmPart = baseModel.leftArm;
 
 			RenderUtils.matchModelPartRot(leftArmPart, this.leftArm);
+			this.leftArm.setHidden(!leftArmPart.visible);
 			this.leftArm.updatePosition(leftArmPart.x - 5f, 2f - leftArmPart.y, leftArmPart.z);
 		}
 
@@ -412,6 +427,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightLegPart = baseModel.rightLeg;
 
 			RenderUtils.matchModelPartRot(rightLegPart, this.rightLeg);
+			this.rightLeg.setHidden(!rightLegPart.visible);
 			this.rightLeg.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 
 			if (this.rightBoot != null) {
@@ -424,13 +440,29 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftLegPart = baseModel.leftLeg;
 
 			RenderUtils.matchModelPartRot(leftLegPart, this.leftLeg);
+			this.leftLeg.setHidden(!leftLegPart.visible);
 			this.leftLeg.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 
 			if (this.leftBoot != null) {
 				RenderUtils.matchModelPartRot(leftLegPart, this.leftBoot);
+				this.leftBoot.setHidden(!leftLegPart.visible);
 				this.leftBoot.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 			}
 		}
+	}
+
+	@Override
+	public void setAllVisible(boolean pVisible) {
+		super.setAllVisible(pVisible);
+
+		setBoneVisible(this.head, pVisible);
+		setBoneVisible(this.body, pVisible);
+		setBoneVisible(this.rightArm, pVisible);
+		setBoneVisible(this.leftArm, pVisible);
+		setBoneVisible(this.rightLeg, pVisible);
+		setBoneVisible(this.leftLeg, pVisible);
+		setBoneVisible(this.rightBoot, pVisible);
+		setBoneVisible(this.leftBoot, pVisible);
 	}
 
 	/**
