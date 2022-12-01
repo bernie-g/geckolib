@@ -231,7 +231,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			Vec3 velocity = livingEntity.getDeltaMovement();
 			float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f;
 
-			isMoving = avgVelocity >= motionThreshold;
+			isMoving = avgVelocity >= motionThreshold && limbSwingAmount != 0;
 		}
 		else {
 			isMoving = (limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold);
@@ -302,6 +302,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
