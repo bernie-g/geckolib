@@ -22,7 +22,7 @@ import java.util.function.BiFunction;
  * {@link GeoRenderLayer} for rendering {@link net.minecraft.world.level.block.state.BlockState BlockStates}
  * or {@link net.minecraft.world.item.ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
-public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
+public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
 	protected final BiFunction<GeoBone, T, ItemStack> stackForBone;
 	protected final BiFunction<GeoBone, T, BlockState> blockForBone;
 

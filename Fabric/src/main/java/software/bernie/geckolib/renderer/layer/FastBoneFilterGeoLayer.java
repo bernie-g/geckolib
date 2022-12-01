@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * This version requires you provide the list of bones to filter up-front,
  * so that the bone hierarchy doesn't need to be traversed.
  */
-public abstract class FastBoneFilterGeoLayer<T extends GeoAnimatable> extends BoneFilterGeoLayer<T> {
+public class FastBoneFilterGeoLayer<T extends GeoAnimatable> extends BoneFilterGeoLayer<T> {
 	protected final Supplier<List<String>> boneSupplier;
 
 	public FastBoneFilterGeoLayer(GeoRenderer<T> renderer) {

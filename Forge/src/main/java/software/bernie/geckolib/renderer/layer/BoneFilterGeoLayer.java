@@ -16,7 +16,7 @@ import software.bernie.geckolib.renderer.GeoRenderer;
  * <br>
  * NOTE: Despite this layer existing, it is much more efficient to use {@link FastBoneFilterGeoLayer} instead
  */
-public abstract class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
+public class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
 	protected final TriConsumer<GeoBone, T, Float> checkAndApply;
 
 	public BoneFilterGeoLayer(GeoRenderer<T> renderer) {
