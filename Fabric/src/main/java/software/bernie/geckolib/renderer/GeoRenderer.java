@@ -128,7 +128,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay);
 
 		actuallyRender(poseStack, animatable, model, renderType,
-				bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+				bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
@@ -139,15 +139,28 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Re-renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}.<br>
+	 * Usually you'd use this for rendering alternate {@link RenderType} layers or for sub-model rendering whilst inside a {@link GeoRenderLayer} or similar
+	 */
+	default void reRender(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
+						  RenderType renderType, VertexConsumer buffer, float partialTick,
+						  int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		poseStack.pushPose();
+		preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		postRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		poseStack.popPose();
+	}
+
+	/**
 	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks.<br>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	default void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
-								MultiBufferSource bufferSource, VertexConsumer buffer,
-								float partialTick, int packedLight, int packedOverlay,
-								float red, float green, float blue, float alpha) {
+								MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick,
+								int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		for (GeoBone group : model.topLevelBones()) {
-			renderRecursively(poseStack, animatable, group, renderType, bufferSource, buffer, partialTick, packedLight,
+			renderRecursively(poseStack, animatable, group, renderType, bufferSource, buffer, skipGeoLayers, partialTick, packedLight,
 					packedOverlay, red, green, blue, alpha);
 		}
 	}
@@ -202,13 +215,16 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	default void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
-								   VertexConsumer buffer, float partialTick, int packedLight,
+								   VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.prepMatrixForBone(poseStack, bone);
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-		applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+
+		if (!skipGeoLayers)
+			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
 
@@ -232,12 +248,12 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Note that this does not render the bone itself. That should be done through {@link GeoRenderer#renderCubesOfBone} separately
 	 */
 	default void renderChildBones(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
-								  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+								  boolean skipGeoLayers, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isHidingChildren())
 			return;
 
 		for (GeoBone childBone : bone.getChildBones()) {
-			renderRecursively(poseStack, animatable, childBone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			renderRecursively(poseStack, animatable, childBone, renderType, bufferSource, buffer, skipGeoLayers, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		}
 	}
 

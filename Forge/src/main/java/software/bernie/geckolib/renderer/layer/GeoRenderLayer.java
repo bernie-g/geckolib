@@ -82,18 +82,4 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 */
 	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType,
 							  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {}
-
-	/**
-	 * Renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}.<br>
-	 * Usually you'd use this for rendering alternate {@link RenderType} layers or for sub-model rendering
-	 */
-	protected final void renderModel(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
-							   RenderType renderType, VertexConsumer buffer, float partialTick,
-							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		poseStack.pushPose();
-		getRenderer().preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-		getRenderer().actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-		getRenderer().postRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-		poseStack.popPose();
-	}
 }

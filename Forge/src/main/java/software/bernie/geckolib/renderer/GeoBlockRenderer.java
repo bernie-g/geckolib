@@ -133,7 +133,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 */
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
-							   MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+							   MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 							   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
@@ -150,7 +150,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		this.model.handleAnimations(animatable, instanceId, animationEvent);
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
-		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick,
+		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, skipGeoLayers, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
@@ -159,7 +159,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
 			Matrix4f poseState = poseStack.last().pose().copy();
@@ -175,7 +175,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue,
+		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, skipGeoLayers, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}
 
