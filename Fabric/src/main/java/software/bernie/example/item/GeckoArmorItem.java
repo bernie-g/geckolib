@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import software.bernie.example.client.renderer.armor.GeckoArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -34,7 +35,7 @@ import java.util.function.Supplier;
  */
 public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	private final Supplier<RenderProvider> renderProvider = GeoItem.makeRenderer(this);
+	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
 	public GeckoArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
 		super(armorMaterial, slot, properties);
@@ -42,7 +43,7 @@ public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 
 	// Create our armor model/renderer for Fabric and return it
 	@Override
-	public void createRenderer(Consumer<RenderProvider> consumer) {
+	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
 			private GeoArmorRenderer<?> renderer;
 
@@ -61,7 +62,7 @@ public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 	}
 
 	@Override
-	public Supplier<RenderProvider> getRenderProvider() {
+	public Supplier<Object> getRenderProvider() {
 		return this.renderProvider;
 	}
 

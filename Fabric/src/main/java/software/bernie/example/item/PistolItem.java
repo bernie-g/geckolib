@@ -18,10 +18,11 @@ import software.bernie.example.client.renderer.item.PistolRenderer;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -35,7 +36,7 @@ import java.util.function.Supplier;
  */
 public class PistolItem extends Item implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	private final Supplier<RenderProvider> renderProvider = GeoItem.makeRenderer(this);
+	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
 	public PistolItem() {
 		super(new Properties().stacksTo(1).durability(201));
@@ -47,7 +48,7 @@ public class PistolItem extends Item implements GeoItem {
 
 	// Utilise our own render hook to define our custom renderer
 	@Override
-	public void createRenderer(Consumer<RenderProvider> consumer) {
+	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
 			private final PistolRenderer renderer = new PistolRenderer();
 
@@ -59,7 +60,7 @@ public class PistolItem extends Item implements GeoItem {
 	}
 
 	@Override
-	public Supplier<RenderProvider> getRenderProvider() {
+	public Supplier<Object> getRenderProvider() {
 		return this.renderProvider;
 	}
 

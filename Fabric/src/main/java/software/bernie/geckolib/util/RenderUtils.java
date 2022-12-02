@@ -1,16 +1,9 @@
 package software.bernie.geckolib.util;
 
-import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
-
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
@@ -27,8 +20,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
@@ -36,6 +32,8 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
+
+import javax.annotation.Nullable;
 
 /**
  * Helper class for various methods and functions useful while rendering
@@ -264,7 +262,7 @@ public final class RenderUtils {
 	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
-		if(SingletonGeoAnimatable.RenderProvider.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
+		if(RenderProvider.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
 			return geoRenderer.getGeoModel();
 
 		return null;
@@ -293,7 +291,7 @@ public final class RenderUtils {
 	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
-		if (SingletonGeoAnimatable.RenderProvider.of(stack).getHumanoidArmorModel(null, stack, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+		if (RenderProvider.of(stack).getHumanoidArmorModel(null, stack, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
 			return armorRenderer.getGeoModel();
 
 		return null;

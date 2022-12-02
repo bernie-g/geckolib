@@ -12,10 +12,11 @@ import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -27,10 +28,9 @@ import java.util.function.Supplier;
  * Example {@link GeoItem} implementation in the form of a Jack-in-the-Box.<br>
  */
 public final class JackInTheBoxItem extends Item implements GeoItem {
-
 	private static final RawAnimation POPUP_ANIM = RawAnimation.begin().thenPlay("use.popup");
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	private final Supplier<RenderProvider> renderProvider = GeoItem.makeRenderer(this);
+	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
 	public JackInTheBoxItem(Properties properties) {
 		super(properties);
@@ -42,19 +42,22 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 
 	// Utilise our own render hook to define our custom renderer
 	@Override
-	public void createRenderer(Consumer<RenderProvider> consumer) {
+	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
-			private final JackInTheBoxRenderer RENDERER = new JackInTheBoxRenderer();
+			private JackInTheBoxRenderer renderer;
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return this.RENDERER;
+				if (this.renderer == null)
+					this.renderer = new JackInTheBoxRenderer();
+
+				return this.renderer;
 			}
 		});
 	}
 
 	@Override
-	public Supplier<RenderProvider> getRenderProvider() {
+	public Supplier<Object> getRenderProvider() {
 		return this.renderProvider;
 	}
 

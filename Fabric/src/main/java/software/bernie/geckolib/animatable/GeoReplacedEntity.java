@@ -86,11 +86,11 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 
 	// These methods aren't used for GeoReplacedEntity
 	@Override
-	default void createRenderer(Consumer<RenderProvider> consumer) {}
+	default void createRenderer(Consumer<Object> consumer) {}
 
 	// These methods aren't used for GeoReplacedEntity
 	@Override
-	default Supplier<RenderProvider> getRenderProvider() {
+	default Supplier<Object> getRenderProvider() {
 		return null;
 	}
 }

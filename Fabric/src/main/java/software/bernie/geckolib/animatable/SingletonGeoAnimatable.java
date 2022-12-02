@@ -1,21 +1,12 @@
 package software.bernie.geckolib.animatable;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.AnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.AnimTriggerPacket;
-import software.bernie.geckolib.mixins.fabric.ItemRendererAccessor;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -116,48 +107,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     }
 
     /**
-     * Internal interface for safely providing a custom renderer instances at runtime.<br>
-     * This can be safely instantiated as a new anonymous class inside your {@link Item} class
-     */
-    interface RenderProvider {
-
-        RenderProvider DEFAULT = new RenderProvider() {};
-
-        static RenderProvider of(ItemStack itemStack) {
-            return of(itemStack.getItem());
-        }
-
-        static RenderProvider of(Item item) {
-            if(item instanceof GeoItem geoItem){
-                return geoItem.getRenderProvider().get();
-            }
-
-            return DEFAULT;
-        }
-
-        default BlockEntityWithoutLevelRenderer getCustomRenderer(){
-            return ((ItemRendererAccessor)Minecraft.getInstance().getItemRenderer()).getBlockEntityRenderer();
-        }
-
-
-        default Model getGenericArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
-            HumanoidModel<LivingEntity> replacement = getHumanoidArmorModel(livingEntity, itemStack, equipmentSlot, original);
-
-            if (replacement != original) {
-                original.copyPropertiesTo(replacement);
-                return replacement;
-            }
-
-            return original;
-        }
-
-        default HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
-            return original;
-        }
-    }
-
-    /**
-     * Create your {@link RenderProvider} reference here.<br>
+     * Create your RenderProvider reference here.<br>
      * <b><u>MUST provide an anonymous class</u></b><br>
      * Example Code:
      * <pre>{@code
@@ -176,10 +126,10 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      *
      * @param consumer
      */
-    void createRenderer(Consumer<RenderProvider> consumer);
+    void createRenderer(Consumer<Object> consumer);
 
     /**
      * Getter for the cached RenderProvider in your class
      */
-    Supplier<RenderProvider> getRenderProvider();
+    Supplier<Object> getRenderProvider();
 }

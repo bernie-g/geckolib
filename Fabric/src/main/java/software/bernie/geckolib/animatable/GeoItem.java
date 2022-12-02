@@ -1,10 +1,8 @@
 package software.bernie.geckolib.animatable;
 
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
-
 import com.google.common.base.Suppliers;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
@@ -12,22 +10,28 @@ import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.util.RenderUtils;
 
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
+
 /**
  * The {@link software.bernie.geckolib.core.animatable.GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}.
  * This also applies to armor, as they are just items too.
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
-public interface GeoItem extends SingletonGeoAnimatable, SingletonGeoAnimatable.RenderProvider {
+public interface GeoItem extends SingletonGeoAnimatable {
 	String ID_NBT_KEY = "GeckoLibID";
 
 	/**
 	 * Safety wrapper to distance the client-side code from common code.<br>
 	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
 	 */
-	static Supplier<RenderProvider> makeRenderer(GeoItem item) {
+	static Supplier<Object> makeRenderer(GeoItem item) {
+		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER)
+			return () -> null;
+
 		return Suppliers.memoize(() -> {
-			AtomicReference<RenderProvider> renderProvider = new AtomicReference<>();
+			AtomicReference<Object> renderProvider = new AtomicReference<>();
 			item.createRenderer(renderProvider::set);
 			return renderProvider.get();
 		});
