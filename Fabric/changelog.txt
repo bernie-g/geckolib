@@ -1,10 +1,3 @@
 v4.0.0
 
-- Updated to Pre3.
-- Fixes GeoArmor rotations. - DerToaster
-- Cleans up more of the examples - Tslat
-- Fixes vanilla armor glint in the ItemArmorGeoLayer.
-- Adds support for Bedrock animation files - Tslat
-- Fixes null face crash.- Tslat
-- Fixes Armor sizing - DerToaster
-- Adds Gremlin example.
+Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes
