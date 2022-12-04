@@ -1,0 +1,30 @@
+*.java          text    eol=lf  diff=java
+*.gradle        text    eol=lf  diff=java
+*.kt            text    eol=lf  diff=kotlin
+*.kts           text    eol=lf  diff=kotlin
+gradlew         text    eol=lf
+*.bat           text    eol=crlf
+
+*.md            text    eol=lf  diff=markdown
+
+.editorconfig   text    eol=lf
+
+*.json          text    eol=lf
+*.json5         text    eol=lf
+*.properties    text    eol=lf
+*.toml          text    eol=lf
+*.xml           text    eol=lf  diff=html
+
+# Modding specific
+*.accesswidener text    eol=lf
+
+# These files are binary and should be left untouched
+# (binary is a macro for -text -diff)
+*.class         binary
+*.dll           binary
+*.ear           binary
+*.jar           binary
+*.jks           binary
+*.png           binary
+*.so            binary
+*.war           binary

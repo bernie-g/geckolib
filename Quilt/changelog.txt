@@ -1,0 +1,3 @@
+v4.0.0
+
+Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes

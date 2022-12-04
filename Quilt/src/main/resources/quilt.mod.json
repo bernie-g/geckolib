@@ -1,0 +1,46 @@
+{
+	"schema_version": 1,
+	"quilt_loader": {
+		"group": "software.bernie.geckolib",
+		"id": "geckolib",
+		"version": "${version}",
+		"metadata": {
+			"name": "Geckolib",
+			"description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.",
+			"contributors": {
+				"Me!": "Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat, KyoSleep"
+			},
+			"icon": "geckolib.png"
+		},
+		"intermediate_mappings": "net.fabricmc:intermediary",
+		"entrypoints": {
+			"init": [
+				"software.bernie.example.GeckoLibMod"
+			],
+			"client_init": [
+				"software.bernie.example.ClientListener"
+			]
+		},
+		"depends": [
+			{
+				"id": "quilt_loader",
+				"versions": ">=0.18.1-"
+			},
+			{
+				"id": "quilted_fabric_api",
+				"versions": ">=4.0.0-"
+			},
+			{
+				"id": "minecraft",
+				"versions": ">=1.19.2"
+			}
+		]
+	},
+	"mixin": [
+		"geckolib.mixins.json"
+	],
+	"minecraft": {
+		"environment": "*"
+	},
+	"access_widener": "geckolib.aw"
+}
