@@ -55,6 +55,7 @@ public interface EasingType {
 	EasingType EASE_IN_BOUNCE = register("easeinbounce", value -> easeIn(bounce(value)));
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
+	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
 
 	Double2DoubleFunction buildTransformer(Double value);
 
@@ -125,6 +126,16 @@ public interface EasingType {
 	 */
 	static Double2DoubleFunction linear(Double2DoubleFunction function) {
 		return function;
+	}
+	
+	/**
+	 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes.<br>
+	 * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
+	 */
+	static double catmullRom(double n) {
+		return (0.5f * (2.0f * (n + 1) + ((n + 2) - n) * 1
+				+ (2.0f * n - 5.0f * (n + 1) + 4.0f * (n + 2) - (n + 3)) * 1
+				+ (3.0f * (n + 1) - n - 3.0f * (n + 2) + (n + 3)) * 1));
 	}
 
 	/**
