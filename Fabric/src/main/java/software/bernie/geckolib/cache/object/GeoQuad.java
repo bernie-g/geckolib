@@ -20,7 +20,7 @@ public record GeoQuad(GeoVertex[] vertices, Vector3f normal, Direction direction
 		v /= texHeight;
 		Vector3f normal = direction.step();
 
-		if (mirror) {
+		if (!mirror) {
 			float tempWidth = uWidth;
 			uWidth = u;
 			u = tempWidth;
