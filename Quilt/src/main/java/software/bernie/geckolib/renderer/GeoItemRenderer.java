@@ -153,7 +153,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		}
 		else {
 			RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, Minecraft.getInstance().getFrameTime());
-			VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
+			VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, false, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
 			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer,
 					0, Minecraft.getInstance().getFrameTime(), packedLight);
