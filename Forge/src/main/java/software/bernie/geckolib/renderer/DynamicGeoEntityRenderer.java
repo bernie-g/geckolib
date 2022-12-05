@@ -111,7 +111,9 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 		if (renderTypeOverride != null)
 			buffer = bufferSource.getBuffer(getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick));
 
-		applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+		if (!skipGeoLayers)
+			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
 		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();

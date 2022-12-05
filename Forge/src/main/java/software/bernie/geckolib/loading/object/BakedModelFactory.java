@@ -48,14 +48,13 @@ public interface BakedModelFactory {
 	 */
 	default GeoQuad[] buildQuads(UVUnion uvUnion, GeoVertex[] vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
 		GeoQuad[] quads = new GeoQuad[6];
-		boolean cubeMirror = cube.mirror() == Boolean.TRUE;
 
-		quads[0] = buildQuad(new GeoVertex[] {vertices[3], vertices[2], vertices[0], vertices[1]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.WEST);
-		quads[1] = buildQuad(new GeoVertex[]{vertices[4], vertices[5], vertices[7], vertices[6]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.EAST);
-		quads[2] = buildQuad(new GeoVertex[]{vertices[2], vertices[4], vertices[6], vertices[0]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.NORTH);
-		quads[3] = buildQuad(new GeoVertex[]{vertices[5], vertices[3], vertices[1], vertices[7]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.SOUTH);
-		quads[4] = buildQuad(new GeoVertex[]{vertices[3], vertices[5], vertices[4], vertices[2]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.UP);
-		quads[5] = buildQuad(new GeoVertex[]{vertices[0], vertices[6], vertices[7], vertices[1]}, cube, uvUnion, textureWidth, textureHeight, cubeMirror, Direction.DOWN);
+		quads[0] = buildQuad(new GeoVertex[]{vertices[3], vertices[2], vertices[0], vertices[1]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.WEST);
+		quads[1] = buildQuad(new GeoVertex[]{vertices[4], vertices[5], vertices[7], vertices[6]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.EAST);
+		quads[2] = buildQuad(new GeoVertex[]{vertices[2], vertices[4], vertices[6], vertices[0]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.NORTH);
+		quads[3] = buildQuad(new GeoVertex[]{vertices[5], vertices[3], vertices[1], vertices[7]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.SOUTH);
+		quads[4] = buildQuad(new GeoVertex[]{vertices[3], vertices[5], vertices[4], vertices[2]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.UP);
+		quads[5] = buildQuad(new GeoVertex[]{vertices[0], vertices[6], vertices[7], vertices[1]}, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.DOWN);
 
 		return quads;
 	}
@@ -153,7 +152,7 @@ public interface BakedModelFactory {
 
 		@Override
 		public GeoCube constructCube(Cube cube, ModelProperties properties, GeoBone bone) {
-			boolean mirror = bone.getMirror() == Boolean.TRUE;
+			boolean mirror = cube.mirror() == Boolean.TRUE;
 			double inflate = cube.inflate() != null ? cube.inflate() / 16f : (bone.getInflate() == null ? 0 : bone.getInflate() / 16f);
 			Vec3 size = RenderUtils.arrayToVec(cube.size());
 			Vec3 origin = RenderUtils.arrayToVec(cube.origin());
@@ -162,8 +161,8 @@ public interface BakedModelFactory {
 			origin = new Vec3(-(origin.x + size.x) / 16d, origin.y / 16d, origin.z / 16d);
 			Vec3 vertexSize = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);
 
-			rotation = rotation.multiply(-1, -1, 1);
 			pivot = pivot.multiply(-1, 1, 1);
+			rotation = rotation.multiply(-1, -1, 1);
 			rotation = new Vec3(Math.toRadians(rotation.x), Math.toRadians(rotation.y), Math.toRadians(rotation.z));
 
 			GeoVertex bottomLeftBack = new GeoVertex(origin.x - inflate, origin.y - inflate, origin.z - inflate);
@@ -176,10 +175,10 @@ public interface BakedModelFactory {
 			GeoVertex bottomRightFront = new GeoVertex(origin.x + vertexSize.x + inflate, origin.y - inflate, origin.z + vertexSize.z + inflate);
 
 			GeoQuad[] quads = buildQuads(cube.uv(),
-					(mirror ?
+					((bone.getMirror() == Boolean.TRUE || mirror) ?
 							new GeoVertex[] {bottomRightFront, bottomLeftFront, topRightFront, topLeftFront, topRightBack, topLeftBack, bottomRightBack, bottomLeftBack} :
 							new GeoVertex[] {bottomLeftBack, bottomRightBack, topLeftBack, topRightBack, topLeftFront, topRightFront, bottomLeftFront, bottomRightFront}),
-					cube, (float)properties.textureWidth(), (float)properties.textureHeight(), (mirror || cube.mirror() == Boolean.TRUE));
+					cube, (float)properties.textureWidth(), (float)properties.textureHeight(), mirror);
 
 			return new GeoCube(quads, pivot, rotation, size, inflate, mirror);
 		}
