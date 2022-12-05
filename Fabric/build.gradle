@@ -225,7 +225,7 @@ if (file('key.properties').exists()) {
 		versionName = 'Fabric 1.19.3'
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.3-rc1']
+		gameVersions = ['1.19.3-rc2']
 		versionType = "alpha"
 		loaders = ['fabric']
 		dependencies { 
