@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
@@ -57,7 +57,7 @@ public final class DefaultAnimations {
 	 * false -> Animation Option B
 	 * null  -> Stop Controller</pre>
 	 */
-	public static <T extends GeoAnimatable> AnimationController<T> basicPredicateController(T animatable, RawAnimation optionA, RawAnimation optionB, BiFunction<T, AnimationEvent<T>, Boolean> predicate) {
+	public static <T extends GeoAnimatable> AnimationController<T> basicPredicateController(T animatable, RawAnimation optionA, RawAnimation optionB, BiFunction<T, AnimationState<T>, Boolean> predicate) {
 		return new AnimationController<T>(animatable, "Generic", 10, state -> {
 			Boolean result = predicate.apply(animatable, state);
 
@@ -142,7 +142,7 @@ public final class DefaultAnimations {
 	 * Will play the swim animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericSwimIdleController(T animatable) {
-		return new AnimationController<T>(animatable, "Swim/Idle", 0, state -> state.setAndContinue(state.isMoving() ? SWIM : IDLE)););
+		return new AnimationController<T>(animatable, "Swim/Idle", 0, state -> state.setAndContinue(state.isMoving() ? SWIM : IDLE));
 	}
 
 	/**

@@ -18,7 +18,7 @@ import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
@@ -70,7 +70,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for the body segment
-	protected PlayState poseBody(AnimationEvent<DynamicExampleEntity> state) {
+	protected PlayState poseBody(AnimationState<DynamicExampleEntity> state) {
 		if (isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
@@ -85,7 +85,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for each hand
-	protected PlayState predicateHandPose(InteractionHand hand, AnimationEvent<DynamicExampleEntity> state) {
+	protected PlayState predicateHandPose(InteractionHand hand, AnimationState<DynamicExampleEntity> state) {
 		ItemStack heldStack = getItemInHand(hand);
 
 		if (heldStack.isEmpty() || isWieldingTwoHandedWeapon())
@@ -93,17 +93,14 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 
 		Item handItem = heldStack.getItem();
 
-		if (isBlocking() && (handItem instanceof ShieldItem || handItem.getUseAnimation(heldStack) == UseAnim.BLOCK)) {
-			state.setAnimation(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
-
-			return PlayState.CONTINUE;
-		}
+		if (isBlocking() && (handItem instanceof ShieldItem || handItem.getUseAnimation(heldStack) == UseAnim.BLOCK))
+			return state.setAndContinue(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
 
 		return PlayState.STOP;
 	}
 
 	// Create the animation handler for posing with a dual-wielded weapon
-	private  PlayState poseDualWield(AnimationEvent<DynamicExampleEntity> state) {
+	private  PlayState poseDualWield(AnimationState<DynamicExampleEntity> state) {
 		if (!isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
@@ -111,14 +108,10 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 			UseAnim useAnim = heldStack.getItem().getUseAnimation(heldStack);
 
 			if (useAnim == UseAnim.BOW || useAnim == UseAnim.CROSSBOW) {
-				state.setAnimation(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
-
-				return PlayState.CONTINUE;
+				return state.setAndContinue(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
 			}
 			else if (useAnim == UseAnim.SPEAR) {
-				state.setAnimation(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
-
-				return PlayState.CONTINUE;
+				return state.setAndContinue(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
 			}
 		}
 
@@ -126,14 +119,13 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for attacking with a dual-wielded weapon
-	private <E extends GeoAnimatable> PlayState attackDualWield(AnimationEvent<E> state) {
+	private <E extends GeoAnimatable> PlayState attackDualWield(AnimationState<E> state) {
 		if (!this.swinging || !isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
 		for (ItemStack heldStack : getHandSlots()) {
-			if (heldStack.getItem().getUseAnimation(heldStack) == UseAnim.SPEAR) {
+			if (heldStack.getItem().getUseAnimation(heldStack) == UseAnim.SPEAR)
 				return state.setAndContinue(SPEAR_SWING);
-			}
 		}
 
 		return PlayState.STOP;

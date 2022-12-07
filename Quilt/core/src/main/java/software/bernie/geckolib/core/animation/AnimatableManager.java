@@ -5,11 +5,15 @@
 
 package software.bernie.geckolib.core.animation;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,11 +58,11 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	}
 
 	public Map<String, AnimationController<T>> getAnimationControllers() {
-		return this.animationControllers;
+		return animationControllers;
 	}
 
 	public Map<String, BoneSnapshot> getBoneSnapshotCollection() {
-		return this.boneSnapshotCollection;
+		return boneSnapshotCollection;
 	}
 
 	public void clearSnapshotCache() {

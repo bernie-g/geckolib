@@ -12,7 +12,7 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -93,7 +93,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 *     <li>For entities, it represents the averaged lateral velocity of the object.</li>
 	 *     <li>For {@link software.bernie.geckolib.animatable.GeoBlockEntity Tile Entities} and {@link software.bernie.geckolib.animatable.GeoItem Items}, it's currently unused</li>
 	 * </ul>
-	 * The lower the value, the more sensitive the {@link AnimationEvent#isMoving()} check will be.<br>
+	 * The lower the value, the more sensitive the {@link AnimationState#isMoving()} check will be.<br>
 	 * Particularly low values may have adverse effects however
 	 */
 	default float getMotionAnimThreshold(T animatable) {
