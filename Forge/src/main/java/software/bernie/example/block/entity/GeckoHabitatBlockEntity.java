@@ -8,10 +8,9 @@ import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
@@ -32,13 +31,11 @@ public class GeckoHabitatBlockEntity extends BlockEntity implements GeoBlockEnti
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, state -> {
 			if (getLevel().getDayTime() > 23000 || getLevel().getDayTime() < 13000) {
-				state.setAnimation(DefaultAnimations.REST);
+				return state.setAndContinue(DefaultAnimations.REST);
 			}
 			else {
-				state.setAnimation(DefaultAnimations.IDLE);
+				return state.setAndContinue(DefaultAnimations.IDLE);
 			}
-
-			return PlayState.CONTINUE;
 		}));
 	}
 

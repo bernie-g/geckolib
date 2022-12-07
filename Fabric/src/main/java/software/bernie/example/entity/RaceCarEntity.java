@@ -13,10 +13,9 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
@@ -101,15 +100,13 @@ public class RaceCarEntity extends Animal implements GeoEntity {
 	// Add our idle/moving animation controller
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "controller", 2, event -> {
-			if (event.isMoving() && getControllingPassenger() != null) {
-				event.setAnimation(DefaultAnimations.DRIVE);
+		controllers.add(new AnimationController<>(this, "controller", 2, state -> {
+			if (state.isMoving() && getControllingPassenger() != null) {
+				return state.setAndContinue(DefaultAnimations.DRIVE);
 			}
 			else {
-				event.setAnimation(DefaultAnimations.IDLE);
+				return state.setAndContinue(DefaultAnimations.IDLE);
 			}
-
-			return PlayState.CONTINUE;
 			// Handle the sound keyframe that is part of our animation json
 		}).setSoundKeyframeHandler(event -> {
 			// We don't have a sound for this yet :(

@@ -365,13 +365,13 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * queues, and process animation state logic.
 	 *
 	 * @param model					The model currently being processed
-	 * @param event                 The animation test event
+	 * @param state                 The animation test state
 	 * @param bones                 The registered {@link CoreGeoBone bones} for this model
 	 * @param snapshots             The {@link BoneSnapshot} map
 	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(CoreGeoModel<T> model, AnimationEvent<T> event, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
+	public void process(CoreGeoModel<T> model, AnimationEvent<T> state, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
@@ -381,7 +381,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			adjustedTick = adjustTick(seekTime);
 		}
 
-		PlayState playState = handleAnimationEvent(event);
+		PlayState playState = handleAnimationEvent(state);
 
 		if (playState == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.isEmpty())) {
 			this.animationState = State.STOPPED;
@@ -694,12 +694,12 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * This handler defines which animation should be currently playing, and returning a {@link PlayState} to tell the controller what to do next.<br>
 	 * Example Usage:<br>
 	 * <pre>{@code
-	 * AnimationFrameHandler myIdleWalkHandler = event -> {
-	 *	if (event.isMoving()) {
-	 *		event.getController().setAnimation(myWalkAnimation);
+	 * AnimationFrameHandler myIdleWalkHandler = state -> {
+	 *	if (state.isMoving()) {
+	 *		state.getController().setAnimation(myWalkAnimation);
 	 *	}
 	 *	else {
-	 *		event.getController().setAnimation(myIdleAnimation);
+	 *		state.getController().setAnimation(myIdleAnimation);
 	 *	}
 	 *
 	 *	return PlayState.CONTINUE;

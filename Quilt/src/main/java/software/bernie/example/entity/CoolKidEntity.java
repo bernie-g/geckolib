@@ -34,11 +34,7 @@ public class CoolKidEntity extends PathfinderMob implements GeoEntity {
 	// Add a generic idle controller, with a 5-tick transition time
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "idle", 5, event -> {
-			event.setAnimation(DefaultAnimations.IDLE);
-
-			return PlayState.CONTINUE;
-		}));
+		controllers.add(new AnimationController<>(this, "idle", 5, state -> state.setAndContinue(DefaultAnimations.IDLE)));
 	}
 
     @Override

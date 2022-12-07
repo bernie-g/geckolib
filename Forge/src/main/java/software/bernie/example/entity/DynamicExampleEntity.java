@@ -93,11 +93,8 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 
 		Item handItem = heldStack.getItem();
 
-		if (isBlocking() && (handItem instanceof ShieldItem || handItem.getUseAnimation(heldStack) == UseAnim.BLOCK)) {
-			state.setAnimation(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
-
-			return PlayState.CONTINUE;
-		}
+		if (isBlocking() && (handItem instanceof ShieldItem || handItem.getUseAnimation(heldStack) == UseAnim.BLOCK))
+			return state.setAndContinue(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
 
 		return PlayState.STOP;
 	}
@@ -111,14 +108,10 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 			UseAnim useAnim = heldStack.getItem().getUseAnimation(heldStack);
 
 			if (useAnim == UseAnim.BOW || useAnim == UseAnim.CROSSBOW) {
-				state.setAnimation(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
-
-				return PlayState.CONTINUE;
+				return state.setAndContinue(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
 			}
 			else if (useAnim == UseAnim.SPEAR) {
-				state.setAnimation(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
-
-				return PlayState.CONTINUE;
+				return state.setAndContinue(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
 			}
 		}
 
@@ -131,11 +124,8 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 			return PlayState.STOP;
 
 		for (ItemStack heldStack : getHandSlots()) {
-			if (heldStack.getItem().getUseAnimation(heldStack) == UseAnim.SPEAR) {
-				state.setAnimation(SPEAR_SWING);
-
-				return PlayState.CONTINUE;
-			}
+			if (heldStack.getItem().getUseAnimation(heldStack) == UseAnim.SPEAR)
+				return state.setAndContinue(SPEAR_SWING);
 		}
 
 		return PlayState.STOP;

@@ -6,11 +6,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
@@ -36,13 +35,11 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, state -> {
 			if (state.getAnimatable().getLevel().isRaining()) {
-				state.setAnimation(FERTILIZER_ANIMS);
+				return state.setAndContinue(FERTILIZER_ANIMS);
 			}
 			else {
-				state.setAnimation(BOTARIUM_ANIMS);
+				return state.setAndContinue(BOTARIUM_ANIMS);
 			}
-
-			return PlayState.CONTINUE;
 		}));
 	}
 

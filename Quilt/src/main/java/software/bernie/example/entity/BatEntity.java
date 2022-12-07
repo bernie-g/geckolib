@@ -53,17 +53,17 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				// Add our flying animation controller
-				new AnimationController<>(this, event -> {
+				new AnimationController<>(this, state -> {
 					if (this.isFlying) {
-						event.setAnimation(DefaultAnimations.FLY);
+						state.setAnimation(DefaultAnimations.FLY);
 					}
 					else {
-						event.setAnimation(DefaultAnimations.IDLE);
+						state.setAnimation(DefaultAnimations.IDLE);
 					}
 
 					// Handle the custom instruction keyframe that is part of our animation json
 					return PlayState.CONTINUE;
-				}).setCustomInstructionKeyframeHandler(event -> {
+				}).setCustomInstructionKeyframeHandler(state -> {
 					Player player = ClientUtils.getClientPlayer();
 
 					if (player != null)
