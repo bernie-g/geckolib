@@ -66,8 +66,8 @@ public class PistolItem extends Item implements GeoItem {
 
 	// Register our animation controllers
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(new AnimationController<>(this, "shoot_controller", event -> PlayState.CONTINUE)
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "shoot_controller", event -> PlayState.CONTINUE)
 				.triggerableAnim("shoot", DefaultAnimations.ITEM_ON_USE));
 		// We've marked the "shoot" animation as being triggerable from the server
 	}

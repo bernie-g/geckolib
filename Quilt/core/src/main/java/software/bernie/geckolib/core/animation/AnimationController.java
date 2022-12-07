@@ -278,6 +278,14 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Returns the currently cached {@link RawAnimation}.<br>
+	 * This animation may or may not still be playing, but it is the last one to be set in {@link AnimationController#setAnimation}
+	 */
+	public RawAnimation getCurrentRawAnimation() {
+		return this.currentRawAnimation;
+	}
+
+	/**
 	 * Sets the currently loaded animation to the one provided.<br>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
 	 * Pass null to this method to tell the controller to stop.<br>

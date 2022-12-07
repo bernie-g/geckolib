@@ -18,14 +18,11 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class ReplacedCreeperEntity implements GeoReplacedEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	/**
-	 * Register the idle + walk animations for the entity.<br>
-	 * In this situation we're going to use a generic controller that is already built for us
-	 * @see DefaultAnimations
-	 */
+	// Register the idle + walk animations for the entity.<br>
+	// In this situation we're going to use a generic controller that is already built for us
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(DefaultAnimations.genericWalkIdleController(this));
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(DefaultAnimations.genericWalkIdleController(this));
 	}
 
 	@Override

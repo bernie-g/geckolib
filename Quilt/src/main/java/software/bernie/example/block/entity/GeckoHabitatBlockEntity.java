@@ -29,13 +29,13 @@ public class GeckoHabitatBlockEntity extends BlockEntity implements GeoBlockEnti
 	// We just want a permanent idle animation happening here
 	// But if it's day time we want him to take a nap
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(new AnimationController<>(this, event -> {
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, event -> {
 			if (getLevel().getDayTime() > 23000 || getLevel().getDayTime() < 13000) {
-				event.getController().setAnimation(DefaultAnimations.REST);
+				event.setAnimation(DefaultAnimations.REST);
 			}
 			else {
-				event.getController().setAnimation(DefaultAnimations.IDLE);
+				event.setAnimation(DefaultAnimations.IDLE);
 			}
 
 			return PlayState.CONTINUE;

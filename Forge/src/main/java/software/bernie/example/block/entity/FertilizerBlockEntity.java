@@ -33,13 +33,13 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity
 	// For this one, we want it to play the "Fertilizer" animation set if it's raining,
 	// or switch to a botarium if it's not.
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(new AnimationController<>(this, event -> {
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, event -> {
 			if (event.getAnimatable().getLevel().isRaining()) {
-				event.getController().setAnimation(FERTILIZER_ANIMS);
+				event.setAnimation(FERTILIZER_ANIMS);
 			}
 			else {
-				event.getController().setAnimation(BOTARIUM_ANIMS);
+				event.setAnimation(BOTARIUM_ANIMS);
 			}
 
 			return PlayState.CONTINUE;

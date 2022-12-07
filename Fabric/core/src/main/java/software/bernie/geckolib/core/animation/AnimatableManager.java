@@ -5,11 +5,15 @@
 
 package software.bernie.geckolib.core.animation;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +24,7 @@ import java.util.Map;
  */
 public class AnimatableManager<T extends GeoAnimatable> {
 	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
-	private final Map<String, AnimationController<T>> animationControllers = new Object2ObjectOpenHashMap<>();
+	private final Map<String, AnimationController<T>> animationControllers;
 	private Map<DataTicket<?>, Object> extraData;
 
 	private double lastUpdateTime;
@@ -28,13 +32,29 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	private double firstTickTime = -1;
 
 	/**
-	 * Add an {@link AnimationController} to this animatable's data.<br>
-	 * Only controllers added via this method will be acted upon.
+	 * Instantiates a new AnimatableManager for the given animatable, calling {@link GeoAnimatable#registerControllers} to define its controllers
 	 */
-	public AnimatableManager<T> addController(AnimationController controller) {
-		this.animationControllers.put(controller.getName(), controller);
+	public AnimatableManager(GeoAnimatable animatable) {
+		ControllerRegistrar registrar = new ControllerRegistrar();
 
-		return this;
+		animatable.registerControllers(registrar);
+
+		this.animationControllers = registrar.build();
+	}
+
+	/**
+	 * Add an {@link AnimationController} to this animatable's manager.<br>
+	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
+	 */
+	public void addController(AnimationController controller) {
+		this.animationControllers.put(controller.getName(), controller);
+	}
+
+	/**
+	 * Removes an {@link AnimationController} from this manager by the given name, if present.
+	 */
+	public void removeController(String name) {
+		this.animationControllers.remove(name);
 	}
 
 	public Map<String, AnimationController<T>> getAnimationControllers() {
@@ -115,5 +135,39 @@ public class AnimatableManager<T extends GeoAnimatable> {
 
 		if (controller != null)
 			controller.tryTriggerAnimation(animName);
+	}
+
+	/**
+	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
+	 */
+	public static final class ControllerRegistrar {
+		private final List<AnimationController<? extends GeoAnimatable>> controllers = new ObjectArrayList<>(4);
+
+		/**
+		 * Add an {@link AnimationController} to this registrar
+		 */
+		public ControllerRegistrar add(AnimationController<?>... controllers) {
+			this.controllers.addAll(Arrays.asList(controllers));
+
+			return this;
+		}
+
+		/**
+		 * Remove an {@link AnimationController} from this registrar by name.<br>
+		 * This is mostly only useful if you're sub-classing an existing animatable object and want to modify the super list
+		 */
+		public ControllerRegistrar remove(String name) {
+			this.controllers.removeIf(controller -> controller.getName().equals(name));
+
+			return this;
+		}
+
+		private <T extends GeoAnimatable> Object2ObjectArrayMap<String, AnimationController<T>> build() {
+			Object2ObjectArrayMap<String, AnimationController<?>> map = new Object2ObjectArrayMap<>(this.controllers.size());
+
+			this.controllers.forEach(controller -> map.put(controller.getName(), controller));
+
+			return (Object2ObjectArrayMap)map;
+		}
 	}
 }

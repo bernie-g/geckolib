@@ -50,27 +50,28 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		// Add our flying animation controller
-		manager.addController(new AnimationController<>(this, event -> {
-			if (this.isFlying) {
-				event.getController().setAnimation(DefaultAnimations.FLY);
-			}
-			else {
-				event.getController().setAnimation(DefaultAnimations.IDLE);
-			}
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(
+				// Add our flying animation controller
+				new AnimationController<>(this, event -> {
+					if (this.isFlying) {
+						event.setAnimation(DefaultAnimations.FLY);
+					}
+					else {
+						event.setAnimation(DefaultAnimations.IDLE);
+					}
 
-			return PlayState.CONTINUE;
-			// Handle the custom instruction keyframe that is part of our animation json
-		}).setCustomInstructionKeyframeHandler(event -> {
-			Player player = ClientUtils.getClientPlayer();
+					// Handle the custom instruction keyframe that is part of our animation json
+					return PlayState.CONTINUE;
+				}).setCustomInstructionKeyframeHandler(event -> {
+					Player player = ClientUtils.getClientPlayer();
 
-			if (player != null)
-				player.displayClientMessage(Component.literal("KeyFraming"), true);
-		}));
-
-		// Add our generic living animation controller
-		manager.addController(DefaultAnimations.genericLivingController(this));
+					if (player != null)
+						player.displayClientMessage(Component.literal("KeyFraming"), true);
+				}),
+				// Add our generic living animation controller
+				DefaultAnimations.genericLivingController(this)
+		);
 	}
 
 	@Override

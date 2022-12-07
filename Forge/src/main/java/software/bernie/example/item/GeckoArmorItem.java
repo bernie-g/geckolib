@@ -63,11 +63,11 @@ public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 
 	// Let's add our animation controller
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(new AnimationController<>(this, 20, event -> {
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, 20, event -> {
 			// Apply our generic idle animation.
 			// Whether it plays or not is decided down below.
-			event.getController().setAnimation(DefaultAnimations.IDLE);
+			event.setAnimation(DefaultAnimations.IDLE);
 
 			// Let's gather some data from the event to use below
 			// This is the entity that is currently wearing/holding the item

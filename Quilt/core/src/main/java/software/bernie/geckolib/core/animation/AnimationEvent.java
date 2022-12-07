@@ -110,4 +110,23 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	public <D> void setData(DataTicket<D> dataTicket, D data) {
 		this.extraData.put(dataTicket, data);
 	}
+
+	/**
+	 * Sets the animation for the controller to start/continue playing.<br>
+	 * Basically just a shortcut for <pre>getController().setAnimation()</pre>
+	 * @param animation The animation to play
+	 */
+	public void setAnimation(RawAnimation animation) {
+		getController().setAnimation(animation);
+	}
+
+	/**
+	 * Checks whether the current {@link AnimationController}'s last animation was the one provided.
+	 * This allows for multi-stage animation shifting where the next animation to play may depend on the previous one
+	 * @param animation The animation to check
+	 * @return Whether the controller's last animation is the one provided
+	 */
+	public boolean isCurrentAnimation(RawAnimation animation) {
+		return Objects.equals(getController().currentRawAnimation, animation);
+	}
 }

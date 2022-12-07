@@ -94,8 +94,8 @@ public class BikeEntity extends Animal implements GeoEntity {
 
 	// Add our generic idle animation controller
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(DefaultAnimations.genericIdleController(this));
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(DefaultAnimations.genericIdleController(this));
 	}
 
 	@Override

@@ -20,11 +20,8 @@ public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 	 */
 	@Override
 	public AnimatableManager<?> getManagerForId(long uniqueId) {
-		if (this.manager == null) {
-			this.manager = new AnimatableManager<>();
-
-			this.animatable.registerControllers(this.manager);
-		}
+		if (this.manager == null)
+			this.manager = new AnimatableManager<>(this.animatable);
 
 		return this.manager;
 	}

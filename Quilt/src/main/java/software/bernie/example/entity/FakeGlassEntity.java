@@ -27,7 +27,7 @@ public class FakeGlassEntity extends PathfinderMob implements GeoEntity {
 
 	// We don't care about animations for this one
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {}
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}
 
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {

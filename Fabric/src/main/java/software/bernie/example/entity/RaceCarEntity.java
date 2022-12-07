@@ -100,13 +100,13 @@ public class RaceCarEntity extends Animal implements GeoEntity {
 
 	// Add our idle/moving animation controller
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		manager.addController(new AnimationController<>(this, "controller", 2, event -> {
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "controller", 2, event -> {
 			if (event.isMoving() && getControllingPassenger() != null) {
-				event.getController().setAnimation(DefaultAnimations.DRIVE);
+				event.setAnimation(DefaultAnimations.DRIVE);
 			}
 			else {
-				event.getController().setAnimation(DefaultAnimations.IDLE);
+				event.setAnimation(DefaultAnimations.IDLE);
 			}
 
 			return PlayState.CONTINUE;

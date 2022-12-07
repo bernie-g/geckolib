@@ -4,10 +4,10 @@
  */
 package software.bernie.geckolib.core.animatable;
 
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 
 /**
  * This is the root interface for all animatable objects in Geckolib.
@@ -22,7 +22,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 public interface GeoAnimatable {
 	/**
 	 * Register your {@link AnimationController AnimationControllers} and their respective animations and conditions.
-	 * Override this method in your animatable object and add your controllers via {@link AnimatableManager#addController(AnimationController)}.
+	 * Override this method in your animatable object and add your controllers via {@link software.bernie.geckolib.core.animation.AnimatableManager.ControllerRegistrar#add ControllerRegistrar.add}.
 	 * You may add as many controllers as wanted.
 	 * <br><br>
 	 * Each controller can only play <u>one</u> animation at a time, and so animations that you intend to play concurrently should be handled in independent controllers.
@@ -30,7 +30,7 @@ public interface GeoAnimatable {
 	 *
 	 * @param manager The object to register your controller instances to
 	 */
-	void registerControllers(AnimatableManager<?> manager);
+	void registerControllers(AnimatableManager.ControllerRegistrar controllers);
 
 	/**
 	 * Each instance of a {@code GeoAnimatable} must return an instance of an {@link AnimatableInstanceCache}, which handles instance-specific animation info.

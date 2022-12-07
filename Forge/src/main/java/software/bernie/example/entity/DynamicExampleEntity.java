@@ -16,11 +16,11 @@ import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationEvent;
 import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -56,16 +56,17 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 
 	// Let's add our animation controllers
 	@Override
-	public void registerControllers(AnimatableManager<?> manager) {
-		// A generic idle controller
-		manager.addController(DefaultAnimations.genericIdleController(this))
-				.addController(new AnimationController<>(this, "Body", 20, this::poseBody))
-				.addController(new AnimationController<>(this, "Left Hand", 10, event -> predicateHandPose(getLeftHand(), event))
-						.triggerableAnim("interact", INTERACT_LEFT))
-				.addController(new AnimationController<>(this, "Right Hand", 10, event -> predicateHandPose(getRightHand(), event))
-						.triggerableAnim("interact", INTERACT_RIGHT))
-				.addController(new AnimationController<>(this, "Dual Wield Pose", 10, this::poseDualWield))
-				.addController(new AnimationController<>(this, "Dual Wield Attack", 10, this::attackDualWield));
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(
+				DefaultAnimations.genericIdleController(this),
+				new AnimationController<>(this, "Body", 20, this::poseBody),
+				new AnimationController<>(this, "Left Hand", 10, event -> predicateHandPose(getLeftHand(), event))
+						.triggerableAnim("interact", INTERACT_LEFT),
+				new AnimationController<>(this, "Right Hand", 10, event -> predicateHandPose(getRightHand(), event))
+						.triggerableAnim("interact", INTERACT_RIGHT),
+				new AnimationController<>(this, "Dual Wield Pose", 10, this::poseDualWield),
+				new AnimationController<>(this, "Dual Wield Attack", 10, this::attackDualWield)
+		);
 	}
 
 	// Create the animation handler for the body segment
@@ -74,10 +75,10 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 			return PlayState.STOP;
 
 		if (isPassenger()) {
-			event.getController().setAnimation(DefaultAnimations.SIT);
+			event.setAnimation(DefaultAnimations.SIT);
 		}
 		else if (isCrouching()) {
-			event.getController().setAnimation(DefaultAnimations.SNEAK);
+			event.setAnimation(DefaultAnimations.SNEAK);
 		}
 
 		return PlayState.CONTINUE;
@@ -93,7 +94,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 		Item handItem = heldStack.getItem();
 
 		if (isBlocking() && (handItem instanceof ShieldItem || handItem.getUseAnimation(heldStack) == UseAnim.BLOCK)) {
-			event.getController().setAnimation(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
+			event.setAnimation(getLeftHand() == hand ? BLOCK_LEFT : BLOCK_RIGHT);
 
 			return PlayState.CONTINUE;
 		}
@@ -110,12 +111,12 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 			UseAnim useAnim = heldStack.getItem().getUseAnimation(heldStack);
 
 			if (useAnim == UseAnim.BOW || useAnim == UseAnim.CROSSBOW) {
-				event.getController().setAnimation(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
+				event.setAnimation(isLeftHanded() ? AIM_LEFT_HAND : AIM_RIGHT_HAND);
 
 				return PlayState.CONTINUE;
 			}
 			else if (useAnim == UseAnim.SPEAR) {
-				event.getController().setAnimation(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
+				event.setAnimation(isLeftHanded() ? SPEAR_LEFT_HAND : SPEAR_RIGHT_HAND);
 
 				return PlayState.CONTINUE;
 			}
@@ -131,7 +132,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 
 		for (ItemStack heldStack : getHandSlots()) {
 			if (heldStack.getItem().getUseAnimation(heldStack) == UseAnim.SPEAR) {
-				event.getController().setAnimation(SPEAR_SWING);
+				event.setAnimation(SPEAR_SWING);
 
 				return PlayState.CONTINUE;
 			}
