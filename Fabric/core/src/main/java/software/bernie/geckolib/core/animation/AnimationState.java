@@ -3,6 +3,7 @@ package software.bernie.geckolib.core.animation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
+import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.Map;
 import java.util.Objects;
@@ -12,7 +13,7 @@ import java.util.Objects;
  * This is where users would set their selected animation to play,
  * stop the controller, or any number of other animation-related actions.
  */
-public class AnimationEvent<T extends GeoAnimatable> {
+public class AnimationState<T extends GeoAnimatable> {
 	private final T animatable;
 	private final float limbSwing;
 	private final float limbSwingAmount;
@@ -23,7 +24,7 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	protected AnimationController<T> controller;
 	public double animationTick;
 
-	public AnimationEvent(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
+	public AnimationState(T animatable, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
 		this.animatable = animatable;
 		this.limbSwing = limbSwing;
 		this.limbSwingAmount = limbSwingAmount;
@@ -79,7 +80,7 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	/**
 	 * Sets the {@code AnimationEvent}'s current {@link AnimationController}
 	 */
-	public AnimationEvent<T> withController(AnimationController<T> controller) {
+	public AnimationState<T> withController(AnimationController<T> controller) {
 		this.controller = controller;
 
 		return this;
@@ -119,6 +120,15 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	 */
 	public void setAnimation(RawAnimation animation) {
 		getController().setAnimation(animation);
+	}
+
+	/**
+	 * Helper method to set an animation to start/continue playing, and return {@link PlayState#CONTINUE}
+	 */
+	public PlayState setAndContinue(RawAnimation animation) {
+		getController().setAnimation(animation);
+
+		return PlayState.CONTINUE;
 	}
 
 	/**

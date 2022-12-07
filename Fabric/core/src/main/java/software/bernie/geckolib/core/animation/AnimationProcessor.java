@@ -65,10 +65,10 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param model                 The model currently being processed
 	 * @param animatableManager			The AnimatableManager instance being used for this animation processor
 	 * @param animTime              The internal tick counter kept by the {@link AnimatableManager} for this animatable
-	 * @param event                 An {@link AnimationEvent} instance applied to this render frame
+	 * @param event                 An {@link AnimationState} instance applied to this render frame
 	 * @param crashWhenCantFindBone Whether to crash if unable to find a required bone, or to continue with the remaining bones
 	 */
-	public void tickAnimation(T animatable, CoreGeoModel<T> model, AnimatableManager<T> animatableManager, double animTime, AnimationEvent<T> event, boolean crashWhenCantFindBone) {
+	public void tickAnimation(T animatable, CoreGeoModel<T> model, AnimatableManager<T> animatableManager, double animTime, AnimationState<T> event, boolean crashWhenCantFindBone) {
 		Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animatableManager.getBoneSnapshotCollection());
 
 		for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {

@@ -21,7 +21,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -267,15 +267,15 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		poseStack.scale(-1, -1, 1);
 
 		this.renderStartPose = poseStack.last().pose();
-		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
+		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 		
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
-		animationEvent.setData(DataTickets.ITEMSTACK, this.currentStack);
-		animationEvent.setData(DataTickets.ENTITY, this.currentEntity);
-		animationEvent.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
-		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
-		this.model.handleAnimations(animatable, instanceId, animationEvent);
+		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+		animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
+		animationState.setData(DataTickets.ENTITY, this.currentEntity);
+		animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
+		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+		this.model.handleAnimations(animatable, instanceId, animationState);
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, skipGeoLayers, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}

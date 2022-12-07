@@ -16,7 +16,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.AnimationProcessor;
 import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.molang.MolangQueries;
@@ -121,18 +121,18 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	}
 
 	/**
-	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationEvent} to be handled by your animation handler at render time
+	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationState} to be handled by your animation handler at render time
 	 * @param animatable The animatable instance currently being animated
 	 * @param instanceId The unique instance id of the animatable being animated
-	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationEvent
+	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationState
 	 */
-	public void addAdditionalEventData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
+	public void addAdditionalStateData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
 
 	@Override
-	public final void handleAnimations(T animatable, long instanceId, AnimationEvent<T> animationEvent) {
+	public final void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
-		Double currentTick = animationEvent.getData(DataTickets.TICK);
+		Double currentTick = animationState.getData(DataTickets.TICK);
 
 		if (currentTick == null)
 			currentTick = animatable instanceof Entity livingEntity ? (double)livingEntity.tickCount : RenderUtils.getCurrentTick();
@@ -153,15 +153,15 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 			this.lastGameTickTime = lastUpdateTime;
 		}
 
-		animationEvent.animationTick = this.animTime;
+		animationState.animationTick = this.animTime;
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationEvent.getAnimatable(), this.animTime);
+		processor.preAnimationSetup(animationState.getAnimatable(), this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationEvent, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
 
-		setCustomAnimations(animatable, instanceId, animationEvent);
+		setCustomAnimations(animatable, instanceId, animationState);
 	}
 
 	@Override

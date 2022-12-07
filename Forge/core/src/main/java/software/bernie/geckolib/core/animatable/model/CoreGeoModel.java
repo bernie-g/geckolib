@@ -3,7 +3,7 @@ package software.bernie.geckolib.core.animatable.model;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationProcessor;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 
 import java.util.Optional;
 
@@ -44,18 +44,18 @@ public interface CoreGeoModel<E extends GeoAnimatable> {
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
-	 * It is an internal method for automated animation parsing. Use {@link CoreGeoModel#setCustomAnimations(GeoAnimatable, long, AnimationEvent)} for custom animation work
+	 * It is an internal method for automated animation parsing. Use {@link CoreGeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
-	void handleAnimations(E animatable, long instanceId, AnimationEvent<E> animationEvent);
+	void handleAnimations(E animatable, long instanceId, AnimationState<E> animationState);
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
 	 * Override to set custom animations (such as head rotation, etc).
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
 	 * @param instanceId The instance id of the {@code GeoAnimatable}
-	 * @param animationEvent An {@link AnimationEvent} instance created to hold animation data for the {@code animatable} for this method call
+	 * @param animationState An {@link AnimationState} instance created to hold animation data for the {@code animatable} for this method call
 	 */
-	default void setCustomAnimations(E animatable, long instanceId, AnimationEvent<E> animationEvent) {}
+	default void setCustomAnimations(E animatable, long instanceId, AnimationState<E> animationState) {}
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>

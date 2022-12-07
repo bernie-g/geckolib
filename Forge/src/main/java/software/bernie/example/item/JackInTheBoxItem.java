@@ -58,10 +58,10 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 	// Let's add our animation controller
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "popup_controller", 20, event -> PlayState.STOP)
+		controllers.add(new AnimationController<>(this, "popup_controller", 20, state -> PlayState.STOP)
 				.triggerableAnim("box_open", POPUP_ANIM)
 				// We've marked the "box_open" animation as being triggerable from the server
-				.setSoundKeyframeHandler(event -> {
+				.setSoundKeyframeHandler(state -> {
 					// Use helper method to avoid client-code in common class
 					Player player = ClientUtils.getClientPlayer();
 

@@ -18,7 +18,7 @@ import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.object.PlayState;
@@ -70,7 +70,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for the body segment
-	protected PlayState poseBody(AnimationEvent<DynamicExampleEntity> event) {
+	protected PlayState poseBody(AnimationState<DynamicExampleEntity> event) {
 		if (isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
@@ -85,7 +85,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for each hand
-	protected PlayState predicateHandPose(InteractionHand hand, AnimationEvent<DynamicExampleEntity> event) {
+	protected PlayState predicateHandPose(InteractionHand hand, AnimationState<DynamicExampleEntity> event) {
 		ItemStack heldStack = getItemInHand(hand);
 
 		if (heldStack.isEmpty() || isWieldingTwoHandedWeapon())
@@ -103,7 +103,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for posing with a dual-wielded weapon
-	private  PlayState poseDualWield(AnimationEvent<DynamicExampleEntity> event) {
+	private  PlayState poseDualWield(AnimationState<DynamicExampleEntity> event) {
 		if (!isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 
@@ -126,7 +126,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	}
 
 	// Create the animation handler for attacking with a dual-wielded weapon
-	private <E extends GeoAnimatable> PlayState attackDualWield(AnimationEvent<E> event) {
+	private <E extends GeoAnimatable> PlayState attackDualWield(AnimationState<E> event) {
 		if (!this.swinging || !isWieldingTwoHandedWeapon())
 			return PlayState.STOP;
 

@@ -31,7 +31,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -217,13 +217,14 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		float motionThreshold = getMotionAnimThreshold(animatable);
 		Vec3 velocity = animatable.getDeltaMovement();
 		float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
-		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
+		AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
 		long instanceId = getInstanceId(animatable);
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
-		animationEvent.setData(DataTickets.ENTITY, animatable);
-		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
-		this.model.handleAnimations(animatable, instanceId, animationEvent);
+
+		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+		animationState.setData(DataTickets.ENTITY, animatable);
+		animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
+		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+		this.model.handleAnimations(animatable, instanceId, animationState);
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));

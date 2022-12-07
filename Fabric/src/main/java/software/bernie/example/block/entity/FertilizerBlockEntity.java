@@ -34,12 +34,12 @@ public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity
 	// or switch to a botarium if it's not.
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, event -> {
-			if (event.getAnimatable().getLevel().isRaining()) {
-				event.setAnimation(FERTILIZER_ANIMS);
+		controllers.add(new AnimationController<>(this, state -> {
+			if (state.getAnimatable().getLevel().isRaining()) {
+				state.setAnimation(FERTILIZER_ANIMS);
 			}
 			else {
-				event.setAnimation(BOTARIUM_ANIMS);
+				state.setAnimation(BOTARIUM_ANIMS);
 			}
 
 			return PlayState.CONTINUE;

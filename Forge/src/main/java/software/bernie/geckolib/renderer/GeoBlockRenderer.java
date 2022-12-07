@@ -19,7 +19,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -138,16 +138,16 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		poseStack.pushPose();
 
 		this.renderStartPose = poseStack.last().pose().copy();
-		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, 0, 0, partialTick, false);
+		AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(animatable));
-		animationEvent.setData(DataTickets.BLOCK_ENTITY, animatable);
-		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
+		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+		animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
+		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
 		poseStack.translate(0, 0.01f, 0);
 		poseStack.translate(0.5, 0, 0.5);
 		rotateBlock(getFacing(animatable), poseStack);
-		this.model.handleAnimations(animatable, instanceId, animationEvent);
+		this.model.handleAnimations(animatable, instanceId, animationState);
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, skipGeoLayers, partialTick,

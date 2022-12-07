@@ -343,7 +343,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	/**
 	 * Handle a given AnimationEvent, alongside the current triggered animation if applicable
 	 */
-	protected PlayState handleAnimationEvent(AnimationEvent<T> event) {
+	protected PlayState handleAnimationEvent(AnimationState<T> event) {
 		if (this.triggeredAnimation != null) {
 			if (this.currentRawAnimation != this.triggeredAnimation)
 				this.currentAnimation = null;
@@ -371,7 +371,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(CoreGeoModel<T> model, AnimationEvent<T> event, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
+	public void process(CoreGeoModel<T> model, AnimationState<T> event, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
@@ -712,7 +712,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		 * Return {@link PlayState#CONTINUE} to tell the controller to continue animating,
 		 * or return {@link PlayState#STOP} to tell it to stop playing all animations and wait for the next {@code PlayState.CONTINUE} return.
 		 */
-		PlayState handle(AnimationEvent<A> event);
+		PlayState handle(AnimationState<A> event);
 	}
 
 	/**

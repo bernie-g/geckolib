@@ -31,7 +31,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -236,14 +236,14 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			isMoving = (limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold);
 		}
 
-		AnimationEvent<T> animationEvent = new AnimationEvent<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
+		AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
 		long instanceId = getInstanceId(animatable);
 
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
-		animationEvent.setData(DataTickets.ENTITY, this.currentEntity);
-		animationEvent.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
-		this.model.handleAnimations(animatable, instanceId, animationEvent);
+		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+		animationState.setData(DataTickets.ENTITY, this.currentEntity);
+		animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
+		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+		this.model.handleAnimations(animatable, instanceId, animationState);
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));

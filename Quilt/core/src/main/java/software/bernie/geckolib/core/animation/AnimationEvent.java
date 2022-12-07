@@ -121,6 +121,15 @@ public class AnimationEvent<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Helper method to set an animation to start/continue playing, and return {@link PlayState#CONTINUE}
+	 */
+	public PlayState setAndContinue(RawAnimation animation) {
+		getController().setAnimation(animation);
+
+		return PlayState.CONTINUE;
+	}
+
+	/**
 	 * Checks whether the current {@link AnimationController}'s last animation was the one provided.
 	 * This allows for multi-stage animation shifting where the next animation to play may depend on the previous one
 	 * @param animation The animation to check

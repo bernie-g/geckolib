@@ -23,7 +23,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationEvent;
+import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -193,13 +193,13 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		poseStack.pushPose();
 
 		this.renderStartPose = poseStack.last().pose();
-		AnimationEvent<T> animationEvent = new AnimationEvent<>(animatable, 0, 0, partialTick, false);
+		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
-		animationEvent.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
-		animationEvent.setData(DataTickets.ITEMSTACK, this.currentItemStack);
-		this.model.addAdditionalEventData(animatable, instanceId, animationEvent::setData);
-		this.model.handleAnimations(animatable, instanceId, animationEvent);
+		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
+		animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
+		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+		this.model.handleAnimations(animatable, instanceId, animationState);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, skipGeoLayers, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);
