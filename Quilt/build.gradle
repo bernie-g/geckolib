@@ -201,7 +201,7 @@ if (file('key.properties').exists()) {
     project {
         apiKey = curseProp.getProperty('curseKey')
         id = "388172"
-        releaseType = "alpha"
+        releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
         addGameVersion("1.19.3")
@@ -233,8 +233,8 @@ if (file('key.properties').exists()) {
 		versionName = 'Quilt 1.19.3'
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.3-rc2']
-		versionType = "alpha"
+		gameVersions = ['1.19.3']
+		versionType = "release"
 		loaders = ['quilt']
 		dependencies { 
         	required.project "qsl"
