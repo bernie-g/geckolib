@@ -28,7 +28,7 @@ public interface GeoAnimatable {
 	 * Each controller can only play <u>one</u> animation at a time, and so animations that you intend to play concurrently should be handled in independent controllers.
 	 * Note having multiple animations playing via multiple controllers can override parts of one animation with another if both animations use the same bones or child bones.
 	 *
-	 * @param manager The object to register your controller instances to
+	 * @param controllers The object to register your controller instances to
 	 */
 	void registerControllers(AnimatableManager.ControllerRegistrar controllers);
 

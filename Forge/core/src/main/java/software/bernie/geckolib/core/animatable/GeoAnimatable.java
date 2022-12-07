@@ -4,10 +4,10 @@
  */
 package software.bernie.geckolib.core.animatable;
 
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 
 /**
  * This is the root interface for all animatable objects in Geckolib.
@@ -28,13 +28,13 @@ public interface GeoAnimatable {
 	 * Each controller can only play <u>one</u> animation at a time, and so animations that you intend to play concurrently should be handled in independent controllers.
 	 * Note having multiple animations playing via multiple controllers can override parts of one animation with another if both animations use the same bones or child bones.
 	 *
-	 * @param manager The object to register your controller instances to
+	 * @param controllers The object to register your controller instances to
 	 */
 	void registerControllers(AnimatableManager.ControllerRegistrar controllers);
 
 	/**
 	 * Each instance of a {@code GeoAnimatable} must return an instance of an {@link AnimatableInstanceCache}, which handles instance-specific animation info.
-	 * Generally speaking, you should create your cache using {@code GeckoLibUtil#createInstanceCache} and store it in your animatable instance, returning that cached instance when called.
+	 * Generally speaking, you should create your cache using {@code GeckoLibUtil#createCache} and store it in your animatable instance, returning that cached instance when called.
 	 * @return A cached instance of an {@code AnimatableInstanceCache}
 	 */
 	AnimatableInstanceCache getAnimatableInstanceCache();
