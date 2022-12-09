@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -15,6 +14,8 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -25,9 +26,6 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
-
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically.<br>
@@ -140,16 +138,19 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		poseStack.pushPose();
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
-		AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
-		long instanceId = getInstanceId(animatable);
 
-		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
-		animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		poseStack.translate(0, 0.01f, 0);
-		poseStack.translate(0.5, 0, 0.5);
-		rotateBlock(getFacing(animatable), poseStack);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
+			long instanceId = getInstanceId(animatable);
+
+			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			poseStack.translate(0, 0.01f, 0);
+			poseStack.translate(0.5, 0, 0.5);
+			rotateBlock(getFacing(animatable), poseStack);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,

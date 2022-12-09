@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -28,8 +29,6 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
-
-import org.joml.Matrix4f;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically.<br>
@@ -193,13 +192,17 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		poseStack.pushPose();
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
-		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
-		long instanceId = getInstanceId(animatable);
 
-		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
-		animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
+			long instanceId = getInstanceId(animatable);
+
+			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
+			animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
+
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);

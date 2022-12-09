@@ -138,16 +138,19 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 		poseStack.pushPose();
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());
-		AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
-		long instanceId = getInstanceId(animatable);
 
-		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
-		animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		poseStack.translate(0, 0.01f, 0);
-		poseStack.translate(0.5, 0, 0.5);
-		rotateBlock(getFacing(animatable), poseStack);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
+			long instanceId = getInstanceId(animatable);
+
+			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			poseStack.translate(0, 0.01f, 0);
+			poseStack.translate(0.5, 0, 0.5);
+			rotateBlock(getFacing(animatable), poseStack);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,

@@ -171,7 +171,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
 
-		if (this.currentEntity instanceof Mob mob) {
+		if (this.currentEntity instanceof Mob mob && !isReRender) {
 			Entity leashHolder = mob.getLeashHolder();
 
 			if (leashHolder != null)
@@ -236,14 +236,16 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			isMoving = (limbSwingAmount <= -motionThreshold || limbSwingAmount >= motionThreshold);
 		}
 
-		AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
-		long instanceId = getInstanceId(animatable);
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
+			long instanceId = getInstanceId(animatable);
 
-		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
-		animationState.setData(DataTickets.ENTITY, this.currentEntity);
-		animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+			animationState.setData(DataTickets.ENTITY, this.currentEntity);
+			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
@@ -269,7 +271,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 */
 	@Override
 	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		super.render(this.currentEntity, 0, partialTick, poseStack, bufferSource, packedLight);
+		if (!isReRender)
+			super.render(this.currentEntity, 0, partialTick, poseStack, bufferSource, packedLight);
 	}
 
 	/**

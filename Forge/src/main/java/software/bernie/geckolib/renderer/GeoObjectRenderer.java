@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -18,9 +19,6 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
-
-import org.joml.Matrix4f;
-
 import java.util.List;
 
 /**
@@ -151,11 +149,15 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 		poseStack.pushPose();
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
-		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
-		long instanceId = getInstanceId(animatable);
 
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
+			long instanceId = getInstanceId(animatable);
+
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
+
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);

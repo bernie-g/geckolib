@@ -267,15 +267,19 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		poseStack.scale(-1, -1, 1);
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());
-		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
-		long instanceId = getInstanceId(animatable);
-		
-		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
-		animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
-		animationState.setData(DataTickets.ENTITY, this.currentEntity);
-		animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+
+		if (!isReRender) {
+			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
+			long instanceId = getInstanceId(animatable);
+
+			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+			animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
+			animationState.setData(DataTickets.ENTITY, this.currentEntity);
+			animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
+
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
