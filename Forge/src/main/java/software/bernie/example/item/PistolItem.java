@@ -15,7 +15,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.PistolRenderer;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -38,7 +37,7 @@ public class PistolItem extends Item implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public PistolItem() {
-		super(new Item.Properties().tab(GeckoLibMod.ITEM_GROUP).stacksTo(1).durability(201));
+		super(new Item.Properties().stacksTo(1).durability(201));
 
 		// Register our item as server-side handled.
 		// This enables both animation data syncing and server-side animation triggering

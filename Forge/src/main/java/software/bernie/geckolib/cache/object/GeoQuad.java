@@ -1,7 +1,8 @@
 package software.bernie.geckolib.cache.object;
 
+import org.joml.Vector3f;
+
 import net.minecraft.core.Direction;
-import com.mojang.math.Vector3f;
 
 /**
  * Quad data holder

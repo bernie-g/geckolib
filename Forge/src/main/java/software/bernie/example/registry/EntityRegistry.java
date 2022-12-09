@@ -3,12 +3,9 @@ package software.bernie.example.registry;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.entity.*;
 import software.bernie.geckolib.GeckoLib;
 
@@ -37,7 +34,6 @@ public final class EntityRegistry {
 																			float width, float height, int primaryEggColor, int secondaryEggColor) {
 		RegistryObject<EntityType<T>> entityType = ENTITIES.register(name,
 				() -> EntityType.Builder.of(entity, MobCategory.CREATURE).sized(width, height).build(name));
-		ItemRegistry.ITEMS.register(name + "_spawn_egg", () -> new ForgeSpawnEggItem(entityType, primaryEggColor, secondaryEggColor, new Item.Properties().tab(GeckoLibMod.ITEM_GROUP)));
 
 		return entityType;
 	}

@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.item.JackInTheBoxRenderer;
 import software.bernie.example.registry.SoundRegistry;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -32,7 +31,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public JackInTheBoxItem(Properties properties) {
-		super(properties.tab(GeckoLibMod.ITEM_GROUP));
+		super(properties);
 
 		// Register our item as server-side handled.
 		// This enables both animation data syncing and server-side animation triggering

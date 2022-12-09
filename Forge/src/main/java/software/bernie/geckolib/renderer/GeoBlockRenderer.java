@@ -3,8 +3,8 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
+
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -25,6 +25,9 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
+
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically.<br>
@@ -113,7 +116,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = poseStack.last().pose().copy();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());;
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -137,7 +140,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 							   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = poseStack.last().pose().copy();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
 		AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
@@ -162,14 +165,14 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose().copy();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());;
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 			BlockPos pos = this.animatable.getBlockPos();
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			Matrix4f worldState = localMatrix.copy();
+			Matrix4f worldState = new Matrix4f(localMatrix);;
 
 			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
 			bone.setWorldSpaceMatrix(worldState);
@@ -184,12 +187,12 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	 */
 	protected void rotateBlock(Direction facing, PoseStack poseStack) {
 		switch (facing) {
-			case SOUTH -> poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
-			case WEST -> poseStack.mulPose(Vector3f.YP.rotationDegrees(90));
-			case NORTH -> poseStack.mulPose(Vector3f.YP.rotationDegrees(0));
-			case EAST -> poseStack.mulPose(Vector3f.YP.rotationDegrees(270));
-			case UP -> poseStack.mulPose(Vector3f.XP.rotationDegrees(90));
-			case DOWN -> poseStack.mulPose(Vector3f.XN.rotationDegrees(90));
+			case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180));
+			case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
+			case NORTH -> poseStack.mulPose(Axis.YP.rotationDegrees(0));
+			case EAST -> poseStack.mulPose(Axis.YP.rotationDegrees(270));
+			case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(90));
+			case DOWN -> poseStack.mulPose(Axis.XN.rotationDegrees(90));
 		}
 	}
 

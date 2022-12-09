@@ -13,7 +13,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.example.GeckoLibMod;
 import software.bernie.example.client.renderer.armor.WolfArmorRenderer;
 import software.bernie.example.registry.ItemRegistry;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -38,7 +37,7 @@ public final class WolfArmorItem extends ArmorItem implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public WolfArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
-		super(armorMaterial, slot, properties.tab(GeckoLibMod.ITEM_GROUP));
+		super(armorMaterial, slot, properties);
 	}
 
 	// Create our armor model/renderer for forge and return it

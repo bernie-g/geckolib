@@ -2,10 +2,6 @@ package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -19,6 +15,12 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
+
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+
 import java.util.List;
 
 /**
@@ -274,9 +276,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			if (quad == null)
 				continue;
 
-			Vector3f normal = quad.normal().copy();
+			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
 
-			normal.transform(normalisedPoseState);
 			RenderUtils.fixInvertedFlatCube(cube, normal);
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
@@ -289,9 +290,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		for (GeoVertex vertex : quad.vertices()) {
 			Vector3f position = vertex.position();
-			Vector4f vector4f = new Vector4f(position.x(), position.y(), position.z(), 1);
+			Vector4f vector4f = poseState.transform(new Vector4f(position.x(), position.y(), position.z(), 1.0f));
 
-			vector4f.transform(poseState);
 			buffer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.texU(),
 					vertex.texV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}

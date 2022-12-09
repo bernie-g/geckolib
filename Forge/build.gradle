@@ -44,7 +44,8 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '2022.11.06-1.19.2'
+    mappings channel: 'official', version: '1.19.3'
+    //mappings channel: 'parchment', version: '2022.11.06-1.19.2'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
@@ -107,7 +108,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.2-43.1.47'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.0.1'
     library 'com.eliotlash.mclib:mclib:20'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -116,16 +117,6 @@ dependencies {
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
     }
-
-    //testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    //testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    //testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-
-    //test {
-    //    useJUnitPlatform()
-    //}
-	//compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76:api")
-    //compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-76")
 }
 
 shadowJar {
@@ -242,7 +233,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-        	addGameVersion("1.19.2")
+        	addGameVersion("1.19.3")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -258,10 +249,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Forge 1.19'
+		versionName = 'Forge 1.19.3'
 		uploadFile = jar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.2']
+		gameVersions = ['1.19.3']
 		loaders = ['forge']
 	}
 }

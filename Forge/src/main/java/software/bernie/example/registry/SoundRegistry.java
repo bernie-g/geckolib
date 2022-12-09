@@ -12,5 +12,5 @@ public final class SoundRegistry {
 			GeckoLib.MOD_ID);
 
 	public static RegistryObject<SoundEvent> JACK_MUSIC = SOUNDS.register("jack_in_the_box_music",
-			() -> new SoundEvent(new ResourceLocation(GeckoLib.MOD_ID, "jack_in_the_box_music")));
+			() -> SoundEvent.createVariableRangeEvent(new ResourceLocation(GeckoLib.MOD_ID, "jack_in_the_box_music")));
 }

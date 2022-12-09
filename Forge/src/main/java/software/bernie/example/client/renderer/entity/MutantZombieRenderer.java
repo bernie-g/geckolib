@@ -2,7 +2,7 @@ package software.bernie.example.client.renderer.entity;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -128,17 +128,17 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampl
 			protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, DynamicExampleEntity animatable,
 											  MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 				if (stack == MutantZombieRenderer.this.mainHandItem) {
-					poseStack.mulPose(Vector3f.XP.rotationDegrees(-90f));
+					poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 
 					if (stack.getItem() instanceof ShieldItem)
 						poseStack.translate(0, 0.125, -0.25);
 				}
 				else if (stack == MutantZombieRenderer.this.offhandItem) {
-					poseStack.mulPose(Vector3f.XP.rotationDegrees(-90f));
+					poseStack.mulPose(Axis.XP.rotationDegrees(-90f));
 
 					if (stack.getItem() instanceof ShieldItem) {
 						poseStack.translate(0, 0.125, 0.25);
-						poseStack.mulPose(Vector3f.YP.rotationDegrees(180));
+						poseStack.mulPose(Axis.YP.rotationDegrees(180));
 					}
 				}
 
