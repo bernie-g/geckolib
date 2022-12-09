@@ -114,7 +114,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = poseStack.last().pose();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -138,7 +138,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 							   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = poseStack.last().pose();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 		
@@ -163,14 +163,16 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 			BlockPos pos = this.animatable.getBlockPos();
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			localMatrix.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
+			Matrix4f worldState = new Matrix4f(localMatrix);;
+
+			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
 			bone.setWorldSpaceMatrix(localMatrix);
 		}
 

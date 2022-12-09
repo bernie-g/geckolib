@@ -148,7 +148,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = poseStack.last().pose();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -169,7 +169,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = poseStack.last().pose();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
 
 		if (this.currentEntity instanceof Mob mob) {
@@ -285,7 +285,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
@@ -424,7 +424,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		poseStack.pushPose();
 		poseStack.translate(xAngleOffset, leashOffset.y, zAngleOffset);
 
-		Matrix4f posMatrix = poseStack.last().pose();
+		Matrix4f posMatrix = new Matrix4f(poseStack.last().pose());
 
 		for (int segment = 0; segment <= 24; ++segment) {
 			renderLeashPiece(vertexConsumer, posMatrix, xDif, yDif, zDif, entityBlockLight, holderBlockLight,

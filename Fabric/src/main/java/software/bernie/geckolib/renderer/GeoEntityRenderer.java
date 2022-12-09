@@ -138,7 +138,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = poseStack.last().pose();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -159,7 +159,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = poseStack.last().pose();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
 
 		if (animatable instanceof Mob mob) {
@@ -269,14 +269,14 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			Matrix4f worldState = localMatrix;
+			Matrix4f worldState = new Matrix4f(localMatrix);;
 
 			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceMatrix(worldState);
@@ -408,7 +408,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		poseStack.pushPose();
 		poseStack.translate(xAngleOffset, leashOffset.y, zAngleOffset);
 
-		Matrix4f posMatrix = poseStack.last().pose();
+		Matrix4f posMatrix = new Matrix4f(poseStack.last().pose());
 
 		for (int segment = 0; segment <= 24; ++segment) {
 			GeoEntityRenderer.renderLeashPiece(vertexConsumer, posMatrix, xDif, yDif, zDif, entityBlockLight, holderBlockLight,

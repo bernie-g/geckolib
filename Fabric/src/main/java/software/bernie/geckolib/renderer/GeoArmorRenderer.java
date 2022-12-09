@@ -224,7 +224,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource,
 						  @Nullable VertexConsumer buffer, float partialTick, int packedLight,
 						  int packedOverlay, float red, float green, float blue, float alpha) {
-		this.preRenderPose = poseStack.last().pose();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
 		applyBaseModel(this.baseModel);
 		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
@@ -266,7 +266,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		poseStack.translate(0, 24 / 16f, 0);
 		poseStack.scale(-1, -1, 1);
 
-		this.renderStartPose = poseStack.last().pose();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 		
@@ -287,7 +287,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));

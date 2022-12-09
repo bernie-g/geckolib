@@ -401,7 +401,7 @@ public class GeoBone implements CoreGeoBone {
 
 		identity.identity();
 
-		Matrix4f matrix = parent == null ? identity : parent.getModelSpaceMatrix();
+		Matrix4f matrix = parent == null ? identity : new Matrix4f(parent.getModelSpaceMatrix());
 
 		matrix.invert();
 
@@ -412,7 +412,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public Matrix4f getModelRotationMatrix() {
-		Matrix4f matrix = getModelSpaceMatrix();
+		Matrix4f matrix = new Matrix4f(getModelSpaceMatrix());
 		matrix.m03(0);
 		matrix.m13(0);
 		matrix.m23(0);

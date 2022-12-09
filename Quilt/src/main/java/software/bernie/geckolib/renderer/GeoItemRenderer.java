@@ -134,7 +134,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
 						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = poseStack.last().pose();
+		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -192,7 +192,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = poseStack.last().pose();
+		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 		long instanceId = getInstanceId(animatable);
 
@@ -213,7 +213,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));

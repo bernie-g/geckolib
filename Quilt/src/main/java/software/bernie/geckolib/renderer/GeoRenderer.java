@@ -268,13 +268,13 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		RenderUtils.translateAwayFromPivotPoint(poseStack, cube);
 
 		Matrix3f normalisedPoseState = poseStack.last().normal();
-		Matrix4f poseState = poseStack.last().pose();
+		Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
 		for (GeoQuad quad : cube.quads()) {
 			if (quad == null)
 				continue;
 
-			Vector3f normal =normalisedPoseState.transform(new Vector3f(quad.normal().absolute()));
+			Vector3f normal =normalisedPoseState.transform(new Vector3f(quad.normal()));
 			
 			RenderUtils.fixInvertedFlatCube(cube, normal);
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);

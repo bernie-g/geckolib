@@ -79,14 +79,14 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingXform()) {
-			Matrix4f poseState = poseStack.last().pose();
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setLocalSpaceMatrix(localMatrix);
 
-			Matrix4f worldState = localMatrix;
+			Matrix4f worldState = new Matrix4f(localMatrix);;
 
 			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceMatrix(worldState);
@@ -154,8 +154,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 		}
 
 		for (GeoVertex vertex : quad.vertices()) {
-			Vector4f vector4f = poseState
-					.transform(new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1.0f));
+			Vector4f vector4f = poseState.transform(new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1.0f));
 			float texU = (vertex.texU() * entityTextureSize.firstInt()) / boneTextureSize.firstInt();
 			float texV = (vertex.texV() * entityTextureSize.secondInt()) / boneTextureSize.secondInt();
 
