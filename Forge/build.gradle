@@ -44,8 +44,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'official', version: '1.19.3'
-    //mappings channel: 'parchment', version: '2022.11.06-1.19.2'
+    mappings channel: 'parchment', version: '1.19.2-2022.11.27-1.19.3'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     runs {
         client {
