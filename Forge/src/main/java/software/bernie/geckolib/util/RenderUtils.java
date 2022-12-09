@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -107,6 +108,15 @@ public final class RenderUtils {
 		inputMatrix.mul(baseMatrix);
 
 		return inputMatrix;
+	}
+	
+	/**
+     * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation.<br>
+     * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRender} override.<br>
+	 */
+	public static void faceRotation(PoseStack poseStack, Entity animatable, float partialTick) {
+		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
+		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
 	}
 
 	/**
