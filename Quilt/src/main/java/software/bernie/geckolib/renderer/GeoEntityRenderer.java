@@ -135,8 +135,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer,
-						  float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.preRenderPose = new Matrix4f(poseStack.last().pose());
 
@@ -156,13 +155,13 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
-	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
 		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
 
-		if (animatable instanceof Mob mob) {
+		if (animatable instanceof Mob mob && !isReRender) {
 			Entity leashHolder = mob.getLeashHolder();
 
 			if (leashHolder != null)
@@ -213,24 +212,26 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 				limbSwingAmount = 1f;
 		}
 
-		float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
-		float motionThreshold = getMotionAnimThreshold(animatable);
-		Vec3 velocity = animatable.getDeltaMovement();
-		float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
-		AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
-		long instanceId = getInstanceId(animatable);
+		if (!isReRender) {
+			float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
+			float motionThreshold = getMotionAnimThreshold(animatable);
+			Vec3 velocity = animatable.getDeltaMovement();
+			float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
+			AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
+			long instanceId = getInstanceId(animatable);
 
-		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
-		animationState.setData(DataTickets.ENTITY, animatable);
-		animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-		this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-		this.model.handleAnimations(animatable, instanceId, animationState);
+			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+			animationState.setData(DataTickets.ENTITY, animatable);
+			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
+			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			this.model.handleAnimations(animatable, instanceId, animationState);
+		}
 
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
 		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
-			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, skipGeoLayers, partialTick,
+			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 					packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
@@ -252,15 +253,16 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
+	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		if (!isReRender)
+			super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
 	}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean skipGeoLayers, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtils.translateMatrixToBone(poseStack, bone);
@@ -286,7 +288,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
-		if (!skipGeoLayers)
+		if (!isReRender)
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);

@@ -23,8 +23,8 @@ public class ReplacedCreeperRenderer extends GeoReplacedEntityRenderer<Creeper, 
 	}
 
 	@Override
-	public void preRender(PoseStack poseStack, ReplacedCreeperEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		super.preRender(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+	public void preRender(PoseStack poseStack, ReplacedCreeperEntity animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		float swellFactor = this.currentEntity.getSwelling(partialTick);
 		float swellMod = 1 + Mth.sin(swellFactor * 100f) * swellFactor * 0.01f;

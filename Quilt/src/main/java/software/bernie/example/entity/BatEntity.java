@@ -12,10 +12,9 @@ import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DefaultAnimations;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -53,22 +52,14 @@ public class BatEntity extends PathfinderMob implements GeoEntity {
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(
 				// Add our flying animation controller
-				new AnimationController<>(this, state -> {
-					if (this.isFlying) {
-						state.setAnimation(DefaultAnimations.FLY);
-					}
-					else {
-						state.setAnimation(DefaultAnimations.IDLE);
-					}
+				new AnimationController<>(this, 10, state -> state.setAndContinue(this.isFlying ? DefaultAnimations.FLY : DefaultAnimations.IDLE))
+						// Handle the custom instruction keyframe that is part of our animation json
+						.setCustomInstructionKeyframeHandler(state -> {
+							Player player = ClientUtils.getClientPlayer();
 
-					// Handle the custom instruction keyframe that is part of our animation json
-					return PlayState.CONTINUE;
-				}).setCustomInstructionKeyframeHandler(state -> {
-					Player player = ClientUtils.getClientPlayer();
-
-					if (player != null)
-						player.displayClientMessage(Component.literal("KeyFraming"), true);
-				}),
+							if (player != null)
+								player.displayClientMessage(Component.literal("KeyFraming"), true);
+						}),
 				// Add our generic living animation controller
 				DefaultAnimations.genericLivingController(this)
 		);
