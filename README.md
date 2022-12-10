@@ -4,7 +4,7 @@
   <a href="https://discord.geckolib.com/"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
 </p>
 
-<h1 style="font-size:10vw" align="center">GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12.2*/1.15.2*/1.16.5*/1.17.1*/1.18.2/1.19.2, Fabric 1.16.5*/1.17.1*/1.18.2/1.19.2, and Quilt 1.18.2/1.19.2.</h1>
+<h1 style="font-size:10vw" align="center">GeckoLib 3.0 is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12.2*/1.15.2*/1.16.5*/1.17.1*/1.18.2/1.19.2, Fabric 1.16.5*/1.17.1*/1.18.2/1.19.2, and Quilt 1.18.2/1.19.2.</h1>
 
 * *This version is unsupported for any issues*
 
