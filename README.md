@@ -1,34 +1,32 @@
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_header.png" alt="logo"/> 
 
 <p align="center">
-  <a href="https://discord.gg/rVVRg8T"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
+  <a href="https://discord.geckolib.com/"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
 </p>
 
-<h1 style="font-size:10vw" align="center">GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12/1.15/1.16/1.17/1.18/1.19, Fabric 1.16/1.17/1.18/1.19, and Quilt 1.18/1.19.</h1>
+<h1 style="font-size:10vw" align="center">GeckoLib 3.1 is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12.2*/1.15.2*/1.16.5*/1.17.1*/1.18.2/1.19.2, Fabric 1.16.5*/1.17.1*/1.18.2/1.19.2, and Quilt 1.18.2/1.19.2.</h1>
+
+* *This version is unsupported for any issues*
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_2.png" alt="logo"/> 
 
-<h3 align="center">
-<b>You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation">here</a>.</b><br><br>
-<b>For non-modders, just download the mod and put it in your mods folder like normal. You can also click the following images for a list of versions for each mod loader.</b><br>
-<a href="https://www.curseforge.com/minecraft/mc-mods/geckolib/files/all?filter-status=1&filter-game-version=2020709689:7499"><img src="https://i.imgur.com/DxWB9m6.png" alt="logo"  width="192" height="192" /> </a><a href="https://www.curseforge.com/minecraft/mc-mods/geckolib/files/all?filter-status=1&filter-game-version=2020709689:7498"><img src="https://i.imgur.com/Q3ZyaqH.png" alt="logo"   width="192" height="192" /> </a><a href="https://www.curseforge.com/minecraft/mc-mods/geckolib/files/all?filter-status=1&filter-game-version=2020709689:9153"><img src="https://quiltmc.org/assets/img/logo.svg" alt="logo"  width="192" height="192" /> </a>
-</h3>
+<h2 align="center">
+<h2>You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation">here</a>.</h2><br><br>
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_3.png" alt="logo"/> 
 
 <h3 align="center">
-<b>GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki">wiki</a>. We spent many hours writing the wiki, so please read it!</b><br>
+<h2>GeckoLib 3.0 provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki">wiki</a>. We spent many hours writing the wiki, so please read it!</h2><br>
 </h3>
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_4.png" alt="logo"/> 
 
 <h3 align="center">
-<b>If you have questions or need help getting up and running with questions, join our discord!</b><br>
+<h2>If you have questions or need help getting up and running with questions, join our discord!</h2><br>
 </h3>
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_5.png" alt="logo"/> 
 <h3 align="center">
-<b>Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change.</b><br><br>
-<a href="https://github.com/bernie-g/geckolib"><img src="https://github-readme-stats.vercel.app/api/pin/?username=bernie-g&repo=geckolib&theme=merko"></a>
+<h2>Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change.</h2><br><br>
 </h3>
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_6.png" alt="logo"/> 
@@ -38,9 +36,9 @@
 
 <h1 style="font-size:10vw" align="center">Sponsored by BisectHosting</h1>
 <h3 align="center">
-<b>Need a server to play with friends? Don't know how to setup one? Just rent an already configured server from BisectHosting!</b><br><br>
+<h2>Need a server to play with friends? Don't know how to setup one? Just rent an already configured server from BisectHosting!</h2><br><br>
 <a href="https://bisecthosting.com/gecko"><img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_promo.png" alt="logo"/> </a>
-<b>Click on the picture above, select plan(at least 4GB), and use my code gecko to get 25% off your first month and enjoy playing with your friends!</b><br><br>
+<h2>Click on the picture above, select plan(at least 4GB), and use my code gecko to get 25% off your first month and enjoy playing with your friends!</h2><br><br>
 </h3>
 
 <h1 style="font-size:10vw" align="center">Acknowledgments</h1>
