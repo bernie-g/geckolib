@@ -1,7 +1,5 @@
 package software.bernie.geckolib.network.packet;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
@@ -13,32 +11,33 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 
+import javax.annotation.Nullable;
+
 /**
  * Packet for syncing user-definable animations that can be triggered from the
  * server
  */
 public class AnimTriggerPacket extends AbstractPacket {
-
-    private final String SYNCABLE_ID;
-    private final long INSTANCE_ID;
-    private final String CONTROLLER_NAME;
-    private final String ANIM_NAME;
+    private final String syncableId;
+    private final long instanceId;
+    private final String controllerName;
+    private final String animName;
 
     public AnimTriggerPacket(String syncableId, long instanceId, @Nullable String controllerName, String animName) {
-        this.SYNCABLE_ID = syncableId;
-        this.INSTANCE_ID = instanceId;
-        this.CONTROLLER_NAME = controllerName == null ? "" : controllerName;
-        this.ANIM_NAME = animName;
+        this.syncableId = syncableId;
+        this.instanceId = instanceId;
+        this.controllerName = controllerName == null ? "" : controllerName;
+        this.animName = animName;
     }
 
     public FriendlyByteBuf encode() {
         FriendlyByteBuf buf = PacketByteBufs.create();
-        buf.writeUtf(this.SYNCABLE_ID);
 
-        buf.writeVarLong(this.INSTANCE_ID);
-        buf.writeUtf(this.CONTROLLER_NAME);
+        buf.writeUtf(this.syncableId);
+        buf.writeVarLong(this.instanceId);
+        buf.writeUtf(this.controllerName);
+        buf.writeUtf(this.animName);
 
-        buf.writeUtf(this.ANIM_NAME);
         return buf;
     }
 
@@ -48,13 +47,12 @@ public class AnimTriggerPacket extends AbstractPacket {
     }
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        final String SYNCABLE_ID = buf.readUtf();
-        final long INSTANCE_ID = buf.readVarLong();
+        String syncableId = buf.readUtf();
+        long instanceId = buf.readVarLong();
+        String controllerName = buf.readUtf();
+        String animName = buf.readUtf();
 
-        final String CONTROLLER_NAME = buf.readUtf();
-        final String ANIM_NAME = buf.readUtf();
-
-        client.execute(() -> runOnThread(SYNCABLE_ID, INSTANCE_ID, CONTROLLER_NAME, ANIM_NAME));
+        client.execute(() -> runOnThread(syncableId, instanceId, controllerName, animName));
     }
 
     private static <D> void runOnThread(String syncableId, long instanceId, String controllerName, String animName) {

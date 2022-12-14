@@ -1,27 +1,20 @@
 package software.bernie.geckolib.network;
 
-import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import org.quiltmc.qsl.networking.api.PlayerLookup;
-import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
-
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import org.quiltmc.qsl.networking.api.PlayerLookup;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.network.packet.AnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.AnimTriggerPacket;
-import software.bernie.geckolib.network.packet.BlockEntityAnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.BlockEntityAnimTriggerPacket;
-import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
+import software.bernie.geckolib.network.packet.*;
+
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * Network handling class for GeckoLib.<br>
@@ -88,7 +81,7 @@ public final class GeckoLibNetwork {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }
 
-        if(entityToTrack instanceof ServerPlayer serverPlayer)
+        if (entityToTrack instanceof ServerPlayer serverPlayer)
             ServerPlayNetworking.send(serverPlayer, packet.getPacketID(), packet.encode());
     }
 

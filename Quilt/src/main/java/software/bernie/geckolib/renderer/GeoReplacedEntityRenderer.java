@@ -52,8 +52,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-	protected Matrix4f renderStartPose = new Matrix4f();
-	protected Matrix4f preRenderPose = new Matrix4f();
+	protected Matrix4f entityRenderTranslations = new Matrix4f();
+	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	public GeoReplacedEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model, T animatable) {
 		super(renderManager);
@@ -147,7 +147,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = new Matrix4f(poseStack.last().pose());
+		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -168,7 +168,6 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = new Matrix4f(poseStack.last().pose());
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
 
 		if (this.currentEntity instanceof Mob mob && !isReRender) {
@@ -249,6 +248,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
+		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
+
 		if (!this.currentEntity.isInvisibleTo(Minecraft.getInstance().player))
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
@@ -286,11 +287,11 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		RenderUtils.rotateMatrixAroundBone(poseStack, bone);
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
-		if (bone.isTrackingXform()) {
+		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.currentEntity, 1).toVector3f()));
 			bone.setLocalSpaceMatrix(localMatrix);
 

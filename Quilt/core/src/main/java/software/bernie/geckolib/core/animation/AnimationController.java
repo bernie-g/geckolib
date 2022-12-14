@@ -503,7 +503,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 		final double finalAdjustedTick = adjustedTick;
 
-		MolangParser.INSTANCE.setValue(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
+		MolangParser.INSTANCE.setMemoizedValue(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
 
 		for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 			BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());

@@ -26,7 +26,6 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -44,7 +43,7 @@ import java.util.List;
  * All entities added to be rendered by GeckoLib should use an instance of this class.<br>
  * This also includes {@link net.minecraft.world.entity.projectile.Projectile Projectiles}
  */
-public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
+public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T> implements GeoRenderer<T> {
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 	protected final GeoModel<T> model;
 
@@ -52,8 +51,8 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-	protected Matrix4f renderStartPose = new Matrix4f();
-	protected Matrix4f preRenderPose = new Matrix4f();
+	protected Matrix4f entityRenderTranslations = new Matrix4f();
+	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
 		super(renderManager);
@@ -137,7 +136,7 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = new Matrix4f(poseStack.last().pose());;
+		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -158,7 +157,6 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
 
 		if (animatable instanceof Mob mob && !isReRender) {
@@ -230,9 +228,10 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		poseStack.translate(0, 0.01f, 0);
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
+		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
+
 		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
-			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, red, green, blue, alpha);
+			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
 	}
@@ -270,18 +269,17 @@ public abstract class GeoEntityRenderer<T extends Entity & GeoAnimatable> extend
 		RenderUtils.rotateMatrixAroundBone(poseStack, bone);
 		RenderUtils.scaleMatrixForBone(poseStack, bone);
 
-		if (bone.isTrackingXform()) {
-			Matrix4f poseState = new Matrix4f(poseStack.last().pose());;
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
+		if (bone.isTrackingMatrices()) {
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
-			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
-			bone.setLocalSpaceMatrix(localMatrix);
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setLocalSpaceMatrix(localMatrix.translate(getRenderOffset(this.animatable, 1).toVector3f()));
 
-			Matrix4f worldState = new Matrix4f(localMatrix);;
+			Matrix4f worldPosition = new Matrix4f(localMatrix);
 
-			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
-			bone.setWorldSpaceMatrix(worldState);
+			worldPosition.translate(this.animatable.position().toVector3f());
+			bone.setWorldSpaceMatrix(worldPosition);
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);

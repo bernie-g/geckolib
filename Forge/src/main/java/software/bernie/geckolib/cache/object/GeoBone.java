@@ -1,16 +1,14 @@
 package software.bernie.geckolib.cache.object;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.state.BoneSnapshot;
-
-import javax.annotation.Nullable;
-
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.core.state.BoneSnapshot;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -320,7 +318,7 @@ public class GeoBone implements CoreGeoBone {
 		return this.cubes;
 	}
 
-	public boolean isTrackingXform() {
+	public boolean isTrackingMatrices() {
 		return trackingMatrices;
 	}
 
@@ -335,7 +333,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setModelSpaceMatrix(Matrix4f matrix) {
-		this.modelSpaceMatrix.mul0(matrix);
+		this.modelSpaceMatrix.set(matrix);
 	}
 
 	public Matrix4f getLocalSpaceMatrix() {
@@ -345,7 +343,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setLocalSpaceMatrix(Matrix4f matrix) {
-		this.localSpaceMatrix.mul0(matrix);
+		this.localSpaceMatrix.set(matrix);
 	}
 
 	public Matrix4f getWorldSpaceMatrix() {
@@ -355,7 +353,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setWorldSpaceMatrix(Matrix4f matrix) {
-		this.worldSpaceMatrix.mul0(matrix);
+		this.worldSpaceMatrix.set(matrix);
 	}
 
 	public void setWorldSpaceNormal(Matrix3f matrix) {
@@ -393,19 +391,11 @@ public class GeoBone implements CoreGeoBone {
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
-
 	public void setModelPosition(Vector3d pos) {
 		// Doesn't work on bones with parent transforms
 		GeoBone parent = getParent();
-		Matrix4f identity = new Matrix4f();
-
-		identity.identity();
-
-		Matrix4f matrix = parent == null ? identity : new Matrix4f(parent.getModelSpaceMatrix());
-
-		matrix.invert();
-
-		Vector4f vec = matrix.transform(new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1));
+		Matrix4f matrix = (parent == null ? new Matrix4f() : new Matrix4f(parent.getModelSpaceMatrix())).invert();
+		Vector4f vec = matrix.transform(new Vector4f(-(float)pos.x / 16f, (float)pos.y / 16f, (float)pos.z / 16f, 1));
 		
 		updatePosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}

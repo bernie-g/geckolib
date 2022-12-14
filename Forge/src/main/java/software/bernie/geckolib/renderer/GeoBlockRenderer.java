@@ -31,7 +31,7 @@ import java.util.List;
  * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically.<br>
  * All blocks added to be rendered by GeckoLib should use an instance of this class.
  */
-public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements GeoRenderer<T>, BlockEntityRenderer<T> {
+public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements GeoRenderer<T>, BlockEntityRenderer<T> {
 	protected final GeoModel<T> model;
 	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 
@@ -39,8 +39,8 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-	protected Matrix4f renderStartPose = new Matrix4f();
-	protected Matrix4f preRenderPose = new Matrix4f();
+	protected Matrix4f blockRenderTranslations = new Matrix4f();
+	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	public GeoBlockRenderer(GeoModel<T> model) {
 		this.model = model;
@@ -113,7 +113,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = new Matrix4f(poseStack.last().pose());;
+		this.blockRenderTranslations = new Matrix4f(poseStack.last().pose());;
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -137,8 +137,6 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 							   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
-
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
@@ -152,6 +150,8 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 			this.model.handleAnimations(animatable, instanceId, animationState);
 		}
 
+		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
+
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);
@@ -164,18 +164,15 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> im
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
-		if (bone.isTrackingXform()) {
-			Matrix4f poseState = new Matrix4f(poseStack.last().pose());;
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose);
+		if (bone.isTrackingMatrices()) {
+			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
+			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.blockRenderTranslations);
+			Matrix4f worldState = new Matrix4f(localMatrix);
 			BlockPos pos = this.animatable.getBlockPos();
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			bone.setLocalSpaceMatrix(localMatrix);
-
-			Matrix4f worldState = new Matrix4f(localMatrix);;
-
-			worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ()));
-			bone.setWorldSpaceMatrix(worldState);
+			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,

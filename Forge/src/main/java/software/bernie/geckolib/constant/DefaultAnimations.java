@@ -9,6 +9,7 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * Optionally usable class that holds constants for recommended animation paths.<br>
@@ -82,6 +83,31 @@ public final class DefaultAnimations {
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericIdleController(T animatable) {
 		return new AnimationController<T>(animatable, "Idle", 10, state -> state.setAndContinue(IDLE));
+	}
+
+	/**
+	 * Generic {@link DefaultAnimations#SPAWN spawn} controller.<br>
+	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is <= the value provided in {@code ticks}.<br>
+	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated.
+	 * Recommended:
+	 * <ul>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: state -> animatable</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}: state -> animatable</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoReplacedEntity GeoReplacedEntity}: state -> state.getData(DataTickets.ENTITY)</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: state -> state.getData(DataTickets.ITEMSTACK)</li>
+	 *     <li>{@code GeoArmor}: state -> state.getData(DataTickets.ENTITY)</li>
+	 * </ul>
+	 * @param animatable The animatable the animation is for
+	 * @param objectSupplier The supplier of the associated object for the {@link GeoAnimatable#getTick} call
+	 * @param ticks The number of ticks the animation should run for. After this value is surpassed, the animation will no longer play
+	 */
+	public static <T extends GeoAnimatable> AnimationController<T> getSpawnController(T animatable, Function<AnimationState<T>, Object> objectSupplier, int ticks) {
+		return new AnimationController<T>(animatable, "Spawn", 0, state -> {
+			if (animatable.getTick(objectSupplier.apply(state)) <= ticks)
+				return state.setAndContinue(DefaultAnimations.SPAWN);
+
+			return PlayState.STOP;
+		});
 	}
 
 	/**

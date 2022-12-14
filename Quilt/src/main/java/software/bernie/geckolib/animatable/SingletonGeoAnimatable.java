@@ -68,8 +68,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @param data       The data to sync
      */
     default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
-        AnimDataSyncPacket<D> animDataSyncPacket = new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data);
-        GeckoLibNetwork.sendToTrackingEntityAndSelf(animDataSyncPacket, entityToTrack);
+        GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data), entityToTrack);
     }
 
     /**
@@ -85,9 +84,9 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     default <D> void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
         if (relatedEntity.level.isClientSide()) {
             getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
-        } else {
-            AnimTriggerPacket animTriggerPacket = new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName);
-            GeckoLibNetwork.sendToTrackingEntityAndSelf(animTriggerPacket, relatedEntity);
+        }
+		else {
+            GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName), relatedEntity);
         }
     }
 
@@ -102,8 +101,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @param packetCallback The packet callback. Used to call a custom network code
      */
     default void triggerAnim(long instanceId, @Nullable String controllerName, String animName, GeckoLibNetwork.IPacketCallback packetCallback) {
-        AnimTriggerPacket animTriggerPacket = new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName);
-        GeckoLibNetwork.sendWithCallback(animTriggerPacket, packetCallback);
+        GeckoLibNetwork.sendWithCallback(new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName), packetCallback);
     }
 
     /**

@@ -44,8 +44,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-	protected Matrix4f renderStartPose = new Matrix4f();
-	protected Matrix4f preRenderPose = new Matrix4f();
+	protected Matrix4f entityRenderTranslations = new Matrix4f();
+	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	protected BakedGeoModel lastModel = null;
 	protected GeoBone head = null;
@@ -224,7 +224,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource,
 						  @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 						  int packedOverlay, float red, float green, float blue, float alpha) {
-		this.preRenderPose = new Matrix4f(poseStack.last().pose());
+		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		applyBaseModel(this.baseModel);
 		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
@@ -266,8 +266,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		poseStack.translate(0, 24 / 16f, 0);
 		poseStack.scale(-1, -1, 1);
 
-		this.renderStartPose = new Matrix4f(poseStack.last().pose());
-
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
@@ -280,6 +278,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			this.model.handleAnimations(animatable, instanceId, animationState);
 		}
 
+		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
+
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		poseStack.popPose();
 	}
@@ -290,11 +290,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
-		if (bone.isTrackingXform()) {
+		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
-			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations));
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);

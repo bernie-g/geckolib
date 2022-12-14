@@ -81,7 +81,7 @@ public final class GeckoLibNetwork {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }
 
-        if(entityToTrack instanceof ServerPlayer serverPlayer)
+        if (entityToTrack instanceof ServerPlayer serverPlayer)
             ServerPlayNetworking.send(serverPlayer, packet.getPacketID(), packet.encode());
     }
 

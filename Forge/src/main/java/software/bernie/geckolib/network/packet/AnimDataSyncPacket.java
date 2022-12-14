@@ -38,8 +38,9 @@ public class AnimDataSyncPacket<D> {
 		String syncableId = buffer.readUtf();
 		long instanceId = buffer.readVarLong();
 		SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>)DataTickets.byName(buffer.readUtf());
+		D data = dataTicket.decode(buffer);
 
-		return new AnimDataSyncPacket<>(syncableId, instanceId, dataTicket, dataTicket.decode(buffer));
+		return new AnimDataSyncPacket<>(syncableId, instanceId, dataTicket, data);
 	}
 
 	public void receivePacket(Supplier<NetworkEvent.Context> context) {
@@ -51,6 +52,7 @@ public class AnimDataSyncPacket<D> {
 			if (animatable instanceof SingletonGeoAnimatable singleton)
 				singleton.setAnimData(ClientUtils.getClientPlayer(), this.instanceId, this.dataTicket, this.data);
 		});
+
 		handler.setPacketHandled(true);
 	}
 }

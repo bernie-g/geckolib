@@ -35,8 +35,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-	protected Matrix4f renderStartPose = new Matrix4f();
-	protected Matrix4f preRenderPose = new Matrix4f();
+	protected Matrix4f objectRenderTranslations = new Matrix4f();
+	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	public GeoObjectRenderer(GeoModel<T> model) {
 		this.model = model;
@@ -130,7 +130,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.preRenderPose = new Matrix4f(poseStack.last().pose());;
+		this.objectRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (this.scaleWidth != 1 && this.scaleHeight != 1)
 			poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
@@ -148,8 +148,6 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
-		this.renderStartPose = new Matrix4f(poseStack.last().pose());;
-
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
@@ -157,6 +155,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			this.model.handleAnimations(animatable, instanceId, animationState);
 		}
+
+		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
@@ -170,11 +170,11 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
-		if (bone.isTrackingXform()) {
+		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.preRenderPose));
-			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.renderStartPose));
+			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.objectRenderTranslations));
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,

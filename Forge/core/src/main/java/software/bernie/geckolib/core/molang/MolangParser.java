@@ -108,15 +108,33 @@ public class MolangParser extends MathBuilder {
 	}
 
 	/**
-	 * Set the value supplier for a variable.
+	 * Set the value supplier for a variable.<br>
+	 * Consider using {@link MolangParser#setMemoizedValue} instead of you don't need per-call dynamic results
 	 * @param name The name of the variable to set the value for
 	 * @param value The value supplier to set
 	 */
 	public void setValue(String name, DoubleSupplier value) {
-		LazyVariable variable = getVariable(name);
+		getVariable(name).set(value);
+	}
 
-		if (variable != null)
-			variable.set(value);
+	/**
+	 * Sets a memoized value supplier for a variable.<br>
+	 * This prevents re-calculation on successive calls, improving efficiency.<br>
+	 * This should be used wherever per-call accuracy is not needed.
+	 */
+	public void setMemoizedValue(String name, DoubleSupplier value) {
+		getVariable(name).set(new DoubleSupplier() {
+			private final DoubleSupplier supplier = value;
+			private double computedValue = Double.MIN_VALUE;
+
+			@Override
+			public double getAsDouble() {
+				if (this.computedValue == Double.MIN_VALUE)
+					this.computedValue = this.supplier.getAsDouble();
+
+				return this.computedValue;
+			}
+		});
 	}
 
 	/**

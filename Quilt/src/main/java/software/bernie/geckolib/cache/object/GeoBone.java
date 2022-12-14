@@ -1,18 +1,16 @@
 package software.bernie.geckolib.cache.object;
 
-import java.util.List;
-import java.util.Objects;
-
-import javax.annotation.Nullable;
-
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
-
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.state.BoneSnapshot;
+
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Mutable bone object representing a set of cubes, as well as child bones.<br>
@@ -24,7 +22,7 @@ public class GeoBone implements CoreGeoBone {
 
 	private final List<GeoBone> children = new ObjectArrayList<>();
 	private final List<GeoCube> cubes = new ObjectArrayList<>();
-	
+
 	private final Boolean mirror;
 	private final Double inflate;
 	private final Boolean dontRender;
@@ -58,7 +56,7 @@ public class GeoBone implements CoreGeoBone {
 	private final Matrix4f localSpaceMatrix = new Matrix4f();
 	private final Matrix4f worldSpaceMatrix = new Matrix4f();
 	private Matrix3f worldSpaceNormal = new Matrix3f();
-	
+
 	private boolean trackingMatrices;
 
 	public GeoBone(@Nullable GeoBone parent, String name, Boolean mirror, @Nullable Double inflate, @Nullable Boolean dontRender, @Nullable Boolean reset) {
@@ -320,7 +318,7 @@ public class GeoBone implements CoreGeoBone {
 		return this.cubes;
 	}
 
-	public boolean isTrackingXform() {
+	public boolean isTrackingMatrices() {
 		return trackingMatrices;
 	}
 
@@ -335,7 +333,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setModelSpaceMatrix(Matrix4f matrix) {
-		this.modelSpaceMatrix.mul0(matrix);
+		this.modelSpaceMatrix.set(matrix);
 	}
 
 	public Matrix4f getLocalSpaceMatrix() {
@@ -345,7 +343,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setLocalSpaceMatrix(Matrix4f matrix) {
-		this.localSpaceMatrix.mul0(matrix);
+		this.localSpaceMatrix.set(matrix);
 	}
 
 	public Matrix4f getWorldSpaceMatrix() {
@@ -355,7 +353,7 @@ public class GeoBone implements CoreGeoBone {
 	}
 
 	public void setWorldSpaceMatrix(Matrix4f matrix) {
-		this.worldSpaceMatrix.mul0(matrix);
+		this.worldSpaceMatrix.set(matrix);
 	}
 
 	public void setWorldSpaceNormal(Matrix3f matrix) {
@@ -371,7 +369,7 @@ public class GeoBone implements CoreGeoBone {
 	 */
 	public Vector3d getLocalPosition() {
 		Vector4f vec = getLocalSpaceMatrix().transform(new Vector4f(0, 0, 0, 1));
-		
+
 		return new Vector3d(vec.x(), vec.y(), vec.z());
 	}
 
@@ -397,17 +395,9 @@ public class GeoBone implements CoreGeoBone {
 	public void setModelPosition(Vector3d pos) {
 		// Doesn't work on bones with parent transforms
 		GeoBone parent = getParent();
-		Matrix4f identity = new Matrix4f();
+		Matrix4f matrix = (parent == null ? new Matrix4f() : new Matrix4f(parent.getModelSpaceMatrix())).invert();
+		Vector4f vec = matrix.transform(new Vector4f(-(float)pos.x / 16f, (float)pos.y / 16f, (float)pos.z / 16f, 1));
 
-		identity.identity();
-
-		Matrix4f matrix = parent == null ? identity : new Matrix4f(parent.getModelSpaceMatrix());
-
-		matrix.invert();
-
-		Vector4f vec = matrix
-				.transform(new Vector4f(-(float) pos.x / 16f, (float) pos.y / 16f, (float) pos.z / 16f, 1));
-		
 		updatePosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
 

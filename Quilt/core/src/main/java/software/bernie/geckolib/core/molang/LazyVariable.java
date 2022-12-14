@@ -36,11 +36,17 @@ public class LazyVariable extends Variable {
 		this.valueSupplier = valueSupplier;
 	}
 
+	/**
+	 * Get the current value of the variable
+	 */
 	@Override
 	public double get() {
 		return this.valueSupplier.getAsDouble();
 	}
 
+	/**
+	 * Instantiates a copy of this variable from this variable's current value and name
+	 */
 	public static LazyVariable from(Variable variable) {
 		return new LazyVariable(variable.getName(), variable.get());
 	}
