@@ -54,7 +54,7 @@ public class AnimDataSyncPacket<D> extends AbstractPacket {
 		SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>)DataTickets.byName(buf.readUtf());
 		D data = dataTicket.decode(buf);
 
-        client.execute(() -> runOnThread(syncableId, instanceID, dataTicket, dataTicket.decode(buf)));
+        client.execute(() -> runOnThread(syncableId, instanceID, dataTicket, data));
     }
 
 	private static <D> void runOnThread(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
