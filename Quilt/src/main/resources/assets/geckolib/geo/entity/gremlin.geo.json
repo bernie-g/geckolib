@@ -102,7 +102,7 @@
 					"name": "bipedHandLeft",
 					"parent": "bipedArmLeft",
 					"pivot": [6, 5, 6.5],
-					"rotation": [90, 0, 0],
+					"rotation": [90, 180, 0],
 					"cubes": [
 						{"origin": [6, 5, 6.5], "size": [0, 0, 0], "uv": [4, 4]}
 					]
@@ -129,7 +129,7 @@
 					"name": "bipedHandRight",
 					"parent": "bipedArmRight",
 					"pivot": [-6, 5, 6.5],
-					"rotation": [90, 0, 0],
+					"rotation": [90, 180, 0],
 					"cubes": [
 						{"origin": [-6, 5, 6.5], "size": [0, 0, 0], "uv": [0, 0], "mirror": true}
 					]
