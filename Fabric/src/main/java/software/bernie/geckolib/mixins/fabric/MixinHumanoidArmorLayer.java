@@ -18,7 +18,7 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
 /**
  * Render hook for injecting GeckoLib's armor rendering functionalities
  */
-@Mixin(HumanoidArmorLayer.class)
+@Mixin(value = HumanoidArmorLayer.class, priority = 700)
 public abstract class MixinHumanoidArmorLayer<T extends LivingEntity, A extends HumanoidModel<T>> {
     @Unique
     private LivingEntity gl_storedEntity;
