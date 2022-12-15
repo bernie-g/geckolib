@@ -28,8 +28,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import software.bernie.geckolib3.ArmorRenderingRegistryImpl;
 
-@Mixin({ ArmorFeatureRenderer.class })
 @Environment(EnvType.CLIENT)
+@Mixin(value = ArmorFeatureRenderer.class, priority = 700)
 public abstract class MixinArmorFeatureRenderer extends FeatureRenderer {
 	@Shadow
 	@Final

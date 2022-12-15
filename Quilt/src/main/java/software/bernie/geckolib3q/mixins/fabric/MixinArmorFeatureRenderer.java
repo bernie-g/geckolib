@@ -29,7 +29,7 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib3q.ArmorRenderingRegistryImpl;
 
-@Mixin({ HumanoidArmorLayer.class })
+@Mixin(value = HumanoidArmorLayer.class, priority = 700)
 @Environment(EnvType.CLIENT)
 public abstract class MixinArmorFeatureRenderer extends RenderLayer {
 	@Shadow
