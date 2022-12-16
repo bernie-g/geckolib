@@ -1,4 +1,3 @@
-v3.0.104
+v3.0.105
 
-- MClib updated, Fixed -() group not working - Hiroku https://github.com/fadookie/particleman/pull/7
-- Fixes crash with Layer Example animation location call.
+- Fixes setCustomAnimations and block animations.
