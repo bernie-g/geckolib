@@ -1,3 +1,8 @@
+v3.0.80
+
+- Closes #345
+- Adds priority to HumanoidArmorLayer mixin, help resolve crash with Cosmetic Armor 
+
 v3.0.79
 
 - Updates Geckolib default armor with new Gecko armor made by VoutVouniern
