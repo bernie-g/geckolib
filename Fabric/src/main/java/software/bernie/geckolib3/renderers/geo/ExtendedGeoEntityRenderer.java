@@ -77,13 +77,15 @@ import software.bernie.geckolib3.util.RenderUtils;
  */
 public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimatable> extends GeoEntityRenderer<T> {
 	protected static Map<ResourceLocation, IntIntPair> TEXTURE_DIMENSIONS_CACHE = new Object2ObjectOpenHashMap<>();
-	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new Object2ObjectOpenHashMap<>(); // TODO Remove in 1.20+
+	protected static Map<ResourceLocation, Tuple<Integer, Integer>> TEXTURE_SIZE_CACHE = new Object2ObjectOpenHashMap<>(); // TODO
+																															// Remove
+																															// in
+																															// 1.20+
 	private static final Map<String, ResourceLocation> ARMOR_TEXTURE_RES_MAP = new Object2ObjectOpenHashMap<>();
 	protected static final HumanoidModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_INNER = new HumanoidModel<>(
 			Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 	protected static final HumanoidModel<LivingEntity> DEFAULT_BIPED_ARMOR_MODEL_OUTER = new HumanoidModel<>(
 			Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
-
 
 	protected float widthScale;
 	protected float heightScale;
@@ -102,7 +104,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	protected ExtendedGeoEntityRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<T> modelProvider,
 			float widthScale, float heightScale, float shadowSize) {
 		super(renderManager, modelProvider);
-		
+
 		this.shadowRadius = shadowSize;
 		this.widthScale = widthScale;
 		this.heightScale = heightScale;
@@ -127,13 +129,13 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				if (skullOwnerTag != null) {
 					if (skullOwnerTag instanceof CompoundTag tag) {
 						skullOwnerProfile = NbtUtils.readGameProfile(tag);
-					}
-					else if (skullOwnerTag instanceof StringTag tag) {
+					} else if (skullOwnerTag instanceof StringTag tag) {
 						String skullOwner = tag.getAsString();
 
 						if (!StringUtils.isBlank(skullOwner)) {
-							SkullBlockEntity.updateGameprofile(new GameProfile(null, skullOwner), name ->
-									itemStack.getTag().put(PlayerHeadItem.TAG_SKULL_OWNER, NbtUtils.writeGameProfile(new CompoundTag(), name)));
+							SkullBlockEntity.updateGameprofile(new GameProfile(null, skullOwner),
+									name -> itemStack.getTag().put(PlayerHeadItem.TAG_SKULL_OWNER,
+											NbtUtils.writeGameProfile(new CompoundTag(), name)));
 						}
 					}
 				}
@@ -154,7 +156,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			poseStack.scale(relativeScaleX, relativeScaleY, relativeScaleZ);
 			poseStack.translate(-0.5, 0, -0.5);
 
-			SkullBlock.Type skullBlockType = ((AbstractSkullBlock)((BlockItem)itemStack.getItem()).getBlock()).getType();
+			SkullBlock.Type skullBlockType = ((AbstractSkullBlock) ((BlockItem) itemStack.getItem()).getBlock())
+					.getType();
 			SkullModelBase skullmodelbase = SkullBlockRenderer
 					.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(skullBlockType);
 			RenderType rendertype = SkullBlockRenderer.getRenderType(skullBlockType, skullOwnerProfile);
@@ -167,9 +170,10 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 	// Rendercall to render the model itself
 	@Override
 	public void render(GeoModel model, T animatable, float partialTick, RenderType type, PoseStack poseStack,
-					   MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlay,
-					   float red, float green, float blue, float alpha) {
-		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+			MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlay, float red,
+			float green, float blue, float alpha) {
+		super.render(model, animatable, partialTick, type, poseStack, bufferSource, buffer, packedLight, packedOverlay,
+				red, green, blue, alpha);
 		// Now, render the heads
 		renderHeads(poseStack, bufferSource, packedLight);
 	}
@@ -181,8 +185,8 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	@Override
 	public void renderLate(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
-						   VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
-						   float partialTicks) {
+			VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue,
+			float partialTicks) {
 		super.renderLate(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlay, red,
 				green, blue, partialTicks);
 
@@ -230,7 +234,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			if (IAnimatable.class.isAssignableFrom(geoArmorItem.getClass())) {
 				final GeoArmorRenderer<? extends ArmorItem> geoArmorRenderer = GeoArmorRenderer
 						.getRenderer(geoArmorItem.getClass());
-				
+
 				VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb,
 						RenderType.armorCutoutNoCull(
 								GeoArmorRenderer.getRenderer(geoArmorItem.getClass()).getTextureLocation(geoArmorItem)),
@@ -262,23 +266,45 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected void setLimbBoneVisible(GeoArmorRenderer<? extends ArmorItem> armorRenderer, ModelPart limb,
 			HumanoidModel<?> armorModel, EquipmentSlot slot) {
+		IBone gbHead = armorRenderer.getAndHideBone(armorRenderer.headBone);
+		IBone gbBody = armorRenderer.getAndHideBone(armorRenderer.bodyBone);
+		IBone gbArmL = armorRenderer.getAndHideBone(armorRenderer.leftArmBone);
+		IBone gbArmR = armorRenderer.getAndHideBone(armorRenderer.rightArmBone);
+		IBone gbLegL = armorRenderer.getAndHideBone(armorRenderer.leftLegBone);
+		IBone gbLegR = armorRenderer.getAndHideBone(armorRenderer.rightLegBone);
+		IBone gbBootL = armorRenderer.getAndHideBone(armorRenderer.leftBootBone);
+		IBone gbBootR = armorRenderer.getAndHideBone(armorRenderer.rightBootBone);
 		if (limb == armorModel.head || limb == armorModel.hat) {
-			armorRenderer.setBoneVisibility(armorRenderer.headBone, true);
+			gbHead.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.body) {
-			armorRenderer.setBoneVisibility(armorRenderer.bodyBone, true);
+		if (limb == armorModel.body) {
+			gbBody.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.leftArm) {
-			armorRenderer.setBoneVisibility(armorRenderer.leftArmBone, true);
+		if (limb == armorModel.leftArm) {
+			gbArmL.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.leftLeg) {
-			armorRenderer.setBoneVisibility((slot == EquipmentSlot.FEET ? armorRenderer.leftBootBone : armorRenderer.leftLegBone), true);
+		if (limb == armorModel.leftLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootL.setHidden(false);
+			} else {
+				gbLegL.setHidden(false);
+			}
+			return;
 		}
-		else if (limb == armorModel.rightArm) {
-			armorRenderer.setBoneVisibility(armorRenderer.rightArmBone, true);
+		if (limb == armorModel.rightArm) {
+			gbArmR.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.rightLeg) {
-			armorRenderer.setBoneVisibility((slot == EquipmentSlot.FEET ? armorRenderer.rightBootBone : armorRenderer.rightLegBone), true);
+		if (limb == armorModel.rightLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootR.setHidden(false);
+			} else {
+				gbLegR.setHidden(false);
+			}
+			return;
 		}
 	}
 
@@ -354,9 +380,9 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 			}
 
 			if (modMatrixRot) {
-				poseStack.mulPose(new Quaternion(0, 0, (float)Math.toRadians(zRot), false));
-				poseStack.mulPose(new Quaternion(0, (float)Math.toRadians(yRot), 0, false));
-				poseStack.mulPose(new Quaternion((float)Math.toRadians(xRot), 0, 0, false));
+				poseStack.mulPose(new Quaternion(0, 0, (float) Math.toRadians(zRot), false));
+				poseStack.mulPose(new Quaternion(0, (float) Math.toRadians(yRot), 0, false));
+				poseStack.mulPose(new Quaternion((float) Math.toRadians(xRot), 0, 0, false));
 			} else {
 				sourceLimb.xRot = xRot;
 				sourceLimb.yRot = yRot;
