@@ -276,13 +276,11 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
-			bone.setLocalSpaceMatrix(localMatrix);
+			bone.setLocalSpaceMatrix(localMatrix.translation(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f())));
 
-			Matrix4f worldState = new Matrix4f(localMatrix);;
+			Matrix4f worldPosition = new Matrix4f(localMatrix);
 
-			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
-			bone.setWorldSpaceMatrix(worldState);
+			bone.setWorldSpaceMatrix(worldPosition.translation(new Vector3f(this.animatable.position().toVector3f())));
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);

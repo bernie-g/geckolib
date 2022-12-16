@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -274,12 +275,11 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			bone.setLocalSpaceMatrix(localMatrix.translate(getRenderOffset(this.animatable, 1).toVector3f()));
+			bone.setLocalSpaceMatrix(localMatrix.translation(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f())));
 
 			Matrix4f worldPosition = new Matrix4f(localMatrix);
 
-			worldPosition.translate(this.animatable.position().toVector3f());
-			bone.setWorldSpaceMatrix(worldPosition);
+			bone.setWorldSpaceMatrix(worldPosition.translation(new Vector3f(this.animatable.position().toVector3f())));
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);

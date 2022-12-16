@@ -394,7 +394,7 @@ public class GeoBone implements CoreGeoBone {
 	public void setModelPosition(Vector3d pos) {
 		// Doesn't work on bones with parent transforms
 		GeoBone parent = getParent();
-		Matrix4f matrix = (parent == null ? new Matrix4f() : new Matrix4f(parent.getModelSpaceMatrix())).invert();
+		Matrix4f matrix = (parent == null ? new Matrix4f().identity() : new Matrix4f(parent.getModelSpaceMatrix())).invert();
 		Vector4f vec = matrix.transform(new Vector4f(-(float)pos.x / 16f, (float)pos.y / 16f, (float)pos.z / 16f, 1));
 
 		updatePosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);

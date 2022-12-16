@@ -38,9 +38,9 @@ public class BatRenderer extends GeoEntityRenderer<BatEntity> {
 				RandomSource rand = animatable.getRandom();
 
 				animatable.getCommandSenderWorld().addParticle(ParticleTypes.PORTAL,
-						ear.getWorldPosition().x,
-						ear.getWorldPosition().y,
-						ear.getWorldPosition().z,
+						ear.getWorldPosition().x(),
+						ear.getWorldPosition().y(),
+						ear.getWorldPosition().z(),
 						rand.nextDouble() - 0.5D,
 						-rand.nextDouble(),
 						rand.nextDouble() - 0.5D);
