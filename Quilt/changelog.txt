@@ -1,3 +1,8 @@
+v3.1.39
+
+- Closes #345
+- Adds priority to HumanoidArmorLayer mixin, help resolve crash with Cosmetic Armor 
+
 v3.1.38
 
 - Fixes Access Widener

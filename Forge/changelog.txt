@@ -1,3 +1,7 @@
+v3.1.39
+
+- Closes #345
+
 v3.1.38
 
 - Updates Geckolib default armor with new Gecko armor made by VoutVouniern
