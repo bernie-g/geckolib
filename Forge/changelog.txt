@@ -1,7 +1,8 @@
-v4.0.1
+v4.0.2
 
-Add some additional reRender support, fix some stuff that probably shouldn't be reRendering. - Tslat
-Homogenise reRender conditional AnimationState support across the various renderers. - Tslat
-Adds faceRotation helper in RenderUtils, most commonly needed for projectiles.
+- Fixes Gremlin item rotation - DerToaster
+- Addes setMemoizedValue to MolangParser - Tslat
+- Bumps Core version
+- More work done with getWorldPosition but not fully working yet.
 
 Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes

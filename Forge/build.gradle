@@ -107,7 +107,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.3-44.0.1'
+    minecraft 'net.minecraftforge:forge:1.19.3-44.0.23'
     library 'com.eliotlash.mclib:mclib:20'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
