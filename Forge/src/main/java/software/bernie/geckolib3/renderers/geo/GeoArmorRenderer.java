@@ -175,7 +175,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 		AnimationEvent itemEvent = new AnimationEvent(this.currentArmorItem, 0, 0, 0, false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
-		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
+		modelProvider.setCustomAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 		this.dispatchedMat = stack.last().pose().copy();
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		this.fitToBiped();

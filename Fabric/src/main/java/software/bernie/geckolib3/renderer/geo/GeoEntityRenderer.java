@@ -207,7 +207,7 @@ public abstract class GeoEntityRenderer<T extends LivingEntity & IAnimatable> ex
 				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel) {
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
+			((IAnimatableModel<T>) modelProvider).setCustomAnimations(entity, this.getUniqueID(entity), predicate);
 		}
 
 		stack.translate(0, 0.01f, 0);

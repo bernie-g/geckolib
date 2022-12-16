@@ -120,7 +120,7 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 		this.dispatchedMat = stack.peek().getModel().copy();
 		AnimationEvent<T> itemEvent = new AnimationEvent<>(animatable, 0, 0,
 				MinecraftClient.getInstance().getTickDelta(), false, Collections.singletonList(itemStack));
-		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
+		modelProvider.setCustomAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		stack.push();
 		// stack.translate(0, 0.01f, 0);
 		stack.translate(0.5, 0.5, 0.5);

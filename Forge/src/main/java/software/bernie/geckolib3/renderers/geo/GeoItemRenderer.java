@@ -126,7 +126,7 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Item
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(animatable));
 		AnimationEvent itemEvent = new AnimationEvent(animatable, 0, 0, Minecraft.getInstance().getFrameTime(), false,
 				Collections.singletonList(itemStack));
-		modelProvider.setLivingAnimations(animatable, this.getUniqueID(animatable), itemEvent);
+		modelProvider.setCustomAnimations(animatable, this.getUniqueID(animatable), itemEvent);
 		this.dispatchedMat = stack.last().pose().copy();
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		stack.pushPose();

@@ -85,7 +85,7 @@ public abstract class GeoBlockRenderer<T extends BlockEntity & IAnimatable> exte
 	public void render(T tile, float partialTicks, MatrixStack stack, VertexConsumerProvider bufferIn,
 			int packedLightIn) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(tile));
-		modelProvider.setLivingAnimations(tile, this.getUniqueID(tile));
+		modelProvider.setCustomAnimations(tile, this.getUniqueID(tile));
 		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		this.dispatchedMat = stack.peek().getModel().copy();
 		stack.push();

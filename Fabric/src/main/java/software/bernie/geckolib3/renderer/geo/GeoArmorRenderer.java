@@ -136,7 +136,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
 				MinecraftClient.getInstance().getTickDelta(), false,
 				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
-		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
+		modelProvider.setCustomAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
 
 		this.fitToBiped();
 		this.applySlot(armorSlot);

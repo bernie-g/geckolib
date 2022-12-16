@@ -205,7 +205,7 @@ public abstract class GeoReplacedEntityRenderer<T extends IAnimatable> extends E
 		AnimationEvent predicate = new AnimationEvent(animatable, limbSwing, limbSwingAmount, partialTicks,
 				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel) {
-			((IAnimatableModel) modelProvider).setLivingAnimations(animatable, this.getUniqueID(entity), predicate);
+			((IAnimatableModel) modelProvider).setCustomAnimations(animatable, this.getUniqueID(entity), predicate);
 		}
 
 		stack.translate(0, 0.01f, 0);

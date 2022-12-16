@@ -77,7 +77,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Enti
 		AnimationEvent<T> predicate = new AnimationEvent<T>(entityIn, limbSwing, lastLimbDistance, partialTicks,
 				!(lastLimbDistance > -0.15F && lastLimbDistance < 0.15F), Collections.singletonList(entityModelData));
 		if (modelProvider instanceof IAnimatableModel) {
-			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entityIn, this.getUniqueID(entityIn), predicate);
+			((IAnimatableModel<T>) modelProvider).setCustomAnimations(entityIn, this.getUniqueID(entityIn), predicate);
 		}
 		Minecraft.getInstance().textureManager.bind(getTextureLocation(entityIn));
 		Color renderColor = getRenderColor(entityIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn);
