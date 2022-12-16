@@ -42,13 +42,19 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 			registerBone(childBone);
 		}
 	}
+	
+	@Override
+	public void setCustomAnimations(T animatable, int instanceId, AnimationEvent animationEvent) {
+		this.setLivingAnimations(animatable, instanceId, animationEvent);
+	}
+
 
 	@Override
 	public void setLivingAnimations(T entity, Integer uniqueID, AnimationEvent customPredicate) {
 		MinecraftClient mc = MinecraftClient.getInstance();
 		AnimationData manager = entity.getFactory().getOrCreateAnimationData(uniqueID.intValue());
 		AnimationEvent<T> predicate;
-		double currentTick = entity instanceof LivingEntity ? ((Entity)entity).age : getCurrentTick();
+		double currentTick = entity instanceof Entity ? ((Entity)entity).age : getCurrentTick();
 
 		if (manager.ticker == null && !(entity instanceof LivingEntity)) 
 			manager.ticker = new AnimationTicker(manager);
