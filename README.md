@@ -4,14 +4,14 @@
   <a href="https://discord.geckolib.com/"align="center"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="discord"/></a> <a href="https://www.patreon.com/geckosmods"><img src="https://img.shields.io/endpoint.svg?url=https://shieldsio-patreon.vercel.app/api?username=geckosmods&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="patreon"/> </a>
 </p>
 
-<h1 style="font-size:10vw" align="center">GeckoLib 4.0 is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.12.2*/1.15.2*/1.16.5*/1.17.1*/1.18.2/1.19.2, Fabric 1.16.5*/1.17.1*/1.18.2/1.19.2, and Quilt 1.18.2/1.19.2.</h1>
+<h1 style="font-size:10vw" align="center">GeckoLib 4.0 is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge 1.19.3+, Fabric 1.19.3+, and Quilt 1.19.3+.</h1>
 
 * *This version is unsupported for any issues*
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_2.png" alt="logo"/> 
 
 <h2 align="center">
-<h2>You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation">here</a>.</h2><br><br>
+<h2>You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation_4.x">here</a>.</h2><br><br>
 
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_3.png" alt="logo"/> 
 
