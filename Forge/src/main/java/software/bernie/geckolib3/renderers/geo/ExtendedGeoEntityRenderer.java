@@ -281,23 +281,45 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 
 	protected void setLimbBoneVisible(GeoArmorRenderer<? extends GeoArmorItem> armorRenderer,
 									  ModelPart limb, HumanoidModel<?> armorModel, EquipmentSlot slot) {
+		IBone gbHead = armorRenderer.getAndHideBone(armorRenderer.headBone);
+		IBone gbBody = armorRenderer.getAndHideBone(armorRenderer.bodyBone);
+		IBone gbArmL = armorRenderer.getAndHideBone(armorRenderer.leftArmBone);
+		IBone gbArmR = armorRenderer.getAndHideBone(armorRenderer.rightArmBone);
+		IBone gbLegL = armorRenderer.getAndHideBone(armorRenderer.leftLegBone);
+		IBone gbLegR = armorRenderer.getAndHideBone(armorRenderer.rightLegBone);
+		IBone gbBootL = armorRenderer.getAndHideBone(armorRenderer.leftBootBone);
+		IBone gbBootR = armorRenderer.getAndHideBone(armorRenderer.rightBootBone);
 		if (limb == armorModel.head || limb == armorModel.hat) {
-			armorRenderer.setBoneVisibility(armorRenderer.headBone, true);
+			gbHead.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.body) {
-			armorRenderer.setBoneVisibility(armorRenderer.bodyBone, true);
+		if (limb == armorModel.body) {
+			gbBody.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.leftArm) {
-			armorRenderer.setBoneVisibility(armorRenderer.leftArmBone, true);
+		if (limb == armorModel.leftArm) {
+			gbArmL.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.leftLeg) {
-			armorRenderer.setBoneVisibility((slot == EquipmentSlot.FEET ? armorRenderer.leftBootBone : armorRenderer.leftLegBone), true);
+		if (limb == armorModel.leftLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootL.setHidden(false);
+			} else {
+				gbLegL.setHidden(false);
+			}
+			return;
 		}
-		else if (limb == armorModel.rightArm) {
-			armorRenderer.setBoneVisibility(armorRenderer.rightArmBone, true);
+		if (limb == armorModel.rightArm) {
+			gbArmR.setHidden(false);
+			return;
 		}
-		else if (limb == armorModel.rightLeg) {
-			armorRenderer.setBoneVisibility((slot == EquipmentSlot.FEET ? armorRenderer.rightBootBone : armorRenderer.rightLegBone), true);
+		if (limb == armorModel.rightLeg) {
+			if (slot == EquipmentSlot.FEET) {
+				gbBootR.setHidden(false);
+			} else {
+				gbLegR.setHidden(false);
+			}
+			return;
 		}
 	}
 
