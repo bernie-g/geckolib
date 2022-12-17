@@ -54,6 +54,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	protected final Map<String, RawAnimation> triggerableAnimations = new Object2ObjectOpenHashMap<>(0);
 	protected RawAnimation triggeredAnimation = null;
+	protected boolean handlingTriggeredAnimations = false;
 
 	protected double transitionLength;
 	protected RawAnimation currentRawAnimation;
@@ -201,6 +202,19 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Tells the AnimationController that you want to receive the {@link AnimationController.AnimationStateHandler}
+	 * while a triggered animation is playing.<br>
+	 * <br>
+	 * This has no effect if no triggered animation has been registered, or one isn't currently playing.<br>
+	 * If a triggered animation is playing, it can be checked in your AnimationStateHandler via {@link AnimationController#isPlayingTriggeredAnimation()}
+	 */
+	public AnimationController<T> receiveTriggeredAnimations() {
+		this.handlingTriggeredAnimations = true;
+
+		return this;
+	}
+
+	/**
 	 * Gets the controller's name.
 	 * @return The name
 	 */
@@ -286,6 +300,15 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Returns whether the controller is currently playing a triggered animation registered in
+	 * {@link AnimationController#triggerableAnim}<br>
+	 * Used for custom handling if {@link AnimationController#receiveTriggeredAnimations()} was marked
+	 */
+	public boolean isPlayingTriggeredAnimation() {
+		return this.triggeredAnimation != null && !hasAnimationFinished();
+	}
+
+	/**
 	 * Sets the currently loaded animation to the one provided.<br>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
 	 * Pass null to this method to tell the controller to stop.<br>
@@ -350,7 +373,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 			setAnimation(this.triggeredAnimation);
 
-			if (!hasAnimationFinished())
+			if (!hasAnimationFinished() && (!this.handlingTriggeredAnimations || this.stateHandler.handle(state) == PlayState.CONTINUE))
 				return PlayState.CONTINUE;
 
 			this.triggeredAnimation = null;
