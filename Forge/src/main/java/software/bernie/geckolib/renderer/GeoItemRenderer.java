@@ -39,6 +39,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	protected final GeoModel<T> model;
 
 	protected ItemStack currentItemStack;
+	protected ItemTransforms.TransformType renderPerspective;
 	protected T animatable;
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
@@ -146,6 +147,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		this.animatable = (T)stack.getItem();
 		this.currentItemStack = stack;
+		this.renderPerspective = transformType;
 
 		if (transformType == ItemTransforms.TransformType.GUI) {
 			renderInGui(transformType, poseStack, bufferSource, packedLight, packedOverlay);
@@ -196,6 +198,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			long instanceId = getInstanceId(animatable);
 
 			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
+			animationState.setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
 			animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			this.model.handleAnimations(animatable, instanceId, animationState);
