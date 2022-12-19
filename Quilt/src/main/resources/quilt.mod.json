@@ -8,7 +8,12 @@
 			"name": "Geckolib",
 			"description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.",
 			"contributors": {
-				"Me!": "Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat, KyoSleep"
+				"Gecko": "Owner",
+				"AzureDoom": "Maintainer",
+				"Eliot": "Contributor",
+				"Hydos": "Contributor",
+				"DerToaster": "Contributor",
+				"Tslat": "Contributor"
 			},
 			"icon": "geckolib.png"
 		},
@@ -32,7 +37,7 @@
 			},
 			{
 				"id": "minecraft",
-				"versions": ">=1.19.2"
+				"versions": ">=1.19.3"
 			}
 		]
 	},
