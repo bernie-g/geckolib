@@ -75,6 +75,13 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
+	 * Returns the current ItemStack being rendered
+	 */
+	public ItemStack getCurrentItemStack() {
+		return this.currentItemStack;
+	}
+
+	/**
 	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */

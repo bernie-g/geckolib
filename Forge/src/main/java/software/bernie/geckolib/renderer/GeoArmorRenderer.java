@@ -83,6 +83,27 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
+	 * Returns the entity currently being rendered with armour equipped
+	 */
+	public Entity getCurrentEntity() {
+		return this.currentEntity;
+	}
+
+	/**
+	 * Returns the ItemStack pertaining to the current piece of armor being rendered
+	 */
+	public ItemStack getCurrentStack() {
+		return this.currentStack;
+	}
+
+	/**
+	 * Returns the equipped slot of the armor piece being rendered
+	 */
+	public EquipmentSlot getCurrentSlot() {
+		return this.currentSlot;
+	}
+
+	/**
 	 * Gets the id that represents the current animatable's instance for animation purposes.
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
