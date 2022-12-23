@@ -14,6 +14,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -40,6 +41,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 
 	public GeoObjectRenderer(GeoModel<T> model) {
 		this.model = model;
+
+		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -179,5 +182,30 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
+	}
+
+	/**
+	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+	 */
+	@Override
+	public void fireCompileRenderLayersEvent() {
+		GeoRenderEvent.Object.CompileRenderLayers.EVENT.invoker().handle(new GeoRenderEvent.Object.CompileRenderLayers(this));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * @return Whether the renderer should proceed based on the cancellation state of the event
+	 */
+	@Override
+	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		return GeoRenderEvent.Object.Pre.EVENT.invoker().handle(new GeoRenderEvent.Object.Pre(this, poseStack, model, bufferSource, partialTick, packedLight));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
+	 */
+	@Override
+	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		GeoRenderEvent.Object.Post.EVENT.invoker().handle(new GeoRenderEvent.Object.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }
