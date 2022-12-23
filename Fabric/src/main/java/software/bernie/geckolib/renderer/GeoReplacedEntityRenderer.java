@@ -32,6 +32,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -60,6 +61,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		this.model = model;
 		this.animatable = animatable;
+		
+		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -463,5 +466,30 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		buffer.vertex(positionMatrix, x - xOffset, y + yOffset, z + zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
 		buffer.vertex(positionMatrix, x + xOffset, y + width - yOffset, z - zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
+	}
+
+	/**
+	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+	 */
+	@Override
+	public void fireCompileRenderLayersEvent() {
+		GeoRenderEvent.ReplacedEntity.CompileRenderLayers.EVENT.invoker().handle(new GeoRenderEvent.ReplacedEntity.CompileRenderLayers(this));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * @return Whether the renderer should proceed based on the cancellation state of the event
+	 */
+	@Override
+	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		return GeoRenderEvent.ReplacedEntity.Pre.EVENT.invoker().handle(new GeoRenderEvent.ReplacedEntity.Pre(this, poseStack, model, bufferSource, partialTick, packedLight));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
+	 */
+	@Override
+	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		GeoRenderEvent.ReplacedEntity.Post.EVENT.invoker().handle(new GeoRenderEvent.ReplacedEntity.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }

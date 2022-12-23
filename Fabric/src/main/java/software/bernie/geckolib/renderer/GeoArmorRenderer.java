@@ -22,6 +22,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -65,6 +66,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 
 		this.model = model;
+
+		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -513,5 +516,30 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			return;
 
 		bone.setHidden(!visible);
+	}
+
+	/**
+	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+	 */
+	@Override
+	public void fireCompileRenderLayersEvent() {
+		GeoRenderEvent.Armor.CompileRenderLayers.EVENT.invoker().handle(new GeoRenderEvent.Armor.CompileRenderLayers(this));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * @return Whether the renderer should proceed based on the cancellation state of the event
+	 */
+	@Override
+	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		return GeoRenderEvent.Armor.Pre.EVENT.invoker().handle(new GeoRenderEvent.Armor.Pre(this, poseStack, model, bufferSource, partialTick, packedLight));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
+	 */
+	@Override
+	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		GeoRenderEvent.Armor.Post.EVENT.invoker().handle(new GeoRenderEvent.Armor.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }
