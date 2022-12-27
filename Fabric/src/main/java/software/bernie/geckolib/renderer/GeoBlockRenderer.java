@@ -21,6 +21,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtils;
@@ -44,6 +45,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 
 	public GeoBlockRenderer(GeoModel<T> model) {
 		this.model = model;
+
+		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -206,5 +209,30 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			return blockState.getValue(DirectionalBlock.FACING);
 
 		return Direction.NORTH;
+	}
+
+	/**
+	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+	 */
+	@Override
+	public void fireCompileRenderLayersEvent() {
+		GeoRenderEvent.Block.CompileRenderLayers.EVENT.invoker().handle(new GeoRenderEvent.Block.CompileRenderLayers(this));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * @return Whether the renderer should proceed based on the cancellation state of the event
+	 */
+	@Override
+	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		return GeoRenderEvent.Block.Pre.EVENT.invoker().handle(new GeoRenderEvent.Block.Pre(this, poseStack, model, bufferSource, partialTick, packedLight));
+	}
+
+	/**
+	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
+	 */
+	@Override
+	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
+		GeoRenderEvent.Block.Post.EVENT.invoker().handle(new GeoRenderEvent.Block.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }

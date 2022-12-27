@@ -124,14 +124,14 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		preRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
-		preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay);
-
-		actuallyRender(poseStack, animatable, model, renderType,
-				bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-
-		applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-
-		postRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		if (firePreRenderEvent(poseStack, model, bufferSource, partialTick, packedLight)) {
+			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay);
+			actuallyRender(poseStack, animatable, model, renderType,
+					bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			postRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			firePostRenderEvent(poseStack, model, bufferSource, partialTick, packedLight);
+		}
 
 		poseStack.popPose();
 	}
@@ -291,4 +291,20 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 					vertex.texV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}
 	}
+
+	/**
+	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+	 */
+	void fireCompileRenderLayersEvent();
+
+	/**
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * @return Whether the renderer should proceed based on the cancellation state of the event
+	 */
+	boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight);
+
+	/**
+	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
+	 */
+	void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight);
 }
