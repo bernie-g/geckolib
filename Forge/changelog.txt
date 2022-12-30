@@ -1,8 +1,14 @@
-v4.0.2
+v4.0.3
 
-- Fixes Gremlin item rotation - DerToaster
-- Addes setMemoizedValue to MolangParser - Tslat
-- Bumps Core version
-- More work done with getWorldPosition but not fully working yet.
+- Add DataTicket for TransformType for item rendering - Tslat
+- Add allowing for handling of triggered animations via opt-in system - Tslat
+- Bumps Core Version
+- Add getters for the relevant sub-data objects of GeoArmorRenderer and GeoItemRender - Tslat
+- Add base GeoRenderEvent class and subclasses - Tslat
+- Add BakedGeoModel to parms for Pre and Post render events - Tslat
+- Add event hooks into renderers on Forge - Tslat 
+- Fix incorrect pre-render event check on Forge - Tslat 
+- Add event hooks to Fabric from Forge - Tslat 
+- Add events to Quilt - Tslat 
 
 Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes
