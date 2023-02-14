@@ -1,3 +1,7 @@
+v3.1.39
+
+- Blacklists gigeresque animation namespace to fix crash. 
+
 v3.1.38
 
 - Closes #345
