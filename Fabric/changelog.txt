@@ -1,3 +1,8 @@
+v3.1.40
+
+- Adds enchantment glint to Geckolib Armors.
+- Adds enchantment glint to Geckolib Items.
+
 v3.1.39
 
 - Blacklists gigeresque animation namespace to fix crash. 
