@@ -28,12 +28,9 @@ public final class ClientListener implements ClientModInitializer {
 
     @Override
 	public void onInitializeClient(ModContainer mod) {
-        if(!GeckoLibMod.shouldRegisterExamples()){
-            return;
-        }
-
-        registerNetwork();
-        registerRenderers();
+		if (GeckoLibMod.shouldRegisterExamples())
+			registerRenderers();
+		registerNetwork();
     }
 
     private static void registerRenderers() {
