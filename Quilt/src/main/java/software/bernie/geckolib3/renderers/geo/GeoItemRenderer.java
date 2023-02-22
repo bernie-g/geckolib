@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -174,6 +175,10 @@ public class GeoItemRenderer<T extends Item & IAnimatable>
 			bone.setLocalSpaceXform(localMatrix);
 		}
 
+		RenderType renderType = getRenderType(animatable, 0, poseStack, rtb, null, packedLight,
+				getTextureLocation(animatable));
+		buffer = ItemRenderer.getFoilBufferDirect(rtb, renderType, false, this.currentItemStack != null && this.currentItemStack.hasFoil());
+		
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}

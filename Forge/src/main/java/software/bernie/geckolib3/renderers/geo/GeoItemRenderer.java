@@ -1,11 +1,18 @@
 package software.bernie.geckolib3.renderers.geo;
 
+import java.util.Collections;
+
+import javax.annotation.Nonnull;
+
+import org.jetbrains.annotations.ApiStatus.AvailableSince;
+
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -13,13 +20,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.ApiStatus.AvailableSince;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.IAnimatableModel;
 import software.bernie.geckolib3.core.controller.AnimationController;
@@ -32,9 +39,6 @@ import software.bernie.geckolib3.util.EModelRenderCycle;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 import software.bernie.geckolib3.util.IRenderCycle;
 import software.bernie.geckolib3.util.RenderUtils;
-
-import javax.annotation.Nonnull;
-import java.util.Collections;
 
 public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends BlockEntityWithoutLevelRenderer
 		implements IGeoRenderer<T> {
@@ -169,6 +173,10 @@ public abstract class GeoItemRenderer<T extends Item & IAnimatable> extends Bloc
 			bone.setLocalSpaceXform(localMatrix);
 		}
 
+		RenderType renderType = getRenderType(animatable, 0, poseStack, rtb, null, packedLight,
+				getTextureLocation(animatable));
+		buffer = ItemRenderer.getFoilBufferDirect(rtb, renderType, false, this.currentItemStack != null && this.currentItemStack.hasFoil());
+		
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}

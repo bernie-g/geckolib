@@ -26,7 +26,7 @@ import software.bernie.geckolib3.geo.render.built.GeoModel;
 public class GeckoLibCache {
 	private static GeckoLibCache INSTANCE;
 	private static final Set<String> excludedNamespaces = ObjectOpenHashSet.of("moreplayermodels", "customnpcs",
-			"gunsrpg", "gigeresque");
+			"gunsrpg", "gigeresque", "azurelib");
 
 	private final AnimationFileLoader animationLoader;
 	private final GeoModelLoader modelLoader;

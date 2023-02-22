@@ -10,6 +10,7 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -74,7 +75,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	protected MultiBufferSource rtb = null;
+	protected MultiBufferSource rtb;
 
 	private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
@@ -194,8 +195,12 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		Color renderColor = getRenderColor(this.currentArmorItem, partialTick, poseStack, null, buffer, packedLight);
 		RenderType renderType = getRenderType(this.currentArmorItem, partialTick, poseStack, null, buffer, packedLight,
 				getTextureLocation(this.currentArmorItem));
+		MultiBufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+		buffer = ItemRenderer.getArmorFoilBuffer(bufferSource,
+				RenderType.armorCutoutNoCull(getTextureLocation(currentArmorItem)),
+				false, itemStack.hasFoil());
 
-		render(model, this.currentArmorItem, partialTick, renderType, poseStack, null, buffer, packedLight,
+		render(model, this.currentArmorItem, partialTick, renderType, poseStack, bufferSource, buffer, packedLight,
 				OverlayTexture.NO_OVERLAY, renderColor.getRed() / 255f, renderColor.getGreen() / 255f,
 				renderColor.getBlue() / 255f, renderColor.getAlpha() / 255f);
 
@@ -211,6 +216,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 							float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.currentArmorItem = animatable;
+		this.rtb = bufferSource;
 
 		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer,
 				packedLight, packedOverlay, red, green, blue, alpha);
@@ -229,6 +235,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			bone.setLocalSpaceXform(localMatrix);
 		}
 
+		buffer = ItemRenderer.getArmorFoilBuffer(getCurrentRTB(),
+				RenderType.armorCutoutNoCull(getTextureLocation(currentArmorItem)), false, itemStack.hasFoil());
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}

@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 
 import org.jetbrains.annotations.ApiStatus.AvailableSince;
-import org.quiltmc.loader.api.QuiltLoader;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -17,10 +16,12 @@ import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 
 import net.fabricmc.fabric.api.client.rendering.v1.ArmorRenderer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -113,41 +114,11 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		return renderer;
 	}
 
+	@Override
 	public void render(PoseStack matrices, MultiBufferSource vertexConsumers, ItemStack stack, LivingEntity entity,
 			EquipmentSlot slot, int light, HumanoidModel<LivingEntity> contextModel) {
 		setCurrentItem(entity, stack, slot, contextModel);
 		this.render(matrices, vertexConsumers, light);
-	}
-
-	public void render(float partialTicks, PoseStack stack, VertexConsumer bufferIn, int packedLightIn) {
-		stack.translate(0.0D, 1.497F, 0.0D);
-		stack.scale(-1.005F, -1.0F, 1.005F);
-		this.setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
-		this.dispatchedMat = stack.last().pose().copy();
-		GeoModel model = modelProvider.getModel(modelProvider.getModelResource(currentArmorItem));
-
-		AnimationEvent<T> itemEvent = new AnimationEvent<T>(this.currentArmorItem, 0, 0,
-				Minecraft.getInstance().getFrameTime(), false,
-				Arrays.asList(this.itemStack, this.entityLiving, this.armorSlot));
-		modelProvider.setLivingAnimations(currentArmorItem, this.getUniqueID(this.currentArmorItem), itemEvent);
-
-		this.fitToBiped();
-		this.applySlot(armorSlot);
-		stack.pushPose();
-		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
-		Color renderColor = getRenderColor(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn);
-		RenderType renderType = getRenderType(currentArmorItem, partialTicks, stack, null, bufferIn, packedLightIn,
-				getTextureLocation(currentArmorItem));
-		render(model, currentArmorItem, partialTicks, renderType, stack, null, bufferIn, packedLightIn,
-				OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
-
-		if (QuiltLoader.isModLoaded("patchouli")) {
-			PatchouliCompat.patchouliLoaded(stack);
-		}
-		stack.popPose();
-		stack.scale(-1.005F, -1.0F, 1.005F);
-		stack.translate(0.0D, -1.497F, 0.0D);
 	}
 
 	public void render(PoseStack stack, MultiBufferSource bufferIn, int packedLightIn) {
@@ -166,19 +137,27 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 		this.applySlot(armorSlot);
 		stack.pushPose();
 		RenderSystem.setShaderTexture(0, getTextureLocation(currentArmorItem));
-		Color renderColor = getRenderColor(currentArmorItem, 0, stack, bufferIn, null, packedLightIn);
-		RenderType renderType = getRenderType(currentArmorItem, 0, stack, bufferIn, null, packedLightIn,
-				getTextureLocation(currentArmorItem));
-		render(model, currentArmorItem, 0, renderType, stack, bufferIn, null, packedLightIn, OverlayTexture.NO_OVERLAY,
-				(float) renderColor.getRed() / 255f, (float) renderColor.getGreen() / 255f,
-				(float) renderColor.getBlue() / 255f, (float) renderColor.getAlpha() / 255);
+		Color renderColor = getRenderColor(currentArmorItem, Minecraft.getInstance().getFrameTime(), stack, bufferIn,
+				null, packedLightIn);
+		RenderType renderType = getRenderType(currentArmorItem, Minecraft.getInstance().getFrameTime(), stack, bufferIn,
+				null, packedLightIn, getTextureLocation(currentArmorItem));
+		render(model, currentArmorItem, Minecraft.getInstance().getFrameTime(), renderType, stack, bufferIn, null,
+				packedLightIn, OverlayTexture.NO_OVERLAY, (float) renderColor.getRed() / 255f,
+				(float) renderColor.getGreen() / 255f, (float) renderColor.getBlue() / 255f,
+				(float) renderColor.getAlpha() / 255);
 
-		if (QuiltLoader.isModLoaded("patchouli")) {
+		if (FabricLoader.getInstance().isModLoaded("patchouli"))
 			PatchouliCompat.patchouliLoaded(stack);
-		}
+
 		stack.popPose();
 		stack.scale(-1.005F, -1.0F, 1.005F);
 		stack.translate(0.0D, -1.497F, 0.0D);
+	}
+
+	@Override
+	public RenderType getRenderType(T animatable, float partialTick, PoseStack poseStack,
+			MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, ResourceLocation texture) {
+		return RenderType.armorCutoutNoCull(texture);
 	}
 
 	@Override
@@ -187,6 +166,7 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 			float alpha) {
 		this.renderEarlyMat = poseStack.last().pose().copy();
 		this.currentArmorItem = animatable;
+		this.rtb = bufferSource;
 
 		IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight,
 				packedOverlay, red, green, blue, alpha);
@@ -205,6 +185,8 @@ public class GeoArmorRenderer<T extends ArmorItem & IAnimatable> implements IGeo
 			bone.setLocalSpaceXform(localMatrix);
 		}
 
+		buffer = ItemRenderer.getArmorFoilBuffer(getCurrentRTB(),
+				RenderType.armorCutoutNoCull(getTextureLocation(currentArmorItem)), false, itemStack.hasFoil());
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
 	}

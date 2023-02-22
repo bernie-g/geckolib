@@ -235,11 +235,6 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				final GeoArmorRenderer<? extends ArmorItem> geoArmorRenderer = GeoArmorRenderer
 						.getRenderer(geoArmorItem.getClass());
 
-				VertexConsumer ivb = ItemRenderer.getArmorFoilBuffer(rtb,
-						RenderType.armorCutoutNoCull(
-								GeoArmorRenderer.getRenderer(geoArmorItem.getClass()).getTextureLocation(geoArmorItem)),
-						false, armorForBone.hasFoil());
-
 				stack.pushPose();
 				stack.scale(-1, -1, 1);
 				this.prepareArmorPositionAndScale(bone, cubeList, sourceLimb, stack, true,
@@ -248,7 +243,7 @@ public abstract class ExtendedGeoEntityRenderer<T extends LivingEntity & IAnimat
 				// Just to be safe, it does some modelprovider stuff in there too
 				geoArmorRenderer.applySlot(boneSlot);
 				setLimbBoneVisible(geoArmorRenderer, sourceLimb, armorModel, boneSlot);
-				geoArmorRenderer.render(this.currentPartialTicks, stack, ivb, packedLight);
+				geoArmorRenderer.render(stack, rtb, packedLight);
 				stack.popPose();
 			} else {
 				ResourceLocation armorResource = this.getArmorResource(currentEntityBeingRendered, armorForBone,
