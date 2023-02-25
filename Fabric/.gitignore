@@ -30,3 +30,6 @@ run
 forge*changelog.txt
 build.bat
 *.bat
+
+# allow gradlew
+!gradle/wrapper
