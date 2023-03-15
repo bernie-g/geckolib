@@ -41,7 +41,7 @@ public final class GeckoLibMod {
 		event.registerCreativeModeTab(new ResourceLocation(GeckoLib.MOD_ID, "geckolib_examples"),
 				e -> e.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get()))
 						.title(Component.translatable("itemGroup." + GeckoLib.MOD_ID + ".geckolib_examples"))
-							.displayItems((enabledFeatures, entries, operatorEnabled) -> {
+							.displayItems((enabledFeatures, entries) -> {
 				                entries.accept(ItemRegistry.JACK_IN_THE_BOX.get());
 				                entries.accept(ItemRegistry.PISTOL.get());
 				                entries.accept(ItemRegistry.GECKO_ARMOR_HELMET.get());

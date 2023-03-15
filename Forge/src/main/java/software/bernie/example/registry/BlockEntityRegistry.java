@@ -1,11 +1,11 @@
 package software.bernie.example.registry;
 
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.registries.RegistryObject;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
+import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
+import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.geckolib.GeckoLib;
 
 public final class BlockEntityRegistry {

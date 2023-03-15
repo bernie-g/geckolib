@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.client.model.data.ModelData;
@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
- * {@link GeoRenderLayer} for rendering {@link net.minecraft.world.level.block.state.BlockState BlockStates}
- * or {@link net.minecraft.world.item.ItemStack ItemStacks} on a given {@link GeoAnimatable}
+ * {@link GeoRenderLayer} for rendering {@link BlockState BlockStates}
+ * or {@link ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
 public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
 	protected final BiFunction<GeoBone, T, ItemStack> stackForBone;
@@ -56,8 +56,8 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
 	/**
 	 * Return a specific TransFormType for this {@link ItemStack} render for this bone.
 	 */
-	protected ItemTransforms.TransformType getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
-		return ItemTransforms.TransformType.NONE;
+	protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
+		return ItemDisplayContext.NONE;
 	}
 
 	/**
@@ -106,7 +106,7 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
 		}
 		else {
 			Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, animatable),
-					packedLight, packedOverlay, poseStack, bufferSource, (int)this.renderer.getInstanceId(animatable));
+					packedLight, packedOverlay, poseStack, bufferSource, Minecraft.getInstance().level, (int)this.renderer.getInstanceId(animatable));
 		}
 	}
 

@@ -205,8 +205,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		applyRotations(animatable, poseStack, ageInTicks, lerpBodyRot, partialTick);
 
 		if (!shouldSit && animatable.isAlive() && livingEntity != null) {
-			limbSwingAmount = Mth.lerp(partialTick, livingEntity.animationSpeedOld, livingEntity.animationSpeed);
-			limbSwing = livingEntity.animationPosition - livingEntity.animationSpeed * (1 - partialTick);
+			limbSwingAmount = livingEntity.walkAnimation.speed(partialTick);
+			limbSwing = livingEntity.walkAnimation.position(partialTick);
 
 			if (livingEntity.isBaby())
 				limbSwing *= 3f;
@@ -395,12 +395,12 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		float xDif = (float)(ropeGripPosition.x - lerpOriginX);
 		float yDif = (float)(ropeGripPosition.y - lerpOriginY);
 		float zDif = (float)(ropeGripPosition.z - lerpOriginZ);
-		float offsetMod = Mth.fastInvSqrt(xDif * xDif + zDif * zDif) * 0.025f / 2f;
+		float offsetMod = Mth.invSqrt(xDif * xDif + zDif * zDif) * 0.025f / 2f;
 		float xOffset = zDif * offsetMod;
 		float zOffset = xDif * offsetMod;
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.leash());
-		BlockPos entityEyePos = new BlockPos(mob.getEyePosition(partialTick));
-		BlockPos holderEyePos = new BlockPos(leashHolder.getEyePosition(partialTick));
+		BlockPos entityEyePos = BlockPos.containing(mob.getEyePosition(partialTick));
+		BlockPos holderEyePos = BlockPos.containing(leashHolder.getEyePosition(partialTick));
 		int entityBlockLight = getBlockLightLevel((T)mob, entityEyePos);
 		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightLayer.BLOCK, holderEyePos);
 		int entitySkyLight = mob.level.getBrightness(LightLayer.SKY, entityEyePos);
