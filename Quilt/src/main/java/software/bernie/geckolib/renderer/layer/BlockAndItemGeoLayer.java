@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -56,8 +57,8 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
     /**
      * Return a specific TransFormType for this {@link ItemStack} render for this bone.
      */
-    protected ItemTransforms.TransformType getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
-        return ItemTransforms.TransformType.NONE;
+    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
+        return ItemDisplayContext.NONE;
     }
 
     /**
@@ -105,7 +106,7 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
                     packedLight, packedOverlay, livingEntity.getId());
         } else {
             Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, animatable),
-                    packedLight, packedOverlay, poseStack, bufferSource, (int) this.renderer.getInstanceId(animatable));
+                    packedLight, packedOverlay, poseStack, bufferSource,Minecraft.getInstance().level, (int) this.renderer.getInstanceId(animatable));
         }
     }
 
