@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib.GeckoLib;
@@ -32,7 +33,7 @@ public final class DataTickets {
 	public static final DataTicket<EquipmentSlot> EQUIPMENT_SLOT = new DataTicket<>("equipment_slot", EquipmentSlot.class);
 	public static final DataTicket<EntityModelData> ENTITY_MODEL_DATA = new DataTicket<>("entity_model_data", EntityModelData.class);
 	public static final DataTicket<Double> TICK = new DataTicket<>("tick", Double.class);
-	public static final DataTicket<ItemTransforms.TransformType> ITEM_RENDER_PERSPECTIVE = new DataTicket<>("item_render_perspective", ItemTransforms.TransformType.class);
+	public static final DataTicket<ItemDisplayContext> ITEM_RENDER_PERSPECTIVE = new DataTicket<>("item_render_perspective", ItemDisplayContext.class);
 	
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples

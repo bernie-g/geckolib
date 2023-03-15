@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
  * Example {@link DynamicGeoEntityRenderer} implementation
  * @see DynamicExampleEntity
  */
-public class GremlinRenderer extends DynamicGeoEntityRenderer<DynamicExampleEntity> {
+public class 	GremlinRenderer extends DynamicGeoEntityRenderer<DynamicExampleEntity> {
 	// Pre-define our bone names for easy and consistent reference later
 	private static final String LEFT_HAND = "bipedHandLeft";
 	private static final String RIGHT_HAND = "bipedHandRight";
