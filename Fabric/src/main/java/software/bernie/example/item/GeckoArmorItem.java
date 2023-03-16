@@ -37,8 +37,8 @@ public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
-	public GeckoArmorItem(ArmorMaterial armorMaterial, EquipmentSlot slot, Properties properties) {
-		super(armorMaterial, slot, properties);
+	public GeckoArmorItem(ArmorMaterial armorMaterial, ArmorItem.Type type, Properties properties) {
+		super(armorMaterial, type, properties);
 	}
 
 	// Create our armor model/renderer for Fabric and return it

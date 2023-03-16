@@ -10,12 +10,12 @@ import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import org.joml.Matrix4f;
@@ -41,7 +41,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	protected final GeoModel<T> model;
 
 	protected ItemStack currentItemStack;
-	protected ItemTransforms.TransformType renderPerspective;
+	protected ItemDisplayContext renderPerspective;
 	protected T animatable;
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
@@ -154,13 +154,13 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	@Override
-	public void renderByItem(ItemStack stack, ItemTransforms.TransformType transformType, PoseStack poseStack,
+	public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
 			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		this.animatable = (T)stack.getItem();
 		this.currentItemStack = stack;
 		this.renderPerspective = transformType;
 
-		if (transformType == ItemTransforms.TransformType.GUI) {
+		if (transformType == ItemDisplayContext.GUI) {
 			renderInGui(transformType, poseStack, bufferSource, packedLight, packedOverlay);
 		}
 		else {
@@ -174,10 +174,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 	/**
 	 * Wrapper method to handle rendering the item in a GUI context
-	 * (defined by {@link net.minecraft.client.renderer.block.model.ItemTransforms.TransformType#GUI} normally).<br>
+	 * (defined by {@link ItemDisplayContext#GUI} normally).<br>
 	 * Just includes some additional required transformations and settings.
 	 */
-	protected void renderInGui(ItemTransforms.TransformType transformType, PoseStack poseStack,
+	protected void renderInGui(ItemDisplayContext transformType, PoseStack poseStack,
 							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ?
 				bufferSource2 : Minecraft.getInstance().renderBuffers().bufferSource();

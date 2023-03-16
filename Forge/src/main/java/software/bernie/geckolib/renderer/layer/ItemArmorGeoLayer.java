@@ -43,7 +43,7 @@ import java.util.Map;
 
 /**
  * Builtin class for handling dynamic armor rendering on GeckoLib entities.<br>
- * Supports both {@link software.bernie.geckolib.animatable.GeoItem GeckoLib} and {@link net.minecraft.world.item.ArmorItem Vanilla} armor models.<br>
+ * Supports both {@link GeoItem GeckoLib} and {@link ArmorItem Vanilla} armor models.<br>
  * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering.
  */
 public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {

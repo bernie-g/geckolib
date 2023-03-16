@@ -6,10 +6,10 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import software.bernie.example.client.model.entity.GremlinModel;
@@ -111,11 +111,11 @@ public class GremlinRenderer extends DynamicGeoEntityRenderer<DynamicExampleEnti
 			}
 
 			@Override
-			protected TransformType getTransformTypeForStack(GeoBone bone, ItemStack stack, DynamicExampleEntity animatable) {
+			protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, DynamicExampleEntity animatable) {
 				// Apply the camera transform for the given hand
 				return switch (bone.getName()) {
-					case LEFT_HAND, RIGHT_HAND -> TransformType.THIRD_PERSON_RIGHT_HAND;
-					default -> TransformType.NONE;
+					case LEFT_HAND, RIGHT_HAND -> ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+					default -> ItemDisplayContext.NONE;
 				};
 			}
 

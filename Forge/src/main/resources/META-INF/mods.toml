@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[43,)"
+loaderVersion="[45,)"
 issueTrackerURL="https://github.com/bernie-g/geckolib/issues"
 license="MIT"
 [[mods]]
@@ -16,12 +16,12 @@ GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D 
 [[dependencies.geckolib]]
     modId="forge"
     mandatory=true 
-    versionRange="[43.1.25,)"
+    versionRange="[45.0.6,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.geckolib]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19, 1.20)"
+    versionRange="[1.19.4, 1.20)"
     ordering="NONE"
     side="BOTH"

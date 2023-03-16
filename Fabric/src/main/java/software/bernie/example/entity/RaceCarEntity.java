@@ -76,8 +76,8 @@ public class RaceCarEntity extends Animal implements GeoEntity {
 	// Get the controlling passenger
 	@Nullable
 	@Override
-	public Entity getControllingPassenger() {
-		return getFirstPassenger();
+	public LivingEntity getControllingPassenger() {
+		return getFirstPassenger() instanceof LivingEntity entity ? entity : null;
 	}
 
 	@Override
