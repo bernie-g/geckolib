@@ -1,6 +1,5 @@
-v4.0.4
+v4.1.0
 
-- Tweak to Network registering. 
-- Core tweak (geckolib-core#16)
+- Updated to 1.19.4 (Thanks to Witixin)
 
 Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes

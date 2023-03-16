@@ -107,7 +107,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.6'
+    minecraft 'net.minecraftforge:forge:1.19.4-45.0.8'
     library 'com.eliotlash.mclib:mclib:20'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -232,7 +232,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-        	addGameVersion("1.19.3")
+        	addGameVersion("1.19.4")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -248,10 +248,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Forge 1.19.3'
+		versionName = 'Forge 1.19.4'
 		uploadFile = jar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.3']
+		gameVersions = ['1.19.4']
 		loaders = ['forge']
 	}
 }

@@ -5,7 +5,7 @@
 	"name": "Geckolib",
 	"description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.",
 	"authors": [
-		"Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat, KyoSleep"
+		"Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat, KyoSleep, Witixin"
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/geckolib",
@@ -28,9 +28,9 @@
 	],
 	"accessWidener": "geckolib.aw",
 	"depends": {
-   		"fabricloader": ">=0.14.10",
+   		"fabricloader": ">=0.14.17",
 		"fabric": "*",
 		"java": ">=17",
-		"minecraft": ">=1.19.2"
+		"minecraft": ">=1.19.4"
 	}
 }
