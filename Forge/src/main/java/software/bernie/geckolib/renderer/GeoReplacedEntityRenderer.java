@@ -443,6 +443,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			renderLeashPiece(vertexConsumer, posMatrix, xDif, yDif, zDif, entityBlockLight, holderBlockLight,
 					entitySkyLight, holderSkyLight, 0.025f, 0.0f, xOffset, zOffset, segment, true);
 		}
+		bufferSource.getBuffer(getGeoModel().getRenderType(animatable, getTextureLocation(animatable)));
 
 		poseStack.popPose();
 	}
