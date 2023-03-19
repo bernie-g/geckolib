@@ -48,11 +48,14 @@ public class PistolItem extends Item implements GeoItem {
 	@Override
 	public void initializeClient(Consumer<IClientItemExtensions> consumer) {
 		consumer.accept(new IClientItemExtensions() {
-			private final PistolRenderer renderer = new PistolRenderer();
+			private PistolRenderer renderer = null;
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return this.renderer;
+				if (renderer == null) 
+					return new PistolRenderer();
+				
+				return renderer;
 			}
 		});
 	}
