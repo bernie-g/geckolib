@@ -50,11 +50,14 @@ public class PistolItem extends Item implements GeoItem {
 	@Override
 	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
-			private final PistolRenderer renderer = new PistolRenderer();
+			private PistolRenderer renderer = null;
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return this.renderer;
+				if (renderer == null) 
+					return new PistolRenderer();
+				
+				return renderer;
 			}
 		});
 	}
