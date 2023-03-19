@@ -420,6 +420,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			GeoEntityRenderer.renderLeashPiece(vertexConsumer, posMatrix, xDif, yDif, zDif, entityBlockLight, holderBlockLight,
 					entitySkyLight, holderSkyLight, 0.025f, 0.0f, xOffset, zOffset, segment, true);
 		}
+		bufferSource.getBuffer(getGeoModel().getRenderType(animatable, getTextureLocation(animatable)));
 
 		poseStack.popPose();
 	}
