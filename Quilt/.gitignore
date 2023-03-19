@@ -32,3 +32,9 @@ workspace/
 
 # macOS
 *.DS_Store
+
+# allow gradlew
+!core/gradle/wrapper
+!core/gradlew.bat
+!gradle/wrapper
+!gradlew.bat
