@@ -1,5 +1,3 @@
 v4.0.5
 
-- Core tweak (geckolib-core#16)
-
-Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes
+- Fixes buffer not being reset for leash rendering.
