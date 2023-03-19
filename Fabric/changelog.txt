@@ -1,5 +1,5 @@
-v4.1.0
+v4.1.1
 
-- Updated to 1.19.4 (Thanks to Witixin)
+- Fixes buffer not being reset for leash rendering.
 
 Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes
