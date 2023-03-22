@@ -198,15 +198,15 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
-	default void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-						   int packedOverlay, float red, float green, float blue, float alpha) {}
+	default void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+						   float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {}
 
 	/**
 	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
-	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
-							float alpha) {}
+	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
+							int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
@@ -272,7 +272,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 				continue;
 
 			Vector3f normal =normalisedPoseState.transform(new Vector3f(quad.normal()));
-			
+
 			RenderUtils.fixInvertedFlatCube(cube, normal);
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
@@ -284,7 +284,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	default void createVerticesOfQuad(GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
 			int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		for (GeoVertex vertex : quad.vertices()) {
-			Vector3f position = vertex.position();			
+			Vector3f position = vertex.position();
 			Vector4f vector4f = poseState.transform(new Vector4f(position.x(), position.y(), position.z(), 1.0f));
 
 			buffer.vertex(vector4f.x(), vector4f.y(), vector4f.z(), red, green, blue, alpha, vertex.texU(),
@@ -307,4 +307,10 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
 	 */
 	void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight);
+	
+    /**
+     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
+     * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+     */
+	default void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {}
 }
