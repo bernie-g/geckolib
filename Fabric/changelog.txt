@@ -1,5 +1,4 @@
-v4.1.1
+v4.1.2
 
-- Fixes buffer not being reset for leash rendering.
-
-Complete Rewrite of the library. Please see https://github.com/bernie-g/geckolib/wiki/Geckolib-4-Changes for all changes
+- Fixes leads not rendering correctly due to swapped parms. 
+- Adds scaleModelForRender for scaling models, should fix most scaling issues
