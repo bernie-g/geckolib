@@ -1,3 +1,4 @@
-v4.0.5
+v4.0.6
 
-- Fixes buffer not being reset for leash rendering.
+- Fixes leads not rendering correctly due to swapped parms. 
+- Adds scaleModelForRender for scaling models, should fix most scaling issues.
