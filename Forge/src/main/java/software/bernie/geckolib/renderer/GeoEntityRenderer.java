@@ -141,6 +141,15 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
+		poseStack.pushPose();
+		if(!isReRender) {
+			if (animatable instanceof Mob mob && !isReRender) {
+				Entity leashHolder = mob.getLeashHolder();
+
+				if (leashHolder != null)
+					renderLeash(mob, partialTick, poseStack, bufferSource, leashHolder);
+			}
+		}
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
@@ -162,13 +171,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		poseStack.pushPose();
 
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
-
-		if (animatable instanceof Mob mob && !isReRender) {
-			Entity leashHolder = mob.getLeashHolder();
-
-			if (leashHolder != null)
-				renderLeash(mob, partialTick, poseStack, bufferSource, leashHolder);
-		}
 
 		boolean shouldSit = animatable.isPassenger() && (animatable.getVehicle() != null && animatable.getVehicle().shouldRiderSit());
 		float lerpBodyRot = livingEntity == null ? 0 : Mth.rotLerp(partialTick, livingEntity.yBodyRotO, livingEntity.yBodyRot);
@@ -257,8 +259,20 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		poseStack.popPose();
 		if (!isReRender)
 			super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
+	}
+
+	@Override
+	public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
+		float ws = 1;
+		float hs = 1;
+		if(animatable.tickCount % 80 >= 40) {
+			ws = 2;
+			hs = 2;
+		}
+		GeoRenderer.super.scaleModelForRender(ws, hs, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 	}
 
 	/**
