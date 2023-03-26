@@ -211,16 +211,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 		return Direction.NORTH;
 	}
 	
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
-     * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
-     */
-	@Override
-    public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
-        if (!isReRender && (widthScale != 1 || heightScale != 1))
-            poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
-    }
-
 	/**
 	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
 	 */

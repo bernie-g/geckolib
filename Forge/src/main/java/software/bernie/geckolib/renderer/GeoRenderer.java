@@ -312,5 +312,9 @@ public interface GeoRenderer<T extends GeoAnimatable> {
      * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
      * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
      */
-	default void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {}
+	default void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
+		if (!isReRender && (widthScale != 1 || heightScale != 1)) {
+			poseStack.scale(widthScale, heightScale, widthScale);
+		}
+	}
 }
