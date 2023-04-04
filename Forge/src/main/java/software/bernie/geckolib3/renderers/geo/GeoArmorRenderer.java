@@ -190,6 +190,9 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.modelProvider.setLivingAnimations(this.currentArmorItem, getInstanceId(this.currentArmorItem), animationEvent); // TODO change to setCustomAnimations in 1.20+
 		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		fitToBiped();
+		if(this.young) {
+			poseStack.scale(0.5F, 0.5F, 0.5F);
+		}
 		RenderSystem.setShaderTexture(0, getTextureLocation(this.currentArmorItem));
 
 		Color renderColor = getRenderColor(this.currentArmorItem, partialTick, poseStack, null, buffer, packedLight);
@@ -239,6 +242,31 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 				RenderType.armorCutoutNoCull(getTextureLocation(currentArmorItem)), false, itemStack.hasFoil());
 		IGeoRenderer.super.renderRecursively(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue,
 				alpha);
+	}
+
+	@Override
+	public void renderCubesOfBone(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		boolean isHead = bone.getName().equalsIgnoreCase(this.headBone) || this.armorSlot.equals(EquipmentSlot.HEAD);
+		final float headScale = 1.5F / 2.0F;
+		//TODO: Change this to be aware of the context (aka the current wearer of the armor) and react accordingly. Access to the model of the wearer is needed
+		if(isHead && this.young) {
+			poseStack.pushPose();
+			//First: revert normal young scale
+			poseStack.scale(2, 2, 2);
+			//Second: Apply headscaling
+			poseStack.scale(headScale, headScale, headScale);
+			//also move a bit
+			//Values taken from HumanoidModel. Calculations are being made in AgeableListModel
+			//Minus cause inverted axis
+			double offsetY = -16.0D / 16.0D;
+			offsetY *= 0.5D;
+			double offsetZ = 0.0D / 16.0D;
+			poseStack.translate(0, offsetY, offsetZ);
+		}
+		IGeoRenderer.super.renderCubesOfBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		if(isHead && this.young) {
+			poseStack.popPose();
+		}
 	}
 
 	public Vec3 getRenderOffset(T entity, float partialTick) {
