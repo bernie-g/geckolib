@@ -54,10 +54,10 @@ public class PistolItem extends Item implements GeoItem {
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				if (renderer == null) 
-					return new PistolRenderer();
+				if (this.renderer == null)
+					this.renderer = new PistolRenderer();
 				
-				return renderer;
+				return this.renderer;
 			}
 		});
 	}
