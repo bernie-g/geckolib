@@ -80,7 +80,7 @@ public class GeoGlowingTextureMeta {
 
 		for (int x = 0; x < glowLayer.getWidth(); x++) {
 			for (int y = 0; y < glowLayer.getHeight(); y++) {
-				int color = glowLayer.getPixelRGBA(x, y);
+				int color = glowLayer.getPixelRGBA(x, y); // Actually ABGR. Blame Mojang.
 
 				if (color != 0)
 					pixels.add(new Pixel(x, y, FastColor.ABGR32.alpha(color)));
@@ -98,10 +98,10 @@ public class GeoGlowingTextureMeta {
 	 */
 	public void createImageMask(NativeImage originalImage, NativeImage newImage) {
 		for (Pixel pixel : this.pixels) {
-			int color = originalImage.getPixelRGBA(pixel.x, pixel.y);
+			int color = originalImage.getPixelRGBA(pixel.x, pixel.y); // Actually ABGR. Blame Mojang.
 
 			if (pixel.alpha > 0)
-				color = FastColor.ARGB32.color(FastColor.ABGR32.alpha(color), FastColor.ABGR32.red(color), FastColor.ABGR32.green(color), FastColor.ABGR32.blue(color));
+				color = FastColor.ABGR32.color(pixel.alpha, FastColor.ABGR32.blue(color), FastColor.ABGR32.green(color), FastColor.ABGR32.red(color));
 
 			newImage.setPixelRGBA(pixel.x, pixel.y, color);
 			originalImage.setPixelRGBA(pixel.x, pixel.y, 0);
