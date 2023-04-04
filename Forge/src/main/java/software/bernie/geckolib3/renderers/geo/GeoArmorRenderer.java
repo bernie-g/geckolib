@@ -6,11 +6,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -41,7 +45,10 @@ import software.bernie.geckolib3.util.RenderUtils;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
@@ -55,6 +62,8 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 
 	protected T currentArmorItem;
 	protected LivingEntity entityLiving;
+
+	protected Model currentWearerModel;
 	protected ItemStack itemStack;
 	protected EquipmentSlot armorSlot;
 	protected float widthScale = 1;
@@ -191,7 +200,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
 		fitToBiped();
 		if(this.young) {
-			poseStack.scale(0.5F, 0.5F, 0.5F);
+			float babyScale = 0.5F;
+			if(this.currentWearerModel instanceof AgeableListModel<?>) {
+				AgeableListModel ageableModel = (AgeableListModel) currentWearerModel;
+				babyScale = 1.0F / ageableModel.babyBodyScale;
+			}
+
+			poseStack.scale(babyScale, babyScale, babyScale);
 		}
 		RenderSystem.setShaderTexture(0, getTextureLocation(this.currentArmorItem));
 
@@ -247,25 +262,47 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 	@Override
 	public void renderCubesOfBone(GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		boolean isHead = bone.getName().equalsIgnoreCase(this.headBone) || this.armorSlot.equals(EquipmentSlot.HEAD);
-		final float headScale = 1.5F / 2.0F;
-		//TODO: Change this to be aware of the context (aka the current wearer of the armor) and react accordingly. Access to the model of the wearer is needed
+		//DONE: Change this to be aware of the context (aka the current wearer of the armor) and react accordingly. Access to the model of the wearer is needed
 		if(isHead && this.young) {
 			poseStack.pushPose();
-			//First: revert normal young scale
-			poseStack.scale(2, 2, 2);
-			//Second: Apply headscaling
-			poseStack.scale(headScale, headScale, headScale);
+
+			EntityRenderer rawCurrentWearerRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(this.entityLiving);
+			Model currentWearerModel = null;
+			AgeableListModel ageableModel = null;
+			float babyScale = 0.5F;
+			float babyHeadScale = babyScale;
+			babyScale = 1.0F / babyScale;
+			double offsetY = 0.0D;
+			double offsetZ = 0.0D;
+
+			if(rawCurrentWearerRenderer instanceof LivingEntityRenderer) {
+				LivingEntityRenderer currentWearerRenderer = (LivingEntityRenderer) rawCurrentWearerRenderer;
+				currentWearerModel = currentWearerRenderer.getModel();
+				if(currentWearerModel instanceof AgeableListModel<?>) {
+					ageableModel = (AgeableListModel) currentWearerModel;
+					babyScale = ageableModel.babyBodyScale; // this is intended. Babyscale is something like 2 or 3, so not actually 0.5 or something
+					if(ageableModel.scaleHead) {
+						babyHeadScale = 1.5F / ageableModel.babyHeadScale;
+					}
+					offsetY = ageableModel.babyYHeadOffset / 16.0D;
+					offsetY *= -0.5D;
+					offsetZ = ageableModel.babyZHeadOffset / 16.0D;
+					offsetZ *= 0.5D;
+				}
+			}
+
+			poseStack.scale(babyScale, babyScale, babyScale);
+			poseStack.scale(babyHeadScale, babyHeadScale, babyHeadScale);
 			//also move a bit
-			//Values taken from HumanoidModel. Calculations are being made in AgeableListModel
 			//Minus cause inverted axis
-			double offsetY = -16.0D / 16.0D;
 			//Multiply by 0.5 cause otherwise the head is too far up or down...
-			offsetY *= 0.5D;
-			double offsetZ = 0.0D / 16.0D;
 			poseStack.translate(0, offsetY, offsetZ);
+
+			poseStack.pushPose();
 		}
 		IGeoRenderer.super.renderCubesOfBone(bone, poseStack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		if(isHead && this.young) {
+			poseStack.popPose();
 			poseStack.popPose();
 		}
 	}
@@ -391,6 +428,13 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 		this.itemStack = itemStack;
 		this.armorSlot = armorSlot;
 		this.currentArmorItem = (T)itemStack.getItem();
+
+		EntityRenderer rawCurrentWearerRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(this.entityLiving);
+		this.currentWearerModel = null;
+		if(rawCurrentWearerRenderer instanceof LivingEntityRenderer) {
+			LivingEntityRenderer currentWearerRenderer = (LivingEntityRenderer) rawCurrentWearerRenderer;
+			this.currentWearerModel = currentWearerRenderer.getModel();
+		}
 
 		return this;
 	}
