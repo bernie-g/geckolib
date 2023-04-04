@@ -259,6 +259,7 @@ public abstract class GeoArmorRenderer<T extends ArmorItem & IAnimatable> extend
 			//Values taken from HumanoidModel. Calculations are being made in AgeableListModel
 			//Minus cause inverted axis
 			double offsetY = -16.0D / 16.0D;
+			//Multiply by 0.5 cause otherwise the head is too far up or down...
 			offsetY *= 0.5D;
 			double offsetZ = 0.0D / 16.0D;
 			poseStack.translate(0, offsetY, offsetZ);
