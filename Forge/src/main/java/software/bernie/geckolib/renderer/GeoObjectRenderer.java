@@ -3,7 +3,6 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -18,6 +17,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
@@ -30,7 +30,7 @@ import java.util.List;
  * It is <b>strongly</b> recommended you override {@link GeoRenderer#getInstanceId} if using this renderer
  */
 public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T> {
-	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
+	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
 	protected T animatable;
@@ -42,8 +42,6 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 
 	public GeoObjectRenderer(GeoModel<T> model) {
 		this.model = model;
-
-		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -76,14 +74,14 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 */
 	@Override
 	public List<GeoRenderLayer<T>> getRenderLayers() {
-		return this.renderLayers;
+		return this.renderLayers.getRenderLayers();
 	}
 
 	/**
 	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
 	 */
 	public GeoObjectRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
-		this.renderLayers.add(renderLayer);
+		this.renderLayers.addLayer(renderLayer);
 
 		return this;
 	}

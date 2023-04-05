@@ -134,6 +134,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		}
 
 		poseStack.popPose();
+
+		renderFinal(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	/**
@@ -206,6 +208,12 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
+							int packedOverlay, float red, float green, float blue, float alpha) {}
+
+	/**
+	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state. This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
+	 */
+	default void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 							int packedOverlay, float red, float green, float blue, float alpha) {}
 
 	/**
@@ -313,8 +321,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
      * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
      */
 	default void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
-		if (!isReRender && (widthScale != 1 || heightScale != 1)) {
+		if (!isReRender && (widthScale != 1 || heightScale != 1))
 			poseStack.scale(widthScale, heightScale, widthScale);
-		}
 	}
 }

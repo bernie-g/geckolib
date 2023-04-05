@@ -4,7 +4,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -25,6 +24,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
@@ -34,8 +34,8 @@ import java.util.List;
  * All blocks added to be rendered by GeckoLib should use an instance of this class.
  */
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements GeoRenderer<T>, BlockEntityRenderer<T> {
+	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
-	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
 
 	protected T animatable;
 	protected float scaleWidth = 1;
@@ -46,8 +46,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 
 	public GeoBlockRenderer(GeoModel<T> model) {
 		this.model = model;
-
-		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -80,14 +78,14 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 */
 	@Override
 	public List<GeoRenderLayer<T>> getRenderLayers() {
-		return this.renderLayers;
+		return this.renderLayers.getRenderLayers();
 	}
 
 	/**
 	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
 	 */
 	public GeoBlockRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
-		this.renderLayers.add(renderLayer);
+		this.renderLayers.addLayer(renderLayer);
 
 		return this;
 	}

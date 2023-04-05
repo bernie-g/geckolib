@@ -2,7 +2,6 @@ package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
@@ -25,6 +24,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
@@ -37,7 +37,7 @@ import java.util.List;
  * @param <T>
  */
 public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel implements GeoRenderer<T> {
-	protected final List<GeoRenderLayer<T>> renderLayers = new ObjectArrayList<>();
+	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
 	protected T animatable;
@@ -66,8 +66,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 
 		this.model = model;
-
-		fireCompileRenderLayersEvent();
 	}
 
 	/**
@@ -130,14 +128,14 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public List<GeoRenderLayer<T>> getRenderLayers() {
-		return this.renderLayers;
+		return this.renderLayers.getRenderLayers();
 	}
 
 	/**
 	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
 	 */
 	public GeoArmorRenderer<T> addRenderLayer(GeoRenderLayer<T> renderLayer) {
-		this.renderLayers.add(renderLayer);
+		this.renderLayers.addLayer(renderLayer);
 
 		return this;
 	}
@@ -516,7 +514,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 		bone.setHidden(!visible);
 	}
-	
+
     /**
      * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
      * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
