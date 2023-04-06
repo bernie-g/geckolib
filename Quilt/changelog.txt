@@ -6,3 +6,4 @@ v4.1.3
 - Fixed leash & nametag rendering for scaled mobs
 - Fix incorrect colouring on GeoGlowLayer
 - Fix incorrect implementation of PistolRenderer in example pistol item
+- Fixed GeoArmor models not rendering properly for baby mobs

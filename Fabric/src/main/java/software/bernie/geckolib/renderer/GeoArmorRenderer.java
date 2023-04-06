@@ -251,7 +251,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		applyBaseModel(this.baseModel);
 		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
 		applyBaseTransformations(this.baseModel);
-
+		scaleModelForBaby(poseStack, animatable, partialTick, isReRender);
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 
 		if (!(this.currentEntity instanceof GeoAnimatable))
@@ -503,6 +503,30 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		setBoneVisible(this.leftLeg, pVisible);
 		setBoneVisible(this.rightBoot, pVisible);
 		setBoneVisible(this.leftBoot, pVisible);
+	}
+
+	/**
+	 * Apply custom scaling to account for {@link net.minecraft.client.model.AgeableListModel AgeableListModel} baby models
+	 */
+	public void scaleModelForBaby(PoseStack poseStack, T animatable, float partialTick, boolean isReRender) {
+		if (!this.young || isReRender)
+			return;
+
+		if (this.currentSlot == EquipmentSlot.HEAD) {
+			if (this.baseModel.scaleHead) {
+				float headScale = 1.5f / this.baseModel.babyHeadScale;
+
+				poseStack.scale(headScale, headScale, headScale);
+			}
+
+			poseStack.translate(0, this.baseModel.babyYHeadOffset / 16f, this.baseModel.babyZHeadOffset / 16f);
+		}
+		else {
+			float bodyScale = 1 / this.baseModel.babyBodyScale;
+
+			poseStack.scale(bodyScale, bodyScale, bodyScale);
+			poseStack.translate(0, this.baseModel.bodyYOffset / 16f, 0);
+		}
 	}
 
 	/**
