@@ -98,16 +98,16 @@ public final class RenderUtils {
 		scaleMatrixForBone(poseStack, bone);
 		translateAwayFromPivotPoint(poseStack, bone);
 	}
-	
+
 	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
 		inputMatrix = new Matrix4f(inputMatrix);
-		
+
 		inputMatrix.invert();
 		inputMatrix.mul(baseMatrix);
 
 		return inputMatrix;
 	}
-	
+
 	/**
      * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation.<br>
      * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRender} override.<br>
@@ -116,7 +116,15 @@ public final class RenderUtils {
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
 		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
 	}
-	
+
+	/**
+	 * Add a positional vector to a matrix.
+	 * This is specifically implemented to act as a translation of an x/y/z coordinate triplet to a render matrix
+	 */
+	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
+		return matrix.add(new Matrix4f().m30(vector.x).m31(vector.y).m32(vector.z));
+	}
+
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path.<br>
 	 * Not performance-efficient, and should not be relied upon
