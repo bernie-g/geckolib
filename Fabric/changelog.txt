@@ -1,4 +1,6 @@
-v4.1.2
+v4.1.3
 
-- Fixes leads not rendering correctly due to swapped parms. 
-- Adds scaleModelForRender for scaling models, should fix most scaling issues
+- Fix local/model/world positions for GeoBones not working
+- Add RenderLayersContainer to allow for deferred CompileLayersEvent for Forge
+- Add renderFinal method for GeoRender, to allow for render operations outside of posestack manipulation
+- Fixed leash & nametag rendering for scaled mobs
