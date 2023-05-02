@@ -223,13 +223,6 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 			type = "_" + type;
 
 		String texture = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, path, (slot == EquipmentSlot.LEGS ? 2 : 1), type);
-		ResourceLocation ResourceLocation = ARMOR_PATH_CACHE.get(texture);
-
-		if (ResourceLocation == null) {
-			ResourceLocation = new ResourceLocation(texture);
-			ARMOR_PATH_CACHE.put(texture, ResourceLocation);
-		}
-
 		return ARMOR_PATH_CACHE.computeIfAbsent(texture, ResourceLocation::new);
 	}
 
