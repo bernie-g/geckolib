@@ -274,10 +274,21 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Overrides the animation transition time for the controller
+	 * Overrides the animation transition time for the controller<br>
+	 * Deprecated, use {@link AnimationController#transitionLength(int)}
 	 */
+	@Deprecated(forRemoval = true)
 	public void setTransitionLength(int ticks) {
 		this.transitionLength = ticks;
+	}
+
+	/**
+	 * Overrides the animation transition time for the controller
+	 */
+	public AnimationController<T> transitionLength(int ticks) {
+		setTransitionLength(ticks);
+
+		return this;
 	}
 
 	/**
