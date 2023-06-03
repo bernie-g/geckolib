@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.eliotlash.mclib:mclib:19'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'it.unimi.dsi:fastutil:8.4.0'
+	implementation 'org.jetbrains:annotations:24.0.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
 }
 
