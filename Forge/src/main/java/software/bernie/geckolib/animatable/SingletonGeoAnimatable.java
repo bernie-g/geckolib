@@ -3,6 +3,8 @@ package software.bernie.geckolib.animatable;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
@@ -99,5 +101,14 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 */
 	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, PacketDistributor.PacketTarget packetTarget) {
 		GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), packetTarget);
+	}
+
+	/**
+	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable.<br>
+	 * Don't override this unless you know what you're doing.
+	 */
+	@Override
+	default @Nullable AnimatableInstanceCache animatableCacheOverride() {
+		return new SingletonAnimatableInstanceCache(this);
 	}
 }

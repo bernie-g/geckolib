@@ -21,7 +21,9 @@ public final class GeckoLibUtil {
 	 * @param animatable The animatable object
 	 */
 	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable) {
-		return createInstanceCache(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
+		AnimatableInstanceCache cache = animatable.animatableCacheOverride();
+
+		return cache != null ? cache : createInstanceCache(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
 	}
 
 	/**
@@ -31,6 +33,11 @@ public final class GeckoLibUtil {
 	 * @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
 	 */
 	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable, boolean singletonObject) {
+		AnimatableInstanceCache cache = animatable.animatableCacheOverride();
+
+		if (cache != null)
+			return cache;
+
 		return singletonObject ? new SingletonAnimatableInstanceCache(animatable) : new InstancedAnimatableInstanceCache(animatable);
 	}
 

@@ -6,10 +6,18 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.AnimatableIdCache;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.ContextAwareAnimatableManager;
 import software.bernie.geckolib.util.RenderUtils;
 
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -67,7 +75,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 		return id;
 	}
-	
+
 	/**
 	 * Returns the current age/tick of the animatable instance.<br>
 	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
@@ -77,5 +85,44 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	@Override
 	default double getTick(Object itemStack) {
 		return RenderUtils.getCurrentTick();
+	}
+
+	/**
+	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective based animations
+	 */
+	class ContextBasedAnimatableInstanceCache extends SingletonAnimatableInstanceCache {
+		public ContextBasedAnimatableInstanceCache(GeoAnimatable animatable) {
+			super(animatable);
+		}
+
+		/**
+		 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist.<br>
+		 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids.
+		 */
+		@Override
+		public AnimatableManager<?> getManagerForId(long uniqueId) {
+			if (!this.managers.containsKey(uniqueId))
+				this.managers.put(uniqueId, new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
+					@Override
+					protected Map<ItemDisplayContext, AnimatableManager<GeoItem>> buildContextOptions(GeoAnimatable animatable) {
+						Map<ItemDisplayContext, AnimatableManager<GeoItem>> map = new EnumMap<>(ItemDisplayContext.class);
+
+						for (ItemDisplayContext context : ItemDisplayContext.values()) {
+							map.put(context, new AnimatableManager<>(animatable));
+						}
+
+						return map;
+					}
+
+					@Override
+					public ItemDisplayContext getCurrentContext() {
+						ItemDisplayContext context = getData(DataTickets.ITEM_RENDER_PERSPECTIVE);
+
+						return context == null ? ItemDisplayContext.NONE : context;
+					}
+				});
+
+			return this.managers.get(uniqueId);
+		}
 	}
 }

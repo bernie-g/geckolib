@@ -208,6 +208,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
 			animationState.setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
 			animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
+			animatable.getAnimatableInstanceCache().getManagerForId(instanceId).setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			this.model.handleAnimations(animatable, instanceId, animationState);
 		}
