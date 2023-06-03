@@ -4,7 +4,7 @@ issueTrackerURL="https://github.com/bernie-g/geckolib/issues"
 license="MIT"
 [[mods]]
 modId="geckolib"
-version="${file.jarVersion}" 
+version="${file.jarVersion}"
 displayName="GeckoLib 4"
 displayURL="http://geckolib.com/"
 logoFile="geckolib.png" 
