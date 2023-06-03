@@ -8,6 +8,7 @@ package software.bernie.geckolib.core.animation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.core.state.BoneSnapshot;
@@ -47,26 +48,26 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
 	 */
 	public void addController(AnimationController controller) {
-		this.animationControllers.put(controller.getName(), controller);
+		getAnimationControllers().put(controller.getName(), controller);
 	}
 
 	/**
 	 * Removes an {@link AnimationController} from this manager by the given name, if present.
 	 */
 	public void removeController(String name) {
-		this.animationControllers.remove(name);
+		getAnimationControllers().remove(name);
 	}
 
 	public Map<String, AnimationController<T>> getAnimationControllers() {
-		return animationControllers;
+		return this.animationControllers;
 	}
 
 	public Map<String, BoneSnapshot> getBoneSnapshotCollection() {
-		return boneSnapshotCollection;
+		return this.boneSnapshotCollection;
 	}
 
 	public void clearSnapshotCache() {
-		this.boneSnapshotCollection.clear();
+		getBoneSnapshotCollection().clear();
 	}
 
 	public double getLastUpdateTime() {
@@ -85,7 +86,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		this.firstTickTime = time;
 	}
 
-	protected boolean isFirstTick() {
+	public boolean isFirstTick() {
 		return this.isFirstTick;
 	}
 
@@ -108,6 +109,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	/**
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
 	 */
+	@Nullable
 	public <D> D getData(DataTicket<D> dataTicket) {
 		return this.extraData != null ? dataTicket.getData(this.extraData) : null;
 	}
