@@ -142,6 +142,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	/**
 	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
 	 */
+	// TODO 1.20+ Convert to record
 	public static final class ControllerRegistrar {
 		private final List<AnimationController<? extends GeoAnimatable>> controllers = new ObjectArrayList<>(4);
 
