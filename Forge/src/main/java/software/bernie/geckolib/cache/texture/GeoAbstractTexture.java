@@ -88,7 +88,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	/**
 	 * No-frills helper method for uploading {@link NativeImage images} into memory for use
 	 */
-	protected static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
+	public static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
 		TextureUtil.prepareImage(texture, 0, image.getWidth(), image.getHeight());
 		image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), blur, clamp, false, true);
 	}

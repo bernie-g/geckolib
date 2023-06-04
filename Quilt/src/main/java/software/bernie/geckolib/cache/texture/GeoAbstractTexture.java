@@ -1,24 +1,21 @@
 package software.bernie.geckolib.cache.texture;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.function.Consumer;
-
-import javax.annotation.Nullable;
-
-import org.quiltmc.loader.api.QuiltLoader;
-
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.quiltmc.loader.api.QuiltLoader;
+
+import javax.annotation.Nullable;
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Consumer;
 
 /**
  * Abstract texture wrapper for GeckoLib textures.<br>
@@ -91,7 +88,7 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	/**
 	 * No-frills helper method for uploading {@link NativeImage images} into memory for use
 	 */
-	protected static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
+	public static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
 		TextureUtil.prepareImage(texture, 0, image.getWidth(), image.getHeight());
 		image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), blur, clamp, false, true);
 	}
