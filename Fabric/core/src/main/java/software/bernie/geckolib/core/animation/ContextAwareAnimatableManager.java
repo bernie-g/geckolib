@@ -1,6 +1,5 @@
 package software.bernie.geckolib.core.animation;
 
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.core.state.BoneSnapshot;
@@ -134,7 +133,6 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored.<br>
 	 * Sub-managers do not have their data set, and instead it is all kept in this parent manager
 	 */
-	@Nullable
 	public <D> D getData(DataTicket<D> dataTicket) {
 		return super.getData(dataTicket);
 	}

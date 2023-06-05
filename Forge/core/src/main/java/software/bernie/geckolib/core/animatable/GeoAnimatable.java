@@ -4,7 +4,6 @@
  */
 package software.bernie.geckolib.core.animatable;
 
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -69,7 +68,6 @@ public interface GeoAnimatable {
 	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable.<br>
 	 * Don't override this unless you know what you're doing.
 	 */
-	@Nullable
 	default AnimatableInstanceCache animatableCacheOverride() {
 		return null;
 	}

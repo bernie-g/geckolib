@@ -8,7 +8,6 @@ package software.bernie.geckolib.core.animation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.core.state.BoneSnapshot;
@@ -109,7 +108,6 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	/**
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
 	 */
-	@Nullable
 	public <D> D getData(DataTicket<D> dataTicket) {
 		return this.extraData != null ? dataTicket.getData(this.extraData) : null;
 	}
