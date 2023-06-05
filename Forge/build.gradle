@@ -4,6 +4,7 @@ buildscript {
 		maven { url = "https://plugins.gradle.org/m2/" }
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         jcenter()
         mavenCentral()
     }
@@ -13,6 +14,7 @@ buildscript {
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
         classpath 'org.parchmentmc:librarian:1.+'
         classpath "com.modrinth.minotaur:Minotaur:2.1.2"
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
     }
 }
 
@@ -25,6 +27,7 @@ apply plugin: 'com.matthewprenger.cursegradle'
 apply from: "https://raw.githubusercontent.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle"
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: "com.modrinth.minotaur"
+apply plugin: 'org.spongepowered.mixin'
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import groovy.json.JsonOutput
@@ -56,6 +59,7 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
 
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=geckolib.mixins.json"
 
             mods {
                 geckolib {
@@ -79,6 +83,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=geckolib.mixins.json"
 
             mods {
                 geckolib {
@@ -87,6 +92,10 @@ minecraft {
             }
         }
     }
+}
+
+mixin { // Add mixins refmap
+    add sourceSets.main, "geckolib.refmap.json"
 }
 
 minecraft.runs.all {
@@ -115,6 +124,10 @@ dependencies {
     shade 'com.eliotlash.mclib:mclib:20'
     shade(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
+    }
+
+    if (System.getProperty("idea.sync.active") != "true") {
+        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
 }
 
@@ -146,7 +159,8 @@ jar {
                 "Implementation-Title"    : project.name,
                 "Implementation-Version"  : "${version}",
                 "Implementation-Vendor"   : "Gecko",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                "MixinConfigs": "geckolib.mixins.json"
         ])
     }
 }
