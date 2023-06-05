@@ -8,9 +8,11 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.ContextAwareAnimatableManager;
@@ -85,6 +87,25 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	@Override
 	default double getTick(Object itemStack) {
 		return RenderUtils.getCurrentTick();
+	}
+
+	/**
+	 * Whether this item animatable is perspective aware, handling animations differently depending on the {@link net.minecraft.world.item.ItemDisplayContext render perspective}
+	 */
+	default boolean isPerspectiveAware() {
+		return false;
+	}
+
+	/**
+	 * Replaces the default AnimatableInstanceCache for GeoItems if {@link GeoItem#isPerspectiveAware()} is true, for perspective-dependent handling
+	 */
+	@Nullable
+	@Override
+	default AnimatableInstanceCache animatableCacheOverride() {
+		if (isPerspectiveAware())
+			return new ContextBasedAnimatableInstanceCache(this);
+
+		return SingletonGeoAnimatable.super.animatableCacheOverride();
 	}
 
 	/**
