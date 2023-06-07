@@ -47,7 +47,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 * @param data The data to sync
 	 */
 	default <D> void setAnimData(Entity relatedEntity, SerializableDataTicket<D> dataTicket, D data) {
-		if (relatedEntity.getLevel().isClientSide()) {
+		if (relatedEntity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
@@ -64,7 +64,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	default void triggerAnim(Entity relatedEntity, @Nullable String controllerName, String animName) {
-		if (relatedEntity.getLevel().isClientSide()) {
+		if (relatedEntity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {

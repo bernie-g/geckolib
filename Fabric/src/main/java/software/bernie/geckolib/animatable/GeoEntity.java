@@ -39,7 +39,7 @@ public interface GeoEntity extends GeoAnimatable {
 	default <D> void setAnimData(SerializableDataTicket<D> dataTicket, D data) {
 		Entity entity = (Entity)this;
 
-		if (entity.getLevel().isClientSide()) {
+		if (entity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
@@ -57,7 +57,7 @@ public interface GeoEntity extends GeoAnimatable {
 	default void triggerAnim(@Nullable String controllerName, String animName) {
 		Entity entity = (Entity)this;
 
-		if (entity.getLevel().isClientSide()) {
+		if (entity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {

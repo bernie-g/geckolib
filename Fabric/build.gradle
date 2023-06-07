@@ -9,16 +9,16 @@ buildscript {
 }
 
 plugins {
-    id 'fabric-loom' version '0.12-SNAPSHOT'
+    id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id "com.modrinth.minotaur" version "2.+"
 }
 
-import groovy.json.JsonSlurper
+
 import groovy.json.JsonOutput
-import com.modrinth.minotaur.dependencies.ModDependency
+import groovy.json.JsonSlurper
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -82,7 +82,7 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    classifier 'dev'
+    //classifier 'dev'
 }
 
 jar {
@@ -193,7 +193,7 @@ if (file('key.properties').exists()) {
         releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
-		addGameVersion("1.19.4")
+		addGameVersion("1.20")
         addGameVersion("Fabric")
         addGameVersion("Java 17")
 
@@ -222,10 +222,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Fabric 1.19.4'
+		versionName = 'Fabric 1.20'
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.4']
+		gameVersions = ['1.20']
 		versionType = "release"
 		loaders = ['fabric']
 		dependencies { 
