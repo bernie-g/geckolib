@@ -82,7 +82,7 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    //classifier 'dev'
+    setArchiveClassifier('dev')
 }
 
 jar {

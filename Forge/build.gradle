@@ -1,15 +1,16 @@
 buildscript {
     repositories {
+        gradlePluginPortal()
         maven { url = "https://maven.minecraftforge.net/" }
 		maven { url = "https://plugins.gradle.org/m2/" }
         maven { url = 'https://maven.parchmentmc.org' }
         maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
-        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
         jcenter()
         mavenCentral()
     }
+
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '[6.0.2,6.2)', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.+', changing: true
         classpath "gradle.plugin.com.github.jengelman.gradle.plugins:shadow:7.0.0"
         classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
         classpath 'org.parchmentmc:librarian:1.+'
@@ -47,8 +48,9 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.19.4'
+    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
     runs {
         client {
             workingDirectory project.file('runs/' + name)
@@ -116,7 +118,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.19.4-45.0.8'
+    minecraft 'net.minecraftforge:forge:1.20-46.0.1'
     library 'com.eliotlash.mclib:mclib:20'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -138,7 +140,7 @@ shadowJar {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    //classifier ''
+    classifier ''
 }
 
 
@@ -172,7 +174,7 @@ task packageSources(type: ShadowJar, dependsOn: 'classes') {
     exclude('it/**')
     exclude('com/google/**')
     relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    classifier = 'sources'
+    archiveClassifier = 'sources'
 }
 
 artifacts {
@@ -246,7 +248,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-        	addGameVersion("1.19.4")
+        	addGameVersion("1.20")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -262,10 +264,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Forge 1.19.4'
+		versionName = 'Forge 1.20'
 		uploadFile = jar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.19.4']
+		gameVersions = ['1.20']
 		loaders = ['forge']
 	}
 }

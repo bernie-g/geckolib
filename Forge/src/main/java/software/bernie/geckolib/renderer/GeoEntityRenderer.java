@@ -394,9 +394,9 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		BlockPos entityEyePos = BlockPos.containing(mob.getEyePosition(partialTick));
 		BlockPos holderEyePos = BlockPos.containing(leashHolder.getEyePosition(partialTick));
 		int entityBlockLight = getBlockLightLevel((T)mob, entityEyePos);
-		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightLayer.BLOCK, holderEyePos);
-		int entitySkyLight = mob.level.getBrightness(LightLayer.SKY, entityEyePos);
-		int holderSkyLight = mob.level.getBrightness(LightLayer.SKY, holderEyePos);
+		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level().getBrightness(LightLayer.BLOCK, holderEyePos);
+		int entitySkyLight = mob.level().getBrightness(LightLayer.SKY, entityEyePos);
+		int holderSkyLight = mob.level().getBrightness(LightLayer.SKY, holderEyePos);
 
 		poseStack.pushPose();
 		poseStack.translate(xAngleOffset, leashOffset.y, zAngleOffset);
