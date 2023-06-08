@@ -101,7 +101,7 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
                                       float partialTick, int packedLight, int packedOverlay) {
         if (animatable instanceof LivingEntity livingEntity) {
             Minecraft.getInstance().getItemRenderer().renderStatic(livingEntity, stack,
-                    getTransformTypeForStack(bone, stack, animatable), false, poseStack, bufferSource, livingEntity.level,
+                    getTransformTypeForStack(bone, stack, animatable), false, poseStack, bufferSource, livingEntity.level(),
                     packedLight, packedOverlay, livingEntity.getId());
         } else {
             Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, animatable),

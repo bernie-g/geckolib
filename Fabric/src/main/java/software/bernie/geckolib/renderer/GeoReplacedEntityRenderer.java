@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -28,6 +27,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -246,7 +246,6 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		}
 
 		poseStack.translate(0, 0.01f, 0);
-		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
@@ -435,9 +434,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		BlockPos entityEyePos = BlockPos.containing(mob.getEyePosition(partialTick));
 		BlockPos holderEyePos = BlockPos.containing(leashHolder.getEyePosition(partialTick));
 		int entityBlockLight = getBlockLightLevel((E)mob, entityEyePos);
-		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightLayer.BLOCK, holderEyePos);
-		int entitySkyLight = mob.level.getBrightness(LightLayer.SKY, entityEyePos);
-		int holderSkyLight = mob.level.getBrightness(LightLayer.SKY, holderEyePos);
+		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level().getBrightness(LightLayer.BLOCK, holderEyePos);
+		int entitySkyLight = mob.level().getBrightness(LightLayer.SKY, entityEyePos);
+		int holderSkyLight = mob.level().getBrightness(LightLayer.SKY, holderEyePos);
 
 		poseStack.pushPose();
 		poseStack.translate(xAngleOffset, leashOffset.y, zAngleOffset);
@@ -479,16 +478,16 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		buffer.vertex(positionMatrix, x - xOffset, y + yOffset, z + zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
 		buffer.vertex(positionMatrix, x + xOffset, y + width - yOffset, z - zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
 	}
-	
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
-     * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
-     */
+
+	/**
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
+	 * This should only be called immediately prior to rendering, and only
+	 * @see AnimatableTexture#setAndUpdate(ResourceLocation, int)
+	 */
 	@Override
-    public void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
-        if (!isReRender && (widthScale != 1 || heightScale != 1))
-            poseStack.scale(this.scaleWidth, this.scaleHeight, this.scaleWidth);
-    }
+	public void updateAnimatedTextureFrame(T animatable) {
+		AnimatableTexture.setAndUpdate(getTextureLocation(animatable), this.currentEntity.getId() + (int)animatable.getTick(this.currentEntity));
+	}
 
 	/**
 	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer

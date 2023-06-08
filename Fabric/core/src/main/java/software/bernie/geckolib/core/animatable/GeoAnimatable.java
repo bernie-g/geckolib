@@ -4,10 +4,10 @@
  */
 package software.bernie.geckolib.core.animatable;
 
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 
 /**
  * This is the root interface for all animatable objects in Geckolib.
@@ -63,4 +63,12 @@ public interface GeoAnimatable {
 	 * @return The current tick/age of the animatable, for animation purposes
 	 */
 	double getTick(Object object);
+
+	/**
+	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable.<br>
+	 * Don't override this unless you know what you're doing.
+	 */
+	default AnimatableInstanceCache animatableCacheOverride() {
+		return null;
+	}
 }

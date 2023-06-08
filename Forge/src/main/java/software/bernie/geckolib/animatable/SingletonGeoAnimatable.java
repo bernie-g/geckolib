@@ -3,6 +3,8 @@ package software.bernie.geckolib.animatable;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.network.PacketDistributor;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
@@ -47,7 +49,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param data The data to sync
 	 */
 	default <D> void setAnimData(Entity relatedEntity, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
-		if (relatedEntity.level.isClientSide()) {
+		if (relatedEntity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(instanceId).setData(dataTicket, data);
 		}
 		else {
@@ -79,7 +81,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	default <D> void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
-		if (relatedEntity.level.isClientSide()) {
+		if (relatedEntity.level().isClientSide()) {
 			getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
@@ -99,5 +101,14 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 */
 	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, PacketDistributor.PacketTarget packetTarget) {
 		GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), packetTarget);
+	}
+
+	/**
+	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable.<br>
+	 * Don't override this unless you know what you're doing.
+	 */
+	@Override
+	default @Nullable AnimatableInstanceCache animatableCacheOverride() {
+		return new SingletonAnimatableInstanceCache(this);
 	}
 }

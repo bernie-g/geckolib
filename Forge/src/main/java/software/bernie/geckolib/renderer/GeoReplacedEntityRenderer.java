@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -37,6 +36,7 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
+import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
@@ -240,7 +240,6 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		}
 
 		poseStack.translate(0, 0.01f, 0);
-		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
@@ -419,9 +418,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		BlockPos entityEyePos = BlockPos.containing(mob.getEyePosition(partialTick));
 		BlockPos holderEyePos = BlockPos.containing(leashHolder.getEyePosition(partialTick));
 		int entityBlockLight = getBlockLightLevel((E)mob, entityEyePos);
-		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level.getBrightness(LightLayer.BLOCK, holderEyePos);
-		int entitySkyLight = mob.level.getBrightness(LightLayer.SKY, entityEyePos);
-		int holderSkyLight = mob.level.getBrightness(LightLayer.SKY, holderEyePos);
+		int holderBlockLight = leashHolder.isOnFire() ? 15 : leashHolder.level().getBrightness(LightLayer.BLOCK, holderEyePos);
+		int entitySkyLight = mob.level().getBrightness(LightLayer.SKY, entityEyePos);
+		int holderSkyLight = mob.level().getBrightness(LightLayer.SKY, holderEyePos);
 
 		poseStack.pushPose();
 		poseStack.translate(xAngleOffset, leashOffset.y, zAngleOffset);
@@ -462,6 +461,16 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		buffer.vertex(positionMatrix, x - xOffset, y + yOffset, z + zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
 		buffer.vertex(positionMatrix, x + xOffset, y + width - yOffset, z - zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
+	}
+
+	/**
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
+	 * This should only be called immediately prior to rendering, and only
+	 * @see AnimatableTexture#setAndUpdate(ResourceLocation, int)
+	 */
+	@Override
+	public void updateAnimatedTextureFrame(T animatable) {
+		AnimatableTexture.setAndUpdate(getTextureLocation(animatable), this.currentEntity.getId() + (int)animatable.getTick(this.currentEntity));
 	}
 
 	/**

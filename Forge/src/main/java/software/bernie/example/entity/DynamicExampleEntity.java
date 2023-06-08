@@ -165,7 +165,7 @@ public class DynamicExampleEntity extends PathfinderMob implements GeoEntity {
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 
-		if (this.level.isClientSide() || stack.isEmpty())
+		if (this.level().isClientSide() || stack.isEmpty())
 			return super.mobInteract(player, hand);
 
 		EquipmentSlot slot = LivingEntity.getEquipmentSlotForItem(stack);

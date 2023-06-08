@@ -140,12 +140,17 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
 
-		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
+		double currentFrameTime = animatable instanceof LivingEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+
+		if (!animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime())
+			return;
+
+		if ((!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused())) {
 			if (animatable instanceof LivingEntity) {
-				animatableManager.updatedAt(currentTick + mc.getFrameTime());
+				animatableManager.updatedAt(currentFrameTime);
 			}
 			else {
-				animatableManager.updatedAt(currentTick - animatableManager.getFirstTickTime());
+				animatableManager.updatedAt(currentFrameTime);
 			}
 
 			double lastUpdateTime = animatableManager.getLastUpdateTime();
@@ -176,7 +181,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 		if (animatable instanceof Entity entity) {
 			parser.setMemoizedValue(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			parser.setMemoizedValue(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.isOnGround()));
+			parser.setMemoizedValue(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.onGround()));
 			parser.setMemoizedValue(MolangQueries.IS_IN_WATER, () -> RenderUtils.booleanToFloat(entity.isInWater()));
 			parser.setMemoizedValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
 
