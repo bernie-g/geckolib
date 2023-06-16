@@ -87,7 +87,7 @@ public final class DefaultAnimations {
 
 	/**
 	 * Generic {@link DefaultAnimations#SPAWN spawn} controller.<br>
-	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is <= the value provided in {@code ticks}.<br>
+	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}.<br>
 	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated.
 	 * Recommended:
 	 * <ul>

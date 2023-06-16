@@ -1,21 +1,10 @@
-buildscript {
-    repositories {
-    	maven { url  = 'https://plugins.gradle.org/m2/' }
-        maven { url = 'https://maven.parchmentmc.org' }
-    }
-    dependencies {
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:7.1.0"
-    }
-}
-
 plugins {
     id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'java'
     id 'maven-publish'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
     id "com.modrinth.minotaur" version "2.+"
 }
-
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -23,24 +12,15 @@ import groovy.json.JsonSlurper
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = project.archives_base_name
+archivesBaseName = "geckolib-fabric"
 version = project.mod_version
 group = project.maven_group
 
 repositories {
     mavenCentral()
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-    maven { url 'https://maven.blamejared.com' }
 	maven { url "https://cfa2.cursemaven.com" }
-    maven { url "https://maven.cloudsmith.io/geckolib3/geckolib/" }
     maven { url "https://plugins.gradle.org/m2/" }
-    maven { url "https://maven.shedaniel.me/" }
-	maven { url = "https://ladysnake.jfrog.io/artifactory/mods" }
-	maven { url = "https://maven.terraformersmc.com/" }
-}
-
-configurations {
-    shade
 }
 
 dependencies {
@@ -56,11 +36,7 @@ dependencies {
 
     // Actual dependencies
     implementation(include('com.eliotlash.mclib:mclib:20'))
-    implementation project(':geckolib-core')
-
-    // Shaded dependencies
-    shade 'com.eliotlash.mclib:mclib:20'
-    shade project(':geckolib-core')
+    implementation project(':core')
 
     // Testing
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -74,18 +50,8 @@ dependencies {
     //modCompileOnly "vazkii.patchouli:Patchouli:1.19.2-76-FABRIC"
 }
 
-shadowJar {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.output
-    duplicatesStrategy = 'exclude'
-    exclude('META-INF/services/**')
-    exclude('it/**')
-    exclude('com/google/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    setArchiveClassifier('dev')
-}
-
 jar {
+    from "LICENSE"
     manifest {
         attributes([
                 "Specification-Title"     : "GeckoLib",
@@ -99,77 +65,60 @@ jar {
     }
 }
 
-processResources {
-    inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
-}
-
 loom {
 	accessWidenerPath = file("src/main/resources/geckolib.aw")
+    runs {
+        named("client") {
+            client()
+            configName = "Fabric Client"
+            ideConfigGenerated(true)
+            runDir("runs/"+name)
+            programArg("--username=Dev")
+        }
+        named("client") {
+            client()
+            configName = "Fabric Client Alt"
+            ideConfigGenerated(true)
+            runDir("runs/"+name)
+            programArg("--username=Alt")
+        }
+        named("server") {
+            server()
+            configName = "Fabric Server"
+            ideConfigGenerated(true)
+            runDir("runs/"+name)
+        }
+    }
+
 }
 
 tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
     it.options.release = 17
-}
-
-artifacts {
-    archives shadowJar
+    source(project(":core").sourceSets.main.allSource)
 }
 
 java {
 	withSourcesJar()
+    withJavadocJar()
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
-jar {
-    from "LICENSE"
-}
-
-remapJar {
-    dependsOn(shadowJar)
-    inputFile = shadowJar.archiveFile
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-			from components.java
-            artifactId = project.archives_base_name
-        }
-    }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-	      name = "cloudsmith"
-	      url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def releasesRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def snapshotsRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-	      credentials {
-                def envUsername = System.getenv("cloudUsername")
-                def envPassword = System.getenv("cloudPassword")
-                username = envUsername == null ? findProperty("cloudUsername") : envUsername
-                password = envPassword == null ? findProperty("cloudPassword") : envPassword
-	      }
-	    }
-    }
+sourcesJar {
+    from project(":core").sourceSets.main.allSource
 }
 
 processResources {
-	doLast {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+    doLast {
         def jsonMinifyStart = System.currentTimeMillis()
         def jsonMinified = 0
         def jsonBytesSaved = 0
-        fileTree(dir: outputs.files.asPath, include: '**/*.json').each { 
+        fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
             File file = it
             jsonMinified++
             def oldLength = file.length()
@@ -177,6 +126,32 @@ processResources {
             jsonBytesSaved += oldLength - file.length()
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
+    }
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        //Don't personally like envVariable + findProperty but this is not my thing lol
+        if (System.getenv("cloudUsername") == null) {
+            mavenLocal()
+        }
+        else maven {
+            name = "cloudsmith"
+            url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+            credentials {
+                def envUsername = System.getenv("cloudUsername")
+                def envPassword = System.getenv("cloudPassword")
+                username = envUsername == null ? findProperty("cloudUsername") : envUsername
+                password = envPassword == null ? findProperty("cloudPassword") : envPassword
+            }
+        }
     }
 }
 
