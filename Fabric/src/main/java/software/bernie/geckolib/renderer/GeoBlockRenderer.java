@@ -121,9 +121,9 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	@Override
-	public void render(BlockEntity animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
+	public void render(T animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
 			int packedLight, int packedOverlay) {
-		this.animatable = (T)animatable;
+		this.animatable = animatable;
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, null, 0, partialTick, packedLight);
 	}
