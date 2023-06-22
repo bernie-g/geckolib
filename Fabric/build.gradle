@@ -43,9 +43,6 @@ dependencies {
     compileOnly project(':core')
     compileOnly(include("com.eliotlash.mclib:mclib:20"))
     modLocalRuntime("com.eliotlash.mclib:mclib:20") //Since we shade this, we don't want this to be a dep in publishing.
-
-
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 }
 
 jar {
