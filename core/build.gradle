@@ -68,7 +68,7 @@ publishing {
         }
     }
     repositories {
-        if (System.getenv("cloudUsername") == null) {
+        if (System.getenv("cloudUsername") == null  && findProperty("cloudUsername") == null) {
             mavenLocal()
         }
         else maven {

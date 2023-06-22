@@ -25,6 +25,7 @@ logs
 # other
 eclipse
 run
+runs/
 key.properties
 
 # Files from Forge MDK

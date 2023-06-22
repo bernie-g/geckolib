@@ -12,7 +12,10 @@ import groovy.json.JsonSlurper
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
 
-archivesBaseName = "geckolib-fabric"
+base {
+    archivesName = "geckolib-fabric-${minecraft_version}"
+}
+
 version = project.mod_version
 group = project.maven_group
 
@@ -34,20 +37,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // Actual dependencies
     implementation(include('com.eliotlash.mclib:mclib:20'))
     implementation project(':core')
 
-    // Testing
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
-
-    test {
-        useJUnitPlatform()
-    }
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
-    //modCompileOnly "vazkii.patchouli:Patchouli:1.19.2-76-FABRIC"
 }
 
 jar {
@@ -74,13 +67,6 @@ loom {
             ideConfigGenerated(true)
             runDir("runs/"+name)
             programArg("--username=Dev")
-        }
-        named("client") {
-            client()
-            configName = "Fabric Client Alt"
-            ideConfigGenerated(true)
-            runDir("runs/"+name)
-            programArg("--username=Alt")
         }
         named("server") {
             server()
@@ -139,7 +125,7 @@ publishing {
     }
     repositories {
         //Don't personally like envVariable + findProperty but this is not my thing lol
-        if (System.getenv("cloudUsername") == null) {
+        if (System.getenv("cloudUsername") == null && findProperty("cloudUsername") == null) {
             mavenLocal()
         }
         else maven {
@@ -168,7 +154,7 @@ if (file('key.properties').exists()) {
         releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
-		addGameVersion("1.20")
+		addGameVersion(minecraft_version)
         addGameVersion("Fabric")
         addGameVersion("Java 17")
 
@@ -197,10 +183,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Fabric 1.20'
+		versionName = "Fabric ${minecraft_version}"
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.20']
+		gameVersions = [minecraft_version]
 		versionType = "release"
 		loaders = ['fabric']
 		dependencies { 

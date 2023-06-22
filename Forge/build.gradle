@@ -11,16 +11,23 @@ plugins {
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
-archivesBaseName = "geckolib-forge"
+base {
+    archivesName = "geckolib-forge-${minecraft_version}"
+}
 version = project.mod_version
 group = project.maven_group
 
 minecraft {
     mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
+    // It is REQUIRED to be set to true for this template to function.
+    // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+    copyIdeResources = true
     runs {
         client {
             workingDirectory project.file('runs/' + name)
+            ideaModule("${rootProject.name}.${project.name}.main")
             singleInstance true
             taskName 'geckolib-forge4.0-Client'
 
@@ -33,7 +40,7 @@ minecraft {
             mods {
                 geckolib {
                     source sourceSets.main
-                    source project(":core").sourceSets.main
+                    //source project(":core").sourceSets.main
                 }
             }
         }
@@ -47,6 +54,7 @@ minecraft {
 
         server {
             workingDirectory project.file('runs/' + name)
+            ideaModule("${rootProject.name}.${project.name}.main")
             singleInstance true
             taskName 'geckolib-forge4.0-Server'
 
@@ -65,15 +73,9 @@ minecraft {
     }
 }
 
-mixin { // Add mixins refmap
-    add sourceSets.main, "geckolib.refmap.json"
-    config "geckolib.mixins.json"
-}
-
 java {
     withSourcesJar()
     withJavadocJar()
-
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
@@ -81,16 +83,26 @@ repositories {
     maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
 }
 
-jarJar.enable()
-
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20-46.0.1'
-    implementation project(":core")
-    minecraftLibrary 'com.eliotlash.mclib:mclib:20'
-    jarJar 'com.eliotlash.mclib:mclib:[20,21)'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.0.3'
+    compileOnly project(":core")
+    minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "20")
+    jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[20,21)")
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
+}
+
+
+jarJar.enable()
+
+tasks.jar {
+    enabled = false
+}
+
+tasks.jarJar {
+    archiveClassifier.set("")
+    finalizedBy("reobfJarJar")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -103,11 +115,8 @@ sourcesJar {
     from project(":core").sourceSets.main.allSource
 }
 
-processResources {
-    from project(":core").sourceSets.main.resources
-}
-
 jar {
+    from "LICENSE"
     manifest {
         attributes([
                 "Specification-Title"     : "GeckoLib",
@@ -121,19 +130,45 @@ jar {
     }
 }
 
+mixin { // Add mixins refmap
+    add sourceSets.main, "geckolib.refmap.json"
+    config "geckolib.mixins.json"
+}
+
+processResources {
+    from project(":core").sourceSets.main.resources
+    doLast {
+        def jsonMinifyStart = System.currentTimeMillis()
+        def jsonMinified = 0
+        def jsonBytesSaved = 0
+        fileTree(dir: outputs.files.asPath, include: '**/*.json').each {
+            File file = it
+            jsonMinified++
+            def oldLength = file.length()
+            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+            jsonBytesSaved += oldLength - file.length()
+        }
+        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
+    }
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            artifactId base.archivesName.get()
             jarJar.component(it)
+            artifactId base.archivesName.get()
+            pom.withXml {
+                asNode().dependencies.dependency.each { dep ->
+                    if("mclib".equals(dep.artifactId.last().value().last())) {
+                        assert dep.parent().remove(dep)
+                    }
+                }
+            }
         }
     }
-}
-publishing {
     repositories {
-        //Don't personally like envVariable + findProperty but this is not my thing lol
-        if (System.getenv("cloudUsername") == null) {
+        if (System.getenv("cloudUsername") == null && findProperty("cloudUsername") == null) {
             mavenLocal()
         }
         else maven {
@@ -146,22 +181,6 @@ publishing {
                 password = envPassword == null ? findProperty("cloudPassword") : envPassword
             }
         }
-    }
-}
-
-processResources {
-	doLast {
-        def jsonMinifyStart = System.currentTimeMillis()
-        def jsonMinified = 0
-        def jsonBytesSaved = 0
-        fileTree(dir: outputs.files.asPath, include: '**/*.json').each { 
-            File file = it
-            jsonMinified++
-            def oldLength = file.length()
-            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-            jsonBytesSaved += oldLength - file.length()
-        }
-        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
 }
 
