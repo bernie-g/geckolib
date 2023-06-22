@@ -157,7 +157,6 @@ processResources {
         expand replaceProperties
     }
 
-
     doLast {
         def jsonMinifyStart = System.currentTimeMillis()
         def jsonMinified = 0
