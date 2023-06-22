@@ -1,18 +1,18 @@
 {
 	"schemaVersion": 1,
-	"id": "geckolib",
+	"id": "${mod_id}",
 	"version": "${version}",
-	"name": "Geckolib",
-	"description": "GeckoLib is an animation engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more.",
+	"name": "${mod_display_name}",
+	"description": "${mod_description}",
 	"authors": [
-		"Gecko, Eliot, AzureDoom, Hydos, DerToaster, Tslat, KyoSleep, Witixin"
+		"${mod_authors}"
 	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/geckolib",
 		"issues": "https://github.com/bernie-g/geckolib/issues",
 		"sources": "https://github.com/bernie-g/geckolib"
 	},
-	"license": "MIT",
+	"license": "${mod_license}",
 	"icon": "geckolib.png",
 	"environment": "*",
 	"entrypoints": {
@@ -28,9 +28,9 @@
 	],
 	"accessWidener": "geckolib.aw",
 	"depends": {
-   		"fabricloader": ">=0.14.17",
-		"fabric": "*",
+   		"fabricloader": ">=${fabric_loader_version}",
+		"fabric": ">=${fabric_api_version}",
 		"java": ">=17",
-		"minecraft": ">=1.20"
+		"minecraft": ">=${minecraft_version}"
 	}
 }

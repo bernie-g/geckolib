@@ -12,7 +12,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 base {
-    archivesName = "geckolib-forge-${minecraft_version}"
+    archivesName = "${mod_id}-forge-${minecraft_version}"
 }
 version = project.mod_version
 group = project.maven_group
@@ -29,18 +29,18 @@ minecraft {
             workingDirectory project.file('runs/' + name)
             ideaModule("${rootProject.name}.${project.name}.main")
             singleInstance true
-            taskName 'geckolib-forge4.0-Client'
+            taskName "${mod_id}-forge4.0-Client"
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
 
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=geckolib.mixins.json"
+            args "-mixin.config=${mod_id}.mixins.json"
 
             mods {
-                geckolib {
+                "${mod_id}" {
                     source sourceSets.main
-                    //source project(":core").sourceSets.main
+                    source project(":core").sourceSets.main
                 }
             }
         }
@@ -48,7 +48,7 @@ minecraft {
         clientAlt {
             parent minecraft.runs.client
             workingDirectory project.file('runs/' + name)
-            taskName 'geckolib-forge4.0-Client-2'
+            taskName "${mod_id}-forge4.0-Client-2"
             args '--username', 'Alt'
         }
 
@@ -56,15 +56,15 @@ minecraft {
             workingDirectory project.file('runs/' + name)
             ideaModule("${rootProject.name}.${project.name}.main")
             singleInstance true
-            taskName 'geckolib-forge4.0-Server'
+            taskName "${mod_id}-forge4.0-Server"
 
             property 'forge.logging.console.level', 'debug'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=geckolib.mixins.json"
+            args "-mixin.config=${mod_id}.mixins.json"
 
             mods {
-                geckolib {
+                "${mod_id}" {
                     source project(":core").sourceSets.main
                     source sourceSets.main
                 }
@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20.1-47.0.3'
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":core")
     minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "20")
     jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[20,21)")
@@ -93,10 +93,10 @@ dependencies {
     }
 }
 
-
 jarJar.enable()
 
 tasks.jar {
+    //We replace the original jar with the JiJ'd one containing mclib.
     enabled = false
 }
 
@@ -119,7 +119,7 @@ jar {
     from "LICENSE"
     manifest {
         attributes([
-                "Specification-Title"     : "GeckoLib",
+                "Specification-Title"     : "${mod_display_name}",
                 "Specification-Vendor"    : "Gecko",
                 "Specification-Version"   : "4",
                 "Implementation-Title"    : project.name,
@@ -131,12 +131,33 @@ jar {
 }
 
 mixin { // Add mixins refmap
-    add sourceSets.main, "geckolib.refmap.json"
-    config "geckolib.mixins.json"
+    add sourceSets.main, "${mod_id}.refmap.json"
+    config "${mod_id}.mixins.json"
 }
+
+def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+def replaceProperties = [
+        minecraft_version_range: minecraft_version_range,
+        forge_version_range: forge_version_range,
+        loader_version_range: forge_loader_range,
+        mod_id: mod_id,
+        mod_name: mod_display_name,
+        mod_license: mod_license,
+        mod_version: mod_version,
+        mod_authors: mod_authors,
+        mod_description: mod_description
+]
 
 processResources {
     from project(":core").sourceSets.main.resources
+
+    inputs.properties replaceProperties
+
+    filesMatching(resourceTargets) {
+        expand replaceProperties
+    }
+
+
     doLast {
         def jsonMinifyStart = System.currentTimeMillis()
         def jsonMinified = 0
@@ -158,6 +179,8 @@ publishing {
             from components.java
             jarJar.component(it)
             artifactId base.archivesName.get()
+            //We don't want users to have mclib as a dep when we JiJ for functionality.
+            //Still, not ideal as IDEs don't pick up on JiJ'd deps.
             pom.withXml {
                 asNode().dependencies.dependency.each { dep ->
                     if("mclib".equals(dep.artifactId.last().value().last())) {
@@ -195,6 +218,7 @@ if (file('key.properties').exists()) {
             id = "388172"
             releaseType = "release"
             changelogType = 'text'
+            mainArtifact = "build/libs/${mod_id}-forge-${minecraft_version}-${mod_version}"
             changelog = file('changelog.txt')
         	addGameVersion("1.20")
             addGameVersion("Forge")
@@ -213,7 +237,7 @@ if (file('key.properties').exists()) {
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
 		versionName = 'Forge 1.20'
-		uploadFile = jar 
+		uploadFile = jarJar
 		changelog = rootProject.file("changelog.txt").text
 		gameVersions = ['1.20']
 		loaders = ['forge']
