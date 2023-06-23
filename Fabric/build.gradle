@@ -41,7 +41,9 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     compileOnly project(':core')
-    compileOnly(include("com.eliotlash.mclib:mclib:20"))
+    include(compileOnly("com.eliotlash.mclib:mclib:20"))
+    testCompileOnly "com.eliotlash.mclib:mclib:20"
+    implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
     modLocalRuntime("com.eliotlash.mclib:mclib:20") //Since we shade this, we don't want this to be a dep in publishing.
 }
 
@@ -138,14 +140,6 @@ publishing {
         mavenJava(MavenPublication) {
             artifactId base.archivesName.get()
             from components.java
-
-            pom.withXml {
-                asNode().dependencies.dependency.each { dep ->
-                    if("mclib".equals(dep.artifactId.last().value().last())) {
-                        assert dep.parent().remove(dep)
-                    }
-                }
-            }
         }
     }
     repositories {
