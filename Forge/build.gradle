@@ -97,14 +97,15 @@ dependencies {
 
 jarJar.enable()
 
-tasks.jar {
-    //We replace the original jar with the JiJ'd one containing mclib.
-    enabled = false
+//Makes the jarJar artifact the default one.
+tasks.jarJar.configure {
+    it.archiveClassifier.set("")
+    finalizedBy("reobfJarJar")
 }
 
-tasks.jarJar {
-    archiveClassifier.set("")
-    finalizedBy("reobfJarJar")
+tasks.jar.configure {
+    it.archiveClassifier.set("slim")
+    //it.finalizedBy("reobfJar")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -178,10 +179,11 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
+            //Excludes the non jij'd jar from being published at all.
+            artifacts = [sourcesJar, javadocJar]
             jarJar.component(it)
             artifactId base.archivesName.get()
             //We don't want users to have mclib as a dep when we JiJ for functionality.
-            //Still, not ideal as IDEs don't pick up on JiJ'd deps.
             pom.withXml {
                 asNode().dependencies.dependency.each { dep ->
                     if("mclib".equals(dep.artifactId.last().value().last())) {
