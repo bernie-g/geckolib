@@ -48,7 +48,7 @@ configurations {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20'
+    mappings channel: 'parchment', version: '2023.06.26-1.20.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
@@ -118,7 +118,7 @@ repositories {
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.20-46.0.1'
+    minecraft 'net.minecraftforge:forge:1.20.1-47.0.49'
     library 'com.eliotlash.mclib:mclib:20'
     library(project(':geckolib-core')) {
         exclude group: 'org.apache.commons'
@@ -248,7 +248,7 @@ if (file('key.properties').exists()) {
             releaseType = "release"
             changelogType = 'text'
             changelog = file('changelog.txt')
-        	addGameVersion("1.20")
+        	addGameVersion("1.20.1")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -264,10 +264,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Forge 1.20'
+		versionName = 'Forge 1.20.1'
 		uploadFile = jar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.20']
+		gameVersions = ['1.20.1']
 		loaders = ['forge']
 	}
 }
