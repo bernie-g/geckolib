@@ -24,7 +24,6 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.texture.AnimatableTexture;
@@ -306,13 +305,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			localMatrix.translate(new Vector3f(getRenderOffset(this.currentEntity, 1).toVector3f()));
-			bone.setLocalSpaceMatrix(localMatrix);
-
-			Matrix4f worldState = localMatrix;
-
-			worldState.translate(new Vector3f(this.currentEntity.position().toVector3f()));
-			bone.setWorldSpaceMatrix(worldState);
+			bone.setLocalSpaceMatrix(RenderUtils.translateMatrix(localMatrix, getRenderOffset(this.currentEntity, 1).toVector3f()));
+			bone.setWorldSpaceMatrix(RenderUtils.translateMatrix(new Matrix4f(localMatrix), this.currentEntity.position().toVector3f()));
 		}
 
 		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
