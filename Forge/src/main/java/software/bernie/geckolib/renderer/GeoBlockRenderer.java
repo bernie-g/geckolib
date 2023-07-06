@@ -146,7 +146,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
 			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			poseStack.translate(0, 0.01f, 0);
 			poseStack.translate(0.5, 0, 0.5);
 			rotateBlock(getFacing(animatable), poseStack);
 			this.model.handleAnimations(animatable, instanceId, animationState);
