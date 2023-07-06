@@ -429,6 +429,9 @@ public class AnimationController<T extends GeoAnimatable> {
 		if (this.justStartedTransition && (this.shouldResetTick || this.justStopped)) {
 			this.justStopped = false;
 			adjustedTick = adjustTick(seekTime);
+
+			if (this.currentAnimation == null)
+				this.animationState = State.TRANSITIONING;
 		}
 		else if (this.currentAnimation == null) {
 			this.shouldResetTick = true;
