@@ -45,6 +45,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	protected T animatable;
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
+	protected boolean useEntityGuiLighting = false;
 
 	protected Matrix4f itemRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
@@ -81,6 +82,16 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	public ItemStack getCurrentItemStack() {
 		return this.currentItemStack;
+	}
+
+	/**
+	 * Mark this renderer so that it uses an alternate lighting scheme when rendering the item in GUI.<br>
+	 * This can help with improperly lit 3d models
+	 */
+	public GeoItemRenderer<T> useAlternateGuiLighting() {
+		this.useEntityGuiLighting = true;
+
+		return this;
 	}
 
 	/**
@@ -182,7 +193,14 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
 		poseStack.pushPose();
-		Lighting.setupForFlatItems();
+
+		if (this.useEntityGuiLighting) {
+			Lighting.setupForEntityInInventory();
+		}
+		else {
+			Lighting.setupForFlatItems();
+		}
+
 		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer,
 				0, Minecraft.getInstance().getFrameTime(), packedLight);
 		defaultBufferSource.endBatch();
