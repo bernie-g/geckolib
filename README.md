@@ -25,7 +25,7 @@
 </h3>
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_5.png" alt="logo"/> 
 <h3 align="center">
-<h2>Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change.</h2><br><br>
+<h2>Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change. If you would like to support Geckolib, feel free to donate on <a href="https://ko-fi.com/geckolib">Kofi.</a> </h2><br><br>
 </h3>
 
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_6.png" alt="logo"/> 
