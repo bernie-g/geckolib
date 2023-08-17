@@ -6,16 +6,16 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import software.bernie.example.item.GeckoArmorItem;
-import software.bernie.example.item.JackInTheBoxItem;
-import software.bernie.example.item.PistolItem;
-import software.bernie.example.item.WolfArmorItem;
+import software.bernie.example.item.*;
 import software.bernie.geckolib.GeckoLib;
 
 public class ItemRegistry {
 
     public static final JackInTheBoxItem JACK_IN_THE_BOX = registerItem("jack_in_the_box", new JackInTheBoxItem(new Item.Properties()));
     public static final PistolItem PISTOL = registerItem("pistol", new PistolItem());
+
+    public static final BlockItem FERTILIZER = registerItem("fertilizer", new BlockItem(BlockRegistry.FERTILIZER_BLOCK, new Item.Properties()));
+    public static final BlockItem GECKO_HABITAT = registerItem("gecko_habitat", new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT_BLOCK, new Item.Properties()));
 
     public static final GeckoArmorItem GECKO_ARMOR_HELMET = registerItem("gecko_armor_helmet", new GeckoArmorItem(ArmorMaterials.NETHERITE, ArmorItem.Type.HELMET, new Item.Properties()));
     public static final GeckoArmorItem GECKO_ARMOR_CHESTPLATE = registerItem("gecko_armor_chestplate", new GeckoArmorItem(ArmorMaterials.NETHERITE, ArmorItem.Type.CHESTPLATE, new Item.Properties()));
@@ -43,6 +43,8 @@ public class ItemRegistry {
             .displayItems((enabledFeatures, entries) -> {
                 entries.accept(ItemRegistry.JACK_IN_THE_BOX);
                 entries.accept(ItemRegistry.PISTOL);
+                entries.accept(ItemRegistry.FERTILIZER);
+                entries.accept(ItemRegistry.GECKO_HABITAT);
                 entries.accept(ItemRegistry.GECKO_ARMOR_HELMET);
                 entries.accept(ItemRegistry.GECKO_ARMOR_CHESTPLATE);
                 entries.accept(ItemRegistry.GECKO_ARMOR_LEGGINGS);
@@ -51,8 +53,6 @@ public class ItemRegistry {
                 entries.accept(ItemRegistry.WOLF_ARMOR_CHESTPLATE);
                 entries.accept(ItemRegistry.WOLF_ARMOR_LEGGINGS);
                 entries.accept(ItemRegistry.WOLF_ARMOR_BOOTS);
-                entries.accept(BlockRegistry.GECKO_HABITAT_BLOCK);
-                entries.accept(BlockRegistry.FERTILIZER_BLOCK);
                 entries.accept(ItemRegistry.BAT_SPAWN_EGG);
                 entries.accept(ItemRegistry.BIKE_SPAWN_EGG);
                 entries.accept(ItemRegistry.RACE_CAR_SPAWN_EGG);

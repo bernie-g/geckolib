@@ -7,10 +7,7 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import software.bernie.example.item.GeckoArmorItem;
-import software.bernie.example.item.JackInTheBoxItem;
-import software.bernie.example.item.PistolItem;
-import software.bernie.example.item.WolfArmorItem;
+import software.bernie.example.item.*;
 import software.bernie.geckolib.GeckoLib;
 
 public final class ItemRegistry {
@@ -18,7 +15,7 @@ public final class ItemRegistry {
 	public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GeckoLib.MOD_ID);
 
 	public static final RegistryObject<BlockItem> GECKO_HABITAT = ITEMS.register("gecko_habitat",
-			() -> new BlockItem(BlockRegistry.GECKO_HABITAT.get(),
+			() -> new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT.get(),
 					new Item.Properties()));
 	public static final RegistryObject<BlockItem> FERTILIZER = ITEMS.register("fertilizer",
 			() -> new BlockItem(BlockRegistry.FERTILIZER.get(),
