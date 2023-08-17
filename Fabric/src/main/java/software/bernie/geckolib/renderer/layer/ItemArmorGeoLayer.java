@@ -207,7 +207,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	/**
 	 * Gets a cached resource path for the vanilla armor layer texture for this armor piece.<br>
-	 * Equivalent to {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#getArmorResource HumanoidArmorLayer.getArmorResource}
+	 * Equivalent to {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#getArmorLocation HumanoidArmorLayer.getArmorLocation}
 	 */
 	public ResourceLocation getVanillaArmorResource(Entity entity, ItemStack stack, EquipmentSlot slot, String type) {
 		String domain = "minecraft";
