@@ -24,8 +24,6 @@ public final class ItemRegistry {
 	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jack_in_the_box",
 			() -> new JackInTheBoxItem(new Item.Properties()));
 
-	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", PistolItem::new);
-
 	public static final RegistryObject<WolfArmorItem> WOLF_ARMOR_HELMET = ITEMS.register("wolf_armor_helmet",
 			() -> new WolfArmorItem(ArmorMaterials.DIAMOND, ArmorItem.Type.HELMET, new Item.Properties()));
 	public static final RegistryObject<WolfArmorItem> WOLF_ARMOR_CHESTPLATE = ITEMS.register("wolf_armor_chestplate",
@@ -58,7 +56,6 @@ public final class ItemRegistry {
 			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get()))
 			.displayItems((enabledFeatures, entries) -> {
 				entries.accept(ItemRegistry.JACK_IN_THE_BOX.get());
-				entries.accept(ItemRegistry.PISTOL.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_HELMET.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_CHESTPLATE.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_LEGGINGS.get());

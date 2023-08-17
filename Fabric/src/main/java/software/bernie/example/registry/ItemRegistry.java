@@ -12,7 +12,6 @@ import software.bernie.geckolib.GeckoLib;
 public class ItemRegistry {
 
     public static final JackInTheBoxItem JACK_IN_THE_BOX = registerItem("jack_in_the_box", new JackInTheBoxItem(new Item.Properties()));
-    public static final PistolItem PISTOL = registerItem("pistol", new PistolItem());
 
     public static final BlockItem FERTILIZER = registerItem("fertilizer", new BlockItem(BlockRegistry.FERTILIZER_BLOCK, new Item.Properties()));
     public static final BlockItem GECKO_HABITAT = registerItem("gecko_habitat", new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT_BLOCK, new Item.Properties()));
@@ -42,7 +41,6 @@ public class ItemRegistry {
             .icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX))
             .displayItems((enabledFeatures, entries) -> {
                 entries.accept(ItemRegistry.JACK_IN_THE_BOX);
-                entries.accept(ItemRegistry.PISTOL);
                 entries.accept(ItemRegistry.FERTILIZER);
                 entries.accept(ItemRegistry.GECKO_HABITAT);
                 entries.accept(ItemRegistry.GECKO_ARMOR_HELMET);
