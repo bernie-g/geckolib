@@ -71,7 +71,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	/**
 	 * Constructs a defaulted resource path for a animation.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
-	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.geo.json"}</pre>
+	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.animation.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
 		return new ResourceLocation(basePath.getNamespace(), "animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
@@ -80,7 +80,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	/**
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
-	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:geo/entity/animal/goat.png"}</pre>
+	 * @return The formatted texture resource path based on recommended defaults. E.G. <pre>{@code "mymod:texture/entity/animal/goat.png"}</pre>
 	 */
 	public ResourceLocation buildFormattedTexturePath(ResourceLocation basePath) {
 		return new ResourceLocation(basePath.getNamespace(), "textures/" + subtype() + "/" + basePath.getPath() + ".png");
