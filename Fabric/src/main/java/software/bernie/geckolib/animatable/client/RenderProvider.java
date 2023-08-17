@@ -23,14 +23,13 @@ public interface RenderProvider {
     }
 
     static RenderProvider of(Item item) {
-        if(item instanceof GeoItem geoItem){
+        if (item instanceof GeoItem geoItem)
             return (RenderProvider)geoItem.getRenderProvider().get();
-        }
 
         return DEFAULT;
     }
 
-    default BlockEntityWithoutLevelRenderer getCustomRenderer(){
+    default BlockEntityWithoutLevelRenderer getCustomRenderer() {
         return ((ItemRendererAccessor)Minecraft.getInstance().getItemRenderer()).getBlockEntityRenderer();
     }
 
@@ -40,6 +39,7 @@ public interface RenderProvider {
 
         if (replacement != original) {
             original.copyPropertiesTo(replacement);
+
             return replacement;
         }
 
