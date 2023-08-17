@@ -218,7 +218,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
 							   MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick,
 							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		poseStack.pushPose();
 
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
@@ -236,7 +235,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 		GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 				packedLight, packedOverlay, red, green, blue, alpha);
-		poseStack.popPose();
 	}
 
 	/**
