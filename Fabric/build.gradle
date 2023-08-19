@@ -134,8 +134,7 @@ publishing {
         }
     }
     repositories {
-        //Don't personally like envVariable + findProperty but this is not my thing lol
-        if (System.getenv("cloudUsername") == null && findProperty("cloudUsername") == null) {
+        if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {
             mavenLocal()
         }
         else maven {
@@ -192,6 +191,7 @@ if (file('key.properties').exists()) {
 		
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
+		versionNumber = version
 		versionName = "Fabric ${minecraft_version}"
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
