@@ -43,6 +43,7 @@ dependencies {
 
     compileOnly project(':core')
     include(compileOnly("com.eliotlash.mclib:mclib:20"))
+    include(implementation("com.eliotlash.mclib:mclib:20"))
     testCompileOnly "com.eliotlash.mclib:mclib:20"
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
     modLocalRuntime("com.eliotlash.mclib:mclib:20") //Since we shade this, we don't want this to be a dep in publishing.
