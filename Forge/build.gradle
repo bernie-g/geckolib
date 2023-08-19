@@ -14,7 +14,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 base {
-    archivesName = "${mod_id}-forge-${minecraft_version}"
+    archivesName = "geckolib-forge-${minecraft_version}"
 }
 
 minecraft {
@@ -101,9 +101,12 @@ tasks.jarJar.configure {
     finalizedBy("reobfJarJar")
 }
 
+tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+    from rootProject.file("LICENSE")
+}
+
 tasks.jar.configure {
     it.archiveClassifier.set("slim")
-    //it.finalizedBy("reobfJar")
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -117,15 +120,14 @@ sourcesJar {
 }
 
 jar {
-    from "LICENSE"
     manifest {
         attributes([
                 "Specification-Title"     : "${mod_display_name}",
-                "Specification-Vendor"    : "Gecko",
+                "Specification-Vendor"    : mod_authors,
                 "Specification-Version"   : "4",
                 "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Gecko",
+                "Implementation-Version"  : version,
+                "Implementation-Vendor"   : mod_authors,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
         ])
     }
@@ -209,7 +211,7 @@ publishing {
 modrinth {
 		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
 		projectId = '8BmcQJ2H' 
-		versionNumber = project.version 
+		versionNumber = project.version
 		versionName = "Forge ${minecraft_version}"
 		uploadFile = jarJar
 		changelog = rootProject.file("changelog.txt").text
