@@ -3,6 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.modrinth.minotaur' version '2.8.3'
+    id 'net.darkhax.curseforgegradle' version '1.1.15'
 }
 
 import groovy.json.JsonOutput
@@ -165,3 +166,20 @@ modrinth {
     debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
+
+task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    group = "publishing"
+    apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
+
+    def mainFile = upload(388172, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
+    mainFile.releaseType = "release"
+    mainFile.addModLoader("Forge")
+    mainFile.addGameVersion(minecraft_version)
+    mainFile.addJavaVersion("Java 17")
+    mainFile.changelog = rootProject.file("changelog.txt").text
+
+    debugMode = true
+    //https://github.com/Darkhax/CurseForgeGradle#available-properties
+}
+
+tasks.publishToCurseForge.dependsOn(tasks.build)
