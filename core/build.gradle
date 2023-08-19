@@ -47,10 +47,10 @@ jar {
     from(rootProject.file("LICENSE"))
     manifest {
         attributes([
-                'Specification-Title'     : project.name,
+                'Specification-Title'     : "geckolib-core",
                 'Specification-Vendor'    : authors,
                 'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : project.name,
+                'Implementation-Title'    : "geckolib-core",
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),

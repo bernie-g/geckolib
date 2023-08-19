@@ -38,14 +38,17 @@ dependencies {
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
 }
 
+tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+    from rootProject.file("LICENSE")
+}
+
 jar {
-    from "LICENSE"
     manifest {
         attributes([
                 "Specification-Title"     : "${mod_display_name}",
                 "Specification-Vendor"    : mod_authors,
                 "Specification-Version"   : "4",
-                "Implementation-Title"    : project.name,
+                "Implementation-Title"    : mod_display_name + " " + project.name,
                 "Implementation-Version"  : version,
                 "Implementation-Vendor"   : mod_authors,
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
