@@ -16,11 +16,8 @@ import groovy.json.JsonSlurper
 base {
     archivesName = "${mod_id}-forge-${minecraft_version}"
 }
-version = project.mod_version
-group = project.maven_group
 
 minecraft {
-    mappings channel: 'parchment', version: '2023.08.13-1.20.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
@@ -146,7 +143,6 @@ def replaceProperties = [
         mod_id: mod_id,
         mod_name: mod_display_name,
         mod_license: mod_license,
-        mod_version: mod_version,
         mod_authors: mod_authors,
         mod_description: mod_description
 ]
@@ -221,9 +217,7 @@ if (file('key.properties').exists()) {
             id = "388172"
             releaseType = "release"
             changelogType = 'text'
-            mainArtifact = "build/libs/${mod_id}-forge-${minecraft_version}-${mod_version}"
             changelog = file('changelog.txt')
-        	addGameVersion("1.20.1")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -238,7 +232,6 @@ if (file('key.properties').exists()) {
 		
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
-		versionNumber = project.mod_version 
 		versionName = 'Forge 1.20'
 		uploadFile = jarJar
 		changelog = rootProject.file("changelog.txt").text
