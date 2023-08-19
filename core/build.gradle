@@ -6,6 +6,7 @@ plugins {
 archivesBaseName = "geckolib-core"
 
 repositories {
+    mavenCentral()
     maven {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content {
@@ -74,10 +75,8 @@ publishing {
             name =  "cloudsmith"
             url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
             credentials {
-                def envUsername = System.getenv("cloudUsername")
-                def envPassword = System.getenv("cloudPassword")
-                username = envUsername == null ? findProperty("cloudUsername") : envUsername
-                password = envPassword == null ? findProperty("cloudPassword") : envPassword
+                username = System.getenv("cloudUsername")
+                password = System.getenv("cloudPassword")
             }
         }
     }
