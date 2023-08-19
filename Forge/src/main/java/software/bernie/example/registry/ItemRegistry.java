@@ -7,10 +7,7 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import software.bernie.example.item.GeckoArmorItem;
-import software.bernie.example.item.JackInTheBoxItem;
-import software.bernie.example.item.PistolItem;
-import software.bernie.example.item.WolfArmorItem;
+import software.bernie.example.item.*;
 import software.bernie.geckolib.GeckoLib;
 
 public final class ItemRegistry {
@@ -18,7 +15,7 @@ public final class ItemRegistry {
 	public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GeckoLib.MOD_ID);
 
 	public static final RegistryObject<BlockItem> GECKO_HABITAT = ITEMS.register("gecko_habitat",
-			() -> new BlockItem(BlockRegistry.GECKO_HABITAT.get(),
+			() -> new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT.get(),
 					new Item.Properties()));
 	public static final RegistryObject<BlockItem> FERTILIZER = ITEMS.register("fertilizer",
 			() -> new BlockItem(BlockRegistry.FERTILIZER.get(),
@@ -26,8 +23,6 @@ public final class ItemRegistry {
 
 	public static final RegistryObject<JackInTheBoxItem> JACK_IN_THE_BOX = ITEMS.register("jack_in_the_box",
 			() -> new JackInTheBoxItem(new Item.Properties()));
-
-	public static final RegistryObject<PistolItem> PISTOL = ITEMS.register("pistol", PistolItem::new);
 
 	public static final RegistryObject<WolfArmorItem> WOLF_ARMOR_HELMET = ITEMS.register("wolf_armor_helmet",
 			() -> new WolfArmorItem(ArmorMaterials.DIAMOND, ArmorItem.Type.HELMET, new Item.Properties()));
@@ -61,7 +56,6 @@ public final class ItemRegistry {
 			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get()))
 			.displayItems((enabledFeatures, entries) -> {
 				entries.accept(ItemRegistry.JACK_IN_THE_BOX.get());
-				entries.accept(ItemRegistry.PISTOL.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_HELMET.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_CHESTPLATE.get());
 				entries.accept(ItemRegistry.GECKO_ARMOR_LEGGINGS.get());

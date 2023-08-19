@@ -1,12 +1,10 @@
-v4.2
+v4.2.2
 
-- Added the AnimationState#isCurrentAnimationStage helper method
-- Added the AnimationState#resetCurrentAnimation helper method
-- Added the AnimationState#setControllerSpeed helper method
-- Added the AnimationController#transitionLength method, which is a functional equivalent to AnimationController#setTransitionLength, but is a factory pattern method instead. Existing method marked as deprecated for removal
-- Prevented the animation processing pass being run over again if re-rendering the same animatable twice in the same render frame
-- Add jetbrains annotations to the core module
-- Added an AnimatableCache override in GeoAnimatable
-- Add a context-aware animatable implementation for handling animations independently for different contexts. (Experimental)
-- Added animated texture support for all geo objects
-- Fixed the built-in scaling not working consistently
+- Fixed some javadoc errors
+- Fixed GeoEntityRenderer passing a hardcoded value for isReRender in renderRecursively
+- Fixed corrupted ogg file for jack in the box example
+- Removed Pistol example due to complications with previous maintainer
+- Fixed BEWLRs rendering twice when Geckolib is installed
+- Further optimised rendering and animation handling to reduce unnecessary work
+- Fixed GeoArmor not aligning properly when used on a non-humanoid entity
+- Converted the Gecko Habitat example item to the actual habitat

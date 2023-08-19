@@ -20,7 +20,7 @@ version = project.mod_version
 group = project.maven_group
 
 minecraft {
-    mappings channel: 'parchment', version: '1.19.3-2023.03.12-1.20'
+    mappings channel: 'parchment', version: '2023.08.13-1.20.1'
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
@@ -223,7 +223,7 @@ if (file('key.properties').exists()) {
             changelogType = 'text'
             mainArtifact = "build/libs/${mod_id}-forge-${minecraft_version}-${mod_version}"
             changelog = file('changelog.txt')
-        	addGameVersion("1.20")
+        	addGameVersion("1.20.1")
             addGameVersion("Forge")
             addGameVersion("Java 17")
         }
@@ -242,7 +242,7 @@ if (file('key.properties').exists()) {
 		versionName = 'Forge 1.20'
 		uploadFile = jarJar
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.20']
+		gameVersions = ['1.20.1']
 		loaders = ['forge']
 	}
 }
