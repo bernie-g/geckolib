@@ -47,10 +47,10 @@ dependencies {
     // Minecraft/Fabric deps
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
-	//mappings( loom.layered() {
-	//	officialMojangMappings()
-	//	parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.14@zip")
-	//})
+    //mappings( loom.layered() {
+    //	officialMojangMappings()
+    //	parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.14@zip")
+    //})
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
@@ -193,7 +193,7 @@ if (file('key.properties').exists()) {
         releaseType = "release"
         changelogType = 'text'
         changelog = file('changelog.txt')
-		addGameVersion("1.20")
+		addGameVersion("1.20.1")
         addGameVersion("Fabric")
         addGameVersion("Java 17")
 
@@ -222,10 +222,10 @@ if (file('key.properties').exists()) {
 		token = modrinthProp.getProperty('modrinthKey')
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.mod_version 
-		versionName = 'Fabric 1.20'
+		versionName = 'Fabric 1.20.1'
 		uploadFile = remapJar 
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.20']
+		gameVersions = ['1.20.1']
 		versionType = "release"
 		loaders = ['fabric']
 		dependencies { 

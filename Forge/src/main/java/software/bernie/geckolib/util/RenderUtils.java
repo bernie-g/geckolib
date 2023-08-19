@@ -206,7 +206,7 @@ public final class RenderUtils {
 
 	/**
 	 * If a {@link GeoCube} is a 2d plane the {@link software.bernie.geckolib.cache.object.GeoQuad Quad's}
-	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks.<br>
+	 * normal is inverted in an intersecting plane, it can cause issues with shaders and other lighting tasks.<br>
 	 * This performs a pseudo-ABS function to help resolve some of those issues.
 	 */
 	public static void fixInvertedFlatCube(GeoCube cube, Vector3f normal) {
