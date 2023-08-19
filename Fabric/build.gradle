@@ -1,5 +1,4 @@
     plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
     id 'fabric-loom' version '1.3-SNAPSHOT'
     id 'java'
     id 'maven-publish'
@@ -34,19 +33,13 @@ dependencies {
     // Minecraft/Fabric deps
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
-	//mappings( loom.layered() {
-	//	officialMojangMappings()
-	//	parchment("org.parchmentmc.data:parchment-1.19.2:2022.08.14@zip")
-	//})
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     compileOnly project(':core')
-    include(compileOnly("com.eliotlash.mclib:mclib:20"))
     include(implementation("com.eliotlash.mclib:mclib:20"))
     testCompileOnly "com.eliotlash.mclib:mclib:20"
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
-    modLocalRuntime("com.eliotlash.mclib:mclib:20") //Since we shade this, we don't want this to be a dep in publishing.
 }
 
 jar {
@@ -113,7 +106,6 @@ def replaceProperties = [
 ]
 
 processResources {
-    inputs.property "version", version
 
     inputs.properties replaceProperties
 
