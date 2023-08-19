@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "${mod_id}",
+	"id": "geckolib",
 	"version": "${version}",
 	"name": "${mod_display_name}",
 	"description": "${mod_description}",
