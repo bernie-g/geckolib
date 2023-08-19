@@ -1,9 +1,8 @@
-    plugins {
+plugins {
     id 'fabric-loom' version '1.3-SNAPSHOT'
     id 'java'
     id 'maven-publish'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id 'com.modrinth.minotaur' version '2.1.2'
+    id 'com.modrinth.minotaur' version '2.8.3'
 }
 
 import groovy.json.JsonOutput
@@ -150,56 +149,19 @@ publishing {
     }
 }
 
-if (file('key.properties').exists()) {
-    curseforge {
-
-    def curseProp = new Properties()
-    File secretPropsFile = file("key.properties")
-    curseProp.load(secretPropsFile.newInputStream())
-
-    project {
-        apiKey = curseProp.getProperty('curseKey')
-        id = "388172"
-        releaseType = "release"
-        changelogType = 'text'
-        changelog = file('changelog.txt')
-		addGameVersion(minecraft_version)
-        addGameVersion("Fabric")
-        addGameVersion("Java 17")
-
-        relations {
-            requiredDependency 'fabric-api'      
-        }
-        mainArtifact(remapJar)
-
-        afterEvaluate {
-            uploadTask.dependsOn("remapJar")
-        }
+modrinth {
+    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
+    projectId = '8BmcQJ2H'
+    versionNumber = version
+    versionName = "Fabric ${minecraft_version}"
+    uploadFile = remapJar
+    changelog = rootProject.file("changelog.txt").text
+    gameVersions = [minecraft_version]
+    versionType = "release"
+    loaders = ['fabric']
+    dependencies {
+        required.project "fabric-api"
     }
-    options {
-    	//debug = true
-        forgeGradleIntegration = false
-    }
-   }
-}
-
-if (file('key.properties').exists()) {
-	modrinth {
-		def modrinthProp = new Properties()
-		File secretPropsFile = file("key.properties")
-		modrinthProp.load(secretPropsFile.newInputStream())
-		
-		token = modrinthProp.getProperty('modrinthKey')
-		projectId = '8BmcQJ2H' 
-		versionNumber = version
-		versionName = "Fabric ${minecraft_version}"
-		uploadFile = remapJar 
-		changelog = rootProject.file("changelog.txt").text
-		gameVersions = [minecraft_version]
-		versionType = "release"
-		loaders = ['fabric']
-		dependencies { 
-        	required.project "fabric-api"
-   		}
-	}
+    debugMode = true
+    //https://github.com/modrinth/minotaur#available-properties
 }

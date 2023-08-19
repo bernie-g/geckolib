@@ -4,10 +4,9 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-    id 'com.matthewprenger.cursegradle' version '1.4.0'
     id 'org.spongepowered.mixin' version '0.7.+'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id 'com.modrinth.minotaur' version '2.1.2'
+    id 'com.modrinth.minotaur' version '2.8.3'
 }
 
 import groovy.json.JsonOutput
@@ -208,39 +207,15 @@ publishing {
     }
 }
 
-if (file('key.properties').exists()) {
-    curseforge {
-        def curseProp = new Properties()
-        File secretPropsFile = file("key.properties")
-        curseProp.load(secretPropsFile.newInputStream())
-
-        project {
-            apiKey = curseProp.getProperty('curseKey')
-            id = "388172"
-            releaseType = "release"
-            changelogType = 'text'
-            mainArtifact = "build/libs/${mod_id}-forge-${minecraft_version}-${version}"
-            changelog = file('changelog.txt')
-        	addGameVersion(minecraft_version)
-            addGameVersion("Forge")
-            addGameVersion("Java 17")
-        }
-    }
-}
-
-if (file('key.properties').exists()) {
-	modrinth {
-		def modrinthProp = new Properties()
-		File secretPropsFile = file("key.properties")
-		modrinthProp.load(secretPropsFile.newInputStream())
-		
-		token = modrinthProp.getProperty('modrinthKey')
+modrinth {
+		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.version 
-		versionName = 'Forge 1.20'
+		versionName = "Forge ${minecraft_version}"
 		uploadFile = jarJar
 		changelog = rootProject.file("changelog.txt").text
-		gameVersions = ['1.20.1']
+		gameVersions = [minecraft_version]
 		loaders = ['forge']
-	}
+        debugMode = true
+        //https://github.com/modrinth/minotaur#available-properties
 }
