@@ -3,7 +3,7 @@ plugins {
     id 'java'
     id 'maven-publish'
     id 'com.matthewprenger.cursegradle' version '1.4.0'
-    id "com.modrinth.minotaur" version "2.+"
+    id 'com.modrinth.minotaur' version '2.1.2'
 }
 
 import groovy.json.JsonOutput
