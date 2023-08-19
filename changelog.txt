@@ -1,5 +1,4 @@
 v4.2.2
-
 - Fixed some javadoc errors
 - Fixed GeoEntityRenderer passing a hardcoded value for isReRender in renderRecursively
 - Fixed corrupted ogg file for jack in the box example
