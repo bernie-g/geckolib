@@ -17,7 +17,11 @@ base {
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral() {
+        content {
+            includeGroup "com.google.code.findbugs"
+        }
+    }
     maven {
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
         content {
@@ -27,15 +31,16 @@ repositories {
 }
 
 dependencies {
-    // Minecraft/Fabric deps
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     compileOnly project(':core')
-    include(implementation("com.eliotlash.mclib:mclib:20"))
+    implementation("com.eliotlash.mclib:mclib:20")
+    include("com.eliotlash.mclib:mclib:20")
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
+
 }
 
 tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
@@ -77,8 +82,8 @@ loom {
 }
 
 tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.release = 17
+    it.options.setEncoding('UTF-8')
+    it.options.release.set(17)
     source(project(":core").sourceSets.main.allSource)
 }
 

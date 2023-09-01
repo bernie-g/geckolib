@@ -95,23 +95,24 @@ dependencies {
 
 jarJar.enable()
 
-//Makes the jarJar artifact the default one.
+//Make the result of jarJar the default.
 tasks.jarJar.configure {
     it.archiveClassifier.set("")
     finalizedBy("reobfJarJar")
-}
-
-tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
-    from rootProject.file("LICENSE")
 }
 
 tasks.jar.configure {
     it.archiveClassifier.set("slim")
 }
 
+
+tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
+    from rootProject.file("LICENSE")
+}
+
 tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = 'UTF-8'
-    it.options.release = 17
+    it.options.setEncoding('UTF-8')
+    it.options.release.set(17)
     source(project(":core").sourceSets.main.allSource)
 }
 
@@ -133,12 +134,12 @@ jar {
     }
 }
 
-mixin { // Add mixins refmap
+mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
 }
 
-def resourceTargets = ['META-INF/mods.toml', 'pack.mcmeta']
+def resourceTargets = ['META-INF/mods.toml']
 def replaceProperties = [
         minecraft_version_range: minecraft_version_range,
         forge_version_range: forge_version_range,
@@ -183,7 +184,7 @@ publishing {
             artifacts = [sourcesJar, javadocJar]
             jarJar.component(it)
             artifactId base.archivesName.get()
-            //We don't want users to have mclib as a dep when we JiJ for functionality.
+            //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
             pom.withXml {
                 asNode().dependencies.dependency.each { dep ->
                     if("mclib".equals(dep.artifactId.last().value().last())) {
