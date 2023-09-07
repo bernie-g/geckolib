@@ -190,7 +190,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	protected void renderInGui(ItemDisplayContext transformType, PoseStack poseStack,
 							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ?
-				bufferSource2 : Minecraft.getInstance().renderBuffers().bufferSource();
+				bufferSource2 : Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), defaultBufferSource, Minecraft.getInstance().getFrameTime());
 		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
