@@ -1,10 +1,6 @@
-v4.2.2
+v4.2.3
 
-- Fixed some javadoc errors
-- Fixed GeoEntityRenderer passing a hardcoded value for isReRender in renderRecursively
-- Fixed corrupted ogg file for jack in the box example
-- Removed Pistol example due to complications with previous maintainer
-- Fixed BEWLRs rendering twice when Geckolib is installed
-- Further optimised rendering and animation handling to reduce unnecessary work
-- Fixed GeoArmor not aligning properly when used on a non-humanoid entity
-- Converted the Gecko Habitat example item to the actual habitat
+- Fixed GeoArmor rendering near the cursor when shaders are installed
+- Fixed GeoItems with render layers having their render layer being inexplicably offset
+- Maybe fixed Optifine reflective surfaces breaking when installed
+- Added additional bedrock animation format parsing
