@@ -159,7 +159,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 
-		poseStack.translate(0.5f, 0.51f, 0.5f);
+		if (!isReRender)
+			poseStack.translate(0.5f, 0.51f, 0.5f);
 	}
 
 	@Override
