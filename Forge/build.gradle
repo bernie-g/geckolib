@@ -214,7 +214,7 @@ modrinth {
 		projectId = '8BmcQJ2H' 
 		versionNumber = project.version
 		versionName = "Forge ${minecraft_version}"
-		uploadFile = jarJar
+		uploadFile = tasks.jarJar
 		changelog = rootProject.file("changelog.txt").text
 		gameVersions = [minecraft_version]
 		loaders = ['forge']
@@ -226,7 +226,7 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    def mainFile = upload(388172, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
+    def mainFile = upload(388172, tasks.jarJar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(minecraft_version)
@@ -237,4 +237,5 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
-tasks.publishToCurseForge.dependsOn(tasks.build)
+publish.finalizedBy('modrinth', 'publishToCurseForge')
+
