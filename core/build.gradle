@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+archivesBaseName = "geckolib-core"
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroup "com.eliotlash.mclib"
+        }
+    }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+    it.options.release = 17
+}
+
+sourcesJar {
+    //Include the license into the sourcesJar
+    from(rootProject.file("LICENSE"))
+}
+
+javadocJar {
+    //Include the license into  the sourcesJar
+    from(rootProject.file("LICENSE"))
+}
+
+dependencies {
+    implementation 'com.eliotlash.mclib:mclib:20'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'it.unimi.dsi:fastutil:8.4.0'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+}
+
+jar {
+    from(rootProject.file("LICENSE"))
+    manifest {
+        attributes([
+                'Specification-Title'     : "geckolib-core",
+                'Specification-Vendor'    : authors,
+                'Specification-Version'   : project.jar.archiveVersion,
+                'Implementation-Title'    : "geckolib-core",
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Timestamp'               : System.currentTimeMillis(),
+                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+        ])
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId base.archivesName.get()
+            from components.java
+        }
+    }
+    repositories {
+        if (System.getenv("cloudUsername") == null  && findProperty("cloudUsername") == null) {
+            mavenLocal()
+        }
+        else maven {
+            name =  "cloudsmith"
+            url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
+            credentials {
+                username = System.getenv("cloudUsername")
+                password = System.getenv("cloudPassword")
+            }
+        }
+    }
+}
