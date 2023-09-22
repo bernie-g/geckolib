@@ -40,7 +40,6 @@ dependencies {
     implementation "com.eliotlash.mclib:mclib:${mclib_version}"
     implementation "com.google.code.gson:gson:${gson_version}"
     implementation "it.unimi.dsi:fastutil:${fastutil_version}"
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${lang3_version}"
 }
 
 jar {
