@@ -37,20 +37,20 @@ javadocJar {
 }
 
 dependencies {
-    implementation 'com.eliotlash.mclib:mclib:20'
-    implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'it.unimi.dsi:fastutil:8.4.0'
-    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'
+    implementation "com.eliotlash.mclib:mclib:${mclib_version}"
+    implementation "com.google.code.gson:gson:${gson_version}"
+    implementation "it.unimi.dsi:fastutil:${fastutil_version}"
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${lang3_version}"
 }
 
 jar {
     from(rootProject.file("LICENSE"))
     manifest {
         attributes([
-                'Specification-Title'     : "geckolib-core",
+                'Specification-Title'     : project_name,
                 'Specification-Vendor'    : authors,
                 'Specification-Version'   : project.jar.archiveVersion,
-                'Implementation-Title'    : "geckolib-core",
+                'Implementation-Title'    : project_name,
                 'Implementation-Version'  : project.jar.archiveVersion,
                 'Implementation-Vendor'   : authors,
                 'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
