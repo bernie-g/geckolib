@@ -18,7 +18,7 @@ base {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: parchment_version
+    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
@@ -86,8 +86,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":core")
-    minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "20")
-    jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[20,21)")
+    minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
+    jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[${mclib_version},)")
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
@@ -171,6 +171,7 @@ processResources {
             def oldLength = file.length()
             file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
             jsonBytesSaved += oldLength - file.length()
+            println(file.name)
         }
         println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
     }
@@ -194,6 +195,7 @@ publishing {
             }
         }
     }
+
     repositories {
         if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {
             mavenLocal()

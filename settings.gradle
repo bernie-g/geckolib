@@ -13,11 +13,16 @@ pluginManagement {
             name = "ParchmentMC"
             url = 'https://maven.parchmentmc.org'
         }
+        maven {
+            name = "NeoForge"
+            url = 'https://maven.neoforged.net/'
+        }
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.5.0'
 }
-rootProject.name = 'geckolib-4.0'
-include 'core', 'Fabric', 'Forge'
+
+rootProject.name = 'GeckoLib'
+include 'core', 'Fabric', 'Forge', 'NeoForge'

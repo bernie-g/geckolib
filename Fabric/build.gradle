@@ -9,8 +9,7 @@ plugins {
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
 base {
     archivesName = "geckolib-fabric-${minecraft_version}"
@@ -37,8 +36,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     compileOnly project(':core')
-    implementation("com.eliotlash.mclib:mclib:20")
-    include("com.eliotlash.mclib:mclib:20")
+    implementation("com.eliotlash.mclib:mclib:${mclib_version}")
+    include("com.eliotlash.mclib:mclib:${mclib_version}")
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
 
 }
