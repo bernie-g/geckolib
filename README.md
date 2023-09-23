@@ -23,7 +23,7 @@ You can view installation instructions for modders <a href="https://github.com/b
     <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_3.png" alt="Documentation"/> 
 </p>
 <p align="center">
-GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">wiki</a>. We spent many hours writing the wiki, so please read it!
+GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">wiki</a>.<br>We spent many hours writing the wiki, so please read it!
 </p>
 <br>
 
@@ -46,8 +46,8 @@ Pull requests are welcome. For significant changes, please open an issue first t
 <p align="center">
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_6.png" alt="License"/> 
 </p>
-<p align="center" style="margin-bottom:50px">
-<img src="https://img.shields.io/github/license/bernie-g/geckolib?style=for-the-badge" alt="MIT" height="70"/> 
+<p align="center">
+<img src="https://img.shields.io/github/license/bernie-g/geckolib?style=for-the-badge" alt="MIT" height="50"/> 
 </p>
 <br>
 
@@ -78,10 +78,10 @@ Acknowledgments
 YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent tools for profiling Java and .NET applications.
 </p>
 
+<br>
 <p align="center">
 <a href="https://cloudsmith.com"><img src="https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith&style=for-the-badge" alt="Hosted By: Cloudsmith"/></a>
 </p>
-<br>
 <p align="center">
 Package repository hosting is graciously provided by <a href="https://www.cloudsmith.com">Cloudsmith</a>
 </p>
