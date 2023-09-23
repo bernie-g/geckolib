@@ -68,7 +68,7 @@ Click on the picture above, select plan (at least 4GB), and use my code gecko to
 
 <hr>
 <h1 align="center">
-Acknowledgments
+Acknowledgements
 </h1>
 
 <p align="center">
