@@ -6,7 +6,7 @@
 <a href="https://ko-fi.com/geckolib"><img src="https://shields.io/badge/kofi-Buy_a_coffee-ff5f5f?logo=ko-fi&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="Kofi"/></a>
 </p>
 <p align="center">
-GeckoLib is a powerful animation library for Minecraft Java Edition available for all major modloaders. Includes out-of-the-box support for easings, math-based animations, resource pack overloading, and animation stacking
+GeckoLib is a powerful animation library for Minecraft Java Edition available for all major modloaders. Includes out-of-the-box support for easings, math-based animations, resource pack overloading, and animation stacking.
 </p>
 <hr>
 <br>
@@ -39,7 +39,7 @@ If you have questions or need help getting up and running with questions, join o
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_5.png" alt="Contributing"/>
 </p>
 <p align="center">
-Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change. If you would like to support GeckoLib, feel free to donate on <a href="https://ko-fi.com/geckolib">Kofi.</a>
+Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change. If you would like to support GeckoLib, feel free to donate on <a href="https://ko-fi.com/geckolib">Ko-fi.</a>
 </p>
 <br>
 
@@ -49,9 +49,9 @@ Pull requests are welcome. For significant changes, please open an issue first t
 <p align="center">
 <img src="https://img.shields.io/github/license/bernie-g/geckolib?style=for-the-badge" alt="MIT" height="50"/> 
 </p>
-<br>
 
 <hr>
+<br>
 <h1 align="center">
 Sponsored by BisectHosting
 </h1>
@@ -78,6 +78,7 @@ Acknowledgments
 YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent tools for profiling Java and .NET applications.
 </p>
 
+<br>
 <br>
 <p align="center">
 <a href="https://cloudsmith.com"><img src="https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith&style=for-the-badge" alt="Hosted By: Cloudsmith"/></a>
