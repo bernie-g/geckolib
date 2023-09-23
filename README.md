@@ -8,41 +8,47 @@
 <p align="center">
 GeckoLib is a powerful animation library for Minecraft Java Edition available for all major modloaders. Includes out-of-the-box support for easings, math-based animations, resource pack overloading, and animation stacking
 </p>
+<br>
 
-<h1 align="center">
+<p align="center">
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_2.png" alt="Installation"/> 
-</h1>
+</p>
 <p align="center">
 You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">here</a>.
 </p>
+<br>
 
-<h1 align="center">
+<p align="center">
     <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_3.png" alt="Documentation"/> 
-</h1>
+</p>
 <p align="center">
 GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">wiki</a>. We spent many hours writing the wiki, so please read it!
 </p>
+<br>
 
-<h1 align="center">
+<p align="center">
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_4.png" alt="Support"/> 
-</h1>
+</p>
 <p align="center">
 If you have questions or need help getting up and running with questions, join our discord!
 </p>
+<br>
 
-<h1 align="center">
+<p align="center">
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_5.png" alt="Contributing"/>
-</h1>
+</p>
 <p align="center">
 Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change. If you would like to support GeckoLib, feel free to donate on <a href="https://ko-fi.com/geckolib">Kofi.</a>
 </p>
+<br>
 
-<h1 align="center">
+<p align="center">
 <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_6.png" alt="License"/> 
-</h1>
+</p>
 <p align="center" style="margin-bottom:50px">
 <img src="https://img.shields.io/github/license/bernie-g/geckolib?style=for-the-badge" alt="MIT" height="70"/> 
 </p>
+<br>
 
 <hr>
 <h1 align="center" style="font-size:2em">
