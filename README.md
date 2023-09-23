@@ -1,4 +1,4 @@
-<p align="center" style="margin-bottom:10px">
+<p align="center">
 <img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_header.png" alt="GeckoLib"/>
 </p>
 <p align="center">
@@ -8,6 +8,7 @@
 <p align="center">
 GeckoLib is a powerful animation library for Minecraft Java Edition available for all major modloaders. Includes out-of-the-box support for easings, math-based animations, resource pack overloading, and animation stacking
 </p>
+<hr>
 <br>
 
 <p align="center">
@@ -51,7 +52,7 @@ Pull requests are welcome. For significant changes, please open an issue first t
 <br>
 
 <hr>
-<h1 align="center" style="font-size:2em">
+<h1 align="center">
 Sponsored by BisectHosting
 </h1>
 
@@ -66,7 +67,7 @@ Click on the picture above, select plan (at least 4GB), and use my code gecko to
 </p>
 
 <hr>
-<h1 align="center" style="font-size:2em;">
+<h1 align="center">
 Acknowledgments
 </h1>
 
@@ -77,9 +78,10 @@ Acknowledgments
 YourKit supports open source projects with its full-featured Java Profiler. YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>, innovative and intelligent tools for profiling Java and .NET applications.
 </p>
 
-<p align="center" style="margin-top:50px">
+<p align="center">
 <a href="https://cloudsmith.com"><img src="https://img.shields.io/badge/OSS%20hosting%20by-cloudsmith-blue?logo=cloudsmith&style=for-the-badge" alt="Hosted By: Cloudsmith"/></a>
 </p>
+<br>
 <p align="center">
 Package repository hosting is graciously provided by <a href="https://www.cloudsmith.com">Cloudsmith</a>
 </p>
