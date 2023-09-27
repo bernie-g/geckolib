@@ -54,7 +54,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
 
-			GeckoLibNetwork.send(new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, data), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+			GeckoLibNetwork.send(new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, data), PacketDistributor.TRACKING_CHUNK.with(level.getChunkAt(pos)));
 		}
 	}
 
@@ -80,7 +80,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		else {
 			BlockPos pos = blockEntity.getBlockPos();
 
-			GeckoLibNetwork.send(new BlockEntityAnimTriggerPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+			GeckoLibNetwork.send(new BlockEntityAnimTriggerPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(level.getChunkAt(pos)));
 		}
 	}
 

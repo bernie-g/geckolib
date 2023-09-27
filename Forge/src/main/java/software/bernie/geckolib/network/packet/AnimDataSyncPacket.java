@@ -1,15 +1,13 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
-
-import java.util.function.Supplier;
 
 /**
  * Packet for syncing user-definable animation data for {@link SingletonGeoAnimatable} instances
@@ -43,16 +41,10 @@ public class AnimDataSyncPacket<D> {
 		return new AnimDataSyncPacket<>(syncableId, instanceId, dataTicket, data);
 	}
 
-	public void receivePacket(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context handler = context.get();
+	public void receivePacket(CustomPayloadEvent.Context context) {
+		GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
 
-		handler.enqueueWork(() -> {
-			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
-
-			if (animatable instanceof SingletonGeoAnimatable singleton)
-				singleton.setAnimData(ClientUtils.getClientPlayer(), this.instanceId, this.dataTicket, this.data);
-		});
-
-		handler.setPacketHandled(true);
+		if (animatable instanceof SingletonGeoAnimatable singleton)
+			singleton.setAnimData(ClientUtils.getClientPlayer(), this.instanceId, this.dataTicket, this.data);
 	}
 }

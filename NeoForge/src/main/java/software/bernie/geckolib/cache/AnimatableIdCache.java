@@ -13,6 +13,7 @@ import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInst
  * {@link SingletonAnimatableInstanceCache singleton} will likely use this.
  */
 public final class AnimatableIdCache extends SavedData {
+	private static final Factory<AnimatableIdCache> FACTORY = new Factory<>(AnimatableIdCache::new, AnimatableIdCache::new, null);
 	private static final String DATA_KEY = "geckolib_id_cache";
 	private long lastId;
 
@@ -47,31 +48,6 @@ public final class AnimatableIdCache extends SavedData {
 	}
 
 	private static AnimatableIdCache getCache(ServerLevel level) {
-		DimensionDataStorage storage = level.getServer().overworld().getDataStorage();
-		AnimatableIdCache cache = storage.computeIfAbsent(AnimatableIdCache::new, AnimatableIdCache::new, DATA_KEY);
-
-		if (cache.lastId == 0) {
-			AnimatableIdCache legacyCache = storage.get(AnimatableIdCache::fromLegacy, "geckolib_ids");
-
-			if (legacyCache != null)
-				cache.lastId = legacyCache.lastId;
-		}
-
-		return cache;
-	}
-
-	/**
-	 * Legacy wrapper for existing worlds pre-4.0.<br>
-	 * Remove this at some point in the future
-	 */
-	private static AnimatableIdCache fromLegacy(CompoundTag tag) {
-		AnimatableIdCache legacyCache = new AnimatableIdCache();
-
-		for (String key : tag.getAllKeys()) {
-			if (tag.contains(key, Tag.TAG_ANY_NUMERIC))
-				legacyCache.lastId = Math.max(legacyCache.lastId, tag.getInt(key));
-		}
-
-		return legacyCache;
+		return level.getServer().overworld().getDataStorage().computeIfAbsent(FACTORY, DATA_KEY);
 	}
 }

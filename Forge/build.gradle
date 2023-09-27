@@ -220,7 +220,7 @@ modrinth {
 		changelog = rootProject.file("changelog.txt").text
 		gameVersions = [minecraft_version]
 		loaders = ['forge']
-        debugMode = true
+
         //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -235,7 +235,6 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").text
 
-    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 

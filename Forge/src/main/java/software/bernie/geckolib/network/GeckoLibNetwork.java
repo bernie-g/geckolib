@@ -2,9 +2,10 @@ package software.bernie.geckolib.network;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.ChannelBuilder;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.packet.*;
@@ -17,20 +18,16 @@ import java.util.Map;
  * Handles packet registration and some networking functions
  */
 public final class GeckoLibNetwork {
-	private static final String VER = "1";
-	private static final SimpleChannel PACKET_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GeckoLib.MOD_ID, "main"), () -> VER, VER::equals, VER::equals);
-
+	private static final SimpleChannel PACKET_CHANNEL = ChannelBuilder.named(new ResourceLocation(GeckoLib.MOD_ID, "main")).simpleChannel();
 	private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
 	public static void init() {
-		int id = 0;
-
-		PACKET_CHANNEL.registerMessage(id++, AnimDataSyncPacket.class, AnimDataSyncPacket::encode, AnimDataSyncPacket::decode, AnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, AnimTriggerPacket.class, AnimTriggerPacket::encode, AnimTriggerPacket::decode, AnimTriggerPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, EntityAnimDataSyncPacket.class, EntityAnimDataSyncPacket::encode, EntityAnimDataSyncPacket::decode, EntityAnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, EntityAnimTriggerPacket.class, EntityAnimTriggerPacket::encode, EntityAnimTriggerPacket::decode, EntityAnimTriggerPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimDataSyncPacket.class, BlockEntityAnimDataSyncPacket::encode, BlockEntityAnimDataSyncPacket::decode, BlockEntityAnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::encode, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket);
+		PACKET_CHANNEL.messageBuilder(AnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimDataSyncPacket::encode).decoder(AnimDataSyncPacket::decode).consumerMainThread(AnimDataSyncPacket::receivePacket).add();
+		PACKET_CHANNEL.messageBuilder(AnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimTriggerPacket::encode).decoder(AnimTriggerPacket::decode).consumerMainThread(AnimTriggerPacket::receivePacket).add();
+		PACKET_CHANNEL.messageBuilder(EntityAnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(EntityAnimDataSyncPacket::encode).decoder(EntityAnimDataSyncPacket::decode).consumerMainThread(EntityAnimDataSyncPacket::receivePacket).add();
+		PACKET_CHANNEL.messageBuilder(EntityAnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(EntityAnimTriggerPacket::encode).decoder(EntityAnimTriggerPacket::decode).consumerMainThread(EntityAnimTriggerPacket::receivePacket).add();
+		PACKET_CHANNEL.messageBuilder(BlockEntityAnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(BlockEntityAnimDataSyncPacket::encode).decoder(BlockEntityAnimDataSyncPacket::decode).consumerMainThread(BlockEntityAnimDataSyncPacket::receivePacket).add();
+		PACKET_CHANNEL.messageBuilder(BlockEntityAnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(BlockEntityAnimTriggerPacket::encode).decoder(BlockEntityAnimTriggerPacket::decode).consumerMainThread(BlockEntityAnimTriggerPacket::receivePacket).add();
 	}
 
 	/**
@@ -62,6 +59,6 @@ public final class GeckoLibNetwork {
 	 * Send a packet using GeckoLib's packet channel
 	 */
 	public static <M> void send(M packet, PacketDistributor.PacketTarget distributor) {
-		PACKET_CHANNEL.send(distributor, packet);
+		PACKET_CHANNEL.send(packet, distributor);
 	}
 }

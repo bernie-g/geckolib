@@ -244,8 +244,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				if (!skullOwner.isBlank()) {
 					CompoundTag profileTag = new CompoundTag();
 
-					SkullBlockEntity.updateGameprofile(new GameProfile(null, skullOwner), name ->
-							stackTag.put(PlayerHeadItem.TAG_SKULL_OWNER, NbtUtils.writeGameProfile(profileTag, name)));
+					profileTag.putString(PlayerHeadItem.TAG_SKULL_OWNER, skullOwner);
+					SkullBlockEntity.resolveGameProfile(profileTag);
 
 					skullProfile = NbtUtils.readGameProfile(profileTag);
 				}

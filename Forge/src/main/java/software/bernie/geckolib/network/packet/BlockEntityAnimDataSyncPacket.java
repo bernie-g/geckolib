@@ -3,13 +3,11 @@ package software.bernie.geckolib.network.packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
-
-import java.util.function.Supplier;
 
 /**
  * Packet for syncing user-definable animation data for {@link BlockEntity BlockEntities}
@@ -38,15 +36,10 @@ public class BlockEntityAnimDataSyncPacket<D> {
 		return new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, dataTicket.decode(buffer));
 	}
 
-	public void receivePacket(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context handler = context.get();
+	public void receivePacket(CustomPayloadEvent.Context context) {
+		BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
 
-		handler.enqueueWork(() -> {
-			BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
-
-			if (blockEntity instanceof GeoBlockEntity geoBlockEntity)
-				geoBlockEntity.setAnimData(this.dataTicket, this.data);
-		});
-		handler.setPacketHandled(true);
+		if (blockEntity instanceof GeoBlockEntity geoBlockEntity)
+			geoBlockEntity.setAnimData(this.dataTicket, this.data);
 	}
 }
