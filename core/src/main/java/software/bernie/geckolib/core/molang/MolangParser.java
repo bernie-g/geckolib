@@ -1,9 +1,9 @@
 package software.bernie.geckolib.core.molang;
 
-import com.eliotlash.mclib.math.Constant;
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.mclib.math.MathBuilder;
-import com.eliotlash.mclib.math.Variable;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathBuilder;
+import software.bernie.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;

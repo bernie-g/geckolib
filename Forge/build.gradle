@@ -98,16 +98,21 @@ tasks.withType(org.gradle.jvm.tasks.Jar) {
     from(project(":mclib").file("LICENSE-particleman"))
 }
 
+sourcesJar {
+    from(project(":core").sourceSets.main.allSource)
+    from(project(":mclib").sourceSets.main.allSource)
+}
+
+javadocJar {
+    from project(":core").sourceSets.main.allSource
+    from project(":mclib").sourceSets.main.allSource
+}
+
 tasks.withType(JavaCompile).configureEach {
     it.options.setEncoding('UTF-8')
     it.options.release.set(17)
     source(project(":core").sourceSets.main.allSource)
     source(project(":mclib").sourceSets.main.allSource)
-}
-
-sourcesJar {
-    from project(":core").sourceSets.main.allSource
-    from project(":mclib").sourceSets.main.allSource
 }
 
 jar {
@@ -172,6 +177,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             artifactId base.archivesName.get()
+            fg.component(it)
         }
     }
 

@@ -1,10 +1,11 @@
 package software.bernie.geckolib.core.molang.functions;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.mclib.math.functions.Function;
+import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.functions.Function;
+import software.bernie.mclib.math.functions.classic.Cos;
 
 /**
- * Replacement function for {@link com.eliotlash.mclib.math.functions.classic.Cos}, operating in degrees rather than radians.
+ * Replacement function for {@link Cos}, operating in degrees rather than radians.
  */
 public class CosDegrees extends Function {
 	public CosDegrees(IValue[] values, String name) throws Exception {

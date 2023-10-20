@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.json.typeadapter;
 
-import com.eliotlash.mclib.math.Constant;
-import com.eliotlash.mclib.math.IValue;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;

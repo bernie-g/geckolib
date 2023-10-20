@@ -1,7 +1,7 @@
 package software.bernie.geckolib.core.molang.expressions;
 
-import com.eliotlash.mclib.math.Constant;
-import com.eliotlash.mclib.math.IValue;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
 import software.bernie.geckolib.core.molang.MolangParser;
 
 /**

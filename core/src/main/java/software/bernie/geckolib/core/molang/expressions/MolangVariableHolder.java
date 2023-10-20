@@ -1,7 +1,7 @@
 package software.bernie.geckolib.core.molang.expressions;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.mclib.math.Variable;
+import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.Variable;
 
 /**
  * Extension of {@link MolangValue} that additionally sets the value of a provided {@link Variable} when being called.

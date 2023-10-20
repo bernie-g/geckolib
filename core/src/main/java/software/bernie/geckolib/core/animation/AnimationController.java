@@ -5,8 +5,8 @@
 
 package software.bernie.geckolib.core.animation;
 
-import com.eliotlash.mclib.math.Constant;
-import com.eliotlash.mclib.math.IValue;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;

@@ -1,6 +1,6 @@
 package software.bernie.geckolib.core.animation;
 
-import com.eliotlash.mclib.utils.Interpolations;
+import software.bernie.mclib.utils.Interpolations;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;

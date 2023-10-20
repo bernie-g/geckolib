@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.core.keyframe;
 
-import com.eliotlash.mclib.math.IValue;
+import software.bernie.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animation.EasingType;
 

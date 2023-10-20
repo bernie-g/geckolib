@@ -84,8 +84,6 @@ loom {
 tasks.withType(JavaCompile).configureEach {
     it.options.setEncoding('UTF-8')
     it.options.release.set(17)
-    source(project(":core").sourceSets.main.allSource)
-    source(project(":mclib").sourceSets.main.allSource)
 }
 
 java {
@@ -95,6 +93,11 @@ java {
 }
 
 sourcesJar {
+    from project(":core").sourceSets.main.allSource
+    from project(":mclib").sourceSets.main.allSource
+}
+
+javadocJar {
     from project(":core").sourceSets.main.allSource
     from project(":mclib").sourceSets.main.allSource
 }

@@ -1,6 +1,6 @@
 package software.bernie.geckolib.core.molang;
 
-import com.eliotlash.mclib.math.Variable;
+import software.bernie.mclib.math.Variable;
 
 import java.util.function.DoubleSupplier;
 

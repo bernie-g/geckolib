@@ -1,6 +1,6 @@
 package software.bernie.geckolib.core.animation;
 
-import com.eliotlash.mclib.utils.Interpolations;
+import software.bernie.mclib.utils.Interpolations;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;

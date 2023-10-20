@@ -1,10 +1,11 @@
 package software.bernie.geckolib.core.molang.functions;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.mclib.math.functions.Function;
+import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.functions.Function;
+import software.bernie.mclib.math.functions.classic.Sin;
 
 /**
- * Replacement function for {@link com.eliotlash.mclib.math.functions.classic.Sin}, operating in degrees rather than radians
+ * Replacement function for {@link Sin}, operating in degrees rather than radians
  */
 public class SinDegrees extends Function {
 	public SinDegrees(IValue[] values, String name) throws Exception {
