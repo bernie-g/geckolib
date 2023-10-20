@@ -36,14 +36,15 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_api_version}"
 
     compileOnly project(':core')
-    implementation("com.eliotlash.mclib:mclib:${mclib_version}")
-    include("com.eliotlash.mclib:mclib:${mclib_version}")
+    compileOnly project(':mclib')
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
 
 }
 
 tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
     from rootProject.file("LICENSE")
+    from(project(":mclib").file("LICENSE-mclib"))
+    from(project(":mclib").file("LICENSE-particleman"))
 }
 
 jar {
@@ -84,6 +85,7 @@ tasks.withType(JavaCompile).configureEach {
     it.options.setEncoding('UTF-8')
     it.options.release.set(17)
     source(project(":core").sourceSets.main.allSource)
+    source(project(":mclib").sourceSets.main.allSource)
 }
 
 java {
@@ -94,6 +96,7 @@ java {
 
 sourcesJar {
     from project(":core").sourceSets.main.allSource
+    from project(":mclib").sourceSets.main.allSource
 }
 
 def replaceProperties = [

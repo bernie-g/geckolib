@@ -86,38 +86,28 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":core")
-    minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
-    jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[${mclib_version},)")
+    compileOnly project(":mclib")
     if (System.getProperty("idea.sync.active") != "true") {
         annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     }
 }
 
-jarJar.enable()
-
-//Make the result of jarJar the default.
-tasks.jarJar.configure {
-    it.archiveClassifier.set("")
-    finalizedBy("reobfJarJar")
-}
-
-tasks.jar.configure {
-    it.archiveClassifier.set("slim")
-}
-
-
-tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
-    from rootProject.file("LICENSE")
+tasks.withType(org.gradle.jvm.tasks.Jar) {
+    from(rootProject.file("LICENSE"))
+    from(project(":mclib").file("LICENSE-mclib"))
+    from(project(":mclib").file("LICENSE-particleman"))
 }
 
 tasks.withType(JavaCompile).configureEach {
     it.options.setEncoding('UTF-8')
     it.options.release.set(17)
     source(project(":core").sourceSets.main.allSource)
+    source(project(":mclib").sourceSets.main.allSource)
 }
 
 sourcesJar {
     from project(":core").sourceSets.main.allSource
+    from project(":mclib").sourceSets.main.allSource
 }
 
 jar {
@@ -181,18 +171,7 @@ publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-            //Excludes the non jij'd jar from being published at all.
-            artifacts = [sourcesJar, javadocJar]
-            jarJar.component(it)
             artifactId base.archivesName.get()
-            //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
-            pom.withXml {
-                asNode().dependencies.dependency.each { dep ->
-                    if("mclib".equals(dep.artifactId.last().value().last())) {
-                        assert dep.parent().remove(dep)
-                    }
-                }
-            }
         }
     }
 

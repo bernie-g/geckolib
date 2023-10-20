@@ -1,0 +1,61 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+archivesBaseName = "mclib"
+
+version="20"
+
+repositories {
+    mavenCentral() {
+        content {
+            includeGroup("com.google.code.gson")
+        }
+    }
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    withSourcesJar()
+    withJavadocJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = 'UTF-8'
+    it.options.release = 17
+}
+
+sourcesJar {
+    //Include the license into the sourcesJar
+    from(file("LICENSE-mclib"))
+    from(file("LICENSE-particleman"))
+}
+
+javadocJar {
+    //Include the license into  the sourcesJar
+    from(file("LICENSE-mclib"))
+    from(file("LICENSE-particleman"))
+}
+
+dependencies {
+    implementation "com.google.code.gson:gson:${gson_version}"
+}
+
+jar {
+    from(file("LICENSE-mclib"))
+    from(file("LICENSE-particleman"))
+    manifest {
+        attributes([
+                'Specification-Title'     : "McLib",
+                'Specification-Vendor'    : "McHorse, Eliotlash",
+                'Specification-Version'   : project.jar.archiveVersion,
+                'Implementation-Title'    : "McLib",
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : "McHorse, Eliotlash",
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'Timestamp'               : System.currentTimeMillis(),
+                'Built-On-Java'           : "${System.getProperty('java.vm.version')} (${System.getProperty('java.vm.vendor')})",
+        ])
+    }
+}

@@ -5,14 +5,18 @@ plugins {
 
 archivesBaseName = "geckolib-core"
 
+project.evaluationDependsOn(":mclib")
+
 repositories {
-    mavenCentral()
-    maven {
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content {
-            includeGroup "com.eliotlash.mclib"
+    repositories {
+        mavenCentral() {
+            content {
+                includeGroup("com.google.code.gson")
+                includeGroup("it.unimi.dsi")
+            }
         }
     }
+
 }
 
 java {
@@ -24,26 +28,23 @@ java {
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = 'UTF-8'
     it.options.release = 17
+    source(project(":mclib").sourceSets.main.allSource)
 }
 
-sourcesJar {
-    //Include the license into the sourcesJar
+tasks.withType(org.gradle.jvm.tasks.Jar) {
     from(rootProject.file("LICENSE"))
-}
-
-javadocJar {
-    //Include the license into  the sourcesJar
-    from(rootProject.file("LICENSE"))
+    from(project(":mclib").file("LICENSE-mclib"))
+    from(project(":mclib").file("LICENSE-particleman"))
+    from(project(":mclib").sourceSets.main.allSource)
 }
 
 dependencies {
-    implementation "com.eliotlash.mclib:mclib:${mclib_version}"
+    compileOnly project(":mclib")
     implementation "com.google.code.gson:gson:${gson_version}"
     implementation "it.unimi.dsi:fastutil:${fastutil_version}"
 }
 
 jar {
-    from(rootProject.file("LICENSE"))
     manifest {
         attributes([
                 'Specification-Title'     : project_name,
