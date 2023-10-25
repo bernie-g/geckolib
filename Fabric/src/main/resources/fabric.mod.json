@@ -29,7 +29,7 @@
 	"accessWidener": "geckolib.aw",
 	"depends": {
    		"fabricloader": ">=${fabric_loader_version}",
-		"fabric": ">=${fabric_api_version}",
+		"fabric-api": ">=${fabric_api_version}",
 		"java": ">=17",
 		"minecraft": ">=${minecraft_version}"
 	},
