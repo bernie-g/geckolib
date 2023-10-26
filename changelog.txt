@@ -1,6 +1,5 @@
-v4.2.3
+v4.2.4
 
-- Fixed GeoArmor rendering near the cursor when shaders are installed
-- Fixed GeoItems with render layers having their render layer being inexplicably offset
-- Maybe fixed Optifine reflective surfaces breaking when installed
-- Added additional bedrock animation format parsing
+- Changed the fabric api id in the fabric.mod.json to use the newer 'fabric-api' id
+- Disabled the animation computation optimisation added earlier in 4.2. There's just too many edge cases with shaders, making it impractical to keep for now
+- Fixed a bug causing animated textured objects glitching out when multiple are present. Unfortunately this requires that animated textures not be unique timings per object =/
