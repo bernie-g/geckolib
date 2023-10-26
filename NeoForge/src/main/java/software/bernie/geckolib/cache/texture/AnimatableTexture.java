@@ -19,6 +19,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.util.RenderUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -77,6 +78,14 @@ public class AnimatableTexture extends SimpleTexture {
 		onRenderThread(() -> GeoAbstractTexture.uploadSimple(getId(), nativeImage, blur, clamp));
 	}
 
+	public static void setAndUpdate(ResourceLocation texturePath) {
+		setAndUpdate(texturePath, (int) RenderUtils.getCurrentTick());
+	}
+
+	/**
+	 * Setting a specific frame for the animated texture does not work well because of how Minecraft buffers rendering passes.
+	 * <p>Use the non-specified method above unless you know what you're doing</p>
+	 */
 	public static void setAndUpdate(ResourceLocation texturePath, int frameTick) {
 		AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(texturePath);
 

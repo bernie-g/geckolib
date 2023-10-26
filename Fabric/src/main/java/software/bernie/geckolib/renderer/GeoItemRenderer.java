@@ -256,11 +256,11 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	/**
 	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
 	 * This should only be called immediately prior to rendering, and only
-	 * @see AnimatableTexture#setAndUpdate(ResourceLocation, int)
+	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
 	public void updateAnimatedTextureFrame(T animatable) {
-		AnimatableTexture.setAndUpdate(getTextureLocation(animatable), Item.getId(animatable) + (int)animatable.getTick(animatable));
+		AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
 	}
 
 	/**

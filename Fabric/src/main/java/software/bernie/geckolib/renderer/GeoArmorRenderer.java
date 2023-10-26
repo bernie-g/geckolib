@@ -544,12 +544,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	/**
 	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
 	 * This should only be called immediately prior to rendering, and only
-	 * @see AnimatableTexture#setAndUpdate(ResourceLocation, int)
+	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
 	public void updateAnimatedTextureFrame(T animatable) {
 		if (this.currentEntity != null)
-			AnimatableTexture.setAndUpdate(getTextureLocation(animatable), this.currentEntity.getId() + this.currentEntity.tickCount);
+			AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
 	}
 
 	/**
