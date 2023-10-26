@@ -442,11 +442,11 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	/**
 	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
 	 * This should only be called immediately prior to rendering, and only
-	 * @see AnimatableTexture#setAndUpdate(ResourceLocation, int)
+	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
 	public void updateAnimatedTextureFrame(T animatable) {
-		AnimatableTexture.setAndUpdate(getTextureLocation(animatable), animatable.getId() + (int)animatable.getTick(animatable));
+		AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
 	}
 	
 	/**
