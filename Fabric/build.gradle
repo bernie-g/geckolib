@@ -169,7 +169,7 @@ modrinth {
     dependencies {
         required.project "fabric-api"
     }
-    debugMode = true
+
     //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -179,12 +179,11 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
 
     def mainFile = upload(388172, tasks.remapJar)
     mainFile.releaseType = "release"
-    mainFile.addModLoader("Forge")
+    mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(minecraft_version)
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").text
 
-    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
