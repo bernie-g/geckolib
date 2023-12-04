@@ -126,7 +126,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		float green = renderColor.getGreenFloat();
 		float blue = renderColor.getBlueFloat();
 		float alpha = renderColor.getAlphaFloat();
-		int packedOverlay = getPackedOverlay(animatable, 0);
+		int packedOverlay = getPackedOverlay(animatable, 0, partialTick);
 		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
 
 		if (renderType == null)
