@@ -365,12 +365,12 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 */
 	@Override
 	public boolean shouldShowName(E entity) {
-		double nameRenderDistance = this.currentEntity.isDiscrete() ? 32d : 64d;
+		double nameRenderDistance = entity.isDiscrete() ? 32d : 64d;
 
-		if (this.entityRenderDispatcher.distanceToSqr(this.currentEntity) >= nameRenderDistance * nameRenderDistance)
+		if (this.entityRenderDispatcher.distanceToSqr(entity) >= nameRenderDistance * nameRenderDistance)
 			return false;
 
-		return this.currentEntity == this.entityRenderDispatcher.crosshairPickEntity && this.currentEntity.hasCustomName() && Minecraft.renderNames();
+		return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName() && Minecraft.renderNames();
 	}
 
 	/**
