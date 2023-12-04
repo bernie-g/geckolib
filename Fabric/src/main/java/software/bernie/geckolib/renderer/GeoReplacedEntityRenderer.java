@@ -381,12 +381,12 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 */
 	@Override
 	public boolean shouldShowName(E entity) {
-		double nameRenderDistance = this.currentEntity.isDiscrete() ? 32d : 64d;
+		double nameRenderDistance = entity.isDiscrete() ? 32d : 64d;
 
-		if (this.entityRenderDispatcher.distanceToSqr(this.currentEntity) >= nameRenderDistance * nameRenderDistance)
+		if (this.entityRenderDispatcher.distanceToSqr(entity) >= nameRenderDistance * nameRenderDistance)
 			return false;
 
-		return this.currentEntity == this.entityRenderDispatcher.crosshairPickEntity && this.currentEntity.hasCustomName() && Minecraft.renderNames();
+		return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName() && Minecraft.renderNames();
 	}
 
 	/**
@@ -402,6 +402,17 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		return OverlayTexture.pack(OverlayTexture.u(u),
 				OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
+	}
+
+	/**
+	 * Gets a packed overlay coordinate pair for rendering.<br>
+	 * Mostly just used for the red tint when an entity is hurt,
+	 * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
+	 * white tint when exploding.
+	 */
+	@Override
+	public int getPackedOverlay(T animatable, float u, float partialTick) {
+		return getPackedOverlay(animatable, u);
 	}
 
 	/**

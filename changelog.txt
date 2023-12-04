@@ -1,6 +1,6 @@
-v4.2.4
+v4.3
 
-- Changed the fabric api id in the fabric.mod.json to use the newer 'fabric-api' id
-- Disabled the animation computation optimisation added earlier in 4.2. There's just too many edge cases with shaders, making it impractical to keep for now
-- Fixed a bug causing animated textured objects glitching out when multiple are present. Unfortunately this requires that animated textures not be unique timings per object =/
-- Fixed some more compat issues with shaders and optifine
+- Swap GeoReplacedEntityRenderer#shouldShowName to use provided entity argument instead of cached entity instance for better compat with entityculling
+- Fully strip failed optimisation due to seeming unfixable incompatibility with shaders
+- Add GeoRenderer#getPackedOverlay with partialTick, deprecate existing method for removal
+- Add DyeableGeoArmorRenderer - a native dyeable armour renderer for GeckoLib armour models
