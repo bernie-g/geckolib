@@ -40,6 +40,15 @@ runs {
         }
     }
 
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
     /*client {
 
     }
@@ -94,7 +103,7 @@ runs {
 
 java {
     withSourcesJar()
-    withJavadocJar()
+    //withJavadocJar()
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
@@ -117,13 +126,12 @@ jarJar.enable()
 //Make the result of jarJar the default.
 tasks.jarJar.configure {
     it.archiveClassifier.set("")
-    finalizedBy("reobfJarJar")
+    //finalizedBy("reobfJarJar")
 }
 
 tasks.jar.configure {
     it.archiveClassifier.set("slim")
 }
-
 
 tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
     from rootProject.file("LICENSE")
@@ -132,6 +140,9 @@ tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
 tasks.withType(JavaCompile).configureEach {
     it.options.setEncoding('UTF-8')
     it.options.release.set(17)
+}
+
+tasks.withType(JavaCompile).matching(it -> !it.name.startsWith("neo")).configureEach {
     source(project(":core").sourceSets.main.allSource)
 }
 
@@ -201,7 +212,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             //Excludes the non jij'd jar from being published at all.
-            artifacts = [sourcesJar, javadocJar]
+            artifacts = [sourcesJar/*, javadocJar*/]
             jarJar.component(it)
             artifactId base.archivesName.get()
             //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
@@ -253,7 +264,6 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").text
 
-    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 

@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -270,7 +270,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public void fireCompileRenderLayersEvent() {
-		MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.CompileRenderLayers(this));
+		NeoForge.EVENT_BUS.post(new GeoRenderEvent.Item.CompileRenderLayers(this));
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.Pre(this, poseStack, model, bufferSource, partialTick, packedLight));
+		return !NeoForge.EVENT_BUS.post(new GeoRenderEvent.Item.Pre(this, poseStack, model, bufferSource, partialTick, packedLight)).isCanceled();
 	}
 
 	/**
@@ -287,6 +287,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
+		NeoForge.EVENT_BUS.post(new GeoRenderEvent.Item.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }

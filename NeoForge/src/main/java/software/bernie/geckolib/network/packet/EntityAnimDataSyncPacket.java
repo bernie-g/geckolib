@@ -2,13 +2,11 @@ package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
-
-import java.util.function.Supplier;
 
 /**
  * Packet for syncing user-definable animation data for {@link net.minecraft.world.entity.Entity Entities}
@@ -37,15 +35,13 @@ public class EntityAnimDataSyncPacket<D> {
 		return new EntityAnimDataSyncPacket<>(entityId, dataTicket, dataTicket.decode(buffer));
 	}
 
-	public void receivePacket(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context handler = context.get();
-
-		handler.enqueueWork(() -> {
+	public void receivePacket(NetworkEvent.Context context) {
+		context.enqueueWork(() -> {
 			Entity entity = ClientUtils.getLevel().getEntity(this.entityId);
 
 			if (entity instanceof GeoEntity geoEntity)
 				geoEntity.setAnimData(this.dataTicket, this.data);
 		});
-		handler.setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }

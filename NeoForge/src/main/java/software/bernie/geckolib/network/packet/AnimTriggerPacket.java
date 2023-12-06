@@ -1,13 +1,12 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server
@@ -36,10 +35,8 @@ public class AnimTriggerPacket<D> {
 		return new AnimTriggerPacket<>(buffer.readUtf(), buffer.readVarLong(), buffer.readUtf(), buffer.readUtf());
 	}
 
-	public void receivePacket(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context handler = context.get();
-
-		handler.enqueueWork(() -> {
+	public void receivePacket(NetworkEvent.Context context) {
+		context.enqueueWork(() -> {
 			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
 
 			if (animatable != null) {
@@ -48,6 +45,6 @@ public class AnimTriggerPacket<D> {
 				manager.tryTriggerAnimation(this.controllerName, this.animName);
 			}
 		});
-		handler.setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }

@@ -5,8 +5,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.neoforged.bus.api.Event;
+import net.neoforged.bus.api.ICancellableEvent;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -76,11 +76,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the armor piece will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends Armor {
+		public static class Pre extends Armor implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -208,11 +207,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the block entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends Block {
+		public static class Pre extends Block implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -341,11 +339,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for entities being rendered by {@link GeoEntityRenderer}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends Entity {
+		public static class Pre extends Entity implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -473,11 +470,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for armor being rendered by {@link GeoItemRenderer}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the ItemStack will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends Item {
+		public static class Pre extends Item implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -598,11 +594,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the object will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends Object {
+		public static class Pre extends Object implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -730,11 +725,10 @@ public interface GeoRenderEvent {
 		 * Pre-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer<?, ?>}.<br>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
 		 * <br>
-		 * This event is {@link Cancelable}.<br>
+		 * This event is {@link ICancellableEvent Cancelable}.<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre extends ReplacedEntity {
+		public static class Pre extends ReplacedEntity implements ICancellableEvent {
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;

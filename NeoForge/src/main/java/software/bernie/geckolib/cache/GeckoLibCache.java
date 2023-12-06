@@ -8,7 +8,7 @@ import net.minecraft.server.packs.resources.PreparableReloadListener.Preparation
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.fml.ModLoader;
+import net.neoforged.fml.ModLoader;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibException;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

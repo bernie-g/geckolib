@@ -15,8 +15,11 @@ description='''
 ${mod_description}
 '''
 
+[[mixins]]
+config = "${mod_id}.mixins.json"
+
 [[dependencies.geckolib]]
-    modId="forge"
+    modId="neoforge"
     mandatory=true 
     versionRange="${neoforge_version_range}"
     ordering="NONE"

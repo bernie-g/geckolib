@@ -1,11 +1,11 @@
 package software.bernie.geckolib;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.DistExecutor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 
 /**
  * Base class for Geckolib!<br>
@@ -26,7 +26,9 @@ public class GeckoLib {
 	 */
 	synchronized public static void initialize() {
 		if (!hasInitialized) {
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
+			if (FMLEnvironment.dist == Dist.CLIENT)
+				GeckoLibCache.registerReloadListener();
+
 			GeckoLibNetwork.init();
 		}
 
@@ -37,8 +39,8 @@ public class GeckoLib {
 	 * Call this method instead of {@link GeckoLib#initialize} if you are shadowing the mod.
 	 */
 	synchronized public static void shadowInit() {
-		if (!hasInitialized)
-			DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
+		if (!hasInitialized && FMLEnvironment.dist == Dist.CLIENT)
+			GeckoLibCache.registerReloadListener();
 
 		hasInitialized = true;
 	}

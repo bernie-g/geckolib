@@ -3,12 +3,11 @@ package software.bernie.geckolib.network.packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.NetworkEvent;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.util.ClientUtils;
 
 import javax.annotation.Nullable;
-import java.util.function.Supplier;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.level.block.entity.BlockEntity BlockEntities}
@@ -34,15 +33,13 @@ public class BlockEntityAnimTriggerPacket<D> {
 		return new BlockEntityAnimTriggerPacket<>(buffer.readBlockPos(), buffer.readUtf(), buffer.readUtf());
 	}
 
-	public void receivePacket(Supplier<NetworkEvent.Context> context) {
-		NetworkEvent.Context handler = context.get();
-
-		handler.enqueueWork(() -> {
+	public void receivePacket(NetworkEvent.Context context) {
+		context.enqueueWork(() -> {
 			BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
 
 			if (blockEntity instanceof GeoBlockEntity getBlockEntity)
 				getBlockEntity.triggerAnim(this.controllerName.isEmpty() ? null : this.controllerName, this.animName);
 		});
-		handler.setPacketHandled(true);
+		context.setPacketHandled(true);
 	}
 }
