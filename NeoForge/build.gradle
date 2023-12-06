@@ -4,7 +4,6 @@ plugins {
     id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.55'
-    //id 'org.spongepowered.mixin' version '0.7.+'
     //id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.modrinth.minotaur' version '2.8.3'
     id 'net.darkhax.curseforgegradle' version '1.1.15'
@@ -24,7 +23,6 @@ minecraft {
     // It is REQUIRED to be set to true for this template to function.
     // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
     //copyIdeResources = true
-
 }
 
 runs {
@@ -48,57 +46,6 @@ runs {
         systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
         programArgument '--nogui'
     }
-
-    /*client {
-
-    }
-
-
-    client {
-        workingDirectory project.file('runs/' + name)
-        //ideaModule("${rootProject.name}.${project.name}.main")
-        singleInstance true
-        //taskName "${mod_id} NeoForge Client"
-
-        property 'forge.logging.console.level', 'debug'
-        property 'mixin.env.remapRefMap', 'true'
-
-        property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-        args "-mixin.config=${mod_id}.mixins.json"
-
-        mods {
-            "${mod_id}" {
-                source sourceSets.main
-                source project(":core").sourceSets.main
-            }
-        }
-    }
-
-    clientAlt {
-        parent minecraft.runs.client
-        workingDirectory project.file('runs/' + name)
-        taskName "${mod_id} NeoForge Client Alt"
-        args '--username', 'Alt'
-    }
-
-    server {
-        workingDirectory project.file('runs/' + name)
-        ideaModule("${rootProject.name}.${project.name}.main")
-        singleInstance true
-        taskName "${mod_id} NeoForge Server"
-
-        property 'forge.logging.console.level', 'debug'
-        property 'mixin.env.remapRefMap', 'true'
-        property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-        args "-mixin.config=${mod_id}.mixins.json"
-
-        mods {
-            "${mod_id}" {
-                source project(":core").sourceSets.main
-                source sourceSets.main
-            }
-        }
-    }*/
 }
 
 java {
@@ -116,9 +63,6 @@ dependencies {
     compileOnly project(":core")
     implementation(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
     jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[${mclib_version},)")
-    //if (System.getProperty("idea.sync.active") != "true") {
-    //    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    //}
 }
 
 jarJar.enable()
@@ -126,7 +70,6 @@ jarJar.enable()
 //Make the result of jarJar the default.
 tasks.jarJar.configure {
     it.archiveClassifier.set("")
-    //finalizedBy("reobfJarJar")
 }
 
 tasks.jar.configure {
@@ -163,11 +106,6 @@ jar {
         ])
     }
 }
-
-/*mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-    config "${mod_id}.mixins.json"
-}*/
 
 def resourceTargets = ['META-INF/mods.toml']
 def replaceProperties = [
