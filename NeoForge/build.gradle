@@ -3,9 +3,9 @@ plugins {
     id 'eclipse' //both are required for the ideCopyResourcesTask
     id 'idea'
     id 'maven-publish'
-    id 'net.neoforged.gradle' version '[6.0.18,6.2)'
-    id 'org.spongepowered.mixin' version '0.7.+'
-    id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id 'net.neoforged.gradle.userdev' version '7.0.55'
+    //id 'org.spongepowered.mixin' version '0.7.+'
+    //id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'com.modrinth.minotaur' version '2.8.3'
     id 'net.darkhax.curseforgegradle' version '1.1.15'
 }
@@ -18,59 +18,78 @@ base {
 }
 
 minecraft {
-    mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
-    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+    //mappings channel: 'parchment', version: "${parchment_version}-${minecraft_version}"
+    accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
     // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
     // It is REQUIRED to be set to true for this template to function.
     // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
-    copyIdeResources = true
-    runs {
-        client {
-            workingDirectory project.file('runs/' + name)
-            ideaModule("${rootProject.name}.${project.name}.main")
-            singleInstance true
-            taskName "${mod_id} NeoForge Client"
+    //copyIdeResources = true
 
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
+}
 
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
+runs {
+    configureEach {
+        systemProperty 'forge.logging.console.level', 'debug'
+        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
 
-            mods {
-                "${mod_id}" {
-                    source sourceSets.main
-                    source project(":core").sourceSets.main
-                }
-            }
+        modSource project.sourceSets.main
+        modSource project(":core").sourceSets.main
+
+        dependencies {
+            runtime(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
         }
+    }
 
-        clientAlt {
-            parent minecraft.runs.client
-            workingDirectory project.file('runs/' + name)
-            taskName "${mod_id} NeoForge Client Alt"
-            args '--username', 'Alt'
-        }
+    /*client {
 
-        server {
-            workingDirectory project.file('runs/' + name)
-            ideaModule("${rootProject.name}.${project.name}.main")
-            singleInstance true
-            taskName "${mod_id} NeoForge Server"
+    }
 
-            property 'forge.logging.console.level', 'debug'
-            property 'mixin.env.remapRefMap', 'true'
-            property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
-            args "-mixin.config=${mod_id}.mixins.json"
 
-            mods {
-                "${mod_id}" {
-                    source project(":core").sourceSets.main
-                    source sourceSets.main
-                }
+    client {
+        workingDirectory project.file('runs/' + name)
+        //ideaModule("${rootProject.name}.${project.name}.main")
+        singleInstance true
+        //taskName "${mod_id} NeoForge Client"
+
+        property 'forge.logging.console.level', 'debug'
+        property 'mixin.env.remapRefMap', 'true'
+
+        property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+        args "-mixin.config=${mod_id}.mixins.json"
+
+        mods {
+            "${mod_id}" {
+                source sourceSets.main
+                source project(":core").sourceSets.main
             }
         }
     }
+
+    clientAlt {
+        parent minecraft.runs.client
+        workingDirectory project.file('runs/' + name)
+        taskName "${mod_id} NeoForge Client Alt"
+        args '--username', 'Alt'
+    }
+
+    server {
+        workingDirectory project.file('runs/' + name)
+        ideaModule("${rootProject.name}.${project.name}.main")
+        singleInstance true
+        taskName "${mod_id} NeoForge Server"
+
+        property 'forge.logging.console.level', 'debug'
+        property 'mixin.env.remapRefMap', 'true'
+        property 'mixin.env.refMapRemappingFile', "${project.projectDir}/build/createSrgToMcp/output.srg"
+        args "-mixin.config=${mod_id}.mixins.json"
+
+        mods {
+            "${mod_id}" {
+                source project(":core").sourceSets.main
+                source sourceSets.main
+            }
+        }
+    }*/
 }
 
 java {
@@ -84,13 +103,13 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.neoforged:forge:${minecraft_version}-${neoforge_version}"
+    implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":core")
-    minecraftLibrary(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
+    implementation(group: 'com.eliotlash.mclib', name: 'mclib', version: "${mclib_version}")
     jarJar(group: 'com.eliotlash.mclib', name: 'mclib', version: "[${mclib_version},)")
-    if (System.getProperty("idea.sync.active") != "true") {
-        annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
-    }
+    //if (System.getProperty("idea.sync.active") != "true") {
+    //    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+    //}
 }
 
 jarJar.enable()
@@ -134,10 +153,10 @@ jar {
     }
 }
 
-mixin {
+/*mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
-}
+}*/
 
 def resourceTargets = ['META-INF/mods.toml']
 def replaceProperties = [
@@ -220,7 +239,6 @@ modrinth {
 		changelog = rootProject.file("changelog.txt").text
 		gameVersions = [minecraft_version]
 		loaders = ['neoforge']
-        debugMode = true
         //https://github.com/modrinth/minotaur#available-properties
 }
 
