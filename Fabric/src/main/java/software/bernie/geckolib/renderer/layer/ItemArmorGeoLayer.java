@@ -201,7 +201,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
 		
-		return RenderProvider.of(stack).getHumanoidArmorModel(null, stack, null, defaultModel);
+		return RenderProvider.of(stack).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
 	}
 
 	/**
