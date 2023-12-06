@@ -1,6 +1,3 @@
-v4.3
+v4.3.1
 
-- Swap GeoReplacedEntityRenderer#shouldShowName to use provided entity argument instead of cached entity instance for better compat with entityculling
-- Fully strip failed optimisation due to seeming unfixable incompatibility with shaders
-- Add GeoRenderer#getPackedOverlay with partialTick, deprecate existing method for removal
-- Add DyeableGeoArmorRenderer - a native dyeable armour renderer for GeckoLib armour models
+- Swap out the null parameters in ItemArmorGeoLayer#getModelForItem with their actual parameters
