@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 
 /**
  * GeckoLib events base-class for the various event stages of rendering.<br>
- * These are fired on the {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus FORGE} mod bus
+ * These are fired on the {@link net.neoforged.fml.common.Mod.EventBusSubscriber.Bus FORGE} mod bus
  */
 public interface GeoRenderEvent {
 	/**

@@ -103,7 +103,7 @@ runs {
 
 java {
     withSourcesJar()
-    //withJavadocJar()
+    withJavadocJar()
     toolchain.languageVersion.set(JavaLanguageVersion.of(17))
 }
 
@@ -212,7 +212,7 @@ publishing {
         mavenJava(MavenPublication) {
             from components.java
             //Excludes the non jij'd jar from being published at all.
-            artifacts = [sourcesJar/*, javadocJar*/]
+            artifacts = [sourcesJar, javadocJar]
             jarJar.component(it)
             artifactId base.archivesName.get()
             //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
