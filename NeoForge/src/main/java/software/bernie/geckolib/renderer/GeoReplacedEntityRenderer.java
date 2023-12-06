@@ -389,6 +389,17 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
+	 * Gets a packed overlay coordinate pair for rendering.<br>
+	 * Mostly just used for the red tint when an entity is hurt,
+	 * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
+	 * white tint when exploding.
+	 */
+	@Override
+	public int getPackedOverlay(T animatable, float u, float partialTick) {
+		return getPackedOverlay(animatable, u);
+	}
+
+	/**
 	 * Static rendering code for rendering a leash segment.<br>
 	 * It's a like-for-like from {@link net.minecraft.client.renderer.entity.MobRenderer#renderLeash} that had to be duplicated here for flexible usage
 	 */

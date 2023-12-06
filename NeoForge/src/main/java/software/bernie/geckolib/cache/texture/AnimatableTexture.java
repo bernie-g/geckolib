@@ -12,13 +12,12 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
-import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.util.RenderUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

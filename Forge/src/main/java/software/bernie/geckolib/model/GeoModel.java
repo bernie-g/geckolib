@@ -39,7 +39,6 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	private BakedGeoModel currentModel = null;
 	private double animTime;
 	private double lastGameTickTime;
-	private long lastRenderedInstance = -1;
 
 	/**
 	 * Returns the resource path for the {@link BakedGeoModel} (model json file) to render based on the provided animatable

@@ -1,10 +1,8 @@
 package software.bernie.geckolib.cache;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
-import net.minecraft.world.level.storage.DimensionDataStorage;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 
 /**
