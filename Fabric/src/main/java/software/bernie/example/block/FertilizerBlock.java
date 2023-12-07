@@ -1,5 +1,6 @@
 package software.bernie.example.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +32,11 @@ import java.util.List;
 public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	public FertilizerBlock() {
 		super(Properties.of().noOcclusion());
+	}
+
+	@Override
+	protected MapCodec<? extends DirectionalBlock> codec() {
+		return null;
 	}
 
 	@Nullable

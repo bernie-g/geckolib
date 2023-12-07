@@ -1,5 +1,6 @@
 package software.bernie.example.block;
 
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -34,6 +35,11 @@ public class GeckoHabitatBlock extends BaseEntityBlock implements EntityBlock {
 
 	public GeckoHabitatBlock() {
 		super(Properties.of().noOcclusion());
+	}
+
+	@Override
+	protected MapCodec<? extends BaseEntityBlock> codec() {
+		return null;
 	}
 
 	@Override
