@@ -145,12 +145,16 @@ processResources {
     }
 }
 
+tasks.withType(GenerateModuleMetadata) {
+    enabled = false
+}
+
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
             //Excludes the non jij'd jar from being published at all.
-            //artifacts = [sourcesJar, javadocJar]
+            artifacts = [sourcesJar, javadocJar]
             jarJar.component(it)
             artifactId base.archivesName.get()
             //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
