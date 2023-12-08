@@ -25,6 +25,12 @@ minecraft {
     // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
     copyIdeResources = true
     runs {
+        sourceSets.each {
+            def dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+            it.output.resourcesDir = dir
+            it.java.destinationDirectory = dir
+        }
+
         client {
             workingDirectory project.file('runs/' + name)
             ideaModule("${rootProject.name}.${project.name}.main")
