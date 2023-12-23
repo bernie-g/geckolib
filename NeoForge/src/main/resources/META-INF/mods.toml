@@ -20,13 +20,13 @@ config = "${mod_id}.mixins.json"
 
 [[dependencies.geckolib]]
     modId="neoforge"
-    mandatory=true 
+    type="required"
     versionRange="${neoforge_version_range}"
     ordering="NONE"
     side="BOTH"
 [[dependencies.geckolib]]
     modId="minecraft"
-    mandatory=true
+    type="required"
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
