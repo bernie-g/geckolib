@@ -53,7 +53,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(instanceId).setData(dataTicket, data);
 		}
 		else {
-			syncAnimData(instanceId, dataTicket, data, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			syncAnimData(instanceId, dataTicket, data, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(relatedEntity));
 		}
 	}
 
@@ -85,7 +85,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(relatedEntity));
 		}
 	}
 

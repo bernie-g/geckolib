@@ -1,7 +1,10 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -12,20 +15,16 @@ import software.bernie.geckolib.util.ClientUtils;
 /**
  * Packet for syncing user-definable animation data for {@link SingletonGeoAnimatable} instances
  */
-public class AnimDataSyncPacket<D> {
-	private final String syncableId;
-	private final long instanceId;
-	private final SerializableDataTicket<D> dataTicket;
-	private final D data;
+public record AnimDataSyncPacket<D>(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) implements CustomPacketPayload {
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_data_sync");
 
-	public AnimDataSyncPacket(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
-		this.syncableId = syncableId;
-		this.instanceId = instanceId;
-		this.dataTicket = dataTicket;
-		this.data = data;
+	@Override
+	public ResourceLocation id() {
+		return ID;
 	}
 
-	public void encode(FriendlyByteBuf buffer) {
+	@Override
+	public void write(FriendlyByteBuf buffer) {
 		buffer.writeUtf(this.syncableId);
 		buffer.writeVarLong(this.instanceId);
 		buffer.writeUtf(this.dataTicket.id());
@@ -41,14 +40,12 @@ public class AnimDataSyncPacket<D> {
 		return new AnimDataSyncPacket<>(syncableId, instanceId, dataTicket, data);
 	}
 
-	public void receivePacket(NetworkEvent.Context context) {
-		context.enqueueWork(() -> {
+	public void receivePacket(PlayPayloadContext context) {
+		context.workHandler().execute(() -> {
 			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
 
 			if (animatable instanceof SingletonGeoAnimatable singleton)
 				singleton.setAnimData(ClientUtils.getClientPlayer(), this.instanceId, this.dataTicket, this.data);
 		});
-
-		context.setPacketHandled(true);
 	}
 }

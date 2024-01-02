@@ -2,8 +2,11 @@ package software.bernie.geckolib.network.packet;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
@@ -12,18 +15,16 @@ import software.bernie.geckolib.util.ClientUtils;
 /**
  * Packet for syncing user-definable animation data for {@link BlockEntity BlockEntities}
  */
-public class BlockEntityAnimDataSyncPacket<D> {
-	private final BlockPos pos;
-	private final SerializableDataTicket<D> dataTicket;
-	private final D data;
+public record BlockEntityAnimDataSyncPacket<D>(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) implements CustomPacketPayload {
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_data_sync");
 
-	public BlockEntityAnimDataSyncPacket(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) {
-		this.pos = pos;
-		this.dataTicket = dataTicket;
-		this.data = data;
+	@Override
+	public ResourceLocation id() {
+		return ID;
 	}
 
-	public void encode(FriendlyByteBuf buffer) {
+	@Override
+	public void write(FriendlyByteBuf buffer) {
 		buffer.writeBlockPos(this.pos);
 		buffer.writeUtf(this.dataTicket.id());
 		this.dataTicket.encode(this.data, buffer);
@@ -36,13 +37,12 @@ public class BlockEntityAnimDataSyncPacket<D> {
 		return new BlockEntityAnimDataSyncPacket<>(pos, dataTicket, dataTicket.decode(buffer));
 	}
 
-	public void receivePacket(NetworkEvent.Context context) {
-		context.enqueueWork(() -> {
+	public void receivePacket(PlayPayloadContext context) {
+		context.workHandler().execute(() -> {
 			BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
 
 			if (blockEntity instanceof GeoBlockEntity geoBlockEntity)
 				geoBlockEntity.setAnimData(this.dataTicket, this.data);
 		});
-		context.setPacketHandled(true);
 	}
 }

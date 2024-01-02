@@ -1,6 +1,7 @@
 package software.bernie.geckolib;
 
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,12 +25,12 @@ public class GeckoLib {
 	 * If shadowing {@code GeckoLib}, you should instead call {@link GeckoLib#shadowInit}
 	 * Note that doing so will prevent {@link software.bernie.geckolib.renderer.GeoItemRenderer Items} from animating properly
 	 */
-	synchronized public static void initialize() {
+	synchronized public static void initialize(IEventBus modBus) {
 		if (!hasInitialized) {
 			if (FMLEnvironment.dist == Dist.CLIENT)
 				GeckoLibCache.registerReloadListener();
 
-			GeckoLibNetwork.init();
+			GeckoLibNetwork.init(modBus);
 		}
 
 		hasInitialized = true;

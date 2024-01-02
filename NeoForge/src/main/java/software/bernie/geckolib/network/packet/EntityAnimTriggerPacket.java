@@ -1,8 +1,11 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -14,27 +17,23 @@ import javax.annotation.Nullable;
 /**
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.entity.Entity Entities}
  */
-public class EntityAnimTriggerPacket<D> {
-	private final int entityId;
-	private final boolean isReplacedEntity;
-	private final String controllerName;
-	private final String animName;
+public record EntityAnimTriggerPacket<D>(int entityId, boolean isReplacedEntity, @Nullable String controllerName, String animName) implements CustomPacketPayload {
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_trigger");
+
+	@Override
+	public ResourceLocation id() {
+		return ID;
+	}
 
 	public EntityAnimTriggerPacket(int entityId, @Nullable String controllerName, String animName) {
 		this(entityId, false, controllerName, animName);
 	}
 
-	public EntityAnimTriggerPacket(int entityId, boolean isReplacedEntity, @Nullable String controllerName, String animName) {
-		this.entityId = entityId;
-		this.isReplacedEntity = isReplacedEntity;
-		this.controllerName = controllerName == null ? "" : controllerName;
-		this.animName = animName;
-	}
-
-	public void encode(FriendlyByteBuf buffer) {
+	@Override
+	public void write(FriendlyByteBuf buffer) {
 		buffer.writeVarInt(this.entityId);
 		buffer.writeBoolean(this.isReplacedEntity);
-		buffer.writeUtf(this.controllerName);
+		buffer.writeUtf(this.controllerName == null ? "" : this.controllerName);
 		buffer.writeUtf(this.animName);
 	}
 
@@ -42,8 +41,8 @@ public class EntityAnimTriggerPacket<D> {
 		return new EntityAnimTriggerPacket<>(buffer.readVarInt(), buffer.readBoolean(), buffer.readUtf(), buffer.readUtf());
 	}
 
-	public void receivePacket(NetworkEvent.Context context) {
-		context.enqueueWork(() -> {
+	public void receivePacket(PlayPayloadContext context) {
+		context.workHandler().execute(() -> {
 			Entity entity = ClientUtils.getLevel().getEntity(this.entityId);
 
 			if (entity == null)
@@ -59,6 +58,5 @@ public class EntityAnimTriggerPacket<D> {
 				geoEntity.triggerAnim(this.controllerName.isEmpty() ? null : this.controllerName, this.animName);
 			}
 		});
-		context.setPacketHandled(true);
 	}
 }

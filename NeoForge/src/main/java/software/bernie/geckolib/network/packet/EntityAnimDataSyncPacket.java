@@ -1,8 +1,11 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.PlayPayloadContext;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
@@ -11,18 +14,16 @@ import software.bernie.geckolib.util.ClientUtils;
 /**
  * Packet for syncing user-definable animation data for {@link net.minecraft.world.entity.Entity Entities}
  */
-public class EntityAnimDataSyncPacket<D> {
-	private final int entityId;
-	private final SerializableDataTicket<D> dataTicket;
-	private final D data;
+public record EntityAnimDataSyncPacket<D>(int entityId, SerializableDataTicket<D> dataTicket, D data) implements CustomPacketPayload {
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_data_sync");
 
-	public EntityAnimDataSyncPacket(int entityId, SerializableDataTicket<D> dataTicket, D data) {
-		this.entityId = entityId;
-		this.dataTicket = dataTicket;
-		this.data = data;
+	@Override
+	public ResourceLocation id() {
+		return ID;
 	}
 
-	public void encode(FriendlyByteBuf buffer) {
+	@Override
+	public void write(FriendlyByteBuf buffer) {
 		buffer.writeVarInt(this.entityId);
 		buffer.writeUtf(this.dataTicket.id());
 		this.dataTicket.encode(this.data, buffer);
@@ -35,13 +36,12 @@ public class EntityAnimDataSyncPacket<D> {
 		return new EntityAnimDataSyncPacket<>(entityId, dataTicket, dataTicket.decode(buffer));
 	}
 
-	public void receivePacket(NetworkEvent.Context context) {
-		context.enqueueWork(() -> {
+	public void receivePacket(PlayPayloadContext context) {
+		context.workHandler().execute(() -> {
 			Entity entity = ClientUtils.getLevel().getEntity(this.entityId);
 
 			if (entity instanceof GeoEntity geoEntity)
 				geoEntity.setAnimData(this.dataTicket, this.data);
 		});
-		context.setPacketHandled(true);
 	}
 }

@@ -44,7 +44,7 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
 		}
 	}
 
@@ -61,7 +61,7 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
 		}
 	}
 

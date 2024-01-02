@@ -7,7 +7,6 @@ package software.bernie.example;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.neoforged.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
 import software.bernie.geckolib.GeckoLib;
@@ -16,18 +15,16 @@ import software.bernie.geckolib.GeckoLib;
 public final class GeckoLibMod {
 	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
 
-	public GeckoLibMod() {
-		GeckoLib.initialize();
+	public GeckoLibMod(IEventBus modBus) {
+		GeckoLib.initialize(modBus);
 
 		if (shouldRegisterExamples()) {
-			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
-
-			EntityRegistry.ENTITIES.register(bus);
-			ItemRegistry.ITEMS.register(bus);
-			ItemRegistry.TABS.register(bus);
-			BlockEntityRegistry.TILES.register(bus);
-			BlockRegistry.BLOCKS.register(bus);
-			SoundRegistry.SOUNDS.register(bus);
+			EntityRegistry.ENTITIES.register(modBus);
+			ItemRegistry.ITEMS.register(modBus);
+			ItemRegistry.TABS.register(modBus);
+			BlockEntityRegistry.TILES.register(modBus);
+			BlockRegistry.BLOCKS.register(modBus);
+			SoundRegistry.SOUNDS.register(modBus);
 		}
 	}
 
