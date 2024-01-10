@@ -61,6 +61,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected AnimationProcessor.QueuedAnimation currentAnimation;
 	protected State animationState = State.STOPPED;
 	protected double tickOffset;
+	protected double lastPollTime = -1;
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
 	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
@@ -448,8 +449,9 @@ public class AnimationController<T extends GeoAnimatable> {
 			processCurrentAnimation(adjustedTick, seekTime, crashWhenCantFindBone);
 		}
 		else if (this.animationState == State.TRANSITIONING) {
-			if (adjustedTick == 0 || this.isJustStarting) {
+			if (this.lastPollTime != seekTime && (adjustedTick == 0 || this.isJustStarting)) {
 				this.justStartedTransition = false;
+				this.lastPollTime = seekTime;
 				this.currentAnimation = this.animationQueue.poll();
 
 				resetEventKeyFrames();

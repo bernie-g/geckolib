@@ -46,7 +46,6 @@ dependencies {
     implementation("com.eliotlash.mclib:mclib:${mclib_version}")
     include("com.eliotlash.mclib:mclib:${mclib_version}")
     implementation "com.google.code.findbugs:jsr305:3.0.1" //Provides the Nullable annotations
-
 }
 
 tasks.withType(org.gradle.jvm.tasks.Jar).configureEach {
