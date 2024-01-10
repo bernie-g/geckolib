@@ -329,6 +329,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		Pose pose = this.currentEntity.getPose();
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
 
+		if (isShaking(animatable))
+			rotationYaw += (float)(Math.cos(this.currentEntity.tickCount * 3.25d) * Math.PI * 0.4d);
+
 		if (pose != Pose.SLEEPING)
 			poseStack.mulPose(Axis.YP.rotationDegrees(180f - rotationYaw));
 
@@ -413,6 +416,15 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	@Override
 	public int getPackedOverlay(T animatable, float u, float partialTick) {
 		return getPackedOverlay(animatable, u);
+	}
+
+	/**
+	 * Whether the entity is currently shaking. This is usually used for freezing, but also for things like piglin conversion or striders suffocating
+	 * <p>This is used for a shaking effect while rendering</p>
+	 * @see net.minecraft.client.renderer.entity.LivingEntityRenderer#isShaking(LivingEntity)
+	 */
+	public boolean isShaking(T animatable) {
+		return this.currentEntity.isFullyFrozen();
 	}
 
 	/**
