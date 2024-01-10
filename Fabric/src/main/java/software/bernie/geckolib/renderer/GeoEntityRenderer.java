@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -295,6 +296,9 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		Pose pose = animatable.getPose();
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
 
+		if (isShaking(animatable))
+			rotationYaw += (float)(Math.cos(animatable.tickCount * 3.25d) * Math.PI * 0.4d);
+
 		if (pose != Pose.SLEEPING)
 			poseStack.mulPose(Axis.YP.rotationDegrees(180f - rotationYaw));
 
@@ -342,17 +346,45 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	}
 
 	/**
+	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible.
+	 * <p>This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render</p>
+	 */
+	public double getNameRenderCutoffDistance(T animatable) {
+		return animatable.isDiscrete() ? 32d : 64d;
+	}
+
+	/**
 	 * Whether the entity's nametag should be rendered or not.<br>
 	 * Pretty much exclusively used in {@link EntityRenderer#renderNameTag}
 	 */
 	@Override
 	public boolean shouldShowName(T animatable) {
-		double nameRenderDistance = animatable.isDiscrete() ? 32d : 64d;
+		if (!(animatable instanceof LivingEntity))
+			return super.shouldShowName(animatable);
 
-		if (this.entityRenderDispatcher.distanceToSqr(animatable) >= nameRenderDistance * nameRenderDistance)
+		double nameRenderCutoff = getNameRenderCutoffDistance(animatable);
+
+		if (this.entityRenderDispatcher.distanceToSqr(animatable) >= nameRenderCutoff * nameRenderCutoff)
 			return false;
 
-		return animatable == this.entityRenderDispatcher.crosshairPickEntity && animatable.hasCustomName() && Minecraft.renderNames();
+		if (animatable instanceof Mob && (!animatable.shouldShowName() && (!animatable.hasCustomName() || animatable != this.entityRenderDispatcher.crosshairPickEntity)))
+			return false;
+
+		final Minecraft minecraft = Minecraft.getInstance();
+		boolean visibleToClient = !animatable.isInvisibleTo(minecraft.player);
+		Team entityTeam = animatable.getTeam();
+
+		if (entityTeam == null)
+			return Minecraft.renderNames() && animatable != minecraft.getCameraEntity() && visibleToClient && !animatable.isVehicle();
+
+		Team playerTeam = minecraft.player.getTeam();
+
+		return switch (entityTeam.getNameTagVisibility()) {
+			case ALWAYS -> visibleToClient;
+			case NEVER -> false;
+			case HIDE_FOR_OTHER_TEAMS -> playerTeam == null ? visibleToClient : entityTeam.isAlliedTo(playerTeam) && (entityTeam.canSeeFriendlyInvisibles() || visibleToClient);
+			case HIDE_FOR_OWN_TEAM -> playerTeam == null ? visibleToClient : !entityTeam.isAlliedTo(playerTeam) && visibleToClient;
+		};
 	}
 
 	/**
@@ -379,6 +411,15 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@Override
 	public int getPackedOverlay(T animatable, float u, float partialTick) {
 		return getPackedOverlay(animatable, u);
+	}
+
+	/**
+	 * Whether the entity is currently shaking. This is usually used for freezing, but also for things like piglin conversion or striders suffocating
+	 * <p>This is used for a shaking effect while rendering</p>
+	 * @see net.minecraft.client.renderer.entity.LivingEntityRenderer#isShaking(LivingEntity)
+	 */
+	public boolean isShaking(T animatable) {
+		return animatable.isFullyFrozen();
 	}
 
 	/**
