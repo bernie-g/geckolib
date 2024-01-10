@@ -23,6 +23,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -363,17 +364,45 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
+	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible.
+	 * <p>This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render</p>
+	 */
+	public double getNameRenderCutoffDistance(T animatable) {
+		return this.currentEntity.isDiscrete() ? 32d : 64d;
+	}
+
+	/**
 	 * Whether the entity's nametag should be rendered or not.<br>
 	 * Pretty much exclusively used in {@link EntityRenderer#renderNameTag}
 	 */
 	@Override
 	public boolean shouldShowName(E entity) {
-		double nameRenderDistance = entity.isDiscrete() ? 32d : 64d;
+		if (!(entity instanceof LivingEntity))
+			return super.shouldShowName(entity);
 
-		if (this.entityRenderDispatcher.distanceToSqr(entity) >= nameRenderDistance * nameRenderDistance)
+		double nameRenderCutoff = getNameRenderCutoffDistance(animatable);
+
+		if (this.entityRenderDispatcher.distanceToSqr(entity) >= nameRenderCutoff * nameRenderCutoff)
 			return false;
 
-		return entity == this.entityRenderDispatcher.crosshairPickEntity && entity.hasCustomName() && Minecraft.renderNames();
+		if (entity instanceof Mob && (!entity.shouldShowName() && (!entity.hasCustomName() || entity != this.entityRenderDispatcher.crosshairPickEntity)))
+			return false;
+
+		final Minecraft minecraft = Minecraft.getInstance();
+		boolean visibleToClient = !entity.isInvisibleTo(minecraft.player);
+		Team entityTeam = entity.getTeam();
+
+		if (entityTeam == null)
+			return Minecraft.renderNames() && entity != minecraft.getCameraEntity() && visibleToClient && !entity.isVehicle();
+
+		Team playerTeam = minecraft.player.getTeam();
+
+		return switch (entityTeam.getNameTagVisibility()) {
+			case ALWAYS -> visibleToClient;
+			case NEVER -> false;
+			case HIDE_FOR_OTHER_TEAMS -> playerTeam == null ? visibleToClient : entityTeam.isAlliedTo(playerTeam) && (entityTeam.canSeeFriendlyInvisibles() || visibleToClient);
+			case HIDE_FOR_OWN_TEAM -> playerTeam == null ? visibleToClient : !entityTeam.isAlliedTo(playerTeam) && visibleToClient;
+		};
 	}
 
 	/**

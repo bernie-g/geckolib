@@ -23,10 +23,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.Team;
 import net.neoforged.neoforge.common.NeoForge;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -35,7 +37,6 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.List;
@@ -345,17 +346,45 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	}
 
 	/**
+	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible.
+	 * <p>This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render</p>
+	 */
+	public double getNameRenderCutoffDistance(T animatable) {
+		return animatable.isDiscrete() ? 32d : 64d;
+	}
+
+	/**
 	 * Whether the entity's nametag should be rendered or not.<br>
 	 * Pretty much exclusively used in {@link EntityRenderer#renderNameTag}
 	 */
 	@Override
 	public boolean shouldShowName(T animatable) {
-		double nameRenderDistance = animatable.isDiscrete() ? 32d : 64d;
+		if (!(animatable instanceof LivingEntity))
+			return super.shouldShowName(animatable);
 
-		if (this.entityRenderDispatcher.distanceToSqr(animatable) >= nameRenderDistance * nameRenderDistance)
+		double nameRenderCutoff = getNameRenderCutoffDistance(animatable);
+
+		if (this.entityRenderDispatcher.distanceToSqr(animatable) >= nameRenderCutoff * nameRenderCutoff)
 			return false;
 
-		return animatable == this.entityRenderDispatcher.crosshairPickEntity && animatable.hasCustomName() && Minecraft.renderNames();
+		if (animatable instanceof Mob && (!animatable.shouldShowName() && (!animatable.hasCustomName() || animatable != this.entityRenderDispatcher.crosshairPickEntity)))
+			return false;
+
+		final Minecraft minecraft = Minecraft.getInstance();
+		boolean visibleToClient = !animatable.isInvisibleTo(minecraft.player);
+		Team entityTeam = animatable.getTeam();
+
+		if (entityTeam == null)
+			return Minecraft.renderNames() && animatable != minecraft.getCameraEntity() && visibleToClient && !animatable.isVehicle();
+
+		Team playerTeam = minecraft.player.getTeam();
+
+		return switch (entityTeam.getNameTagVisibility()) {
+			case ALWAYS -> visibleToClient;
+			case NEVER -> false;
+			case HIDE_FOR_OTHER_TEAMS -> playerTeam == null ? visibleToClient : entityTeam.isAlliedTo(playerTeam) && (entityTeam.canSeeFriendlyInvisibles() || visibleToClient);
+			case HIDE_FOR_OWN_TEAM -> playerTeam == null ? visibleToClient : !entityTeam.isAlliedTo(playerTeam) && visibleToClient;
+		};
 	}
 
 	/**
