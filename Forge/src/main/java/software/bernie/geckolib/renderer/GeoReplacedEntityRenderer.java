@@ -367,8 +367,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible.
 	 * <p>This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render</p>
 	 */
-	public double getNameRenderCutoffDistance(T animatable) {
-		return this.currentEntity.isDiscrete() ? 32d : 64d;
+	public double getNameRenderCutoffDistance(E entity, T animatable) {
+		return entity.isDiscrete() ? 32d : 64d;
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		if (!(entity instanceof LivingEntity))
 			return super.shouldShowName(entity);
 
-		double nameRenderCutoff = getNameRenderCutoffDistance(animatable);
+		double nameRenderCutoff = getNameRenderCutoffDistance(entity, this.animatable);
 
 		if (this.entityRenderDispatcher.distanceToSqr(entity) >= nameRenderCutoff * nameRenderCutoff)
 			return false;
