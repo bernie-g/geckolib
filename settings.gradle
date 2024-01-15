@@ -17,6 +17,10 @@ pluginManagement {
             name = "NeoForge"
             url = 'https://maven.neoforged.net/'
         }
+        maven {
+            name = 'Sponge Snapshots'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
     }
 }
 
@@ -25,4 +29,4 @@ plugins {
 }
 
 rootProject.name = 'GeckoLib'
-include 'core', 'Fabric', 'Forge', 'NeoForge'
+include 'common', 'fabric', 'forge', 'neoforge'
