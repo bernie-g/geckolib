@@ -1,8 +1,8 @@
 package software.bernie.geckolib.core.molang.expressions;
 
+import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.mclib.math.Constant;
 import software.bernie.mclib.math.IValue;
-import software.bernie.geckolib.core.molang.MolangParser;
 
 /**
  * Molang extension for the {@link IValue} system.

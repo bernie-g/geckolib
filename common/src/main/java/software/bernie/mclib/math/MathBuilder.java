@@ -1,12 +1,7 @@
 package software.bernie.mclib.math;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import software.bernie.mclib.math.functions.Function;
+import software.bernie.mclib.math.functions.classic.*;
 import software.bernie.mclib.math.functions.limit.Clamp;
 import software.bernie.mclib.math.functions.limit.Max;
 import software.bernie.mclib.math.functions.limit.Min;
@@ -17,15 +12,13 @@ import software.bernie.mclib.math.functions.rounding.Trunc;
 import software.bernie.mclib.math.functions.utility.Lerp;
 import software.bernie.mclib.math.functions.utility.LerpRotate;
 import software.bernie.mclib.math.functions.utility.Random;
-import software.bernie.mclib.math.functions.classic.Abs;
-import software.bernie.mclib.math.functions.classic.Mod;
-import software.bernie.mclib.math.functions.classic.Pow;
-import software.bernie.mclib.math.functions.classic.Cos;
-import software.bernie.mclib.math.functions.classic.Exp;
-import software.bernie.mclib.math.functions.classic.Ln;
-import software.bernie.mclib.math.functions.classic.Sin;
-import software.bernie.mclib.math.functions.classic.Sqrt;
 import software.bernie.mclib.utils.MathUtils;
+
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Math builder

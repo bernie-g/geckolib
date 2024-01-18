@@ -5,8 +5,6 @@
 
 package software.bernie.geckolib.core.animation;
 
-import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -25,6 +23,8 @@ import software.bernie.geckolib.core.molang.MolangQueries;
 import software.bernie.geckolib.core.object.Axis;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.state.BoneSnapshot;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
 
 import java.util.*;
 import java.util.function.Function;

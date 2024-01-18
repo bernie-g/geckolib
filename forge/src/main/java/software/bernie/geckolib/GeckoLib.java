@@ -4,8 +4,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 
 /**
  * Base class for Geckolib!<br>

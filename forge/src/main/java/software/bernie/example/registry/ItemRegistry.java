@@ -7,7 +7,10 @@ import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-import software.bernie.example.item.*;
+import software.bernie.example.item.GeckoArmorItem;
+import software.bernie.example.item.GeckoHabitatItem;
+import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.example.item.WolfArmorItem;
 import software.bernie.geckolib.GeckoLib;
 
 public final class ItemRegistry {

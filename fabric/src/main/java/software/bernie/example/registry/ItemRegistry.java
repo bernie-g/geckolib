@@ -6,7 +6,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.*;
-import software.bernie.example.item.*;
+import software.bernie.example.item.GeckoArmorItem;
+import software.bernie.example.item.GeckoHabitatItem;
+import software.bernie.example.item.JackInTheBoxItem;
+import software.bernie.example.item.WolfArmorItem;
 import software.bernie.geckolib.GeckoLib;
 
 public class ItemRegistry {

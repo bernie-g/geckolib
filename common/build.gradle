@@ -4,9 +4,11 @@ plugins {
     id 'maven-publish'
     id 'org.spongepowered.gradle.vanilla' version '0.2.1-SNAPSHOT'
 }
+
 base {
     archivesName = "geckolib-common-${minecraft_version}"
 }
+
 minecraft {
     version(minecraft_version)
     accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
@@ -15,18 +17,4 @@ minecraft {
 dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId base.archivesName.get()
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://" + System.getenv("local_maven")
-        }
-    }
 }

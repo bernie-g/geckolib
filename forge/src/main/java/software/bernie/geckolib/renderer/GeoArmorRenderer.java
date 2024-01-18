@@ -26,7 +26,6 @@ import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;

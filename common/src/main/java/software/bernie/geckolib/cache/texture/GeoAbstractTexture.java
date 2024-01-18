@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.neoforged.fml.loading.FMLPaths;
+import software.bernie.geckolib.GeckoLibServices;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -55,7 +55,8 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	 */
 	protected void printDebugImageToDisk(ResourceLocation id, NativeImage newImage) {
 		try {
-			File file = new File(FMLPaths.GAMEDIR.get().toFile(), "GeoTexture Debug Printouts");
+			//TODO update this
+			File file = new File(GeckoLibServices.PLATFORM.getGameDir().toFile(), "GeoTexture Debug Printouts");
 
 			if (!file.exists()) {
 				file.mkdirs();

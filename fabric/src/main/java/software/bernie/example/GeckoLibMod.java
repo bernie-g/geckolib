@@ -6,11 +6,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import software.bernie.example.registry.BlockEntityRegistry;
-import software.bernie.example.registry.BlockRegistry;
-import software.bernie.example.registry.EntityRegistry;
-import software.bernie.example.registry.ItemRegistry;
-import software.bernie.example.registry.SoundRegistry;
+import software.bernie.example.registry.*;
 import software.bernie.geckolib.GeckoLib;
 
 public final class GeckoLibMod implements ModInitializer {

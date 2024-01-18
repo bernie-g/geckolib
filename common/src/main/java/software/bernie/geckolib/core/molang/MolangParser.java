@@ -1,9 +1,5 @@
 package software.bernie.geckolib.core.molang;
 
-import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
-import software.bernie.mclib.math.MathBuilder;
-import software.bernie.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -12,6 +8,10 @@ import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.core.molang.expressions.MolangVariableHolder;
 import software.bernie.geckolib.core.molang.functions.CosDegrees;
 import software.bernie.geckolib.core.molang.functions.SinDegrees;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathBuilder;
+import software.bernie.mclib.math.Variable;
 
 import java.util.List;
 import java.util.Map;

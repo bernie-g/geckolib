@@ -1,7 +1,5 @@
 package software.bernie.geckolib.network.packet;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
@@ -16,6 +14,8 @@ import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.RenderUtils;
+
+import javax.annotation.Nullable;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the

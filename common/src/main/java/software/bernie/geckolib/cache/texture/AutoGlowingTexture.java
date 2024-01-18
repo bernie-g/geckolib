@@ -17,9 +17,9 @@ import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
 
 import java.io.IOException;
@@ -117,14 +117,14 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			if (glowLayerMeta != null) {
 				glowLayerMeta.createImageMask(baseImage, glowImage);
 
-				if (!FMLEnvironment.production) {
+				if (GeckoLibServices.PLATFORM.isDevelopmentEnvironment()) {
 					printDebugImageToDisk(this.textureBase, baseImage);
 					printDebugImageToDisk(this.glowLayer, glowImage);
 				}
 			}
 		}
 		catch (IOException e) {
-			GeckoLib.LOGGER.warn("Resource failed to open for glowlayer meta: {}", this.glowLayer, e);
+			GeckoLibConstants.LOGGER.warn("Resource failed to open for glowlayer meta: {}", this.glowLayer, e);
 		}
 
 		NativeImage mask = glowImage;

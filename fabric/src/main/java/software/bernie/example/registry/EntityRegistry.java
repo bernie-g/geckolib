@@ -8,13 +8,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
-import software.bernie.example.entity.BatEntity;
-import software.bernie.example.entity.BikeEntity;
-import software.bernie.example.entity.CoolKidEntity;
-import software.bernie.example.entity.FakeGlassEntity;
-import software.bernie.example.entity.DynamicExampleEntity;
-import software.bernie.example.entity.ParasiteEntity;
-import software.bernie.example.entity.RaceCarEntity;
+import software.bernie.example.entity.*;
 import software.bernie.geckolib.GeckoLib;
 
 public class EntityRegistry {

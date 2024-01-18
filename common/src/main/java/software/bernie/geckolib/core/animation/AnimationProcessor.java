@@ -1,6 +1,5 @@
 package software.bernie.geckolib.core.animation;
 
-import software.bernie.mclib.utils.Interpolations;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;
@@ -9,6 +8,7 @@ import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.core.state.BoneSnapshot;
+import software.bernie.mclib.utils.Interpolations;
 
 import java.util.Collection;
 import java.util.LinkedList;

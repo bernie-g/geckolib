@@ -1,5 +1,6 @@
 package software.bernie.geckolib.cache.texture;
 
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
@@ -16,8 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.GeckoLibConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
+ * Wrapper for {@link net.minecraft.client.renderer.texture.SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
  */
 public class AnimatableTexture extends SimpleTexture {
 	private AnimationContents animationContents = null;
@@ -63,21 +63,20 @@ public class AnimatableTexture extends SimpleTexture {
 			}
 		}
 		catch (RuntimeException exception) {
-			GeckoLib.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
+			GeckoLibConstants.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
 		}
 
 		super.load(manager);
 	}
 
 	public static void setAndUpdate(ResourceLocation texturePath) {
-		setAndUpdate(texturePath, (int) RenderUtils.getCurrentTick());
+		setAndUpdate(texturePath, (int) (Blaze3D.getTime() * 20)); //TODO Replace with RenderUtils
 	}
 
 	/**
 	 * Setting a specific frame for the animated texture does not work well because of how Minecraft buffers rendering passes.
 	 * <p>Use the non-specified method above unless you know what you're doing</p>
 	 */
-
 	public static void setAndUpdate(ResourceLocation texturePath, int frameTick) {
 		AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(texturePath);
 
@@ -116,7 +115,7 @@ public class AnimatableTexture extends SimpleTexture {
 
 		private Texture generateAnimatedTexture(NativeImage image, AnimationMetadataSection animMeta) {
 			if (!Mth.isMultipleOf(image.getWidth(), this.frameSize.width()) || !Mth.isMultipleOf(image.getHeight(), this.frameSize.height())) {
-				GeckoLib.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.location, image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
+				GeckoLibConstants.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.location, image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
 
 				return null;
 			}
@@ -139,11 +138,11 @@ public class AnimatableTexture extends SimpleTexture {
 
 				for (Frame frame : frames) {
 					if (frame.time <= 0) {
-						GeckoLib.LOGGER.warn("Invalid frame duration on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.time);
+						GeckoLibConstants.LOGGER.warn("Invalid frame duration on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.time);
 						unusedFrames.add(frame.index);
 					}
 					else if (frame.index < 0 || frame.index >= frameCount) {
-						GeckoLib.LOGGER.warn("Invalid frame index on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.index);
+						GeckoLibConstants.LOGGER.warn("Invalid frame index on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.index);
 						unusedFrames.add(frame.index);
 					}
 
@@ -151,7 +150,7 @@ public class AnimatableTexture extends SimpleTexture {
 				}
 
 				if (!unusedFrames.isEmpty())
-					GeckoLib.LOGGER.warn("Unused frames in sprite {}: {}", AnimatableTexture.this.location, Arrays.toString(unusedFrames.toArray()));
+					GeckoLibConstants.LOGGER.warn("Unused frames in sprite {}: {}", AnimatableTexture.this.location, Arrays.toString(unusedFrames.toArray()));
 			}
 
 			return frames.size() <= 1 ? null : new Texture(image, frames.toArray(new Frame[0]), columns, animMeta.isInterpolatedFrames());

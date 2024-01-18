@@ -1,7 +1,5 @@
 package software.bernie.geckolib.loading.json.typeadapter;
 
-import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -19,6 +17,8 @@ import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
+import software.bernie.mclib.math.Constant;
+import software.bernie.mclib.math.IValue;
 
 import java.lang.reflect.Type;
 import java.util.List;

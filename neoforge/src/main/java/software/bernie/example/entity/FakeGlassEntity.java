@@ -7,8 +7,8 @@ import software.bernie.example.client.model.entity.FakeGlassModel;
 import software.bernie.example.client.renderer.entity.FakeGlassRenderer;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
