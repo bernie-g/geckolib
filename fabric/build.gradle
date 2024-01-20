@@ -74,7 +74,7 @@ modrinth {
     projectId = '8BmcQJ2H'
     versionNumber = project.version
     versionName = "Fabric ${minecraft_version}"
-    uploadFile = tasks.remapJar
+    uploadFile = tasks.remapJar.exclude("assets/")
     changelog = rootProject.file("changelog.txt").text
     gameVersions = [minecraft_version]
     versionType = "release"
@@ -92,7 +92,7 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    def mainFile = upload(388172, tasks.remapJar)
+    def mainFile = upload(388172, tasks.remapJar.exclude("assets/"))
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(minecraft_version)

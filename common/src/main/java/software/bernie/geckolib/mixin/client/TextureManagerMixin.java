@@ -14,6 +14,7 @@ import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import java.util.Map;
 
 @Mixin(TextureManager.class)
+//TODO make sure fabric uses this class
 public abstract class TextureManagerMixin {
 	@Shadow @Final private Map<ResourceLocation, AbstractTexture> byPath;
 
