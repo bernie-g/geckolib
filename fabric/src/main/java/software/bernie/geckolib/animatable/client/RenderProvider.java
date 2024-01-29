@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.mixins.fabric.ItemRendererAccessor;
+import software.bernie.geckolib.mixins.client.ItemRendererAccessor;
 
 /**
  * Internal interface for safely providing a custom renderer instances at runtime.<br>

@@ -1,4 +1,4 @@
-package software.bernie.geckolib.mixin.client;
+package software.bernie.geckolib.mixins.client;
 
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
