@@ -92,7 +92,7 @@ public class MathBuilder
      * Parse given math expression into a {@link software.bernie.mclib.math.IValue} which can be
      * used to execute math.
      */
-    public software.bernie.mclib.math.IValue parse(String expression) throws Exception
+    public IValue parse(String expression) throws Exception
     {
         return this.parseSymbols(this.breakdownChars(this.breakdown(expression)));
     }
