@@ -39,16 +39,10 @@ public final class GeckoLibCache {
 	private static Map<ResourceLocation, BakedGeoModel> MODELS = Collections.emptyMap();
 
 	public static Map<ResourceLocation, BakedAnimations> getBakedAnimations() {
-		if (!GeckoLib.hasInitialized)
-			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
-
 		return ANIMATIONS;
 	}
 
 	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
-		if (!GeckoLib.hasInitialized)
-			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
-
 		return MODELS;
 	}
 
@@ -111,10 +105,18 @@ public final class GeckoLibCache {
 				}, executor)
 				.thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
-						// Skip known namespaces that use an "animation" folder as well
+						// Skip known namespaces that use an "animation" or "geo" folder as well
 						if (!EXCLUDED_NAMESPACES.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
 							map.accept(entry.getKey(), entry.getValue().join());
 					}
 				}, executor);
+	}
+
+	/**
+	 * Register a new namespace to be excluded from GeckoLib's resource loader.
+	 * @param namespace The namespace to exclude
+	 */
+	public static synchronized void registerNamespaceExclusion(String namespace) {
+		EXCLUDED_NAMESPACES.add(namespace);
 	}
 }
