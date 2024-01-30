@@ -18,6 +18,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.util.RenderUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +71,7 @@ public class AnimatableTexture extends SimpleTexture {
 	}
 
 	public static void setAndUpdate(ResourceLocation texturePath) {
-		setAndUpdate(texturePath, (int) (Blaze3D.getTime() * 20)); //TODO Replace with RenderUtils
+		setAndUpdate(texturePath, (int) RenderUtils.getCurrentTick());
 	}
 
 	/**

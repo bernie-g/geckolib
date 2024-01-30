@@ -55,7 +55,6 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	 */
 	protected void printDebugImageToDisk(ResourceLocation id, NativeImage newImage) {
 		try {
-			//TODO update this
 			File file = new File(GeckoLibServices.PLATFORM.getGameDir().toFile(), "GeoTexture Debug Printouts");
 
 			if (!file.exists()) {

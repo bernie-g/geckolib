@@ -7,6 +7,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import software.bernie.TransitionRenderUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -80,7 +81,7 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
             return;
         }
 
-        GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
+        GeoAnimatable animatable = TransitionRenderUtils.getReplacedAnimatable(entity.getType());
         if (animatable instanceof GeoReplacedEntity replacedEntity)
             replacedEntity.triggerAnim(entity, controllerName.isEmpty() ? null : controllerName, animName);
     }

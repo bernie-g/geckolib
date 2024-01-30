@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.TransitionRenderUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -49,7 +50,7 @@ public record EntityAnimTriggerPacket<D>(int entityId, boolean isReplacedEntity,
 				return;
 
 			if (this.isReplacedEntity) {
-				GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
+				GeoAnimatable animatable = TransitionRenderUtils.getReplacedAnimatable(entity.getType());
 
 				if (animatable instanceof GeoReplacedEntity replacedEntity)
 					replacedEntity.triggerAnim(entity, this.controllerName.isEmpty() ? null : this.controllerName, this.animName);
