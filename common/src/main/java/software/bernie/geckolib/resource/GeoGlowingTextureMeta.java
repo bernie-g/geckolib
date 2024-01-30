@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  */
-// TODO FIX * Metadata class that stores the data for GeckoLib's {@link software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer emissive texture feature} for a given texture
+// TODO FIX COMMENT * Metadata class that stores the data for GeckoLib's {@link software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer emissive texture feature} for a given texture
 public class GeoGlowingTextureMeta {
 	public static final MetadataSectionSerializer<GeoGlowingTextureMeta> DESERIALIZER = new MetadataSectionSerializer<>() {
 		@Override
