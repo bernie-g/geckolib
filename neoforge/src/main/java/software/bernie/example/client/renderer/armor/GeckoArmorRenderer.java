@@ -10,7 +10,7 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 /**
- * Example {@link GeoRenderer} for the {@link WolfArmorItem} example item
+ * Example {@link GeoArmorRenderer} for the {@link WolfArmorItem} example item
  */
 public final class GeckoArmorRenderer extends GeoArmorRenderer<GeckoArmorItem> {
 	public GeckoArmorRenderer() {

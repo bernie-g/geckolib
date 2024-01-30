@@ -8,7 +8,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 /**
- * Example {@link GeoRenderer} for the {@link WolfArmorItem} example item
+ * Example {@link GeoArmorRenderer} for the {@link WolfArmorItem} example item
  */
 public final class WolfArmorRenderer extends GeoArmorRenderer<WolfArmorItem> {
 	public WolfArmorRenderer() {
