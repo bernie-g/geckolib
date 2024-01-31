@@ -1,4 +1,4 @@
-package software.bernie;
+package software.bernie.geckolib;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
