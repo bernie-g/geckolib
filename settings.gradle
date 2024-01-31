@@ -4,22 +4,40 @@ pluginManagement {
         maven {
             name = 'MinecraftForge'
             url = 'https://maven.minecraftforge.net/'
+            content {
+                includeGroupAndSubgroups("net.minecraftforge")
+            }
         }
         maven {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
+            content {
+                includeGroupAndSubgroups("net.fabricmc")
+                includeGroup("fabric-loom")
+            }
         }
         maven {
             name = "ParchmentMC"
             url = 'https://maven.parchmentmc.org'
+            content {
+                includeGroupAndSubgroups("org.parchmentmc")
+            }
         }
         maven {
             name = "NeoForge"
             url = 'https://maven.neoforged.net/'
+            content {
+                includeGroupAndSubgroups("net.neoforged")
+                includeGroup("codechicken")
+                includeGroup("net.covers1624")
+            }
         }
         maven {
             name = 'Sponge Snapshots'
             url = 'https://repo.spongepowered.org/repository/maven-public/'
+            content {
+                includeGroupAndSubgroups("org.spongepowered")
+            }
         }
     }
 }
@@ -29,4 +47,4 @@ plugins {
 }
 
 rootProject.name = 'GeckoLib'
-include 'common', 'fabric', 'forge', 'neoforge'
+include('common', 'fabric', 'forge', 'neoforge')
