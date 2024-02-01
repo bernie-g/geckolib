@@ -90,14 +90,14 @@ public final class DefaultAnimations {
 	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}.<br>
 	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated.
 	 * Recommended:
-	 * <ul>
-	 *     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: state -> animatable</li>
+	 * <ul> */
+	 /*     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: state -> animatable</li>
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}: state -> animatable</li>
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoReplacedEntity GeoReplacedEntity}: state -> state.getData(DataTickets.ENTITY)</li>
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: state -> state.getData(DataTickets.ITEMSTACK)</li>
 	 *     <li>{@code GeoArmor}: state -> state.getData(DataTickets.ENTITY)</li>
-	 * </ul>
-	 * @param animatable The animatable the animation is for
+	 * </ul> TODO FIX */
+	 /** @param animatable The animatable the animation is for
 	 * @param objectSupplier The supplier of the associated object for the {@link GeoAnimatable#getTick} call
 	 * @param ticks The number of ticks the animation should run for. After this value is surpassed, the animation will no longer play
 	 */
