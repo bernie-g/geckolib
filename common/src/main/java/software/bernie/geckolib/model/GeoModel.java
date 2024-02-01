@@ -22,6 +22,7 @@ import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.molang.MolangQueries;
 import software.bernie.geckolib.core.object.DataTicket;
 import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.Optional;

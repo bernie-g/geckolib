@@ -29,6 +29,7 @@ import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 import javax.annotation.Nullable;
 
