@@ -15,5 +15,5 @@ public class GeckoLibConstants {
 
 
     //TODO bring block signature generic PR
-    //TODO give generic to getObject
+    //TODO give generic to getTick(Object)
 }
