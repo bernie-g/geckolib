@@ -1,13 +1,10 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
-import net.neoforged.neoforge.network.PacketDistributor;
+import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
 
 import javax.annotation.Nullable;
 
@@ -44,7 +41,7 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
+			GeckoLibServices.NETWORK.syncEntityAnimData(entity, dataTicket, data);
 		}
 	}
 
@@ -61,10 +58,10 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
+			GeckoLibServices.NETWORK.entityAnimTrigger(entity, controllerName, animName);
 		}
 	}
-
+	
 	/**
 	 * Returns the current age/tick of the animatable instance.<br>
 	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
