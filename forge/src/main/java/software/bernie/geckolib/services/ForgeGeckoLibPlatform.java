@@ -16,4 +16,9 @@ public class ForgeGeckoLibPlatform implements GeckoLibPlatform {
     public Path getGameDir(){
         return FMLPaths.GAMEDIR.get();
     }
+
+    @Override
+    public boolean isPhysicalClient(){
+        return FMLEnvironment.dist.isClient();
+    }
 }

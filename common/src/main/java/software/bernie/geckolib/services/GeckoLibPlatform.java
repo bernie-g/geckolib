@@ -6,5 +6,7 @@ public interface GeckoLibPlatform {
 
     boolean isDevelopmentEnvironment();
 
+    boolean isPhysicalClient();
+
     Path getGameDir();
 }
