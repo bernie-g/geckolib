@@ -24,3 +24,5 @@ accessible field net/minecraft/client/model/AgeableListModel babyBodyScale F
 accessible field net/minecraft/client/model/AgeableListModel bodyYOffset F
 
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
+
+accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
