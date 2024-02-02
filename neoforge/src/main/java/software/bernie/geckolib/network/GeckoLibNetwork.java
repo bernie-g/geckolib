@@ -33,33 +33,6 @@ public final class GeckoLibNetwork {
 		registrar.play(BlockEntityAnimTriggerPacket.ID, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket);
 	}
 
-	private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
-
-	/**
-	 * Registers a synced {@link GeoAnimatable} object for networking support.<br>
-	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
-	 */
-	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
-
-		if (existing == null)
-			GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass().toString());
-	}
-
-	/**
-	 * Gets a registered synced {@link GeoAnimatable} object by name
-	 * @param className
-	 */
-	@Nullable
-	public static GeoAnimatable getSyncedAnimatable(String className) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
-
-		if (animatable == null)
-			GeckoLib.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
-
-		return animatable;
-	}
-
 	/**
 	 * Send a packet using GeckoLib's packet channel
 	 */

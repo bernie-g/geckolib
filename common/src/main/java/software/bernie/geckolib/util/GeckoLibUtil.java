@@ -1,7 +1,9 @@
 package software.bernie.geckolib.util;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -12,10 +14,16 @@ import software.bernie.geckolib.core.animation.EasingType;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.network.SerializableDataTicket;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+
 /**
  * Helper class for various GeckoLib-specific functions.
  */
 public final class GeckoLibUtil {
+
+	public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
+
 	/**
 	 * Creates a new AnimatableInstanceCache for the given animatable object
 	 * @param animatable The animatable object
@@ -82,5 +90,31 @@ public final class GeckoLibUtil {
 	 */
 	synchronized public static <D> SerializableDataTicket<D> addDataTicket(SerializableDataTicket<D> dataTicket) {
 		return DataTickets.registerSerializable(dataTicket);
+	}
+
+	/**
+	 * Registers a synced {@link GeoAnimatable} object for networking support.<br>
+	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
+	 */
+	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
+		GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().getName(), animatable);
+
+		if (existing == null)
+			GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
+	}
+
+	/**
+	 * Gets a registered synced {@link GeoAnimatable} object by name
+	 *
+	 * @param className the className
+	 */
+	@Nullable
+	public static GeoAnimatable getSyncedAnimatable(String className) {
+		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
+
+		if (animatable == null)
+			GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
+
+		return animatable;
 	}
 }

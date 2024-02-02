@@ -30,8 +30,6 @@ public final class GeckoLibNetwork {
     public static final ResourceLocation BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_data_sync");
     public static final ResourceLocation BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_trigger_sync");
 
-    public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
-
     /**
      * Used to register packets that the server sends
      **/
@@ -46,31 +44,6 @@ public final class GeckoLibNetwork {
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, BlockEntityAnimTriggerPacket::receive);
     }
 
-    /**
-     * Registers a synced {@link GeoAnimatable} object for networking support.<br>
-     * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
-     */
-    synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-        GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
-
-        if (existing == null)
-            GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
-    }
-
-    /**
-     * Gets a registered synced {@link GeoAnimatable} object by name
-     *
-     * @param className the className
-     */
-    @Nullable
-    public static GeoAnimatable getSyncedAnimatable(String className) {
-        GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
-
-        if (animatable == null)
-            GeckoLib.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
-
-        return animatable;
-    }
 
     public static void sendWithCallback(AbstractPacket packet, IPacketCallback callback) {
         callback.onReadyToSend(packet);

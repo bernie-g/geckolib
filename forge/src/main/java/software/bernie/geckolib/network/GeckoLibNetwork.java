@@ -19,8 +19,6 @@ import java.util.Map;
  */
 public final class GeckoLibNetwork {
 	private static final SimpleChannel PACKET_CHANNEL = ChannelBuilder.named(new ResourceLocation(GeckoLib.MOD_ID, "main")).simpleChannel();
-	private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
-
 	public static void init() {
 		PACKET_CHANNEL.messageBuilder(AnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimDataSyncPacket::encode).decoder(AnimDataSyncPacket::decode).consumerMainThread(AnimDataSyncPacket::receivePacket).add();
 		PACKET_CHANNEL.messageBuilder(AnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimTriggerPacket::encode).decoder(AnimTriggerPacket::decode).consumerMainThread(AnimTriggerPacket::receivePacket).add();
@@ -28,31 +26,6 @@ public final class GeckoLibNetwork {
 		PACKET_CHANNEL.messageBuilder(EntityAnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(EntityAnimTriggerPacket::encode).decoder(EntityAnimTriggerPacket::decode).consumerMainThread(EntityAnimTriggerPacket::receivePacket).add();
 		PACKET_CHANNEL.messageBuilder(BlockEntityAnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(BlockEntityAnimDataSyncPacket::encode).decoder(BlockEntityAnimDataSyncPacket::decode).consumerMainThread(BlockEntityAnimDataSyncPacket::receivePacket).add();
 		PACKET_CHANNEL.messageBuilder(BlockEntityAnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(BlockEntityAnimTriggerPacket::encode).decoder(BlockEntityAnimTriggerPacket::decode).consumerMainThread(BlockEntityAnimTriggerPacket::receivePacket).add();
-	}
-
-	/**
-	 * Registers a synced {@link GeoAnimatable} object for networking support.<br>
-	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
-	 */
-	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
-
-		if (existing == null)
-			GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass().toString());
-	}
-
-	/**
-	 * Gets a registered synced {@link GeoAnimatable} object by name
-	 * @param className
-	 */
-	@Nullable
-	public static GeoAnimatable getSyncedAnimatable(String className) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
-
-		if (animatable == null)
-			GeckoLib.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
-
-		return animatable;
 	}
 
 	/**

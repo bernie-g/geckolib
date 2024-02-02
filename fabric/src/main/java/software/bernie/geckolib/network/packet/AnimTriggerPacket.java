@@ -10,6 +10,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
@@ -56,7 +57,7 @@ public class AnimTriggerPacket extends AbstractPacket {
     }
 
     private static <D> void runOnThread(String syncableId, long instanceId, String controllerName, String animName) {
-        GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(syncableId);
+        GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(syncableId);
 
         if (animatable != null) {
             AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);

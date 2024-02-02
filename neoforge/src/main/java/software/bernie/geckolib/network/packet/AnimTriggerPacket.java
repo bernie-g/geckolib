@@ -9,6 +9,7 @@ import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server
@@ -35,7 +36,7 @@ public record AnimTriggerPacket<D>(String syncableId, long instanceId, @Nullable
 
 	public void receivePacket(PlayPayloadContext context) {
 		context.workHandler().execute(() -> {
-			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+			GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
 
 			if (animatable != null) {
 				AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);

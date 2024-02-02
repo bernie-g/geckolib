@@ -8,6 +8,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Packet for syncing user-definable animation data for {@link SingletonGeoAnimatable} instances
@@ -42,7 +43,7 @@ public class AnimDataSyncPacket<D> {
 	}
 
 	public void receivePacket(CustomPayloadEvent.Context context) {
-		GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+		GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
 
 		if (animatable instanceof SingletonGeoAnimatable singleton)
 			singleton.setAnimData(ClientUtils.getClientPlayer(), this.instanceId, this.dataTicket, this.data);

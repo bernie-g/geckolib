@@ -5,6 +5,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +37,7 @@ public class AnimTriggerPacket<D> {
 	}
 
 	public void receivePacket(CustomPayloadEvent.Context context) {
-		GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+		GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
 
 		if (animatable != null) {
 			AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
