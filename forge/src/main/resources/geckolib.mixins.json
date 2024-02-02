@@ -10,6 +10,8 @@
   "mixins": [
   ],
   "client": [
-    "client.TextureManagerMixin"
+    "client.TextureManagerMixin",
+    "client.MixinHumanoidArmorLayer",
+    "client.MixinItemRenderer"
   ]
 }
