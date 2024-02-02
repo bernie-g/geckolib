@@ -15,4 +15,8 @@ public interface GeckoLibNetworking {
     <D> void syncEntityAnimData(Entity entity, SerializableDataTicket<D> dataTicket, D data);
 
     void entityAnimTrigger(Entity entity, @Nullable String controllerName, String animName);
+
+    <D> void syncSingletonAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack);
+
+    void singletonTriggerAnim(String animatableClassName, long instanceId, @Nullable String controllerName, String animName, Entity entityToTrack);
 }

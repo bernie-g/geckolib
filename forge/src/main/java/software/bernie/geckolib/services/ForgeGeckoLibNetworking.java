@@ -7,10 +7,7 @@ import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.network.packet.BlockEntityAnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.BlockEntityAnimTriggerPacket;
-import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
-import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
+import software.bernie.geckolib.network.packet.*;
 
 public class ForgeGeckoLibNetworking implements GeckoLibNetworking {
 
@@ -34,5 +31,18 @@ public class ForgeGeckoLibNetworking implements GeckoLibNetworking {
     @Override
     public void entityAnimTrigger(Entity entity, @Nullable String controllerName, String animName){
         GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entity));
+    }
+
+    @Override
+    public <D> void syncSingletonAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack){
+        GeckoLibNetwork.send(new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data),
+                PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entityToTrack));
+    }
+
+    @Override
+    public void singletonTriggerAnim(String animatableClassName, long instanceId, @Nullable String controllerName, String animName, Entity entityToTrack){
+        GeckoLibNetwork.send(new AnimTriggerPacket<>(animatableClassName, instanceId, controllerName, animName),
+                PacketDistributor.TRACKING_ENTITY_AND_SELF.with(entityToTrack));
+
     }
 }
