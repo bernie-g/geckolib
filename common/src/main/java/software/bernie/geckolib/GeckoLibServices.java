@@ -23,6 +23,5 @@ public class GeckoLibServices {
 
     public static class Client {
         public static final GeckoLibEvents EVENTS = load(GeckoLibEvents.class);
-        //TODO Events on GeoRenderers
     }
 }

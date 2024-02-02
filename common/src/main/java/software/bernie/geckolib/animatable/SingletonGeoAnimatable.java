@@ -101,7 +101,6 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     }
 
 
-    //TODO Remove in favour of client-only container
     /**
      * Create your RenderProvider reference here.<br>
      * <b><u>MUST provide an anonymous class</u></b><br>
