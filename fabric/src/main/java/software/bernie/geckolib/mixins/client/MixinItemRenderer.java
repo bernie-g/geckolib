@@ -20,20 +20,18 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
  */
 @Mixin(ItemRenderer.class)
 public class MixinItemRenderer {
-    // Done in two parts so that the cancellation of the vanilla render can fail-safe without breaking functionality
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
-    public void itemModelHook(ItemStack itemStack, ItemDisplayContext transformType, boolean bl, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, BakedModel bakedModel, CallbackInfo ci){
-       final BlockEntityWithoutLevelRenderer renderer = RenderProvider.of(itemStack).getCustomRenderer();
-
-       if (renderer != RenderProvider.DEFAULT.getCustomRenderer()) //If renderer is our own
-           renderer.renderByItem(itemStack, transformType, poseStack, multiBufferSource, i, j);
-    }
     @WrapOperation(method = "render", require = 0,
             at = @At(value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
     public void cancelRender(BlockEntityWithoutLevelRenderer renderer, ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j, Operation<Void> operation) {
-        if (RenderProvider.of(itemStack).getCustomRenderer() == renderer) //If non geo rendering, render appropriately
-            renderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, i, j);
+
+        final BlockEntityWithoutLevelRenderer possibleCustomRenderer = RenderProvider.of(itemStack).getCustomRenderer();
+
+        if (possibleCustomRenderer != RenderProvider.DEFAULT.getCustomRenderer()) //The Item is a GeoItem and has a RenderProvider default, render it
+            possibleCustomRenderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, i, j);
+        else {
+            operation.call(renderer, itemStack, displayContext, poseStack, bufferSource, i, j);
+        }
     }
 }
