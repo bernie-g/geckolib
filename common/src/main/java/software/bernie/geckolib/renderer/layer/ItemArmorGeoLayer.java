@@ -26,6 +26,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -42,7 +43,7 @@ import java.util.Map;
 
 /**
  * Builtin class for handling dynamic armor rendering on GeckoLib entities.<br>
- * Supports both {@link software.bernie.geckolib.animatable.GeoItem GeckoLib} and {@link net.minecraft.world.item.ArmorItem Vanilla} armor models.<br>
+ * Supports both {@link GeoItem GeckoLib} and {@link ArmorItem Vanilla} armor models.<br>
  * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering.
  */
 public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
@@ -201,7 +202,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
 		
-		return RenderProvider.of(stack).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
+		return GeckoLibServices.Client.ITEM_RENDERING.getHumanoidModel(animatable, stack, slot, defaultModel);
 	}
 
 	/**

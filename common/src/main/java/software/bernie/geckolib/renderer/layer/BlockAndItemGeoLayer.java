@@ -19,8 +19,8 @@ import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
 /**
- * {@link GeoRenderLayer} for rendering {@link net.minecraft.world.level.block.state.BlockState BlockStates}
- * or {@link net.minecraft.world.item.ItemStack ItemStacks} on a given {@link GeoAnimatable}
+ * {@link GeoRenderLayer} for rendering {@link BlockState BlockStates}
+ * or {@link ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
 public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
     protected final BiFunction<GeoBone, T, ItemStack> stackForBone;
