@@ -44,11 +44,6 @@ public final class GeckoLibNetwork {
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, BlockEntityAnimTriggerPacket::receive);
     }
 
-
-    public static void sendWithCallback(AbstractPacket packet, IPacketCallback callback) {
-        callback.onReadyToSend(packet);
-    }
-
     public static void sendToTrackingEntityAndSelf(AbstractPacket packet, Entity entityToTrack) {
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(entityToTrack)) {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
@@ -62,9 +57,5 @@ public final class GeckoLibNetwork {
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(level, blockPos)) {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }
-    }
-
-    public interface IPacketCallback {
-        void onReadyToSend(AbstractPacket packetToSend);
     }
 }
