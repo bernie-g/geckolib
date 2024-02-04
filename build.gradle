@@ -107,12 +107,6 @@ subprojects {
     }
 
     publishing {
-        publications {
-            mavenJava(MavenPublication) {
-                from components.java
-                artifactId base.archivesName.get()
-            }
-        }
 
         repositories {
             if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {

@@ -6,6 +6,7 @@ plugins {
     id 'net.darkhax.curseforgegradle'
 }
 
+
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
 
 base {
@@ -61,8 +62,12 @@ tasks.withType(JavaCompile).configureEach {
     source(project(":common").sourceSets.main.allSource)
 }
 
-sourcesJar {
-    from project(":common").sourceSets.main.allSource
+tasks.named("sourcesJar", Jar) {
+    from(project(":common").sourceSets.main.allSource)
+}
+
+tasks.withType(Javadoc).configureEach {
+    source(project(":common").sourceSets.main.allJava)
 }
 
 processResources {
@@ -74,7 +79,7 @@ modrinth {
     projectId = '8BmcQJ2H'
     versionNumber = project.version
     versionName = "Fabric ${minecraft_version}"
-    uploadFile = tasks.remapJar.exclude("assets/")
+    uploadFile = tasks.remapJar
     changelog = rootProject.file("changelog.txt").text
     gameVersions = [minecraft_version]
     versionType = "release"
@@ -92,7 +97,7 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    def mainFile = upload(388172, tasks.remapJar.exclude("assets/"))
+    def mainFile = upload(388172, tasks.remapJar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(minecraft_version)
@@ -100,6 +105,15 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     mainFile.changelog = rootProject.file("changelog.txt").text
     debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId base.archivesName.get()
+        }
+    }
 }
 
 publish.finalizedBy('modrinth', 'publishToCurseForge')

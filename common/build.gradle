@@ -18,3 +18,14 @@ dependencies {
     compileOnly group:'org.spongepowered', name:'mixin', version:'0.8.5'
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
 }
+
+publishing {
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+                artifactId base.archivesName.get()
+            }
+        }
+    }
+}
