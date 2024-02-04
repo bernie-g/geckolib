@@ -5,20 +5,26 @@
 
 package software.bernie.example;
 
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 
 @Mod(GeckoLibConstants.MODID)
 public final class GeckoLibMod {
 	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
 
 	public GeckoLibMod() {
-		GeckoLib.initialize();
+		if (FMLEnvironment.dist.isClient())
+			GeckoLibCache.registerReloadListener();
+
+		GeckoLibNetwork.init();
 
 		if (shouldRegisterExamples()) {
 			IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();

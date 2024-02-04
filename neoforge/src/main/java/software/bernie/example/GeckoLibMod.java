@@ -5,19 +5,24 @@
 
 package software.bernie.example;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 
 @Mod(GeckoLibConstants.MODID)
 public final class GeckoLibMod {
 	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
 
 	public GeckoLibMod(IEventBus modBus) {
-		GeckoLib.initialize(modBus);
+		if (FMLEnvironment.dist.isClient())
+			GeckoLibCache.registerReloadListener();
+
+		GeckoLibNetwork.init(modBus);
 
 		if (shouldRegisterExamples()) {
 			EntityRegistry.ENTITIES.register(modBus);
