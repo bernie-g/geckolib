@@ -7,6 +7,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.packet.*;
 
@@ -23,7 +24,7 @@ public final class GeckoLibNetwork {
 	}
 
 	private static void registerPackets(final RegisterPayloadHandlerEvent ev) {
-		final IPayloadRegistrar registrar = ev.registrar(GeckoLib.MOD_ID);
+		final IPayloadRegistrar registrar = ev.registrar(GeckoLibConstants.MODID);
 
 		registrar.play(AnimDataSyncPacket.ID, AnimDataSyncPacket::decode, AnimDataSyncPacket::receivePacket);
 		registrar.play(AnimTriggerPacket.ID, AnimTriggerPacket::decode, AnimTriggerPacket::receivePacket);

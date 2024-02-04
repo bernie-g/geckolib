@@ -5,6 +5,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -17,7 +18,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * Packet for syncing user-definable animation data for {@link SingletonGeoAnimatable} instances
  */
 public record AnimDataSyncPacket<D>(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_data_sync");
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLibConstants.MODID, "anim_data_sync");
 
 	@Override
 	public ResourceLocation id() {

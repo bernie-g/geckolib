@@ -9,7 +9,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobCategory;
 import software.bernie.example.entity.*;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public class EntityRegistry {
 
@@ -28,6 +28,6 @@ public class EntityRegistry {
     public static <T extends Mob> EntityType<T> registerMob(String name, EntityType.EntityFactory<T> entity,
                                                             float width, float height) {
         return Registry.register(BuiltInRegistries.ENTITY_TYPE,
-                new ResourceLocation(GeckoLib.MOD_ID, name),FabricEntityTypeBuilder.create(MobCategory.CREATURE, entity).dimensions(EntityDimensions.scalable(width, height)).build());
+                new ResourceLocation(GeckoLibConstants.MODID, name),FabricEntityTypeBuilder.create(MobCategory.CREATURE, entity).dimensions(EntityDimensions.scalable(width, height)).build());
     }
 }

@@ -7,10 +7,11 @@ import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.GeckoHabitatBlock;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class BlockRegistry {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS,
-			GeckoLib.MOD_ID);
+			GeckoLibConstants.MODID);
 
 	public static final RegistryObject<GeckoHabitatBlock> GECKO_HABITAT = BLOCKS.register("gecko_habitat",
 			GeckoHabitatBlock::new);

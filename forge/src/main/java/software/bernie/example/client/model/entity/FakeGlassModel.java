@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.FakeGlassRenderer;
 import software.bernie.example.entity.FakeGlassEntity;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -17,7 +18,7 @@ public class FakeGlassModel extends DefaultedEntityGeoModel<FakeGlassEntity> {
 			new ResourceLocation("minecraft", "textures/block/redstone_block.png");
 
 	public FakeGlassModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "fake_glass"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "fake_glass"));
 	}
 
 	// We just want our texture to be the Redstone Block texture

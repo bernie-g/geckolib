@@ -3,6 +3,7 @@ package software.bernie.example.client.renderer.armor;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.WolfArmorItem;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -12,6 +13,6 @@ import software.bernie.geckolib.renderer.GeoRenderer;
  */
 public final class WolfArmorRenderer extends GeoArmorRenderer<WolfArmorItem> {
 	public WolfArmorRenderer() {
-		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "armor/wolf_armor")));
+		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLibConstants.MODID, "armor/wolf_armor")));
 	}
 }

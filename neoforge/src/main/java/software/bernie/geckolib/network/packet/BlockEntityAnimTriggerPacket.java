@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.util.ClientUtils;
 
@@ -14,7 +15,7 @@ import software.bernie.geckolib.util.ClientUtils;
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.level.block.entity.BlockEntity BlockEntities}
  */
 public record BlockEntityAnimTriggerPacket<D>(BlockPos pos, String controllerName, String animName) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_trigger");
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLibConstants.MODID, "block_entity_anim_trigger");
 
 	@Override
 	public ResourceLocation id() {

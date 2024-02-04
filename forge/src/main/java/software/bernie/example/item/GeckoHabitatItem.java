@@ -6,6 +6,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -31,7 +32,8 @@ public class GeckoHabitatItem extends BlockItem implements GeoItem {
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				if (this.renderer == null)
-					this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "gecko_habitat")));
+					this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(new ResourceLocation(
+							GeckoLibConstants.MODID, "gecko_habitat")));
 
 				return this.renderer;
 			}

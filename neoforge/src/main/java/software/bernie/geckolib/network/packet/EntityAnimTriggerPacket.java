@@ -5,8 +5,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
-import software.bernie.geckolib.GeckoLib;
-import software.bernie.geckolib.TransitionRenderUtils;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -19,7 +18,7 @@ import javax.annotation.Nullable;
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.entity.Entity Entities}
  */
 public record EntityAnimTriggerPacket<D>(int entityId, boolean isReplacedEntity, @Nullable String controllerName, String animName) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_trigger");
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLibConstants.MODID, "entity_anim_trigger");
 
 	@Override
 	public ResourceLocation id() {
@@ -50,7 +49,7 @@ public record EntityAnimTriggerPacket<D>(int entityId, boolean isReplacedEntity,
 				return;
 
 			if (this.isReplacedEntity) {
-				GeoAnimatable animatable = TransitionRenderUtils.getReplacedAnimatable(entity.getType());
+				GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
 
 				if (animatable instanceof GeoReplacedEntity replacedEntity)
 					replacedEntity.triggerAnim(entity, this.controllerName.isEmpty() ? null : this.controllerName, this.animName);

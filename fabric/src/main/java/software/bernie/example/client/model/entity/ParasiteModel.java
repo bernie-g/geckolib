@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.ParasiteRenderer;
 import software.bernie.example.entity.ParasiteEntity;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -14,7 +14,7 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class ParasiteModel extends DefaultedEntityGeoModel<ParasiteEntity> {
 	public ParasiteModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "parasite"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "parasite"));
 	}
 
 	// We want our model to render using the translucent render type

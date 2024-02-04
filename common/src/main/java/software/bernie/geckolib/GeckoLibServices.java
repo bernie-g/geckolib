@@ -1,7 +1,7 @@
 package software.bernie.geckolib;
 
 import software.bernie.geckolib.services.GeckoLibEvents;
-import software.bernie.geckolib.services.GeckoLibItemHelper;
+import software.bernie.geckolib.services.GeckoLibRenderProviderHelper;
 import software.bernie.geckolib.services.GeckoLibNetworking;
 import software.bernie.geckolib.services.GeckoLibPlatform;
 
@@ -24,6 +24,6 @@ public class GeckoLibServices {
 
     public static class Client {
         public static final GeckoLibEvents EVENTS = load(GeckoLibEvents.class);
-        public static final GeckoLibItemHelper ITEM_RENDERING = load(GeckoLibItemHelper.class);
+        public static final GeckoLibRenderProviderHelper ITEM_RENDERING = load(GeckoLibRenderProviderHelper.class);
     }
 }

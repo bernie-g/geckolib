@@ -8,10 +8,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.entity.*;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class EntityRegistry {
 	public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,
-			GeckoLib.MOD_ID);
+			GeckoLibConstants.MODID);
 
 	public static final RegistryObject<EntityType<BatEntity>> BAT = registerMob("bat", BatEntity::new,
 			0.7f, 1.3f, 0x1F1F1F, 0x0D0D0D);

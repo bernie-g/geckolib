@@ -4,7 +4,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.BikeRenderer;
 import software.bernie.example.entity.BikeEntity;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -14,7 +14,7 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class BikeModel extends DefaultedEntityGeoModel<BikeEntity> {
 	public BikeModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "bike"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "bike"));
 	}
 
 	// We want this entity to have a translucent render

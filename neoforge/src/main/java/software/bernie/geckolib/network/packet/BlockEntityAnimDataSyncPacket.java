@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
@@ -16,7 +17,7 @@ import software.bernie.geckolib.util.ClientUtils;
  * Packet for syncing user-definable animation data for {@link BlockEntity BlockEntities}
  */
 public record BlockEntityAnimDataSyncPacket<D>(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) implements CustomPacketPayload {
-	public static final ResourceLocation ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_data_sync");
+	public static final ResourceLocation ID = new ResourceLocation(GeckoLibConstants.MODID, "block_entity_anim_data_sync");
 
 	@Override
 	public ResourceLocation id() {

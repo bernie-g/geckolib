@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -19,7 +19,7 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class GeckoHabitatModel extends DefaultedBlockGeoModel<GeckoHabitatBlockEntity> {
 	public GeckoHabitatModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "gecko_habitat"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "gecko_habitat"));
 	}
 
 	@Override

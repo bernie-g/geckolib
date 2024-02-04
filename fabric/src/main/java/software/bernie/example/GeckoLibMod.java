@@ -2,22 +2,17 @@ package software.bernie.example;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import software.bernie.example.registry.*;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class GeckoLibMod implements ModInitializer {
 
-	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
-	private static final boolean isDevelopmentEnvironment = FabricLoader.getInstance().isDevelopmentEnvironment();
-
 	@Override
 	public void onInitialize() {
-		GeckoLib.initialize();
-		if (!shouldRegisterExamples()) {
+		if (!GeckoLibConstants.shouldRegisterExamples()) {
 			return;
 		}
 
@@ -51,15 +46,4 @@ public final class GeckoLibMod implements ModInitializer {
 				.add(Attributes.ATTACK_KNOCKBACK, 0.1);
 	}
 
-	/**
-	 * By default, GeckoLib will register and activate several example entities,
-	 * items, and blocks when in dev.<br>
-	 * These examples are <u>not</u> present when in a production environment
-	 * (normal players).<br>
-	 * This can be disabled by setting the
-	 * {@link GeckoLibMod#DISABLE_EXAMPLES_PROPERTY_KEY} to false in your run args
-	 */
-	static boolean shouldRegisterExamples() {
-		return isDevelopmentEnvironment && !Boolean.getBoolean(DISABLE_EXAMPLES_PROPERTY_KEY);
-	}
 }

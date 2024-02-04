@@ -25,11 +25,15 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 import javax.annotation.Nullable;
 
@@ -226,5 +230,83 @@ public final class RenderUtils {
 			case EAST -> 180f;
 			default -> 0f;
 		};
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link EntityType}.<br>
+	 * This only works if you're calling this method for an EntityType known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param entityType The {@code EntityType} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoModel<?> getGeoModelForEntityType(EntityType<?> entityType) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
+
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a GeoAnimatable instance that has been registered as the replacement renderer for a given {@link EntityType}
+	 * @param entityType The {@code EntityType} to retrieve the replaced {@link GeoAnimatable} for
+	 * @return The {@code GeoAnimatable} instance, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
+
+		return renderer instanceof GeoReplacedEntityRenderer<?, ?> replacedEntityRenderer ? replacedEntityRenderer.getAnimatable() : null;
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Entity}.<br>
+	 * This only works if you're calling this method for an Entity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param entity The {@code Entity} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
+		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
+
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
+	 * This only works if you're calling this method for an Item known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param item The {@code Item} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoModel<?> getGeoModelForItem(Item item) {
+		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForItem(item);
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link BlockEntity}.<br>
+	 * This only works if you're calling this method for a BlockEntity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param blockEntity The {@code BlockEntity} to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
+		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
+
+		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+	}
+
+	/**
+	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
+	 * This only works if you're calling this method for an Item known to be using a {@link software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer}.<br>
+	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * @param stack The ItemStack to retrieve the GeoModel for
+	 * @return The GeoModel, or null if one isn't found
+	 */
+	@org.jetbrains.annotations.Nullable
+	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
+		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack);
 	}
 }

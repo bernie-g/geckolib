@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.layer.CoolKidGlassesLayer;
 import software.bernie.example.entity.CoolKidEntity;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -15,7 +16,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  */
 public class CoolKidRenderer extends GeoEntityRenderer<CoolKidEntity> {
 	public CoolKidRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new DefaultedEntityGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "cool_kid")));
+        super(renderManager, new DefaultedEntityGeoModel<>(new ResourceLocation(GeckoLibConstants.MODID, "cool_kid")));
 
 		this.shadowRadius = 0.25f;
 

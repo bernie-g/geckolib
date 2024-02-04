@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
 import software.bernie.example.client.model.entity.MutantZombieModel;
 import software.bernie.example.entity.DynamicExampleEntity;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
@@ -45,7 +45,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampl
 	private static final String LEFT_SLEEVE = "armorBipedLeftArm";
 	private static final String HELMET = "armorBipedHead";
 
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/dynamic_entity_cape.png");
+	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLibConstants.MODID, "textures/entity/dynamic_entity_cape.png");
 
 	protected ItemStack mainHandItem;
 	protected ItemStack offhandItem;

@@ -7,6 +7,7 @@ import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.SimpleChannel;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.packet.*;
 
@@ -18,7 +19,7 @@ import java.util.Map;
  * Handles packet registration and some networking functions
  */
 public final class GeckoLibNetwork {
-	private static final SimpleChannel PACKET_CHANNEL = ChannelBuilder.named(new ResourceLocation(GeckoLib.MOD_ID, "main")).simpleChannel();
+	private static final SimpleChannel PACKET_CHANNEL = ChannelBuilder.named(new ResourceLocation(GeckoLibConstants.MODID, "main")).simpleChannel();
 	public static void init() {
 		PACKET_CHANNEL.messageBuilder(AnimDataSyncPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimDataSyncPacket::encode).decoder(AnimDataSyncPacket::decode).consumerMainThread(AnimDataSyncPacket::receivePacket).add();
 		PACKET_CHANNEL.messageBuilder(AnimTriggerPacket.class, NetworkDirection.PLAY_TO_CLIENT).encoder(AnimTriggerPacket::encode).decoder(AnimTriggerPacket::decode).consumerMainThread(AnimTriggerPacket::receivePacket).add();

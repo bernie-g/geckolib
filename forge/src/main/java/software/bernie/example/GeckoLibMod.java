@@ -11,8 +11,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import software.bernie.example.registry.*;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
-@Mod(GeckoLib.MOD_ID)
+@Mod(GeckoLibConstants.MODID)
 public final class GeckoLibMod {
 	public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
 

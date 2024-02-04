@@ -3,7 +3,6 @@ package software.bernie.geckolib.network.packet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
-import software.bernie.geckolib.TransitionRenderUtils;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -50,7 +49,7 @@ public class EntityAnimTriggerPacket<D> {
 			return;
 
 		if (this.isReplacedEntity) {
-			GeoAnimatable animatable = TransitionRenderUtils.getReplacedAnimatable(entity.getType());
+			GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
 
 			if (animatable instanceof GeoReplacedEntity replacedEntity)
 				replacedEntity.triggerAnim(entity, this.controllerName.isEmpty() ? null : this.controllerName, this.animName);

@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -18,12 +19,12 @@ import software.bernie.geckolib.model.GeoModel;
  * @see FertilizerBlockRenderer
  */
 public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntity> {
-	private final ResourceLocation BOTARIUM_MODEL = buildFormattedModelPath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
-	private final ResourceLocation BOTARIUM_TEXTURE = buildFormattedTexturePath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
-	private final ResourceLocation BOTARIUM_ANIMATIONS = buildFormattedAnimationPath(new ResourceLocation(GeckoLib.MOD_ID, "botarium"));
+	private final ResourceLocation BOTARIUM_MODEL = buildFormattedModelPath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
+	private final ResourceLocation BOTARIUM_TEXTURE = buildFormattedTexturePath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
+	private final ResourceLocation BOTARIUM_ANIMATIONS = buildFormattedAnimationPath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
 
 	public FertilizerModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "fertilizer"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "fertilizer"));
 	}
 
 	/**

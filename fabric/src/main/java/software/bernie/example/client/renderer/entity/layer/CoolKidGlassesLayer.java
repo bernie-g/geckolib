@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.entity.CoolKidEntity;
-import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -18,7 +18,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
  * @see software.bernie.example.client.renderer.entity.CoolKidRenderer
  */
 public class CoolKidGlassesLayer extends GeoRenderLayer<CoolKidEntity> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/cool_kid_glasses.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLibConstants.MODID, "textures/entity/cool_kid_glasses.png");
 
 	public CoolKidGlassesLayer(GeoRenderer<CoolKidEntity> entityRenderer) {
         super(entityRenderer);

@@ -7,10 +7,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class BlockEntityRegistry {
 	public static final DeferredRegister<BlockEntityType<?>> TILES = DeferredRegister
-			.create(Registries.BLOCK_ENTITY_TYPE, GeckoLib.MOD_ID);
+			.create(Registries.BLOCK_ENTITY_TYPE, GeckoLibConstants.MODID);
 
 	public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeckoHabitatBlockEntity>> GECKO_HABITAT = TILES
 			.register("habitat", () -> BlockEntityType.Builder

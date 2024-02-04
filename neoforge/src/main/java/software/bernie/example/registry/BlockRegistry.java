@@ -7,10 +7,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.GeckoHabitatBlock;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class BlockRegistry {
 	public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(Registries.BLOCK,
-			GeckoLib.MOD_ID);
+			GeckoLibConstants.MODID);
 
 	public static final DeferredHolder<Block, GeckoHabitatBlock> GECKO_HABITAT = BLOCKS.register("gecko_habitat",
 			GeckoHabitatBlock::new);

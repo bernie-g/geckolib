@@ -12,10 +12,11 @@ import software.bernie.example.item.GeckoHabitatItem;
 import software.bernie.example.item.JackInTheBoxItem;
 import software.bernie.example.item.WolfArmorItem;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 
 public final class ItemRegistry {
-	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLib.MOD_ID);
-	public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GeckoLib.MOD_ID);
+	public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GeckoLibConstants.MODID);
+	public static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GeckoLibConstants.MODID);
 
 	public static final RegistryObject<BlockItem> GECKO_HABITAT = ITEMS.register("gecko_habitat",
 			() -> new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT.get(),
@@ -55,7 +56,7 @@ public final class ItemRegistry {
     public static final RegistryObject<ForgeSpawnEggItem> GREMLIN_SPAWN_EGG = ITEMS.register("gremlin_spawn_egg", () -> new ForgeSpawnEggItem(EntityRegistry.GREMLIN, 0x505050, 0x606060, new Item.Properties()));
 
 	public static final RegistryObject<CreativeModeTab> GECKOLIB_TAB = TABS.register("geckolib_examples", () -> CreativeModeTab.builder()
-			.title(Component.translatable("itemGroup." + GeckoLib.MOD_ID + ".geckolib_examples"))
+			.title(Component.translatable("itemGroup." + GeckoLibConstants.MODID + ".geckolib_examples"))
 			.icon(() -> new ItemStack(ItemRegistry.JACK_IN_THE_BOX.get()))
 			.displayItems((enabledFeatures, entries) -> {
 				entries.accept(ItemRegistry.JACK_IN_THE_BOX.get());

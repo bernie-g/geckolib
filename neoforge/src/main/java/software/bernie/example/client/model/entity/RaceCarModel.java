@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.RaceCarRenderer;
 import software.bernie.example.entity.RaceCarEntity;
 import software.bernie.geckolib.GeckoLib;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -14,7 +15,7 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class RaceCarModel extends DefaultedEntityGeoModel<RaceCarEntity> {
 	public RaceCarModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "race_car"));
+		super(new ResourceLocation(GeckoLibConstants.MODID, "race_car"));
 	}
 
 	// We want our model to render using the translucent render type
