@@ -5,7 +5,6 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;

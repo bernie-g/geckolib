@@ -19,7 +19,6 @@ import software.bernie.example.client.renderer.entity.*;
 import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.example.registry.BlockRegistry;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 @Mod.EventBusSubscriber(modid = GeckoLibConstants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

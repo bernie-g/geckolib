@@ -6,7 +6,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 public final class BlockEntityRegistry {

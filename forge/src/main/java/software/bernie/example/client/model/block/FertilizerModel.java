@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;

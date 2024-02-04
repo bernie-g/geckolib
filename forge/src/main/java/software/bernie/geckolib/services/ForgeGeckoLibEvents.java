@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.*;
 

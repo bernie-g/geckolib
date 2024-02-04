@@ -1,7 +1,6 @@
 package software.bernie.geckolib.services;
 
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -11,7 +10,6 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class FabricGeckoLibRenderProviderHelper implements GeckoLibRenderProviderHelper {

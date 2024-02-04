@@ -9,7 +9,6 @@ import software.bernie.geckolib.core.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib.core.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.loading.object.BakedAnimations;
-import software.bernie.geckolib.util.JsonUtil;
 
 import java.lang.reflect.Type;
 import java.util.Map;

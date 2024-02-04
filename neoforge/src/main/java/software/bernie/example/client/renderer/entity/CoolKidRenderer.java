@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.client.renderer.entity.layer.CoolKidGlassesLayer;
 import software.bernie.example.entity.CoolKidEntity;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;

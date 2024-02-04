@@ -26,12 +26,10 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 

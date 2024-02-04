@@ -8,7 +8,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 @Mod.EventBusSubscriber(modid = GeckoLibConstants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)

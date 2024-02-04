@@ -1,18 +1,12 @@
 package software.bernie.geckolib.network;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.SimpleChannel;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.packet.*;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 /**
  * Network handling class for GeckoLib.<br>

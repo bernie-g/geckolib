@@ -1,9 +1,9 @@
 package software.bernie.geckolib;
 
 import software.bernie.geckolib.services.GeckoLibEvents;
-import software.bernie.geckolib.services.GeckoLibRenderProviderHelper;
 import software.bernie.geckolib.services.GeckoLibNetworking;
 import software.bernie.geckolib.services.GeckoLibPlatform;
+import software.bernie.geckolib.services.GeckoLibRenderProviderHelper;
 
 import java.util.ServiceLoader;
 

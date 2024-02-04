@@ -6,7 +6,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.example.block.FertilizerBlock;
 import software.bernie.example.block.GeckoHabitatBlock;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 public final class BlockRegistry {

@@ -16,6 +16,8 @@ public final class GeckoLibMod implements ModInitializer {
 			return;
 		}
 
+		//TODO probably fix
+
 		new EntityRegistry();
 		registerEntityAttributes();
 

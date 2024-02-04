@@ -3,11 +3,9 @@ package software.bernie.example.client.renderer.armor;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.example.item.GeckoArmorItem;
 import software.bernie.example.item.WolfArmorItem;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
 
 /**

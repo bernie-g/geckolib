@@ -1,18 +1,12 @@
 package software.bernie.geckolib.network;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.packet.*;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 /**
  * Network handling class for GeckoLib.<br>

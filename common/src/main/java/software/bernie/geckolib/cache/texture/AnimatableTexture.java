@@ -1,6 +1,5 @@
 package software.bernie.geckolib.cache.texture;
 
-import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;

@@ -17,7 +17,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import software.bernie.example.block.entity.FertilizerBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.registry.BlockEntityRegistry;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 import javax.annotation.Nullable;

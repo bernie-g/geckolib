@@ -8,7 +8,6 @@ import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import software.bernie.example.registry.EntityRegistry;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.GeckoLibConstants;
 
 @Mod.EventBusSubscriber(modid = GeckoLibConstants.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
