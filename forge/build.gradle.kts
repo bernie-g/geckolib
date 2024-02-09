@@ -1,4 +1,5 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.minecraftforge.gradle.userdev.tasks.JarJar
 
 plugins {
     id("java")
@@ -21,6 +22,8 @@ val forge_version: String by project
 base {
     archivesName = "geckolib-forge-${minecraft_version}"
 }
+
+jarJar.enable()
 
 minecraft {
     mappings("parchment", "${mappings_mc_version}-${parchment_version}-${minecraft_version}")
@@ -84,8 +87,6 @@ minecraft {
     }
 }
 
-jarJar.enable()
-
 dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
     compileOnly(project(":common"))
@@ -97,6 +98,14 @@ dependencies {
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.5")) {
         jarJar.ranged(this, "[0.3.5,)") //TODO figure out jarJar again
     }
+}
+
+tasks.named<Jar>("jar").configure {
+    archiveClassifier.set("slim")
+}
+
+tasks.named<JarJar>("jarJar").configure {
+    archiveClassifier.set("")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -125,7 +134,7 @@ modrinth {
 		projectId = "8BmcQJ2H"
 		versionNumber.set(project.version.toString())
 		versionName = "Forge ${minecraft_version}"
-		uploadFile.set(tasks.named<Jar>("jar"))
+		uploadFile.set(tasks.named<JarJar>("jarJar"))
 		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 		gameVersions.set(listOf(minecraft_version))
 		loaders.set(listOf("Fabric"))
@@ -137,7 +146,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.jar)
+    val mainFile = upload(388172, tasks.jarJar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(minecraft_version)
@@ -152,6 +161,7 @@ publishing {
         publications {
             create<MavenPublication>("maven") {
                 from(components["java"])
+                jarJar.component(this)
                 artifactId = base.archivesName.get()
             }
         }
