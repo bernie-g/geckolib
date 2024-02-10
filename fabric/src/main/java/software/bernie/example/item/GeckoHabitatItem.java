@@ -17,7 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class GeckoHabitatItem extends BlockItem implements GeoItem {
-	private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private final Supplier<Object> renderProvider = GeoItem.makeRenderer(this);
 
 	public GeckoHabitatItem(Block block, Properties properties) {
@@ -28,7 +28,7 @@ public class GeckoHabitatItem extends BlockItem implements GeoItem {
 	@Override
 	public void createRenderer(Consumer<Object> consumer) {
 		consumer.accept(new RenderProvider() {
-			private GeoItemRenderer<GeckoHabitatItem> renderer = null;
+			private GeoItemRenderer<GeckoHabitatItem> renderer;
 
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
@@ -51,6 +51,6 @@ public class GeckoHabitatItem extends BlockItem implements GeoItem {
 
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return this.geoCache;
+		return this.cache;
 	}
 }
