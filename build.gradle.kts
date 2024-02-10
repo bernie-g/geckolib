@@ -24,7 +24,7 @@ val neoforge_loader_range: String by project
 
 subprojects {
 
-    //This is frowned upon, and buildSrc should be used.---
+    //This is frowned upon, and buildSrc should be used.
     apply(plugin = "java")
     apply(plugin = "maven-publish")
 
@@ -97,14 +97,15 @@ subprojects {
             val jsonMinifyStart = System.currentTimeMillis()
             var jsonMinified = 0
             var jsonBytesSaved = 0
-            // /* fileTree(outputs.files.asPath, "**/*.json").each {
-            /*val file = it
-            jsonMinified++
-            val oldLength = file.length()
-            file.text = JsonOutput.toJson(JsonSlurper().parse(file))
-            jsonBytesSaved += oldLength - file.length()
-            println(file.name)
-        }*/
+            val tree = fileTree(outputs.files.asPath)
+            tree.include("**/*.json")
+            tree.forEach {
+                jsonMinified++
+                val oldLength = it.length()
+                it.writeText(JsonOutput.toJson(JsonSlurper().parse(it)), Charsets.UTF_8)
+                jsonBytesSaved += (oldLength - it.length()).toInt()
+                println(it.name)
+            }
             println("Minified " + jsonMinified + " json files. Saved " + jsonBytesSaved + " bytes. Took " + (System.currentTimeMillis() - jsonMinifyStart) + "ms.")
         }
     }
