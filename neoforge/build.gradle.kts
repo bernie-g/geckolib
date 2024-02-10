@@ -97,7 +97,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("maven") {
+            create<MavenPublication>("geckolib") {
                 from(components["java"])
                 artifactId = base.archivesName.get()
             }
