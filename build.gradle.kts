@@ -27,6 +27,8 @@ subprojects {
     //This is frowned upon, and buildSrc should be used.
     apply(plugin = "java")
     apply(plugin = "maven-publish")
+    apply(plugin = "idea")
+    apply(plugin = "eclipse")
 
     extensions.configure<JavaPluginExtension> {
         toolchain.languageVersion = JavaLanguageVersion.of(17)

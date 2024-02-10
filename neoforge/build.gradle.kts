@@ -1,10 +1,6 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
-    id("java")
-    id("eclipse") //both are required for the ideCopyResourcesTask
-    id("idea")
-    id("maven-publish")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("net.neoforged.gradle.userdev") version "7.+"

@@ -2,11 +2,9 @@ import net.fabricmc.loom.task.RemapJarTask
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
-    id("fabric-loom") version "1.5-SNAPSHOT"
-    id("java")
-    id("maven-publish")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
+    id("fabric-loom") version "1.5-SNAPSHOT"
 }
 
 val minecraft_version: String by project

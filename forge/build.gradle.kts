@@ -2,10 +2,6 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.minecraftforge.gradle.userdev.tasks.JarJar
 
 plugins {
-    id("java")
-    id("eclipse") //both are required for the ideCopyResourcesTask
-    id("idea")
-    id("maven-publish")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("net.minecraftforge.gradle") version "[6.0,6.2)"
