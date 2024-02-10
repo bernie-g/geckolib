@@ -97,14 +97,15 @@ subprojects {
             val jsonMinifyStart = System.currentTimeMillis()
             var jsonMinified = 0
             var jsonBytesSaved = 0
-            val tree = fileTree(outputs.files.asPath)
-            tree.include("**/*.json")
-            tree.forEach {
-                jsonMinified++
-                val oldLength = it.length()
-                it.writeText(JsonOutput.toJson(JsonSlurper().parse(it)), Charsets.UTF_8)
-                jsonBytesSaved += (oldLength - it.length()).toInt()
-                println(it.name)
+            fileTree(outputs.files.asPath) {
+                include("**/*.json")
+                forEach {
+                    jsonMinified++
+                    val oldLength = it.length()
+                    it.writeText(JsonOutput.toJson(JsonSlurper().parse(it)), Charsets.UTF_8)
+                    jsonBytesSaved += (oldLength - it.length()).toInt()
+                    //println(it.name)
+                }
             }
             println("Minified " + jsonMinified + " json files. Saved " + jsonBytesSaved + " bytes. Took " + (System.currentTimeMillis() - jsonMinifyStart) + "ms.")
         }
