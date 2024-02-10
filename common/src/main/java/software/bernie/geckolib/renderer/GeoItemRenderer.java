@@ -154,7 +154,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
-		this.itemRenderTranslations = new Matrix4f(poseStack.last().pose());;
+		this.itemRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 
