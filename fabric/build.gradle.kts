@@ -31,6 +31,9 @@ repositories {
     maven {
         name = "ParchmentMC"
         url = uri("https://maven.parchmentmc.org")
+        content {
+            includeGroupAndSubgroups("org.parchmentmc")
+        }
     }
 }
 
