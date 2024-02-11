@@ -53,18 +53,6 @@ subprojects {
         }
     }
 
-    repositories {
-        mavenCentral()
-        maven {
-            name = "Sponge / Mixin"
-            url = uri("https://repo.spongepowered.org/repository/maven-public/")
-        }
-        maven {
-            name = "BlameJared Maven (JEI / CraftTweaker / Bookshelf)"
-            url = uri("https://maven.blamejared.com")
-        }
-    }
-
     tasks.withType<JavaCompile>().configureEach {
         this.options.encoding = "UTF-8"
         this.options.getRelease().set(17)
