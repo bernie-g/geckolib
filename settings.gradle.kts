@@ -47,4 +47,8 @@ plugins {
 }
 
 rootProject.name = "geckolib"
-include("common", "fabric", "forge", "neoforge")
+
+include("common")
+include("fabric")
+include("forge")
+include("neoforge")
