@@ -20,23 +20,23 @@ import software.bernie.geckolib.util.ClientUtils;
  * BlockEntities}
  */
 public class BlockEntityAnimDataSyncPacket<D> extends AbstractPacket {
-	private final BlockPos BLOCK_POS;
-	private final SerializableDataTicket<D> DATA_TICKET;
-	private final D DATA;
+	private final BlockPos blockPos;
+	private final SerializableDataTicket<D> dataTicket;
+	private final D data;
 
 	public BlockEntityAnimDataSyncPacket(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) {
-		this.BLOCK_POS = pos;
-		this.DATA_TICKET = dataTicket;
-		this.DATA = data;
+		this.blockPos = pos;
+		this.dataTicket = dataTicket;
+		this.data = data;
 	}
 
 	@Override
 	public FriendlyByteBuf encode() {
 		FriendlyByteBuf buf = PacketByteBufs.create();
 
-		buf.writeBlockPos(this.BLOCK_POS);
-		buf.writeUtf(this.DATA_TICKET.id());
-		this.DATA_TICKET.encode(this.DATA, buf);
+		buf.writeBlockPos(this.blockPos);
+		buf.writeUtf(this.dataTicket.id());
+		this.dataTicket.encode(this.data, buf);
 
 		return buf;
 	}
@@ -47,11 +47,11 @@ public class BlockEntityAnimDataSyncPacket<D> extends AbstractPacket {
 	}
 
 	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		final BlockPos BLOCK_POS = buf.readBlockPos();
-		final SerializableDataTicket<D> DATA_TICKET = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
-		final D DATA = DATA_TICKET.decode(buf);
+		final BlockPos blockPos = buf.readBlockPos();
+		final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
+		final D data = dataTicket.decode(buf);
 
-		client.execute(() -> runOnThread(BLOCK_POS, DATA_TICKET, DATA));
+		client.execute(() -> runOnThread(blockPos, dataTicket, data));
 	}
 
 	private static <D> void runOnThread(BlockPos blockPos, SerializableDataTicket<D> dataTicket, D data) {

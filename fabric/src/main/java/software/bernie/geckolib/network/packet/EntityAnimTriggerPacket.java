@@ -22,11 +22,11 @@ import javax.annotation.Nullable;
  * server for {@link net.minecraft.world.entity.Entity Entities}
  */
 public class EntityAnimTriggerPacket extends AbstractPacket {
-    private final int ENTITY_ID;
-    private final boolean IS_REPLACED_ENTITY;
+    private final int entityId;
+    private final boolean isReplacedEntity;
 
-    private final String CONTROLLER_NAME;
-    private final String ANIM_NAME;
+    private final String controllerName;
+    private final String animName;
 
     public EntityAnimTriggerPacket(int entityId, @Nullable String controllerName, String animName) {
         this(entityId, false, controllerName, animName);
@@ -34,21 +34,21 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
 
     public EntityAnimTriggerPacket(int entityId, boolean isReplacedEntity, @Nullable String controllerName,
                                    String animName) {
-        this.ENTITY_ID = entityId;
-        this.IS_REPLACED_ENTITY = isReplacedEntity;
-        this.CONTROLLER_NAME = controllerName == null ? "" : controllerName;
-        this.ANIM_NAME = animName;
+        this.entityId = entityId;
+        this.isReplacedEntity = isReplacedEntity;
+        this.controllerName = controllerName == null ? "" : controllerName;
+        this.animName = animName;
     }
 
     @Override
     public FriendlyByteBuf encode() {
         FriendlyByteBuf buf = PacketByteBufs.create();
 
-        buf.writeVarInt(this.ENTITY_ID);
-        buf.writeBoolean(this.IS_REPLACED_ENTITY);
+        buf.writeVarInt(this.entityId);
+        buf.writeBoolean(this.isReplacedEntity);
 
-        buf.writeUtf(this.CONTROLLER_NAME);
-        buf.writeUtf(this.ANIM_NAME);
+        buf.writeUtf(this.controllerName);
+        buf.writeUtf(this.animName);
 
         return buf;
     }
@@ -59,13 +59,13 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
     }
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        final int ENTITY_ID = buf.readVarInt();
-        final boolean IS_REPLACED_ENTITY = buf.readBoolean();
+        final int entityId = buf.readVarInt();
+        final boolean isReplacedEntity = buf.readBoolean();
 
-        final String CONTROLLER_NAME = buf.readUtf();
-        final String ANIM_NAME = buf.readUtf();
+        final String controllerName = buf.readUtf();
+        final String animName = buf.readUtf();
 
-        client.execute(() -> runOnThread(ENTITY_ID, IS_REPLACED_ENTITY, CONTROLLER_NAME, ANIM_NAME));
+        client.execute(() -> runOnThread(entityId, isReplacedEntity, controllerName, animName));
     }
 
     private static void runOnThread(int entityId, boolean isReplacedEntity, String controllerName, String animName) {

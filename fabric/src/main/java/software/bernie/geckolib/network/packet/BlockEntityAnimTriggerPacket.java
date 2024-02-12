@@ -21,22 +21,22 @@ import javax.annotation.Nullable;
  * BlockEntities}
  */
 public class BlockEntityAnimTriggerPacket extends AbstractPacket {
-    private final BlockPos BLOCK_POS;
-    private final String CONTROLLER_NAME;
-    private final String ANIM_NAME;
+    private final BlockPos blockPos;
+    private final String controllerName;
+    private final String animName;
 
     public BlockEntityAnimTriggerPacket(BlockPos blockPos, @Nullable String controllerName, String animName) {
-        this.BLOCK_POS = blockPos;
-        this.CONTROLLER_NAME = controllerName == null ? "" : controllerName;
-        this.ANIM_NAME = animName;
+        this.blockPos = blockPos;
+        this.controllerName = controllerName == null ? "" : controllerName;
+        this.animName = animName;
     }
 
     public FriendlyByteBuf encode() {
         FriendlyByteBuf buf = PacketByteBufs.create();
 
-        buf.writeBlockPos(this.BLOCK_POS);
-        buf.writeUtf(this.CONTROLLER_NAME);
-        buf.writeUtf(this.ANIM_NAME);
+        buf.writeBlockPos(this.blockPos);
+        buf.writeUtf(this.controllerName);
+        buf.writeUtf(this.animName);
 
         return buf;
     }
@@ -47,11 +47,11 @@ public class BlockEntityAnimTriggerPacket extends AbstractPacket {
     }
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-        final BlockPos BLOCK_POS = buf.readBlockPos();
-        final String CONTROLLER_NAME = buf.readUtf();
-        final String ANIM_NAME = buf.readUtf();
+        final BlockPos blockPos = buf.readBlockPos();
+        final String controllerName = buf.readUtf();
+        final String animName = buf.readUtf();
 
-        client.execute(() -> runOnThread(BLOCK_POS, CONTROLLER_NAME, ANIM_NAME));
+        client.execute(() -> runOnThread(blockPos, controllerName, animName));
     }
 
     private static void runOnThread(BlockPos blockPos, String controllerName, String animName) {
