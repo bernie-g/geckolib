@@ -92,10 +92,11 @@ dependencies {
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")
     compileOnly("io.github.llamalad7:mixinextras-common:0.3.5")
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.5")) {
-        jarJar.ranged(this, "[0.3.5,)") //TODO figure out jarJar again
+        jarJar.ranged(this, "[0.3.5,)")
     }
 }
 
+//Make the result of the jarJar task the one with no classifier instead of no classifier and "all"
 tasks.named<Jar>("jar").configure {
     archiveClassifier.set("slim")
 }
@@ -130,7 +131,7 @@ modrinth {
 		projectId = "8BmcQJ2H"
 		versionNumber.set(project.version.toString())
 		versionName = "Forge ${minecraft_version}"
-		uploadFile.set(tasks.named<JarJar>("jarJar"))
+		uploadFile.set(tasks.jarJar)
 		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 		gameVersions.set(listOf(minecraft_version))
 		loaders.set(listOf("Fabric"))

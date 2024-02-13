@@ -23,7 +23,7 @@ base {
 }
 
 repositories {
-    mavenCentral() {
+    mavenCentral {
         content {
             includeGroup("com.google.code.findbugs")
         }
