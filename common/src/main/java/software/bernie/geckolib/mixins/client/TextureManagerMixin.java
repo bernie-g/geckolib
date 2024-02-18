@@ -15,9 +15,8 @@ import java.util.Map;
 
 @Mixin(TextureManager.class)
 public abstract class TextureManagerMixin {
-	@Shadow @Final private Map<ResourceLocation, AbstractTexture> byPath;
-
-	@Shadow public abstract void register(ResourceLocation resourceLocation, AbstractTexture abstractTexture);
+	@Shadow(aliases = "f_118468_")
+	@Final private Map<ResourceLocation, AbstractTexture> byPath;
 
 	@Inject(method = "getTexture(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/AbstractTexture;", at = @At("HEAD"))
 	private void wrapAnimatableTexture(ResourceLocation path, CallbackInfoReturnable<AbstractTexture> callback) {
@@ -26,7 +25,7 @@ public abstract class TextureManagerMixin {
 		if (existing == null) {
 			existing = new AnimatableTexture(path);
 
-			register(path, existing);
+			((TextureManager)(Object)this).register(path, existing);
 		}
 	}
 }
