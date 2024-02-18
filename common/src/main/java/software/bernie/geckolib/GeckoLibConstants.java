@@ -26,6 +26,5 @@ public class GeckoLibConstants {
         return GeckoLibServices.PLATFORM.isDevelopmentEnvironment() && !Boolean.getBoolean(GeckoLibConstants.DISABLE_EXAMPLES_PROPERTY_KEY);
     }
 
-    //TODO bring block signature generic PR
     //TODO give generic to getTick(Object)
 }

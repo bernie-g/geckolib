@@ -14,7 +14,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 public final class CommonListener {
 	@SubscribeEvent
 	public static void registerEntityAttributes(EntityAttributeCreationEvent event) {
-		if (GeckoLibMod.shouldRegisterExamples()) {
+		if (GeckoLibConstants.shouldRegisterExamples()) {
 			AttributeSupplier.Builder genericAttribs = PathfinderMob.createMobAttributes()
 					.add(Attributes.FOLLOW_RANGE, 16)
 					.add(Attributes.MAX_HEALTH, 1);

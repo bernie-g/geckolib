@@ -26,7 +26,7 @@ public final class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final EntityRenderersEvent.RegisterRenderers event) {
-		if (GeckoLibMod.shouldRegisterExamples()) {
+		if (GeckoLibConstants.shouldRegisterExamples()) {
 			event.registerEntityRenderer(EntityRegistry.BAT.get(), BatRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.BIKE.get(), BikeRenderer::new);
 			event.registerEntityRenderer(EntityRegistry.RACE_CAR.get(), RaceCarRenderer::new);
@@ -45,7 +45,7 @@ public final class ClientListener {
 
 	@SubscribeEvent
 	public static void registerRenderers(final FMLClientSetupEvent event) {
-		if (GeckoLibMod.shouldRegisterExamples())
+		if (GeckoLibConstants.shouldRegisterExamples())
 			ItemBlockRenderTypes.setRenderLayer(BlockRegistry.GECKO_HABITAT.get(), RenderType.translucent());
 	}
 }
