@@ -8,6 +8,7 @@ import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.json.raw.Model;
+import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
 
@@ -25,7 +26,7 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static BakedAnimations loadAnimationsFile(ResourceLocation location, ResourceManager manager) {
-		return JsonUtil.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(loadFile(location, manager), "animations"), BakedAnimations.class);
+		return KeyFramesAdapter.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(loadFile(location, manager), "animations"), BakedAnimations.class);
 	}
 
 	/**
@@ -34,7 +35,7 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static Model loadModelFile(ResourceLocation location, ResourceManager manager) {
-		return JsonUtil.GEO_GSON.fromJson(loadFile(location, manager), Model.class);
+		return KeyFramesAdapter.GEO_GSON.fromJson(loadFile(location, manager), Model.class);
 	}
 
 	/**
@@ -43,7 +44,7 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static JsonObject loadFile(ResourceLocation location, ResourceManager manager) {
-		return GsonHelper.fromJson(JsonUtil.GEO_GSON, getFileContents(location, manager), JsonObject.class);
+		return GsonHelper.fromJson(KeyFramesAdapter.GEO_GSON, getFileContents(location, manager), JsonObject.class);
 	}
 
 	/**

@@ -4,11 +4,6 @@ import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.loading.json.raw.*;
-import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
-import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
-import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Array;
@@ -20,27 +15,6 @@ import java.util.function.Function;
  * Json helper class for various json functions
  */
 public class JsonUtil {
-
-
-    //TODO Remove post merge (This is a 'breaking' change even though this is fairly internal)
-    public static final Gson GEO_GSON = new GsonBuilder().setLenient()
-            .registerTypeAdapter(Bone.class, Bone.deserializer())
-            .registerTypeAdapter(Cube.class, Cube.deserializer())
-            .registerTypeAdapter(FaceUV.class, FaceUV.deserializer())
-            .registerTypeAdapter(LocatorClass.class, LocatorClass.deserializer())
-            .registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
-            .registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
-            .registerTypeAdapter(Model.class, Model.deserializer())
-            .registerTypeAdapter(ModelProperties.class, ModelProperties.deserializer())
-            .registerTypeAdapter(PolyMesh.class, PolyMesh.deserializer())
-            .registerTypeAdapter(PolysUnion.class, PolysUnion.deserializer())
-            .registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())
-            .registerTypeAdapter(UVFaces.class, UVFaces.deserializer())
-            .registerTypeAdapter(UVUnion.class, UVUnion.deserializer())
-            .registerTypeAdapter(Animation.Keyframes.class, new KeyFramesAdapter())
-            .registerTypeAdapter(BakedAnimations.class, new BakedAnimationsAdapter())
-            .create();
-
 
     private JsonUtil() {}
 
