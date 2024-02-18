@@ -85,6 +85,8 @@ public final class DefaultAnimations {
 		return new AnimationController<T>(animatable, "Idle", 10, state -> state.setAndContinue(IDLE));
 	}
 
+	//TODO FIX GeoArmor NOT EXISTING
+
 	/**
 	 * Generic {@link DefaultAnimations#SPAWN spawn} controller.<br>
 	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}.<br>
@@ -97,7 +99,6 @@ public final class DefaultAnimations {
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: state -> state.getData(DataTickets.ITEMSTACK)</li>
 	 *     <li>{@code GeoArmor}: state -> state.getData(DataTickets.ENTITY)</li>
 	 * </ul>
-	 * TODO FIX ABOVE NOT EXISTING
 	 * @param animatable The animatable the animation is for
 	 * @param objectSupplier The supplier of the associated object for the {@link GeoAnimatable#getTick} call
 	 * @param ticks The number of ticks the animation should run for. After this value is surpassed, the animation will no longer play
