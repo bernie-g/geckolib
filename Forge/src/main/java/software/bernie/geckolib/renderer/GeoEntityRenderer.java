@@ -25,6 +25,7 @@ import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
 import net.minecraftforge.common.MinecraftForge;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -132,6 +133,16 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	}
 
 	/**
+	 * Gets the {@link RenderType} to render the given animatable with.<br>
+	 * Uses the {@link RenderType#entityCutoutNoCull}	{@code RenderType} by default.<br>
+	 * Override this to change the way a model will render (such as translucent models, etc)
+	 */
+	@Override
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+		return GeoRenderer.super.getRenderType(animatable, texture, bufferSource, partialTick);
+	}
+
+	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
 	 * work such as scaling and translating.<br>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
@@ -223,8 +234,17 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
-		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
-			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		if (animatable.isInvisibleTo(Minecraft.getInstance().player)) {
+			if (Minecraft.getInstance().shouldEntityAppearGlowing(animatable)) {
+				buffer = bufferSource.getBuffer(renderType = RenderType.outline(getTextureLocation(animatable)));
+			}
+			else {
+				renderType = null;
+			}
+		}
+
+		if (renderType != null)
+			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, 0);
 
 		poseStack.popPose();
 	}

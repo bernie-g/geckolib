@@ -243,7 +243,16 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
-		if (!this.currentEntity.isInvisibleTo(Minecraft.getInstance().player))
+		if (this.currentEntity.isInvisibleTo(Minecraft.getInstance().player)) {
+			if (Minecraft.getInstance().shouldEntityAppearGlowing(this.currentEntity)) {
+				buffer = bufferSource.getBuffer(renderType = RenderType.outline(getTextureLocation(animatable)));
+			}
+			else {
+				renderType = null;
+			}
+		}
+
+		if (renderType != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();

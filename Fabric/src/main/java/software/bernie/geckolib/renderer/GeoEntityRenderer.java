@@ -222,7 +222,16 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
-		if (!animatable.isInvisibleTo(Minecraft.getInstance().player))
+		if (animatable.isInvisibleTo(Minecraft.getInstance().player)) {
+			if (Minecraft.getInstance().shouldEntityAppearGlowing(animatable)) {
+				buffer = bufferSource.getBuffer(renderType = RenderType.outline(getTextureLocation(animatable)));
+			}
+			else {
+				renderType = null;
+			}
+		}
+
+		if (renderType != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 					packedLight, packedOverlay, red, green, blue, alpha);
 
