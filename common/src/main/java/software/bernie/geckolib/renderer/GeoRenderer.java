@@ -284,7 +284,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			if (quad == null)
 				continue;
 
-			Vector3f normal =normalisedPoseState.transform(new Vector3f(quad.normal()));
+			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
 			
 			RenderUtils.fixInvertedFlatCube(cube, normal);
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);
