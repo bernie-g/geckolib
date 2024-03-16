@@ -467,7 +467,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
-					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
+					BoneSnapshot boneSnapshot = this.boneSnapshots.computeIfAbsent(boneAnimation.boneName(), key -> BoneSnapshot.copy(snapshots.get(key)));
 					CoreGeoBone bone = bones.get(boneAnimation.boneName());
 
 					if (bone == null) {
@@ -535,7 +535,8 @@ public class AnimationController<T extends GeoAnimatable> {
 				else {
 					this.animationState = State.TRANSITIONING;
 					this.shouldResetTick = true;
-					this.currentAnimation = nextAnimation;
+					adjustedTick = adjustTick(seekTime);
+					this.currentAnimation = this.animationQueue.poll();
 				}
 			}
 		}
@@ -559,7 +560,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			KeyframeStack<Keyframe<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 			if (!rotationKeyFrames.xKeyframes().isEmpty()) {
-				boneAnimationQueue.addRotations(
+			boneAnimationQueue.addRotations(
 						getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), adjustedTick, true, Axis.X),
 						getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), adjustedTick, true, Axis.Y),
 						getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), adjustedTick, true, Axis.Z));
