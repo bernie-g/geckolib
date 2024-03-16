@@ -6,9 +6,9 @@ package software.bernie.mclib.math;
  * Simply wraps given {@link software.bernie.mclib.math.IValue} into parenthesis in the
  * {@link #toString()} method.
  */
-public class Group implements software.bernie.mclib.math.IValue
+public class Group implements IValue
 {
-    private software.bernie.mclib.math.IValue value;
+    private IValue value;
 
     public Group(IValue value)
     {
