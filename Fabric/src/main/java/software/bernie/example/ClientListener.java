@@ -23,7 +23,6 @@ import software.bernie.example.registry.EntityRegistry;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 
 public final class ClientListener implements ClientModInitializer {
-
 	@Override
 	public void onInitializeClient() {
 		if (GeckoLibMod.shouldRegisterExamples())

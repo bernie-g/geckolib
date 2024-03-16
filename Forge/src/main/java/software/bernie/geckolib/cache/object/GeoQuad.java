@@ -24,7 +24,8 @@ public record GeoQuad(GeoVertex[] vertices, Vector3f normal, Direction direction
 			float tempWidth = uWidth;
 			uWidth = u;
 			u = tempWidth;
-
+		}
+		else {
 			normal.mul(-1, 1, 1);
 		}
 
