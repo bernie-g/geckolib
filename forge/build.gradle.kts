@@ -2,6 +2,7 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.minecraftforge.gradle.userdev.tasks.JarJar
 
 plugins {
+    id("geckolib-convention")
     id("com.modrinth.minotaur")
     id("net.darkhax.curseforgegradle")
     id("net.minecraftforge.gradle") version "[6.0,6.2)"
