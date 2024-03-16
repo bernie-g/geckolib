@@ -560,7 +560,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			KeyframeStack<Keyframe<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 			if (!rotationKeyFrames.xKeyframes().isEmpty()) {
-			boneAnimationQueue.addRotations(
+				boneAnimationQueue.addRotations(
 						getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), adjustedTick, true, Axis.X),
 						getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), adjustedTick, true, Axis.Y),
 						getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), adjustedTick, true, Axis.Z));
