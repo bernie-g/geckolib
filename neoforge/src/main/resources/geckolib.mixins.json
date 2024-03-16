@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "software.bernie.geckolib.mixins",
+  "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "mixins": [
+  ],
+  "client": [
+    "client.TextureManagerMixin",
+    "client.MixinHumanoidArmorLayer",
+    "client.MixinItemRenderer"
+  ]
+}

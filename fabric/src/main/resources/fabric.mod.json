@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "geckolib",
+	"version": "${version}",
+	"name": "${mod_display_name}",
+	"description": "${mod_description}",
+	"authors": [
+		"${mod_authors}"
+	],
+	"contact": {
+		"homepage": "https://www.curseforge.com/minecraft/mc-mods/geckolib",
+		"issues": "https://github.com/bernie-g/geckolib/issues",
+		"sources": "https://github.com/bernie-g/geckolib"
+	},
+	"license": "${mod_license}",
+	"icon": "${mod_id}.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"software.bernie.example.GeckoLibMod"
+		],
+		"client": [
+			"software.bernie.example.ClientListener"
+		]
+	},
+	"mixins": [
+		"geckolib.mixins.json"
+	],
+	"accessWidener": "geckolib.accesswidener",
+	"depends": {
+   		"fabricloader": ">=${fabric_loader_version}",
+		"fabric-api": ">=${fabric_api_version}",
+		"java": ">=17",
+		"minecraft": ">=${minecraft_version}"
+	},
+	"custom": {
+		"modmenu": {
+			"badges": [ "library" ]
+		}
+	}
+}
