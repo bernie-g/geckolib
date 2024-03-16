@@ -107,7 +107,8 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	public ResourceLocation getTextureResource(T animatable) {
 		return this.texturePath;
 	}
-	
+
+	//aparently for yarn
 	public ResourceLocation getTexture(T animatable) {
 		return this.texturePath;
 	}
