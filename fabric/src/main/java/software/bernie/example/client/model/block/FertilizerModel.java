@@ -6,18 +6,18 @@ package software.bernie.example.client.model.block;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.example.block.entity.FertilizerBlockEntity;
+import software.bernie.example.block.entity.BotariumBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
 /**
- * Example {@link GeoModel} for the {@link FertilizerBlockEntity}
- * @see FertilizerBlockEntity
+ * Example {@link GeoModel} for the {@link BotariumBlockEntity}
+ * @see BotariumBlockEntity
  * @see FertilizerBlockRenderer
  */
-public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntity> {
+public class FertilizerModel extends DefaultedBlockGeoModel<BotariumBlockEntity> {
 	private final ResourceLocation BOTARIUM_MODEL = buildFormattedModelPath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
 	private final ResourceLocation BOTARIUM_TEXTURE = buildFormattedTexturePath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
 	private final ResourceLocation BOTARIUM_ANIMATIONS = buildFormattedAnimationPath(new ResourceLocation(GeckoLibConstants.MODID, "botarium"));
@@ -30,7 +30,7 @@ public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntit
 	 * Return the fertilizer animation path if it's raining, or the botarium animation path if not.
 	 */
 	@Override
-	public ResourceLocation getAnimationResource(FertilizerBlockEntity animatable) {
+	public ResourceLocation getAnimationResource(BotariumBlockEntity animatable) {
 		if (animatable.getLevel().isRaining()) {
 			return super.getAnimationResource(animatable);
 		}
@@ -43,7 +43,7 @@ public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntit
 	 * Return the fertilizer model path if it's raining, or the botarium model path if not.
 	 */
 	@Override
-	public ResourceLocation getModelResource(FertilizerBlockEntity animatable) {
+	public ResourceLocation getModelResource(BotariumBlockEntity animatable) {
 		if (animatable.getLevel().isRaining()) {
 			return super.getModelResource(animatable);
 		}
@@ -56,7 +56,7 @@ public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntit
 	 * Return the fertilizer texture path if it's raining, or the botarium texture path if not.
 	 */
 	@Override
-	public ResourceLocation getTextureResource(FertilizerBlockEntity animatable) {
+	public ResourceLocation getTextureResource(BotariumBlockEntity animatable) {
 		if (animatable.getLevel().isRaining()) {
 			return super.getTextureResource(animatable);
 		}
@@ -66,7 +66,7 @@ public class FertilizerModel extends DefaultedBlockGeoModel<FertilizerBlockEntit
 	}
 
 	@Override
-	public RenderType getRenderType(FertilizerBlockEntity animatable, ResourceLocation texture) {
+	public RenderType getRenderType(BotariumBlockEntity animatable, ResourceLocation texture) {
 		return RenderType.entityTranslucent(getTextureResource(animatable));
 	}
 }

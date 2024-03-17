@@ -17,15 +17,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
  * @see software.bernie.example.client.model.block.FertilizerModel
  * @see FertilizerBlockRenderer
  */
-public class FertilizerBlockEntity extends BlockEntity implements GeoBlockEntity {
+public class BotariumBlockEntity extends BlockEntity implements GeoBlockEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	// We statically instantiate our RawAnimations for efficiency, consistency, and error-proofing
 	private static final RawAnimation FERTILIZER_ANIMS = RawAnimation.begin().thenPlay("fertilizer.deploy").thenLoop("fertilizer.idle");
 	private static final RawAnimation BOTARIUM_ANIMS = RawAnimation.begin().thenPlay("botarium.deploy").thenLoop("botarium.idle");
 
-	public FertilizerBlockEntity(BlockPos pos, BlockState state) {
-		super(BlockEntityRegistry.FERTILIZER_BLOCK, pos, state);
+	public BotariumBlockEntity(BlockPos pos, BlockState state) {
+		super(BlockEntityRegistry.BOTARIUM_BLOCK, pos, state);
 	}
 
 	// Let's set our animations up

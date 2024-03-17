@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import software.bernie.example.block.entity.FertilizerBlockEntity;
+import software.bernie.example.block.entity.BotariumBlockEntity;
 import software.bernie.example.client.renderer.block.FertilizerBlockRenderer;
 import software.bernie.example.registry.BlockEntityRegistry;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -26,7 +26,7 @@ import java.util.List;
  * Example animated block using GeckoLib animations.<br>
  * There's nothing to see here since the {@link Block} class itself has little to do with animations
  * @see software.bernie.example.client.model.block.FertilizerModel
- * @see FertilizerBlockEntity
+ * @see BotariumBlockEntity
  * @see FertilizerBlockRenderer
  */
 public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
@@ -42,7 +42,7 @@ public class FertilizerBlock extends DirectionalBlock implements EntityBlock {
 	@Nullable
 	@Override
 	public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-		return BlockEntityRegistry.FERTILIZER_BLOCK.create(pos, state);
+		return BlockEntityRegistry.BOTARIUM_BLOCK.create(pos, state);
 	}
 
 	@Override

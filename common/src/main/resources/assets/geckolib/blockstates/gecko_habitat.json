@@ -2,27 +2,27 @@
   "variants": {
     "facing=north": {
       "y": 0,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     },
     "facing=south": {
       "y": 180,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     },
     "facing=east": {
       "y": 180,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     },
     "facing=west": {
       "y": 180,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     },
     "facing=up": {
       "y": 0,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     },
     "facing=down": {
       "y": 0,
-      "model": "geckolib:block/box"
+      "model": "minecraft:block/air"
     }
   }
 }

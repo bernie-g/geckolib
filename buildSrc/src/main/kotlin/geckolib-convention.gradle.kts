@@ -9,9 +9,7 @@ plugins {
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
     withSourcesJar()
     withJavadocJar()
 }
@@ -100,7 +98,6 @@ tasks.withType<ProcessResources>().configureEach {
 // metadata includes mapped dependencies which are not reasonably consumable by
 // other mod developers.
 tasks.withType<GenerateModuleMetadata>().configureEach {
-
     enabled = false
 }
 

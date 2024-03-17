@@ -16,7 +16,7 @@ public class ItemRegistry {
 
     public static final JackInTheBoxItem JACK_IN_THE_BOX = registerItem("jack_in_the_box", new JackInTheBoxItem(new Item.Properties()));
 
-    public static final BlockItem FERTILIZER = registerItem("fertilizer", new BlockItem(BlockRegistry.FERTILIZER_BLOCK, new Item.Properties()));
+    public static final BlockItem FERTILIZER = registerItem("fertilizer", new BlockItem(BlockRegistry.BOTARIUM_BLOCK, new Item.Properties()));
     public static final BlockItem GECKO_HABITAT = registerItem("gecko_habitat", new GeckoHabitatItem(BlockRegistry.GECKO_HABITAT_BLOCK, new Item.Properties()));
 
     public static final GeckoArmorItem GECKO_ARMOR_HELMET = registerItem("gecko_armor_helmet", new GeckoArmorItem(ArmorMaterials.NETHERITE, ArmorItem.Type.HELMET, new Item.Properties()));

@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "side": "geckolib:block/botarium_side",
+    "end": "geckolib:block/botarium_top",
+    "up": "#end",
+    "down": "#end",
+    "north": "#side",
+    "south": "#side",
+    "east": "#side",
+    "west": "#side",
+    "particle": "#end"
+  }
+}
