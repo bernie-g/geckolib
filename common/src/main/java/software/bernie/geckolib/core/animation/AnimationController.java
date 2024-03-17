@@ -458,8 +458,11 @@ public class AnimationController<T extends GeoAnimatable> {
 
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
-					BoneSnapshot boneSnapshot = this.boneSnapshots.computeIfAbsent(boneAnimation.boneName(), key -> BoneSnapshot.copy(snapshots.get(key)));
+					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
 					CoreGeoBone bone = bones.get(boneAnimation.boneName());
+
+					if (boneSnapshot == null)
+						continue;
 
 					if (bone == null) {
 						if (crashWhenCantFindBone)
