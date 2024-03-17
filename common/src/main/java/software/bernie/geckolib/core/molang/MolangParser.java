@@ -9,7 +9,7 @@ import software.bernie.geckolib.core.molang.expressions.MolangVariableHolder;
 import software.bernie.geckolib.core.molang.functions.CosDegrees;
 import software.bernie.geckolib.core.molang.functions.SinDegrees;
 import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.MathBuilder;
 import software.bernie.mclib.math.Variable;
 
@@ -249,7 +249,7 @@ public class MolangParser extends MathBuilder {
 	/**
 	 * Wrapper around {@link #parseSymbols(List)} to throw {@link MolangException}
 	 */
-	private IValue parseSymbolsMolang(List<Object> symbols) throws MolangException {
+	private MathValue parseSymbolsMolang(List<Object> symbols) throws MolangException {
 		try {
 			return this.parseSymbols(symbols);
 		}

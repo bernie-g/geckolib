@@ -18,7 +18,7 @@ import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
 import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -65,11 +65,11 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 
 		for (Map.Entry<String, JsonElement> entry : bonesObj.entrySet()) {
 			JsonObject entryObj = entry.getValue().getAsJsonObject();
-			KeyframeStack<Keyframe<IValue>> scaleFrames = buildKeyframeStack(
+			KeyframeStack<Keyframe<MathValue>> scaleFrames = buildKeyframeStack(
 					getTripletObj(entryObj.get("scale")), false);
-			KeyframeStack<Keyframe<IValue>> positionFrames = buildKeyframeStack(
+			KeyframeStack<Keyframe<MathValue>> positionFrames = buildKeyframeStack(
 					getTripletObj(entryObj.get("position")), false);
-			KeyframeStack<Keyframe<IValue>> rotationFrames = buildKeyframeStack(
+			KeyframeStack<Keyframe<MathValue>> rotationFrames = buildKeyframeStack(
 					getTripletObj(entryObj.get("rotation")), true);
 
 			animations[index] = new BoneAnimation(entry.getKey(), rotationFrames, positionFrames, scaleFrames);
@@ -130,17 +130,17 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
-	private KeyframeStack<Keyframe<IValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {
+	private KeyframeStack<Keyframe<MathValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {
 		if (entries.isEmpty())
 			return new KeyframeStack<>();
 
-		List<Keyframe<IValue>> xFrames = new ObjectArrayList<>();
-		List<Keyframe<IValue>> yFrames = new ObjectArrayList<>();
-		List<Keyframe<IValue>> zFrames = new ObjectArrayList<>();
+		List<Keyframe<MathValue>> xFrames = new ObjectArrayList<>();
+		List<Keyframe<MathValue>> yFrames = new ObjectArrayList<>();
+		List<Keyframe<MathValue>> zFrames = new ObjectArrayList<>();
 
-		IValue xPrev = null;
-		IValue yPrev = null;
-		IValue zPrev = null;
+		MathValue xPrev = null;
+		MathValue yPrev = null;
+		MathValue zPrev = null;
 		Pair<String, JsonElement> prevEntry = null;
 
 		for (Pair<String, JsonElement> entry : entries) {
@@ -158,13 +158,13 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			MolangValue rawXValue = MolangParser.parseJson(keyFrameVector.get(0));
 			MolangValue rawYValue = MolangParser.parseJson(keyFrameVector.get(1));
 			MolangValue rawZValue = MolangParser.parseJson(keyFrameVector.get(2));
-			IValue xValue = isForRotation && rawXValue.isConstant() ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue;
-			IValue yValue = isForRotation && rawYValue.isConstant() ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue;
-			IValue zValue = isForRotation && rawZValue.isConstant() ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue;
+			MathValue xValue = isForRotation && rawXValue.isConstant() ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue;
+			MathValue yValue = isForRotation && rawYValue.isConstant() ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue;
+			MathValue zValue = isForRotation && rawZValue.isConstant() ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue;
 
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;
-			List<IValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
+			List<MathValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
 					JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
 					new ObjectArrayList<>();
 

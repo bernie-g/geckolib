@@ -12,7 +12,7 @@ import software.bernie.mclib.math.functions.rounding.Trunc;
 import software.bernie.mclib.math.functions.utility.Lerp;
 import software.bernie.mclib.math.functions.utility.LerpRotate;
 import software.bernie.mclib.math.functions.utility.Random;
-import software.bernie.mclib.utils.MathUtils;
+import software.bernie.mclib.math.utils.MathUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -24,18 +24,17 @@ import java.util.Map;
  * Math builder
  *
  * This class is responsible for parsing math expressions provided by
- * user in a string to an {@link software.bernie.mclib.math.IValue} which can be used to compute
+ * user in a string to an {@link MathValue} which can be used to compute
  * some value dynamically using different math operators, variables and
  * functions.
  *
  * It works by first breaking down given string into a list of tokens
- * and then putting them together in a binary tree-like {@link software.bernie.mclib.math.IValue}.
+ * and then putting them together in a binary tree-like {@link MathValue}.
  *
  * TODO: maybe implement constant pool (to reuse same values)?
  * TODO: maybe pre-compute constant expressions?
  */
-public class MathBuilder
-{
+public class MathBuilder {
     /**
      * Named variables that can be used in math expression by this
      * builder
@@ -47,8 +46,7 @@ public class MathBuilder
      */
     public Map<String, Class<? extends Function>> functions = new HashMap<String, Class<? extends Function>>();
 
-    public MathBuilder()
-    {
+    public MathBuilder() {
         /* Some default values */
         this.register(new Variable("PI", Math.PI));
         this.register(new Variable("E", Math.E));
@@ -83,30 +81,25 @@ public class MathBuilder
     /**
      * Register a variable
      */
-    public void register(Variable variable)
-    {
+    public void register(Variable variable) {
         this.variables.put(variable.getName(), variable);
     }
 
     /**
-     * Parse given math expression into a {@link software.bernie.mclib.math.IValue} which can be
+     * Parse given math expression into a {@link MathValue} which can be
      * used to execute math.
      */
-    public IValue parse(String expression) throws Exception
-    {
+    public MathValue parse(String expression) throws Exception {
         return this.parseSymbols(this.breakdownChars(this.breakdown(expression)));
     }
 
     /**
      * Breakdown an expression
      */
-    public String[] breakdown(String expression) throws Exception
-    {
+    public String[] breakdown(String expression) throws Exception {
         /* If given string have illegal characters, then it can't be parsed */
         if (!expression.matches("^[\\w\\d\\s_+-/*%^&|<>=!?:.,()]+$"))
-        {
             throw new Exception("Given expression '" + expression + "' contains illegal characters!");
-        }
 
         /* Remove all spaces, and leading and trailing parenthesis */
         expression = expression.replaceAll("\\s+", "");
@@ -116,23 +109,18 @@ public class MathBuilder
         int left = 0;
         int right = 0;
 
-        for (String s : chars)
-        {
-            if (s.equals("("))
-            {
+        for (String s : chars) {
+            if (s.equals("(")) {
                 left++;
             }
-            else if (s.equals(")"))
-            {
+            else if (s.equals(")")) {
                 right++;
             }
         }
 
         /* Amount of left and right brackets should be the same */
         if (left != right)
-        {
             throw new Exception("Given expression '" + expression + "' has more uneven amount of parenthesis, there are " + left + " open and " + right + " closed!");
-        }
 
         return chars;
     }
@@ -140,77 +128,64 @@ public class MathBuilder
     /**
      * Breakdown characters into a list of math expression symbols.
      */
-    public List<Object> breakdownChars(String[] chars)
-    {
+    public List<Object> breakdownChars(String[] chars) {
         List<Object> symbols = new ArrayList<Object>();
         String buffer = "";
         int len = chars.length;
 
-        for (int i = 0; i < len; i++)
-        {
+        for (int i = 0; i < len; i++) {
             String s = chars[i];
             boolean longOperator = i > 0 && this.isOperator(chars[i - 1] + s);
 
-            if (this.isOperator(s) || longOperator || s.equals(","))
-            {
+            if (this.isOperator(s) || longOperator || s.equals(",")) {
                 /* Taking care of a special case of using minus sign to
                  * invert the positive value */
-                if (s.equals("-"))
-                {
+                if (s.equals("-")) {
                     int size = symbols.size();
 
                     boolean isFirst = size == 0 && buffer.isEmpty();
                     boolean isOperatorBehind = size > 0 && (this.isOperator(symbols.get(size - 1)) || symbols.get(size - 1).equals(",")) && buffer.isEmpty();
 
-                    if (isFirst || isOperatorBehind)
-                    {
+                    if (isFirst || isOperatorBehind) {
                         buffer += s;
 
                         continue;
                     }
                 }
 
-                if (longOperator)
-                {
+                if (longOperator) {
                     s = chars[i - 1] + s;
                     buffer = buffer.substring(0, buffer.length() - 1);
                 }
 
                 /* Push buffer and operator */
-                if (!buffer.isEmpty())
-                {
+                if (!buffer.isEmpty()) {
                     symbols.add(buffer);
                     buffer = "";
                 }
 
                 symbols.add(s);
             }
-            else if (s.equals("("))
-            {
+            else if (s.equals("(")) {
                 /* Push a list of symbols */
-                if (!buffer.isEmpty())
-                {
+                if (!buffer.isEmpty()) {
                     symbols.add(buffer);
                     buffer = "";
                 }
 
                 int counter = 1;
 
-                for (int j = i + 1; j < len; j++)
-                {
+                for (int j = i + 1; j < len; j++) {
                     String c = chars[j];
 
-                    if (c.equals("("))
-                    {
+                    if (c.equals("(")) {
                         counter++;
                     }
-                    else if (c.equals(")"))
-                    {
+                    else if (c.equals(")")) {
                         counter--;
                     }
 
-                    if (counter == 0)
-                    {
+                    if (counter == 0) {
                         symbols.add(this.breakdownChars(buffer.split("(?!^)")));
 
                         i = j;
@@ -218,23 +193,19 @@ public class MathBuilder
 
                         break;
                     }
-                    else
-                    {
+                    else {
                         buffer += c;
                     }
                 }
             }
-            else
-            {
+            else {
                 /* Accumulate the buffer */
                 buffer += s;
             }
         }
 
         if (!buffer.isEmpty())
-        {
             symbols.add(buffer);
-        }
 
         return symbols;
     }
@@ -243,41 +214,33 @@ public class MathBuilder
      * Parse symbols
      *
      * This function is the most important part of this class. It's
-     * responsible for turning list of symbols into {@link software.bernie.mclib.math.IValue}. This
-     * is done by constructing a binary tree-like {@link software.bernie.mclib.math.IValue} based on
+     * responsible for turning list of symbols into {@link MathValue}. This
+     * is done by constructing a binary tree-like {@link MathValue} based on
      * {@link software.bernie.mclib.math.Operator} class.
      *
      * However, beside parsing operations, it's also can return one or
      * two item sized symbol lists.
      */
     @SuppressWarnings("unchecked")
-    public software.bernie.mclib.math.IValue parseSymbols(List<Object> symbols) throws Exception
-    {
-        software.bernie.mclib.math.IValue ternary = this.tryTernary(symbols);
+    public MathValue parseSymbols(List<Object> symbols) throws Exception {
+        MathValue ternary = tryTernary(symbols);
 
         if (ternary != null)
-        {
             return ternary;
-        }
 
         int size = symbols.size();
 
         /* Constant, variable or group (parenthesis) */
         if (size == 1)
-        {
-            return this.valueFromObject(symbols.get(0));
-        }
+            return valueFromObject(symbols.get(0));
 
         /* Function */
-        if (size == 2)
-        {
+        if (size == 2) {
             Object first = symbols.get(0);
             Object second = symbols.get(1);
 
-            if ((this.isVariable(first) || first.equals("-")) && second instanceof List)
-            {
-                return this.createFunction((String) first, (List<Object>) second);
-            }
+            if ((isVariable(first) || first.equals("-")) && second instanceof List)
+                return createFunction((String) first, (List<Object>) second);
         }
 
         /* Any other math expression */
@@ -285,18 +248,14 @@ public class MathBuilder
         int secondOp = -1;
 
         /* Find next two operators' indices */
-        for (int i = 0; i < size; i++)
-        {
+        for (int i = 0; i < size; i++) {
             Object o = symbols.get(i);
 
-            if (this.isOperator(o))
-            {
-                if (firstOp == -1)
-                {
+            if (isOperator(o)) {
+                if (firstOp == -1) {
                     firstOp = i;
                 }
-                else
-                {
+                else {
                     secondOp = i;
                     break;
                 }
@@ -306,28 +265,23 @@ public class MathBuilder
         /* And finally construct the math operation */
         Operation op = this.operationForOperator((String) symbols.get(firstOp));
 
-        if (secondOp == -1)
-        {
-            software.bernie.mclib.math.IValue left = this.parseSymbols(symbols.subList(0, firstOp));
-            software.bernie.mclib.math.IValue right = this.parseSymbols(symbols.subList(firstOp + 1, MathUtils.clamp(firstOp + 3, 0, size)));
+        if (secondOp == -1) {
+            MathValue left = this.parseSymbols(symbols.subList(0, firstOp));
+            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, MathUtils.clamp(firstOp + 3, 0, size)));
 
             return new software.bernie.mclib.math.Operator(op, left, right);
         }
-        else if (secondOp > firstOp)
-        {
+
+        if (secondOp > firstOp) {
             Operation compareTo = this.operationForOperator((String) symbols.get(secondOp));
-            software.bernie.mclib.math.IValue left = this.parseSymbols(symbols.subList(0, firstOp));
+            MathValue left = this.parseSymbols(symbols.subList(0, firstOp));
 
             if (compareTo.value > op.value)
-            {
                 return new software.bernie.mclib.math.Operator(op, left, this.parseSymbols(symbols.subList(firstOp + 1, size)));
-            }
-            else
-            {
-                software.bernie.mclib.math.IValue right = this.parseSymbols(symbols.subList(firstOp + 1, secondOp));
 
-                return new software.bernie.mclib.math.Operator(compareTo, new Operator(op, left, right), this.parseSymbols(symbols.subList(secondOp + 1, size)));
-            }
+            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, secondOp));
+
+            return new software.bernie.mclib.math.Operator(compareTo, new Operator(op, left, right), this.parseSymbols(symbols.subList(secondOp + 1, size)));
         }
 
         throw new Exception("Given symbols couldn't be parsed! " + symbols);
@@ -340,43 +294,33 @@ public class MathBuilder
      * and some elements from beginning till ?, in between ? and :, and also some
      * remaining elements after :.
      */
-    protected software.bernie.mclib.math.IValue tryTernary(List<Object> symbols) throws Exception
-    {
+    protected MathValue tryTernary(List<Object> symbols) throws Exception {
         int question = -1;
         int questions = 0;
         int colon = -1;
         int colons = 0;
         int size = symbols.size();
 
-        for (int i = 0; i < size; i ++)
-        {
+        for (int i = 0; i < size; i ++) {
             Object object = symbols.get(i);
 
-            if (object instanceof String)
-            {
-                if (object.equals("?"))
-                {
+            if (object instanceof String) {
+                if (object.equals("?")) {
                     if (question == -1)
-                    {
                         question = i;
-                    }
 
                     questions ++;
                 }
-                else if (object.equals(":"))
-                {
+                else if (object.equals(":")) {
                     if (colons + 1 == questions && colon == -1)
-                    {
                         colon = i;
-                    }
 
                     colons ++;
                 }
             }
         }
 
-        if (questions == colons && question > 0 && question + 1 < colon && colon < size - 1)
-        {
+        if (questions == colons && question > 0 && question + 1 < colon && colon < size - 1) {
             return new Ternary(
                 this.parseSymbols(symbols.subList(0, question)),
                 this.parseSymbols(symbols.subList(question + 1, colon)),
@@ -394,63 +338,47 @@ public class MathBuilder
      * needs the name of the function and list of args (which can't be
      * stored in one object).
      *
-     * This method will constructs {@link software.bernie.mclib.math.IValue}s from list of args
+     * This method will constructs {@link MathValue}s from list of args
      * mixed with operators, groups, values and commas. And then plug it
      * in to a class constructor with given name.
      */
-    protected software.bernie.mclib.math.IValue createFunction(String first, List<Object> args) throws Exception
-    {
+    protected MathValue createFunction(String first, List<Object> args) throws Exception {
         /* Handle special cases with negation */
         if (first.equals("!"))
-        {
-            return new software.bernie.mclib.math.Negate(this.parseSymbols(args));
-        }
+            return new software.bernie.mclib.math.Negate(parseSymbols(args));
 
         if (first.startsWith("!") && first.length() > 1)
-        {
-            return new software.bernie.mclib.math.Negate(this.createFunction(first.substring(1), args));
-        }
+            return new software.bernie.mclib.math.Negate(createFunction(first.substring(1), args));
 
         /* Handle inversion of the value */
         if (first.equals("-"))
-        {
-            return new software.bernie.mclib.math.Negative(this.parseSymbols(args));
-        }
+            return new software.bernie.mclib.math.Negative(parseSymbols(args));
 
         if (first.startsWith("-") && first.length() > 1)
-        {
-            return new software.bernie.mclib.math.Negative(this.createFunction(first.substring(1), args));
-        }
+            return new software.bernie.mclib.math.Negative(createFunction(first.substring(1), args));
 
         if (!this.functions.containsKey(first))
-        {
             throw new Exception("Function '" + first + "' couldn't be found!");
-        }
 
-        List<software.bernie.mclib.math.IValue> values = new ArrayList<software.bernie.mclib.math.IValue>();
+        List<MathValue> values = new ArrayList<MathValue>();
         List<Object> buffer = new ArrayList<Object>();
 
-        for (Object o : args)
-        {
-            if (o.equals(","))
-            {
+        for (Object o : args) {
+            if (o.equals(",")) {
                 values.add(this.parseSymbols(buffer));
                 buffer.clear();
             }
-            else
-            {
+            else {
                 buffer.add(o);
             }
         }
 
         if (!buffer.isEmpty())
-        {
-            values.add(this.parseSymbols(buffer));
-        }
+            values.add(parseSymbols(buffer));
 
         Class<? extends Function> function = this.functions.get(first);
-        Constructor<? extends Function> ctor = function.getConstructor(software.bernie.mclib.math.IValue[].class, String.class);
-        Function func = ctor.newInstance(values.toArray(new software.bernie.mclib.math.IValue[values.size()]), first);
+        Constructor<? extends Function> ctor = function.getConstructor(MathValue[].class, String.class);
+        Function func = ctor.newInstance(values.toArray(new MathValue[values.size()]), first);
 
         return func;
     }
@@ -463,50 +391,37 @@ public class MathBuilder
      * groups.
      */
     @SuppressWarnings("unchecked")
-    public software.bernie.mclib.math.IValue valueFromObject(Object object) throws Exception
-    {
-        if (object instanceof String)
-        {
+    public MathValue valueFromObject(Object object) throws Exception {
+        if (object instanceof String) {
             String symbol = (String) object;
 
             /* Variable and constant negation */
             if (symbol.startsWith("!"))
-            {
-                return new Negate(this.valueFromObject(symbol.substring(1)));
-            }
+                return new Negate(valueFromObject(symbol.substring(1)));
 
             if (this.isDecimal(symbol))
-            {
                 return new Constant(Double.parseDouble(symbol));
-            }
-            else if (this.isVariable(symbol))
-            {
+
+            if (this.isVariable(symbol)) {
                 /* Need to account for a negative value variable */
-                if (symbol.startsWith("-"))
-                {
+                if (symbol.startsWith("-")) {
                     symbol = symbol.substring(1);
                     Variable value = this.getVariable(symbol);
 
                     if (value != null)
-                    {
                         return new Negative(value);
-                    }
                 }
-                else
-                {
-                    IValue value = this.getVariable(symbol);
+                else {
+                    MathValue value = this.getVariable(symbol);
 
                     /* Avoid NPE */
                     if (value != null)
-                    {
                         return value;
-                    }
                 }
             }
         }
-        else if (object instanceof List)
-        {
-            return new Group(this.parseSymbols((List<Object>) object));
+        else if (object instanceof List) {
+            return new Group(parseSymbols((List<Object>) object));
         }
 
         throw new Exception("Given object couldn't be converted to value! " + object);
@@ -515,22 +430,17 @@ public class MathBuilder
     /**
      * Get variable
      */
-    protected Variable getVariable(String name)
-    {
+    protected Variable getVariable(String name) {
         return this.variables.get(name);
     }
 
     /**
      * Get operation for given operator strings
      */
-    protected Operation operationForOperator(String op) throws Exception
-    {
-        for (Operation operation : Operation.values())
-        {
+    protected Operation operationForOperator(String op) throws Exception {
+        for (Operation operation : Operation.values()) {
             if (operation.sign.equals(op))
-            {
                 return operation;
-            }
         }
 
         throw new Exception("There is no such operator '" + op + "'!");
@@ -539,21 +449,18 @@ public class MathBuilder
     /**
      * Whether given object is a variable
      */
-    protected boolean isVariable(Object o)
-    {
+    protected boolean isVariable(Object o) {
         return o instanceof String && !this.isDecimal((String) o) && !this.isOperator((String) o);
     }
 
-    protected boolean isOperator(Object o)
-    {
+    protected boolean isOperator(Object o) {
         return o instanceof String && this.isOperator((String) o);
     }
 
     /**
      * Whether string is an operator
      */
-    protected boolean isOperator(String s)
-    {
+    protected boolean isOperator(String s) {
         return Operation.OPERATORS.contains(s) || s.equals("?") || s.equals(":");
     }
 
@@ -561,8 +468,7 @@ public class MathBuilder
      * Whether string is numeric (including whether it's a floating
      * number)
      */
-    protected boolean isDecimal(String s)
-    {
+    protected boolean isDecimal(String s) {
         return s.matches("^-?\\d+(\\.\\d+)?$");
     }
 }

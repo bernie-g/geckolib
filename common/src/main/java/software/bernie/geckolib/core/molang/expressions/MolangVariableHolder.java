@@ -1,6 +1,6 @@
 package software.bernie.geckolib.core.molang.expressions;
 
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.Variable;
 
 /**
@@ -9,7 +9,7 @@ import software.bernie.mclib.math.Variable;
 public class MolangVariableHolder extends MolangValue {
 	public Variable variable;
 
-	public MolangVariableHolder(Variable variable, IValue value) {
+	public MolangVariableHolder(Variable variable, MathValue value) {
 		super(value);
 
 		this.variable = variable;

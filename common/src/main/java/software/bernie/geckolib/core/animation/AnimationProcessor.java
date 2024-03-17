@@ -8,7 +8,7 @@ import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.core.state.BoneSnapshot;
-import software.bernie.mclib.utils.Interpolations;
+import software.bernie.mclib.math.utils.Interpolations;
 
 import java.util.Collection;
 import java.util.LinkedList;

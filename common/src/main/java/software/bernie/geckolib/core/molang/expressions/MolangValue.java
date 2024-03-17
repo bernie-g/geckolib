@@ -2,21 +2,21 @@ package software.bernie.geckolib.core.molang.expressions;
 
 import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 
 /**
- * Molang extension for the {@link IValue} system.
+ * Molang extension for the {@link MathValue} system.
  * Used to handle values and expressions specific to Molang deserialization
  */
-public class MolangValue implements IValue {
-	private final IValue value;
+public class MolangValue implements MathValue {
+	private final MathValue value;
 	private final boolean returns;
 
-	public MolangValue(IValue value) {
+	public MolangValue(MathValue value) {
 		this(value, false);
 	}
 
-	public MolangValue(IValue value, boolean isReturn) {
+	public MolangValue(MathValue value, boolean isReturn) {
 		this.value = value;
 		this.returns = isReturn;
 	}
@@ -26,7 +26,7 @@ public class MolangValue implements IValue {
 		return this.value.get();
 	}
 
-	public IValue getValueHolder() {
+	public MathValue getValueHolder() {
 		return this.value;
 	}
 

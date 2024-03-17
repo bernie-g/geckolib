@@ -24,7 +24,7 @@ import software.bernie.geckolib.core.object.Axis;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 
 import java.util.*;
 import java.util.function.Function;
@@ -471,9 +471,9 @@ public class AnimationController<T extends GeoAnimatable> {
 						continue;
 					}
 
-					KeyframeStack<Keyframe<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
-					KeyframeStack<Keyframe<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
-					KeyframeStack<Keyframe<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
+					KeyframeStack<Keyframe<MathValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
+					KeyframeStack<Keyframe<MathValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
+					KeyframeStack<Keyframe<MathValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 					if (!rotationKeyFrames.xKeyframes().isEmpty()) {
 						boneAnimationQueue.addNextRotation(null, adjustedTick, this.transitionLength, boneSnapshot, bone.getInitialSnapshot(),
@@ -549,9 +549,9 @@ public class AnimationController<T extends GeoAnimatable> {
 				continue;
 			}
 
-			KeyframeStack<Keyframe<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
-			KeyframeStack<Keyframe<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
-			KeyframeStack<Keyframe<IValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
+			KeyframeStack<Keyframe<MathValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
+			KeyframeStack<Keyframe<MathValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
+			KeyframeStack<Keyframe<MathValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 			if (!rotationKeyFrames.xKeyframes().isEmpty()) {
 				boneAnimationQueue.addRotations(
@@ -670,10 +670,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	/**
 	 * Convert a {@link KeyframeLocation} to an {@link AnimationPoint}
 	 */
-	private AnimationPoint getAnimationPointAtTick(List<Keyframe<IValue>> frames, double tick, boolean isRotation,
+	private AnimationPoint getAnimationPointAtTick(List<Keyframe<MathValue>> frames, double tick, boolean isRotation,
 												   Axis axis) {
-		KeyframeLocation<Keyframe<IValue>> location = getCurrentKeyFrameLocation(frames, tick);
-		Keyframe<IValue> currentFrame = location.keyframe();
+		KeyframeLocation<Keyframe<MathValue>> location = getCurrentKeyFrameLocation(frames, tick);
+		Keyframe<MathValue> currentFrame = location.keyframe();
 		double startValue = currentFrame.startValue().get();
 		double endValue = currentFrame.endValue().get();
 
@@ -702,11 +702,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param ageInTicks The current tick time
 	 * @return A new {@code KeyFrameLocation} containing the current {@code KeyFrame} and the tick time used to find it
 	 */
-	private KeyframeLocation<Keyframe<IValue>> getCurrentKeyFrameLocation(List<Keyframe<IValue>> frames,
-																		  double ageInTicks) {
+	private KeyframeLocation<Keyframe<MathValue>> getCurrentKeyFrameLocation(List<Keyframe<MathValue>> frames,
+																			 double ageInTicks) {
 		double totalFrameTime = 0;
 
-		for (Keyframe<IValue> frame : frames) {
+		for (Keyframe<MathValue> frame : frames) {
 			totalFrameTime += frame.length();
 
 			if (totalFrameTime > ageInTicks)

@@ -5,29 +5,24 @@ package software.bernie.mclib.math;
  *
  * This class simply returns supplied in the constructor value
  */
-public class Constant implements IValue
-{
+public class Constant implements MathValue {
     private double value;
 
-    public Constant(double value)
-    {
+    public Constant(double value) {
         this.value = value;
     }
 
     @Override
-    public double get()
-    {
+    public double get() {
         return this.value;
     }
 
-    public void set(double value)
-    {
+    public void set(double value) {
         this.value = value;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return String.valueOf(this.value);
     }
 }

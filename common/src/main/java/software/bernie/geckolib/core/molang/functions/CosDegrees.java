@@ -1,6 +1,6 @@
 package software.bernie.geckolib.core.molang.functions;
 
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.functions.Function;
 import software.bernie.mclib.math.functions.classic.Cos;
 
@@ -8,7 +8,7 @@ import software.bernie.mclib.math.functions.classic.Cos;
  * Replacement function for {@link Cos}, operating in degrees rather than radians.
  */
 public class CosDegrees extends Function {
-	public CosDegrees(IValue[] values, String name) throws Exception {
+	public CosDegrees(MathValue[] values, String name) throws Exception {
 		super(values, name);
 	}
 

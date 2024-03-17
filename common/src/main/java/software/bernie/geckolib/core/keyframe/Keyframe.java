@@ -7,7 +7,7 @@ package software.bernie.geckolib.core.keyframe;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animation.EasingType;
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +20,7 @@ import java.util.Objects;
  * @param easingType The {@code EasingType} to use for transformations
  * @param easingArgs The arguments to provide to the easing calculation
  */
-public record Keyframe<T extends IValue>(double length, T startValue, T endValue, EasingType easingType, List<T> easingArgs) {
+public record Keyframe<T extends MathValue>(double length, T startValue, T endValue, EasingType easingType, List<T> easingArgs) {
 	public Keyframe(double length, T startValue, T endValue) {
 		this(length, startValue, endValue, EasingType.LINEAR);
 	}

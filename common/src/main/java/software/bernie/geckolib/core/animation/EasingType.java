@@ -5,7 +5,7 @@ import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.Keyframe;
-import software.bernie.mclib.utils.Interpolations;
+import software.bernie.mclib.math.utils.Interpolations;
 
 import java.util.Locale;
 import java.util.Map;

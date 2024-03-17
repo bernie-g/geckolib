@@ -5,24 +5,20 @@ package software.bernie.mclib.math;
  *
  * This class is responsible for negating given value
  */
-public class Negate implements software.bernie.mclib.math.IValue
-{
-	public software.bernie.mclib.math.IValue value;
+public class Negate implements MathValue {
+	public MathValue value;
 
-	public Negate(IValue value)
-	{
+	public Negate(MathValue value) {
 		this.value = value;
 	}
 
 	@Override
-	public double get()
-	{
+	public double get() {
 		return this.value.get() == 0 ? 1 : 0;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "!" + this.value.toString();
 	}
 }

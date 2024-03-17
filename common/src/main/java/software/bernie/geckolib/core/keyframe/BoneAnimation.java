@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.core.keyframe;
 
-import software.bernie.mclib.math.IValue;
+import software.bernie.mclib.math.MathValue;
 
 /**
  * A record of a deserialized animation for a given bone.<br>
@@ -16,7 +16,7 @@ import software.bernie.mclib.math.IValue;
  * @param scaleKeyFrames The deserialized scale {@code Keyframe} stack
  */
 public record BoneAnimation(String boneName,
-							KeyframeStack<Keyframe<IValue>> rotationKeyFrames,
-							KeyframeStack<Keyframe<IValue>> positionKeyFrames,
-							KeyframeStack<Keyframe<IValue>> scaleKeyFrames) {
+							KeyframeStack<Keyframe<MathValue>> rotationKeyFrames,
+							KeyframeStack<Keyframe<MathValue>> positionKeyFrames,
+							KeyframeStack<Keyframe<MathValue>> scaleKeyFrames) {
 }

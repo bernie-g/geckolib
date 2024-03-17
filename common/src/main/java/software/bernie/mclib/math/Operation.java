@@ -12,133 +12,101 @@ import java.util.Set;
  *
  * TODO: maybe convert to classes (for the sake of API)?
  */
-public enum Operation
-{
-    ADD("+", 1)
-    {
+public enum Operation {
+    ADD("+", 1) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a + b;
         }
     },
-    SUB("-", 1)
-    {
+    SUB("-", 1) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a - b;
         }
     },
-    MUL("*", 2)
-    {
+    MUL("*", 2) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a * b;
         }
     },
-    DIV("/", 2)
-    {
+    DIV("/", 2) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             /* To avoid any exceptions */
             return a / (b == 0 ? 1 : b);
         }
     },
-    MOD("%", 2)
-    {
+    MOD("%", 2) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a % b;
         }
     },
-    POW("^", 3)
-    {
+    POW("^", 3) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return Math.pow(a, b);
         }
     },
-    AND("&&", 5)
-    {
+    AND("&&", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a != 0 && b != 0 ? 1 : 0;
         }
     },
-    OR("||", 5)
-    {
+    OR("||", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a != 0 || b != 0 ? 1 : 0;
         }
     },
-    LESS("<", 5)
-    {
+    LESS("<", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a < b ? 1 : 0;
         }
     },
-    LESS_THAN("<=", 5)
-    {
+    LESS_THAN("<=", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a <= b ? 1 : 0;
         }
     },
-    GREATER_THAN(">=", 5)
-    {
+    GREATER_THAN(">=", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a >= b ? 1 : 0;
         }
     },
-    GREATER(">", 5)
-    {
+    GREATER(">", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return a > b ? 1 : 0;
         }
     },
-    EQUALS("==", 5)
-    {
+    EQUALS("==", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return equals(a, b) ? 1 : 0;
         }
     },
-    NOT_EQUALS("!=", 5)
-    {
+    NOT_EQUALS("!=", 5) {
         @Override
-        public double calculate(double a, double b)
-        {
+        public double calculate(double a, double b) {
             return !equals(a, b) ? 1 : 0;
         }
     };
 
     public final static Set<String> OPERATORS = new HashSet<String>();
 
-    public static boolean equals(double a, double b)
-    {
+    public static boolean equals(double a, double b) {
         return Math.abs(a - b) < 0.00001;
     }
 
-    static
-    {
-        for (Operation op : values())
-        {
+    static {
+        for (Operation op : values()) {
             OPERATORS.add(op.sign);
         }
     }
@@ -154,8 +122,7 @@ public enum Operation
      */
     public final int value;
 
-    private Operation(String sign, int value)
-    {
+    Operation(String sign, int value) {
         this.sign = sign;
         this.value = value;
     }

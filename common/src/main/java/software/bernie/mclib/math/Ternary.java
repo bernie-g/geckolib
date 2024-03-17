@@ -6,28 +6,24 @@ package software.bernie.mclib.math;
  * This value implementation allows to return different values depending on
  * given condition value
  */
-public class Ternary implements software.bernie.mclib.math.IValue
-{
-	public software.bernie.mclib.math.IValue condition;
-	public software.bernie.mclib.math.IValue ifTrue;
-	public software.bernie.mclib.math.IValue ifFalse;
+public class Ternary implements MathValue {
+	public MathValue condition;
+	public MathValue ifTrue;
+	public MathValue ifFalse;
 
-	public Ternary(software.bernie.mclib.math.IValue condition, software.bernie.mclib.math.IValue ifTrue, IValue ifFalse)
-	{
+	public Ternary(MathValue condition, MathValue ifTrue, MathValue ifFalse) {
 		this.condition = condition;
 		this.ifTrue = ifTrue;
 		this.ifFalse = ifFalse;
 	}
 
 	@Override
-	public double get()
-	{
+	public double get() {
 		return this.condition.get() != 0 ? this.ifTrue.get() : this.ifFalse.get();
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return this.condition.toString() + " ? " + this.ifTrue.toString() + " : " + this.ifFalse.toString();
 	}
 }
