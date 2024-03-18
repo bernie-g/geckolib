@@ -1,5 +1,6 @@
 package software.bernie.mclib.math;
 
+import net.minecraft.util.Mth;
 import software.bernie.mclib.math.functions.Function;
 import software.bernie.mclib.math.functions.classic.*;
 import software.bernie.mclib.math.functions.limit.Clamp;
@@ -12,7 +13,6 @@ import software.bernie.mclib.math.functions.rounding.Trunc;
 import software.bernie.mclib.math.functions.utility.Lerp;
 import software.bernie.mclib.math.functions.utility.LerpRotate;
 import software.bernie.mclib.math.functions.utility.Random;
-import software.bernie.mclib.math.utils.MathUtils;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -267,7 +267,7 @@ public class MathBuilder {
 
         if (secondOp == -1) {
             MathValue left = this.parseSymbols(symbols.subList(0, firstOp));
-            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, MathUtils.clamp(firstOp + 3, 0, size)));
+            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, Mth.clamp(firstOp + 3, 0, size)));
 
             return new software.bernie.mclib.math.Operator(op, left, right);
         }

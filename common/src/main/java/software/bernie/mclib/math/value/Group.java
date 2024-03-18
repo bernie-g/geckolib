@@ -17,6 +17,11 @@ public record Group(MathValue contents) implements MathValue {
     }
 
     @Override
+    public boolean isMutable() {
+        return this.contents.isMutable();
+    }
+
+    @Override
     public String toString() {
         return "(" + this.contents.toString() + ")";
     }

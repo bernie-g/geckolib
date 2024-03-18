@@ -1,6 +1,7 @@
 package software.bernie.geckolib.core.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.util.Mth;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
@@ -8,7 +9,6 @@ import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.core.state.BoneSnapshot;
-import software.bernie.mclib.math.utils.Interpolations;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -140,9 +140,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
-				bone.setRotX((float)Interpolations.lerp(saveSnapshot.getRotX(), initialSnapshot.getRotX(), percentageReset));
-				bone.setRotY((float)Interpolations.lerp(saveSnapshot.getRotY(), initialSnapshot.getRotY(), percentageReset));
-				bone.setRotZ((float)Interpolations.lerp(saveSnapshot.getRotZ(), initialSnapshot.getRotZ(), percentageReset));
+				bone.setRotX((float)Mth.lerp(percentageReset, saveSnapshot.getRotX(), initialSnapshot.getRotX()));
+				bone.setRotY((float)Mth.lerp(percentageReset, saveSnapshot.getRotY(), initialSnapshot.getRotY()));
+				bone.setRotZ((float)Mth.lerp(percentageReset, saveSnapshot.getRotZ(), initialSnapshot.getRotZ()));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
@@ -157,9 +157,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
-				bone.setPosX((float)Interpolations.lerp(saveSnapshot.getOffsetX(), initialSnapshot.getOffsetX(), percentageReset));
-				bone.setPosY((float)Interpolations.lerp(saveSnapshot.getOffsetY(), initialSnapshot.getOffsetY(), percentageReset));
-				bone.setPosZ((float)Interpolations.lerp(saveSnapshot.getOffsetZ(), initialSnapshot.getOffsetZ(), percentageReset));
+				bone.setPosX((float)Mth.lerp(percentageReset, saveSnapshot.getOffsetX(), initialSnapshot.getOffsetX()));
+				bone.setPosY((float)Mth.lerp(percentageReset, saveSnapshot.getOffsetY(), initialSnapshot.getOffsetY()));
+				bone.setPosZ((float)Mth.lerp(percentageReset, saveSnapshot.getOffsetZ(), initialSnapshot.getOffsetZ()));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateOffset(bone.getPosX(), bone.getPosY(), bone.getPosZ());
@@ -174,9 +174,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
 
-				bone.setScaleX((float)Interpolations.lerp(saveSnapshot.getScaleX(), initialSnapshot.getScaleX(), percentageReset));
-				bone.setScaleY((float)Interpolations.lerp(saveSnapshot.getScaleY(), initialSnapshot.getScaleY(), percentageReset));
-				bone.setScaleZ((float)Interpolations.lerp(saveSnapshot.getScaleZ(), initialSnapshot.getScaleZ(), percentageReset));
+				bone.setScaleX((float)Mth.lerp(percentageReset, saveSnapshot.getScaleX(), initialSnapshot.getScaleX()));
+				bone.setScaleY((float)Mth.lerp(percentageReset, saveSnapshot.getScaleY(), initialSnapshot.getScaleY()));
+				bone.setScaleZ((float)Mth.lerp(percentageReset, saveSnapshot.getScaleZ(), initialSnapshot.getScaleZ()));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());

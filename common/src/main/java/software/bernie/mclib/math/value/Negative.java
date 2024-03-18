@@ -17,6 +17,11 @@ public record Negative(MathValue value) implements MathValue {
     }
 
     @Override
+    public boolean isMutable() {
+        return this.value.isMutable();
+    }
+
+    @Override
     public String toString() {
         return "-" + this.value.toString();
     }

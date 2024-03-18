@@ -1,8 +1,8 @@
 package software.bernie.mclib.math.functions.limit;
 
+import net.minecraft.util.Mth;
 import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.functions.Function;
-import software.bernie.mclib.math.utils.MathUtils;
 
 public class Clamp extends Function {
     public Clamp(MathValue[] values, String name) throws Exception {
@@ -16,6 +16,6 @@ public class Clamp extends Function {
 
     @Override
     public double get() {
-        return MathUtils.clamp(this.getArg(0), this.getArg(1), this.getArg(2));
+        return Mth.clamp(this.getArg(0), this.getArg(1), this.getArg(2));
     }
 }

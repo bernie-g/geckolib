@@ -18,6 +18,11 @@ public record Ternary(MathValue condition, MathValue trueValue, MathValue falseV
     }
 
     @Override
+    public boolean isMutable() {
+        return this.condition.isMutable() || this.trueValue.isMutable() || this.falseValue.isMutable();
+    }
+
+    @Override
     public String toString() {
         return this.condition.toString() + " ? " + this.trueValue.toString() + " : " + this.falseValue.toString();
     }

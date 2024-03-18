@@ -3,9 +3,9 @@ package software.bernie.geckolib.core.animation;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import net.minecraft.util.Mth;
 import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.Keyframe;
-import software.bernie.mclib.math.utils.Interpolations;
 
 import java.util.Locale;
 import java.util.Map;
@@ -81,7 +81,7 @@ public interface EasingType {
 		if (animationPoint.currentTick() >= animationPoint.transitionLength())
 			return (float)animationPoint.animationEndValue();
 
-		return Interpolations.lerp(animationPoint.animationStartValue(), animationPoint.animationEndValue(), buildTransformer(easingValue).apply(lerpValue));
+		return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
 	}
 
 	/**

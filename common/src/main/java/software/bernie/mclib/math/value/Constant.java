@@ -17,6 +17,11 @@ public record Constant(double value) implements MathValue {
     }
 
     @Override
+    public boolean isMutable() {
+        return false;
+    }
+
+    @Override
     public String toString() {
         return String.valueOf(this.value);
     }
