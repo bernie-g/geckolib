@@ -17,7 +17,6 @@ import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
-import software.bernie.mclib.math.Constant;
 import software.bernie.mclib.math.MathValue;
 
 import java.lang.reflect.Type;

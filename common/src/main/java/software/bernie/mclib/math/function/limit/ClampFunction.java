@@ -17,12 +17,17 @@ public final class ClampFunction extends MathFunction {
     private final MathValue min;
     private final MathValue max;
 
-    public ClampFunction(String name, MathValue... values) {
-        super(name);
+    public ClampFunction(MathValue... values) {
+        super(values);
 
         this.value = values[0];
         this.min = values[1];
         this.max = values[2];
+    }
+
+    @Override
+    public String getName() {
+        return "math.clamp";
     }
 
     @Override

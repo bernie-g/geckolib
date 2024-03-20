@@ -17,12 +17,17 @@ public final class LerpRotFunction extends MathFunction {
     private final MathValue max;
     private final MathValue delta;
 
-    public LerpRotFunction(String name, MathValue... values) {
-        super(name);
+    public LerpRotFunction(MathValue... values) {
+        super(values);
 
         this.min = values[0];
         this.max = values[1];
         this.delta = values[2];
+    }
+
+    @Override
+    public String getName() {
+        return "math.lerprotate";
     }
 
     @Override

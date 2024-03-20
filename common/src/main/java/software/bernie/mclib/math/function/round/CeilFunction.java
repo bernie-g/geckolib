@@ -14,10 +14,15 @@ import software.bernie.mclib.math.function.MathFunction;
 public final class CeilFunction extends MathFunction {
     private final MathValue value;
 
-    public CeilFunction(String name, MathValue... values) {
-        super(name);
+    public CeilFunction(MathValue... values) {
+        super(values);
 
         this.value = values[0];
+    }
+
+    @Override
+    public String getName() {
+        return "math.ceil";
     }
 
     @Override

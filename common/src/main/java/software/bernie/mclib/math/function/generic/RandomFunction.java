@@ -29,13 +29,18 @@ public final class RandomFunction extends MathFunction {
     @Nullable
     private final Random random;
 
-    public RandomFunction(String name, MathValue... values) {
-        super(name);
+    public RandomFunction(MathValue... values) {
+        super(values);
 
         this.valueA = values[0];
         this.valueB = values.length >= 2 ? values[1] : null;
         this.seed = values.length >= 3 ? values[2] : null;
         this.random = this.seed != null ? new Random() : null;
+    }
+
+    @Override
+    public String getName() {
+        return "math.random";
     }
 
     @Override

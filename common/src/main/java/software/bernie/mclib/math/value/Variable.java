@@ -1,7 +1,9 @@
 package software.bernie.mclib.math.value;
 
-import org.apache.commons.lang3.mutable.MutableDouble;
 import software.bernie.mclib.math.MathValue;
+
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.DoubleSupplier;
 
 /**
  * {@link MathValue} value supplier
@@ -9,24 +11,32 @@ import software.bernie.mclib.math.MathValue;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns the currently stored value, which may be modified at any given time via {@link #set}
+ * Returns the currently stored value, which may be modified at any given time via {@link #set}. Values may be lazily evaluated to eliminate wasteful usage
  */
-public record Variable(String name, MutableDouble value) implements MathValue {
+public record Variable(String name, AtomicReference<DoubleSupplier> value) implements MathValue {
     public Variable(String name, double value) {
-        this(name, new MutableDouble(value));
+        this(name, () -> value);
+    }
+
+    public Variable(String name, DoubleSupplier value) {
+        this(name, new AtomicReference<>(value));
     }
 
     @Override
     public double get() {
-        return this.value.getValue();
+        return this.value.get().getAsDouble();
     }
 
     public void set(final double value) {
-        this.value.setValue(value);
+        this.value.set(() -> value);
+    }
+
+    public void set(final DoubleSupplier value) {
+        this.value.set(value);
     }
 
     @Override
     public String toString() {
-        return this.name + "(" + this.value.getValue() + ")";
+        return this.name + "(" + this.value.get().getAsDouble() + ")";
     }
 }

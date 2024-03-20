@@ -23,7 +23,6 @@ import software.bernie.geckolib.core.molang.MolangQueries;
 import software.bernie.geckolib.core.object.Axis;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.state.BoneSnapshot;
-import software.bernie.mclib.math.Constant;
 import software.bernie.mclib.math.MathValue;
 
 import java.util.*;

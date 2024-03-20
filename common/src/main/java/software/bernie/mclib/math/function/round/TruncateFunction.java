@@ -14,10 +14,15 @@ import software.bernie.mclib.math.function.MathFunction;
 public final class TruncateFunction extends MathFunction {
     private final MathValue value;
 
-    public TruncateFunction(String name, MathValue... values) {
-        super(name);
+    public TruncateFunction(MathValue... values) {
+        super(values);
 
         this.value = values[0];
+    }
+
+    @Override
+    public String getName() {
+        return "math.trunc";
     }
 
     @Override

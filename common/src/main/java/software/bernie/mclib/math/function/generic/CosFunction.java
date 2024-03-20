@@ -1,5 +1,6 @@
-package software.bernie.mclib.math.function.round;
+package software.bernie.mclib.math.function.generic;
 
+import net.minecraft.util.Mth;
 import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.function.MathFunction;
 
@@ -9,12 +10,12 @@ import software.bernie.mclib.math.function.MathFunction;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns the largest value that is less than or equal to the input value and is equal to an integer
+ * Returns the cosine of the input value angle, with the input angle converted to radians
  */
-public final class FloorFunction extends MathFunction {
+public final class CosFunction extends MathFunction {
     private final MathValue value;
 
-    public FloorFunction(MathValue... values) {
+    public CosFunction(MathValue... values) {
         super(values);
 
         this.value = values[0];
@@ -22,12 +23,12 @@ public final class FloorFunction extends MathFunction {
 
     @Override
     public String getName() {
-        return "math.floor";
+        return "math.cos";
     }
 
     @Override
     public double compute() {
-        return Math.floor(this.value.get());
+        return Mth.cos((float)this.value.get() * Mth.DEG_TO_RAD);
     }
 
     @Override

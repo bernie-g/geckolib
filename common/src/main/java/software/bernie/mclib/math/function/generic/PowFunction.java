@@ -1,4 +1,4 @@
-package software.bernie.mclib.math.function.round;
+package software.bernie.mclib.math.function.generic;
 
 import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.function.MathFunction;
@@ -9,34 +9,36 @@ import software.bernie.mclib.math.function.MathFunction;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns the largest value that is less than or equal to the input value and is equal to an integer
+ * Returns the input value raised to the power of the second input value
  */
-public final class FloorFunction extends MathFunction {
+public final class PowFunction extends MathFunction {
     private final MathValue value;
+    private final MathValue power;
 
-    public FloorFunction(MathValue... values) {
+    public PowFunction(MathValue... values) {
         super(values);
 
         this.value = values[0];
+        this.power = values[1];
     }
 
     @Override
     public String getName() {
-        return "math.floor";
+        return "math.pow";
     }
 
     @Override
     public double compute() {
-        return Math.floor(this.value.get());
+        return Math.pow(this.value.get(), this.power.get());
     }
 
     @Override
     public int getMinArgs() {
-        return 1;
+        return 2;
     }
 
     @Override
     public MathValue[] getArgs() {
-        return new MathValue[] {this.value};
+        return new MathValue[] {this.value, this.power};
     }
 }

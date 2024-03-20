@@ -8,7 +8,7 @@ import software.bernie.mclib.math.MathValue;
  * <p>
  * <b>Contract:</b>
  * <br>
- * A fixed, static double value
+ * An immutable double value
  */
 public record Constant(double value) implements MathValue {
     @Override

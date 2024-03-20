@@ -8,10 +8,10 @@ import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.core.molang.expressions.MolangVariableHolder;
 import software.bernie.geckolib.core.molang.functions.CosDegrees;
 import software.bernie.geckolib.core.molang.functions.SinDegrees;
-import software.bernie.mclib.math.Constant;
-import software.bernie.mclib.math.MathValue;
 import software.bernie.mclib.math.MathBuilder;
-import software.bernie.mclib.math.Variable;
+import software.bernie.mclib.math.MathValue;
+import software.bernie.mclib.math.value.Constant;
+import software.bernie.mclib.math.value.Variable;
 
 import java.util.List;
 import java.util.Map;
@@ -215,7 +215,7 @@ public class MolangParser extends MathBuilder {
 	protected static MolangValue parseOneLine(String expression, MolangCompoundValue currentStatement) throws MolangException {
 		if (expression.startsWith(RETURN)) {
 			try {
-				return new MolangValue(INSTANCE.parse(expression.substring(RETURN.length())), true);
+				return new MolangValue(INSTANCE.compileExpression(expression.substring(RETURN.length())), true);
 			}
 			catch (Exception e) {
 				throw new MolangException("Couldn't parse return '" + expression + "' expression!");
@@ -223,7 +223,7 @@ public class MolangParser extends MathBuilder {
 		}
 
 		try {
-			List<Object> symbols = INSTANCE.breakdownChars(INSTANCE.breakdown(expression));
+			List<Object> symbols = INSTANCE.compileSymbols(INSTANCE.decomposeExpression(expression));
 
 			if (symbols.size() >= 3 && symbols.get(0) instanceof String name && INSTANCE.isVariable(symbols.get(0)) && symbols.get(1).equals("=")) {
 				symbols = symbols.subList(2, symbols.size());

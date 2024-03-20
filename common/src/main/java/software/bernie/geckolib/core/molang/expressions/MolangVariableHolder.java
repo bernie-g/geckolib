@@ -1,7 +1,7 @@
 package software.bernie.geckolib.core.molang.expressions;
 
 import software.bernie.mclib.math.MathValue;
-import software.bernie.mclib.math.Variable;
+import software.bernie.mclib.math.value.Variable;
 
 /**
  * Extension of {@link MolangValue} that additionally sets the value of a provided {@link Variable} when being called.

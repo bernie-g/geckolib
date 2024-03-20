@@ -15,11 +15,16 @@ public final class MaxFunction extends MathFunction {
     private final MathValue valueA;
     private final MathValue valueB;
 
-    public MaxFunction(String name, MathValue... values) {
-        super(name);
+    public MaxFunction(MathValue... values) {
+        super(values);
 
         this.valueA = values[0];
         this.valueB = values[1];
+    }
+
+    @Override
+    public String getName() {
+        return "math.max";
     }
 
     @Override

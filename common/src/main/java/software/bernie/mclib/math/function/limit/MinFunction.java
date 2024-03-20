@@ -15,11 +15,16 @@ public final class MinFunction extends MathFunction {
     private final MathValue valueA;
     private final MathValue valueB;
 
-    public MinFunction(String name, MathValue... values) {
-        super(name);
+    public MinFunction(MathValue... values) {
+        super(values);
 
         this.valueA = values[0];
         this.valueB = values[1];
+    }
+
+    @Override
+    public String getName() {
+        return "math.min";
     }
 
     @Override

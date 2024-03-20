@@ -12,28 +12,27 @@ import java.util.StringJoiner;
  * Functions should be deterministic - identical input values should result in identical output values, and values should adhere to the {@link MathValue#isMutable() Mutability} contract of {@link MathValue} for determining result-caching.
  */
 public abstract class MathFunction implements MathValue {
-    private final String name;
     private final boolean isMutable;
-    private Double cachedValue = null;
+    private double cachedValue = Double.MIN_VALUE;
 
-    protected MathFunction(String name, MathValue... values) {
-        this.name = name;
-
+    protected MathFunction(MathValue... values) {
         validate(values);
 
         this.isMutable = isMutable(values);
     }
 
-    public String getName() {
-        return this.name;
-    }
+    /**
+     * Return the expression name/symbol for this function.
+     * This is the value that would be seen in a mathematical expression string
+     */
+    public abstract String getName();
 
     @Override
     public final double get() {
         if (this.isMutable)
             return compute();
 
-        if (this.cachedValue == null)
+        if (this.cachedValue == Double.MIN_VALUE)
             this.cachedValue = compute();
 
         return this.cachedValue;
@@ -71,11 +70,11 @@ public abstract class MathFunction implements MathValue {
     /**
      * Validate this function's arguments against its minimum requirements, throwing an exception for invalid argument states
      */
-    public void validate(MathValue... inputs) {
+    public void validate(MathValue... inputs) throws IllegalArgumentException {
         final int minArgs = getMinArgs();
 
         if (inputs.length < minArgs)
-            throw new IllegalArgumentException(String.format("Function '%s' requires at least %s arguments. Only %s given!", getName(), minArgs, inputs.length));
+            throw new IllegalArgumentException(String.format("Function '%s' at least %s arguments. Only %s given!", getName(), minArgs, inputs.length));
     }
 
     @Override
@@ -93,5 +92,18 @@ public abstract class MathFunction implements MathValue {
         }
 
         return getName() + joiner;
+    }
+
+    /**
+     * Factory interface for {@link MathFunction}.
+     * Functionally equivalent to a <code>Function<MathValue[], MathFunction></code>, but with a more concise user-facing handle
+     * @param <T>
+     */
+    @FunctionalInterface
+    public interface Factory<T extends MathFunction> {
+        /**
+         * Instantiate a new {@link MathFunction} for the given input values
+         */
+        T create(MathValue... values);
     }
 }

@@ -1,474 +1,477 @@
 package software.bernie.mclib.math;
 
+import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.util.Mth;
-import software.bernie.mclib.math.functions.Function;
-import software.bernie.mclib.math.functions.classic.*;
-import software.bernie.mclib.math.functions.limit.Clamp;
-import software.bernie.mclib.math.functions.limit.Max;
-import software.bernie.mclib.math.functions.limit.Min;
-import software.bernie.mclib.math.functions.rounding.Ceil;
-import software.bernie.mclib.math.functions.rounding.Floor;
-import software.bernie.mclib.math.functions.rounding.Round;
-import software.bernie.mclib.math.functions.rounding.Trunc;
-import software.bernie.mclib.math.functions.utility.Lerp;
-import software.bernie.mclib.math.functions.utility.LerpRotate;
-import software.bernie.mclib.math.functions.utility.Random;
+import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.mclib.math.function.MathFunction;
+import software.bernie.mclib.math.function.generic.*;
+import software.bernie.mclib.math.function.limit.ClampFunction;
+import software.bernie.mclib.math.function.limit.MaxFunction;
+import software.bernie.mclib.math.function.limit.MinFunction;
+import software.bernie.mclib.math.function.round.*;
+import software.bernie.mclib.math.value.*;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 /**
- * Math builder
- *
- * This class is responsible for parsing math expressions provided by
- * user in a string to an {@link MathValue} which can be used to compute
- * some value dynamically using different math operators, variables and
- * functions.
- *
- * It works by first breaking down given string into a list of tokens
- * and then putting them together in a binary tree-like {@link MathValue}.
- *
- * TODO: maybe implement constant pool (to reuse same values)?
- * TODO: maybe pre-compute constant expressions?
+ * Mathematical expression parser that breaks down String-expressions into tokenised objects that can be used for automated computation.
+ * <p>
+ * Original design: <a href="https://github.com/fadookie/particleman/tree/be1ce93c3cbd0f894742e3f41c0c6b23880be046/mclib">McLib - McHorse, Eliot Lash, Hiroku</a>
+ * under <a href="https://github.com/fadookie/particleman/blob/be1ce93c3cbd0f894742e3f41c0c6b23880be046/LICENSE-mclib.md">MIT License</a>
+ * <p>
+ * Overhauled by Tslat for GeckoLib and redesigned specifically for <a href="https://bedrock.dev/docs/1.20.0.0/1.20.80.21/Molang">Molang</a> use
  */
 public class MathBuilder {
-    /**
-     * Named variables that can be used in math expression by this
-     * builder
-     */
-    public Map<String, Variable> variables = new HashMap<String, Variable>();
+    private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:.,()]+$");
+    private static final Pattern WHITESPACE = Pattern.compile("\\s");
+    private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
+    private static final Pattern OPERATIVE_SYMBOLS = Pattern.compile("[?:=]");
+    private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new HashMap<>(18), map -> {
+        map.put("math.abs", AbsFunction::new);
+        map.put("math.cos", CosFunction::new);
+        map.put("math.exp", ExpFunction::new);
+        map.put("math.ln", LogFunction::new);
+        map.put("math.mod", ModFunction::new);
+        map.put("math.pow", PowFunction::new);
+        map.put("math.random", RandomFunction::new);
+        map.put("math.sin", SinFunction::new);
+        map.put("math.sqrt", SqrtFunction::new);
+        map.put("math.clamp", ClampFunction::new);
+        map.put("math.max", MaxFunction::new);
+        map.put("math.min", MinFunction::new);
+        map.put("math.ceil", CeilFunction::new);
+        map.put("math.floor", FloorFunction::new);
+        map.put("math.lerp", LerpFunction::new);
+        map.put("math.lerprotate", LerpRotFunction::new);
+        map.put("math.round", RoundFunction::new);
+        map.put("math.trunc", TruncateFunction::new);
+    });
+    private static final Map<String, Variable> VARIABLES = Util.make(new HashMap<>(), map -> {
+        map.put("PI", new Variable("PI", Math.PI));
+        map.put("E", new Variable("E", Math.E));
+    });
 
     /**
-     * Map of functions which can be used in the math expressions
+     * @return Whether a {@link MathFunction} has been registered under the given expression name
      */
-    public Map<String, Class<? extends Function>> functions = new HashMap<String, Class<? extends Function>>();
-
-    public MathBuilder() {
-        /* Some default values */
-        this.register(new Variable("PI", Math.PI));
-        this.register(new Variable("E", Math.E));
-
-        /* Rounding functions */
-        this.functions.put("floor", Floor.class);
-        this.functions.put("round", Round.class);
-        this.functions.put("ceil", Ceil.class);
-        this.functions.put("trunc", Trunc.class);
-
-        /* Selection and limit functions */
-        this.functions.put("clamp", Clamp.class);
-        this.functions.put("max", Max.class);
-        this.functions.put("min", Min.class);
-
-        /* Classical functions */
-        this.functions.put("abs", Abs.class);
-        this.functions.put("cos", Cos.class);
-        this.functions.put("sin", Sin.class);
-        this.functions.put("exp", Exp.class);
-        this.functions.put("ln", Ln.class);
-        this.functions.put("sqrt", Sqrt.class);
-        this.functions.put("mod", Mod.class);
-        this.functions.put("pow", Pow.class);
-
-        /* Utility functions */
-        this.functions.put("lerp", Lerp.class);
-        this.functions.put("lerprotate", LerpRotate.class);
-        this.functions.put("random", Random.class);
+    public static boolean isFunctionRegistered(String name) {
+        return FUNCTION_FACTORIES.containsKey(name);
     }
 
     /**
-     * Register a variable
+     * Register a new {@link MathFunction} to be handled by GeckoLib for parsing and internal use.
+     * <p>
+     * Overrides are supported, but should be avoided unless specifically needed
+     *
+     * @param name The string representation of the function. This will be the parsed value from input math strings.
+     * @param factory The constructor-factory for the given function
      */
-    public void register(Variable variable) {
-        this.variables.put(variable.getName(), variable);
+    public static void registerFunction(String name, MathFunction.Factory<?> factory) {
+        if (FUNCTION_FACTORIES.put(name, factory) != null)
+            GeckoLibConstants.LOGGER.log(Level.WARN, "Duplicate registration of MathFunction: '" + name + "'. Ignore if intentional override");
+
+        GeckoLibConstants.LOGGER.log(Level.DEBUG, "Registered MathFunction '" + name + "'");
     }
 
     /**
-     * Parse given math expression into a {@link MathValue} which can be
-     * used to execute math.
+     * Construct a {@link MathFunction} from the given symbol and values
+     *
+     * @param name The expression name of the function
+     * @param values The input values for the function
+     * @return A new instance of the MathFunction
      */
-    public MathValue parse(String expression) throws Exception {
-        return this.parseSymbols(this.breakdownChars(this.breakdown(expression)));
+    @Nullable
+    public static <T extends MathFunction> T buildFunction(String name, MathValue... values) {
+        if (!FUNCTION_FACTORIES.containsKey(name))
+            return null;
+
+        return (T)FUNCTION_FACTORIES.get(name).create(values);
     }
 
     /**
-     * Breakdown an expression
+     * Register a new {@link Variable} with the math parsing system
+     * <p>
+     * Technically supports overriding by matching keys, though you should try to update the existing variable instances instead if possible
      */
-    public String[] breakdown(String expression) throws Exception {
-        /* If given string have illegal characters, then it can't be parsed */
-        if (!expression.matches("^[\\w\\d\\s_+-/*%^&|<>=!?:.,()]+$"))
-            throw new Exception("Given expression '" + expression + "' contains illegal characters!");
+    public static void registerVariable(Variable variable) {
+        VARIABLES.put(variable.name(), variable);
+    }
 
-        /* Remove all spaces, and leading and trailing parenthesis */
-        expression = expression.replaceAll("\\s+", "");
+    /**
+     * @return The registered {@link Variable} instance for the given name
+     */
+    public static Optional<Variable> getVariableFor(String name) {
+        return Optional.ofNullable(VARIABLES.get(name));
+    }
 
-        String[] chars = expression.split("(?!^)");
+    /**
+     * Parse and compile a full expression into a single {@link MathValue} object
+     */
+    public static <L extends List<Either<String, L>>> MathValue compileExpression(String expression) {
+        return parseSymbols(compileSymbols(decomposeExpression(expression)));
+    }
 
-        int left = 0;
-        int right = 0;
+    /**
+     * Breakdown an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
+     */
+    public static char[] decomposeExpression(String expression) throws IllegalArgumentException {
+        if (!EXPRESSION_FORMAT.matcher(expression).matches())
+            throw new IllegalArgumentException("Invalid characters found in expression: '" + expression + "'");
 
-        for (String s : chars) {
-            if (s.equals("(")) {
-                left++;
+        final char[] chars = WHITESPACE.matcher(expression).replaceAll("").toCharArray();
+        int groupState = 0;
+
+        for (char character : chars) {
+            if (character == '(') {
+                groupState++;
             }
-            else if (s.equals(")")) {
-                right++;
+            else if (character == ')') {
+                groupState--;
             }
+            
+            if (groupState < 0)
+                throw new IllegalArgumentException("Closing parenthesis before opening parenthesis in expression '" + expression + "'");
         }
-
-        /* Amount of left and right brackets should be the same */
-        if (left != right)
-            throw new Exception("Given expression '" + expression + "' has more uneven amount of parenthesis, there are " + left + " open and " + right + " closed!");
+        
+        if (groupState != 0)
+            throw new IllegalArgumentException("Uneven parenthesis in expression, each opening brace must have a pairing close brace '" + expression + "'");
 
         return chars;
     }
 
     /**
-     * Breakdown characters into a list of math expression symbols.
+     * Compile a collection of 'symbols' from the given char array representing the expression split into individual characters
+     *
+     * @return A list of either string symbols, or a recursively nested collection of compiled symbols
      */
-    public List<Object> breakdownChars(String[] chars) {
-        List<Object> symbols = new ArrayList<Object>();
-        String buffer = "";
-        int len = chars.length;
+    public static <L extends List<Either<String, L>>> L compileSymbols(char[] chars) {
+        final L symbols = (L)new ObjectArrayList<Either<String, L>>();
+        final StringBuilder buffer = new StringBuilder();
 
-        for (int i = 0; i < len; i++) {
-            String s = chars[i];
-            boolean longOperator = i > 0 && this.isOperator(chars[i - 1] + s);
+        for (int i = 0; i < chars.length; i++) {
+            final char ch = chars[i];
+            final boolean isMultiCharOperator = i > 0 && isOperativeSymbol(chars[i - 1] + "" + ch);
 
-            if (this.isOperator(s) || longOperator || s.equals(",")) {
-                /* Taking care of a special case of using minus sign to
-                 * invert the positive value */
-                if (s.equals("-")) {
-                    int size = symbols.size();
+            if (isOperativeSymbol(ch) || isMultiCharOperator || ch == ',') {
+                if (ch == '-' && buffer.isEmpty()) {
+                    Object lastSymbol;
 
-                    boolean isFirst = size == 0 && buffer.isEmpty();
-                    boolean isOperatorBehind = size > 0 && (this.isOperator(symbols.get(size - 1)) || symbols.get(size - 1).equals(",")) && buffer.isEmpty();
-
-                    if (isFirst || isOperatorBehind) {
-                        buffer += s;
+                    if (symbols.isEmpty() || isOperativeSymbol(lastSymbol = symbols.get(symbols.size() - 1).left().orElse(null)) || ",".equals(lastSymbol)) {
+                        buffer.append(ch);
 
                         continue;
                     }
                 }
 
-                if (longOperator) {
-                    s = chars[i - 1] + s;
-                    buffer = buffer.substring(0, buffer.length() - 1);
+                if (isMultiCharOperator) {
+                    symbols.add(Either.left(buffer.substring(0, buffer.length() - 1)));
+                    symbols.add(Either.left(chars[i - 1] + "" + ch));
+                }
+                else {
+                    symbols.add(Either.left(buffer.toString()));
                 }
 
-                /* Push buffer and operator */
-                if (!buffer.isEmpty()) {
-                    symbols.add(buffer);
-                    buffer = "";
-                }
-
-                symbols.add(s);
+                buffer.setLength(0);
             }
-            else if (s.equals("(")) {
-                /* Push a list of symbols */
+            else if (ch == '(') {
                 if (!buffer.isEmpty()) {
-                    symbols.add(buffer);
-                    buffer = "";
+                    symbols.add(Either.left(buffer.toString()));
+                    buffer.setLength(0);
                 }
 
-                int counter = 1;
+                int groupState = 1;
 
-                for (int j = i + 1; j < len; j++) {
-                    String c = chars[j];
+                for (int j = i + 1; i < chars.length; i++) {
+                    final char groupChar = chars[j];
 
-                    if (c.equals("(")) {
-                        counter++;
+                    if (groupChar == '(') {
+                        groupState++;
                     }
-                    else if (c.equals(")")) {
-                        counter--;
+                    else if (groupChar == ')') {
+                        groupState--;
                     }
 
-                    if (counter == 0) {
-                        symbols.add(this.breakdownChars(buffer.split("(?!^)")));
-
+                    if (groupState == 0) {
+                        symbols.add(compileSymbols(buffer.toString().toCharArray()));
                         i = j;
-                        buffer = "";
-
-                        break;
+                        buffer.setLength(0);
                     }
                     else {
-                        buffer += c;
+                        buffer.append(ch);
                     }
                 }
             }
             else {
-                /* Accumulate the buffer */
-                buffer += s;
+                buffer.append(ch);
             }
         }
 
         if (!buffer.isEmpty())
-            symbols.add(buffer);
+            symbols.add(Either.left(buffer.toString()));
 
         return symbols;
     }
 
     /**
-     * Parse symbols
+     * Compiles a given raw list of {@link #compileSymbols(char[]) symbols} into a singular {@link MathValue}, ready for use
      *
-     * This function is the most important part of this class. It's
-     * responsible for turning list of symbols into {@link MathValue}. This
-     * is done by constructing a binary tree-like {@link MathValue} based on
-     * {@link software.bernie.mclib.math.Operator} class.
-     *
-     * However, beside parsing operations, it's also can return one or
-     * two item sized symbol lists.
+     * @throws IllegalArgumentException If the given symbols list cannot be compiled down into a MathValue
      */
-    @SuppressWarnings("unchecked")
-    public MathValue parseSymbols(List<Object> symbols) throws Exception {
-        MathValue ternary = tryTernary(symbols);
+    public static <L extends List<Either<String, L>>> MathValue parseSymbols(L symbols) throws IllegalArgumentException {
+        if (symbols.size() == 2) {
+            Optional<String> prefix = symbols.get(0).left().filter(left -> isVariable(left) || left.equals("-"));
+            Optional<L> group = symbols.get(1).right();
+
+            if (prefix.isPresent() && group.isPresent())
+                return compileFunction(prefix.get(), group.get());
+        }
+
+        MathValue value = compileValue(symbols);
+
+        if (value != null)
+            return value;
+
+        throw new IllegalArgumentException("Unable to parse compiled symbols from expression: " + symbols);
+    }
+
+    /**
+     * Compile the given {@link #compileSymbols(char[]) symbols} down into a singular {@link MathValue}, ready for use
+     *
+     * @return A compiled MathValue instance, or null if not applicable
+     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     */
+    @Nullable
+    protected static <L extends List<Either<String, L>>> MathValue compileValue(L symbols) throws IllegalArgumentException {
+        if (symbols.size() == 1)
+            return compileSingleValue(symbols.get(0));
+
+        Ternary ternary = compileTernary(symbols);
 
         if (ternary != null)
             return ternary;
 
-        int size = symbols.size();
+        return compileCalculation(symbols);
+    }
 
-        /* Constant, variable or group (parenthesis) */
-        if (size == 1)
-            return valueFromObject(symbols.get(0));
+    /**
+     * Compile a singular-argument {@link MathValue} instance from the given symbols list, if applicable
+     *
+     * @return A compiled MathValue value, or null if not applicable
+     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     */
+    @Nullable
+    protected static <L extends List<Either<String, L>>> MathValue compileSingleValue(Either<String, L> symbol) throws IllegalArgumentException {
+        if (symbol.right().isPresent())
+            return new Group(parseSymbols(symbol.right().get()));
 
-        /* Function */
-        if (size == 2) {
-            Object first = symbols.get(0);
-            Object second = symbols.get(1);
+        return symbol.left().map(string -> {
+            if (string.startsWith("!"))
+                return new BooleanNegate(compileSingleValue(Either.left(string.substring(1))));
 
-            if ((isVariable(first) || first.equals("-")) && second instanceof List)
-                return createFunction((String) first, (List<Object>) second);
-        }
+            if (isNumeric(string))
+                return new Constant(Double.parseDouble(string));
 
-        /* Any other math expression */
-        int firstOp = -1;
-        int secondOp = -1;
+            if (isVariable(string)) {
+                if (string.startsWith("-"))
+                    return getVariableFor(string.substring(1)).orElse(null);
 
-        /* Find next two operators' indices */
-        for (int i = 0; i < size; i++) {
-            Object o = symbols.get(i);
+                return getVariableFor(string).orElse(null);
+            }
 
-            if (isOperator(o)) {
-                if (firstOp == -1) {
-                    firstOp = i;
+            return null;
+        }).orElse(null);
+    }
+
+    /**
+     * Compile a {@link Calculation} value instance from the given symbols list, if applicable
+     *
+     * @return A compiled Calculation value, or null if not applicable
+     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     */
+    @Nullable
+    protected static <L extends List<Either<String, L>>> Calculation compileCalculation(L symbols) throws IllegalArgumentException  {
+        final int symbolCount = symbols.size();
+        int firstOperatorIndex = -1;
+        int secondOperatorIndex = -1;
+
+        for (int i = 0; i < symbolCount; i++) {
+            final Either<String, L> symbol = symbols.get(i);
+
+            if (symbol.left().filter(MathBuilder::isOperativeSymbol).isPresent()) {
+                if (firstOperatorIndex == -1) {
+                    firstOperatorIndex = i;
                 }
                 else {
-                    secondOp = i;
+                    secondOperatorIndex = i;
+
                     break;
                 }
             }
         }
 
-        /* And finally construct the math operation */
-        Operation op = this.operationForOperator((String) symbols.get(firstOp));
+        if (firstOperatorIndex == -1)
+            return null;
 
-        if (secondOp == -1) {
-            MathValue left = this.parseSymbols(symbols.subList(0, firstOp));
-            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, Mth.clamp(firstOp + 3, 0, size)));
+        Operator firstOperator = getOperatorFor(symbols.get(firstOperatorIndex).left().get());
 
-            return new software.bernie.mclib.math.Operator(op, left, right);
+        if (secondOperatorIndex == -1) {
+            MathValue left = parseSymbols((L)symbols.subList(0, firstOperatorIndex));
+            MathValue right = parseSymbols((L)symbols.subList(firstOperatorIndex + 1, Mth.clamp(firstOperatorIndex + 3, 0, symbolCount)));
+
+            return new Calculation(firstOperator, left, right);
         }
 
-        if (secondOp > firstOp) {
-            Operation compareTo = this.operationForOperator((String) symbols.get(secondOp));
-            MathValue left = this.parseSymbols(symbols.subList(0, firstOp));
+        Operator secondOperator = getOperatorFor(symbols.get(secondOperatorIndex).left().get());
+        MathValue left = parseSymbols((L)symbols.subList(0, firstOperatorIndex));
 
-            if (compareTo.value > op.value)
-                return new software.bernie.mclib.math.Operator(op, left, this.parseSymbols(symbols.subList(firstOp + 1, size)));
+        if (secondOperator.takesPrecedenceOver(firstOperator))
+            return new Calculation(firstOperator, left, parseSymbols((L)symbols.subList(firstOperatorIndex + 1, symbolCount)));
 
-            MathValue right = this.parseSymbols(symbols.subList(firstOp + 1, secondOp));
+        MathValue right = parseSymbols((L)symbols.subList(firstOperatorIndex + 1, secondOperatorIndex));
 
-            return new software.bernie.mclib.math.Operator(compareTo, new Operator(op, left, right), this.parseSymbols(symbols.subList(secondOp + 1, size)));
-        }
-
-        throw new Exception("Given symbols couldn't be parsed! " + symbols);
+        return new Calculation(secondOperator, new Calculation(firstOperator, left, right), parseSymbols((L)symbols.subList(secondOperatorIndex + 1, symbolCount)));
     }
 
     /**
-     * Try parsing a ternary expression
+     * Compile a {@link Ternary} value instance from the given symbols list, if applicable
      *
-     * From what we know, with ternary expressions, we should have only one ? and :,
-     * and some elements from beginning till ?, in between ? and :, and also some
-     * remaining elements after :.
+     * @return A compiled Ternary value, or null if not applicable
+     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
      */
-    protected MathValue tryTernary(List<Object> symbols) throws Exception {
-        int question = -1;
-        int questions = 0;
-        int colon = -1;
-        int colons = 0;
-        int size = symbols.size();
+    @Nullable
+    protected static <L extends List<Either<String, L>>> Ternary compileTernary(L symbols) throws IllegalArgumentException  {
+        final int symbolCount = symbols.size();
 
-        for (int i = 0; i < size; i ++) {
-            Object object = symbols.get(i);
+        if (symbolCount < 3)
+            return null;
 
-            if (object instanceof String) {
-                if (object.equals("?")) {
-                    if (question == -1)
-                        question = i;
+        Supplier<MathValue> condition = null;
+        Supplier<MathValue> ifTrue = null;
+        int ternaryState = 0;
+        int lastColon = -1;
 
-                    questions ++;
-                }
-                else if (object.equals(":")) {
-                    if (colons + 1 == questions && colon == -1)
-                        colon = i;
+        for (int i = 0; i < symbolCount; i++) {
+            final int i2 = i;
+            final String string = symbols.get(i).left().orElse(null);
 
-                    colons ++;
-                }
+            if ("?".equals(string)) {
+                if (condition == null)
+                    condition = () -> parseSymbols((L)symbols.subList(0, i2));
+
+                ternaryState++;
+            }
+            else if (":".equals(string)) {
+                if (ternaryState == 1 && ifTrue == null)
+                    ifTrue = () -> parseSymbols((L)symbols.subList(0, i2));
+
+                ternaryState--;
+                lastColon = i;
             }
         }
 
-        if (questions == colons && question > 0 && question + 1 < colon && colon < size - 1) {
-            return new Ternary(
-                this.parseSymbols(symbols.subList(0, question)),
-                this.parseSymbols(symbols.subList(question + 1, colon)),
-                this.parseSymbols(symbols.subList(colon + 1, size))
-            );
-        }
+        if (ternaryState == 0 && condition != null && ifTrue != null && lastColon < symbolCount - 1)
+            return new Ternary(condition.get(), ifTrue.get(), parseSymbols((L)symbols.subList(lastColon + 1, symbolCount)));
 
         return null;
     }
 
     /**
-     * Create a function value
+     * Compiles a {@link MathValue} for the given symbols list, if applicable.
+     * <p>
+     * Note that due to parsing flexibility, this method doesn't necessarily generate a {@link MathFunction}, as some calls may be for value-value pairs instead
      *
-     * This method in comparison to {@link #valueFromObject(Object)}
-     * needs the name of the function and list of args (which can't be
-     * stored in one object).
-     *
-     * This method will constructs {@link MathValue}s from list of args
-     * mixed with operators, groups, values and commas. And then plug it
-     * in to a class constructor with given name.
+     * @param name The name of the function or value
+     * @param args The symbols list for the value
+     * @return A compiled MathValue, or null if not applicable
+     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
      */
-    protected MathValue createFunction(String first, List<Object> args) throws Exception {
-        /* Handle special cases with negation */
-        if (first.equals("!"))
-            return new software.bernie.mclib.math.Negate(parseSymbols(args));
+    @Nullable
+    protected static <L extends List<Either<String, L>>> MathValue compileFunction(String name, L args) throws IllegalArgumentException {
+        if (name.startsWith("!")) {
+            if (name.length() == 1)
+                return new BooleanNegate(parseSymbols(args));
 
-        if (first.startsWith("!") && first.length() > 1)
-            return new software.bernie.mclib.math.Negate(createFunction(first.substring(1), args));
+            return new BooleanNegate(compileFunction(name.substring(1), args));
+        }
 
-        /* Handle inversion of the value */
-        if (first.equals("-"))
-            return new software.bernie.mclib.math.Negative(parseSymbols(args));
+        if (name.startsWith("-")) {
+            if (name.length() == 1)
+                return new Negative(parseSymbols(args));
 
-        if (first.startsWith("-") && first.length() > 1)
-            return new software.bernie.mclib.math.Negative(createFunction(first.substring(1), args));
+            return new Negative(compileFunction(name.substring(1), args));
+        }
 
-        if (!this.functions.containsKey(first))
-            throw new Exception("Function '" + first + "' couldn't be found!");
+        if (!isFunctionRegistered(name))
+            return null;
 
-        List<MathValue> values = new ArrayList<MathValue>();
-        List<Object> buffer = new ArrayList<Object>();
+        final List<MathValue> values = new ObjectArrayList<>();
+        final L buffer = (L)new ObjectArrayList<Either<String, L>>();
 
-        for (Object o : args) {
-            if (o.equals(",")) {
-                values.add(this.parseSymbols(buffer));
+        for (Either<String, L> arg : args) {
+            if (arg.left().filter(","::equals).isPresent()) {
+                values.add(parseSymbols(buffer));
                 buffer.clear();
             }
             else {
-                buffer.add(o);
+                buffer.add(arg);
             }
         }
 
         if (!buffer.isEmpty())
             values.add(parseSymbols(buffer));
 
-        Class<? extends Function> function = this.functions.get(first);
-        Constructor<? extends Function> ctor = function.getConstructor(MathValue[].class, String.class);
-        Function func = ctor.newInstance(values.toArray(new MathValue[values.size()]), first);
-
-        return func;
+        return buildFunction(name, values.toArray(new MathValue[0]));
     }
 
     /**
-     * Get value from an object.
+     * @return Whether the given String should be considered an operator or operator-like symbol
+     */
+    public static boolean isOperativeSymbol(char symbol) {
+        return isOperativeSymbol(String.valueOf(symbol));
+    }
+
+    /**
+     * @return Whether the given String should be considered an operator or operator-like symbol
+     */
+    public static boolean isOperativeSymbol(Object symbol) {
+        return symbol instanceof String st && isOperativeSymbol(st);
+    }
+
+    /**
+     * @return Whether the given String should be considered an operator or operator-like symbol
+     */
+    public static boolean isOperativeSymbol(String symbol) {
+        return Operator.isOperator(symbol) || OPERATIVE_SYMBOLS.matcher(symbol).matches();
+    }
+
+    /**
+     * Determine if the given string can be considered numeric, supporting both negative values and decimal values, but not strings omitting a preceding digit before a decimal point
      *
-     * This method is responsible for creating different sort of values
-     * based on the input object. It can create constants, variables and
-     * groups.
+     * @return Whether the string is numeric
      */
-    @SuppressWarnings("unchecked")
-    public MathValue valueFromObject(Object object) throws Exception {
-        if (object instanceof String) {
-            String symbol = (String) object;
-
-            /* Variable and constant negation */
-            if (symbol.startsWith("!"))
-                return new Negate(valueFromObject(symbol.substring(1)));
-
-            if (this.isDecimal(symbol))
-                return new Constant(Double.parseDouble(symbol));
-
-            if (this.isVariable(symbol)) {
-                /* Need to account for a negative value variable */
-                if (symbol.startsWith("-")) {
-                    symbol = symbol.substring(1);
-                    Variable value = this.getVariable(symbol);
-
-                    if (value != null)
-                        return new Negative(value);
-                }
-                else {
-                    MathValue value = this.getVariable(symbol);
-
-                    /* Avoid NPE */
-                    if (value != null)
-                        return value;
-                }
-            }
-        }
-        else if (object instanceof List) {
-            return new Group(parseSymbols((List<Object>) object));
-        }
-
-        throw new Exception("Given object couldn't be converted to value! " + object);
+    public static boolean isNumeric(String string) {
+        return NUMERIC.matcher(string).matches();
     }
 
     /**
-     * Get variable
+     * Get an {@link Operator} for a given operator string, throwing an exception if one does not exist
      */
-    protected Variable getVariable(String name) {
-        return this.variables.get(name);
+    protected static Operator getOperatorFor(String op) throws IllegalArgumentException {
+        return Operator.getOperatorFor(op).orElseThrow(() -> new IllegalArgumentException("Unknown operator symbol '" + op + "'"));
     }
 
     /**
-     * Get operation for given operator strings
+     * Determine if the given string is likely to be a variable of some kind.
+     * <p>
+     * Functionally this is just a confirmation-by-elimination check, since variables don't really have a defined form
      */
-    protected Operation operationForOperator(String op) throws Exception {
-        for (Operation operation : Operation.values()) {
-            if (operation.sign.equals(op))
-                return operation;
-        }
-
-        throw new Exception("There is no such operator '" + op + "'!");
-    }
-
-    /**
-     * Whether given object is a variable
-     */
-    protected boolean isVariable(Object o) {
-        return o instanceof String && !this.isDecimal((String) o) && !this.isOperator((String) o);
-    }
-
-    protected boolean isOperator(Object o) {
-        return o instanceof String && this.isOperator((String) o);
-    }
-
-    /**
-     * Whether string is an operator
-     */
-    protected boolean isOperator(String s) {
-        return Operation.OPERATORS.contains(s) || s.equals("?") || s.equals(":");
-    }
-
-    /**
-     * Whether string is numeric (including whether it's a floating
-     * number)
-     */
-    protected boolean isDecimal(String s) {
-        return s.matches("^-?\\d+(\\.\\d+)?$");
+    protected static boolean isVariable(String string) {
+        return !isNumeric(string) && !isOperativeSymbol(string);
     }
 }
