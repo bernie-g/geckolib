@@ -12,12 +12,13 @@ import software.bernie.geckolib.core.animation.EasingType;
 import software.bernie.geckolib.core.keyframe.BoneAnimation;
 import software.bernie.geckolib.core.keyframe.Keyframe;
 import software.bernie.geckolib.core.keyframe.KeyframeStack;
-import software.bernie.geckolib.core.molang.MolangException;
-import software.bernie.geckolib.core.molang.MolangParser;
-import software.bernie.geckolib.core.molang.expressions.MolangValue;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.function.misc.ToRadFunction;
+import software.bernie.geckolib.loading.math.value.Constant;
+import software.bernie.geckolib.loading.math.value.Negative;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.JsonUtil;
-import software.bernie.mclib.math.MathValue;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -37,8 +38,9 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			try {
 				animations.put(entry.getKey(), bakeAnimation(entry.getKey(), entry.getValue().getAsJsonObject(), context));
 			}
-			catch (MolangException ex) {
+			catch (IllegalArgumentException ex) {
 				GeckoLibConstants.LOGGER.error("Unable to parse animation: " + entry.getKey());
+
 				ex.printStackTrace();
 			}
 		}
@@ -46,7 +48,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		return new BakedAnimations(animations);
 	}
 
-	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws MolangException {
+	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws IllegalArgumentException {
 		double length = animationObj.has("animation_length") ? GsonHelper.getAsDouble(animationObj, "animation_length") * 20d : -1;
 		Animation.LoopType loopType = Animation.LoopType.fromJson(animationObj.get("loop"));
 		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()));
@@ -58,7 +60,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		return new Animation(name, length, loopType, boneAnimations, keyframes);
 	}
 
-	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws MolangException {
+	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws IllegalArgumentException {
 		BoneAnimation[] animations = new BoneAnimation[bonesObj.size()];
 		int index = 0;
 
@@ -129,7 +131,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
-	private KeyframeStack<Keyframe<MathValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {
+	private KeyframeStack<Keyframe<MathValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws IllegalArgumentException {
 		if (entries.isEmpty())
 			return new KeyframeStack<>();
 
@@ -154,12 +156,12 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			double timeDelta = curTime - prevTime;
 
 			JsonArray keyFrameVector = element instanceof JsonArray array ? array : GsonHelper.getAsJsonArray(element.getAsJsonObject(), "vector");
-			MolangValue rawXValue = MolangParser.parseJson(keyFrameVector.get(0));
-			MolangValue rawYValue = MolangParser.parseJson(keyFrameVector.get(1));
-			MolangValue rawZValue = MolangParser.parseJson(keyFrameVector.get(2));
-			MathValue xValue = isForRotation && rawXValue.isConstant() ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue;
-			MathValue yValue = isForRotation && rawYValue.isConstant() ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue;
-			MathValue zValue = isForRotation && rawZValue.isConstant() ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue;
+			MathValue rawXValue = MathParser.parseJson(keyFrameVector.get(0));
+			MathValue rawYValue = MathParser.parseJson(keyFrameVector.get(1));
+			MathValue rawZValue = MathParser.parseJson(keyFrameVector.get(2));
+			MathValue xValue = isForRotation && rawXValue instanceof Constant ? new ToRadFunction(new Negative(rawXValue)) : rawXValue;
+			MathValue yValue = isForRotation && rawYValue instanceof Constant ? new ToRadFunction(new Negative(rawYValue)) : rawYValue;
+			MathValue zValue = isForRotation && rawZValue instanceof Constant ? new ToRadFunction(rawZValue) : rawZValue;
 
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;

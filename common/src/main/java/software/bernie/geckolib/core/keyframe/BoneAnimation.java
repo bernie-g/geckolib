@@ -5,7 +5,7 @@
 
 package software.bernie.geckolib.core.keyframe;
 
-import software.bernie.mclib.math.MathValue;
+import software.bernie.geckolib.loading.math.MathValue;
 
 /**
  * A record of a deserialized animation for a given bone.<br>

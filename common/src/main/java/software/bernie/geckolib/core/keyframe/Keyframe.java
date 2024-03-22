@@ -7,7 +7,7 @@ package software.bernie.geckolib.core.keyframe;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.core.animation.EasingType;
-import software.bernie.mclib.math.MathValue;
+import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.List;
 import java.util.Objects;

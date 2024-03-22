@@ -18,12 +18,13 @@ import software.bernie.geckolib.core.keyframe.event.data.CustomInstructionKeyfra
 import software.bernie.geckolib.core.keyframe.event.data.KeyFrameData;
 import software.bernie.geckolib.core.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib.core.keyframe.event.data.SoundKeyframeData;
-import software.bernie.geckolib.core.molang.MolangParser;
-import software.bernie.geckolib.core.molang.MolangQueries;
 import software.bernie.geckolib.core.object.Axis;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.core.state.BoneSnapshot;
-import software.bernie.mclib.math.MathValue;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.MolangQueries;
+import software.bernie.geckolib.loading.math.value.Constant;
 
 import java.util.*;
 import java.util.function.Function;
@@ -453,7 +454,7 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 
 			if (this.currentAnimation != null) {
-				MolangParser.INSTANCE.setValue(MolangQueries.ANIM_TIME, () -> 0);
+				MathParser.setVariable(MolangQueries.ANIM_TIME, () -> 0);
 
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
@@ -536,7 +537,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 		final double finalAdjustedTick = adjustedTick;
 
-		MolangParser.INSTANCE.setMemoizedValue(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
+		MathParser.setVariable(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
 
 		for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 			BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
@@ -782,6 +783,6 @@ public class AnimationController<T extends GeoAnimatable> {
 		RUNNING,
 		TRANSITIONING,
 		PAUSED,
-		STOPPED;
+		STOPPED
 	}
 }
