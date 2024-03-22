@@ -14,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -26,9 +27,8 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -121,7 +121,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Override this to change the way a model will render (such as translucent models, etc)
 	 */
 	@Override
-	public RenderType getRenderType(T animatable, ResourceLocation texture, @org.jetbrains.annotations.Nullable MultiBufferSource bufferSource, float partialTick) {
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
 		return RenderType.armorCutoutNoCull(texture);
 	}
 
@@ -316,8 +316,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			bone.setLocalSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations));
+			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setLocalSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations));
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
@@ -443,39 +443,39 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (this.head != null) {
 			ModelPart headPart = baseModel.head;
 
-			RenderUtils.matchModelPartRot(headPart, this.head);
+			RenderUtil.matchModelPartRot(headPart, this.head);
 			this.head.updatePosition(headPart.x, -headPart.y, headPart.z);
 		}
 
 		if (this.body != null) {
 			ModelPart bodyPart = baseModel.body;
 
-			RenderUtils.matchModelPartRot(bodyPart, this.body);
+			RenderUtil.matchModelPartRot(bodyPart, this.body);
 			this.body.updatePosition(bodyPart.x, -bodyPart.y, bodyPart.z);
 		}
 
 		if (this.rightArm != null) {
 			ModelPart rightArmPart = baseModel.rightArm;
 
-			RenderUtils.matchModelPartRot(rightArmPart, this.rightArm);
+			RenderUtil.matchModelPartRot(rightArmPart, this.rightArm);
 			this.rightArm.updatePosition(rightArmPart.x + 5, 2 - rightArmPart.y, rightArmPart.z);
 		}
 
 		if (this.leftArm != null) {
 			ModelPart leftArmPart = baseModel.leftArm;
 
-			RenderUtils.matchModelPartRot(leftArmPart, this.leftArm);
+			RenderUtil.matchModelPartRot(leftArmPart, this.leftArm);
 			this.leftArm.updatePosition(leftArmPart.x - 5f, 2f - leftArmPart.y, leftArmPart.z);
 		}
 
 		if (this.rightLeg != null) {
 			ModelPart rightLegPart = baseModel.rightLeg;
 
-			RenderUtils.matchModelPartRot(rightLegPart, this.rightLeg);
+			RenderUtil.matchModelPartRot(rightLegPart, this.rightLeg);
 			this.rightLeg.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 
 			if (this.rightBoot != null) {
-				RenderUtils.matchModelPartRot(rightLegPart, this.rightBoot);
+				RenderUtil.matchModelPartRot(rightLegPart, this.rightBoot);
 				this.rightBoot.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 			}
 		}
@@ -483,11 +483,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (this.leftLeg != null) {
 			ModelPart leftLegPart = baseModel.leftLeg;
 
-			RenderUtils.matchModelPartRot(leftLegPart, this.leftLeg);
+			RenderUtil.matchModelPartRot(leftLegPart, this.leftLeg);
 			this.leftLeg.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 
 			if (this.leftBoot != null) {
-				RenderUtils.matchModelPartRot(leftLegPart, this.leftBoot);
+				RenderUtil.matchModelPartRot(leftLegPart, this.leftBoot);
 				this.leftBoot.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 			}
 		}

@@ -4,8 +4,8 @@ import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
@@ -14,8 +14,7 @@ import java.util.function.Function;
 /**
  * Json helper class for various json functions
  */
-public class JsonUtil {
-
+public final class JsonUtil {
     private JsonUtil() {}
 
     /**

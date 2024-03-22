@@ -1,8 +1,8 @@
 package software.bernie.geckolib.loading.object;
 
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.Animation;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**

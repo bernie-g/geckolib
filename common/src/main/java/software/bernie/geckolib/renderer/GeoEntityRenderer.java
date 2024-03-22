@@ -36,7 +36,7 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 
@@ -272,21 +272,21 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
-		RenderUtils.translateMatrixToBone(poseStack, bone);
-		RenderUtils.translateToPivotPoint(poseStack, bone);
-		RenderUtils.rotateMatrixAroundBone(poseStack, bone);
-		RenderUtils.scaleMatrixForBone(poseStack, bone);
+		RenderUtil.translateMatrixToBone(poseStack, bone);
+		RenderUtil.translateToPivotPoint(poseStack, bone);
+		RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+		RenderUtil.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
+			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			bone.setLocalSpaceMatrix(RenderUtils.translateMatrix(localMatrix, getRenderOffset(this.animatable, 1).toVector3f()));
-			bone.setWorldSpaceMatrix(RenderUtils.translateMatrix(new Matrix4f(localMatrix), this.animatable.position().toVector3f()));
+			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setLocalSpaceMatrix(RenderUtil.translateMatrix(localMatrix, getRenderOffset(this.animatable, 1).toVector3f()));
+			bone.setWorldSpaceMatrix(RenderUtil.translateMatrix(new Matrix4f(localMatrix), this.animatable.position().toVector3f()));
 		}
 
-		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
+		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
@@ -324,7 +324,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		else if (livingEntity != null && pose == Pose.SLEEPING) {
 			Direction bedOrientation = livingEntity.getBedOrientation();
 
-			poseStack.mulPose(Axis.YP.rotationDegrees(bedOrientation != null ? RenderUtils.getDirectionAngle(bedOrientation) : rotationYaw));
+			poseStack.mulPose(Axis.YP.rotationDegrees(bedOrientation != null ? RenderUtil.getDirectionAngle(bedOrientation) : rotationYaw));
 			poseStack.mulPose(Axis.ZP.rotationDegrees(getDeathMaxRotation(animatable)));
 			poseStack.mulPose(Axis.YP.rotationDegrees(270f));
 		}

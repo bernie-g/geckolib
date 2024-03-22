@@ -6,7 +6,7 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animation data for {@link net.minecraft.world.entity.Entity Entities}
@@ -36,7 +36,7 @@ public class EntityAnimDataSyncPacket<D> {
 	}
 
 	public void receivePacket(CustomPayloadEvent.Context context) {
-		Entity entity = ClientUtils.getLevel().getEntity(this.entityId);
+		Entity entity = ClientUtil.getLevel().getEntity(this.entityId);
 
 		if (entity instanceof GeoEntity geoEntity)
 			geoEntity.setAnimData(this.dataTicket, this.data);

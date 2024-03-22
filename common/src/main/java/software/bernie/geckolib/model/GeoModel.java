@@ -13,7 +13,6 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationProcessor;
@@ -23,7 +22,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -33,7 +32,7 @@ import java.util.function.BiConsumer;
  * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses.
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
-public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<T> {
+public abstract class GeoModel<T extends GeoAnimatable> {
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
@@ -71,7 +70,11 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		return RenderType.entityCutoutNoCull(texture);
 	}
 
-	@Override
+	/**
+	 * Get the baked model data for this model based on the provided string location
+	 * @param location The resource path of the baked model (usually the animatable's id string)
+	 * @return The BakedGeoModel
+	 */
 	public final BakedGeoModel getBakedGeoModel(String location) {
 		return getBakedModel(new ResourceLocation(location));
 	}
@@ -98,14 +101,17 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	 * @param name The name of the bone
 	 * @return An {@link Optional} containing the {@link software.bernie.geckolib.cache.object.GeoBone} if one matches, otherwise an empty Optional
 	 */
-	public Optional<software.bernie.geckolib.cache.object.GeoBone> getBone(String name) {
-		return Optional.ofNullable((GeoBone)getAnimationProcessor().getBone(name));
+	public Optional<GeoBone> getBone(String name) {
+		return Optional.ofNullable(getAnimationProcessor().getBone(name));
 	}
 
 	/**
-	 * Get the baked animation object used for rendering from the given resource path
+	 * Gets the loaded {@link Animation} for the given animation {@code name}, if it exists
+	 *
+	 * @param animatable The {@code GeoAnimatable} instance being referred to
+	 * @param name The name of the animation to retrieve
+	 * @return The {@code Animation} instance for the provided {@code name}, or null if none match
 	 */
-	@Override
 	public Animation getAnimation(T animatable, String name) {
 		ResourceLocation location = getAnimationResource(animatable);
 		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(location);
@@ -116,7 +122,9 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		return bakedAnimations.getAnimation(name);
 	}
 
-	@Override
+	/**
+	 * Gets the {@link AnimationProcessor} for this model.
+	 */
 	public AnimationProcessor<T> getAnimationProcessor() {
 		return this.processor;
 	}
@@ -129,14 +137,17 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	 */
 	public void addAdditionalStateData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
 
-	@Override
+	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
+	 */
 	public final void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 		Double currentTick = animationState.getData(DataTickets.TICK);
 
 		if (currentTick == null)
-			currentTick = animatable instanceof Entity entity ? (double)entity.tickCount : RenderUtils.getCurrentTick();
+			currentTick = animatable instanceof Entity entity ? (double)entity.tickCount : RenderUtil.getCurrentTick();
 
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
@@ -167,7 +178,22 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		setCustomAnimations(animatable, instanceId, animationState);
 	}
 
-	@Override
+	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * Override to set custom animations (such as head rotation, etc).
+	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
+	 * @param instanceId The instance id of the {@code GeoAnimatable}
+	 * @param animationState An {@link AnimationState} instance created to hold animation data for the {@code animatable} for this method call
+	 */
+	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {}
+
+	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
+	 *
+	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
+	 * @param animTime The internal tick counter kept by the {@link AnimatableManager manager} for this animatable
+	 */
 	public void applyMolangQueries(T animatable, double animTime) {
 		Minecraft mc = Minecraft.getInstance();
 
@@ -178,14 +204,14 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 		if (animatable instanceof Entity entity) {
 			MathParser.setVariable(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			MathParser.setVariable(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.onGround()));
-			MathParser.setVariable(MolangQueries.IS_IN_WATER, () -> RenderUtils.booleanToFloat(entity.isInWater()));
-			MathParser.setVariable(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
+			MathParser.setVariable(MolangQueries.IS_ON_GROUND, () -> RenderUtil.booleanToFloat(entity.onGround()));
+			MathParser.setVariable(MolangQueries.IS_IN_WATER, () -> RenderUtil.booleanToFloat(entity.isInWater()));
+			MathParser.setVariable(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtil.booleanToFloat(entity.isInWaterRainOrBubble()));
 
 			if (entity instanceof LivingEntity livingEntity) {
 				MathParser.setVariable(MolangQueries.HEALTH, livingEntity::getHealth);
 				MathParser.setVariable(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
-				MathParser.setVariable(MolangQueries.IS_ON_FIRE, () -> RenderUtils.booleanToFloat(livingEntity.isOnFire()));
+				MathParser.setVariable(MolangQueries.IS_ON_FIRE, () -> RenderUtil.booleanToFloat(livingEntity.isOnFire()));
 				MathParser.setVariable(MolangQueries.GROUND_SPEED, () -> {
 					Vec3 velocity = livingEntity.getDeltaMovement();
 

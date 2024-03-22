@@ -7,11 +7,10 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import javax.annotation.Nullable;
 
 /**
  * GeckoLib events base-class for the various event stages of rendering.<br>

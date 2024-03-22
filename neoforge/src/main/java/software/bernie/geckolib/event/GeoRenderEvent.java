@@ -7,11 +7,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import javax.annotation.Nullable;
 
 /**
  * GeckoLib events base-class for the various event stages of rendering.<br>

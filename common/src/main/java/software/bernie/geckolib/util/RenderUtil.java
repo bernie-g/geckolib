@@ -21,29 +21,28 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
-import javax.annotation.Nullable;
-
 /**
  * Helper class for various methods and functions useful while rendering
  */
-public final class RenderUtils {
-	public static void translateMatrixToBone(PoseStack poseStack, CoreGeoBone bone) {
+public final class RenderUtil {
+	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
 		poseStack.translate(-bone.getPosX() / 16f, bone.getPosY() / 16f, bone.getPosZ() / 16f);
 	}
 
-	public static void rotateMatrixAroundBone(PoseStack poseStack, CoreGeoBone bone) {
+	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
 		if (bone.getRotZ() != 0)
 			poseStack.mulPose(Axis.ZP.rotation(bone.getRotZ()));
 
@@ -62,7 +61,7 @@ public final class RenderUtils {
 		poseStack.mulPose(new Quaternionf().rotationXYZ((float)rotation.x(), 0, 0));
 	}
 
-	public static void scaleMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
+	public static void scaleMatrixForBone(PoseStack poseStack, GeoBone bone) {
 		poseStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
 	}
 
@@ -71,7 +70,7 @@ public final class RenderUtils {
 		poseStack.translate(pivot.x() / 16f, pivot.y() / 16f, pivot.z() / 16f);
 	}
 
-	public static void translateToPivotPoint(PoseStack poseStack, CoreGeoBone bone) {
+	public static void translateToPivotPoint(PoseStack poseStack, GeoBone bone) {
 		poseStack.translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);
 	}
 
@@ -81,16 +80,16 @@ public final class RenderUtils {
 		poseStack.translate(-pivot.x() / 16f, -pivot.y() / 16f, -pivot.z() / 16f);
 	}
 
-	public static void translateAwayFromPivotPoint(PoseStack poseStack, CoreGeoBone bone) {
+	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoBone bone) {
 		poseStack.translate(-bone.getPivotX() / 16f, -bone.getPivotY() / 16f, -bone.getPivotZ() / 16f);
 	}
 
-	public static void translateAndRotateMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
+	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
 		translateToPivotPoint(poseStack, bone);
 		rotateMatrixAroundBone(poseStack, bone);
 	}
 
-	public static void prepMatrixForBone(PoseStack poseStack, CoreGeoBone bone) {
+	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
 		translateMatrixToBone(poseStack, bone);
 		translateToPivotPoint(poseStack, bone);
 		rotateMatrixAroundBone(poseStack, bone);
@@ -195,10 +194,10 @@ public final class RenderUtils {
 	}
 
 	/**
-	 * Rotates a {@link CoreGeoBone} to match a provided {@link ModelPart}'s rotations.<br>
+	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations.<br>
 	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts.
 	 */
-	public static void matchModelPartRot(ModelPart from, CoreGeoBone to) {
+	public static void matchModelPartRot(ModelPart from, GeoBone to) {
 		to.updateRotation(-from.xRot, -from.yRot, from.zRot);
 	}
 
@@ -251,7 +250,7 @@ public final class RenderUtils {
 	 * @param entityType The {@code EntityType} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoModel<?> getGeoModelForEntityType(EntityType<?> entityType) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
 
@@ -263,7 +262,7 @@ public final class RenderUtils {
 	 * @param entityType The {@code EntityType} to retrieve the replaced {@link GeoAnimatable} for
 	 * @return The {@code GeoAnimatable} instance, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
 
@@ -277,7 +276,7 @@ public final class RenderUtils {
 	 * @param entity The {@code Entity} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
 		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
 
@@ -291,7 +290,7 @@ public final class RenderUtils {
 	 * @param item The {@code Item} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
 		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForItem(item);
 	}
@@ -303,7 +302,7 @@ public final class RenderUtils {
 	 * @param blockEntity The {@code BlockEntity} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoModel<?> getGeoModelForBlock(BlockEntity blockEntity) {
 		BlockEntityRenderer<?> renderer = Minecraft.getInstance().getBlockEntityRenderDispatcher().getRenderer(blockEntity);
 
@@ -317,7 +316,7 @@ public final class RenderUtils {
 	 * @param stack The ItemStack to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
-	@org.jetbrains.annotations.Nullable
+	@Nullable
 	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
 		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack);
 	}

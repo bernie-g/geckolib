@@ -10,13 +10,14 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 import software.bernie.geckolib.GeckoLibException;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
+import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.loading.FileLoader;
 import software.bernie.geckolib.loading.json.FormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -29,8 +30,8 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * Cache class for holding loaded {@link software.bernie.geckolib.core.animation.Animation Animations}
- * and {@link CoreGeoModel Models}
+ * Cache class for holding loaded {@link Animation Animations}
+ * and {@link GeoModel Models}
  */
 public final class GeckoLibCache {
 	private static final Set<String> EXCLUDED_NAMESPACES = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");

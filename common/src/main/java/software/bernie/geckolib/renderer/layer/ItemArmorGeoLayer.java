@@ -26,6 +26,8 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -34,10 +36,8 @@ import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -50,7 +50,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected static final HumanoidModel<LivingEntity> INNER_ARMOR_MODEL = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 	protected static final HumanoidModel<LivingEntity> OUTER_ARMOR_MODEL = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
 
-	@Nullable protected ItemStack mainHandStack;
+	@Nullable
+	protected ItemStack mainHandStack;
 	@Nullable protected ItemStack offhandStack;
 	@Nullable protected ItemStack helmetStack;
 	@Nullable protected ItemStack chestplateStack;
@@ -65,7 +66,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * Return an EquipmentSlot for a given {@link ItemStack} and animatable instance.<br>
 	 * This is what determines the base model to use for rendering a particular stack
 	 */
-	@Nonnull
+	@NotNull
 	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable) {
 		for(EquipmentSlot slot : EquipmentSlot.values()) {
 			if(slot.getType() == EquipmentSlot.Type.ARMOR) {
@@ -81,7 +82,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * Return a ModelPart for a given {@link GeoBone}.<br>
 	 * This is then transformed into position for the final render
 	 */
-	@Nonnull
+	@NotNull
 	protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable, HumanoidModel<?> baseModel) {
 		return baseModel.body;
 	}
@@ -197,7 +198,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	/**
 	 * Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided {@link ItemStack}
 	 */
-	@Nonnull
+	@NotNull
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
 		
@@ -257,7 +258,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		RenderType renderType = SkullBlockRenderer.getRenderType(type, skullProfile);
 
 		poseStack.pushPose();
-		RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
+		RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 		poseStack.scale(1.1875f, 1.1875f, 1.1875f);
 		poseStack.translate(-0.5f, 0, -0.5f);
 		SkullBlockRenderer.renderSkull(null, 0, 0, poseStack, bufferSource, packedLight, model, renderType);

@@ -1,14 +1,13 @@
 package software.bernie.geckolib.cache.object;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,7 +15,7 @@ import java.util.Objects;
  * Mutable bone object representing a set of cubes, as well as child bones.<br>
  * This is the object that is directly modified by animations to handle movement
  */
-public class GeoBone implements CoreGeoBone {
+public class GeoBone {
 	private final GeoBone parent;
 	private final String name;
 
@@ -75,224 +74,208 @@ public class GeoBone implements CoreGeoBone {
 		this.modelSpaceMatrix.identity();
 	}
 
-	@Override
 	public String getName() {
 		return this.name;
 	}
 
-	@Override
 	public GeoBone getParent() {
 		return this.parent;
 	}
 
-	@Override
 	public float getRotX() {
 		return this.rotX;
 	}
 
-	@Override
 	public float getRotY() {
 		return this.rotY;
 	}
 
-	@Override
 	public float getRotZ() {
 		return this.rotZ;
 	}
 
-	@Override
 	public float getPosX() {
 		return this.positionX;
 	}
 
-	@Override
 	public float getPosY() {
 		return this.positionY;
 	}
 
-	@Override
 	public float getPosZ() {
 		return this.positionZ;
 	}
 
-	@Override
 	public float getScaleX() {
 		return this.scaleX;
 	}
 
-	@Override
 	public float getScaleY() {
 		return this.scaleY;
 	}
 
-	@Override
 	public float getScaleZ() {
 		return this.scaleZ;
 	}
 
-	@Override
 	public void setRotX(float value) {
 		this.rotX = value;
 
 		markRotationAsChanged();
 	}
 
-	@Override
 	public void setRotY(float value) {
 		this.rotY = value;
 
 		markRotationAsChanged();
 	}
 
-	@Override
 	public void setRotZ(float value) {
 		this.rotZ = value;
 
 		markRotationAsChanged();
 	}
 
-	@Override
+	public void updateRotation(float xRot, float yRot, float zRot) {
+		setRotX(xRot);
+		setRotY(yRot);
+		setRotZ(zRot);
+	}
+
 	public void setPosX(float value) {
 		this.positionX = value;
 
 		markPositionAsChanged();
 	}
 
-	@Override
 	public void setPosY(float value) {
 		this.positionY = value;
 
 		markPositionAsChanged();
 	}
 
-	@Override
 	public void setPosZ(float value) {
 		this.positionZ = value;
 
 		markPositionAsChanged();
 	}
 
-	@Override
+	public void updatePosition(float posX, float posY, float posZ) {
+		setPosX(posX);
+		setPosY(posY);
+		setPosZ(posZ);
+	}
+
 	public void setScaleX(float value) {
 		this.scaleX = value;
 
 		markScaleAsChanged();
 	}
 
-	@Override
 	public void setScaleY(float value) {
 		this.scaleY = value;
 
 		markScaleAsChanged();
 	}
 
-	@Override
 	public void setScaleZ(float value) {
 		this.scaleZ = value;
 
 		markScaleAsChanged();
 	}
 
-	@Override
+	public void updateScale(float scaleX, float scaleY, float scaleZ) {
+		setScaleX(scaleX);
+		setScaleY(scaleY);
+		setScaleZ(scaleZ);
+	}
+
 	public boolean isHidden() {
 		return this.hidden;
 	}
 
-	@Override
 	public void setHidden(boolean hidden) {
 		this.hidden = hidden;
 
 		setChildrenHidden(hidden);
 	}
 
-	@Override
 	public void setChildrenHidden(boolean hideChildren) {
 		this.childrenHidden = hideChildren;
 	}
 
-	@Override
 	public void setPivotX(float value) {
 		this.pivotX = value;
 	}
 
-	@Override
 	public void setPivotY(float value) {
 		this.pivotY = value;
 	}
 
-	@Override
 	public void setPivotZ(float value) {
 		this.pivotZ = value;
 	}
 
-	@Override
+	public void updatePivot(float pivotX, float pivotY, float pivotZ) {
+		setPivotX(pivotX);
+		setPivotY(pivotY);
+		setPivotZ(pivotZ);
+	}
+
 	public float getPivotX() {
 		return this.pivotX;
 	}
 
-	@Override
 	public float getPivotY() {
 		return this.pivotY;
 	}
 
-	@Override
 	public float getPivotZ() {
 		return this.pivotZ;
 	}
 
-	@Override
 	public boolean isHidingChildren() {
 		return this.childrenHidden;
 	}
 
-	@Override
 	public void markScaleAsChanged() {
 		this.scaleChanged = true;
 	}
 
-	@Override
 	public void markRotationAsChanged() {
 		this.rotationChanged = true;
 	}
 
-	@Override
 	public void markPositionAsChanged() {
 		this.positionChanged = true;
 	}
 
-	@Override
 	public boolean hasScaleChanged() {
 		return this.scaleChanged;
 	}
 
-	@Override
 	public boolean hasRotationChanged() {
 		return this.rotationChanged;
 	}
 
-	@Override
 	public boolean hasPositionChanged() {
 		return this.positionChanged;
 	}
 
-	@Override
 	public void resetStateChanges() {
 		this.scaleChanged = false;
 		this.rotationChanged = false;
 		this.positionChanged = false;
 	}
 
-	@Override
 	public BoneSnapshot getInitialSnapshot() {
 		return this.initialSnapshot;
 	}
 
-	@Override
 	public List<GeoBone> getChildBones() {
 		return this.children;
 	}
 
-	@Override
 	public void saveInitialSnapshot() {
 		if (this.initialSnapshot == null)
 			this.initialSnapshot = saveSnapshot();
@@ -427,7 +410,10 @@ public class GeoBone implements CoreGeoBone {
 		setRotZ(getRotZ() + source.getRotZ() - source.getInitialSnapshot().getRotZ());
 	}
 
-	@Override
+	public BoneSnapshot saveSnapshot() {
+		return new BoneSnapshot(this);
+	}
+
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -438,7 +424,6 @@ public class GeoBone implements CoreGeoBone {
 		return hashCode() == obj.hashCode();
 	}
 
-	@Override
 	public int hashCode() {
 		return Objects.hash(getName(), (getParent() != null ? getParent().getName() : 0), getCubes().size(), getChildBones().size());
 	}

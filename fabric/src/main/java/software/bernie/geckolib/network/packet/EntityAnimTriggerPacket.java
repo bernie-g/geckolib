@@ -7,15 +7,14 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
-import software.bernie.geckolib.util.ClientUtils;
-import software.bernie.geckolib.util.RenderUtils;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib.util.ClientUtil;
+import software.bernie.geckolib.util.RenderUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the
@@ -69,7 +68,7 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
     }
 
     private static void runOnThread(int entityId, boolean isReplacedEntity, String controllerName, String animName) {
-        Entity entity = ClientUtils.getLevel().getEntity(entityId);
+        Entity entity = ClientUtil.getLevel().getEntity(entityId);
         if (entity == null)
             return;
 
@@ -80,7 +79,7 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
             return;
         }
 
-        GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
+        GeoAnimatable animatable = RenderUtil.getReplacedAnimatable(entity.getType());
         if (animatable instanceof GeoReplacedEntity replacedEntity)
             replacedEntity.triggerAnim(entity, controllerName.isEmpty() ? null : controllerName, animName);
     }

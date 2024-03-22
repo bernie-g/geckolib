@@ -3,6 +3,7 @@ package software.bernie.geckolib.util;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -14,7 +15,6 @@ import software.bernie.geckolib.core.animation.EasingType;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.network.SerializableDataTicket;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**

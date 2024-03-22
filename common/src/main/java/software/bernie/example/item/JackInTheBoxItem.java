@@ -18,7 +18,7 @@ import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
@@ -61,7 +61,7 @@ public final class JackInTheBoxItem extends Item implements GeoItem {
 				// We've marked the "box_open" animation as being triggerable from the server
 				.setSoundKeyframeHandler(state -> {
 					// Use helper method to avoid client-code in common class
-					Player player = ClientUtils.getClientPlayer();
+					Player player = ClientUtil.getClientPlayer();
 
 					if (player != null)
 						player.playSound(SoundEvents.MUSIC_DISC_5, 1, 1);

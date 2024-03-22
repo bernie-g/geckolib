@@ -8,12 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
-import software.bernie.geckolib.util.ClientUtils;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the
@@ -55,7 +54,7 @@ public class BlockEntityAnimTriggerPacket extends AbstractPacket {
     }
 
     private static void runOnThread(BlockPos blockPos, String controllerName, String animName) {
-        BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(blockPos);
+        BlockEntity blockEntity = ClientUtil.getLevel().getBlockEntity(blockPos);
 
         if (blockEntity instanceof GeoBlockEntity getBlockEntity)
             getBlockEntity.triggerAnim(controllerName.isEmpty() ? null : controllerName, animName);

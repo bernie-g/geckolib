@@ -16,12 +16,11 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.example.block.entity.GeckoHabitatBlockEntity;
 import software.bernie.example.client.model.block.GeckoHabitatModel;
 import software.bernie.example.client.renderer.block.GeckoHabitatBlockRenderer;
 import software.bernie.example.registry.BlockEntityRegistry;
-
-import javax.annotation.Nullable;
 
 /**
  * Example animated block using GeckoLib animations.<br>

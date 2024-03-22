@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.level.block.entity.BlockEntity BlockEntities}
@@ -34,7 +34,7 @@ public record BlockEntityAnimTriggerPacket<D>(BlockPos pos, String controllerNam
 
 	public void receivePacket(PlayPayloadContext context) {
 		context.workHandler().execute(() -> {
-			BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
+			BlockEntity blockEntity = ClientUtil.getLevel().getBlockEntity(this.pos);
 
 			if (blockEntity instanceof GeoBlockEntity getBlockEntity)
 				getBlockEntity.triggerAnim(this.controllerName.isEmpty() ? null : this.controllerName, this.animName);

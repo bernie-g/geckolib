@@ -12,7 +12,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animation data for
@@ -54,7 +54,7 @@ public class EntityAnimDataSyncPacket<D> extends AbstractPacket {
 	}
 
 	private static <D> void runOnThread(int entityId, SerializableDataTicket<D> dataTicket, D data) {
-		Entity entity = ClientUtils.getLevel().getEntity(entityId);
+		Entity entity = ClientUtil.getLevel().getEntity(entityId);
 
 		if (entity instanceof GeoEntity geoEntity)
 			geoEntity.setAnimData(dataTicket, data);

@@ -1,15 +1,9 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.core.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.core.keyframe.*;
 import software.bernie.geckolib.core.keyframe.event.CustomInstructionKeyframeEvent;
 import software.bernie.geckolib.core.keyframe.event.ParticleKeyframeEvent;
@@ -25,6 +19,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.math.value.Constant;
+import software.bernie.geckolib.model.GeoModel;
 
 import java.util.*;
 import java.util.function.Function;
@@ -65,7 +60,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
 	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
-	protected CoreGeoModel<T> lastModel;
+	protected GeoModel<T> lastModel;
 
 	/**
 	 * Instantiates a new {@code AnimationController}.<br>
@@ -392,12 +387,12 @@ public class AnimationController<T extends GeoAnimatable> {
 	 *
 	 * @param model					The model currently being processed
 	 * @param state                 The animation test state
-	 * @param bones                 The registered {@link CoreGeoBone bones} for this model
+	 * @param bones                 The registered {@link GeoBone bones} for this model
 	 * @param snapshots             The {@link BoneSnapshot} map
 	 * @param seekTime              The current tick + partial tick
 	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
 	 */
-	public void process(CoreGeoModel<T> model, AnimationState<T> state, Map<String, CoreGeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
+	public void process(GeoModel<T> model, AnimationState<T> state, Map<String, GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
 		double adjustedTick = adjustTick(seekTime);
 		this.lastModel = model;
 
@@ -459,7 +454,7 @@ public class AnimationController<T extends GeoAnimatable> {
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
-					CoreGeoBone bone = bones.get(boneAnimation.boneName());
+					GeoBone bone = bones.get(boneAnimation.boneName());
 
 					if (boneSnapshot == null)
 						continue;
@@ -621,10 +616,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * Prepare the {@link BoneAnimationQueue} map for the current render frame
 	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
 	 */
-	private void createInitialQueues(Collection<CoreGeoBone> modelRendererList) {
+	private void createInitialQueues(Collection<GeoBone> modelRendererList) {
 		this.boneAnimationQueues.clear();
 
-		for (CoreGeoBone modelRenderer : modelRendererList) {
+		for (GeoBone modelRenderer : modelRendererList) {
 			this.boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
 		}
 	}

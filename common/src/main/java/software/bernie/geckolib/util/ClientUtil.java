@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 /**
  * Helper class for segregating client-side code
  */
-public final class ClientUtils {
+public final class ClientUtil {
 	/**
 	 * Get the player on the client
 	 */

@@ -2,9 +2,9 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.data.EntityModelData;
 
@@ -44,7 +44,7 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 		if (!this.turnsHead)
 			return;
 
-		CoreGeoBone head = getAnimationProcessor().getBone("head");
+		GeoBone head = getAnimationProcessor().getBone("head");
 
 		if (head != null) {
 			EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);

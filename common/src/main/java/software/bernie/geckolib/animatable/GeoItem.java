@@ -15,7 +15,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.ContextAwareAnimatableManager;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -93,7 +93,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	 */
 	@Override
 	default double getTick(Object itemStack) {
-		return RenderUtils.getCurrentTick();
+		return RenderUtil.getCurrentTick();
 	}
 
 	/**

@@ -3,14 +3,13 @@ package software.bernie.geckolib.animatable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.util.RenderUtils;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib.util.RenderUtil;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link BlockEntity BlockEntities}
@@ -87,6 +86,6 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 */
 	@Override
 	default double getTick(Object blockEntity) {
-		return RenderUtils.getCurrentTick();
+		return RenderUtil.getCurrentTick();
 	}
 }

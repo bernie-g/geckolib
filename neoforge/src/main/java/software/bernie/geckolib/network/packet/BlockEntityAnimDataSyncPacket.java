@@ -10,7 +10,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animation data for {@link BlockEntity BlockEntities}
@@ -39,7 +39,7 @@ public record BlockEntityAnimDataSyncPacket<D>(BlockPos pos, SerializableDataTic
 
 	public void receivePacket(PlayPayloadContext context) {
 		context.workHandler().execute(() -> {
-			BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
+			BlockEntity blockEntity = ClientUtil.getLevel().getBlockEntity(this.pos);
 
 			if (blockEntity instanceof GeoBlockEntity geoBlockEntity)
 				geoBlockEntity.setAnimData(this.dataTicket, this.data);

@@ -4,8 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class GeckoLibConstants {
-
+public final class GeckoLibConstants {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "geckolib";
     public static final String DISABLE_EXAMPLES_PROPERTY_KEY = "geckolib.disable_examples";
@@ -25,6 +24,4 @@ public class GeckoLibConstants {
     public static boolean shouldRegisterExamples() {
         return GeckoLibServices.PLATFORM.isDevelopmentEnvironment() && !Boolean.getBoolean(GeckoLibConstants.DISABLE_EXAMPLES_PROPERTY_KEY);
     }
-
-    //TODO give generic to getTick(Object)
 }

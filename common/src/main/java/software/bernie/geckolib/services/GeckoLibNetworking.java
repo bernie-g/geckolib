@@ -3,9 +3,8 @@ package software.bernie.geckolib.services;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.network.SerializableDataTicket;
-
-import javax.annotation.Nullable;
 
 public interface GeckoLibNetworking {
 

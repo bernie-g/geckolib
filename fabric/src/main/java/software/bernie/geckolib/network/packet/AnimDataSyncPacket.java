@@ -12,7 +12,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
-import software.bernie.geckolib.util.ClientUtils;
+import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
@@ -62,6 +62,6 @@ public class AnimDataSyncPacket<D> extends AbstractPacket {
 		GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(syncableId);
 
 		if (animatable instanceof SingletonGeoAnimatable singleton)
-			singleton.setAnimData(ClientUtils.getClientPlayer(), instanceId, dataTicket, data);
+			singleton.setAnimData(ClientUtil.getClientPlayer(), instanceId, dataTicket, data);
 	}
 }

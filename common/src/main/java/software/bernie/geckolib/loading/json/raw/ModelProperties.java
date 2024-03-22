@@ -4,9 +4,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
-
-import javax.annotation.Nullable;
 
 /**
  * Container class for model property information, only used in deserialization at startup

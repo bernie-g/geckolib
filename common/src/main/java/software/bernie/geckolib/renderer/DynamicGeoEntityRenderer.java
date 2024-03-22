@@ -9,15 +9,15 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -73,16 +73,16 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
-		RenderUtils.translateMatrixToBone(poseStack, bone);
-		RenderUtils.translateToPivotPoint(poseStack, bone);
-		RenderUtils.rotateMatrixAroundBone(poseStack, bone);
-		RenderUtils.scaleMatrixForBone(poseStack, bone);
+		RenderUtil.translateMatrixToBone(poseStack, bone);
+		RenderUtil.translateToPivotPoint(poseStack, bone);
+		RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+		RenderUtil.scaleMatrixForBone(poseStack, bone);
 
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
+			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
-			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setLocalSpaceMatrix(localMatrix);
 
@@ -92,7 +92,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 			bone.setWorldSpaceMatrix(worldState);
 		}
 
-		RenderUtils.translateAwayFromPivotPoint(poseStack, bone);
+		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
 		this.textureOverride = getTextureOverrideForBone(bone, this.animatable, partialTick);
 		ResourceLocation texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;
@@ -169,6 +169,6 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	 * This is inefficient however, and should only be used where required.
 	 */
 	protected IntIntPair computeTextureSize(ResourceLocation texture) {
-		return TEXTURE_DIMENSIONS_CACHE.computeIfAbsent(texture, RenderUtils::getTextureDimensions);
+		return TEXTURE_DIMENSIONS_CACHE.computeIfAbsent(texture, RenderUtil::getTextureDimensions);
 	}
 }

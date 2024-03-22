@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -17,9 +18,8 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -228,7 +228,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 								   VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								   int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
-		RenderUtils.prepMatrixForBone(poseStack, bone);
+		RenderUtil.prepMatrixForBone(poseStack, bone);
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 
 		if (!isReRender)
@@ -273,9 +273,9 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	default void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight,
 							int packedOverlay, float red, float green, float blue, float alpha) {
-		RenderUtils.translateToPivotPoint(poseStack, cube);
-		RenderUtils.rotateMatrixAroundCube(poseStack, cube);
-		RenderUtils.translateAwayFromPivotPoint(poseStack, cube);
+		RenderUtil.translateToPivotPoint(poseStack, cube);
+		RenderUtil.rotateMatrixAroundCube(poseStack, cube);
+		RenderUtil.translateAwayFromPivotPoint(poseStack, cube);
 
 		Matrix3f normalisedPoseState = poseStack.last().normal();
 		Matrix4f poseState = new Matrix4f(poseStack.last().pose());
@@ -286,7 +286,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
 			
-			RenderUtils.fixInvertedFlatCube(cube, normal);
+			RenderUtil.fixInvertedFlatCube(cube, normal);
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
 	}

@@ -2,9 +2,8 @@ package software.bernie.geckolib.loading.json.raw;
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
-
-import javax.annotation.Nullable;
 
 /**
  * Container class for locator value information, only used in deserialization at startup

@@ -1,12 +1,11 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.SerializableDataTicket;
-
-import javax.annotation.Nullable;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link net.minecraft.world.entity.Entity Entities}.

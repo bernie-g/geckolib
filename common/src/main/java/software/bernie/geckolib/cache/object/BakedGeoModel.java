@@ -1,7 +1,5 @@
 package software.bernie.geckolib.cache.object;
 
-import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.loading.json.raw.ModelProperties;
 
 import java.util.List;
@@ -10,13 +8,12 @@ import java.util.Optional;
 /**
  * Baked model object for Geckolib models.
  */
-public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties properties) implements CoreBakedGeoModel {
+public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties properties) {
 	/**
 	 * Gets the list of top-level bones for this model.
 	 * Identical to calling {@link BakedGeoModel#topLevelBones()}
 	 */
-	@Override
-	public List<? extends CoreGeoBone> getBones() {
+	public List<? extends GeoBone> getBones() {
 		return this.topLevelBones;
 	}
 
@@ -28,12 +25,35 @@ public record BakedGeoModel(List<GeoBone> topLevelBones, ModelProperties propert
 	 */
 	public Optional<GeoBone> getBone(String name) {
 		for (GeoBone bone : this.topLevelBones) {
-			CoreGeoBone childBone = searchForChildBone(bone, name);
+			GeoBone childBone = searchForChildBone(bone, name);
 
 			if (childBone != null)
 				return Optional.of((GeoBone)childBone);
 		}
 
 		return Optional.empty();
+	}
+
+	/**
+	 * Search a given {@link GeoBone}'s child bones and see if any of them match the given name, then return it.<br>
+	 * @param parent The parent bone to search the children of
+	 * @param name The name of the child bone to find
+	 * @return The {@code GeoBone} found in the parent's children list, or null if not found
+	 */
+	public GeoBone searchForChildBone(GeoBone parent, String name) {
+		if (parent.getName().equals(name))
+			return parent;
+
+		for (GeoBone bone : parent.getChildBones()) {
+			if (bone.getName().equals(name))
+				return bone;
+
+			GeoBone subChildBone = searchForChildBone(bone, name);
+
+			if (subChildBone != null)
+				return subChildBone;
+		}
+
+		return null;
 	}
 }

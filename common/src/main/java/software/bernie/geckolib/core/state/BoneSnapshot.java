@@ -1,19 +1,14 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.core.state;
 
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * A state monitoring class for a given {@link CoreGeoBone}.<br>
+ * A state monitoring class for a given {@link GeoBone}.<br>
  * Transformations applied to the bone is monitored by the {@link software.bernie.geckolib.core.animation.AnimationProcessor}
  * in the course of animations, and stored here for monitoring.
  */
 public class BoneSnapshot {
-	private final CoreGeoBone bone;
+	private final GeoBone bone;
 
 	private float scaleX;
 	private float scaleY;
@@ -35,7 +30,7 @@ public class BoneSnapshot {
 	private boolean posAnimInProgress = true;
 	private boolean scaleAnimInProgress = true;
 
-	public BoneSnapshot(CoreGeoBone bone) {
+	public BoneSnapshot(GeoBone bone) {
 		this.rotX = bone.getRotX();
 		this.rotY = bone.getRotY();
 		this.rotZ = bone.getRotZ();
@@ -69,7 +64,7 @@ public class BoneSnapshot {
 		return newSnapshot;
 	}
 
-	public CoreGeoBone getBone() {
+	public GeoBone getBone() {
 		return this.bone;
 	}
 

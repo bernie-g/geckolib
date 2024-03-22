@@ -4,8 +4,8 @@
  */
 package software.bernie.geckolib.core.animatable;
 
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
 
@@ -41,7 +41,7 @@ public interface GeoAnimatable {
 
 	/**
 	 * Defines the speed in which the {@link software.bernie.geckolib.core.animation.AnimationProcessor} should return
-	 * {@link CoreGeoBone GeoBones} that currently have no animations
+	 * {@link GeoBone GeoBones} that currently have no animations
 	 * to their default position.
 	 */
 	default double getBoneResetTime() {

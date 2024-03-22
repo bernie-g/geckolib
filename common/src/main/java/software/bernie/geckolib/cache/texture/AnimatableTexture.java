@@ -17,7 +17,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,7 +70,7 @@ public class AnimatableTexture extends SimpleTexture {
 	}
 
 	public static void setAndUpdate(ResourceLocation texturePath) {
-		setAndUpdate(texturePath, (int) RenderUtils.getCurrentTick());
+		setAndUpdate(texturePath, (int) RenderUtil.getCurrentTick());
 	}
 
 	/**

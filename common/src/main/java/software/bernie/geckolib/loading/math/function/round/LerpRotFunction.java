@@ -2,7 +2,7 @@ package software.bernie.geckolib.loading.math.function.round;
 
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 /**
  * {@link MathFunction} value supplier
@@ -32,7 +32,7 @@ public final class LerpRotFunction extends MathFunction {
 
     @Override
     public double compute() {
-        return RenderUtils.lerpYaw(this.delta.get(), this.min.get(), this.max.get());
+        return RenderUtil.lerpYaw(this.delta.get(), this.min.get(), this.max.get());
     }
 
     @Override

@@ -3,13 +3,12 @@ package software.bernie.geckolib.network.packet;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.util.ClientUtils;
-import software.bernie.geckolib.util.RenderUtils;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib.util.ClientUtil;
+import software.bernie.geckolib.util.RenderUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.entity.Entity Entities}
@@ -43,13 +42,13 @@ public class EntityAnimTriggerPacket<D> {
 	}
 
 	public void receivePacket(CustomPayloadEvent.Context context) {
-		Entity entity = ClientUtils.getLevel().getEntity(this.entityId);
+		Entity entity = ClientUtil.getLevel().getEntity(this.entityId);
 
 		if (entity == null)
 			return;
 
 		if (this.isReplacedEntity) {
-			GeoAnimatable animatable = RenderUtils.getReplacedAnimatable(entity.getType());
+			GeoAnimatable animatable = RenderUtil.getReplacedAnimatable(entity.getType());
 
 			if (animatable instanceof GeoReplacedEntity replacedEntity)
 				replacedEntity.triggerAnim(entity, this.controllerName.isEmpty() ? null : this.controllerName, this.animName);

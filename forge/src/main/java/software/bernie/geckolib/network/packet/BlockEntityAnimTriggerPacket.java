@@ -4,10 +4,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.util.ClientUtils;
-
-import javax.annotation.Nullable;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * Packet for syncing user-definable animations that can be triggered from the server for {@link net.minecraft.world.level.block.entity.BlockEntity BlockEntities}
@@ -34,7 +33,7 @@ public class BlockEntityAnimTriggerPacket<D> {
 	}
 
 	public void receivePacket(CustomPayloadEvent.Context context) {
-		BlockEntity blockEntity = ClientUtils.getLevel().getBlockEntity(this.pos);
+		BlockEntity blockEntity = ClientUtil.getLevel().getBlockEntity(this.pos);
 
 		if (blockEntity instanceof GeoBlockEntity getBlockEntity)
 			getBlockEntity.triggerAnim(this.controllerName.isEmpty() ? null : this.controllerName, this.animName);

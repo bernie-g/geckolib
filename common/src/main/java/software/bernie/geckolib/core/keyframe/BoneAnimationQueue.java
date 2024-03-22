@@ -1,22 +1,17 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.core.keyframe;
 
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
 /**
  * A bone pseudo-stack for bone animation positions, scales, and rotations.
  * Animation points are calculated then pushed onto their respective queues to be used for transformations in rendering
  */
-public record BoneAnimationQueue(CoreGeoBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
+public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
 								 AnimationPointQueue rotationZQueue, AnimationPointQueue positionXQueue, AnimationPointQueue positionYQueue,
 								 AnimationPointQueue positionZQueue, AnimationPointQueue scaleXQueue, AnimationPointQueue scaleYQueue,
 								 AnimationPointQueue scaleZQueue) {
-	public BoneAnimationQueue(CoreGeoBone bone) {
+	public BoneAnimationQueue(GeoBone bone) {
 		this(bone, new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
 				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
 				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue());

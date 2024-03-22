@@ -12,6 +12,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.example.client.model.entity.MutantZombieModel;
 import software.bernie.example.entity.DynamicExampleEntity;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -20,9 +22,6 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 import software.bernie.geckolib.renderer.layer.ItemArmorGeoLayer;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Example {@link DynamicGeoEntityRenderer} implementation
@@ -69,7 +68,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampl
 			}
 
 			// Return the equipment slot relevant to the bone we're using
-			@Nonnull
+			@NotNull
 			@Override
 			protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, DynamicExampleEntity animatable) {
 				return switch (bone.getName()) {
@@ -84,7 +83,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampl
 			}
 
 			// Return the ModelPart responsible for the armor pieces we want to render
-			@Nonnull
+			@NotNull
 			@Override
 			protected ModelPart getModelPartForBone(GeoBone bone, EquipmentSlot slot, ItemStack stack, DynamicExampleEntity animatable, HumanoidModel<?> baseModel) {
 				return switch (bone.getName()) {
