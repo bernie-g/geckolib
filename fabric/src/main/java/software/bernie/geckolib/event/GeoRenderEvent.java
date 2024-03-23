@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -755,7 +756,7 @@ public interface GeoRenderEvent {
 	}
 
 	/**
-	 * Renderer events for miscellaneous {@link software.bernie.geckolib.core.animatable.GeoAnimatable animatables} being rendered by {@link GeoObjectRenderer}
+	 * Renderer events for miscellaneous {@link GeoAnimatable animatables} being rendered by {@link GeoObjectRenderer}
 	 */
 	abstract class Object implements GeoRenderEvent {
 		private final GeoObjectRenderer<?> renderer;

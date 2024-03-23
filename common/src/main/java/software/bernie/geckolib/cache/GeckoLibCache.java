@@ -8,9 +8,9 @@ import net.minecraft.server.packs.resources.PreparableReloadListener.Preparation
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
-import software.bernie.geckolib.GeckoLibException;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.loading.FileLoader;
 import software.bernie.geckolib.loading.json.FormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
@@ -85,7 +85,7 @@ public final class GeckoLibCache {
 			Model model = FileLoader.loadModelFile(resource, resourceManager);
 
 			if (model.formatVersion() != FormatVersion.V_1_12_0)
-				throw new GeckoLibException(resource, "Unsupported geometry json version. Supported versions: 1.12.0");
+				throw GeckoLibConstants.exception(resource, "Unsupported geometry json version. Supported versions: 1.12.0");
 
 			return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
 			}, elementConsumer);

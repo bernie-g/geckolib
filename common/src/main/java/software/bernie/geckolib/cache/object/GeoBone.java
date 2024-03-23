@@ -6,7 +6,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
-import software.bernie.geckolib.core.state.BoneSnapshot;
+import software.bernie.geckolib.animation.state.BoneSnapshot;
 
 import java.util.List;
 import java.util.Objects;

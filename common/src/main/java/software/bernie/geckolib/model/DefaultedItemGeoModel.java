@@ -1,7 +1,7 @@
 package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 
 /**
  * {@link DefaultedGeoModel} specific to {@link net.minecraft.world.item.Item Items}

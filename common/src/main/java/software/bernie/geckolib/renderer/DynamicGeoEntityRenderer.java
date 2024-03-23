@@ -14,7 +14,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import software.bernie.geckolib.cache.object.*;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.RenderUtil;
 
@@ -79,7 +79,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
@@ -98,6 +98,16 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 
 			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceMatrix(worldState);
+		}
+
+		if (buffer == null) {
+			if (renderType == null) {
+				poseStack.popPose();
+
+				return;
+			}
+
+			buffer = bufferSource.getBuffer(renderType);
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
@@ -132,7 +142,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		this.textureOverride = null;
 
 		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);

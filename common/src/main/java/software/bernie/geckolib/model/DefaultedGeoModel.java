@@ -1,7 +1,7 @@
 package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 
 /**
  * Defaulted model class for GeckoLib models

@@ -6,14 +6,15 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.InstancedAnimatableInstanceCache;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.EasingType;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.InstancedAnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.EasingType;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
-import software.bernie.geckolib.network.SerializableDataTicket;
+import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.core.animation.Animation.LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
+	 * Register a custom {@link Animation.LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
 	 * <p>
 	 * <b><u>MUST be called during mod construct</u></b>
 	 *
@@ -64,7 +65,7 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.core.animation.EasingType} with GeckoLib allowing for dynamic handling of animation transitions and curves
+	 * Register a custom {@link EasingType} with GeckoLib allowing for dynamic handling of animation transitions and curves
 	 * <p>
 	 * <b><u>MUST be called during mod construct</u></b>
 	 *
@@ -90,7 +91,7 @@ public final class GeckoLibUtil {
 	/**
 	 * Register a custom {@link SerializableDataTicket} with GeckoLib for handling custom data transmission
 	 * <p>
-	 * NOTE: You do not need to register non-serializable {@link software.bernie.geckolib.core.object.DataTicket DataTickets}.
+	 * NOTE: You do not need to register non-serializable {@link DataTicket DataTickets}.
 	 *
 	 * @param dataTicket The SerializableDataTicket to register
 	 * @return The dataTicket you passed in

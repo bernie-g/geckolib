@@ -3,10 +3,10 @@ package software.bernie.geckolib.loading.json.typeadapter;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.keyframe.event.data.CustomInstructionKeyframeData;
-import software.bernie.geckolib.core.keyframe.event.data.ParticleKeyframeData;
-import software.bernie.geckolib.core.keyframe.event.data.SoundKeyframeData;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.keyframe.event.data.CustomInstructionKeyframeData;
+import software.bernie.geckolib.animation.keyframe.event.data.ParticleKeyframeData;
+import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 

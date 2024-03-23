@@ -12,7 +12,7 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
-import software.bernie.geckolib.network.SerializableDataTicket;
+import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtil;
 
 /**

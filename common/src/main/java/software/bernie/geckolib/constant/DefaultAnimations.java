@@ -2,11 +2,11 @@ package software.bernie.geckolib.constant;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.PlayState;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -90,8 +90,6 @@ public final class DefaultAnimations {
 	public static <T extends GeoAnimatable> AnimationController<T> genericIdleController(T animatable) {
 		return new AnimationController<T>(animatable, "Idle", 10, state -> state.setAndContinue(IDLE));
 	}
-
-	//TODO FIX GeoArmor NOT EXISTING
 
 	/**
 	 * Generic {@link DefaultAnimations#SPAWN spawn} controller

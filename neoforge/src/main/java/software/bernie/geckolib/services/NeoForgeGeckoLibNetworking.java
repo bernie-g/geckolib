@@ -6,7 +6,7 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.network.GeckoLibNetwork;
-import software.bernie.geckolib.network.SerializableDataTicket;
+import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.*;
 
 public class NeoForgeGeckoLibNetworking implements GeckoLibNetworking {

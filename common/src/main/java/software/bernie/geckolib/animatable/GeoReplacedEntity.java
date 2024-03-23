@@ -5,9 +5,9 @@ import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.network.SerializableDataTicket;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -71,7 +71,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 *
 	 * @param relatedEntity An entity related to the state of the data for syncing
 	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
-	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
+	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	@ApiStatus.NonExtendable
 	default void triggerAnim(Entity relatedEntity, @Nullable String controllerName, String animName) {

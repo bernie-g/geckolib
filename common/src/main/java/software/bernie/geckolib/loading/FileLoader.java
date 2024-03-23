@@ -6,6 +6,7 @@ import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.io.IOUtils;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
@@ -20,7 +21,7 @@ import java.nio.charset.Charset;
  */
 public final class FileLoader {
 	/**
-	 * Load up and deserialize an animation json file to its respective {@link software.bernie.geckolib.core.animation.Animation} components
+	 * Load up and deserialize an animation json file to its respective {@link Animation} components
 	 *
 	 * @param location The resource path of the animations file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access

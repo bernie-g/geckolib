@@ -24,18 +24,20 @@ import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
+import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -144,12 +146,35 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
+	 * Gets the {@link RenderType} to render the given animatable with
+	 * <p>
+	 * Uses the {@link RenderType#entityCutoutNoCull} {@code RenderType} by default
+	 * <p>
+	 * Override this to change the way a model will render (such as translucent models, etc).
+	 *
+	 * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions taking place
+	 */
+	@Nullable
+	@Override
+	public RenderType getRenderType(T animatable, ResourceLocation texture, @Nullable MultiBufferSource bufferSource, float partialTick) {
+		final boolean invisible = this.currentEntity != null && this.currentEntity.isInvisible();
+
+		if (invisible && !this.currentEntity.isInvisibleTo(ClientUtil.getClientPlayer()))
+			return RenderType.itemEntityTranslucentCull(texture);
+
+		if (!invisible)
+			return GeoRenderer.super.getRenderType(animatable, texture, bufferSource, partialTick);
+
+		return this.currentEntity != null && Minecraft.getInstance().shouldEntityAppearGlowing(this.currentEntity) ? RenderType.outline(texture) : null;
+	}
+
+	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
 	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 						  float alpha) {
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
@@ -169,7 +194,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
-	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource,
+							   @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay,
+							   float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
@@ -253,17 +280,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
-		//TODO Breaking change
-		if (this.currentEntity.isInvisibleTo(Minecraft.getInstance().player)) {
-			if (Minecraft.getInstance().shouldEntityAppearGlowing(this.currentEntity)) {
-				buffer = bufferSource.getBuffer(renderType = RenderType.outline(getTextureLocation(animatable)));
-			}
-			else {
-				renderType = null;
-			}
-		}
-
-		if (renderType != null)
+		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
 		poseStack.popPose();
@@ -273,7 +290,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
 	 */
 	@Override
-	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		if (!this.currentEntity.isSpectator())
 			GeoRenderer.super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 	}
@@ -284,7 +301,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	@Override
-	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		super.render(this.currentEntity, 0, partialTick, poseStack, bufferSource, packedLight);
 
 		if (this.currentEntity instanceof Mob mob) {

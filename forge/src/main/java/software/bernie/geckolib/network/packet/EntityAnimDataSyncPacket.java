@@ -5,7 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.network.SerializableDataTicket;
+import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtil;
 
 /**

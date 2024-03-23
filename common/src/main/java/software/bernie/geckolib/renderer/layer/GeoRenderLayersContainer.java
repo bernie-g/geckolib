@@ -1,7 +1,7 @@
 package software.bernie.geckolib.renderer.layer;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 import java.util.List;

@@ -3,7 +3,7 @@ package software.bernie.geckolib.cache;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
-import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
+import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 
 /**
  * Storage class that keeps track of the last animatable id used, and provides new ones on request

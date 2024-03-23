@@ -7,17 +7,18 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib.GeckoLibException;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationProcessor;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.AnimationProcessor;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.object.DataTicket;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.object.BakedAnimations;
@@ -68,7 +69,10 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 
 	/**
 	 * Gets the default render type for this animatable, to be selected by default by the renderer using it
+	 *
+	 * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions taking place
 	 */
+	@Nullable
 	public RenderType getRenderType(T animatable, ResourceLocation texture) {
 		return RenderType.entityCutoutNoCull(texture);
 	}
@@ -90,7 +94,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		BakedGeoModel model = GeckoLibCache.getBakedModels().get(location);
 
 		if (model == null)
-			throw new GeckoLibException(location, "Unable to find model");
+			throw GeckoLibConstants.exception(location, "Unable to find model");
 
 		if (model != this.currentModel) {
 			this.processor.setActiveModel(model);
@@ -122,7 +126,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(location);
 
 		if (bakedAnimations == null)
-			throw new GeckoLibException(location, "Unable to find animation.");
+			throw GeckoLibConstants.exception(location, "Unable to find animation.");
 
 		return bakedAnimations.getAnimation(name);
 	}
