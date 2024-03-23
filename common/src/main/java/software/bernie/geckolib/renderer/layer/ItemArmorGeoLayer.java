@@ -107,8 +107,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource,
-						  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource,
+						  @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		this.mainHandStack = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offhandStack = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmetStack = animatable.getItemBySlot(EquipmentSlot.HEAD);

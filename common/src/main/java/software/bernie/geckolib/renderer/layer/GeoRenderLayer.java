@@ -67,9 +67,12 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * This is the method that is actually called by the render for your render layer to function
 	 * <p>
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
+	 * <p>
+	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
+	 * and you may need to factor this in to your design
 	 */
-	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
-								MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
+	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
+								MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
 								int packedLight, int packedOverlay) {}
 
 	/**
