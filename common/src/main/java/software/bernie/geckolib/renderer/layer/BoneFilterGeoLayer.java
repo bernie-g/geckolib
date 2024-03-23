@@ -11,9 +11,10 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 /**
- * {@link GeoRenderLayer} for auto-applying some form of modification to bones of a model prior to rendering.<br>
- * This can be useful for enabling or disabling bone rendering based on arbitrary conditions.<br>
- * <br>
+ * {@link GeoRenderLayer} for auto-applying some form of modification to bones of a model prior to rendering
+ * <p>
+ * This can be useful for enabling or disabling bone rendering based on arbitrary conditions
+ * <p>
  * NOTE: Despite this layer existing, it is much more efficient to use {@link FastBoneFilterGeoLayer} instead
  */
 public class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
@@ -30,13 +31,19 @@ public class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<
 	}
 
 	/**
-	 * This method is called for each bone in the model.<br>
+	 * This method is called for each bone in the model
+	 * <p>
 	 * Check whether the bone should be affected and apply the modification as needed.
 	 */
 	protected void checkAndApply(GeoBone bone, T animatable, float partialTick) {
 		this.checkAndApply.accept(bone, animatable, partialTick);
 	}
 
+	/**
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called
+	 * <p>
+	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
+	 */
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		for (GeoBone bone : bakedModel.topLevelBones()) {

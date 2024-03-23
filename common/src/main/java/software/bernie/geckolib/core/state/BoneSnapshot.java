@@ -3,7 +3,8 @@ package software.bernie.geckolib.core.state;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
- * A state monitoring class for a given {@link GeoBone}.<br>
+ * A state monitoring class for a given {@link GeoBone}
+ * <p>
  * Transformations applied to the bone is monitored by the {@link software.bernie.geckolib.core.animation.AnimationProcessor}
  * in the course of animations, and stored here for monitoring.
  */

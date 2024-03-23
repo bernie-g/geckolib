@@ -12,9 +12,11 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Optionally usable class that holds constants for recommended animation paths.<br>
- * Using these won't affect much, but it may help keep some consistency in animation namings.<br>
- * Additionally, it encourages use of cached {@link software.bernie.geckolib.core.animation.RawAnimation RawAnimations}, to reduce overheads.
+ * Optionally usable class that holds constants for recommended animation paths
+ * <p>
+ * Using these won't affect much, but it may help keep some consistency in animation namings
+ * <p>
+ * Additionally, it encourages use of cached {@link RawAnimation RawAnimations}, to reduce overheads.
  */
 public final class DefaultAnimations {
 	public static final RawAnimation ITEM_ON_USE = RawAnimation.begin().thenPlay("item.use");
@@ -51,8 +53,10 @@ public final class DefaultAnimations {
 	public static final RawAnimation ATTACK_POWERUP = RawAnimation.begin().thenPlay("attack.powerup");
 
 	/**
-	 * A basic predicate-based {@link AnimationController} implementation.<br>
-	 * Provide an {@code option A} {@link RawAnimation animation} and an {@code option B} animation, and use the predicate to determine which to play.<br>
+	 * A basic predicate-based {@link AnimationController} implementation
+	 * <p>
+	 * Provide an {@code option A} {@link RawAnimation animation} and an {@code option B} animation, and use the predicate to determine which to play
+	 * <p>
 	 * Outcome table:
 	 * <pre>  true  -> Animation Option A
 	 * false -> Animation Option B
@@ -70,7 +74,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#LIVING living} controller.<br>
+	 * Generic {@link DefaultAnimations#LIVING living} controller
+	 * <p>
 	 * Continuously plays the living animation
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericLivingController(T animatable) {
@@ -78,7 +83,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#IDLE idle} controller.<br>
+	 * Generic {@link DefaultAnimations#IDLE idle} controller
+	 * <p>
 	 * Continuously plays the idle animation
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericIdleController(T animatable) {
@@ -88,9 +94,12 @@ public final class DefaultAnimations {
 	//TODO FIX GeoArmor NOT EXISTING
 
 	/**
-	 * Generic {@link DefaultAnimations#SPAWN spawn} controller.<br>
-	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}.<br>
-	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated.
+	 * Generic {@link DefaultAnimations#SPAWN spawn} controller
+	 * <p>
+	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}
+	 * <p>
+	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated
+	 * </p>
 	 * Recommended:
 	 * <ul>
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: state -> animatable</li>
@@ -99,6 +108,7 @@ public final class DefaultAnimations {
 	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: state -> state.getData(DataTickets.ITEMSTACK)</li>
 	 *     <li>{@code GeoArmor}: state -> state.getData(DataTickets.ENTITY)</li>
 	 * </ul>
+	 *
 	 * @param animatable The animatable the animation is for
 	 * @param objectSupplier The supplier of the associated object for the {@link GeoAnimatable#getTick} call
 	 * @param ticks The number of ticks the animation should run for. After this value is surpassed, the animation will no longer play
@@ -113,7 +123,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#WALK walk} controller.<br>
+	 * Generic {@link DefaultAnimations#WALK walk} controller
+	 * <p>
 	 * Will play the walk animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericWalkController(T animatable) {
@@ -126,9 +137,12 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic attack controller.<br>
-	 * Plays an attack animation if the animatable is {@link net.minecraft.world.entity.LivingEntity#swinging}.<br>
+	 * Generic attack controller
+	 * <p>
+	 * Plays an attack animation if the animatable is {@link net.minecraft.world.entity.LivingEntity#swinging}
+	 * <p>
 	 * Resets the animation each time it stops, ready for the next swing
+	 *
 	 * @param animatable The entity that should swing
 	 * @param attackAnimation The attack animation to play (E.G. swipe, strike, stomp, swing, etc)
 	 * @return A new {@link AnimationController} instance to use
@@ -145,7 +159,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#IDLE idle} controller.<br>
+	 * Generic {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#IDLE idle} controller
+	 * <p>
 	 * Will play the walk animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericWalkIdleController(T animatable) {
@@ -153,7 +168,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#SWIM swim} controller.<br>
+	 * Generic {@link DefaultAnimations#SWIM swim} controller
+	 * <p>
 	 * Will play the swim animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericSwimController(T entity) {
@@ -166,7 +182,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#SWIM swim} + {@link DefaultAnimations#IDLE idle} controller.<br>
+	 * Generic {@link DefaultAnimations#SWIM swim} + {@link DefaultAnimations#IDLE idle} controller
+	 * <p>
 	 * Will play the swim animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericSwimIdleController(T animatable) {
@@ -174,7 +191,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#FLY walk} controller.<br>
+	 * Generic {@link DefaultAnimations#FLY walk} controller
+	 * <p>
 	 * Will play the fly animation if the animatable is considered moving, or stop if not.
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyController(T animatable) {
@@ -182,7 +200,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#FLY walk} + {@link DefaultAnimations#IDLE idle} controller.<br>
+	 * Generic {@link DefaultAnimations#FLY walk} + {@link DefaultAnimations#IDLE idle} controller
+	 * <p>
 	 * Will play the walk animation if the animatable is considered moving, or idle if not
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyIdleController(T animatable) {
@@ -190,7 +209,8 @@ public final class DefaultAnimations {
 	}
 
 	/**
-	 * Generic {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#RUN run} + {@link DefaultAnimations#IDLE idle} controller.<br>
+	 * Generic {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#RUN run} + {@link DefaultAnimations#IDLE idle} controller
+	 * <p>
 	 * If the entity is considered moving, will either walk or run depending on the {@link Entity#isSprinting()} method, otherwise it will idle
 	 */
 	public static <T extends Entity & GeoAnimatable> AnimationController<T> genericWalkRunIdleController(T entity) {

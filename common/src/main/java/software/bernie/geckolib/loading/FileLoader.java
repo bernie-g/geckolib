@@ -10,7 +10,6 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
-import software.bernie.geckolib.util.JsonUtil;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -22,6 +21,7 @@ import java.nio.charset.Charset;
 public final class FileLoader {
 	/**
 	 * Load up and deserialize an animation json file to its respective {@link software.bernie.geckolib.core.animation.Animation} components
+	 *
 	 * @param location The resource path of the animations file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
@@ -31,6 +31,7 @@ public final class FileLoader {
 
 	/**
 	 * Load up and deserialize a geo model json file to its respective {@link BakedGeoModel} format
+	 *
 	 * @param location The resource path of the model file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
@@ -40,6 +41,7 @@ public final class FileLoader {
 
 	/**
 	 * Load a given json file into memory
+	 *
 	 * @param location The resource path of the json file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
@@ -49,6 +51,7 @@ public final class FileLoader {
 
 	/**
 	 * Read a text-based file into memory in the form of a single string
+	 *
 	 * @param location The resource path of the file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */

@@ -114,7 +114,8 @@ public final class GeckoLibCache {
 	}
 
 	/**
-	 * Register a new namespace to be excluded from GeckoLib's resource loader.
+	 * Register a new namespace to be excluded from GeckoLib's resource loader
+	 *
 	 * @param namespace The namespace to exclude
 	 */
 	public static synchronized void registerNamespaceExclusion(String namespace) {

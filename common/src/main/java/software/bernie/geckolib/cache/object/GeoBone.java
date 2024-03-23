@@ -12,7 +12,8 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Mutable bone object representing a set of cubes, as well as child bones.<br>
+ * Mutable bone object representing a set of cubes, as well as child bones
+ * <p>
  * This is the object that is directly modified by animations to handle movement
  */
 public class GeoBone {

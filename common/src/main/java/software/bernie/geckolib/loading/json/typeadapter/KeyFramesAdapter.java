@@ -14,7 +14,8 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * {@link Gson} {@link JsonDeserializer} for {@link Animation.Keyframes}.<br>
+ * {@link Gson} {@link JsonDeserializer} for {@link Animation.Keyframes}
+ * <p>
  * Acts as the deserialization interface for {@code Keyframes}
  */
 public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {

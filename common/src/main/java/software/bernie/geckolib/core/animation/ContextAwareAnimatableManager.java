@@ -7,8 +7,10 @@ import software.bernie.geckolib.core.state.BoneSnapshot;
 import java.util.Map;
 
 /**
- * Context-aware wrapper for {@link AnimatableManager}.<br>
- * This can be used for things like perspective-dependent animation handling and other similar functionality.<br>
+ * Context-aware wrapper for {@link AnimatableManager}
+ * <p>
+ * This can be used for things like perspective-dependent animation handling and other similar functionality
+ * <p>
  * This relies entirely on data present in {@link AnimatableManager#extraData} saved to this manager to determine context
  */
 public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> extends AnimatableManager<T> {
@@ -26,7 +28,8 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
-	 * Build the context-manager map for this manager.<br>
+	 * Build the context-manager map for this manager
+	 * <p>
 	 * The resulting map <u>MUST</u> contain all possible contexts.
 	 *
 	 * @param animatable
@@ -46,7 +49,8 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
-	 * Add an {@link AnimationController} to this animatable's manager.<br>
+	 * Add an {@link AnimationController} to this animatable's manager
+	 * <p>
 	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
 	 */
 	public void addController(AnimationController controller) {
@@ -97,9 +101,12 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
-	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name.<br>
-	 * This pseudo-overloaded method checks each controller in turn until one of them accepts the trigger.<br>
+	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
+	 * <p>
+	 * This pseudo-overloaded method checks each controller in turn until one of them accepts the trigger
+	 * <p>
 	 * This can be sped up by specifying which controller you intend to receive the trigger in {@link AnimatableManager#tryTriggerAnimation(String, String)}
+	 *
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	public void tryTriggerAnimation(String animName) {
@@ -110,6 +117,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 
 	/**
 	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
+	 *
 	 * @param controllerName The name of the controller name the animation belongs to
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
@@ -120,8 +128,10 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
-	 * Set a custom data point to be used later.<br>
+	 * Set a custom data point to be used later
+	 * <p>
 	 * Sub-managers do not have their data set, and instead it is all kept in this parent manager
+	 *
 	 * @param dataTicket The DataTicket for the data point
 	 * @param data The piece of data to store
 	 */
@@ -130,7 +140,8 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
-	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored.<br>
+	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
+	 * <p>
 	 * Sub-managers do not have their data set, and instead it is all kept in this parent manager
 	 */
 	public <D> D getData(DataTicket<D> dataTicket) {

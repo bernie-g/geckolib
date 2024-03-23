@@ -51,8 +51,10 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the {@link RenderType} to render the given animatable with.<br>
-	 * Uses the {@link RenderType#entityCutoutNoCull}	{@code RenderType} by default.<br>
+	 * Gets the {@link RenderType} to render the given animatable with
+	 * <p>
+	 * Uses the {@link RenderType#entityCutoutNoCull} {@code RenderType} by default
+	 * <p>
 	 * Override this to change the way a model will render (such as translucent models, etc)
 	 */
 	default RenderType getRenderType(T animatable, ResourceLocation texture,
@@ -62,7 +64,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets a tint-applying color to render the given animatable with.<br>
+	 * Gets a tint-applying color to render the given animatable with
+	 * <p>
 	 * Returns {@link Color#WHITE} by default
 	 */
 	default Color getRenderColor(T animatable, float partialTick, int packedLight) {
@@ -70,7 +73,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets a packed overlay coordinate pair for rendering.<br>
+	 * Gets a packed overlay coordinate pair for rendering
+	 * <p>
 	 * Mostly just used for the red tint when an entity is hurt,
 	 * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
 	 * white tint when exploding.
@@ -80,7 +84,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes
+	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	default long getInstanceId(T animatable) {
@@ -88,8 +93,9 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Determines the threshold value before the animatable should be considered moving for animation purposes.<br>
-	 * The default value and usage for this varies depending on the renderer.<br>
+	 * Determines the threshold value before the animatable should be considered moving for animation purposes
+	 * <p>
+	 * The default value and usage for this varies depending on the renderer
 	 * <ul>
 	 *     <li>For entities, it represents the averaged lateral velocity of the object.</li>
 	 *     <li>For {@link software.bernie.geckolib.animatable.GeoBlockEntity Tile Entities} and {@link software.bernie.geckolib.animatable.GeoItem Items}, it's currently unused</li>
@@ -104,7 +110,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Initial access point for rendering. It all begins here.<br>
+	 * Initial access point for rendering. It all begins here
+	 * <p>
 	 * All GeckoLib renderers should immediately defer their respective default {@code render} calls to this, for consistent handling
 	 */
 	default void defaultRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, @Nullable RenderType renderType, @Nullable VertexConsumer buffer,
@@ -142,7 +149,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Re-renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}.<br>
+	 * Re-renders the provided {@link BakedGeoModel} using the existing {@link GeoRenderer}
+	 * <p>
 	 * Usually you'd use this for rendering alternate {@link RenderType} layers or for sub-model rendering whilst inside a {@link GeoRenderLayer} or similar
 	 */
 	default void reRender(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
@@ -156,7 +164,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	default void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, RenderType renderType,
@@ -201,22 +210,25 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	default void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 						   int packedOverlay, float red, float green, float blue, float alpha) {}
 
 	/**
-	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
+	 * Called after rendering the model to buffer. Post-render modifications should be performed here
+	 * <p>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
 							float alpha) {}
 
 	/**
-	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state. This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
+	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
+	 * <p>
+	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	default void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight,
 							 int packedOverlay, float red, float green, float blue, float alpha) {}
@@ -254,7 +266,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Render the child bones of a given {@link GeoBone}.<br>
+	 * Render the child bones of a given {@link GeoBone}
+	 * <p>
 	 * Note that this does not render the bone itself. That should be done through {@link GeoRenderer#renderCubesOfBone} separately
 	 */
 	default void renderChildBones(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
@@ -268,7 +281,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Renders an individual {@link GeoCube}.<br>
+	 * Renders an individual {@link GeoCube}
+	 * <p>
 	 * This tends to be called recursively from something like {@link GeoRenderer#renderCubesOfBone}
 	 */
 	default void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight,
@@ -322,7 +336,8 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight);
 	
     /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call.<br>
+     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 * <p>
      * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
      */
 	default void scaleModelForRender(float widthScale, float heightScale, PoseStack poseStack, T animatable, BakedGeoModel model, boolean isReRender, float partialTick, int packedLight, int packedOverlay) {
@@ -331,8 +346,10 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	void updateAnimatedTextureFrame(T animatable);

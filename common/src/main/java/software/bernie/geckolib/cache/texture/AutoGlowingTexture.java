@@ -29,6 +29,7 @@ import java.util.function.Function;
 
 /**
  * Texture object type responsible for GeckoLib's emissive render textures
+ *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
 public class AutoGlowingTexture extends GeoAbstractTexture {
@@ -62,8 +63,10 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	}
 
 	/**
-	 * Get the emissive resource equivalent of the input resource path.<br>
+	 * Get the emissive resource equivalent of the input resource path
+	 * <p>
 	 * Additionally prepares the texture manager for the missing texture if the resource is not present
+	 *
 	 * @return The glowlayer resourcepath for the provided input path
 	 */
 	public static ResourceLocation getEmissiveResource(ResourceLocation baseResource) {
@@ -145,7 +148,8 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	}
 
 	/**
-	 * Return a cached instance of the RenderType for the given texture for GeoGlowingLayer rendering.
+	 * Return a cached instance of the RenderType for the given texture for GeoGlowingLayer rendering
+	 *
 	 * @param texture The texture of the resource to apply a glow layer to
 	 */
 	public static RenderType getRenderType(ResourceLocation texture) {

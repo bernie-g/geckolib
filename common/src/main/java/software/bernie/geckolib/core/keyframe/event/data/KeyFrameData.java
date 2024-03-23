@@ -10,7 +10,8 @@ import software.bernie.geckolib.core.keyframe.Keyframe;
 import java.util.Objects;
 
 /**
- * Base class for custom {@link Keyframe} events.<br>
+ * Base class for custom {@link Keyframe} events
+ *
  * @see ParticleKeyframeData
  * @see SoundKeyframeData
  */

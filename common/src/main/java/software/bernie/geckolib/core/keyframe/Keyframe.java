@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /**
  * Animation keyframe data
+ *
  * @param length The length (in ticks) the keyframe lasts for
  * @param startValue The value to start the keyframe's transformation with
  * @param endValue The value to end the keyframe's transformation with

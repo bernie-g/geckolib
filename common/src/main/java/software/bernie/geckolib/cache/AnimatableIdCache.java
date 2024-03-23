@@ -6,9 +6,9 @@ import net.minecraft.world.level.saveddata.SavedData;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 
 /**
- * Storage class that keeps track of the last animatable id used, and provides new ones on request.<br>
- * Generally only used for {@link net.minecraft.world.item.Item Items}, but any
- * {@link SingletonAnimatableInstanceCache singleton} will likely use this.
+ * Storage class that keeps track of the last animatable id used, and provides new ones on request
+ * <p>
+ * Generally only used for {@link net.minecraft.world.item.Item Items}, but any {@link SingletonAnimatableInstanceCache singleton} will likely use this.
  */
 public final class AnimatableIdCache extends SavedData {
 	private static final Factory<AnimatableIdCache> FACTORY = new Factory<>(AnimatableIdCache::new, AnimatableIdCache::new, null);
@@ -25,6 +25,7 @@ public final class AnimatableIdCache extends SavedData {
 
 	/**
 	 * Get the next free id from the id cache
+	 *
 	 * @param level An arbitrary ServerLevel. It doesn't matter which one
 	 * @return The next free ID, which is immediately reserved for use after calling this method
 	 */

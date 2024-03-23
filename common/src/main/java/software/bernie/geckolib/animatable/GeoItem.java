@@ -23,8 +23,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
- * The {@link GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}.
+ * The {@link GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}
+ * <p>
  * This also applies to armor, as they are just items too.
+ *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
@@ -32,7 +34,8 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	String ID_NBT_KEY = "GeckoLibID";
 
 	/**
-	 * Safety wrapper to distance the client-side code from common code.<br>
+	 * Safety wrapper to distance the client-side code from common code
+	 * <p>
 	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
 	 */
 	static Supplier<Object> makeRenderer(GeoItem item) {
@@ -68,7 +71,8 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}.<br>
+	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}
+	 * <p>
 	 * If no ID has been reserved for this stack yet, it will reserve a new id and assign it
 	 */
 	static long getOrAssignId(ItemStack stack, ServerLevel level) {
@@ -86,8 +90,10 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 	
 	/**
-	 * Returns the current age/tick of the animatable instance.<br>
+	 * Returns the current age/tick of the animatable instance
+	 * <p>
 	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 *
 	 * @param itemStack The ItemStack representing this animatable
 	 * @return The current tick/age of the animatable, for animation purposes
 	 */
@@ -124,8 +130,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		}
 
 		/**
-		 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist.<br>
-		 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids.
+		 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist
+		 * <p>
+		 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
 		 */
 		@Override
 		public AnimatableManager<?> getManagerForId(long uniqueId) {

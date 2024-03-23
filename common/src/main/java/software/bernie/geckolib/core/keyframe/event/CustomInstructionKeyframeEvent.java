@@ -10,7 +10,8 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.keyframe.event.data.CustomInstructionKeyframeData;
 
 /**
- * The {@link KeyFrameEvent} specific to the {@link AnimationController#customKeyframeHandler}.<br>
+ * The {@link KeyFrameEvent} specific to the {@link AnimationController#customKeyframeHandler}
+ * <p>
  * Called when a custom instruction keyframe is encountered
  */
 public class CustomInstructionKeyframeEvent<T extends GeoAnimatable> extends KeyFrameEvent<T, CustomInstructionKeyframeData> {

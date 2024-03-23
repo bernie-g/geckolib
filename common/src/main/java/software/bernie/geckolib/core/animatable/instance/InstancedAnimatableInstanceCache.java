@@ -4,7 +4,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 /**
- * AnimatableInstanceCache implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimatableManager} instance per cache.
+ * AnimatableInstanceCache implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimatableManager} instance per cache
  */
 public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected AnimatableManager<?> manager;
@@ -14,9 +14,9 @@ public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 	}
 
 	/**
-	 * Gets the {@link AnimatableManager} instance from this cache.
-	 * Because this cache subclass expects a 1:1 relationship of cache to animatable,
-	 * only one {@code AnimatableManager} instance is used
+	 * Gets the {@link AnimatableManager} instance from this cache
+	 * <p>
+	 * Because this cache subclass expects a 1:1 relationship of cache to animatable, only one {@code AnimatableManager} instance is used
 	 */
 	@Override
 	public AnimatableManager<?> getManagerForId(long uniqueId) {

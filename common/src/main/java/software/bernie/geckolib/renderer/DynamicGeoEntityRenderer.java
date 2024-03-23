@@ -21,7 +21,8 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.Map;
 
 /**
- * Extended special-entity renderer for more advanced or dynamic models.<br>
+ * Extended special-entity renderer for more advanced or dynamic models
+ * <p>
  * Because of the extra performance cost of this renderer, it is advised to avoid using it unnecessarily,
  * and consider whether the benefits are worth the cost for your needs.
  */
@@ -35,10 +36,13 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	}
 
 	/**
-	 * For each bone rendered, this method is called.<br>
-	 * If a ResourceLocation is returned, the renderer will render the bone using that texture instead of the default.<br>
-	 * This can be useful for custom rendering  on a per-bone basis.<br>
-	 * There is a somewhat significant performance cost involved in this however, so only use as needed.
+	 * For each bone rendered, this method is called
+	 * <p>
+	 * If a ResourceLocation is returned, the renderer will render the bone using that texture instead of the default
+	 * This can be useful for custom rendering  on a per-bone basis
+	 * <p>
+	 * There is a somewhat significant performance cost involved in this however, so only use as needed
+	 *
 	 * @return The specified ResourceLocation, or null if no override
 	 */
 	@Nullable
@@ -47,10 +51,13 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	}
 
 	/**
-	 * For each bone rendered, this method is called.<br>
-	 * If a RenderType is returned, the renderer will render the bone using that RenderType instead of the default.<br>
-	 * This can be useful for custom rendering operations on a per-bone basis.<br>
-	 * There is a somewhat significant performance cost involved in this however, so only use as needed.
+	 * For each bone rendered, this method is called
+	 * <p>
+	 * If a RenderType is returned, the renderer will render the bone using that RenderType instead of the default
+	 * This can be useful for custom rendering operations on a per-bone basis
+	 * <p>
+	 * There is a somewhat significant performance cost involved in this however, so only use as needed
+	 *
 	 * @return The specified RenderType, or null if no override
 	 */
 	@Nullable
@@ -60,6 +67,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 
 	/**
 	 * Override this to handle a given {@link GeoBone GeoBone's} rendering in a particular way
+	 *
 	 * @return Whether the renderer should skip rendering the {@link GeoCube cubes} of the given GeoBone or not
 	 */
 	protected boolean boneRenderOverride(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer,
@@ -119,7 +127,8 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	}
 
 	/**
-	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
+	 * Called after rendering the model to buffer. Post-render modifications should be performed here
+	 * <p>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
@@ -130,8 +139,9 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	}
 
 	/**
-	 * Applies the {@link GeoQuad Quad's} {@link GeoVertex vertices} to the given {@link VertexConsumer buffer} for rendering.<br>
-	 * Custom override to handle custom non-baked textures for ExtendedGeoEntityRenderer
+	 * Applies the {@link GeoQuad Quad's} {@link GeoVertex vertices} to the given {@link VertexConsumer buffer} for rendering
+	 * <p>
+	 * Custom override to handle custom non-baked textures for DynamicGeoEntityRenderer
 	 */
 	@Override
 	public void createVerticesOfQuad(GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
@@ -164,9 +174,11 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	}
 
 	/**
-	 * Retrieve or compute the height and width of a given texture from its {@link ResourceLocation}.<br>
-	 * This is used for dynamically mapping vertices on a given quad.<br>
-	 * This is inefficient however, and should only be used where required.
+	 * Retrieve or compute the height and width of a given texture from its {@link ResourceLocation}
+	 * <p>
+	 * This is used for dynamically mapping vertices on a given quad
+	 * <p>
+	 * This is inefficient however, and should only be used where required
 	 */
 	protected IntIntPair computeTextureSize(ResourceLocation texture) {
 		return TEXTURE_DIMENSIONS_CACHE.computeIfAbsent(texture, RenderUtil::getTextureDimensions);

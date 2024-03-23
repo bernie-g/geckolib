@@ -5,7 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.core.object.DataTicket;
 
 /**
- * Network-compatible {@link software.bernie.geckolib.core.object.DataTicket} implementation.
+ * Network-compatible {@link software.bernie.geckolib.core.object.DataTicket} implementation
+ * <p>
  * Used for sending data from server -> client in an easy manner
  */
 public abstract class SerializableDataTicket<D> extends DataTicket<D> {
@@ -15,6 +16,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Encode the object to a packet buffer for transmission
+	 *
 	 * @param data The object to be serialized
 	 * @param buffer The buffer to serialize the object to
 	 */
@@ -22,6 +24,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Decode the object from a packet buffer after transmission
+	 *
 	 * @param buffer The buffer to deserialize the object from
 	 * @return A new instance of your data object
 	 */
@@ -31,6 +34,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Double>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Double> ofDouble(ResourceLocation id) {
@@ -49,6 +53,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Float>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Float> ofFloat(ResourceLocation id) {
@@ -67,6 +72,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Boolean>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Boolean> ofBoolean(ResourceLocation id) {
@@ -85,6 +91,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Integer>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Integer> ofInt(ResourceLocation id) {
@@ -103,6 +110,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<String>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<String> ofString(ResourceLocation id) {
@@ -121,6 +129,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Enum>} for the given id
+	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static <E extends Enum<E>> SerializableDataTicket<E> ofEnum(ResourceLocation id, Class<E> enumClass) {

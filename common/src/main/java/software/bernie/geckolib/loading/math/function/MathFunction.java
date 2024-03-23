@@ -96,8 +96,7 @@ public abstract class MathFunction implements MathValue {
 
     /**
      * Factory interface for {@link MathFunction}.
-     * Functionally equivalent to a <code>Function<MathValue[], MathFunction></code>, but with a more concise user-facing handle
-     * @param <T>
+     * Functionally equivalent to <pre>{@code Function<MathValue[], MathFunction>}</pre> but with a more concise user-facing handle
      */
     @FunctionalInterface
     public interface Factory<T extends MathFunction> {

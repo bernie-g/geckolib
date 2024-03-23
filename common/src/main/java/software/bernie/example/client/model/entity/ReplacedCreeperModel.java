@@ -8,6 +8,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 /**
  * Example {@link software.bernie.geckolib.model.GeoModel} for dynamically replacing an
  * existing entity's renderer with a GeckoLib model (in this case, {@link net.minecraft.world.entity.monster.Creeper}
+ *
  * @see software.bernie.geckolib.renderer.GeoReplacedEntityRenderer
  * @see software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer
  */

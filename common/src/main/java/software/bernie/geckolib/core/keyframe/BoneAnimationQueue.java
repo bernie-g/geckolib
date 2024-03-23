@@ -4,7 +4,8 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
 /**
- * A bone pseudo-stack for bone animation positions, scales, and rotations.
+ * A bone pseudo-stack for bone animation positions, scales, and rotations
+ * <p>
  * Animation points are calculated then pushed onto their respective queues to be used for transformations in rendering
  */
 public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
@@ -19,6 +20,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#positionXQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -31,6 +33,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#positionYQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -43,6 +46,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#positionZQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -55,6 +59,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new X, Y, and Z position {@link AnimationPoint} to their respective queues
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (base on the {@link software.bernie.geckolib.core.animation.AnimationController}
@@ -71,6 +76,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#scaleXQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -83,6 +89,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#scaleYQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -95,6 +102,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#scaleZQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -107,6 +115,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new X, Y, and Z scale {@link AnimationPoint} to their respective queues
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (base on the {@link software.bernie.geckolib.core.animation.AnimationController}
@@ -123,6 +132,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#rotationXQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -135,6 +145,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#rotationYQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -147,6 +158,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new {@link AnimationPoint} to the {@link BoneAnimationQueue#rotationZQueue}
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (based on the {@link software.bernie.geckolib.core.animation.AnimationController})
@@ -159,6 +171,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add a new X, Y, and Z scale {@link AnimationPoint} to their respective queues
+	 *
 	 * @param keyFrame The {@code Nullable} Keyframe relevant to the animation point
 	 * @param lerpedTick The lerped time (current tick + partial tick) that the point starts at
 	 * @param transitionLength The length of the transition (base on the {@link software.bernie.geckolib.core.animation.AnimationController}
@@ -176,6 +189,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add an X, Y, and Z position {@link AnimationPoint} to their respective queues
+	 *
 	 * @param xPoint The x position {@code AnimationPoint} to add
 	 * @param yPoint The y position {@code AnimationPoint} to add
 	 * @param zPoint The z position {@code AnimationPoint} to add
@@ -188,6 +202,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add an X, Y, and Z scale {@link AnimationPoint} to their respective queues
+	 *
 	 * @param xPoint The x scale {@code AnimationPoint} to add
 	 * @param yPoint The y scale {@code AnimationPoint} to add
 	 * @param zPoint The z scale {@code AnimationPoint} to add
@@ -200,6 +215,7 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 
 	/**
 	 * Add an X, Y, and Z rotation {@link AnimationPoint} to their respective queues
+	 *
 	 * @param xPoint The x rotation {@code AnimationPoint} to add
 	 * @param yPoint The y rotation {@code AnimationPoint} to add
 	 * @param zPoint The z rotation {@code AnimationPoint} to add

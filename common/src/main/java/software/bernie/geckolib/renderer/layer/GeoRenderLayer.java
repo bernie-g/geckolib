@@ -12,7 +12,8 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 /**
- * Render layer base class for rendering additional layers of effects or textures over an existing model at runtime.<br>
+ * Render layer base class for rendering additional layers of effects or textures over an existing model at runtime
+ * <p>
  * Contains the base boilerplate and helper code for various render layer features
  */
 public abstract class GeoRenderLayer<T extends GeoAnimatable> {
@@ -53,7 +54,8 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called.<br>
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called
+	 * <p>
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
 	 */
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
@@ -61,21 +63,23 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 						  int packedLight, int packedOverlay) {}
 
 	/**
-	 * This is the method that is actually called by the render for your render layer to function.<br>
-	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags.
+	 * This is the method that is actually called by the render for your render layer to function
+	 * <p>
+	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
 	 */
 	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, RenderType renderType,
 								MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick,
 								int packedLight, int packedOverlay) {}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
-	 * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
-	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
-	 * It's recommended to avoid using this unless necessary.<br>
-	 * <br>
-	 * The {@link GeoBone} in question has already been rendered by this stage.<br>
-	 * <br>
+	 * This method is called by the {@link GeoRenderer} for each bone being rendered
+	 * <p>
+	 * This is a more expensive call, particularly if being used to render something on a different buffer
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time
+	 * It's recommended to avoid using this unless necessary
+	 * <p>
+	 * The {@link GeoBone} in question has already been rendered by this stage
+	 * <p>
 	 * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
 	 * using {@link MultiBufferSource#getBuffer} before ending the method
 	 */

@@ -11,8 +11,10 @@ import software.bernie.geckolib.core.keyframe.Keyframe;
 import software.bernie.geckolib.core.keyframe.event.data.KeyFrameData;
 
 /**
- * The base class for {@link Keyframe} events.<br>
- * These will be passed to one of the controllers in {@link AnimationController} when encountered during animation.
+ * The base class for {@link Keyframe} events
+ * <p>
+ * These will be passed to one of the controllers in {@link AnimationController} when encountered during animation
+ *
  * @see CustomInstructionKeyframeEvent
  * @see ParticleKeyframeEvent
  * @see SoundKeyframeEvent

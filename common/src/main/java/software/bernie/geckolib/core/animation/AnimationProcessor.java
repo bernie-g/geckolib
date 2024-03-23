@@ -27,6 +27,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 	/**
 	 * Build an animation queue for the given {@link RawAnimation}
+	 *
 	 * @param animatable The animatable object being rendered
 	 * @param rawAnimation The raw animation to be compiled
 	 * @return A queue of animations and loop types to play
@@ -197,6 +198,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	/**
 	 * Create new bone {@link BoneSnapshot} based on the bone's initial snapshot for the currently registered {@link GeoBone GeoBones},
 	 * filtered by the bones already present in the master snapshots map
+	 *
 	 * @param snapshots The master bone snapshots map from the related {@link AnimatableManager}
 	 * @return The input snapshots map, for easy assignment
 	 */
@@ -210,7 +212,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets a bone by name.
+	 * Gets a bone by name
 	 *
 	 * @param boneName The bone name
 	 * @return the bone
@@ -220,8 +222,10 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Adds the given bone to the bones list for this processor.<br>
-	 * This is normally handled automatically by Geckolib.<br>
+	 * Adds the given bone to the bones list for this processor
+	 * <p>
+	 * This is normally handled automatically by Geckolib
+	 * <p>
 	 * Failure to properly register a bone will break things.
 	 */
 	public void registerGeoBone(GeoBone bone) {
@@ -235,13 +239,14 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 	/**
 	 * Clear the {@link GeoBone GeoBones} currently registered to the processor,
-	 * then prepares the processor for a new model.<br>
+	 * then prepares the processor for a new model
+	 * <p>
 	 * Should be called whenever switching models to render/animate
 	 */
 	public void setActiveModel(BakedGeoModel model) {
 		this.bones.clear();
 
-		for (GeoBone bone : model.getBones()) {
+		for (GeoBone bone : model.topLevelBones()) {
 			registerGeoBone(bone);
 		}
 	}
@@ -261,7 +266,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * {@link Animation} and {@link software.bernie.geckolib.core.animation.Animation.LoopType} override pair,
+	 * {@link Animation} and {@link Animation.LoopType} override pair,
 	 * used to define a playable animation stage for a {@link GeoAnimatable}
 	 */
 	public record QueuedAnimation(Animation animation, Animation.LoopType loopType) {}

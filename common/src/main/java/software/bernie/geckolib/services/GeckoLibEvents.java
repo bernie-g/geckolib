@@ -1,6 +1,5 @@
 package software.bernie.geckolib.services;
 
-
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import software.bernie.geckolib.cache.object.BakedGeoModel;

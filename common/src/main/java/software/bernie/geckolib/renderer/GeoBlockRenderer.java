@@ -29,7 +29,8 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically.<br>
+ * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically
+ * <p>
  * All blocks added to be rendered by GeckoLib should use an instance of this class.
  */
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements GeoRenderer<T>, BlockEntityRenderer<T> {
@@ -64,7 +65,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes
+	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
@@ -107,8 +109,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
@@ -128,7 +130,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -204,8 +207,10 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
@@ -222,7 +227,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+	 *
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override

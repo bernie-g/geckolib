@@ -14,12 +14,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base interface for a factory of {@link BakedGeoModel} objects.
+ * Base interface for a factory of {@link BakedGeoModel} objects
+ * <p>
  * Handled by default by GeckoLib, but custom implementations may be added by other mods for special needs
  */
 public interface BakedModelFactory {
-	final Map<String, BakedModelFactory> FACTORIES = new Object2ObjectOpenHashMap<>(1);
-	final BakedModelFactory DEFAULT_FACTORY = new Builtin();
+	Map<String, BakedModelFactory> FACTORIES = new Object2ObjectOpenHashMap<>(1);
+	BakedModelFactory DEFAULT_FACTORY = new Builtin();
 
 	/**
 	 * Construct the output model from the given {@link GeometryTree}.<br>
@@ -28,6 +29,7 @@ public interface BakedModelFactory {
 
 	/**
 	 * Construct a {@link GeoBone} from the relevant raw input data
+	 *
 	 * @param boneStructure The {@code BoneStructure} comprising the structure of the bone and its children
 	 * @param properties The loaded properties for the model
 	 * @param parent The parent bone for this bone, or null if a top-level bone
@@ -36,6 +38,7 @@ public interface BakedModelFactory {
 
 	/**
 	 * Construct a {@link GeoCube} from the relevant raw input data
+	 *
 	 * @param cube The raw {@code Cube} comprising the structure and properties of the cube
 	 * @param properties The loaded properties for the model
 	 * @param bone The bone this cube belongs to
@@ -43,7 +46,8 @@ public interface BakedModelFactory {
 	GeoCube constructCube(Cube cube, ModelProperties properties, GeoBone bone);
 
 	/**
-	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier.<br>
+	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier
+	 * <p>
 	 * Vertices have already been mirrored here if {@code mirror} is true
 	 */
 	default GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
@@ -111,9 +115,12 @@ public interface BakedModelFactory {
 	}
 
 	/**
-	 * Register a custom {@link BakedModelFactory} to handle loading models in a custom way.<br>
-	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * Register a custom {@link BakedModelFactory} to handle loading models in a custom way
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 * <p>
 	 * It is recommended you don't call this directly, and instead call it via {@link GeckoLibUtil#addCustomBakedModelFactory}
+	 *
 	 * @param namespace The namespace (modid) to register the factory for
 	 * @param factory The factory responsible for model loading under the given namespace
 	 */

@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * A more efficient version of {@link BoneFilterGeoLayer}.<br>
- * This version requires you provide the list of bones to filter up-front,
- * so that the bone hierarchy doesn't need to be traversed.
+ * A more efficient version of {@link BoneFilterGeoLayer}
+ * <p>
+ * This version requires you provide the list of bones to filter up-front, so that the bone hierarchy doesn't need to be traversed
  */
 public class FastBoneFilterGeoLayer<T extends GeoAnimatable> extends BoneFilterGeoLayer<T> {
 	protected final Supplier<List<String>> boneSupplier;
@@ -36,7 +36,8 @@ public class FastBoneFilterGeoLayer<T extends GeoAnimatable> extends BoneFilterG
 	}
 
 	/**
-	 * Return a list of bone names to grab to then be filtered.<br>
+	 * Return a list of bone names to grab to then be filtered
+	 * <p>
 	 * This is even more efficient if you use a cached list.
 	 */
 	protected List<String> getAffectedBones() {

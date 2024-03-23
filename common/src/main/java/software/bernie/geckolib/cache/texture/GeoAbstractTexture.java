@@ -18,7 +18,8 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 /**
- * Abstract texture wrapper for GeckoLib textures.<br>
+ * Abstract texture wrapper for GeckoLib textures
+ * <p>
  * Mostly just handles boilerplate
  */
 public abstract class GeoAbstractTexture extends AbstractTexture {
@@ -78,8 +79,10 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	}
 
 	/**
-	 * Called at {@link AbstractTexture#load} time to load this texture for the first time into the render cache.
-	 * Generate and apply the necessary functions here, then return the RenderCall to submit to the render pipeline.
+	 * Called at {@link AbstractTexture#load} time to load this texture for the first time into the render cache
+	 * <p>
+	 * Generate and apply the necessary functions here, then return the RenderCall to submit to the render pipeline
+	 *
 	 * @return The RenderCall to submit to the render pipeline, or null if no further action required
 	 */
 	@Nullable

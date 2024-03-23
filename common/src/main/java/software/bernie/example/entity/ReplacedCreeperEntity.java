@@ -11,6 +11,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 /**
  * Replacement {@link net.minecraft.world.entity.monster.Creeper} {@link GeoEntity} to showcase
  * replacing the model and animations of an existing entity
+ *
  * @see software.bernie.geckolib.renderer.GeoReplacedEntityRenderer
  * @see software.bernie.example.client.renderer.entity.ReplacedCreeperRenderer
  * @see software.bernie.example.client.model.entity.ReplacedCreeperModel

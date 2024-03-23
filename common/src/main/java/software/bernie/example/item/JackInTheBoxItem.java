@@ -23,9 +23,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
-
 /**
- * Example {@link GeoItem} implementation in the form of a Jack-in-the-Box.<br>
+ * Example {@link GeoItem} implementation in the form of a Jack-in-the-Box
  */
 public final class JackInTheBoxItem extends Item implements GeoItem {
 	private static final RawAnimation POPUP_ANIM = RawAnimation.begin().thenPlay("use.popup");

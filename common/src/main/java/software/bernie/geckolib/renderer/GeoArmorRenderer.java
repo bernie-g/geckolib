@@ -32,10 +32,11 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} for rendering in-world armor specifically.<br>
- * All custom armor added to be rendered in-world by GeckoLib should use an instance of this class.
+ * Base {@link GeoRenderer} for rendering in-world armor specifically
+ * <p>
+ * All custom armor added to be rendered in-world by GeckoLib should use an instance of this class
+ *
  * @see GeoItem
- * @param <T>
  */
 public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel implements GeoRenderer<T> {
 	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
@@ -107,7 +108,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes
+	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
@@ -116,8 +118,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Gets the {@link RenderType} to render the given animatable with.<br>
-	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default.<br>
+	 * Gets the {@link RenderType} to render the given animatable with
+	 * <p>
+	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default
+	 * <p>
 	 * Override this to change the way a model will render (such as translucent models, etc)
 	 */
 	@Override
@@ -160,8 +164,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'head' GeoBone from this model.<br>
+	 * Returns the 'head' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the head model piece, or null if not using it
 	 */
 	@Nullable
@@ -170,8 +176,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'body' GeoBone from this model.<br>
+	 * Returns the 'body' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the body model piece, or null if not using it
 	 */
 	@Nullable
@@ -180,8 +188,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'right arm' GeoBone from this model.<br>
+	 * Returns the 'right arm' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the right arm model piece, or null if not using it
 	 */
 	@Nullable
@@ -190,8 +200,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'left arm' GeoBone from this model.<br>
+	 * Returns the 'left arm' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the left arm model piece, or null if not using it
 	 */
 	@Nullable
@@ -200,8 +212,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'right leg' GeoBone from this model.<br>
+	 * Returns the 'right leg' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the right leg model piece, or null if not using it
 	 */
 	@Nullable
@@ -210,8 +224,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'left leg' GeoBone from this model.<br>
+	 * Returns the 'left leg' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the left leg model piece, or null if not using it
 	 */
 	@Nullable
@@ -220,8 +236,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'right boot' GeoBone from this model.<br>
+	 * Returns the 'right boot' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the right boot model piece, or null if not using it
 	 */
 	@Nullable
@@ -230,8 +248,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Returns the 'left boot' GeoBone from this model.<br>
+	 * Returns the 'left boot' GeoBone from this model
+	 * <p>
 	 * Override if your geo model has different bone names for these bones
+	 *
 	 * @return The bone for the left boot model piece, or null if not using it
 	 */
 	@Nullable
@@ -240,8 +260,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
@@ -278,7 +298,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -342,10 +363,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Prepare the renderer for the current render cycle.<br>
-	 * Must be called prior to render as the default HumanoidModel doesn't give render context.<br>
+	 * Prepare the renderer for the current render cycle
+	 * <p>
+	 * Must be called prior to render as the default HumanoidModel doesn't give render context
+	 * <p>
 	 * Params have been left nullable so that the renderer can be called for model/texture purposes safely.
-	 * If you do grab the renderer using null parameters, you should not use it for actual rendering.
+	 * If you do grab the renderer using null parameters, you should not use it for actual rendering
+	 *
 	 * @param entity The entity being rendered with the armor on
 	 * @param stack The ItemStack being rendered
 	 * @param slot The slot being rendered
@@ -375,8 +399,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 	/**
 	 * Resets the bone visibility for the model based on the currently rendering slot,
-	 * and then sets bones relevant to the current slot as visible for rendering.<br>
-	 * <br>
+	 * and then sets bones relevant to the current slot as visible for rendering
+	 * <p>
 	 * This is only called by default for non-geo entities (I.E. players or vanilla mobs)
 	 */
 	protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
@@ -403,8 +427,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 	/**
 	 * Resets the bone visibility for the model based on the current {@link ModelPart} and {@link EquipmentSlot},
-	 * and then sets the bones relevant to the current part as visible for rendering.<br>
-	 * <br>
+	 * and then sets the bones relevant to the current part as visible for rendering
+	 * <p>
 	 * If you are rendering a geo entity with armor, you should probably be calling this prior to rendering
 	 */
 	public void applyBoneVisibilityByPart(EquipmentSlot currentSlot, ModelPart currentPart, HumanoidModel<?> model) {
@@ -542,8 +566,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
@@ -561,7 +587,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+	 *
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override

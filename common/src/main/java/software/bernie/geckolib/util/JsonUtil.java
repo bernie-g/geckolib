@@ -18,8 +18,10 @@ public final class JsonUtil {
     private JsonUtil() {}
 
     /**
-     * Convert a {@link JsonArray} of doubles to a {@code double[]}.<br>
-     * No type checking is done, so if the array contains anything other than doubles, this will throw an exception.<br>
+     * Convert a {@link JsonArray} of doubles to a {@code double[]}
+     * <p>
+     * No type checking is done, so if the array contains anything other than doubles, this will throw an exception
+     * <p>
      * Ensures a minimum size of 3, as this is the expected usage of this method
      */
     public static double[] jsonArrayToDoubleArray(@Nullable JsonArray array) throws JsonParseException{
@@ -37,6 +39,7 @@ public final class JsonUtil {
 
     /**
      * Converts a {@link JsonArray} of a given object type to an array of that object, deserialized from their respective {@link JsonElement JsonElements}
+     *
      * @param array The array containing the objects to be converted
      * @param context The {@link com.google.gson.Gson} context for deserialization
      * @param objectClass The object type that the array contains
@@ -52,7 +55,8 @@ public final class JsonUtil {
     }
 
     /**
-     * Converts a {@link JsonArray} to a {@link List} of elements of a pre-determined type.
+     * Converts a {@link JsonArray} to a {@link List} of elements of a pre-determined type
+     *
      * @param array The {@code JsonArray} to convert
      * @param elementTransformer Transformation function that converts a {@link JsonElement} to the intended output object
      */
@@ -71,6 +75,7 @@ public final class JsonUtil {
 
     /**
      * Converts a {@link JsonObject} to a {@link Map} of String keys to their respective objects
+     *
      * @param obj The base {@code JsonObject} to convert
      * @param context The {@link Gson} deserialization context
      * @param objectType The object class that the map should contain

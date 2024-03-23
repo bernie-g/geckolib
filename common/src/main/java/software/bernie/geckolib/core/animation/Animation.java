@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * A compiled animation instance for use by the {@link AnimationController}<br>
- * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable.
+ * A compiled animation instance for use by the {@link AnimationController}
+ * <p>
+ * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable
  */
 public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Keyframes keyFrames) {
 	public record Keyframes(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
@@ -29,12 +30,13 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	}
 
 	/**
-	 * Loop type functional interface to define post-play handling for a given animation. <br>
+	 * Loop type functional interface to define post-play handling for a given animation
+	 * <p>
 	 * Custom loop types are supported by extending this class and providing the extended class instance as the loop type for the animation
 	 */
 	@FunctionalInterface
 	public interface LoopType {
-		final Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
+		Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
 		LoopType DEFAULT = (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation);
 		LoopType PLAY_ONCE = register("play_once", register("false", (animatable, controller, currentAnimation) -> false));
@@ -47,6 +49,7 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 
 		/**
 		 * Override in a custom instance to dynamically decide whether an animation should repeat or stop
+		 *
 		 * @param animatable The animating object relevant to this method call
 		 * @param controller The {@link AnimationController} playing the current animation
 		 * @param currentAnimation The current animation that just played
@@ -55,9 +58,11 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 		boolean shouldPlayAgain(GeoAnimatable animatable, AnimationController<? extends GeoAnimatable> controller, Animation currentAnimation);
 
 		/**
-		 * Retrieve a LoopType instance based on a {@link JsonElement}.
+		 * Retrieve a LoopType instance based on a {@link JsonElement}
+		 * <p>
 		 * Returns either {@link LoopType#PLAY_ONCE} or {@link LoopType#LOOP} based on a boolean or string element type,
-		 * or any other registered loop type with a matching type string.
+		 * or any other registered loop type with a matching type string
+		 *
 		 * @param json The <code>loop</code> {@link JsonElement} to attempt to parse
 		 * @return A usable LoopType instance
 		 */
@@ -81,9 +86,12 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 		}
 
 		/**
-		 * Register a LoopType with Geckolib for handling loop functionality of animations..<br>
-		 * <b><u>MUST be called during mod construct</u></b><br>
+		 * Register a LoopType with Geckolib for handling loop functionality of animations
+		 * <p>
+		 * <b><u>MUST be called during mod construct</u></b>
+		 * <p>
 		 * It is recommended you don't call this directly, and instead call it via {@code GeckoLibUtil#addCustomLoopType}
+		 *
 		 * @param name The name of the loop type
 		 * @param loopType The loop type to register
 		 * @return The registered {@code LoopType}

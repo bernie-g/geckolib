@@ -17,8 +17,9 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * A shallow-level dyeable armour renderer for GeckoLib armor models.
- * <p>This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms</p>
+ * A shallow-level dyeable armour renderer for GeckoLib armor models
+ * <p>
+ * This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms
  */
 public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends GeoArmorRenderer<T> {
     protected final Set<GeoBone> dyeableBones = new ObjectArraySet<>();
@@ -51,22 +52,26 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
     }
 
     /**
-     * Whether the given GeoBone should be considered dyeable or not.
-     * <p>Note that values returned from here are cached for the last rendered {@link BakedGeoModel} and require a manual reset if you intend to change these results.</p>
+     * Whether the given GeoBone should be considered dyeable or not
+     * <p>
+     * Note that values returned from here are cached for the last rendered {@link BakedGeoModel} and require a manual reset if you intend to change these results
+     *
      * @return whether the bone should be dyed or not
      */
     protected abstract boolean isBoneDyeable(GeoBone bone);
 
     /**
-     * What color the given GeoBone should be dyed as.
-     * <p>Only bones that were marked as 'dyeable' in {@link DyeableGeoArmorRenderer#isBoneDyeable(GeoBone)} are provided here</p>
+     * What color the given GeoBone should be dyed as
+     * <p>
+     * Only bones that were marked as 'dyeable' in {@link DyeableGeoArmorRenderer#isBoneDyeable(GeoBone)} are provided here
      */
     @NotNull
     protected abstract Color getColorForBone(GeoBone bone);
 
     /**
-     * Check whether the dye cache should be considered dirty and recomputed.
-     * <p>The less this forces re-computation, the better for performance</p>
+     * Check whether the dye cache should be considered dirty and recomputed
+     * <p>
+     * The less this forces re-computation, the better for performance
      */
     protected void checkBoneDyeCache(T animatable, BakedGeoModel model, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         if (model != this.lastModel) {

@@ -4,6 +4,7 @@ import org.joml.Vector3f;
 
 /**
  * Vertex data holder
+ *
  * @param position The position of the vertex
  * @param texU The texture U coordinate
  * @param texV The texture V coordinate

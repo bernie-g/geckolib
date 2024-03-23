@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Functional interface defining an easing function.<br>
+ * Functional interface defining an easing function
+ * <p>
  * {@code value} is the easing value provided from the keyframe's {@link Keyframe#easingArgs()}
- * <br><br>
- * For more information on easings, see:<br>
- * <a href="https://easings.net/">Easings.net</a><br>
- * <a href="https://cubic-bezier.com">Cubic-Bezier.com</a><br>
+ *
+ * @see <a href="https://easings.net/">Easings.net</a>
+ * @see <a href="https://cubic-bezier.com">Cubic-Bezier.com</a>
  */
 @FunctionalInterface
 public interface EasingType {
@@ -85,9 +85,12 @@ public interface EasingType {
 	}
 
 	/**
-	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves.<br>
-	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 * <p>
 	 * It is recommended you don't call this directly, and instead call it via {@code GeckoLibUtil#addCustomEasingType}
+	 *
 	 * @param name The name of the easing type
 	 * @param easingType The {@code EasingType} to associate with the given name
 	 * @return The {@code EasingType} you registered
@@ -99,7 +102,8 @@ public interface EasingType {
 	}
 
 	/**
-	 * Retrieve an {@code EasingType} instance based on a {@link JsonElement}. Returns one of the default {@code EasingTypes} if the name matches, or any other registered {@code EasingType} with a matching name.
+	 * Retrieve an {@code EasingType} instance based on a {@link JsonElement}. Returns one of the default {@code EasingTypes} if the name matches, or any other registered {@code EasingType} with a matching name
+	 *
 	 * @param json The {@code easing} {@link JsonElement} to attempt to parse.
 	 * @return A usable {@code EasingType} instance
 	 */
@@ -111,7 +115,8 @@ public interface EasingType {
 	}
 
 	/**
-	 * Get an existing {@code EasingType} from a given string, matching the string to its name.
+	 * Get an existing {@code EasingType} from a given string, matching the string to its name
+	 *
 	 * @param name The name of the easing function
 	 * @return The relevant {@code EasingType}, or {@link EasingType#LINEAR} if none match
 	 */
@@ -129,7 +134,8 @@ public interface EasingType {
 	}
 	
 	/**
-	 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes.<br>
+	 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
+	 * <p>
 	 * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
 	 */
 	static double catmullRom(double n) {
@@ -153,7 +159,7 @@ public interface EasingType {
 	}
 
 	/**
-	 * Returns an easing function that runs equally both forwards and backwards in time based on the halfway point, generating a symmetrical curve.<br>
+	 * Returns an easing function that runs equally both forwards and backwards in time based on the halfway point, generating a symmetrical curve
 	 */
 	static Double2DoubleFunction easeInOut(Double2DoubleFunction function) {
 		return time -> {
@@ -183,7 +189,8 @@ public interface EasingType {
 	// ---> Mathematical Functions <--- //
 
 	/**
-	 * A linear function, equivalent to a null-operation.<br>
+	 * A linear function, equivalent to a null-operation
+	 * <p>
 	 * {@code f(n) = n}
 	 */
 	static double linear(double n) {
@@ -191,8 +198,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * A quadratic function, equivalent to the square (<i>n</i>^2) of elapsed time.<br>
-	 * {@code f(n) = n^2}<br>
+	 * A quadratic function, equivalent to the square (<i>n</i>^2) of elapsed time
+	 * <p>
+	 * {@code f(n) = n^2}
+	 * <p>
 	 * <a href="http://easings.net/#easeInQuad">Easings.net#easeInQuad</a>
 	 */
 	static double quadratic(double n) {
@@ -200,8 +209,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * A cubic function, equivalent to cube (<i>n</i>^3) of elapsed time.<br>
-	 * {@code f(n) = n^3}<br>
+	 * A cubic function, equivalent to cube (<i>n</i>^3) of elapsed time
+	 * <p>
+	 * {@code f(n) = n^3}
+	 * <p>
 	 * <a href="http://easings.net/#easeInCubic">Easings.net#easeInCubic</a>
 	 */
 	static double cubic(double n) {
@@ -209,8 +220,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * A sinusoidal function, equivalent to a sine curve output.<br>
-	 * {@code f(n) = 1 - cos(n * π / 2)}<br>
+	 * A sinusoidal function, equivalent to a sine curve output
+	 * <p>
+	 * {@code f(n) = 1 - cos(n * π / 2)}
+	 * <p>
 	 * <a href="http://easings.net/#easeInSine">Easings.net#easeInSine</a>
 	 */
 	static double sine(double n) {
@@ -218,8 +231,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * A circular function, equivalent to a normally symmetrical curve.<br>
-	 * {@code f(n) = 1 - sqrt(1 - n^2)}<br>
+	 * A circular function, equivalent to a normally symmetrical curve
+	 * <p>
+	 * {@code f(n) = 1 - sqrt(1 - n^2)}
+	 * <p>
 	 * <a href="http://easings.net/#easeInCirc">Easings.net#easeInCirc</a>
 	 */
 	static double circle(double n) {
@@ -227,8 +242,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * An exponential function, equivalent to an exponential curve.<br>
-	 * {@code f(n) = 2^(10 * (n - 1))}<br>
+	 * An exponential function, equivalent to an exponential curve
+	 * <p>
+	 * {@code f(n) = 2^(10 * (n - 1))}
+	 * <p>
 	 * <a href="http://easings.net/#easeInExpo">Easings.net#easeInExpo</a>
 	 */
 	static double exp(double n) {
@@ -238,9 +255,12 @@ public interface EasingType {
 	// ---> Easing Curve Functions <--- //
 
 	/**
-	 * An elastic function, equivalent to an oscillating curve.<br>
-	 * <i>n</i> defines the elasticity of the output.<br>
-	 * {@code f(t) = 1 - (cos(t * π) / 2))^3 * cos(t * n * π)}<br>
+	 * An elastic function, equivalent to an oscillating curve
+	 * <p>
+	 * <i>n</i> defines the elasticity of the output
+	 * <p>
+	 * {@code f(t) = 1 - (cos(t * π) / 2))^3 * cos(t * n * π)}
+	 * <p>
 	 * <a href="http://easings.net/#easeInElastic">Easings.net#easeInElastic</a>
 	 */
 	static Double2DoubleFunction elastic(Double n) {
@@ -250,9 +270,12 @@ public interface EasingType {
 	}
 
 	/**
-	 * A bouncing function, equivalent to a bouncing ball curve.<br>
-	 * <i>n</i> defines the bounciness of the output.<br>
-	 * Thanks to <b>Waterded#6455</b> for making the bounce adjustable, and <b>GiantLuigi4#6616</b> for additional cleanup.<br>
+	 * A bouncing function, equivalent to a bouncing ball curve
+	 * <p>
+	 * <i>n</i> defines the bounciness of the output
+	 * <p>
+	 * Thanks to <b>Waterded#6455</b> for making the bounce adjustable, and <b>GiantLuigi4#6616</b> for additional cleanup
+	 * <p>
 	 * <a href="http://easings.net/#easeInBounce">Easings.net#easeInBounce</a>
 	 */
 	static Double2DoubleFunction bounce(Double n) {
@@ -267,8 +290,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * A negative elastic function, equivalent to inverting briefly before increasing.<br>
-	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)</code><br>
+	 * A negative elastic function, equivalent to inverting briefly before increasing
+	 * <p>
+	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)</code>
+	 * <p>
 	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	 */
 	static Double2DoubleFunction back(Double n) {
@@ -278,8 +303,10 @@ public interface EasingType {
 	}
 
 	/**
-	 * An exponential function, equivalent to an exponential curve to the {@code n} root.<br>
+	 * An exponential function, equivalent to an exponential curve to the {@code n} root
+	 * <p>
 	 * <code>f(t) = t^n</code>
+	 *
 	 * @param n The exponent
 	 */
 	static Double2DoubleFunction pow(double n) {

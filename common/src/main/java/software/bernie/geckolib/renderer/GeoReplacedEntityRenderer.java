@@ -73,6 +73,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 	/**
 	 * Gets the {@link GeoAnimatable} instance currently being rendered
+	 *
 	 * @see GeoReplacedEntityRenderer#getCurrentEntity()
 	 */
 	@Override
@@ -89,7 +90,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes
+	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
@@ -98,7 +100,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Shadowing override of {@link EntityRenderer#getTextureLocation}.<br>
+	 * Shadowing override of {@link EntityRenderer#getTextureLocation}
+	 * <p>
 	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
 	 */
 	@Override
@@ -141,8 +144,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
@@ -161,7 +164,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -275,7 +279,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state. This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
+	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
+	 * <p>
+	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	@Override
 	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
@@ -290,7 +296,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
+	 * Called after rendering the model to buffer. Post-render modifications should be performed here
+	 * <p>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
@@ -381,8 +388,10 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Gets the max rotation value for dying entities.<br>
-	 * You might want to modify this for different aesthetics, such as a {@link net.minecraft.world.entity.monster.Spider} flipping upside down on death.<br>
+	 * Gets the max rotation value for dying entities
+	 * <p>
+	 * You might want to modify this for different aesthetics, such as a {@link net.minecraft.world.entity.monster.Spider} flipping upside down on death
+	 * <p>
 	 * Functionally equivalent to {@link net.minecraft.client.renderer.entity.LivingEntityRenderer#getFlipDegrees}
 	 */
 	protected float getDeathMaxRotation(T animatable) {
@@ -390,15 +399,17 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible.
-	 * <p>This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render</p>
+	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible
+	 * <p>
+	 * This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render
 	 */
 	public double getNameRenderCutoffDistance(E entity, T animatable) {
 		return entity.isDiscrete() ? 32d : 64d;
 	}
 
 	/**
-	 * Whether the entity's nametag should be rendered or not.<br>
+	 * Whether the entity's nametag should be rendered or not
+	 * <p>
 	 * Pretty much exclusively used in {@link EntityRenderer#renderNameTag}
 	 */
 	@Override
@@ -432,7 +443,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Gets a packed overlay coordinate pair for rendering.<br>
+	 * Gets a packed overlay coordinate pair for rendering
+	 * <p>
 	 * Mostly just used for the red tint when an entity is hurt,
 	 * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
 	 * white tint when exploding.
@@ -448,7 +460,9 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 	/**
 	 * Whether the entity is currently shaking. This is usually used for freezing, but also for things like piglin conversion or striders suffocating
-	 * <p>This is used for a shaking effect while rendering</p>
+	 * <p>
+	 * This is used for a shaking effect while rendering
+	 *
 	 * @see net.minecraft.client.renderer.entity.LivingEntityRenderer#isShaking(LivingEntity)
 	 */
 	public boolean isShaking(T animatable) {
@@ -456,7 +470,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Static rendering code for rendering a leash segment.<br>
+	 * Static rendering code for rendering a leash segment
+	 * <p>
 	 * It's a like-for-like from {@link net.minecraft.client.renderer.entity.MobRenderer#renderLeash} that had to be duplicated here for flexible usage
 	 */
 	public <H extends Entity, M extends Mob> void renderLeash(M mob, float partialTick, PoseStack poseStack,
@@ -502,7 +517,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Static rendering code for rendering a leash segment.<br>
+	 * Static rendering code for rendering a leash segment
+	 * <p>
 	 * It's a like-for-like from {@link net.minecraft.client.renderer.entity.MobRenderer#addVertexPair} that had to be duplicated here for flexible usage
 	 */
 	private static void renderLeashPiece(VertexConsumer buffer, Matrix4f positionMatrix, float xDif, float yDif,
@@ -525,8 +541,10 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
@@ -543,7 +561,8 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+	 * <p>
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override

@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.network.SerializableDataTicket;
 
 public interface GeckoLibNetworking {
-
     <D> void syncBlockEntityAnimData(BlockPos pos, SerializableDataTicket<D> dataTicket, D data, Level serverLevel);
     void blockEntityAnimTrigger(BlockPos pos, @Nullable String controllerName, String animName, Level serverLevel);
 

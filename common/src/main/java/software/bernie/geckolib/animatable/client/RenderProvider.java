@@ -11,7 +11,8 @@ import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.animatable.GeoItem;
 
 /**
- * Internal interface for safely providing a custom renderer instances at runtime.<br>
+ * Internal interface for safely providing a custom renderer instances at runtime
+ * <p>
  * This can be safely instantiated as a new anonymous class inside your {@link Item} class
  */
 public interface RenderProvider {

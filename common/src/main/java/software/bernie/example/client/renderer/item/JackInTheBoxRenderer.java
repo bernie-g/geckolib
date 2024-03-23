@@ -7,7 +7,7 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 /**
- * Example {@link software.bernie.geckolib.renderer.GeoItemRenderer} for {@link JackInTheBoxItem}
+ * Example {@link GeoItemRenderer} for {@link JackInTheBoxItem}
  */
 public class JackInTheBoxRenderer extends GeoItemRenderer<JackInTheBoxItem> {
 	public JackInTheBoxRenderer() {

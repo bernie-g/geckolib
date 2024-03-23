@@ -23,9 +23,10 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} class for rendering anything that isn't already handled by the other builtin GeoRenderer subclasses.<br>
- * Before using this class you should ensure your use-case isn't already covered by one of the other existing renderers.<br>
- * <br>
+ * Base {@link GeoRenderer} class for rendering anything that isn't already handled by the other builtin GeoRenderer subclasses
+ * <p>
+ * Before using this class you should ensure your use-case isn't already covered by one of the other existing renderers
+ * <p>
  * It is <b>strongly</b> recommended you override {@link GeoRenderer#getInstanceId} if using this renderer
  */
 public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T> {
@@ -60,7 +61,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * Shadowing override of {@link EntityRenderer#getTextureLocation}.<br>
+	 * Shadowing override of {@link EntityRenderer#getTextureLocation}
+	 * <p>
 	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
 	 */
 	@Override
@@ -103,8 +105,10 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * The entry render point for this renderer.<br>
+	 * The entry render point for this renderer
+	 * <p>
 	 * Call this whenever you want to render your object
+	 *
 	 * @param poseStack The PoseStack to render under
 	 * @param animatable The {@link T} instance to render
 	 * @param bufferSource The BufferSource to render with, or null to use the default
@@ -124,8 +128,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
@@ -139,7 +143,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -181,8 +186,10 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
@@ -199,7 +206,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	}
 
 	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+	 *
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override

@@ -28,8 +28,10 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
- * Base class for all code-based model objects.<br>
- * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses.
+ * Base class for all code-based model objects
+ * <p>
+ * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
+ *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
 public abstract class GeoModel<T extends GeoAnimatable> {
@@ -56,8 +58,9 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public abstract ResourceLocation getAnimationResource(T animatable);
 
 	/**
-	 * Override this and return true if Geckolib should crash when attempting to animate the model, but fails to find a bone.<br>
-	 * By default, GeckoLib will just gracefully ignore a missing bone, which might cause oddities with incorrect models or mismatching variables.<br>
+	 * Override this and return true if Geckolib should crash when attempting to animate the model, but fails to find a bone
+	 * <p>
+	 * By default, GeckoLib will just gracefully ignore a missing bone, which might cause oddities with incorrect models or mismatching variables
 	 */
 	public boolean crashIfBoneMissing() {
 		return false;
@@ -72,6 +75,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 
 	/**
 	 * Get the baked model data for this model based on the provided string location
+	 *
 	 * @param location The resource path of the baked model (usually the animatable's id string)
 	 * @return The BakedGeoModel
 	 */
@@ -98,6 +102,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 
 	/**
 	 * Gets a bone from this model by name
+	 *
 	 * @param name The name of the bone
 	 * @return An {@link Optional} containing the {@link software.bernie.geckolib.cache.object.GeoBone} if one matches, otherwise an empty Optional
 	 */
@@ -131,6 +136,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 
 	/**
 	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationState} to be handled by your animation handler at render time
+	 *
 	 * @param animatable The animatable instance currently being animated
 	 * @param instanceId The unique instance id of the animatable being animated
 	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationEvent
@@ -138,7 +144,8 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public void addAdditionalStateData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * <p>
 	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
 	public final void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
@@ -179,8 +186,10 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
-	 * Override to set custom animations (such as head rotation, etc).
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * <p>
+	 * Override to set custom animations (such as head rotation, etc)
+	 *
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
 	 * @param instanceId The instance id of the {@code GeoAnimatable}
 	 * @param animationState An {@link AnimationState} instance created to hold animation data for the {@code animatable} for this method call
@@ -188,7 +197,8 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * <p>
 	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
 	 *
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered

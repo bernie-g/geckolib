@@ -61,13 +61,14 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
     }
 
     /**
-     * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
-     * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
-     * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
-     * It's recommended to avoid using this unless necessary.<br>
-     * <br>
-     * The {@link GeoBone} in question has already been rendered by this stage.<br>
-     * <br>
+     * This method is called by the {@link GeoRenderer} for each bone being rendered
+     * <p>
+     * This is a more expensive call, particularly if being used to render something on a different buffer.
+     * It does however have the benefit of having the matrix translations and other transformations already applied from render-time
+     * It's recommended to avoid using this unless necessary
+     * <p>
+     * The {@link GeoBone} in question has already been rendered by this stage
+     * <p>
      * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
      * using {@link MultiBufferSource#getBuffer} before ending the method
      */

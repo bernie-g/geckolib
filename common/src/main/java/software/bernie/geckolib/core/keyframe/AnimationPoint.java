@@ -7,6 +7,7 @@ package software.bernie.geckolib.core.keyframe;
 
 /**
  * Animation state record that holds the state of an animation at a given point
+ *
  * @param currentTick The lerped tick time (current tick + partial tick) of the point
  * @param transitionLength The length of time (in ticks) that the point should take to transition
  * @param animationStartValue The start value to provide to the animation handling system

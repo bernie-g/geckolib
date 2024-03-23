@@ -9,7 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Animation state handler for end-users.<br>
+ * Animation state handler for end-users
+ * <p>
  * This is where users would set their selected animation to play,
  * stop the controller, or any number of other animation-related actions.
  */
@@ -63,7 +64,8 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets whether the current {@link GeoAnimatable} is considered to be moving for animation purposes.<br>
+	 * Gets whether the current {@link GeoAnimatable} is considered to be moving for animation purposes
+	 * <p>
 	 * Note that this is a best-case approximation of movement, and your needs may vary.
 	 */
 	public boolean isMoving() {
@@ -87,7 +89,8 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the optional additional data map for the state.<br>
+	 * Gets the optional additional data map for the state
+	 *
 	 * @see DataTicket
 	 */
 	public Map<DataTicket<?>, ?> getExtraData() {
@@ -95,7 +98,8 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Get a data value saved to this animation state by the ticket for that data.<br>
+	 * Get a data value saved to this animation state by the ticket for that data
+	 *
 	 * @see DataTicket
 	 * @param dataTicket The {@link DataTicket} for the data to retrieve
 	 * @return The cached data for the given {@code DataTicket}, or null if not saved
@@ -106,6 +110,7 @@ public class AnimationState<T extends GeoAnimatable> {
 
 	/**
 	 * Save a data value for the given {@link DataTicket} in the additional data map
+	 *
 	 * @param dataTicket The {@code DataTicket} for the data value
 	 * @param data The data value
 	 */
@@ -114,8 +119,10 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Sets the animation for the controller to start/continue playing.<br>
-	 * Basically just a shortcut for <pre>getController().setAnimation()</pre>
+	 * Sets the animation for the controller to start/continue playing
+	 * <p>
+	 * Basically just a shortcut for <pre>{@code getController().setAnimation()}</pre>
+	 *
 	 * @param animation The animation to play
 	 */
 	public void setAnimation(RawAnimation animation) {
@@ -132,8 +139,10 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Checks whether the current {@link AnimationController}'s last animation was the one provided.
+	 * Checks whether the current {@link AnimationController}'s last animation was the one provided
+	 * <p>
 	 * This allows for multi-stage animation shifting where the next animation to play may depend on the previous one
+	 *
 	 * @param animation The animation to check
 	 * @return Whether the controller's last animation is the one provided
 	 */
@@ -142,9 +151,12 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Similar to {@link AnimationState#isCurrentAnimation}, but additionally checks the current stage of the animation by name.<br>
-	 * This can be used to check if a multi-stage animation has reached a given stage (if it is running at all)<br>
+	 * Similar to {@link AnimationState#isCurrentAnimation}, but additionally checks the current stage of the animation by name
+	 * <p>
+	 * This can be used to check if a multi-stage animation has reached a given stage (if it is running at all)
+	 * <p>
 	 * Note that this will still return true even if the animation has finished, matching with the last animation stage in the {@link RawAnimation} last provided
+	 *
 	 * @param name The name of the animation stage to check (I.E. "move.walk")
 	 * @return Whether the controller's current stage is the one provided
 	 */
@@ -153,7 +165,8 @@ public class AnimationState<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Helper method for {@link AnimationController#forceAnimationReset()}<br>
+	 * Helper method for {@link AnimationController#forceAnimationReset()}
+	 * <p>
 	 * This should be used in controllers when stopping a non-looping animation, so that it is reset to the start for the next time it starts
 	 */
 	public void resetCurrentAnimation() {
@@ -162,6 +175,7 @@ public class AnimationState<T extends GeoAnimatable> {
 
 	/**
 	 * Helper method for {@link AnimationController#setAnimationSpeed}
+	 *
 	 * @param speed The speed modifier for the controller (2 = twice as fast, 0.5 = half as fast, etc)
 	 */
 	public void setControllerSpeed(float speed) {

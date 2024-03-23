@@ -7,8 +7,9 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import java.util.List;
 
 /**
- * Base interface for a container for {@link GeoRenderLayer GeoRenderLayers}<br>
- * Each renderer should contain an instance of this, for holding its layers and handling events.
+ * Base interface for a container for {@link GeoRenderLayer GeoRenderLayers}
+ * <p>
+ * Each renderer should contain an instance of this, for holding its layers and handling events
  */
 public class GeoRenderLayersContainer<T extends GeoAnimatable> {
 	private final GeoRenderer<T> renderer;

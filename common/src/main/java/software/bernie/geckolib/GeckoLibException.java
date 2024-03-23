@@ -3,7 +3,8 @@ package software.bernie.geckolib;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * Generic {@link Exception} wrapper for GeckoLib.<br>
+ * Generic {@link Exception} wrapper for GeckoLib
+ * <p>
  * Mostly just serves as a marker for internal error handling.
  */
 public class GeckoLibException extends RuntimeException {

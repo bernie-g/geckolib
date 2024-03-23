@@ -17,7 +17,6 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
 
 @Mixin(HumanoidArmorLayer.class)
 public class MixinHumanoidArmorLayer {
-
     @ModifyVariable(method = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V",
             at = @At(value = "STORE", opcode = Opcodes.ASTORE),
             ordinal = 0, index = 10, name = "model", print = false)

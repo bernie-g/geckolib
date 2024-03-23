@@ -18,10 +18,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The animation data collection for a given animatable instance.<br>
+ * The animation data collection for a given animatable instance
+ * <p>
  * Generally speaking, a single working-instance of an {@link GeoAnimatable Animatable}
- * will have a single instance of {@code AnimatableManager} associated with it.<br>
- *
+ * will have a single instance of {@code AnimatableManager} associated with it
  */
 public class AnimatableManager<T extends GeoAnimatable> {
 	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
@@ -44,7 +44,8 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Add an {@link AnimationController} to this animatable's manager.<br>
+	 * Add an {@link AnimationController} to this animatable's manager
+	 * <p>
 	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
 	 */
 	public void addController(AnimationController controller) {
@@ -96,6 +97,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 
 	/**
 	 * Set a custom data point to be used later
+	 *
 	 * @param dataTicket The DataTicket for the data point
 	 * @param data The piece of data to store
 	 */
@@ -114,9 +116,12 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name.<br>
-	 * This pseudo-overloaded method checks each controller in turn until one of them accepts the trigger.<br>
+	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
+	 * <p>
+	 * This pseudo-overloaded method checks each controller in turn until one of them accepts the trigger
+	 * <p>
 	 * This can be sped up by specifying which controller you intend to receive the trigger in {@link AnimatableManager#tryTriggerAnimation(String, String)}
+	 *
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	public void tryTriggerAnimation(String animName) {
@@ -128,6 +133,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 
 	/**
 	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
+	 *
 	 * @param controllerName The name of the controller name the animation belongs to
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link software.bernie.geckolib.core.animation.AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
@@ -162,7 +168,8 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		}
 
 		/**
-		 * Remove an {@link AnimationController} from this registrar by name.<br>
+		 * Remove an {@link AnimationController} from this registrar by name
+		 * <p>
 		 * This is mostly only useful if you're sub-classing an existing animatable object and want to modify the super list
 		 */
 		public ControllerRegistrar remove(String name) {

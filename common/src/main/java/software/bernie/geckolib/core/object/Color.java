@@ -155,7 +155,8 @@ public record Color(int argbInt) {
 	}
 
 	/**
-	 * Returns a brighter variant of the same color.<br>
+	 * Returns a brighter variant of the same color
+	 *
 	 * @param factor The factor for shading
 	 */
 	public Color brighter(double factor) {
@@ -181,7 +182,8 @@ public record Color(int argbInt) {
 	}
 
 	/**
-	 * Returns a darker variant of the same color.<br>
+	 * Returns a darker variant of the same color
+	 *
 	 * @param factor The factor for shading. The value provided is an inversely relative multiplier.<br>
 	 *                  E.G. input=2 -> 2x as dark.<br>
 	 *                  E.G. input=0.5 -> 0.5x as dark (brighter)

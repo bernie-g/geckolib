@@ -17,8 +17,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Stores the default (builtin) {@link DataTicket DataTickets} used in Geckolib.<br>
- * Additionally handles registration of {@link software.bernie.geckolib.network.SerializableDataTicket SerializableDataTickets}
+ * Stores the default (builtin) {@link DataTicket DataTickets} used in Geckolib
+ * <p>
+ * Additionally handles registration of {@link SerializableDataTicket SerializableDataTickets}
  */
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
@@ -34,8 +35,7 @@ public final class DataTickets {
 	public static final DataTicket<ItemDisplayContext> ITEM_RENDER_PERSPECTIVE = new DataTicket<>("item_render_perspective", ItemDisplayContext.class);
 	
 	// Builtin serializable tickets
-	// These are not used anywhere by default, but are provided as examples
-	// and for ease of use
+	// These are not used anywhere by default, but are provided as examples and for ease of use
 	public static final SerializableDataTicket<Integer> ANIM_STATE = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(GeckoLibConstants.resourceLocation("anim_state")));
 	public static final SerializableDataTicket<String> ANIM = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofString(GeckoLibConstants.resourceLocation("anim")));
 	public static final SerializableDataTicket<Integer> USE_TICKS = GeckoLibUtil.addDataTicket(SerializableDataTicket.ofInt(GeckoLibConstants.resourceLocation("use_ticks")));
@@ -50,8 +50,10 @@ public final class DataTickets {
 	}
 
 	/**
-	 * Register a {@link SerializableDataTicket} with GeckoLib for handling custom data transmission.<br>
-	 * It is recommended you don't call this directly, and instead call it via {@link software.bernie.geckolib.util.GeckoLibUtil#addDataTicket}
+	 * Register a {@link SerializableDataTicket} with GeckoLib for handling custom data transmission
+	 * <p>
+	 * It is recommended you don't call this directly, and instead call it via {@link GeckoLibUtil#addDataTicket}
+	 *
 	 * @param ticket The SerializableDataTicket instance to register
 	 * @return The registered instance
 	 */

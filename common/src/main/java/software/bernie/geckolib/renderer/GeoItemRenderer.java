@@ -33,7 +33,8 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.List;
 
 /**
- * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically.<br>
+ * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically
+ * <p>
  * All items added to be rendered by GeckoLib should use an instance of this class.
  */
 public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntityWithoutLevelRenderer implements GeoRenderer<T> {
@@ -85,7 +86,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Mark this renderer so that it uses an alternate lighting scheme when rendering the item in GUI.<br>
+	 * Mark this renderer so that it uses an alternate lighting scheme when rendering the item in GUI
+	 * <p>
 	 * This can help with improperly lit 3d models
 	 */
 	public GeoItemRenderer<T> useAlternateGuiLighting() {
@@ -95,7 +97,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Gets the id that represents the current animatable's instance for animation purposes.
+	 * Gets the id that represents the current animatable's instance for animation purposes
+	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
 	 */
 	@Override
@@ -104,7 +107,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Shadowing override of {@link EntityRenderer#getTextureLocation}.<br>
+	 * Shadowing override of {@link EntityRenderer#getTextureLocation}
+	 * <p>
 	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
 	 */
 	@Override
@@ -147,8 +151,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory
-	 * work such as scaling and translating.<br>
+	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
+	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
@@ -182,9 +186,9 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Wrapper method to handle rendering the item in a GUI context
-	 * (defined by {@link ItemDisplayContext#GUI} normally).<br>
-	 * Just includes some additional required transformations and settings.
+	 * Wrapper method to handle rendering the item in a GUI context (defined by {@link ItemDisplayContext#GUI} normally)
+	 * <p>
+	 * Just includes some additional required transformations and settings
 	 */
 	protected void renderInGui(ItemDisplayContext transformType, PoseStack poseStack,
 							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
@@ -211,7 +215,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks.<br>
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
@@ -255,8 +260,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer.<br>
-	 * This should only be called immediately prior to rendering, and only
+	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
+	 * <p>
+	 * This should only be called immediately prior to rendering
+	 *
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	@Override
@@ -273,7 +280,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
+	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+	 *
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override

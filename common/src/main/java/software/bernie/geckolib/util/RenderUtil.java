@@ -107,8 +107,9 @@ public final class RenderUtil {
 	}
 	
 	/**
-     * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation.<br>
-     * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRender} override.<br>
+     * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation
+	 * <p>
+     * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRender} override
 	 */
 	public static void faceRotation(PoseStack poseStack, Entity animatable, float partialTick) {
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
@@ -116,7 +117,8 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Add a positional vector to a matrix.
+	 * Add a positional vector to a matrix
+	 * <p>
 	 * This is specifically implemented to act as a translation of an x/y/z coordinate triplet to a render matrix
 	 */
 	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
@@ -124,8 +126,10 @@ public final class RenderUtil {
 	}
 	
 	/**
-	 * Gets the actual dimensions of a texture resource from a given path.<br>
+	 * Gets the actual dimensions of a texture resource from a given path
+	 * <p>
 	 * Not performance-efficient, and should not be relied upon
+	 *
 	 * @param texture The path of the texture resource to check
 	 * @return The dimensions (width x height) of the texture, or null if unable to find or read the file
 	 */
@@ -167,7 +171,8 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Returns the current time (in ticks) that the {@link org.lwjgl.glfw.GLFW GLFW} instance has been running.
+	 * Returns the current time (in ticks) that the {@link org.lwjgl.glfw.GLFW GLFW} instance has been running
+	 * <p>
 	 * This is effectively a permanent timer that counts up since the game was launched.
 	 */
 	public static double getCurrentTick() {
@@ -175,7 +180,8 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Returns a float equivalent of a boolean.<br>
+	 * Returns a float equivalent of a boolean
+	 * <p>
 	 * Output table:
 	 * <ul>
 	 *     <li>true -> 1</li>
@@ -194,8 +200,9 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations.<br>
-	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts.
+	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations
+	 * <p>
+	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts
 	 */
 	public static void matchModelPartRot(ModelPart from, GeoBone to) {
 		to.updateRotation(-from.xRot, -from.yRot, from.zRot);
@@ -203,8 +210,9 @@ public final class RenderUtil {
 
 	/**
 	 * If a {@link GeoCube} is a 2d plane the {@link software.bernie.geckolib.cache.object.GeoQuad Quad's}
-	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks.<br>
-	 * This performs a pseudo-ABS function to help resolve some of those issues.
+	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks
+	 * <p>
+	 * This performs a pseudo-ABS function to help resolve some of those issues
 	 */
 	public static void fixInvertedFlatCube(GeoCube cube, Vector3f normal) {
 		if (normal.x() < 0 && (cube.size().y() == 0 || cube.size().z() == 0))
@@ -244,9 +252,12 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Gets a {@link GeoModel} instance from a given {@link EntityType}.<br>
-	 * This only works if you're calling this method for an EntityType known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Gets a {@link GeoModel} instance from a given {@link EntityType}
+	 * <p>
+	 * This only works if you're calling this method for an EntityType known to be using a {@link GeoRenderer GeckoLib Renderer}
+	 * <p>
 	 * Generally speaking you probably shouldn't be calling this method at all.
+	 *
 	 * @param entityType The {@code EntityType} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
@@ -259,6 +270,7 @@ public final class RenderUtil {
 
 	/**
 	 * Gets a GeoAnimatable instance that has been registered as the replacement renderer for a given {@link EntityType}
+	 *
 	 * @param entityType The {@code EntityType} to retrieve the replaced {@link GeoAnimatable} for
 	 * @return The {@code GeoAnimatable} instance, or null if one isn't found
 	 */
@@ -270,9 +282,12 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Gets a {@link GeoModel} instance from a given {@link Entity}.<br>
-	 * This only works if you're calling this method for an Entity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Gets a {@link GeoModel} instance from a given {@link Entity}
+	 * <p>
+	 * This only works if you're calling this method for an Entity known to be using a {@link GeoRenderer GeckoLib Renderer}
+	 * <p>
 	 * Generally speaking you probably shouldn't be calling this method at all.
+	 *
 	 * @param entity The {@code Entity} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
@@ -284,9 +299,12 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
-	 * This only works if you're calling this method for an Item known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
+	 * Gets a {@link GeoModel} instance from a given {@link Item}
+	 * <p>
+	 * This only works if you're calling this method for an Item known to be using a {@link GeoRenderer GeckoLib Renderer}
+	 * <p>
 	 * Generally speaking you probably shouldn't be calling this method at all.
+	 *
 	 * @param item The {@code Item} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
@@ -296,9 +314,12 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Gets a {@link GeoModel} instance from a given {@link BlockEntity}.<br>
-	 * This only works if you're calling this method for a BlockEntity known to be using a {@link GeoRenderer GeckoLib Renderer}.<br>
-	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * Gets a {@link GeoModel} instance from a given {@link BlockEntity}
+	 * <p>
+	 * This only works if you're calling this method for a BlockEntity known to be using a {@link GeoRenderer GeckoLib Renderer}
+	 * <p>
+	 * Generally speaking you probably shouldn't be calling this method at all
+	 *
 	 * @param blockEntity The {@code BlockEntity} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
@@ -310,9 +331,12 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Gets a {@link GeoModel} instance from a given {@link Item}.<br>
-	 * This only works if you're calling this method for an Item known to be using a {@link software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer}.<br>
-	 * Generally speaking you probably shouldn't be calling this method at all.
+	 * Gets a {@link GeoModel} instance from a given {@link Item}
+	 * <p>
+	 * This only works if you're calling this method for an Item known to be using a {@link software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer}
+	 * <p>
+	 * Generally speaking you probably shouldn't be calling this method at all
+	 *
 	 * @param stack The ItemStack to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */

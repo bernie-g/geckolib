@@ -12,8 +12,10 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 /**
- * Example replacement renderer for a {@link Creeper}.<br>
+ * Example replacement renderer for a {@link Creeper}
+ * <p>
  * This functionally replaces the model and animations of an existing entity without needing to replace the entity entirely
+ *
  * @see GeoReplacedEntityRenderer
  * @see ReplacedCreeperEntity
  */

@@ -11,8 +11,7 @@ public record GeoQuad(GeoVertex[] vertices, Vector3f normal, Direction direction
 		return build(vertices, (float)uvCoords[0], (float)uvCoords[1], (float)uvSize[0], (float)uvSize[1], texWidth, texHeight, mirror, direction);
 	}
 
-	public static GeoQuad build(GeoVertex[] vertices, float u, float v, float uSize, float vSize, float texWidth,
-			float texHeight, boolean mirror, Direction direction) {
+	public static GeoQuad build(GeoVertex[] vertices, float u, float v, float uSize, float vSize, float texWidth, float texHeight, boolean mirror, Direction direction) {
 		float uWidth = (u + uSize) / texWidth;
 		float vHeight = (v + vSize) / texHeight;
 		u /= texWidth;

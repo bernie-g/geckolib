@@ -110,6 +110,7 @@ public class GeoGlowingTextureMeta {
 
 	/**
 	 * A pixel marker for a glowlayer mask
+	 *
 	 * @param x The X coordinate of the pixel
 	 * @param y The Y coordinate of the pixel
 	 * @param alpha The alpha value of the mask

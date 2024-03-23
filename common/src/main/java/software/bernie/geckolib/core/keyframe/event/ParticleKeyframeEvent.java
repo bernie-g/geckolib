@@ -5,7 +5,8 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.keyframe.event.data.ParticleKeyframeData;
 
 /**
- * The {@link KeyFrameEvent} specific to the {@link AnimationController#particleKeyframeHandler}.<br>
+ * The {@link KeyFrameEvent} specific to the {@link AnimationController#particleKeyframeHandler}
+ * <p>
  * Called when a particle instruction keyframe is encountered
  */
 public class ParticleKeyframeEvent<T extends GeoAnimatable> extends KeyFrameEvent<T, ParticleKeyframeData> {

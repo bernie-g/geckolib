@@ -21,11 +21,11 @@ import java.util.Map;
  * Helper class for various GeckoLib-specific functions.
  */
 public final class GeckoLibUtil {
-
 	public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
 	/**
 	 * Creates a new AnimatableInstanceCache for the given animatable object
+	 *
 	 * @param animatable The animatable object
 	 */
 	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable) {
@@ -35,8 +35,10 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Creates a new AnimatableInstanceCache for the given animatable object. <br>
-	 * Recommended to use {@link GeckoLibUtil#createInstanceCache(GeoAnimatable)} unless you know what you're doing.
+	 * Creates a new AnimatableInstanceCache for the given animatable object
+	 * <p>
+	 * Recommended to use {@link GeckoLibUtil#createInstanceCache(GeoAnimatable)} unless you know what you're doing
+	 *
 	 * @param animatable The animatable object
 	 * @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
 	 */
@@ -50,9 +52,10 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.core.animation.Animation.LoopType} with GeckoLib,
-	 * allowing for dynamic handling of post-animation looping.<br>
-	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * Register a custom {@link software.bernie.geckolib.core.animation.Animation.LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 *
 	 * @param name The name of the {@code LoopType} handler
 	 * @param loopType The {@code LoopType} implementation to use for the given name
 	 */
@@ -61,9 +64,10 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.core.animation.EasingType} with GeckoLib,
-	 * allowing for dynamic handling of animation transitions and curves.<br>
-	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * Register a custom {@link software.bernie.geckolib.core.animation.EasingType} with GeckoLib allowing for dynamic handling of animation transitions and curves
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 *
 	 * @param name The name of the {@code EasingType} handler
 	 * @param easingType The {@code EasingType} implementation to use for the given name
 	 */
@@ -72,9 +76,10 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.loading.object.BakedModelFactory} with GeckoLib,
-	 * allowing for dynamic handling of geo model loading.<br>
-	 * <b><u>MUST be called during mod construct</u></b><br>
+	 * Register a custom {@link software.bernie.geckolib.loading.object.BakedModelFactory} with GeckoLib, allowing for dynamic handling of geo model loading
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 *
 	 * @param namespace The namespace (modid) to register the factory for
 	 * @param factory The factory responsible for model loading under the given namespace
 	 */
@@ -83,8 +88,10 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link SerializableDataTicket} with GeckoLib for handling custom data transmission.<br>
+	 * Register a custom {@link SerializableDataTicket} with GeckoLib for handling custom data transmission
+	 * <p>
 	 * NOTE: You do not need to register non-serializable {@link software.bernie.geckolib.core.object.DataTicket DataTickets}.
+	 *
 	 * @param dataTicket The SerializableDataTicket to register
 	 * @return The dataTicket you passed in
 	 */
@@ -93,7 +100,8 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Registers a synced {@link GeoAnimatable} object for networking support.<br>
+	 * Registers a synced {@link GeoAnimatable} object for networking support
+	 * <p>
 	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
 	 */
 	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {

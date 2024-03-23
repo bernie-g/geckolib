@@ -6,7 +6,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 
 /**
- * AnimatableInstanceCache implementation for singleton/flyweight objects such as Items. Utilises a keyed map to differentiate different instances of the object.
+ * AnimatableInstanceCache implementation for singleton/flyweight objects such as Items. Utilises a keyed map to differentiate different instances of the object
  */
 public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected final Long2ObjectMap<AnimatableManager<?>> managers = new Long2ObjectOpenHashMap<>();
@@ -16,8 +16,9 @@ public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	}
 
 	/**
-	 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist.<br>
-	 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids.
+	 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist
+	 * <p>
+	 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
 	 */
 	@Override
 	public AnimatableManager<?> getManagerForId(long uniqueId) {
