@@ -586,7 +586,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public void fireCompileRenderLayersEvent() {
-		GeckoLibServices.Client.EVENTS.armorCompileLayers(this);
+		GeckoLibServices.Client.EVENTS.fireCompileArmorRenderLayers(this);
 	}
 
 	/**
@@ -596,7 +596,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		return GeckoLibServices.Client.EVENTS.preArmorRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		return GeckoLibServices.Client.EVENTS.fireArmorPreRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 
 	/**
@@ -604,6 +604,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		GeckoLibServices.Client.EVENTS.postArmorRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		GeckoLibServices.Client.EVENTS.fireArmorPostRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 }

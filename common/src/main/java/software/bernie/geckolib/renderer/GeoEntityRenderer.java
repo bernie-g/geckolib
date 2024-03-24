@@ -538,7 +538,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void fireCompileRenderLayersEvent() {
-		GeckoLibServices.Client.EVENTS.entityCompileLayers(this);
+		GeckoLibServices.Client.EVENTS.fireCompileEntityRenderLayers(this);
 	}
 
 	/**
@@ -548,7 +548,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		return GeckoLibServices.Client.EVENTS.preEntityRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		return GeckoLibServices.Client.EVENTS.fireEntityPreRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 
 	/**
@@ -556,6 +556,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		GeckoLibServices.Client.EVENTS.postEntityRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		GeckoLibServices.Client.EVENTS.fireEntityPostRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 }

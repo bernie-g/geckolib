@@ -80,7 +80,7 @@ public final class GeckoLibCache {
 				return FileLoader.loadAnimationsFile(resource, resourceManager);
 			}
 			catch (Exception ex) {
-				throw GeckoLibConstants.exception(resource, "Error loading animation file");
+				throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
 			}
 		}, elementConsumer);
 	}
@@ -96,7 +96,7 @@ public final class GeckoLibCache {
 				return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
 			}
 			catch (Exception ex) {
-				throw GeckoLibConstants.exception(resource, "Error loading model file");
+				throw GeckoLibConstants.exception(resource, "Error loading model file", ex);
 			}
 		}, elementConsumer);
 	}

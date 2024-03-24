@@ -225,7 +225,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 */
 	@Override
 	public void fireCompileRenderLayersEvent() {
-		GeckoLibServices.Client.EVENTS.blockCompileLayers(this);
+		GeckoLibServices.Client.EVENTS.fireCompileBlockRenderLayers(this);
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 */
 	@Override
 	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		return GeckoLibServices.Client.EVENTS.preBlockRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		return GeckoLibServices.Client.EVENTS.fireBlockPreRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 */
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		GeckoLibServices.Client.EVENTS.postBlockRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		GeckoLibServices.Client.EVENTS.fireBlockPostRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 		//GeoRenderEvent.Block.Post.EVENT.invoker().handle(new GeoRenderEvent.Block.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }

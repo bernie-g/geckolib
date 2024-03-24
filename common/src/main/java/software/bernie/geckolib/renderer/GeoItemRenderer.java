@@ -278,7 +278,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public void fireCompileRenderLayersEvent() {
-		GeckoLibServices.Client.EVENTS.itemCompileLayers(this);
+		GeckoLibServices.Client.EVENTS.fireCompileItemRenderLayers(this);
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public boolean firePreRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		return GeckoLibServices.Client.EVENTS.preItemRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		return GeckoLibServices.Client.EVENTS.fireItemPreRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 
 	/**
@@ -296,6 +296,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
-		GeckoLibServices.Client.EVENTS.postItemRender(this, poseStack, model, bufferSource, partialTick, packedLight);
+		GeckoLibServices.Client.EVENTS.fireItemPostRender(this, poseStack, model, bufferSource, partialTick, packedLight);
 	}
 }

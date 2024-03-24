@@ -102,7 +102,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
             getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
         }
         else {
-            GeckoLibServices.NETWORK.singletonTriggerAnim(getClass().getName(), instanceId, controllerName, animName, relatedEntity);
+            GeckoLibServices.NETWORK.triggerSingletonAnim(getClass().getName(), instanceId, controllerName, animName, relatedEntity);
         }
     }
 

@@ -11,7 +11,7 @@ import software.bernie.geckolib.util.JsonUtil;
 import java.util.Map;
 
 /**
- * Container class for cube information, only used in deserialization at startup
+ * Container class for bone information, only used in deserialization at startup
  */
 public record Bone(double[] bindPoseRotation, Cube[] cubes, @Nullable Boolean debug,
 				   @Nullable Double inflate, @Nullable Map<String, LocatorValue> locators,

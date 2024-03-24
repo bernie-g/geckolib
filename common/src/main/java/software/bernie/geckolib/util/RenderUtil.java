@@ -305,11 +305,11 @@ public final class RenderUtil {
 	 * <p>
 	 * Generally speaking you probably shouldn't be calling this method at all.
 	 *
-	 * @param item The {@code Item} to retrieve the GeoModel for
+	 * @param item The {@code ItemStack} to retrieve the GeoModel for
 	 * @return The GeoModel, or null if one isn't found
 	 */
 	@Nullable
-	public static GeoModel<?> getGeoModelForItem(Item item) {
+	public static GeoModel<?> getGeoModelForItem(ItemStack item) {
 		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForItem(item);
 	}
 

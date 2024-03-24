@@ -210,7 +210,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
 		
-		return GeckoLibServices.Client.ITEM_RENDERING.getHumanoidModel(animatable, stack, slot, defaultModel);
+		return GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(animatable, stack, slot, defaultModel);
 	}
 
 	/**

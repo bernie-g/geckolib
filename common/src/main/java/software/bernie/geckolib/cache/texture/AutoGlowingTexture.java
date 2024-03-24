@@ -53,6 +53,10 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 						.setWriteMaskState(WRITE_MASK).createCompositeState(false));
 	});
 	private static final String APPENDIX = "_glowmask";
+	/**
+	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)
+	 */
+	public static boolean PRINT_DEBUG_IMAGES = false;
 
 	protected final ResourceLocation textureBase;
 	protected final ResourceLocation glowLayer;
@@ -120,7 +124,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			if (glowLayerMeta != null) {
 				glowLayerMeta.createImageMask(baseImage, glowImage);
 
-				if (GeckoLibServices.PLATFORM.isDevelopmentEnvironment()) {
+				if (PRINT_DEBUG_IMAGES && GeckoLibServices.PLATFORM.isDevelopmentEnvironment()) {
 					printDebugImageToDisk(this.textureBase, baseImage);
 					printDebugImageToDisk(this.glowLayer, glowImage);
 				}

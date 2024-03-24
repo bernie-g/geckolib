@@ -17,7 +17,6 @@ import java.util.function.Supplier;
  * <p>
  * This interface is <u>specifically</u> for entities replacing the rendering of other, existing entities
  *
- * @see software.bernie.example.entity.ReplacedCreeperEntity
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Entity-Animations">GeckoLib Wiki - Entity Animations</a>
  */
 public interface GeoReplacedEntity extends SingletonGeoAnimatable {
@@ -60,7 +59,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibServices.NETWORK.syncEntityAnimData(relatedEntity, dataTicket, data);
+			GeckoLibServices.NETWORK.syncEntityAnimData(relatedEntity, true, dataTicket, data);
 		}
 	}
 
@@ -79,7 +78,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibServices.NETWORK.entityAnimTrigger(relatedEntity, controllerName, animName);
+			GeckoLibServices.NETWORK.triggerEntityAnim(relatedEntity, true, controllerName, animName);
 		}
 	}
 	

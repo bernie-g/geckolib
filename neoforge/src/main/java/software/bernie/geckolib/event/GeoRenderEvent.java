@@ -14,12 +14,14 @@ import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 /**
- * GeckoLib events base-class for the various event stages of rendering.<br>
+ * GeckoLib events base-class for the various event stages of rendering
+ * <p>
  * These are fired on the {@link net.neoforged.fml.common.Mod.EventBusSubscriber.Bus FORGE} mod bus
  */
 public interface GeoRenderEvent {
 	/**
 	 * Returns the renderer for this event
+	 *
 	 * @see software.bernie.geckolib.renderer.DynamicGeoEntityRenderer DynamicGeoEntityRenderer
 	 * @see software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer
 	 * @see software.bernie.geckolib.renderer.GeoBlockRenderer GeoBlockRenderer
@@ -73,10 +75,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the armor piece will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends Armor implements ICancellableEvent {
@@ -118,7 +121,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for armor pieces being rendered by {@link GeoEntityRenderer}.<br>
+		 * Post-render event for armor pieces being rendered by {@link GeoEntityRenderer}
+		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends Armor {
@@ -160,7 +164,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoArmorRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoArmorRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends Armor {
@@ -169,7 +174,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
@@ -204,10 +210,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the block entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends Block implements ICancellableEvent {
@@ -249,7 +256,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for block entities being rendered by {@link GeoBlockRenderer}.<br>
+		 * Post-render event for block entities being rendered by {@link GeoBlockRenderer}
+		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends Block {
@@ -291,7 +299,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoBlockRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoBlockRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends Block {
@@ -300,7 +309,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
@@ -336,10 +346,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for entities being rendered by {@link GeoEntityRenderer}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for entities being rendered by {@link GeoEntityRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends Entity implements ICancellableEvent {
@@ -381,7 +392,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for entities being rendered by {@link GeoEntityRenderer}.<br>
+		 * Post-render event for entities being rendered by {@link GeoEntityRenderer}
+		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends Entity {
@@ -423,7 +435,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoEntityRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoEntityRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends Entity {
@@ -432,7 +445,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
@@ -467,10 +481,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for armor being rendered by {@link GeoItemRenderer}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for armor being rendered by {@link GeoItemRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the ItemStack will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends Item implements ICancellableEvent {
@@ -512,7 +527,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for ItemStacks being rendered by {@link GeoItemRenderer}.<br>
+		 * Post-render event for ItemStacks being rendered by {@link GeoItemRenderer}
+		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends Item {
@@ -554,7 +570,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoItemRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoItemRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends Item {
@@ -563,7 +580,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
@@ -591,10 +609,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the object will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends Object implements ICancellableEvent {
@@ -636,7 +655,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}.<br>
+		 * Post-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
+		 <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends Object {
@@ -678,7 +698,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoObjectRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoObjectRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends Object {
@@ -687,7 +708,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
@@ -722,10 +744,11 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Pre-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer<?, ?>}.<br>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}<br>
-		 * <br>
-		 * This event is {@link ICancellableEvent Cancelable}.<br>
+		 * Pre-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer}
+		 * <p>
+		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * <p>
+		 * This event is {@link ICancellableEvent Cancelable}<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
 		public static class Pre extends ReplacedEntity implements ICancellableEvent {
@@ -767,7 +790,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * Post-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer}.<br>
+		 * Post-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer}
+		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post extends ReplacedEntity {
@@ -809,7 +833,8 @@ public interface GeoRenderEvent {
 		}
 
 		/**
-		 * One-time event for a {@link GeoReplacedEntityRenderer} called on first initialisation.<br>
+		 * One-time event for a {@link GeoReplacedEntityRenderer} called on first initialisation
+		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers extends ReplacedEntity {
@@ -818,7 +843,8 @@ public interface GeoRenderEvent {
 			}
 
 			/**
-			 * Adds a {@link GeoRenderLayer} to the renderer.<br>
+			 * Adds a {@link GeoRenderLayer} to the renderer
+			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
 			public void addLayer(GeoRenderLayer renderLayer) {
