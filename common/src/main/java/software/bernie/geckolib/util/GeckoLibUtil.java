@@ -77,7 +77,7 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link software.bernie.geckolib.loading.object.BakedModelFactory} with GeckoLib, allowing for dynamic handling of geo model loading
+	 * Register a custom {@link BakedModelFactory} with GeckoLib, allowing for dynamic handling of geo model loading
 	 * <p>
 	 * <b><u>MUST be called during mod construct</u></b>
 	 *
