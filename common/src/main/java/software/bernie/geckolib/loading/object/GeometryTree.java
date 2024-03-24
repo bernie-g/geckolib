@@ -25,16 +25,17 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 
 			if (bone.parent() == null) {
 				topLevelBones.put(bone.name(), new BoneStructure(bone));
-				bones.remove(index);
 			}
 			else {
-				BoneStructure structure = findBoneStructureInTree(topLevelBones, bone.parent());
+				BoneStructure parent = findBoneStructureInTree(topLevelBones, bone.parent());
 
-				if (structure != null) {
-					structure.children().put(bone.name(), new BoneStructure(bone));
-					bones.remove(index);
-				}
+				if (parent == null)
+					throw new IllegalArgumentException("Invalid parent bone defined in model - parent does not exist or not defined before child bone! '" + bone.parent() + "'");
+
+				parent.children().put(bone.name(), new BoneStructure(bone));
 			}
+
+			bones.remove(index);
 
 			if (index == 0) {
 				index = bones.size() - 1;
