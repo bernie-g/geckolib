@@ -293,7 +293,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, float red, float green, float blue, float alpha) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
@@ -308,16 +308,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			bone.setLocalSpaceMatrix(RenderUtil.translateMatrix(localMatrix, getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setWorldSpaceMatrix(RenderUtil.translateMatrix(new Matrix4f(localMatrix), this.animatable.position().toVector3f()));
-		}
-
-		if (buffer == null) {
-			if (renderType == null) {
-				poseStack.pushPose();
-
-				return;
-			}
-
-			buffer = bufferSource.getBuffer(renderType);
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
