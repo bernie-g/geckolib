@@ -19,7 +19,6 @@ import java.util.Map;
  * Acts as the deserialization interface for {@code Keyframes}
  */
 public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {
-
 	public static final Gson GEO_GSON = new GsonBuilder().setLenient()
 			.registerTypeAdapter(Bone.class, Bone.deserializer())
 			.registerTypeAdapter(Cube.class, Cube.deserializer())

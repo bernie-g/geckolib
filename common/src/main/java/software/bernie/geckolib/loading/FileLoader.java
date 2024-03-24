@@ -27,6 +27,12 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static BakedAnimations loadAnimationsFile(ResourceLocation location, ResourceManager manager) {
+		if (location.getPath().endsWith(".geo.json"))
+			throw new IllegalArgumentException("Geo model file found in animations folder!");
+
+		if (!location.getPath().endsWith(".animation.json"))
+			GeckoLibConstants.LOGGER.warn("Found animation file with improper file name format; animation files should end in .animation.json: '" + location + "'");
+
 		return KeyFramesAdapter.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(loadFile(location, manager), "animations"), BakedAnimations.class);
 	}
 
@@ -37,6 +43,12 @@ public final class FileLoader {
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */
 	public static Model loadModelFile(ResourceLocation location, ResourceManager manager) {
+		if (location.getPath().endsWith(".animation.json"))
+			throw new IllegalArgumentException("Animation file found in geo models folder!");
+
+		if (!location.getPath().endsWith(".geo.json"))
+			GeckoLibConstants.LOGGER.warn("Found geo model file with improper file name format; geo model files should end in .geo.json: '" + location + "'");
+
 		return KeyFramesAdapter.GEO_GSON.fromJson(loadFile(location, manager), Model.class);
 	}
 

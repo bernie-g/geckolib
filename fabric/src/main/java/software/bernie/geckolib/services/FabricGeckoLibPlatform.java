@@ -8,17 +8,17 @@ import java.nio.file.Path;
 public class FabricGeckoLibPlatform implements GeckoLibPlatform {
 
     @Override
-    public boolean isDevelopmentEnvironment(){
+    public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
     @Override
-    public Path getGameDir(){
+    public Path getGameDir() {
         return FabricLoader.getInstance().getGameDir();
     }
 
     @Override
-    public boolean isPhysicalClient(){
+    public boolean isPhysicalClient() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 }

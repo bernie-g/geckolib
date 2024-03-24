@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * {@link Gson} {@link JsonDeserializer} for {@link software.bernie.geckolib.loading.object.BakedAnimations}.<br>
+ * {@link Gson} {@link JsonDeserializer} for {@link BakedAnimations}.<br>
  * Acts as the deserialization interface for {@code BakedAnimations}
  */
 public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations> {
