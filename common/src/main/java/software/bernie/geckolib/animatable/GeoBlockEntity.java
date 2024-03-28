@@ -1,6 +1,5 @@
 package software.bernie.geckolib.animatable;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -58,8 +57,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(0).setData(dataTicket, data);
 		}
 		else {
-			BlockPos pos = blockEntity.getBlockPos();
-			GeckoLibServices.NETWORK.syncBlockEntityAnimData(pos, dataTicket, data, (ServerLevel)level);
+			GeckoLibServices.NETWORK.syncBlockEntityAnimData(blockEntity.getBlockPos(), dataTicket, data, (ServerLevel)level);
 		}
 	}
 
@@ -86,8 +84,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			BlockPos pos = blockEntity.getBlockPos();
-			GeckoLibServices.NETWORK.triggerBlockEntityAnim(pos, controllerName, animName, (ServerLevel)level);
+			GeckoLibServices.NETWORK.triggerBlockEntityAnim(blockEntity.getBlockPos(), controllerName, animName, (ServerLevel)level);
 		}
 	}
 
