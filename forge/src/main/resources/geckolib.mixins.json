@@ -5,13 +5,13 @@
   "refmap": "geckolib.refmap.json",
   "minVersion": "0.8",
   "injectors": {
-    "defaultRequire": 0
+    "defaultRequire": 1
   },
   "mixins": [
   ],
   "client": [
     "client.TextureManagerMixin",
-    "client.MixinHumanoidArmorLayer",
+    "client.HumanoidArmorLayerMixin",
     "client.MixinItemRenderer"
   ]
 }

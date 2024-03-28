@@ -17,6 +17,7 @@ minecraft {
 
 dependencies {
     compileOnly("org.spongepowered:mixin:0.8.5")
+    compileOnly("io.github.llamalad7:mixinextras-common:0.3.5")
     implementation("com.google.code.findbugs:jsr305:3.0.1")
 }
 

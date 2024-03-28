@@ -25,7 +25,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @NotNull
     @Override
     public <T extends LivingEntity & GeoAnimatable> HumanoidModel<?> getArmorModelForItem(T animatable, ItemStack stack, EquipmentSlot slot, HumanoidModel<LivingEntity> defaultModel){
-        return RenderProvider.of(stack).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
+        return RenderProvider.of(stack).getGeckolibArmorModel(animatable, stack, slot, defaultModel);
     }
 
     /**
@@ -50,7 +50,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForArmor(ItemStack armour){
-        if (RenderProvider.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+        if (RenderProvider.of(armour).getGeckolibArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
         return null;

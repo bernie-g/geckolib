@@ -135,7 +135,7 @@ modrinth {
 		uploadFile.set(tasks.jarJar)
 		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 		gameVersions.set(listOf(minecraft_version))
-		loaders.set(listOf("Fabric"))
+		loaders.set(listOf("forge"))
         debugMode = true
         //https://github.com/modrinth/minotaur#available-properties
 }

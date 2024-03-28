@@ -244,6 +244,5 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	@Override
 	public void firePostRenderEvent(PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, float partialTick, int packedLight) {
 		GeckoLibServices.Client.EVENTS.fireBlockPostRender(this, poseStack, model, bufferSource, partialTick, packedLight);
-		//GeoRenderEvent.Block.Post.EVENT.invoker().handle(new GeoRenderEvent.Block.Post(this, poseStack, model, bufferSource, partialTick, packedLight));
 	}
 }

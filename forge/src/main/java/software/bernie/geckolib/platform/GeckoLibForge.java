@@ -19,7 +19,7 @@ public class GeckoLibForge implements GeckoLibPlatform {
     }
 
     /**
-     * @return Whether the current runtime is on the client side regardless of logical context
+     * @return The root game directory (./run)
      */
     @Override
     public Path getGameDir() {
@@ -27,7 +27,7 @@ public class GeckoLibForge implements GeckoLibPlatform {
     }
 
     /**
-     * @return The root game directory (./run)
+     * @return Whether the current runtime is on the client side regardless of logical context
      */
     @Override
     public boolean isPhysicalClient() {

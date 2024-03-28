@@ -3,6 +3,7 @@ package software.bernie.geckolib.mixin.client;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -17,18 +18,15 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
  */
 @Mixin(ItemRenderer.class)
 public class MixinItemRenderer {
+    @WrapOperation(method = "render", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
+    public void geckolib$wrapGeoItemRenderer(BlockEntityWithoutLevelRenderer renderer, ItemStack stack, ItemDisplayContext context, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Operation<Void> callback) {
+        final BlockEntityWithoutLevelRenderer possibleCustomRenderer = RenderProvider.of(stack).getCustomRenderer();
 
-    @WrapOperation(method = "render", require = 0,
-            at = @At(value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
-    public void cancelRender(BlockEntityWithoutLevelRenderer renderer, ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j, Operation<Void> operation) {
-
-        final BlockEntityWithoutLevelRenderer possibleCustomRenderer = RenderProvider.of(itemStack).getCustomRenderer();
-
-        if (possibleCustomRenderer != RenderProvider.DEFAULT.getCustomRenderer()) //The Item is a GeoItem and has a RenderProvider default, render it
-            possibleCustomRenderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, i, j);
+        if (possibleCustomRenderer != Minecraft.getInstance().getItemRenderer().blockEntityRenderer) {
+            possibleCustomRenderer.renderByItem(stack, context, poseStack, bufferSource, packedLight, packedOverlay);
+        }
         else {
-            operation.call(renderer, itemStack, displayContext, poseStack, bufferSource, i, j);
+            callback.call(renderer, stack, context, poseStack, bufferSource, packedLight, packedOverlay);
         }
     }
 }

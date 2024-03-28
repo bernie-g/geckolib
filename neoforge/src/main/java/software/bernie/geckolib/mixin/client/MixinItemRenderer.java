@@ -17,18 +17,14 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
 
 @Mixin(ItemRenderer.class)
 public class MixinItemRenderer {
+    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getCustomRenderer()Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;"))
+    private BlockEntityWithoutLevelRenderer geckolib$wrapGeoItemRenderer(IClientItemExtensions clientItemExtensions, Operation<BlockEntityWithoutLevelRenderer> callback, ItemStack stack, ItemDisplayContext context,
+                                                                         boolean isLeftHand, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, BakedModel bakedModel) {
+        final BlockEntityWithoutLevelRenderer renderer = callback.call(clientItemExtensions);
 
-    @WrapOperation(method = "Lnet/minecraft/client/renderer/entity/ItemRenderer;render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V",
-        at = @At(value = "INVOKE", target = "Lnet/neoforged/neoforge/client/extensions/common/IClientItemExtensions;getCustomRenderer()Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;"))
-    private BlockEntityWithoutLevelRenderer geckolib_getCustomRenderer(IClientItemExtensions instance,
-                                                                       Operation<BlockEntityWithoutLevelRenderer> original, ItemStack pItemStack, ItemDisplayContext pDisplayContext,
-                                                                       boolean pLeftHand, PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight, int pCombinedOverlay,
-                                                                       BakedModel pModel){
+        if (renderer == Minecraft.getInstance().getItemRenderer().blockEntityRenderer)
+            return RenderProvider.of(stack).getCustomRenderer();
 
-        BlockEntityWithoutLevelRenderer renderer = original.call(instance);
-        if (renderer == Minecraft.getInstance().getItemRenderer().blockEntityRenderer) {
-            return RenderProvider.of(pItemStack).getCustomRenderer();
-        }
         return renderer;
     }
 }

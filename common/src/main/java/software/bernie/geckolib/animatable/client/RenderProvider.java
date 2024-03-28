@@ -30,11 +30,11 @@ public interface RenderProvider {
     }
 
     default BlockEntityWithoutLevelRenderer getCustomRenderer() {
-        return (Minecraft.getInstance().getItemRenderer()).blockEntityRenderer;
+        return Minecraft.getInstance().getItemRenderer().blockEntityRenderer;
     }
 
     default Model getGenericArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
-        HumanoidModel<LivingEntity> replacement = getHumanoidArmorModel(livingEntity, itemStack, equipmentSlot, original);
+        HumanoidModel<LivingEntity> replacement = getGeckolibArmorModel(livingEntity, itemStack, equipmentSlot, original);
 
         if (replacement != original) {
             original.copyPropertiesTo(replacement);
@@ -45,7 +45,7 @@ public interface RenderProvider {
         return original;
     }
 
-    default HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
+    default <T extends LivingEntity, A extends HumanoidModel<T>> A getGeckolibArmorModel(T livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, A original) {
         return original;
     }
 }

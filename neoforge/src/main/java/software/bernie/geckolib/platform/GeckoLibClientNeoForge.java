@@ -31,7 +31,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
         HumanoidModel<?> model = IClientItemExtensions.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
 
         if (model == defaultModel) {
-            return RenderProvider.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
+            return RenderProvider.of(item).getGeckolibArmorModel(animatable, stack, slot, defaultModel);
         }
 
         return model;
@@ -65,7 +65,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
         if (IClientItemExtensions.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
-        if (RenderProvider.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+        if (RenderProvider.of(armour).getGeckolibArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
         return null;
