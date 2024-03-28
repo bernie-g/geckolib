@@ -96,7 +96,7 @@ dependencies {
         annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
 
     annotationProcessor(libs.mixinextras.common)
-    compileOnly(libs.mixinextras.common)
+    implementation(libs.mixinextras.common)
     implementation(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge) {
         jarJar.ranged(this, libs.versions.mixinextras.range.get())

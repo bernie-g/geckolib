@@ -1,3 +1,7 @@
+import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.java
+import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.publishing
+import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.versionCatalogs
+
 plugins {
     `java`
     `maven-publish`
@@ -39,9 +43,9 @@ tasks.withType<Jar>().configureEach {
         attributes(mapOf(
                 "Specification-Title"     to modDisplayName,
                 "Specification-Vendor"    to modAuthors,
-                "Specification-Version"   to archiveVersion,
+                "Specification-Version"   to modVersion,
                 "Implementation-Title"    to modDisplayName,
-                "Implementation-Version"  to archiveVersion,
+                "Implementation-Version"  to modVersion,
                 "Implementation-Vendor"   to modAuthors,
                 "Built-On-Minecraft"      to mcVersion
         ))

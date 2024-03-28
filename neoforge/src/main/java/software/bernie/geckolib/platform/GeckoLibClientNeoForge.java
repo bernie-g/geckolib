@@ -30,9 +30,8 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
         Item item = stack.getItem();
         HumanoidModel<?> model = IClientItemExtensions.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
 
-        if (model == defaultModel) {
+        if (model == defaultModel)
             return RenderProvider.of(item).getGeckolibArmorModel(animatable, stack, slot, defaultModel);
-        }
 
         return model;
     }

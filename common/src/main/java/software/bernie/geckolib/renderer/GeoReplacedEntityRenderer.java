@@ -494,7 +494,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	public <H extends Entity, M extends Mob> void renderLeash(M mob, float partialTick, PoseStack poseStack,
 															  MultiBufferSource bufferSource, H leashHolder) {
 		double lerpBodyAngle = (Mth.lerp(partialTick, mob.yBodyRotO, mob.yBodyRot) * Mth.DEG_TO_RAD) + Mth.HALF_PI;
-		Vec3 leashOffset = mob.getLeashOffset();
+		Vec3 leashOffset = mob.getLeashOffset(partialTick);
 		double xAngleOffset = Math.cos(lerpBodyAngle) * leashOffset.z + Math.sin(lerpBodyAngle) * leashOffset.x;
 		double zAngleOffset = Math.sin(lerpBodyAngle) * leashOffset.z - Math.cos(lerpBodyAngle) * leashOffset.x;
 		double lerpOriginX = Mth.lerp(partialTick, mob.xo, mob.getX()) + xAngleOffset;
