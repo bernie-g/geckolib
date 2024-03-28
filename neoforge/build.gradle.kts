@@ -2,25 +2,27 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id("geckolib-convention")
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
-    id("net.neoforged.gradle.userdev") version "7.+"
+
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.curseforgegradle)
+    alias(libs.plugins.neogradle)
 }
 
-val minecraft_version: String by project
-val mappings_mc_version: String by project
-val parchment_version: String by project
-val mod_id: String by project
-val neoforge_version: String by project
+val modId: String by project
+val modVersion = libs.versions.geckolib.get()
+val mcVersion = libs.versions.minecraft.asProvider().get()
+val parchmentMcVersion = libs.versions.parchment.minecraft.get()
+val parchmentVersion = libs.versions.parchment.asProvider().get()
+val neoforgeVersion = libs.versions.neoforge.asProvider().get()
 
 base {
-    archivesName = "geckolib-neoforge-${minecraft_version}"
+    archivesName = "geckolib-neoforge-${mcVersion}-${modVersion}"
 }
 
 subsystems {
     parchment {
-        minecraftVersion = mappings_mc_version
-        mappingsVersion = parchment_version
+        minecraftVersion = parchmentMcVersion
+        mappingsVersion = parchmentVersion
     }
 }
 
@@ -31,24 +33,24 @@ minecraft {
 runs {
     configureEach {
         systemProperty("forge.logging.console.level", "debug")
-        systemProperty("forge.enabledGameTestNamespaces", mod_id)
+        systemProperty("forge.enabledGameTestNamespaces", modId)
 
         modSource(project.sourceSets.getByName("main"))
         modSource(project(":common").sourceSets.getByName("main"))
     }
 
     create("client") {
-        systemProperty("neoforge.enabledGameTestNamespaces", mod_id)
+        systemProperty("neoforge.enabledGameTestNamespaces", modId)
     }
 
     create("server") {
-        systemProperty("neoforge.enabledGameTestNamespaces", mod_id)
+        systemProperty("neoforge.enabledGameTestNamespaces", modId)
         programArgument("--nogui")
     }
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${neoforge_version}")
+    implementation(libs.neoforge)
     compileOnly(project(":common"))
 }
 
@@ -72,10 +74,10 @@ modrinth {
 		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
 		projectId = "8BmcQJ2H"
 		versionNumber.set(project.version.toString())
-		versionName = "NeoForge ${minecraft_version}"
+		versionName = "NeoForge ${mcVersion}"
 		uploadFile.set(tasks.named<Jar>("jar"))
 		changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-		gameVersions.set(listOf(minecraft_version))
+		gameVersions.set(listOf(mcVersion))
 		loaders.set(listOf("neoforge"))
         //https://github.com/modrinth/minotaur#available-properties
         debugMode = true
@@ -88,7 +90,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     val mainFile = upload(388172, tasks.jar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
-    mainFile.addGameVersion(minecraft_version)
+    mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
     debugMode = true

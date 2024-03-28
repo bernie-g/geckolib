@@ -3,35 +3,37 @@ import net.minecraftforge.gradle.userdev.tasks.JarJar
 
 plugins {
     id("geckolib-convention")
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
-    id("net.minecraftforge.gradle") version "[6.0,6.2)"
-    id("org.spongepowered.mixin") version "0.7.+"
-    id("org.parchmentmc.librarian.forgegradle") version "1.+"
+
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.curseforgegradle)
+    alias(libs.plugins.forgegradle)
+    alias(libs.plugins.mixin)
+    alias(libs.plugins.parchmentforgegradle)
 }
 
-val minecraft_version: String by project
-val mappings_mc_version: String by project
-val parchment_version: String by project
-val mod_id: String by project
-val forge_version: String by project
+val modId: String by project
+val modVersion = libs.versions.geckolib.get()
+val mcVersion = libs.versions.minecraft.asProvider().get()
+val mappingsMcVersion = libs.versions.parchment.minecraft.get()
+val parchmentVersion = libs.versions.parchment.asProvider().get()
+val forgeVersion = libs.versions.forge.asProvider().get()
 
 base {
-    archivesName = "geckolib-forge-${minecraft_version}"
+    archivesName = "geckolib-forge-${mcVersion}-${modVersion}"
 }
 
 jarJar.enable()
 
 minecraft {
-    mappings("parchment", "${mappings_mc_version}-${parchment_version}-${minecraft_version}")
+    mappings("parchment", "${mappingsMcVersion}-${parchmentVersion}-${mcVersion}")
     accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
-    // This property allows configuring Gradle's ProcessResources task(s) to run on IDE output locations before launching the game.
-    // It is REQUIRED to be set to true for this template to function.
-    // See https://docs.gradle.org/current/dsl/org.gradle.language.jvm.tasks.ProcessResources.html
+
     copyIdeResources = true
+
     runs {
         sourceSets.forEach {
-            val dir = layout.buildDirectory.dir("sourcesSets/$it.name")
+            val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
+
             it.output.setResourcesDir(dir)
             it.java.destinationDirectory = dir
         }
@@ -40,42 +42,44 @@ minecraft {
             workingDirectory(project.file("runs/" + name))
             ideaModule("${rootProject.name}.${project.name}.main")
             isSingleInstance = true
-            taskName("${mod_id}-forge4.0-Client")
+            taskName("geckolibClient")
+            args("--username", "Dev")
 
             property("forge.logging.console.level", "debug")
             property("mixin.env.remapRefMap", "true")
 
             property("mixin.env.refMapRemappingFile", "${project.projectDir}/build/createSrgToMcp/output.srg")
-            args("-mixin.config=${mod_id}.mixins.json")
+            args("-mixin.config=${modId}.mixins.json")
 
             mods {
-                create(mod_id) {
+                create(modId) {
                     source(sourceSets.getByName("main"))
                     source(project(":common").sourceSets.getByName("main"))
                 }
             }
         }
 
-        create("clientAlt") {
+        create("client2") {
             parent(minecraft.runs.named("client").get())
             workingDirectory(project.file("runs/"+ name))
-            taskName("${mod_id}-forge4.0-Client-2")
-            args("--username", "Alt")
+            taskName("geckolibClient2")
+            args("--username", "Dev2")
+            args("-mixin.config=${modId}.mixins.json")
         }
 
         create("server") {
             workingDirectory(project.file("runs/"+ name))
             ideaModule("${rootProject.name}.${project.name}.main")
             isSingleInstance = true
-            taskName("${mod_id}-forge4.0-Server")
+            taskName("GeckoLib-Server")
 
             property("forge.logging.console.level", "debug")
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${project.projectDir}/build/createSrgToMcp/output.srg")
-            args("-mixin.config=${mod_id}.mixins.json")
+            args("-mixin.config=${modId}.mixins.json")
 
             mods {
-                create(mod_id) {
+                create(modId) {
                     source(project(":common").sourceSets.main.get())
                     source(sourceSets.main.get())
                 }
@@ -85,15 +89,17 @@ minecraft {
 }
 
 dependencies {
-    minecraft("net.minecraftforge:forge:${minecraft_version}-${forge_version}")
+    minecraft(libs.forge)
     compileOnly(project(":common"))
-    if (System.getProperty("idea.sync.active") != "true") {
-        annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-    }
-    annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.5")
-    compileOnly("io.github.llamalad7:mixinextras-common:0.3.5")
-    implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.5")) {
-        jarJar.ranged(this, "[0.3.5,)")
+
+    if (System.getProperty("idea.sync.active") != "true")
+        annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
+
+    annotationProcessor(libs.mixinextras.common)
+    compileOnly(libs.mixinextras.common)
+    implementation(libs.mixinextras.forge)
+    jarJar(libs.mixinextras.forge) {
+        jarJar.ranged(this, libs.versions.mixinextras.range.get())
     }
 }
 
@@ -123,18 +129,18 @@ tasks.withType<ProcessResources>().configureEach {
 }
 
 mixin {
-    add(sourceSets.getByName("main"), "${mod_id}.refmap.json")
-    config("${mod_id}.mixins.json")
+    add(sourceSets.getByName("main"), "${modId}.refmap.json")
+    config("${modId}.mixins.json")
 }
 
 modrinth {
 		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
 		projectId = "8BmcQJ2H"
 		versionNumber.set(project.version.toString())
-		versionName = "Forge ${minecraft_version}"
+		versionName = "Forge ${mcVersion}"
 		uploadFile.set(tasks.jarJar)
 		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
-		gameVersions.set(listOf(minecraft_version))
+		gameVersions.set(listOf(mcVersion))
 		loaders.set(listOf("forge"))
         debugMode = true
         //https://github.com/modrinth/minotaur#available-properties
@@ -147,7 +153,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     val mainFile = upload(388172, tasks.jarJar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
-    mainFile.addGameVersion(minecraft_version)
+    mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
     debugMode = true

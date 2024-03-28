@@ -1,24 +1,25 @@
 plugins {
     id("geckolib-convention")
-    id("org.spongepowered.gradle.vanilla") version "0.2.1-SNAPSHOT"
+
+    alias(libs.plugins.vanillagradle)
 }
 
-val minecraft_version: String by project
-val mod_id: String by project
+val modId: String by project
+val mcVersion = libs.versions.minecraft.asProvider().get()
 
 base {
-    archivesName = "geckolib-common-${minecraft_version}"
+    archivesName = "geckolib-common-${mcVersion}"
 }
 
 minecraft {
-    version(minecraft_version)
-    accessWideners(file("src/main/resources/${mod_id}.accesswidener"))
+    version(mcVersion)
+    accessWideners(file("src/main/resources/${modId}.accesswidener"))
 }
 
 dependencies {
-    compileOnly("org.spongepowered:mixin:0.8.5")
-    compileOnly("io.github.llamalad7:mixinextras-common:0.3.5")
-    implementation("com.google.code.findbugs:jsr305:3.0.1")
+    compileOnly(libs.mixin)
+    compileOnly(libs.mixinextras.common)
+    //implementation("com.google.code.findbugs:jsr305:3.0.1")
 }
 
 publishing {

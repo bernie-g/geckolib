@@ -3,16 +3,18 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id("geckolib-convention")
-    id("com.modrinth.minotaur")
-    id("net.darkhax.curseforgegradle")
-    id("fabric-loom") version "1.5-SNAPSHOT"
+
+    alias(libs.plugins.minotaur)
+    alias(libs.plugins.curseforgegradle)
+    alias(libs.plugins.loom)
 }
 
-val minecraft_version: String by project
-val mappings_mc_version: String by project
-val parchment_version: String by project
-val fabric_loader_version: String by project
-val fabric_api_version: String by project
+val modVersion = libs.versions.geckolib.get()
+val mcVersion = libs.versions.minecraft.asProvider().get()
+val parchmentMcVersion = libs.versions.parchment.minecraft.get()
+val parchmentVersion = libs.versions.parchment.asProvider().get()
+val fabricVersion = libs.versions.fabric.asProvider().get()
+val fapiVersion = libs.versions.fabric.api.get()
 
 java {
     sourceCompatibility =  JavaVersion.VERSION_17
@@ -20,15 +22,15 @@ java {
 }
 
 base {
-    archivesName = "geckolib-fabric-${minecraft_version}"
+    archivesName = "geckolib-fabric-${mcVersion}-${modVersion}"
 }
 
 repositories {
-    mavenCentral {
-        content {
-            includeGroup("com.google.code.findbugs")
-        }
-    }
+    //mavenCentral {
+    //    content {
+    //        includeGroup("com.google.code.findbugs")
+    //    }
+    //}
     maven {
         name = "ParchmentMC"
         url = uri("https://maven.parchmentmc.org")
@@ -39,32 +41,35 @@ repositories {
 }
 
 dependencies {
-    minecraft("com.mojang:minecraft:${minecraft_version}")
+    minecraft(libs.minecraft)
     mappings(loom.layered() {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${mappings_mc_version}:${parchment_version}@zip")
+        parchment("org.parchmentmc.data:parchment-${parchmentMcVersion}:${parchmentVersion}@zip")
     })
-    modImplementation("net.fabricmc:fabric-loader:${fabric_loader_version}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${fabric_api_version}")
+    modImplementation(libs.fabric)
+    modImplementation(libs.fabric.api)
     compileOnly(project(":common"))
-    implementation("com.google.code.findbugs:jsr305:3.0.1") //Provides the Nullable annotations
+   // implementation("com.google.code.findbugs:jsr305:3.0.1") //Provides the Nullable annotations
 }
 
 loom {
 	accessWidenerPath = project(":common").file("src/main/resources/geckolib.accesswidener")
     runs {
         named("client") {
-            client()
             configName = "Fabric Client"
+
+            client()
             ideConfigGenerated(true)
-            runDir("runs/"+name)
+            runDir("runs/" + name)
             programArg("--username=Dev")
         }
+
         named("server") {
-            server()
             configName = "Fabric Server"
+
+            server()
             ideConfigGenerated(true)
-            runDir("runs/"+name)
+            runDir("runs/" + name)
         }
     }
 }
@@ -88,11 +93,11 @@ tasks.withType<ProcessResources>().configureEach {
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     projectId = "8BmcQJ2H"
-    versionNumber.set(project.version.toString())
-    versionName = "Fabric ${minecraft_version}"
+    versionNumber.set(modVersion)
+    versionName = "Fabric ${mcVersion}"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
     changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
-    gameVersions.set(listOf(minecraft_version))
+    gameVersions.set(listOf(mcVersion))
     versionType = "release"
     loaders.set(listOf("fabric"))
     debugMode = true
@@ -110,7 +115,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     val mainFile = upload(388172, tasks.remapJar)
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
-    mainFile.addGameVersion(minecraft_version)
+    mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
     debugMode = true

@@ -1,6 +1,3 @@
-import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
-
 plugins {
     `java`
     `maven-publish`
@@ -10,38 +7,43 @@ plugins {
 
 java {
     toolchain.languageVersion = JavaLanguageVersion.of(17)
+
     withSourcesJar()
     withJavadocJar()
 }
 
-val mod_display_name: String by project
-val mod_authors: String by project
-val minecraft_version: String by project
-val forge_version_range: String by project
-val forge_loader_version_range: String by project
-val minecraft_version_range: String by project
-val fabric_api_version: String by project
-val fabric_loader_version: String by project
-val mod_id: String by project
-val mod_license: String by project
-val mod_description: String by project
-val neoforge_version: String by project
-val neoforge_loader_range: String by project
+val libs = project.versionCatalogs.find("libs")
 
+val modId: String by project
+val modDisplayName: String by project
+val modAuthors: String by project
+val modLicense: String by project
+val modDescription: String by project
+val modVersion = libs.get().findVersion("geckolib").get()
+val mcVersion = libs.get().findVersion("minecraft").get()
+val forgeVersion = libs.get().findVersion("forge").get()
+val forgeVersionRange = libs.get().findVersion("forge.range").get()
+val fmlVersionRange = libs.get().findVersion("forge.fml.range").get()
+val mcVersionRange = libs.get().findVersion("minecraft.range").get()
+val fapiVersion = libs.get().findVersion("fabric.api").get()
+val fabricVersion = libs.get().findVersion("fabric").get()
+val neoforgeVersion = libs.get().findVersion("neoforge").get()
+val neoforgeLoaderVersionRange = libs.get().findVersion("neoforge.loader.range").get()
 
 tasks.withType<Jar>().configureEach {
     from(rootProject.file("LICENSE")) {
-        rename { "${it}_${mod_display_name}" }
+        rename { "${it}_${modDisplayName}" }
     }
+
     manifest {
         attributes(mapOf(
-                "Specification-Title"     to mod_display_name,
-                "Specification-Vendor"    to mod_authors,
+                "Specification-Title"     to modDisplayName,
+                "Specification-Vendor"    to modAuthors,
                 "Specification-Version"   to archiveVersion,
-                "Implementation-Title"    to mod_display_name,
+                "Implementation-Title"    to modDisplayName,
                 "Implementation-Version"  to archiveVersion,
-                "Implementation-Vendor"   to mod_authors,
-                "Built-On-Minecraft"      to minecraft_version
+                "Implementation-Vendor"   to modAuthors,
+                "Built-On-Minecraft"      to mcVersion
         ))
     }
 }
@@ -53,45 +55,29 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.withType<ProcessResources>().configureEach {
     val expandProps = mapOf(
-            "version" to version,
-            "group" to project.group, //Else we target the task's group.
-            "minecraft_version" to minecraft_version,
-            "forge_version" to forge_version_range,
-            "forge_loader_range" to forge_loader_version_range,
-            "forge_version_range" to forge_version_range,
-            "minecraft_version_range" to minecraft_version_range,
-            "fabric_api_version" to fabric_api_version,
-            "fabric_loader_version" to fabric_loader_version,
-            "mod_display_name" to mod_display_name,
-            "mod_authors" to mod_authors,
-            "mod_id" to mod_id,
-            "mod_license" to mod_license,
-            "mod_description" to mod_description,
-            "neoforge_version_range" to neoforge_version,
-            "neoforge_loader_range" to neoforge_loader_range
+            "version" to modVersion,
+            "group" to project.group, // Else we target the task's group.
+            "minecraft_version" to mcVersion,
+            "forge_version" to forgeVersion,
+            "forge_loader_range" to fmlVersionRange,
+            "forge_version_range" to forgeVersionRange,
+            "minecraft_version_range" to mcVersionRange,
+            "fabric_api_version" to fapiVersion,
+            "fabric_loader_version" to fabricVersion,
+            "mod_display_name" to modDisplayName,
+            "mod_authors" to modAuthors,
+            "mod_id" to modId,
+            "mod_license" to modLicense,
+            "mod_description" to modDescription,
+            "neoforge_version_range" to neoforgeVersion,
+            "neoforge_loader_range" to neoforgeLoaderVersionRange
     )
 
     filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json")) {
         expand(expandProps)
     }
-    inputs.properties(expandProps)
 
-    doLast {
-        val jsonMinifyStart = System.currentTimeMillis()
-        var jsonMinified = 0
-        var jsonBytesSaved = 0
-        fileTree(outputs.files.asPath) {
-            include("**/*.json")
-            forEach {
-                jsonMinified++
-                val oldLength = it.length()
-                it.writeText(JsonOutput.toJson(JsonSlurper().parse(it)), Charsets.UTF_8)
-                jsonBytesSaved += (oldLength - it.length()).toInt()
-                //println(it.name)
-            }
-        }
-        println("Minified " + jsonMinified + " json files. Saved " + jsonBytesSaved + " bytes. Took " + (System.currentTimeMillis() - jsonMinifyStart) + "ms.")
-    }
+    inputs.properties(expandProps)
 }
 
 // Disables Gradle's custom module metadata from being published to maven. The
@@ -109,6 +95,7 @@ publishing {
         else maven {
             name = "cloudsmith"
             url = uri("https://maven.cloudsmith.io/geckolib3/geckolib/")
+
             credentials {
                 username = System.getenv("cloudUsername")
                 password = System.getenv("cloudPassword")
