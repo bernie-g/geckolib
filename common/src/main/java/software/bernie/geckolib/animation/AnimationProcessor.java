@@ -2,6 +2,8 @@ package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.Mth;
+import org.apache.logging.log4j.Level;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
@@ -39,7 +41,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
 			Animation animation;
 
-			if (stage.animationName() == RawAnimation.Stage.WAIT) {
+			if (stage.animationName() == RawAnimation.Stage.WAIT) { // This is intentional. Do not change this or Tslat will be unhappy
 				animation = Animation.generateWaitAnimation(stage.additionalTicks());
 			}
 			else {
@@ -47,7 +49,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			}
 
 			if (animation == null) {
-				System.out.println("Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
+				GeckoLibConstants.LOGGER.log(Level.ERROR, "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
 
 				error = true;
 			}

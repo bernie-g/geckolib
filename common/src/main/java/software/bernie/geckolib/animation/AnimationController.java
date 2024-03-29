@@ -3,6 +3,9 @@ package software.bernie.geckolib.animation;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.core.Direction.Axis;
+import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.keyframe.*;
 import software.bernie.geckolib.animation.keyframe.event.CustomInstructionKeyframeEvent;
@@ -63,8 +66,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected GeoModel<T> lastModel;
 
 	/**
-	 * Instantiates a new {@code AnimationController}.<br>
-	 * This constructor assumes a 0-tick transition length between animations, and a generic name.
+	 * Instantiates a new {@code AnimationController}
+	 * <p>
+	 * This constructor assumes a 0-tick transition length between animations, and a generic name
+	 *
 	 * @param animatable The object that will be animated by this controller
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
@@ -73,8 +78,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Instantiates a new {@code AnimationController}.<br>
-	 * This constructor assumes a 0-tick transition length between animations.
+	 * Instantiates a new {@code AnimationController}
+	 * <p>
+	 * This constructor assumes a 0-tick transition length between animations
+	 *
 	 * @param animatable The object that will be animated by this controller
 	 * @param name The name of the controller - should represent what animations it handles
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
@@ -84,8 +91,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Instantiates a new {@code AnimationController}.<br>
-	 * This constructor assumes a generic name.
+	 * Instantiates a new {@code AnimationController}
+	 * <p>
+	 * This constructor assumes a generic name
+	 *
 	 * @param animatable The object that will be animated by this controller
 	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
 	 *                              Lerping is automatically applied where possible
@@ -96,7 +105,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Instantiates a new {@code AnimationController}.<br>
+	 * Instantiates a new {@code AnimationController}
+	 *
 	 * @param animatable The object that will be animated by this controller
 	 * @param name The name of the controller - should represent what animations it handles
 	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
@@ -111,7 +121,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Applies the given {@link SoundKeyframeHandler} to this controller, for handling {@link SoundKeyframeEvent sound keyframe instructions}.
+	 * Applies the given {@link SoundKeyframeHandler} to this controller, for handling {@link SoundKeyframeEvent sound keyframe instructions}
+	 *
 	 * @return this
 	 */
 	public AnimationController<T> setSoundKeyframeHandler(SoundKeyframeHandler<T> soundHandler) {
@@ -121,7 +132,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Applies the given {@link ParticleKeyframeHandler} to this controller, for handling {@link ParticleKeyframeEvent particle keyframe instructions}.
+	 * Applies the given {@link ParticleKeyframeHandler} to this controller, for handling {@link ParticleKeyframeEvent particle keyframe instructions}
+	 *
 	 * @return this
 	 */
 	public AnimationController<T> setParticleKeyframeHandler(ParticleKeyframeHandler<T> particleHandler) {
@@ -131,7 +143,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Applies the given {@link CustomKeyframeHandler} to this controller, for handling {@link CustomInstructionKeyframeEvent sound keyframe instructions}.
+	 * Applies the given {@link CustomKeyframeHandler} to this controller, for handling {@link CustomInstructionKeyframeEvent sound keyframe instructions}
+	 *
 	 * @return this
 	 */
 	public AnimationController<T> setCustomInstructionKeyframeHandler(CustomKeyframeHandler<T> customInstructionHandler) {
@@ -141,8 +154,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Applies the given modifier function to this controller, for handling the speed that the controller should play its animations at.<br>
-	 * An output value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc.
+	 * Applies the given modifier function to this controller, for handling the speed that the controller should play its animations at
+	 * <p>
+	 * An output value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc
+	 *
 	 * @param speedModFunction The function to apply to this controller to handle animation speed
 	 * @return this
 	 */
@@ -153,8 +168,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Applies the given modifier value to this controller, for handlign the speed that the controller hsould play its animations at.<br>
-	 * A value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc.
+	 * Applies the given modifier value to this controller, for handlign the speed that the controller hsould play its animations at
+	 * <p>
+	 * A value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc
+	 *
 	 * @param speed The speed modifier to apply to this controller to handle animation speed.
 	 * @return this
 	 */
@@ -163,8 +180,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Sets the controller's {@link EasingType} override for animations.<br>
+	 * Sets the controller's {@link EasingType} override for animations
+	 * <p>
 	 * By default, the controller will use whatever {@code EasingType} was defined in the animation json
+	 *
 	 * @param easingTypeFunction The new {@code EasingType} to use
 	 * @return this
 	 */
@@ -173,8 +192,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Sets the controller's {@link EasingType} override function for animations.<br>
+	 * Sets the controller's {@link EasingType} override function for animations
+	 * <p>
 	 * By default, the controller will use whatever {@code EasingType} was defined in the animation json
+	 *
 	 * @param easingType The new {@code EasingType} to use
 	 * @return this
 	 */
@@ -185,8 +206,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Registers a triggerable {@link RawAnimation} with the controller.<br>
-	 * These can then be triggered by the various {@code triggerAnim} methods in {@code GeoAnimatable's} subclasses
+	 * Registers a triggerable {@link RawAnimation} with the controller
+	 * <p>
+	 * These can then be triggered by the various {@code triggerAnim} methods in {@code GeoAnimatable}'s subclasses
+	 *
 	 * @param name The name of the triggerable animation
 	 * @param animation The RawAnimation for this triggerable animation
 	 * @return this
@@ -198,11 +221,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Tells the AnimationController that you want to receive the {@link AnimationController.AnimationStateHandler}
-	 * while a triggered animation is playing.<br>
-	 * <br>
-	 * This has no effect if no triggered animation has been registered, or one isn't currently playing.<br>
-	 * If a triggered animation is playing, it can be checked in your AnimationStateHandler via {@link AnimationController#isPlayingTriggeredAnimation()}
+	 * Tells the AnimationController that you want to receive the {@link AnimationController.AnimationStateHandler} while a triggered animation is playing
+	 * <p>
+	 * This has no effect if no triggered animation has been registered, or one isn't currently playing
+	 * <p>
+	 * If a triggered animation is playing, it can be checked in your AnimationStateHandler via {@link #isPlayingTriggeredAnimation()}
 	 */
 	public AnimationController<T> receiveTriggeredAnimations() {
 		this.handlingTriggeredAnimations = true;
@@ -211,7 +234,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the controller's name.
+	 * Gets the controller's name
+	 *
 	 * @return The name
 	 */
 	public String getName() {
@@ -219,10 +243,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the currently loaded {@link Animation}. Can be null<br>
+	 * Gets the currently loaded {@link Animation}, if present
+	 * <p>
 	 * An animation returned here does not guarantee it is currently playing, just that it is the currently loaded animation for this controller
 	 */
-
+	@Nullable
 	public AnimationProcessor.QueuedAnimation getCurrentAnimation() {
 		return this.currentAnimation;
 	}
@@ -242,8 +267,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the current animation speed modifier.<br>
-	 * This modifier defines the relative speed in which animations will be played based on the current state of the game.
+	 * Gets the current animation speed modifier
+	 * <p>
+	 * This modifier defines the relative speed in which animations will be played based on the current state of the game
+	 *
 	 * @return The computed current animation speed modifier
 	 */
 	public double getAnimationSpeed() {
@@ -251,8 +278,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Marks the controller as needing to reset its animation and state the next time {@link AnimationController#setAnimation(RawAnimation)} is called.<br>
-	 * <br>
+	 * Marks the controller as needing to reset its animation and state the next time {@link #setAnimation(RawAnimation)} is called
+	 * <p>
 	 * Use this if you have a {@link RawAnimation} with multiple stages and you want it to start again from the first stage, or if you want to reset the currently playing animation to the start
 	 */
 	public void forceAnimationReset() {
@@ -260,10 +287,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Tells the controller to stop all animations until told otherwise.<br>
+	 * Tells the controller to stop all animations until told otherwise
+	 * <p>
 	 * Calling this will prevent the controller from continuing to play the currently loaded animation until
-	 * either {@link AnimationController#forceAnimationReset()} is called, or
-	 * {@link AnimationController#setAnimation(RawAnimation)} is called with a different animation
+	 * either {@link #forceAnimationReset()} is called, or
+	 * {@link #setAnimation(RawAnimation)} is called with a different animation
 	 */
 	public void stop() {
 		this.animationState = State.STOPPED;
@@ -279,9 +307,10 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Checks whether the last animation that was playing on this controller has finished or not.<br>
+	 * Checks whether the last animation that was playing on this controller has finished or not
+	 * <p>
 	 * This will return true if the controller has had an animation set previously, and it has finished playing
-	 * and isn't going to loop or proceed to another animation.<br>
+	 * and isn't going to loop or proceed to another animation
 	 *
 	 * @return Whether the previous animation finished or not
 	 */
@@ -290,8 +319,9 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Returns the currently cached {@link RawAnimation}.<br>
-	 * This animation may or may not still be playing, but it is the last one to be set in {@link AnimationController#setAnimation}
+	 * Returns the currently cached {@link RawAnimation}
+	 * <p>
+	 * This animation may or may not still be playing, but it is the last one to be set in {@link #setAnimation}
 	 */
 	public RawAnimation getCurrentRawAnimation() {
 		return this.currentRawAnimation;
@@ -299,18 +329,21 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * Returns whether the controller is currently playing a triggered animation registered in
-	 * {@link AnimationController#triggerableAnim}<br>
-	 * Used for custom handling if {@link AnimationController#receiveTriggeredAnimations()} was marked
+	 * {@link #triggerableAnim}<br>
+	 * Used for custom handling if {@link #receiveTriggeredAnimations()} was marked
 	 */
 	public boolean isPlayingTriggeredAnimation() {
 		return this.triggeredAnimation != null && !hasAnimationFinished();
 	}
 
 	/**
-	 * Sets the currently loaded animation to the one provided.<br>
-	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing.<br>
-	 * Pass null to this method to tell the controller to stop.<br>
-	 * If {@link AnimationController#forceAnimationReset()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
+	 * Sets the currently loaded animation to the one provided
+	 * <p>
+	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing
+	 * <p>
+	 * Pass null to this method to tell the controller to stop
+	 * <p>
+	 * If {@link #forceAnimationReset()} has been called prior to this, the controller will reload the animation regardless of whether it matches the currently loaded one or not
 	 */
 	public void setAnimation(RawAnimation rawAnimation) {
 		if (rawAnimation == null || rawAnimation.getAnimationStages().isEmpty()) {
@@ -340,7 +373,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Attempt to trigger an animation from the list of {@link AnimationController#triggerableAnimations triggerable animations} this controller contains.
+	 * Attempt to trigger an animation from the list of {@link #triggerableAnimations triggerable animations} this controller contains
+	 *
 	 * @param animName The name of the animation to trigger
 	 * @return Whether the controller triggered an animation or not
 	 */
@@ -383,7 +417,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * This method is called every frame in order to populate the animation point
-	 * queues, and process animation state logic.
+	 * queues, and process animation state logic
 	 *
 	 * @param model					The model currently being processed
 	 * @param state                 The animation test state
@@ -497,6 +531,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * Handle the current animation's state modifications and translations
+	 *
 	 * @param adjustedTick The controller-adjusted tick for animation purposes
 	 * @param seekTime The lerped tick (current tick + partial tick)
 	 * @param crashWhenCantFindBone Whether the controller should throw an exception when unable to find the required bone, or continue with the remaining bones
@@ -575,7 +610,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().sounds()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.soundKeyframeHandler == null) {
-					System.out.println("Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
 					break;
 				}
@@ -587,7 +622,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (ParticleKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().particles()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.particleKeyframeHandler == null) {
-					System.out.println("Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
 					break;
 				}
@@ -599,7 +634,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (CustomInstructionKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().customInstructions()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.customKeyframeHandler == null) {
-					System.out.println("Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
 
 					break;
 				}
@@ -614,6 +649,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * Prepare the {@link BoneAnimationQueue} map for the current render frame
+	 *
 	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
 	 */
 	private void createInitialQueues(Collection<GeoBone> modelRendererList) {
@@ -627,6 +663,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	/**
 	 * Cache the relevant {@link BoneSnapshot BoneSnapshots} for the current {@link AnimationProcessor.QueuedAnimation}
 	 * for animation lerping
+	 *
 	 * @param animation The {@code QueuedAnimation} to filter {@code BoneSnapshots} for
 	 * @param snapshots The master snapshot collection to pull filter from
 	 */
@@ -645,10 +682,12 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Adjust a tick value depending on the controller's current state and speed modifier.<br>
+	 * Adjust a tick value depending on the controller's current state and speed modifier
+	 * <p>
 	 * Is used when starting a new animation, transitioning, and a few other key areas
+	 *
 	 * @param tick The currently used tick value
-	 * @return 0 if {@link AnimationController#shouldResetTick} is set to false, or a {@link AnimationController#animationSpeedModifier} modified value otherwise
+	 * @return 0 if {@link #shouldResetTick} is set to false, or a {@link #animationSpeedModifier} modified value otherwise
 	 */
 	protected double adjustTick(double tick) {
 		if (!this.shouldResetTick)
@@ -693,6 +732,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * Returns the {@link Keyframe} relevant to the current tick time
+	 *
 	 * @param frames The list of {@code KeyFrames} to filter through
 	 * @param ageInTicks The current tick time
 	 * @return A new {@code KeyFrameLocation} containing the current {@code KeyFrame} and the tick time used to find it
@@ -719,9 +759,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Every render frame, the {@code AnimationController} will call this handler for <u>each</u> animatable that is being rendered.
-	 * This handler defines which animation should be currently playing, and returning a {@link PlayState} to tell the controller what to do next.<br>
-	 * Example Usage:<br>
+	 * Every render frame, the {@code AnimationController} will call this handler for <u>each</u> animatable that is being rendered
+	 * <p>
+	 * This handler defines which animation should be currently playing, and returning a {@link PlayState} to tell the controller what to do next
+	 * <p>
+	 * Example Usage:
 	 * <pre>{@code
 	 * AnimationFrameHandler myIdleWalkHandler = state -> {
 	 *	if (state.isMoving()) {
@@ -737,15 +779,17 @@ public class AnimationController<T extends GeoAnimatable> {
 	@FunctionalInterface
 	public interface AnimationStateHandler<A extends GeoAnimatable> {
 		/**
-		 * The handling method, called each frame.
+		 * The handling method, called each frame
+		 * <p>
 		 * Return {@link PlayState#CONTINUE} to tell the controller to continue animating,
-		 * or return {@link PlayState#STOP} to tell it to stop playing all animations and wait for the next {@code PlayState.CONTINUE} return.
+		 * or return {@link PlayState#STOP} to tell it to stop playing all animations and wait for the next {@link PlayState#CONTINUE} return.
 		 */
 		PlayState handle(AnimationState<A> state);
 	}
 
 	/**
-	 * A handler for when a predefined sound keyframe is hit.
+	 * A handler for when a predefined sound keyframe is hit
+	 * <p>
 	 * When the keyframe is encountered, the {@link SoundKeyframeHandler#handle(SoundKeyframeEvent)} method will be called.
 	 * Play the sound(s) of your choice at this time.
 	 */
@@ -755,7 +799,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * A handler for when a predefined particle keyframe is hit.
+	 * A handler for when a predefined particle keyframe is hit
+	 * <p>
 	 * When the keyframe is encountered, the {@link ParticleKeyframeHandler#handle(ParticleKeyframeEvent)} method will be called.
 	 * Spawn the particles/effects of your choice at this time.
 	 */
@@ -765,7 +810,8 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * A handler for pre-defined custom instruction keyframes.
+	 * A handler for pre-defined custom instruction keyframes
+	 * <p>
 	 * When the keyframe is encountered, the {@link CustomKeyframeHandler#handle(CustomInstructionKeyframeEvent)} method will be called.
 	 * You can then take whatever action you want at this point.
 	 */

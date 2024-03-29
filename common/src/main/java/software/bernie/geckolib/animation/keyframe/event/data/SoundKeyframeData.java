@@ -17,7 +17,7 @@ public class SoundKeyframeData extends KeyFrameData {
 	}
 
 	/**
-	 * Gets the sound id given by the {@link Keyframe} instruction from the {@code animation.json}
+	 * Gets the sound data given by the {@link Keyframe} instruction from the {@code animation.json}
 	 */
 	public String getSound() {
 		return this.sound;
