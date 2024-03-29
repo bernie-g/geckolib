@@ -16,7 +16,7 @@ import software.bernie.geckolib.util.ClientUtil;
 /**
  * Built-in helper for a {@link software.bernie.geckolib.animation.AnimationController.SoundKeyframeHandler SoundKeyframeHandler} that automatically plays the sound defined in the keyframe data
  * <p>
- * Due to an inability to determine the position of the sound for all animatables, this handler only supports Entities and BlockEntities
+ * Due to an inability to determine the position of the sound for all animatables, this handler only supports {@link software.bernie.geckolib.animatable.GeoEntity GeoEntity} and {@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}
  * <p>
  * The expected keyframe data format is one of the below:
  * <pre>{@code
