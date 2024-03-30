@@ -23,11 +23,9 @@ import software.bernie.geckolib.loading.math.function.random.RandomFunction;
 import software.bernie.geckolib.loading.math.function.random.RandomIntegerFunction;
 import software.bernie.geckolib.loading.math.function.round.*;
 import software.bernie.geckolib.loading.math.value.*;
+import software.bernie.geckolib.util.CompoundException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -45,6 +43,7 @@ public class MathParser {
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern STATEMENT_DELIMITER = Pattern.compile(";");
     private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
+    private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
     private static final Pattern OPERATIVE_SYMBOLS = Pattern.compile("[?:]");
     private static final String MOLANG_RETURN = "return ";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new HashMap<>(18), map -> {
@@ -165,7 +164,7 @@ public class MathParser {
      */
     public static MathValue parseJson(JsonElement element) {
         if (!(element instanceof JsonPrimitive primitive) || primitive.isBoolean())
-            throw new IllegalArgumentException("Bad formatting on Molang expression, expected single value, received: " + element.getClass().getSimpleName());
+            throw new CompoundException("Bad formatting on Molang expression, expected single value, received: " + element.getClass().getSimpleName());
 
         if (primitive.isNumber())
             return new Constant(primitive.getAsDouble());
@@ -173,12 +172,10 @@ public class MathParser {
         if (primitive.isString()) {
             String value = primitive.getAsString();
 
-            try {
+            if (VALID_DOUBLE.matcher(value).matches())
                 return new Constant(Double.parseDouble(value));
-            }
-            catch (NumberFormatException ex) {
-                return compileMolang(value);
-            }
+
+            return compileMolang(value);
         }
 
         return new Constant(0);
@@ -223,17 +220,22 @@ public class MathParser {
      * Parse and compile a full expression into a single {@link MathValue} object
      */
     public static MathValue compileExpression(String expression) {
-        return parseSymbols(compileSymbols(decomposeExpression(expression)));
+        try {
+            return parseSymbols(compileSymbols(decomposeExpression(expression)));
+        }
+        catch (CompoundException ex) {
+            throw ex.withMessage("Failed to parse expression '" + expression + "'");
+        }
     }
 
     /**
      * Breakdown an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
      */
-    public static char[] decomposeExpression(String expression) throws IllegalArgumentException {
+    public static char[] decomposeExpression(String expression) throws CompoundException {
         if (!EXPRESSION_FORMAT.matcher(expression).matches())
-            throw new IllegalArgumentException("Invalid characters found in expression: '" + expression + "'");
+            throw new CompoundException("Invalid characters found in expression: '" + expression + "'");
 
-        final char[] chars = WHITESPACE.matcher(expression).replaceAll("").toCharArray();
+        final char[] chars = WHITESPACE.matcher(expression).replaceAll("").toLowerCase(Locale.ROOT).toCharArray();
         int groupState = 0;
 
         for (char character : chars) {
@@ -245,11 +247,11 @@ public class MathParser {
             }
             
             if (groupState < 0)
-                throw new IllegalArgumentException("Closing parenthesis before opening parenthesis in expression '" + expression + "'");
+                throw new CompoundException("Closing parenthesis before opening parenthesis in expression '" + expression + "'");
         }
         
         if (groupState != 0)
-            throw new IllegalArgumentException("Uneven parenthesis in expression, each opening brace must have a pairing close brace '" + expression + "'");
+            throw new CompoundException("Uneven parenthesis in expression, each opening brace must have a pairing close brace '" + expression + "'");
 
         return chars;
     }
@@ -276,7 +278,7 @@ public class MathParser {
 
             if (isOperativeSymbol(ch) || isMultiCharOperator || ch == ',') {
                 if (ch == '-' && buffer.isEmpty()) {
-                    Object lastSymbol;
+                    String lastSymbol;
 
                     if (symbols.isEmpty() || isOperativeSymbol(lastSymbol = symbols.get(symbols.size() - 1).left().orElse(null)) || ",".equals(lastSymbol)) {
                         buffer.append(ch);
@@ -309,7 +311,7 @@ public class MathParser {
                 List<MathValue> subValues = new ObjectArrayList<>();
                 int groupState = 1;
 
-                for (int j = i + 1; i < chars.length; i++) {
+                for (int j = i + 1; j < chars.length; j++) {
                     final char groupChar = chars[j];
 
                     if (groupChar == '(') {
@@ -329,8 +331,9 @@ public class MathParser {
                         if (!buffer.isEmpty())
                             subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
 
-                        symbols.add(Either.right(subValues));
                         i = j;
+
+                        symbols.add(Either.right(subValues));
                         buffer.setLength(0);
 
                         break;
@@ -354,9 +357,9 @@ public class MathParser {
     /**
      * Compiles a given raw list of {@link #compileSymbols(char[]) symbols} into a singular {@link MathValue}, ready for use
      *
-     * @throws IllegalArgumentException If the given symbols list cannot be compiled down into a MathValue
+     * @throws CompoundException If the given symbols list cannot be compiled down into a MathValue
      */
-    public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws IllegalArgumentException {
+    public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 2) {
             Optional<String> prefix = symbols.get(0).left().filter(left -> isQueryOrFunctionName(left) || left.equals("-"));
             Optional<List<MathValue>> group = symbols.get(1).right();
@@ -370,17 +373,17 @@ public class MathParser {
         if (value != null)
             return value;
 
-        throw new IllegalArgumentException("Unable to parse compiled symbols from expression: " + symbols);
+        throw new CompoundException("Unable to parse compiled symbols from expression: " + symbols);
     }
 
     /**
      * Compile the given {@link #compileSymbols(char[]) symbols} down into a singular {@link MathValue}, ready for use
      *
      * @return A compiled MathValue instance, or null if not applicable
-     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
-    protected static MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws IllegalArgumentException {
+    protected static MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.get(0));
 
@@ -396,10 +399,10 @@ public class MathParser {
      * Compile a singular-argument {@link MathValue} instance from the given symbols list, if applicable
      *
      * @return A compiled MathValue value, or null if not applicable
-     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
-    protected static MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws IllegalArgumentException {
+    protected static MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
         if (symbol.right().isPresent())
             return new Group(symbol.right().get().get(0));
 
@@ -425,10 +428,10 @@ public class MathParser {
      * Compile a {@link Calculation} value instance from the given symbols list, if applicable
      *
      * @return A compiled Calculation value, or null if not applicable
-     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
-    protected static MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws IllegalArgumentException  {
+    protected static MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
         int firstOperatorIndex = -1;
         int secondOperatorIndex = -1;
@@ -476,10 +479,10 @@ public class MathParser {
      * Compile a {@link Ternary} value instance from the given symbols list, if applicable
      *
      * @return A compiled Ternary value, or null if not applicable
-     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
-    protected static Ternary compileTernary(List<Either<String, List<MathValue>>> symbols) throws IllegalArgumentException  {
+    protected static Ternary compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
 
         if (symbolCount < 3)
@@ -523,10 +526,10 @@ public class MathParser {
      * @param name The name of the function or value
      * @param args The symbols list for the value
      * @return A compiled MathValue, or null if not applicable
-     * @throws IllegalArgumentException If there is a parsing failure for any of the contents of the symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
-    protected static MathValue compileFunction(String name, List<MathValue> args) throws IllegalArgumentException {
+    protected static MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
             if (name.length() == 1)
                 return new BooleanNegate(args.get(0));
@@ -580,8 +583,8 @@ public class MathParser {
     /**
      * Get an {@link Operator} for a given operator string, throwing an exception if one does not exist
      */
-    protected static Operator getOperatorFor(String op) throws IllegalArgumentException {
-        return Operator.getOperatorFor(op).orElseThrow(() -> new IllegalArgumentException("Unknown operator symbol '" + op + "'"));
+    protected static Operator getOperatorFor(String op) throws CompoundException {
+        return Operator.getOperatorFor(op).orElseThrow(() -> new CompoundException("Unknown operator symbol '" + op + "'"));
     }
 
     /**

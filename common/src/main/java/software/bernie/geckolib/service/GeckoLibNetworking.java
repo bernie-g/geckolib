@@ -93,9 +93,9 @@ public interface GeckoLibNetworking {
         sendToAllPlayersTrackingEntity(new SingletonDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data), entityToTrack);
     }
     /**
-     * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#triggerAnim(long, String, String, Entity) Trigger} an animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
+     * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#triggerAnim(Entity, long, String, String) Trigger} an animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
      */
-    default void triggerSingletonAnim(String animatableClassName, long instanceId, @Nullable String controllerName, String animName, Entity entityToTrack) {
+    default void triggerSingletonAnim(String animatableClassName, Entity entityToTrack, long instanceId, @Nullable String controllerName, String animName) {
         sendToAllPlayersTrackingEntity(new SingletonAnimTriggerPacket(animatableClassName, instanceId, controllerName, animName), entityToTrack);
     }
 }

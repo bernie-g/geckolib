@@ -9,42 +9,46 @@ import software.bernie.geckolib.loading.json.raw.ModelProperties;
 
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Container class for a {@link Bone} structure, used at startup during deserialization
  */
 public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProperties properties) {
 	public static GeometryTree fromModel(Model model) {
-		Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
-		MinecraftGeometry geometry = model.minecraftGeometry()[0];
-		List<Bone> bones = new ObjectArrayList<>(geometry.bones());
-		int index = bones.size() - 1;
+		final Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
+		final MinecraftGeometry geometry = model.minecraftGeometry()[0];
+		final List<Bone> bones = new ObjectArrayList<>(geometry.bones());
 
 		while (true) {
-			Bone bone = bones.get(index);
+			if (!bones.removeIf(bone -> {
+				if (bone.parent() == null) {
+					topLevelBones.put(bone.name(), new BoneStructure(bone));
 
-			if (bone.parent() == null) {
-				topLevelBones.put(bone.name(), new BoneStructure(bone));
-			}
-			else {
+					return true;
+				}
+
 				BoneStructure parent = findBoneStructureInTree(topLevelBones, bone.parent());
 
-				if (parent == null)
-					throw new IllegalArgumentException("Invalid parent bone defined in model - parent does not exist or not defined before child bone! '" + bone.parent() + "'");
+				if (parent != null) {
+					parent.children().put(bone.name(), new BoneStructure(bone));
 
-				parent.children().put(bone.name(), new BoneStructure(bone));
-			}
+					return true;
+				}
 
-			bones.remove(index);
+				return false;
+			})) {
+				if (!bones.isEmpty()) {
+					StringJoiner joiner = new StringJoiner(", ");
 
-			if (index == 0) {
-				index = bones.size() - 1;
+					for (Bone remainingBone : bones) {
+						joiner.add(remainingBone.name() + " -> " + remainingBone.parent());
+					}
 
-				if (index == -1)
-					break;
-			}
-			else {
-				index--;
+					throw new IllegalArgumentException("Invalid model definition. Found bone(s) with undefined parent (child -> parent): " + joiner);
+				}
+
+				break;
 			}
 		}
 

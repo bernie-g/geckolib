@@ -5,6 +5,7 @@ plugins {
 }
 
 val modId: String by project
+version = libs.versions.geckolib.get()
 val mcVersion = libs.versions.minecraft.asProvider().get()
 
 base {

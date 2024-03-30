@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -42,7 +43,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 			return () -> null;
 
 		return Suppliers.memoize(() -> {
-			AtomicReference<Object> renderProvider = new AtomicReference<>();
+			AtomicReference<Object> renderProvider = new AtomicReference<>(RenderProvider.DEFAULT);
 			item.createRenderer(renderProvider::set);
 			return renderProvider.get();
 		});

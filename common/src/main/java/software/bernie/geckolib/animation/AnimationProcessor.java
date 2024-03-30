@@ -39,23 +39,25 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		boolean error = false;
 
 		for (RawAnimation.Stage stage : rawAnimation.getAnimationStages()) {
-			Animation animation;
+			Animation animation = null;
 
 			if (stage.animationName() == RawAnimation.Stage.WAIT) { // This is intentional. Do not change this or Tslat will be unhappy
 				animation = Animation.generateWaitAnimation(stage.additionalTicks());
 			}
 			else {
-				animation = this.model.getAnimation(animatable, stage.animationName());
+				try {
+					animation = this.model.getAnimation(animatable, stage.animationName());
+				}
+				catch (RuntimeException ex) {
+					GeckoLibConstants.LOGGER.log(Level.ERROR, "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
+
+					error = true;
+					ex.printStackTrace();
+				}
 			}
 
-			if (animation == null) {
-				GeckoLibConstants.LOGGER.log(Level.ERROR, "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
-
-				error = true;
-			}
-			else {
+			if (animation != null)
 				animations.add(new QueuedAnimation(animation, stage.loopType()));
-			}
 		}
 
 		return error ? null : animations;

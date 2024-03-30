@@ -18,6 +18,7 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.util.CompoundException;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -78,6 +79,11 @@ public final class GeckoLibCache {
 		return loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
 			try {
 				return FileLoader.loadAnimationsFile(resource, resourceManager);
+			}
+			catch (CompoundException ex) {
+				ex.withMessage(resource.toString() + ": Error loading animation file").printStackTrace();
+
+				return new BakedAnimations(new Object2ObjectOpenHashMap<>());
 			}
 			catch (Exception ex) {
 				throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);

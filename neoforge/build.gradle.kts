@@ -9,14 +9,14 @@ plugins {
 }
 
 val modId: String by project
-val modVersion = libs.versions.geckolib.get()
+version = libs.versions.geckolib.get()
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
 val neoforgeVersion = libs.versions.neoforge.asProvider().get()
 
 base {
-    archivesName = "geckolib-neoforge-${mcVersion}-${modVersion}"
+    archivesName = "geckolib-neoforge-${mcVersion}"
 }
 
 subsystems {

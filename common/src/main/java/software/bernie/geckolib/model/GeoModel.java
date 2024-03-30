@@ -133,7 +133,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 			if (!location.getPath().contains("animations/"))
 				throw GeckoLibConstants.exception(location, "Invalid animation resource path provided - GeckoLib animations must be placed in assets/<modid>/animations/");
 
-			throw GeckoLibConstants.exception(location, "Unable to find animation.");
+			throw GeckoLibConstants.exception(location, "Unable to find animation file.");
 		}
 
 		return bakedAnimations.getAnimation(name);

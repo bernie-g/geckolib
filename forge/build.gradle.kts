@@ -12,14 +12,14 @@ plugins {
 }
 
 val modId: String by project
-val modVersion = libs.versions.geckolib.get()
+version = libs.versions.geckolib.get()
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val mappingsMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
 val forgeVersion = libs.versions.forge.asProvider().get()
 
 base {
-    archivesName = "geckolib-forge-${mcVersion}-${modVersion}"
+    archivesName = "geckolib-forge-${mcVersion}"
 }
 
 jarJar.enable()

@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-val modVersion = libs.versions.geckolib.get()
+version = libs.versions.geckolib.get()
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
@@ -22,7 +22,7 @@ java {
 }
 
 base {
-    archivesName = "geckolib-fabric-${mcVersion}-${modVersion}"
+    archivesName = "geckolib-fabric-${mcVersion}"
 }
 
 repositories {
@@ -93,7 +93,7 @@ tasks.withType<ProcessResources>().configureEach {
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     projectId = "8BmcQJ2H"
-    versionNumber.set(modVersion)
+    versionNumber.set("${version}")
     versionName = "Fabric ${mcVersion}"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
     changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))

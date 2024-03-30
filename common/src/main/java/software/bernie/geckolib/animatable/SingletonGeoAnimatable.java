@@ -97,12 +97,12 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
      */
     @ApiStatus.NonExtendable
-    default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, Entity relatedEntity) {
+    default <D> void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
         if (relatedEntity.level().isClientSide()) {
             getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
         }
         else {
-            GeckoLibServices.NETWORK.triggerSingletonAnim(getClass().getName(), instanceId, controllerName, animName, relatedEntity);
+            GeckoLibServices.NETWORK.triggerSingletonAnim(getClass().getName(), relatedEntity, instanceId, controllerName, animName);
         }
     }
 

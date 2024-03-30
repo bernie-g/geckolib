@@ -6,7 +6,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.math.NumberUtils;
-import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.EasingType;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
@@ -18,6 +17,7 @@ import software.bernie.geckolib.loading.math.function.misc.ToRadFunction;
 import software.bernie.geckolib.loading.math.value.Constant;
 import software.bernie.geckolib.loading.math.value.Negative;
 import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.util.CompoundException;
 import software.bernie.geckolib.util.JsonUtil;
 
 import java.lang.reflect.Type;
@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations> {
 	@Override
-	public BakedAnimations deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+	public BakedAnimations deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws RuntimeException {
 		JsonObject obj = json.getAsJsonObject();
 		Map<String, Animation> animations = new Object2ObjectOpenHashMap<>(obj.size());
 
@@ -38,17 +38,15 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			try {
 				animations.put(entry.getKey(), bakeAnimation(entry.getKey(), entry.getValue().getAsJsonObject(), context));
 			}
-			catch (IllegalArgumentException ex) {
-				GeckoLibConstants.LOGGER.error("Unable to parse animation: " + entry.getKey());
-
-				ex.printStackTrace();
+			catch (CompoundException ex) {
+				throw ex.withMessage("Unable to parse animation: " + entry.getKey());
 			}
 		}
 
 		return new BakedAnimations(animations);
 	}
 
-	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws IllegalArgumentException {
+	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws CompoundException {
 		double length = animationObj.has("animation_length") ? GsonHelper.getAsDouble(animationObj, "animation_length") * 20d : -1;
 		Animation.LoopType loopType = Animation.LoopType.fromJson(animationObj.get("loop"));
 		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()));
@@ -60,18 +58,15 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		return new Animation(name, length, loopType, boneAnimations, keyframes);
 	}
 
-	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws IllegalArgumentException {
+	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws CompoundException {
 		BoneAnimation[] animations = new BoneAnimation[bonesObj.size()];
 		int index = 0;
 
 		for (Map.Entry<String, JsonElement> entry : bonesObj.entrySet()) {
 			JsonObject entryObj = entry.getValue().getAsJsonObject();
-			KeyframeStack<Keyframe<MathValue>> scaleFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("scale")), false);
-			KeyframeStack<Keyframe<MathValue>> positionFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("position")), false);
-			KeyframeStack<Keyframe<MathValue>> rotationFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("rotation")), true);
+			KeyframeStack<Keyframe<MathValue>> scaleFrames = buildKeyframeStack(getTripletObj(entryObj.get("scale")), false);
+			KeyframeStack<Keyframe<MathValue>> positionFrames = buildKeyframeStack(getTripletObj(entryObj.get("position")), false);
+			KeyframeStack<Keyframe<MathValue>> rotationFrames = buildKeyframeStack(getTripletObj(entryObj.get("rotation")), true);
 
 			animations[index] = new BoneAnimation(entry.getKey(), rotationFrames, positionFrames, scaleFrames);
 			index++;
@@ -131,7 +126,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
-	private KeyframeStack<Keyframe<MathValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws IllegalArgumentException {
+	private KeyframeStack<Keyframe<MathValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws CompoundException {
 		if (entries.isEmpty())
 			return new KeyframeStack<>();
 
