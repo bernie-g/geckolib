@@ -154,9 +154,9 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			MathValue rawXValue = MathParser.parseJson(keyFrameVector.get(0));
 			MathValue rawYValue = MathParser.parseJson(keyFrameVector.get(1));
 			MathValue rawZValue = MathParser.parseJson(keyFrameVector.get(2));
-			MathValue xValue = isForRotation && rawXValue instanceof Constant ? new ToRadFunction(new Negative(rawXValue)) : rawXValue;
-			MathValue yValue = isForRotation && rawYValue instanceof Constant ? new ToRadFunction(new Negative(rawYValue)) : rawYValue;
-			MathValue zValue = isForRotation && rawZValue instanceof Constant ? new ToRadFunction(rawZValue) : rawZValue;
+			MathValue xValue = isForRotation && rawXValue instanceof Constant ? new Constant(new ToRadFunction(new Negative(rawXValue)).get()) : rawXValue;
+			MathValue yValue = isForRotation && rawYValue instanceof Constant ? new Constant(new ToRadFunction(new Negative(rawYValue)).get()) : rawYValue;
+			MathValue zValue = isForRotation && rawZValue instanceof Constant ? new Constant(new ToRadFunction(rawZValue).get()) : rawZValue;
 
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;

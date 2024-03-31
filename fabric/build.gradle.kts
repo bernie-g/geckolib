@@ -93,7 +93,7 @@ tasks.withType<ProcessResources>().configureEach {
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     projectId = "8BmcQJ2H"
-    versionNumber.set("${version}")
+    versionNumber.set(project.version.toString())
     versionName = "Fabric ${mcVersion}"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
     changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
