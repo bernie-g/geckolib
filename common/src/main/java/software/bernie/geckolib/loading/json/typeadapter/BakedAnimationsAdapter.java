@@ -13,9 +13,7 @@ import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.animation.keyframe.KeyframeStack;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MathValue;
-import software.bernie.geckolib.loading.math.function.misc.ToRadFunction;
 import software.bernie.geckolib.loading.math.value.Constant;
-import software.bernie.geckolib.loading.math.value.Negative;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.CompoundException;
 import software.bernie.geckolib.util.JsonUtil;
@@ -154,9 +152,9 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			MathValue rawXValue = MathParser.parseJson(keyFrameVector.get(0));
 			MathValue rawYValue = MathParser.parseJson(keyFrameVector.get(1));
 			MathValue rawZValue = MathParser.parseJson(keyFrameVector.get(2));
-			MathValue xValue = isForRotation && rawXValue instanceof Constant ? new Constant(new ToRadFunction(new Negative(rawXValue)).get()) : rawXValue;
-			MathValue yValue = isForRotation && rawYValue instanceof Constant ? new Constant(new ToRadFunction(new Negative(rawYValue)).get()) : rawYValue;
-			MathValue zValue = isForRotation && rawZValue instanceof Constant ? new Constant(new ToRadFunction(rawZValue).get()) : rawZValue;
+			MathValue xValue = isForRotation && rawXValue instanceof Constant ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue;
+			MathValue yValue = isForRotation && rawYValue instanceof Constant ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue;
+			MathValue zValue = isForRotation && rawZValue instanceof Constant ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue;
 
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;
