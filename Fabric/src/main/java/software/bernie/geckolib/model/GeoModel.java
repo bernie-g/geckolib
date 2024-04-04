@@ -170,7 +170,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	}
 
 	@Override
-	public void applyMolangQueries(T animatable, AnimationState<T>  animationState, double animTime) {
+	public void applyMolangQueries(T animatable, AnimationState<T> animationState, double animTime) {
 		MolangParser parser = MolangParser.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
 
@@ -179,23 +179,32 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		parser.setMemoizedValue(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);
 		parser.setMemoizedValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
 
-		if (animatable instanceof Entity entity) {
-			parser.setMemoizedValue(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			parser.setMemoizedValue(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.onGround()));
-			parser.setMemoizedValue(MolangQueries.IS_IN_WATER, () -> RenderUtils.booleanToFloat(entity.isInWater()));
-			parser.setMemoizedValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
+		if (animatable instanceof GeoReplacedEntity) {
+			this.applyMolangEntityQueries(mc, parser, animationState,
+					animationState.getData(DataTickets.ENTITY), animTime);
+		} else if (animatable instanceof Entity entity) {
+			this.applyMolangEntityQueries(mc, parser, animationState, entity, animTime);
+		}
+	}
 
-			if (entity instanceof LivingEntity livingEntity) {
-				parser.setMemoizedValue(MolangQueries.HEALTH, livingEntity::getHealth);
-				parser.setMemoizedValue(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
-				parser.setMemoizedValue(MolangQueries.IS_ON_FIRE, () -> RenderUtils.booleanToFloat(livingEntity.isOnFire()));
-				parser.setMemoizedValue(MolangQueries.GROUND_SPEED, () -> {
-					Vec3 velocity = livingEntity.getDeltaMovement();
+	private void applyMolangEntityQueries(Minecraft mc, MolangParser parser, AnimationState<T> animationState,
+										  Entity entity, double animTime) {
+		parser.setMemoizedValue(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera()
+				.getPosition().distanceTo(entity.position()));
+		parser.setMemoizedValue(MolangQueries.IS_ON_GROUND, () -> RenderUtils.booleanToFloat(entity.onGround()));
+		parser.setMemoizedValue(MolangQueries.IS_IN_WATER, () -> RenderUtils.booleanToFloat(entity.isInWater()));
+		parser.setMemoizedValue(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtils.booleanToFloat(entity.isInWaterRainOrBubble()));
 
-					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-				});
-				parser.setMemoizedValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)animTime - livingEntity.getViewYRot((float)animTime - 0.1f)));
-			}
+		if (entity instanceof LivingEntity livingEntity) {
+			parser.setMemoizedValue(MolangQueries.HEALTH, livingEntity::getHealth);
+			parser.setMemoizedValue(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
+			parser.setMemoizedValue(MolangQueries.IS_ON_FIRE, () -> RenderUtils.booleanToFloat(livingEntity.isOnFire()));
+			parser.setMemoizedValue(MolangQueries.GROUND_SPEED, () -> {
+				Vec3 velocity = livingEntity.getDeltaMovement();
+				return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
+			});
+			parser.setMemoizedValue(MolangQueries.YAW_SPEED, () ->
+					livingEntity.getViewYRot((float)animTime - livingEntity.getViewYRot((float)animTime - 0.1f)));
 		}
 	}
 }
