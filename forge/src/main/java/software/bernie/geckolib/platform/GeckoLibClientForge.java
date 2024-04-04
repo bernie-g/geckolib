@@ -47,7 +47,7 @@ public final class GeckoLibClientForge implements GeckoLibClient {
         if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 
-        if (RenderProvider.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
+        if (RenderProvider.of(item).getItemRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 
         return null;

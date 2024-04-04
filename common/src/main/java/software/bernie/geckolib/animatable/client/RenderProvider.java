@@ -16,8 +16,8 @@ import software.bernie.geckolib.animatable.GeoItem;
  * <p>
  * This is a functional equivalent to Forge's {@code IClientItemExtensions}. If on Forge, either can be used
  *
- * @see software.bernie.geckolib.renderer.GeoItemRenderer
- * @see software.bernie.geckolib.renderer.GeoArmorRenderer
+ * @see software.bernie.geckolib.renderer.GeoItemRenderer GeoItemRenderer
+ * @see software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer
  */
 public interface RenderProvider {
     RenderProvider DEFAULT = new RenderProvider() {};
@@ -40,18 +40,16 @@ public interface RenderProvider {
      */
     static RenderProvider of(Item item) {
         if (item instanceof GeoItem geoItem)
-            return (RenderProvider)geoItem.getRenderProvider().get();
+            return (RenderProvider)geoItem.getRenderProvider();
 
         return DEFAULT;
     }
 
     /**
-     * Get the cached renderer for this provider, primarily for custom Item rendering
-     *
      * @return The cached BEWLR instance for this provider, or null if not applicable
      */
     @Nullable
-    default BlockEntityWithoutLevelRenderer getCustomRenderer() {
+    default BlockEntityWithoutLevelRenderer getItemRenderer() {
         return null;
     }
 
@@ -66,7 +64,7 @@ public interface RenderProvider {
      * @param original The base HumanoidModel (usually the default vanilla armor model), if applicable
      * @return The cached HumanoidModel instance for this provider, or the original if not applicable
      */
-    default <T extends LivingEntity, A extends HumanoidModel<T>> A getGeckolibArmorModel(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable A original) {
+    default <T extends LivingEntity, A extends HumanoidModel<T>> HumanoidModel<?> getGeckolibArmorModel(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable A original) {
         return original;
     }
 }

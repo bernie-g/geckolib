@@ -34,7 +34,7 @@ public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
         CHANNEL.messageBuilder(messageType).encoder(MultiloaderPacket::write).decoder(decoder).consumerMainThread((packet, context) -> {
             packet.receiveMessage(context.getSender() != null ? context.getSender() : ClientUtil.getClientPlayer(), context::enqueueWork);
             context.setPacketHandled(true);
-        });
+        }).add();
     }
 
     /**

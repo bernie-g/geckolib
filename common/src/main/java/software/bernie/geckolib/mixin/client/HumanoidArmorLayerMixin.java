@@ -35,11 +35,11 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
         A baseModel = original.call(instance, slot);
         T entity = geckolibEntity.get();
         ItemStack stack = entity.getItemBySlot(slot);
-        A newModel = RenderProvider.of(stack).getGeckolibArmorModel(entity, stack, slot, baseModel);
+        HumanoidModel<?> newModel = RenderProvider.of(stack).getGeckolibArmorModel(entity, stack, slot, baseModel);
 
         if (newModel != baseModel && newModel instanceof GeoArmorRenderer<?> geoArmorRenderer)
             geoArmorRenderer.prepForRender(entity, stack, slot, baseModel);
 
-        return newModel;
+        return (A)newModel;
     }
 }

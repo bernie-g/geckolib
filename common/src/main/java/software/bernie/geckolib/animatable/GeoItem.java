@@ -1,26 +1,21 @@
 package software.bernie.geckolib.animatable;
 
-import com.google.common.base.Suppliers;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animatable.client.RenderProvider;
-import software.bernie.geckolib.cache.AnimatableIdCache;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.ContextAwareAnimatableManager;
+import software.bernie.geckolib.cache.AnimatableIdCache;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}
@@ -32,30 +27,6 @@ import java.util.function.Supplier;
  */
 public interface GeoItem extends SingletonGeoAnimatable {
 	String ID_NBT_KEY = "GeckoLibID";
-
-	/**
-	 * Safety wrapper to distance the client-side code from common code
-	 * <p>
-	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
-	 */
-	static Supplier<Object> makeRenderer(GeoItem item) {
-		if (!GeckoLibServices.PLATFORM.isPhysicalClient())
-			return () -> null;
-
-		return Suppliers.memoize(() -> {
-			AtomicReference<Object> renderProvider = new AtomicReference<>(RenderProvider.DEFAULT);
-			item.createRenderer(renderProvider::set);
-			return renderProvider.get();
-		});
-	}
-
-	/**
-	 * Getter for the cached RenderProvider in your class
-	 */
-	@Override
-	default Supplier<Object> getRenderProvider() {
-		return GeoItem.makeRenderer(this);
-	}
 
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT},

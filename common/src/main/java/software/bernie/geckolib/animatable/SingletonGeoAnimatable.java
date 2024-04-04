@@ -4,15 +4,15 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to singleton objects
@@ -127,11 +127,15 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @Override
      * public void createRenderer(Consumer<RenderProvider> consumer) {
      * 	consumer.accept(new RenderProvider() {
-     * 		private final GeoArmorRenderer<?> renderer = new MyArmorRenderer();
+     * 		private final BlockEntityWithoutLevelRenderer itemRenderer;
      *
      *        @Override
-     *        GeoArmorRenderer<?> getRenderer(GeoArmor armor) {
-     * 			return this.renderer;
+     *        @Nullable
+     *        BlockEntityWithoutLevelRenderer getItemRenderer(GeoArmor armor) {
+     *          if (this.itemRenderer == null)
+     *              this.itemRenderer = new MyItemRenderer();
+     *
+     * 			return this.itemRenderer;
      *        }
      *    }
      * }
@@ -139,12 +143,12 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      *
      * @param consumer Consumer of your new RenderProvider instance
      */
-    default void createRenderer(Consumer<Object> consumer) {}
+    default void createRenderer(Consumer<RenderProvider> consumer) {}
 
     /**
-     * Getter for the cached RenderProvider in your class
+     * Get the cached {@link RenderProvider} from your {@link AnimatableInstanceCache}
      */
-    default Supplier<Object> getRenderProvider() {
-        return null;
+    default Object getRenderProvider() {
+        return getAnimatableInstanceCache().getRenderProvider();
     }
 }

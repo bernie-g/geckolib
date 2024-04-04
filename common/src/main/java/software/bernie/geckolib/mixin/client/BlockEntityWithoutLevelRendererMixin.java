@@ -20,7 +20,7 @@ import software.bernie.geckolib.animatable.client.RenderProvider;
 public class BlockEntityWithoutLevelRendererMixin {
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void geckolib$renderGeckolibItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, CallbackInfo ci) {
-        final BlockEntityWithoutLevelRenderer geckolibRenderer = RenderProvider.of(stack).getCustomRenderer();
+        final BlockEntityWithoutLevelRenderer geckolibRenderer = RenderProvider.of(stack).getItemRenderer();
 
         if (geckolibRenderer != null) {
             geckolibRenderer.renderByItem(stack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);

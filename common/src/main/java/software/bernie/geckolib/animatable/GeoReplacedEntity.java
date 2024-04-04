@@ -5,12 +5,12 @@ import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link Entity Entities}
@@ -98,12 +98,12 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	// These methods aren't used for GeoReplacedEntity
 	@ApiStatus.NonExtendable
 	@Override
-	default void createRenderer(Consumer<Object> consumer) {}
+	default void createRenderer(Consumer<RenderProvider> consumer) {}
 
 	// These methods aren't used for GeoReplacedEntity
 	@ApiStatus.NonExtendable
 	@Override
-	default Supplier<Object> getRenderProvider() {
+	default Object getRenderProvider() {
 		return null;
 	}
 }

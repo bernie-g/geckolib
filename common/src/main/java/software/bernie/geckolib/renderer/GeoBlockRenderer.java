@@ -119,6 +119,9 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 						  float alpha) {
 		this.blockRenderTranslations = new Matrix4f(poseStack.last().pose());
 
+		if (!isReRender)
+			poseStack.translate(0.5, 0, 0.5);
+
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 	}
 
@@ -146,7 +149,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
 			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			poseStack.translate(0.5, 0, 0.5);
 			rotateBlock(getFacing(animatable), poseStack);
 			this.model.handleAnimations(animatable, instanceId, animationState);
 		}

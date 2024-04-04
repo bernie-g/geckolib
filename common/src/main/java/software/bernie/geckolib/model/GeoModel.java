@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationProcessor;
@@ -171,7 +172,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
 
-		double currentFrameTime = animatable instanceof Entity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)
@@ -189,7 +190,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		this.lastRenderedInstance = instanceId;
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationState.getAnimatable(), this.animTime);
+		processor.preAnimationSetup(animationState, this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
 			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
