@@ -161,7 +161,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		this.lastRenderedInstance = instanceId;
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationState.getAnimatable(), this.animTime);
+		processor.preAnimationSetup(animationState.getAnimatable(), animationState, this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
 			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
@@ -170,7 +170,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	}
 
 	@Override
-	public void applyMolangQueries(T animatable, double animTime) {
+	public void applyMolangQueries(T animatable, AnimationState<T> animationState, double animTime) {
 		MolangParser parser = MolangParser.INSTANCE;
 		Minecraft mc = Minecraft.getInstance();
 
