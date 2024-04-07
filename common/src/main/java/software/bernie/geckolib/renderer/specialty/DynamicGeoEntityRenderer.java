@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer;
+package software.bernie.geckolib.renderer.specialty;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,6 +16,7 @@ import org.joml.Vector4f;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Map;
@@ -98,16 +99,6 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 
 			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceMatrix(worldState);
-		}
-
-		if (buffer == null) {
-			if (renderType == null) {
-				poseStack.popPose();
-
-				return;
-			}
-
-			buffer = bufferSource.getBuffer(renderType);
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);

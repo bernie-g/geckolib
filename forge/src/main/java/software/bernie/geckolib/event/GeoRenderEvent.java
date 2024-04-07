@@ -22,7 +22,7 @@ public interface GeoRenderEvent {
 	/**
 	 * Returns the renderer for this event
 	 *
-	 * @see software.bernie.geckolib.renderer.DynamicGeoEntityRenderer DynamicGeoEntityRenderer
+	 * @see software.bernie.geckolib.renderer.specialty.DynamicGeoEntityRenderer DynamicGeoEntityRenderer
 	 * @see software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer
 	 * @see software.bernie.geckolib.renderer.GeoBlockRenderer GeoBlockRenderer
 	 * @see software.bernie.geckolib.renderer.GeoEntityRenderer GeoEntityRenderer
@@ -323,7 +323,7 @@ public interface GeoRenderEvent {
 
 	/**
 	 * Renderer events for {@link net.minecraft.world.entity.Entity Entities} being rendered by {@link GeoEntityRenderer}, as well as
-	 * {@link software.bernie.geckolib.renderer.DynamicGeoEntityRenderer DynamicGeoEntityRenderer}
+	 * {@link software.bernie.geckolib.renderer.specialty.DynamicGeoEntityRenderer DynamicGeoEntityRenderer}
 	 */
 	abstract class Entity extends Event implements GeoRenderEvent {
 		private final GeoEntityRenderer<?> renderer;
