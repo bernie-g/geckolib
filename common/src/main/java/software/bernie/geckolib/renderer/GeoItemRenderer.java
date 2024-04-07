@@ -228,13 +228,14 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
+			GeoModel<T> currentModel = getGeoModel();
 
 			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentItemStack));
 			animationState.setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
 			animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 			animatable.getAnimatableInstanceCache().getManagerForId(instanceId).setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
-			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			currentModel.handleAnimations(animatable, instanceId, animationState);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());

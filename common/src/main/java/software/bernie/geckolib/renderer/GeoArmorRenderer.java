@@ -171,8 +171,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the head model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getHeadBone() {
-		return this.model.getBone("armorHead").orElse(null);
+	public GeoBone getHeadBone(GeoModel<T> model) {
+		return model.getBone("armorHead").orElse(null);
 	}
 
 	/**
@@ -183,8 +183,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the body model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getBodyBone() {
-		return this.model.getBone("armorBody").orElse(null);
+	public GeoBone getBodyBone(GeoModel<T> model) {
+		return model.getBone("armorBody").orElse(null);
 	}
 
 	/**
@@ -195,8 +195,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right arm model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getRightArmBone() {
-		return this.model.getBone("armorRightArm").orElse(null);
+	public GeoBone getRightArmBone(GeoModel<T> model) {
+		return model.getBone("armorRightArm").orElse(null);
 	}
 
 	/**
@@ -207,8 +207,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left arm model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getLeftArmBone() {
-		return this.model.getBone("armorLeftArm").orElse(null);
+	public GeoBone getLeftArmBone(GeoModel<T> model) {
+		return model.getBone("armorLeftArm").orElse(null);
 	}
 
 	/**
@@ -219,8 +219,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right leg model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getRightLegBone() {
-		return this.model.getBone("armorRightLeg").orElse(null);
+	public GeoBone getRightLegBone(GeoModel<T> model) {
+		return model.getBone("armorRightLeg").orElse(null);
 	}
 
 	/**
@@ -231,8 +231,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left leg model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getLeftLegBone() {
-		return this.model.getBone("armorLeftLeg").orElse(null);
+	public GeoBone getLeftLegBone(GeoModel<T> model) {
+		return model.getBone("armorLeftLeg").orElse(null);
 	}
 
 	/**
@@ -243,8 +243,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the right boot model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getRightBootBone() {
-		return this.model.getBone("armorRightBoot").orElse(null);
+	public GeoBone getRightBootBone(GeoModel<T> model) {
+		return model.getBone("armorRightBoot").orElse(null);
 	}
 
 	/**
@@ -255,8 +255,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @return The bone for the left boot model piece, or null if not using it
 	 */
 	@Nullable
-	public GeoBone getLeftBootBone() {
-		return this.model.getBone("armorLeftBoot").orElse(null);
+	public GeoBone getLeftBootBone(GeoModel<T> model) {
+		return model.getBone("armorLeftBoot").orElse(null);
 	}
 
 	/**
@@ -313,13 +313,14 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
+			GeoModel<T> currentModel = getGeoModel();
 
 			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
 			animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
 			animationState.setData(DataTickets.ENTITY, this.currentEntity);
 			animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
-			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			currentModel.handleAnimations(animatable, instanceId, animationState);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
@@ -354,15 +355,16 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		if (this.lastModel == bakedModel)
 			return;
 
+		GeoModel<T> model = getGeoModel();
 		this.lastModel = bakedModel;
-		this.head = getHeadBone();
-		this.body = getBodyBone();
-		this.rightArm = getRightArmBone();
-		this.leftArm = getLeftArmBone();
-		this.rightLeg = getRightLegBone();
-		this.leftLeg = getLeftLegBone();
-		this.rightBoot = getRightBootBone();
-		this.leftBoot = getLeftBootBone();
+		this.head = getHeadBone(model);
+		this.body = getBodyBone(model);
+		this.rightArm = getRightArmBone(model);
+		this.leftArm = getLeftArmBone(model);
+		this.rightLeg = getRightLegBone(model);
+		this.leftLeg = getLeftLegBone(model);
+		this.rightBoot = getRightBootBone(model);
+		this.leftBoot = getLeftBootBone(model);
 	}
 
 	/**

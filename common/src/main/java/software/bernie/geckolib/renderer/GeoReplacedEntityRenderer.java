@@ -268,12 +268,13 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
 			long instanceId = getInstanceId(animatable);
+			GeoModel<T> currentModel = getGeoModel();
 
 			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
 			animationState.setData(DataTickets.ENTITY, this.currentEntity);
 			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			currentModel.handleAnimations(animatable, instanceId, animationState);
 		}
 
 		poseStack.translate(0, 0.01f, 0);
