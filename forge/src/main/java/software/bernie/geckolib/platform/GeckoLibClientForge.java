@@ -9,7 +9,7 @@ import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -30,8 +30,8 @@ public final class GeckoLibClientForge implements GeckoLibClient {
         Item item = stack.getItem();
         HumanoidModel<?> model = IClientItemExtensions.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
 
-        if (model == defaultModel)
-            return RenderProvider.of(item).getGeckolibArmorModel(animatable, stack, slot, defaultModel);
+        if (model == defaultModel && GeoRenderProvider.of(item).getGeoArmorRenderer(animatable, stack, slot, defaultModel) instanceof GeoArmorRenderer<?> geoArmorRenderer)
+            return geoArmorRenderer;
 
         return model;
     }
@@ -47,7 +47,7 @@ public final class GeckoLibClientForge implements GeckoLibClient {
         if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 
-        if (RenderProvider.of(item).getItemRenderer() instanceof GeoRenderer<?> geoRenderer)
+        if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 
         return null;
@@ -64,7 +64,7 @@ public final class GeckoLibClientForge implements GeckoLibClient {
         if (IClientItemExtensions.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
-        if (RenderProvider.of(armour).getGeckolibArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+        if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
         return null;

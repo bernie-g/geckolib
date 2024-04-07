@@ -8,6 +8,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.renderer.GeoItemRenderer;
 
 /**
  * Internal interface for safely providing a custom item and armor renderer instances at runtime
@@ -19,52 +21,57 @@ import software.bernie.geckolib.animatable.GeoItem;
  * @see software.bernie.geckolib.renderer.GeoItemRenderer GeoItemRenderer
  * @see software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer
  */
-public interface RenderProvider {
-    RenderProvider DEFAULT = new RenderProvider() {};
+public interface GeoRenderProvider {
+    GeoRenderProvider DEFAULT = new GeoRenderProvider() {};
 
     /**
-     * Get the RenderProvider instance for the given ItemStack, if applicable
+     * Get the GeoRenderProvider instance for the given ItemStack, if applicable
      *
      * @param itemStack The ItemStack to get the provider instance for
-     * @return The RenderProvider instance for this stack, or a defaulted empty instance if not defined
+     * @return The GeoRenderProvider instance for this stack, or a defaulted empty instance if not defined
      */
-    static RenderProvider of(ItemStack itemStack) {
+    static GeoRenderProvider of(ItemStack itemStack) {
         return of(itemStack.getItem());
     }
 
     /**
-     * Get the RenderProvider instance for the given Item, if applicable
+     * Get the GeoRenderProvider instance for the given Item, if applicable
      *
      * @param item The ItemStack to get the provider instance for
-     * @return The RenderProvider instance for this item, or a defaulted empty instance if not defined
+     * @return The GeoRenderProvider instance for this item, or a defaulted empty instance if not defined
      */
-    static RenderProvider of(Item item) {
+    static GeoRenderProvider of(Item item) {
         if (item instanceof GeoItem geoItem)
-            return (RenderProvider)geoItem.getRenderProvider();
+            return (GeoRenderProvider)geoItem.getRenderProvider();
 
         return DEFAULT;
     }
 
     /**
+     * Get the cached {@link BlockEntityWithoutLevelRenderer} instance for this provider.
+     * <p>
+     * Normally this would be an instance of {@link GeoItemRenderer}
+     *
      * @return The cached BEWLR instance for this provider, or null if not applicable
      */
     @Nullable
-    default BlockEntityWithoutLevelRenderer getItemRenderer() {
+    default BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
         return null;
     }
 
     /**
-     * Get the cached HumanoidModel instance for this provider.
+     * Get the cached {@link GeoArmorRenderer} instance for this provider.
      * <p>
-     * Normally this would be an instance of {@link software.bernie.geckolib.renderer.GeoArmorRenderer GeoArmorRenderer}
+     * Normally this would be an instance of {@link GeoArmorRenderer}
      *
      * @param livingEntity The entity currently wearing the item, if applicable
      * @param itemStack The ItemStack for this provider
      * @param equipmentSlot The slot the ItemStack is currently in, if applicable
      * @param original The base HumanoidModel (usually the default vanilla armor model), if applicable
-     * @return The cached HumanoidModel instance for this provider, or the original if not applicable
+     * @return The cached HumanoidModel instance for this provider, or null if not applicable
      */
-    default <T extends LivingEntity, A extends HumanoidModel<T>> HumanoidModel<?> getGeckolibArmorModel(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable A original) {
-        return original;
+    @Nullable
+    default <T extends LivingEntity> HumanoidModel<?> getGeoArmorRenderer(@Nullable T livingEntity, ItemStack itemStack, @Nullable EquipmentSlot equipmentSlot, @Nullable HumanoidModel<T> original) {
+        return null;
     }
 }

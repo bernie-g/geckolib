@@ -5,6 +5,9 @@ import software.bernie.geckolib.animation.AnimatableManager;
 
 /**
  * AnimatableInstanceCache implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimatableManager} instance per cache
+ * <p>
+ * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
+ * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
  */
 public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected AnimatableManager<?> manager;

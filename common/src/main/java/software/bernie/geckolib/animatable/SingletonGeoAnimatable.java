@@ -4,7 +4,7 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -118,15 +118,15 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 
 
     /**
-     * Create your RenderProvider reference here
+     * Create your GeoRenderProvider reference here
      * <p>
      * <b><u>MUST provide an anonymous class</u></b>
      * <p>
      * Example Code:
      * <pre>{@code
      * @Override
-     * public void createRenderer(Consumer<RenderProvider> consumer) {
-     * 	consumer.accept(new RenderProvider() {
+     * public void createRenderer(Consumer<GeoRenderProvider> consumer) {
+     * 	consumer.accept(new GeoRenderProvider() {
      * 		private final BlockEntityWithoutLevelRenderer itemRenderer;
      *
      *        @Override
@@ -141,12 +141,12 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * }
      * }</pre>
      *
-     * @param consumer Consumer of your new RenderProvider instance
+     * @param consumer Consumer of your new GeoRenderProvider instance
      */
-    default void createRenderer(Consumer<RenderProvider> consumer) {}
+    default void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {}
 
     /**
-     * Get the cached {@link RenderProvider} from your {@link AnimatableInstanceCache}
+     * Get the cached {@link GeoRenderProvider} from your {@link AnimatableInstanceCache}
      */
     default Object getRenderProvider() {
         return getAnimatableInstanceCache().getRenderProvider();

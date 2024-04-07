@@ -7,6 +7,9 @@ import software.bernie.geckolib.animation.AnimatableManager;
 
 /**
  * AnimatableInstanceCache implementation for singleton/flyweight objects such as Items. Utilises a keyed map to differentiate different instances of the object
+ * <p>
+ * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
+ * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
  */
 public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected final Long2ObjectMap<AnimatableManager<?>> managers = new Long2ObjectOpenHashMap<>();

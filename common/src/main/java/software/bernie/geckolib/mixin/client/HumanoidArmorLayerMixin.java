@@ -1,8 +1,6 @@
 package software.bernie.geckolib.mixin.client;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -15,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 
 /**
@@ -25,21 +23,19 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
  */
 @Mixin(HumanoidArmorLayer.class)
 public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends HumanoidModel<T>> {
-    @Inject(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "HEAD"))
-    public void geckolib$captureLocals(PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, T livingEntity, float limbSwing, float limbSwingAmount, float partialTick, float age, float headYaw, float headPitch, CallbackInfo ci, @Share("geckolib_entity") LocalRef<T> geckolibEntity){
-        geckolibEntity.set(livingEntity);
-    }
+    @Inject(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;setPartVisibility(Lnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/world/entity/EquipmentSlot;)V"))
+    public void geckolib$replaceArmorModel(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci, @Local(argsOnly = true, index = 6) LocalRef<HumanoidModel<T>> baseModelSetter) {
+        final ItemStack stack = entity.getItemBySlot(equipmentSlot);
+        final HumanoidModel<?> geckolibModel = GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, equipmentSlot, baseModel);
 
-    @WrapOperation(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/entity/LivingEntity;FFFFFF)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;getArmorModel(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/client/model/HumanoidModel;"))
-    public A geckolib$replaceArmorModel(HumanoidArmorLayer instance, EquipmentSlot slot, Operation<A> original, @Share("geckolib_entity") LocalRef<T> geckolibEntity) {
-        A baseModel = original.call(instance, slot);
-        T entity = geckolibEntity.get();
-        ItemStack stack = entity.getItemBySlot(slot);
-        HumanoidModel<?> newModel = RenderProvider.of(stack).getGeckolibArmorModel(entity, stack, slot, baseModel);
+        if (geckolibModel != null) {
+            if (geckolibModel instanceof GeoArmorRenderer<?> geoArmorRenderer)
+                geoArmorRenderer.prepForRender(entity, stack, equipmentSlot, baseModel);
 
-        if (newModel != baseModel && newModel instanceof GeoArmorRenderer<?> geoArmorRenderer)
-            geoArmorRenderer.prepForRender(entity, stack, slot, baseModel);
+            final A newModel = (A)geckolibModel;
 
-        return (A)newModel;
+            baseModel.copyPropertiesTo(newModel);
+            baseModelSetter.set(newModel);
+        }
     }
 }

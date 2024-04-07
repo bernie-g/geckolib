@@ -94,6 +94,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 	/**
 	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective based animations
+	 * <p>
+	 * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
+	 * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
 	 */
 	class ContextBasedAnimatableInstanceCache extends SingletonAnimatableInstanceCache {
 		public ContextBasedAnimatableInstanceCache(GeoAnimatable animatable) {

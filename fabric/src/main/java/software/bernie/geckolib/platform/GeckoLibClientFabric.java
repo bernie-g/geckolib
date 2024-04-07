@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -25,7 +25,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @NotNull
     @Override
     public <T extends LivingEntity & GeoAnimatable> HumanoidModel<?> getArmorModelForItem(T animatable, ItemStack stack, EquipmentSlot slot, HumanoidModel<LivingEntity> defaultModel) {
-        return RenderProvider.of(stack).getGeckolibArmorModel(animatable, stack, slot, defaultModel);
+        return GeoRenderProvider.of(stack).getGeoArmorRenderer(animatable, stack, slot, defaultModel) instanceof GeoArmorRenderer<?> geoArmorRenderer ? geoArmorRenderer : defaultModel;
     }
 
     /**
@@ -36,7 +36,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForItem(ItemStack item) {
-        if (RenderProvider.of(item).getItemRenderer() instanceof GeoRenderer<?> geoItemRenderer)
+        if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?> geoItemRenderer)
             return geoItemRenderer.getGeoModel();
 
         return null;
@@ -50,7 +50,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForArmor(ItemStack armour) {
-        if (RenderProvider.of(armour).getGeckolibArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+        if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
         return null;

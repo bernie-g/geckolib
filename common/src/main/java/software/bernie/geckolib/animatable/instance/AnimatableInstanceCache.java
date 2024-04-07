@@ -4,7 +4,7 @@ import com.google.common.base.Suppliers;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.animatable.client.RenderProvider;
+import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  */
 public abstract class AnimatableInstanceCache {
 	protected final GeoAnimatable animatable;
-	protected final Supplier<RenderProvider> renderProvider;
+	protected final Supplier<GeoRenderProvider> renderProvider;
 
 	public AnimatableInstanceCache(GeoAnimatable animatable) {
 		this.animatable = animatable;
@@ -26,9 +26,9 @@ public abstract class AnimatableInstanceCache {
 			if (!(this.animatable instanceof SingletonGeoAnimatable singleton) || !GeckoLibServices.PLATFORM.isPhysicalClient())
 				return null;
 
-			final AtomicReference<RenderProvider> consumer = new AtomicReference<>(RenderProvider.DEFAULT);
+			final AtomicReference<GeoRenderProvider> consumer = new AtomicReference<>(GeoRenderProvider.DEFAULT);
 
-			singleton.createRenderer(consumer::set);
+			singleton.createGeoRenderer(consumer::set);
 
 			return consumer.get();
 		});
@@ -67,13 +67,13 @@ public abstract class AnimatableInstanceCache {
 	}
 
 	/**
-	 * Get the {@link RenderProvider} for this animatable
+	 * Get the {@link GeoRenderProvider} for this animatable
 	 * <p>
 	 * Because only {@link SingletonGeoAnimatable}s use this functionality, it this method should not be used and will always return null for anything other than a SingletonGeoAnimatable
 	 * <p>
 	 * The returned object is upcast to Object for side-safety
 	 *
-	 * @return The cached RenderProvider instance for this animatable, or null if one does not exist
+	 * @return The cached GeoRenderProvider instance for this animatable, or null if one does not exist
 	 */
 	public Object getRenderProvider() {
 		return this.renderProvider.get();
