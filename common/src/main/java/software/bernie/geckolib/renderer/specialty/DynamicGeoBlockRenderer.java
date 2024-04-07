@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.Map;
 
 /**
- * Extended special-entity renderer for more advanced or dynamic models
+ * Extended special-block renderer for more advanced or dynamic models
  * <p>
  * Because of the extra performance cost of this renderer, it is advised to avoid using it unnecessarily,
  * and consider whether the benefits are worth the cost for your needs.
