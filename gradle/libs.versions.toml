@@ -36,7 +36,7 @@
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
     plugin-neoforge-gradle = "7.+"
-    plugin-loom = "1.5-SNAPSHOT"
+    plugin-loom = "1.6-SNAPSHOT"
     plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
 
 [libraries]
