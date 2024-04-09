@@ -95,8 +95,11 @@ dependencies {
     if (System.getProperty("idea.sync.active") != "true")
         annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
 
+    compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
-    compileOnly(libs.mixinextras.forge)
+    testCompileOnly(libs.mixinextras.common)
+
+    runtimeOnly(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge) {
         jarJar.ranged(this, libs.versions.mixinextras.range.get())
     }
