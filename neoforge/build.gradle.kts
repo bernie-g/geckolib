@@ -52,6 +52,10 @@ runs {
 dependencies {
     implementation(libs.neoforge)
     compileOnly(project(":common"))
+
+    // Only enable for testing as needed
+    // Disable before publishing
+    //implementation(libs.examplemod.neoforge)
 }
 
 tasks.withType<JavaCompile>().matching{!it.name.startsWith("neo")}.configureEach {

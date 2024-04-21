@@ -1,5 +1,6 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.minecraftforge.gradle.userdev.tasks.JarJar
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 
 plugins {
     id("geckolib-convention")
@@ -103,6 +104,10 @@ dependencies {
     jarJar(libs.mixinextras.forge) {
         jarJar.ranged(this, libs.versions.mixinextras.range.get())
     }
+
+    // Only enable for testing as needed
+    // Disable before publishing
+    //implementation(fg.deobf(libs.examplemod.forge.get()))
 }
 
 //Make the result of the jarJar task the one with no classifier instead of no classifier and "all"

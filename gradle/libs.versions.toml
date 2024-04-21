@@ -6,27 +6,28 @@
     minecraft-range = "[1.20.4,)"
     minecraft = "1.20.4"
     parchment-minecraft = "1.20.4"
-    parchment = "2024.02.25"
+    parchment = "2024.04.14"
 
 # Fabric Settings
-    fabric = "0.15.7"
-    fabric-api = "0.96.11+1.20.4"
+    fabric = "0.15.10"
+    fabric-api = "0.97.0+1.20.4"
 
 # Forge Settings
     forge-fml-range = "[49,)"
     forge-range = "[49,)"
-    forge = "49.0.38"
-    forge-mc = "1.20.4-49.0.38"
+    forge = "49.0.48"
+    forge-mc = "1.20.4-49.0.48"
 
 # Neoforge Settings
     neoforge-loader-range = "[2,)"
     neoforge-range = "[20.4.167,)"
-    neoforge = "20.4.214"
+    neoforge = "20.4.232"
 
 # Dependencies
     mixin = "0.8.5"
     mixinextras = "0.3.5"
     mixinextras-range = "[0.3.5,)"
+    examplemod = "1.0.0"
 
 # Plugins
     plugin-minotaur = "2.8.7"
@@ -51,6 +52,12 @@
     fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
     fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
     minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
+
+# Testing
+    examplemod-common = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-common-1.20.4", version.ref = "examplemod" }
+    examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-1.20.4", version.ref = "examplemod" }
+    examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-1.20.4", version.ref = "examplemod" }
+    examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-1.20.4", version.ref = "examplemod" }
 
 [plugins]
 # Publishing

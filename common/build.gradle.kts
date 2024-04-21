@@ -20,7 +20,10 @@ minecraft {
 dependencies {
     compileOnly(libs.mixin)
     compileOnly(libs.mixinextras.common)
-    //implementation("com.google.code.findbugs:jsr305:3.0.1")
+
+    // Only enable for testing as needed
+    // Disable before publishing
+    //implementation(libs.examplemod.common)
 }
 
 publishing {

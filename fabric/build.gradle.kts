@@ -26,11 +26,6 @@ base {
 }
 
 repositories {
-    //mavenCentral {
-    //    content {
-    //        includeGroup("com.google.code.findbugs")
-    //    }
-    //}
     maven {
         name = "ParchmentMC"
         url = uri("https://maven.parchmentmc.org")
@@ -49,7 +44,10 @@ dependencies {
     modImplementation(libs.fabric)
     modImplementation(libs.fabric.api)
     compileOnly(project(":common"))
-   // implementation("com.google.code.findbugs:jsr305:3.0.1") //Provides the Nullable annotations
+
+    // Only enable for testing as needed
+    // Disable before publishing
+    //modImplementation(libs.examplemod.fabric)
 }
 
 loom {
