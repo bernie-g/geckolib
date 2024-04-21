@@ -100,13 +100,6 @@ tasks.withType<ProcessResources>().configureEach {
     inputs.properties(expandProps)
 }
 
-// Disables Gradle's custom module metadata from being published to maven. The
-// metadata includes mapped dependencies which are not reasonably consumable by
-// other mod developers.
-tasks.withType<GenerateModuleMetadata>().configureEach {
-    enabled = false
-}
-
 publishing {
     repositories {
         if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {
