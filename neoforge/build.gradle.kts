@@ -75,16 +75,17 @@ tasks.withType<ProcessResources>().configureEach {
 }
 
 modrinth {
-		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-		projectId = "8BmcQJ2H"
-		versionNumber.set(project.version.toString())
-		versionName = "NeoForge ${mcVersion}"
-		uploadFile.set(tasks.named<Jar>("jar"))
-		changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-		gameVersions.set(listOf(mcVersion))
-		loaders.set(listOf("neoforge"))
-        //https://github.com/modrinth/minotaur#available-properties
-        debugMode = true
+    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
+    projectId = "8BmcQJ2H"
+    versionNumber.set(project.version.toString())
+    versionName = "NeoForge ${mcVersion}"
+    uploadFile.set(tasks.named<Jar>("jar"))
+    changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    gameVersions.set(listOf(mcVersion))
+    loaders.set(listOf("neoforge"))
+
+    //debugMode = true
+    //https://github.com/modrinth/minotaur#available-properties
 }
 
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
@@ -97,7 +98,8 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-    debugMode = true
+
+    //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 

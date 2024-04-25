@@ -93,11 +93,11 @@ modrinth {
     gameVersions.set(listOf(mcVersion))
     versionType = "release"
     loaders.set(listOf("fabric"))
-    debugMode = true
     dependencies {
         required.project("fabric-api")
     }
 
+    //debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -111,7 +111,8 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-    debugMode = true
+
+    //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
