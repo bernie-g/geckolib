@@ -2,9 +2,15 @@ package software.bernie.geckolib.platform;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.service.GeckoLibPlatform;
 
 import java.nio.file.Path;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Fabric service for general loader-specific functions
@@ -32,5 +38,17 @@ public final class GeckoLibFabric implements GeckoLibPlatform {
     @Override
     public boolean isPhysicalClient() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
+    }
+
+    /**
+     * Register a {@link DataComponentType}
+     * <p>
+     * This is mostly just used for storing the animatable ID on ItemStacks
+     */
+    @Override
+    public <T> Supplier<DataComponentType<T>> registerDataComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builder) {
+        final DataComponentType<T> componentType = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, GeckoLibConstants.id(id).toString(), builder.apply(DataComponentType.builder()).build());
+
+        return () -> componentType;
     }
 }

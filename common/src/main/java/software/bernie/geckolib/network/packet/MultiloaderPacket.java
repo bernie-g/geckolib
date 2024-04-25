@@ -1,6 +1,5 @@
 package software.bernie.geckolib.network.packet;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
@@ -11,12 +10,6 @@ import java.util.function.Consumer;
  * Multiloader implementation of a packet base, for loader-agnostic packet handling
  */
 public interface MultiloaderPacket extends CustomPacketPayload {
-    /**
-     * Encode the packet's contents to the given buffer
-     */
-    @Override
-    void write(FriendlyByteBuf buffer);
-
     /**
      * Handle the message after being received and decoded
      * <p>

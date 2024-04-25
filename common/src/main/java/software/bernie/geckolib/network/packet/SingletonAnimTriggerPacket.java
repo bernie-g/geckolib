@@ -1,7 +1,9 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -11,23 +13,21 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 
 public record SingletonAnimTriggerPacket(String syncableId, long instanceId, String controllerName, String animName) implements MultiloaderPacket {
-    public static final ResourceLocation ID = GeckoLibConstants.id("singleton_anim_trigger");
+    public static final CustomPacketPayload.Type<SingletonAnimTriggerPacket> TYPE = new Type<>(GeckoLibConstants.id("singleton_anim_trigger"));
+    public static final StreamCodec<FriendlyByteBuf, SingletonAnimTriggerPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8,
+            SingletonAnimTriggerPacket::syncableId,
+            ByteBufCodecs.VAR_LONG,
+            SingletonAnimTriggerPacket::instanceId,
+            ByteBufCodecs.STRING_UTF8,
+            SingletonAnimTriggerPacket::controllerName,
+            ByteBufCodecs.STRING_UTF8,
+            SingletonAnimTriggerPacket::animName,
+            SingletonAnimTriggerPacket::new);
 
     @Override
-    public ResourceLocation id() {
-        return ID;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeUtf(this.syncableId);
-        buffer.writeVarLong(this.instanceId);
-        buffer.writeUtf(this.controllerName);
-        buffer.writeUtf(this.animName);
-    }
-
-    public static SingletonAnimTriggerPacket decode(FriendlyByteBuf buffer) {
-        return new SingletonAnimTriggerPacket(buffer.readUtf(), buffer.readVarLong(), buffer.readUtf(), buffer.readUtf());
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

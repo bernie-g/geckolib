@@ -1,14 +1,14 @@
 package software.bernie.geckolib.network.packet;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
@@ -16,27 +16,21 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.function.Consumer;
 
 public record EntityDataSyncPacket<D>(int entityId, boolean isReplacedEntity, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
-    public static final ResourceLocation ID = GeckoLibConstants.id("entity_data_sync");
+    public static final CustomPacketPayload.Type<EntityDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("entity_data_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, EntityDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
+        SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
+        buf.writeVarInt(packet.entityId);
+        buf.writeBoolean(packet.isReplacedEntity);
+        ((StreamCodec)packet.dataTicket.streamCodec()).encode(buf, packet.data);
+    }, buf -> {
+        final SerializableDataTicket dataTicket = SerializableDataTicket.STREAM_CODEC.decode(buf);
+
+        return new EntityDataSyncPacket<>(buf.readVarInt(), buf.readBoolean(), dataTicket, dataTicket.streamCodec().decode(buf));
+    });
 
     @Override
-    public ResourceLocation id() {
-        return ID;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.entityId);
-        buffer.writeBoolean(this.isReplacedEntity);
-        buffer.writeUtf(this.dataTicket.id());
-        this.dataTicket.encode(this.data, buffer);
-    }
-
-    public static <D> EntityDataSyncPacket<D> decode(FriendlyByteBuf buffer) {
-        final int entityId = buffer.readVarInt();
-        final boolean isReplacedEntity = buffer.readBoolean();
-        final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>)DataTickets.byName(buffer.readUtf());
-
-        return new EntityDataSyncPacket<>(entityId, isReplacedEntity, dataTicket, dataTicket.decode(buffer));
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

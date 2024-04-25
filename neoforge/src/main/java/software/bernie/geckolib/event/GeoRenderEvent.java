@@ -16,7 +16,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 /**
  * GeckoLib events base-class for the various event stages of rendering
  * <p>
- * These are fired on the {@link net.neoforged.fml.common.Mod.EventBusSubscriber.Bus FORGE} mod bus
+ * These are fired on the {@link net.neoforged.fml.common.EventBusSubscriber.Bus FORGE} mod bus
  */
 public interface GeoRenderEvent {
 	/**

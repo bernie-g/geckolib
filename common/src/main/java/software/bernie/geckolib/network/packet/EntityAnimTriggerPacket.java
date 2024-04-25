@@ -1,7 +1,9 @@
 package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
@@ -14,23 +16,21 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.function.Consumer;
 
 public record EntityAnimTriggerPacket(int entityId, boolean isReplacedEntity, String controllerName, String animName) implements MultiloaderPacket {
-    public static final ResourceLocation ID = GeckoLibConstants.id("entity_anim_trigger");
+    public static final CustomPacketPayload.Type<EntityAnimTriggerPacket> TYPE = new Type<>(GeckoLibConstants.id("entity_anim_trigger"));
+    public static final StreamCodec<FriendlyByteBuf, EntityAnimTriggerPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT,
+            EntityAnimTriggerPacket::entityId,
+            ByteBufCodecs.BOOL,
+            EntityAnimTriggerPacket::isReplacedEntity,
+            ByteBufCodecs.STRING_UTF8,
+            EntityAnimTriggerPacket::controllerName,
+            ByteBufCodecs.STRING_UTF8,
+            EntityAnimTriggerPacket::animName,
+            EntityAnimTriggerPacket::new);
 
     @Override
-    public ResourceLocation id() {
-        return ID;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeVarInt(this.entityId);
-        buffer.writeBoolean(this.isReplacedEntity);
-        buffer.writeUtf(this.controllerName);
-        buffer.writeUtf(this.animName);
-    }
-
-    public static EntityAnimTriggerPacket decode(FriendlyByteBuf buffer) {
-        return new EntityAnimTriggerPacket(buffer.readVarInt(), buffer.readBoolean(), buffer.readUtf(), buffer.readUtf());
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

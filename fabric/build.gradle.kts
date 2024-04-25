@@ -16,11 +16,6 @@ val parchmentVersion = libs.versions.parchment.asProvider().get()
 val fabricVersion = libs.versions.fabric.asProvider().get()
 val fapiVersion = libs.versions.fabric.api.get()
 
-java {
-    sourceCompatibility =  JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
-
 base {
     archivesName = "geckolib-fabric-${mcVersion}"
 }
@@ -114,7 +109,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 17")
+    mainFile.addJavaVersion("Java 21")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
     debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties

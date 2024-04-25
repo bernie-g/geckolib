@@ -2,7 +2,8 @@ package software.bernie.geckolib.service;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -17,20 +18,20 @@ import software.bernie.geckolib.network.packet.*;
  */
 public interface GeckoLibNetworking {
     static void init() {
-        registerPacket(BlockEntityAnimTriggerPacket.ID, true, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::decode);
-        registerPacket(BlockEntityDataSyncPacket.ID, true, BlockEntityDataSyncPacket.class, BlockEntityDataSyncPacket::decode);
-        registerPacket(EntityAnimTriggerPacket.ID, true, EntityAnimTriggerPacket.class, EntityAnimTriggerPacket::decode);
-        registerPacket(EntityDataSyncPacket.ID, true, EntityDataSyncPacket.class, EntityDataSyncPacket::decode);
-        registerPacket(SingletonAnimTriggerPacket.ID, true, SingletonAnimTriggerPacket.class, SingletonAnimTriggerPacket::decode);
-        registerPacket(SingletonDataSyncPacket.ID, true, SingletonDataSyncPacket.class, SingletonDataSyncPacket::decode);
+        registerPacket(BlockEntityAnimTriggerPacket.TYPE, BlockEntityAnimTriggerPacket.CODEC, true);
+        registerPacket(BlockEntityDataSyncPacket.TYPE, BlockEntityDataSyncPacket.CODEC, true);
+        registerPacket(EntityAnimTriggerPacket.TYPE, EntityAnimTriggerPacket.CODEC, true);
+        registerPacket(EntityDataSyncPacket.TYPE, EntityDataSyncPacket.CODEC, true);
+        registerPacket(SingletonAnimTriggerPacket.TYPE, SingletonAnimTriggerPacket.CODEC, true);
+        registerPacket(SingletonDataSyncPacket.TYPE, SingletonDataSyncPacket.CODEC, true);
     }
 
     /**
      * Register a GeckoLib packet for use
      */
     @ApiStatus.Internal
-    private static <P extends MultiloaderPacket> void registerPacket(ResourceLocation id, boolean isClientBound, Class<P> messageType, FriendlyByteBuf.Reader<P> decoder) {
-        GeckoLibServices.NETWORK.registerPacketInternal(id, isClientBound, messageType, decoder);
+    private static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
+        GeckoLibServices.NETWORK.registerPacketInternal(payloadType, codec, isClientBound);
     }
 
     /**
@@ -39,7 +40,7 @@ public interface GeckoLibNetworking {
      * <b><u>FOR GECKOLIB USE ONLY</u></b>
      */
     @ApiStatus.Internal
-    <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> messageType, FriendlyByteBuf.Reader<P> decoder);
+    <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound);
 
     /**
      * Send a packet to all players currently tracking a given entity

@@ -1,8 +1,12 @@
 package software.bernie.geckolib;
 
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.util.function.Supplier;
 
 /**
  * Holder class for several properties and/or handlers inherent to GeckoLib
@@ -10,6 +14,10 @@ import org.apache.logging.log4j.Logger;
 public final class GeckoLibConstants {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "geckolib";
+
+    public static final Supplier<DataComponentType<Long>> STACK_ANIMATABLE_ID_COMPONENT = GeckoLibServices.PLATFORM.registerDataComponent("stack_animatable_id", builder -> builder.networkSynchronized(ByteBufCodecs.VAR_LONG));
+
+    public static void init() {}
 
     /**
      * Helper method to create a ResourceLocation predefined with GeckoLib's {@link #MODID}

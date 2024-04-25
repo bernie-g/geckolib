@@ -2,18 +2,19 @@ package software.bernie.geckolib.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.ChunkPos;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.service.GeckoLibNetworking;
-import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.function.Consumer;
 
@@ -21,10 +22,10 @@ import java.util.function.Consumer;
  * NeoForge service implementation for GeckoLib's networking functionalities
  */
 public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
-    private static IPayloadRegistrar registrar = null;
+    private static PayloadRegistrar registrar = null;
 
     public static void init(IEventBus modBus) {
-        modBus.addListener((Consumer<RegisterPayloadHandlerEvent>) event -> {
+        modBus.addListener((Consumer<RegisterPayloadHandlersEvent>) event -> {
             registrar = event.registrar(GeckoLibConstants.MODID);
             GeckoLibNetworking.init();
             registrar = null;
@@ -37,8 +38,13 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      * <b><u>FOR GECKOLIB USE ONLY</u></b>
      */
     @Override
-    public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> messageType, FriendlyByteBuf.Reader<P> decoder) {
-        registrar.play(id, decoder, (packet, context) -> packet.receiveMessage(context.player().orElseGet(ClientUtil::getClientPlayer), context.workHandler()::execute));
+    public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
+        if (isClientBound) {
+            registrar.playToClient(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+        }
+        else {
+            registrar.playToServer(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec, (packet, context) -> packet.receiveMessage(context.player(), context::enqueueWork));
+        }
     }
 
     /**
@@ -50,7 +56,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      */
     @Override
     public void sendToAllPlayersTrackingEntity(MultiloaderPacket packet, Entity trackingEntity) {
-        PacketDistributor.TRACKING_ENTITY_AND_SELF.with(trackingEntity).send(packet);
+        PacketDistributor.sendToPlayersTrackingEntityAndSelf(trackingEntity, packet);
     }
 
     /**
@@ -58,7 +64,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      */
     @Override
     public void sendToAllPlayersTrackingBlock(MultiloaderPacket packet, ServerLevel level, BlockPos pos) {
-        PacketDistributor.TRACKING_CHUNK.with(level.getChunkAt(pos)).send(packet);
+        PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(pos), packet);
     }
 
     /**
@@ -66,6 +72,6 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      */
     @Override
     public void sendToPlayer(MultiloaderPacket packet, ServerPlayer player) {
-        PacketDistributor.PLAYER.with(player).send(packet);
+        PacketDistributor.sendToPlayer(player, packet);
     }
 }

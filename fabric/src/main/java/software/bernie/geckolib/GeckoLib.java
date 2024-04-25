@@ -9,6 +9,7 @@ import software.bernie.geckolib.service.GeckoLibNetworking;
 public final class GeckoLib implements ModInitializer {
     @Override
     public void onInitialize() {
+        GeckoLibConstants.init();
         GeckoLibNetworking.init();
     }
 }

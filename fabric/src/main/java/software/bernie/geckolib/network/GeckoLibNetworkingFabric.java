@@ -1,11 +1,12 @@
 package software.bernie.geckolib.network;
 
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -24,13 +25,14 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
      * <b><u>FOR GECKOLIB USE ONLY</u></b>
      */
     @Override
-    public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> messageType, FriendlyByteBuf.Reader<P> decoder) {
+    public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
         if (isClientBound) {
             if (GeckoLibServices.PLATFORM.isPhysicalClient())
-                GeckoLibClient.registerPacket(id, decoder);
+                GeckoLibClient.registerPacket(payloadType, codec);
         }
         else {
-            ServerPlayNetworking.registerGlobalReceiver(id, (server, player, packetListener, buffer, sender) -> decoder.apply(buffer).receiveMessage(player, server::execute));
+            PayloadTypeRegistry.playC2S().register(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec);
+            ServerPlayNetworking.registerGlobalReceiver(payloadType, (packet, context) -> packet.receiveMessage(context.player(), context.player().getServer()::execute));
         }
     }
 
@@ -66,9 +68,6 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
      */
     @Override
     public void sendToPlayer(MultiloaderPacket packet, ServerPlayer player) {
-        FriendlyByteBuf buffer = PacketByteBufs.create();
-
-        packet.write(buffer);
-        ServerPlayNetworking.send(player, packet.id(), buffer);
+        ServerPlayNetworking.send(player, packet);
     }
 }

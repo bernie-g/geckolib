@@ -1,5 +1,6 @@
 package software.bernie.geckolib.cache;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
@@ -15,11 +16,9 @@ public final class AnimatableIdCache extends SavedData {
 	private static final String DATA_KEY = "geckolib_id_cache";
 	private long lastId;
 
-	private AnimatableIdCache() {
-		this(new CompoundTag());
-	}
+	private AnimatableIdCache() {}
 
-	private AnimatableIdCache(CompoundTag tag) {
+	private AnimatableIdCache(CompoundTag tag, HolderLookup.Provider registryLookup) {
 		this.lastId = tag.getLong("last_id");
 	}
 
@@ -40,7 +39,7 @@ public final class AnimatableIdCache extends SavedData {
 	}
 
 	@Override
-	public CompoundTag save(CompoundTag tag) {
+	public CompoundTag save(CompoundTag tag, HolderLookup.Provider registryLookup) {
 		tag.putLong("last_id", this.lastId);
 
 		return tag;

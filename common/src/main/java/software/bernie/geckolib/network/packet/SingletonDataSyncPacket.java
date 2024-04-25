@@ -1,13 +1,13 @@
 package software.bernie.geckolib.network.packet;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -15,27 +15,21 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.function.Consumer;
 
 public record SingletonDataSyncPacket<D>(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
-    public static final ResourceLocation ID = GeckoLibConstants.id("singleton_data_sync");
+    public static final CustomPacketPayload.Type<SingletonDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("singleton_data_sync"));
+    public static final StreamCodec<RegistryFriendlyByteBuf, SingletonDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
+        SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
+        buf.writeUtf(packet.syncableId);
+        buf.writeVarLong(packet.instanceId);
+        ((StreamCodec)packet.dataTicket.streamCodec()).encode(buf, packet.data);
+    }, buf -> {
+        final SerializableDataTicket dataTicket = SerializableDataTicket.STREAM_CODEC.decode(buf);
+
+        return new SingletonDataSyncPacket<>(buf.readUtf(), buf.readVarLong(), dataTicket, dataTicket.streamCodec().decode(buf));
+    });
 
     @Override
-    public ResourceLocation id() {
-        return ID;
-    }
-
-    @Override
-    public void write(FriendlyByteBuf buffer) {
-        buffer.writeUtf(this.syncableId);
-        buffer.writeVarLong(this.instanceId);
-        buffer.writeUtf(this.dataTicket.id());
-        this.dataTicket.encode(this.data, buffer);
-    }
-
-    public static <D> SingletonDataSyncPacket<D> decode(FriendlyByteBuf buffer) {
-        final String syncableId = buffer.readUtf();
-        final long instanceId = buffer.readVarLong();
-        final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buffer.readUtf());
-
-        return new SingletonDataSyncPacket<>(syncableId, instanceId, dataTicket, dataTicket.decode(buffer));
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 
     @Override

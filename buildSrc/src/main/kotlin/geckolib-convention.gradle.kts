@@ -10,7 +10,7 @@ plugins {
 }
 
 java {
-    toolchain.languageVersion = JavaLanguageVersion.of(17)
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
 
     withSourcesJar()
     withJavadocJar()
@@ -70,7 +70,7 @@ tasks.withType<Jar>().configureEach {
 
 tasks.withType<JavaCompile>().configureEach {
     this.options.encoding = "UTF-8"
-    this.options.getRelease().set(17)
+    this.options.getRelease().set(21)
 }
 
 tasks.withType<ProcessResources>().configureEach {
@@ -93,7 +93,7 @@ tasks.withType<ProcessResources>().configureEach {
             "neoforge_loader_range" to neoforgeLoaderVersionRange
     )
 
-    filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/mods.toml", "*.mixins.json")) {
+    filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
         expand(expandProps)
     }
 

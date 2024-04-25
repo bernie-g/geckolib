@@ -1,11 +1,12 @@
 package software.bernie.geckolib.animatable;
 
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -16,6 +17,7 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The {@link GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}
@@ -26,19 +28,15 @@ import java.util.Map;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
 public interface GeoItem extends SingletonGeoAnimatable {
-	String ID_NBT_KEY = "GeckoLibID";
-
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT},
 	 * or {@link Long#MAX_VALUE} if one hasn't been assigned
 	 */
 	static long getId(ItemStack stack) {
-		CompoundTag tag = stack.getTag();
-
-		if (tag == null)
-			return Long.MAX_VALUE;
-
-		return tag.getLong(ID_NBT_KEY);
+		return Optional.ofNullable(stack.getComponentsPatch().get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
+				.filter(Optional::isPresent)
+				.<Long>map(Optional::get)
+				.orElse(Long.MAX_VALUE);
 	}
 
 	/**
@@ -47,15 +45,13 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	 * If no ID has been reserved for this stack yet, it will reserve a new id and assign it
 	 */
 	static long getOrAssignId(ItemStack stack, ServerLevel level) {
-		CompoundTag tag = stack.getOrCreateTag();
-		long id = tag.getLong(ID_NBT_KEY);
+		if (!(stack.getComponents() instanceof PatchedDataComponentMap components))
+			return Long.MAX_VALUE;
 
-		if (tag.contains(ID_NBT_KEY, Tag.TAG_ANY_NUMERIC))
-			return id;
+		Long id = components.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
 
-		id = AnimatableIdCache.getFreeId(level);
-
-		tag.putLong(ID_NBT_KEY, id);
+		if (id == null)
+			components.set(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), id = AnimatableIdCache.getFreeId(level));
 
 		return id;
 	}
