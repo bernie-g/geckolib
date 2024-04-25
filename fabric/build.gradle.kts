@@ -107,7 +107,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
 
     val mainFile = upload(388172, tasks.remapJar)
     mainFile.releaseType = "release"
-    mainFile.addModLoader("Forge")
+    mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
