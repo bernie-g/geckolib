@@ -10,6 +10,7 @@ plugins {
 }
 
 version = libs.versions.geckolib.get()
+val modId: String by project
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
@@ -47,6 +48,9 @@ dependencies {
 
 loom {
 	accessWidenerPath = project(":common").file("src/main/resources/geckolib.accesswidener")
+
+    mixin.defaultRefmapName.set("${modId}.refmap.json")
+
     runs {
         named("client") {
             configName = "Fabric Client"
