@@ -1,5 +1,6 @@
 package software.bernie.geckolib;
 
+import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceLocation;
@@ -15,7 +16,7 @@ public final class GeckoLibConstants {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final String MODID = "geckolib";
 
-    public static final Supplier<DataComponentType<Long>> STACK_ANIMATABLE_ID_COMPONENT = GeckoLibServices.PLATFORM.registerDataComponent("stack_animatable_id", builder -> builder.networkSynchronized(ByteBufCodecs.VAR_LONG));
+    public static final Supplier<DataComponentType<Long>> STACK_ANIMATABLE_ID_COMPONENT = GeckoLibServices.PLATFORM.registerDataComponent("stack_animatable_id", builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
 
     public static void init() {}
 
