@@ -24,6 +24,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("misc.idle");
 	public static final RawAnimation LIVING = RawAnimation.begin().thenLoop("misc.living");
 	public static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("misc.spawn");
+	public static final RawAnimation DIE = RawAnimation.begin().thenPlay("misc.die");
 	public static final RawAnimation INTERACT = RawAnimation.begin().thenPlay("misc.interact");
 	public static final RawAnimation DEPLOY = RawAnimation.begin().thenPlay("misc.deploy");
 	public static final RawAnimation REST = RawAnimation.begin().thenPlay("misc.rest");
@@ -80,6 +81,15 @@ public final class DefaultAnimations {
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericLivingController(T animatable) {
 		return new AnimationController<>(animatable, "Living", 10, state -> state.setAndContinue(LIVING));
+	}
+
+	/**
+	 * Generic {@link DefaultAnimations#DIE die} controller
+	 * <p>
+	 * Plays the death animation when dying
+	 */
+	public static <T extends LivingEntity & GeoAnimatable> AnimationController<T> genericDeathController(T animatable) {
+		return new AnimationController<>(animatable, "Death", 0, state -> state.getAnimatable().isDeadOrDying() ? state.setAndContinue(DIE) : PlayState.STOP);
 	}
 
 	/**
