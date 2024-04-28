@@ -6,7 +6,7 @@ import software.bernie.geckolib.loading.json.raw.MinecraftGeometry;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.raw.ModelProperties;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * Container class for a {@link Bone} structure, used at startup during deserialization
