@@ -18,14 +18,17 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 		final MinecraftGeometry geometry = model.minecraftGeometry()[0];
 		final Bone[] bones = geometry.bones();
 		final Map<String, BoneStructure> lookup = new Object2ObjectOpenHashMap<>();
-
+		for (Bone bone : bones) {
+			final BoneStructure boneStructure = new BoneStructure(bone);
+			lookup.put(bone.name(), boneStructure);
+			if (bone.parent() == null)
+				topLevelBones.put(bone.name(), boneStructure);
+		}
 		for (Bone bone : bones) {
 			final String parentName = bone.parent();
 			final String boneName = bone.name();
-			final BoneStructure boneStructure = lookup.computeIfAbsent(boneName, key -> new BoneStructure(bone));
-			if (parentName == null) {
-				topLevelBones.put(boneName, boneStructure);
-			} else {
+			final BoneStructure boneStructure = lookup.get(boneName);
+			if (parentName != null) {
 				lookup.get(parentName).children().put(boneName, boneStructure);
 			}
 		}
