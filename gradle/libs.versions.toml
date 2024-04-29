@@ -1,16 +1,16 @@
 [versions]
 # GeckoLib
-    geckolib = "4.5"
+    geckolib = "4.5.1"
 
 # General Dependencies
-    minecraft-range = "[1.20.4,)"
-    minecraft = "1.20.5"
+    minecraft-range = "[1.20.5,)"
+    minecraft = "1.20.6"
     parchment-minecraft = "1.20.4"
     parchment = "2024.04.14"
 
 # Fabric Settings
     fabric = "0.15.10"
-    fabric-api = "0.97.6+1.20.5"
+    fabric-api = "0.97.8+1.20.6"
 
 # Forge Settings
     forge-fml-range = "[49,)"
@@ -20,8 +20,8 @@
 
 # Neoforge Settings
     neoforge-loader-range = "[2,)"
-    neoforge-range = "[20.5.0-beta,)"
-    neoforge = "20.5.0-beta"
+    neoforge-range = "[20.6.0-beta,)"
+    neoforge = "20.6.1-beta"
 
 # Dependencies
     mixin = "0.8.5"
