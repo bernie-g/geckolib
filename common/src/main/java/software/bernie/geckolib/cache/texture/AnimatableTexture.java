@@ -129,7 +129,7 @@ public class AnimatableTexture extends SimpleTexture {
 			animMeta.forEachFrame((frame, frameTime) -> frames.add(new Frame(frame, frameTime)));
 
 			if (frames.isEmpty()) {
-				for(int frame = 0; frame < frameCount; ++frame) {
+				for (int frame = 0; frame < frameCount; ++frame) {
 					frames.add(new Frame(frame, animMeta.getDefaultFrameTime()));
 				}
 			}
@@ -231,8 +231,8 @@ public class AnimatableTexture extends SimpleTexture {
 				int nextFrameIndex = this.frames[(this.currentFrame + 1) % this.frames.length].index;
 
 				if (frame.index != nextFrameIndex) {
-					for(int y = 0; y < this.interpolatedFrame.getHeight(); ++y) {
-						for(int x = 0; x < this.interpolatedFrame.getWidth(); ++x) {
+					for (int y = 0; y < this.interpolatedFrame.getHeight(); ++y) {
+						for (int x = 0; x < this.interpolatedFrame.getWidth(); ++x) {
 							int prevFramePixel = getPixel(frame.index, x, y);
 							int nextFramePixel = getPixel(nextFrameIndex, x, y);
 							int blendedRed = interpolate(frameProgress, prevFramePixel >> 16 & 255, nextFramePixel >> 16 & 255);

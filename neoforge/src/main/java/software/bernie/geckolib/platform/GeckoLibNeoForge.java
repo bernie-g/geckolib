@@ -18,7 +18,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
      * @return Whether the current runtime is an in-dev (non-production) environment, for running debug-only tasks
      */
     @Override
-    public boolean isDevelopmentEnvironment(){
+    public boolean isDevelopmentEnvironment() {
         return !FMLEnvironment.production;
     }
 
@@ -26,7 +26,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
      * @return The root game directory (./run)
      */
     @Override
-    public Path getGameDir(){
+    public Path getGameDir() {
         return FMLPaths.GAMEDIR.get();
     }
 
@@ -34,7 +34,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
      * @return Whether the current runtime is on the client side regardless of logical context
      */
     @Override
-    public boolean isPhysicalClient(){
+    public boolean isPhysicalClient() {
         return FMLEnvironment.dist.isClient();
     }
 

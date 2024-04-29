@@ -42,7 +42,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	/**
 	 * Get the renderer responsible for the current render operation
 	 */
-	public GeoRenderer<T> getRenderer(){
+	public GeoRenderer<T> getRenderer() {
 		return this.renderer;
 	}
 

@@ -26,7 +26,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
      */
     @NotNull
     @Override
-    public <T extends LivingEntity & GeoAnimatable> HumanoidModel<?> getArmorModelForItem(T animatable, ItemStack stack, EquipmentSlot slot, HumanoidModel<LivingEntity> defaultModel){
+    public <T extends LivingEntity & GeoAnimatable> HumanoidModel<?> getArmorModelForItem(T animatable, ItemStack stack, EquipmentSlot slot, HumanoidModel<LivingEntity> defaultModel) {
         Item item = stack.getItem();
         HumanoidModel<?> model = IClientItemExtensions.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
 
@@ -43,8 +43,8 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
      */
     @Nullable
     @Override
-    public GeoModel<?> getGeoModelForItem(ItemStack item){
-        if(IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
+    public GeoModel<?> getGeoModelForItem(ItemStack item) {
+        if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 
         if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?> geoRenderer)
@@ -60,7 +60,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
      */
     @Nullable
     @Override
-    public GeoModel<?> getGeoModelForArmor(ItemStack armour){
+    public GeoModel<?> getGeoModelForArmor(ItemStack armour) {
         if (IClientItemExtensions.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
