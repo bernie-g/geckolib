@@ -214,9 +214,24 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * <p>
 	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
 	 *
+	 * @param animationState The AnimationState data for the current render frame
+	 * @param animTime The internal tick counter kept by the {@link AnimatableManager manager} for this animatable
+	 */
+	public void applyMolangQueries(AnimationState<T> animationState, double animTime) {
+		applyMolangQueries(animationState.getAnimatable(), animTime);
+	}
+
+	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * <p>
+	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
+	 * <p>
+	 * Deprecated, use {@link #applyMolangQueries(AnimationState, double)}
+	 *
 	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
 	 * @param animTime The internal tick counter kept by the {@link AnimatableManager manager} for this animatable
 	 */
+	@Deprecated(forRemoval = true)
 	public void applyMolangQueries(T animatable, double animTime) {
 		Minecraft mc = Minecraft.getInstance();
 

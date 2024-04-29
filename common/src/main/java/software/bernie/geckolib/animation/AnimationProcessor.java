@@ -266,7 +266,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * Apply transformations and settings prior to acting on any animation-related functionality
 	 */
 	public void preAnimationSetup(AnimationState<T> animationState, double animTime) {
-		this.model.applyMolangQueries(animationState.getAnimatable(), animTime);
+		this.model.applyMolangQueries(animationState, animTime);
 	}
 
 	/**
