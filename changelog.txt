@@ -1,2 +1,4 @@
-v4.5
-- 1.20.5 :)
+v4.5.1
+- Added deprecating overload for GeoModel#applyMolangQueries to pass the entire AnimationState
+- Clean up a section of model loading slightly
+- Formatting fixes
