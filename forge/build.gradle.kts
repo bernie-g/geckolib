@@ -105,6 +105,8 @@ dependencies {
         jarJar.ranged(this, libs.versions.mixinextras.range.get())
     }
 
+    implementation(libs.jopt.simple)
+
     // Only enable for testing as needed
     // Disable before publishing
     //implementation(fg.deobf(libs.examplemod.forge.get()))

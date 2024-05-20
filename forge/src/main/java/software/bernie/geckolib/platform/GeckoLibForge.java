@@ -1,10 +1,14 @@
 package software.bernie.geckolib.platform;
 
+import net.minecraft.core.component.DataComponentType;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.service.GeckoLibPlatform;
 
 import java.nio.file.Path;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 /**
  * Forge service for general loader-specific functions
@@ -32,5 +36,15 @@ public class GeckoLibForge implements GeckoLibPlatform {
     @Override
     public boolean isPhysicalClient() {
         return FMLEnvironment.dist.isClient();
+    }
+
+    /**
+     * Register a {@link DataComponentType}
+     * <p>
+     * This is mostly just used for storing the animatable ID on ItemStacks
+     */
+    @Override
+    public <T> Supplier<DataComponentType<T>> registerDataComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builder) {
+        return GeckoLib.DATA_COMPONENTS_REGISTER.register(id, () -> builder.apply(new DataComponentType.Builder<>()).build());
     }
 }

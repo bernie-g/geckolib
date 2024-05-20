@@ -2,13 +2,17 @@ package software.bernie.geckolib.network;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraftforge.network.Channel;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.SimpleChannel;
+import net.minecraftforge.network.payload.PayloadProtocol;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.service.GeckoLibNetworking;
@@ -18,10 +22,13 @@ import software.bernie.geckolib.util.ClientUtil;
  * Forge service implementation for GeckoLib's networking functionalities
  */
 public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
-    private static final SimpleChannel CHANNEL = ChannelBuilder.named(GeckoLibConstants.id("main")).simpleChannel();
+    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(new ResourceLocation(GeckoLibConstants.MODID, "main")).optional().networkProtocolVersion(1).payloadChannel().play();
+    public static Channel<CustomPacketPayload> CHANNEL;
 
     public static void init() {
         GeckoLibNetworking.init();
+
+        CHANNEL = NETWORK_CHANNEL_BUILDER.bidirectional().build();
     }
 
     /**
@@ -30,11 +37,19 @@ public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
      * <b><u>FOR GECKOLIB USE ONLY</u></b>
      */
     @Override
-    public <P extends MultiloaderPacket> void registerPacketInternal(ResourceLocation id, boolean isClientBound, Class<P> messageType, FriendlyByteBuf.Reader<P> decoder) {
-        CHANNEL.messageBuilder(messageType).encoder(MultiloaderPacket::write).decoder(decoder).consumerMainThread((packet, context) -> {
-            packet.receiveMessage(context.getSender() != null ? context.getSender() : ClientUtil.getClientPlayer(), context::enqueueWork);
-            context.setPacketHandled(true);
-        }).add();
+    public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec, boolean isClientBound) {
+        if (isClientBound) {
+            NETWORK_CHANNEL_BUILDER.clientbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
+                packet.receiveMessage(context.getSender() != null ? context.getSender() : ClientUtil.getClientPlayer(), context::enqueueWork);
+                context.setPacketHandled(true);
+            });
+        }
+        else {
+            NETWORK_CHANNEL_BUILDER.serverbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
+                packet.receiveMessage(context.getSender() != null ? context.getSender() : ClientUtil.getClientPlayer(), context::enqueueWork);
+                context.setPacketHandled(true);
+            });
+        }
     }
 
     /**

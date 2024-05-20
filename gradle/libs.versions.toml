@@ -1,30 +1,31 @@
 [versions]
 # GeckoLib
-    geckolib = "4.5.1"
+    geckolib = "4.5.2"
 
 # General Dependencies
-    minecraft-range = "[1.20.5,)"
+    minecraft-range = "[1.20.6,)"
     minecraft = "1.20.6"
-    parchment-minecraft = "1.20.4"
-    parchment = "2024.04.14"
+    parchment-minecraft = "1.20.6"
+    parchment = "2024.05.01"
 
 # Fabric Settings
-    fabric = "0.15.10"
-    fabric-api = "0.97.8+1.20.6"
+    fabric = "0.15.11"
+    fabric-api = "0.98.0+1.20.6"
 
 # Forge Settings
-    forge-fml-range = "[49,)"
-    forge-range = "[49,)"
-    forge = "49.0.48"
-    forge-mc = "1.20.4-49.0.48"
+    forge-fml-range = "[50,)"
+    forge-range = "[50,)"
+    forge = "50.0.22"
+    forge-mc = "1.20.6-50.0.22"
+    jopt-simple = "5.0.4"
 
 # Neoforge Settings
     neoforge-loader-range = "[2,)"
-    neoforge-range = "[20.6.0-beta,)"
-    neoforge = "20.6.5-beta"
+    neoforge-range = "[20.6.53-beta,)"
+    neoforge = "20.6.72-beta"
 
 # Dependencies
-    mixin = "0.8.5"
+    mixin = "0.8.6"
     mixinextras = "0.3.5"
     mixinextras-range = "[0.3.5,)"
     examplemod = "1.0.0"
@@ -36,7 +37,7 @@
     plugin-forge-gradle = "[6.0,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.+"
+    plugin-neoforge-gradle = "7.0.122"
     plugin-loom = "1.6-SNAPSHOT"
     plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
 
@@ -58,6 +59,9 @@
     examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-1.20.6", version.ref = "examplemod" }
     examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-1.20.6", version.ref = "examplemod" }
     examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-1.20.6", version.ref = "examplemod" }
+
+# Other
+    jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version.ref = "jopt-simple" } # Forge's temporary hacky solution
 
 [plugins]
 # Publishing
