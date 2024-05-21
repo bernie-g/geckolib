@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -280,7 +281,7 @@ public class MathParser {
                 if (ch == '-' && buffer.isEmpty()) {
                     String lastSymbol;
 
-                    if (symbols.isEmpty() || isOperativeSymbol(lastSymbol = symbols.get(symbols.size() - 1).left().orElse(null)) || ",".equals(lastSymbol)) {
+                    if (symbols.isEmpty() || isOperativeSymbol(lastSymbol = symbols.getLast().left().orElse("")) || ",".equals(lastSymbol)) {
                         buffer.append(ch);
 
                         continue;
@@ -560,6 +561,7 @@ public class MathParser {
     /**
      * @return Whether the given String should be considered an operator or operator-like symbol
      */
+    @Deprecated(forRemoval = true)
     public static boolean isOperativeSymbol(Object symbol) {
         return symbol instanceof String st && isOperativeSymbol(st);
     }
@@ -567,7 +569,7 @@ public class MathParser {
     /**
      * @return Whether the given String should be considered an operator or operator-like symbol
      */
-    public static boolean isOperativeSymbol(String symbol) {
+    public static boolean isOperativeSymbol(@NotNull String symbol) {
         return Operator.isOperator(symbol) || OPERATIVE_SYMBOLS.matcher(symbol).matches();
     }
 
