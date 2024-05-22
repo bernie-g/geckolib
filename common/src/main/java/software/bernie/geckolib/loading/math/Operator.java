@@ -16,7 +16,6 @@ import java.util.function.BiFunction;
 public record Operator(String symbol, int precedence, Operation operation) implements Comparable<Operator> {
     private static final Map<String, Operator> OPERATORS = new HashMap<>(14);
 
-    public static final Operator ASSIGN_VARIABLE = register("=", Integer.MIN_VALUE, (a, b) -> 0);
     public static final Operator ADD = register("+", 1, (a, b) -> a + b);
     public static final Operator SUB = register("-", 1, (a, b) -> a - b);
     public static final Operator MUL = register("*", 2, (a, b) -> a * b);
@@ -31,6 +30,7 @@ public record Operator(String symbol, int precedence, Operation operation) imple
     public static final Operator GTE = register(">=", 5, (a, b) -> a >= b ? 1 : 0);
     public static final Operator EQUAL = register("==", 5, (a, b) -> Math.abs(a - b) < 0.00001 ? 1 : 0);
     public static final Operator NOT_EQUAL = register("!=", 5, (a, b) -> Math.abs(a - b) >= 0.00001 ? 1 : 0);
+    public static final Operator ASSIGN_VARIABLE = register("=", Integer.MAX_VALUE, (a, b) -> 0);
 
     /**
      * Instantiate and register a new mathematical operator.
