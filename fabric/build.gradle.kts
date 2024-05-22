@@ -29,6 +29,17 @@ repositories {
             includeGroupAndSubgroups("org.parchmentmc")
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Geckolib Examples"
+                url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+            }
+        }
+        filter {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
 }
 
 dependencies {
@@ -43,7 +54,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //modImplementation(libs.examplemod.fabric)
+    //modLocalRuntime(libs.examplemod.fabric)
 }
 
 loom {

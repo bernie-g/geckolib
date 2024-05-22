@@ -89,6 +89,20 @@ minecraft {
     }
 }
 
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Geckolib Examples"
+                url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+            }
+        }
+        filter {
+            includeGroup("software.bernie.geckolib")
+        }
+    }
+}
+
 dependencies {
     minecraft(libs.forge)
     compileOnly(project(":common"))
