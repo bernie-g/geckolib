@@ -52,9 +52,8 @@ dependencies {
     modImplementation(libs.fabric.api)
     compileOnly(project(":common"))
 
-    // Only enable for testing as needed
-    // Disable before publishing
-    //modLocalRuntime(libs.examplemod.fabric)
+    // ExampleMod
+    modLocalRuntime(libs.examplemod.fabric)
 }
 
 loom {
