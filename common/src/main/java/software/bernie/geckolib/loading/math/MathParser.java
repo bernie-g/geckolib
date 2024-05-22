@@ -5,7 +5,6 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
-import net.minecraft.util.Mth;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -434,46 +433,34 @@ public class MathParser {
     @Nullable
     protected static MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
-        int firstOperatorIndex = -1;
-        int secondOperatorIndex = -1;
+        int operatorIndex = -1;
+        Operator lastOperator = null;
 
         for (int i = 0; i < symbolCount; i++) {
-            final Either<String, List<MathValue>> symbol = symbols.get(i);
+            Operator operator = symbols.get(i).left()
+                    .filter(MathParser::isOperativeSymbol)
+                    .map(MathParser::getOperatorFor).orElse(null);
 
-            if (symbol.left().filter(MathParser::isOperativeSymbol).isPresent()) {
-                if (firstOperatorIndex == -1) {
-                    firstOperatorIndex = i;
-                }
-                else {
-                    secondOperatorIndex = i;
+            if (operator == null)
+                continue;
 
-                    break;
-                }
+            if (operator == Operator.ASSIGN_VARIABLE) {
+                if (!(parseSymbols(symbols.subList(0, i)) instanceof Variable variable))
+                    throw new CompoundException("Attempted to assign a value to a non-variable");
+
+                return new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount)));
+            }
+
+            if (lastOperator == null || !operator.takesPrecedenceOver(lastOperator)) {
+                operatorIndex = i;
+                lastOperator = operator;
+            }
+            else {
+                break;
             }
         }
 
-        if (firstOperatorIndex == -1)
-            return null;
-
-        final Operator firstOperator = getOperatorFor(symbols.get(firstOperatorIndex).left().get());
-        final MathValue left = parseSymbols(symbols.subList(0, firstOperatorIndex));
-        final boolean isVariable = firstOperator == Operator.ASSIGN_VARIABLE && left instanceof Variable;
-
-        if (secondOperatorIndex == -1) {
-            MathValue right = parseSymbols(symbols.subList(firstOperatorIndex + 1, Mth.clamp(firstOperatorIndex + 3, 0, symbolCount)));
-
-            return isVariable ? new VariableAssignment((Variable)left, right) : new Calculation(firstOperator, left, right);
-        }
-
-        final Operator secondOperator = getOperatorFor(symbols.get(secondOperatorIndex).left().get());
-
-        if (secondOperator.takesPrecedenceOver(firstOperator)) {
-            MathValue right = parseSymbols(symbols.subList(firstOperatorIndex + 1, symbolCount));
-
-            return isVariable ? new VariableAssignment((Variable)left, right) : new Calculation(firstOperator, left, right);
-        }
-
-        return new Calculation(secondOperator, new Calculation(firstOperator, left, parseSymbols(symbols.subList(firstOperatorIndex + 1, secondOperatorIndex))), parseSymbols(symbols.subList(secondOperatorIndex + 1, symbolCount)));
+        return lastOperator == null ? null : new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount)));
     }
 
     /**
