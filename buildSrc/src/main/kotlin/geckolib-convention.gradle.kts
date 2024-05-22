@@ -16,6 +16,13 @@ java {
     withJavadocJar()
 }
 
+idea {
+    module {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
+}
+
 repositories {
     mavenLocal {
         name = "GeckoLib Examples MavenLocal"
