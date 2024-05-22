@@ -426,9 +426,9 @@ public class MathParser {
     }
 
     /**
-     * Compile a {@link Calculation} value instance from the given symbols list, if applicable
+     * Compile a MathValue value instance from the given symbols list, if applicable
      *
-     * @return A compiled Calculation value, or null if not applicable
+     * @return A compiled {@link Calculation} or {@link VariableAssignment} value, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     @Nullable
