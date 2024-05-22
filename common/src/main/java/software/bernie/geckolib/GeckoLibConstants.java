@@ -13,7 +13,7 @@ import java.util.function.Supplier;
  * Holder class for several properties and/or handlers inherent to GeckoLib
  */
 public final class GeckoLibConstants {
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LogManager.getLogger("GeckoLib");
     public static final String MODID = "geckolib";
 
     public static final Supplier<DataComponentType<Long>> STACK_ANIMATABLE_ID_COMPONENT = GeckoLibServices.PLATFORM.registerDataComponent("stack_animatable_id", builder -> builder.persistent(Codec.LONG).networkSynchronized(ByteBufCodecs.VAR_LONG));
