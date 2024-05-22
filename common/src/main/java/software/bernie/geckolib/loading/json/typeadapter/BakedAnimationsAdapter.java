@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.math.NumberUtils;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.EasingType;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
@@ -36,8 +37,15 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			try {
 				animations.put(entry.getKey(), bakeAnimation(entry.getKey(), entry.getValue().getAsJsonObject(), context));
 			}
-			catch (CompoundException ex) {
-				throw ex.withMessage("Unable to parse animation: " + entry.getKey());
+			catch (Exception ex) {
+				if (ex instanceof CompoundException compoundEx) {
+					GeckoLibConstants.LOGGER.error(compoundEx.withMessage("Unable to parse animation: " + entry.getKey()).getLocalizedMessage());
+				}
+				else {
+					GeckoLibConstants.LOGGER.error("Unable to parse animation: " + entry.getKey());
+				}
+
+				ex.printStackTrace();
 			}
 		}
 
