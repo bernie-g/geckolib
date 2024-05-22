@@ -23,6 +23,9 @@ public record Negative(MathValue value) implements MathValue {
 
     @Override
     public String toString() {
-        return "-" + this.value.toString();
+        if (this.value instanceof Constant)
+            return "-" + this.value;
+
+        return "-" + "(" + this.value + ")";
     }
 }
