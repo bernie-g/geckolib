@@ -1,2 +1,5 @@
 v4.5.2
-- Fix crash with some animation file parsing
+- Fix crash with some animation file parsing #582
+- Fixed incorrect precedence handling in the math parser for molang expressions #579
+- Failing to parse a loaded animation will no longer crash the game
+- GeckoLib's logging entries will use the correct name instead of "GeckolibLogger"
