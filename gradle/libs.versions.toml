@@ -10,19 +10,19 @@
 
 # Fabric Settings
     fabric = "0.15.11"
-    fabric-api = "0.98.0+1.20.6"
+    fabric-api = "0.99.0+1.20.6"
 
 # Forge Settings
     forge-fml-range = "[50,)"
     forge-range = "[50,)"
-    forge = "50.0.22"
-    forge-mc = "1.20.6-50.0.22"
+    forge = "50.0.31"
+    forge-mc = "1.20.6-50.0.31"
     jopt-simple = "5.0.4"
 
 # Neoforge Settings
     neoforge-loader-range = "[2,)"
-    neoforge-range = "[20.6.53-beta,)"
-    neoforge = "20.6.72-beta"
+    neoforge-range = "[20.6.78-beta,)"
+    neoforge = "20.6.78-beta"
 
 # Dependencies
     mixin = "0.8.6"
@@ -32,7 +32,7 @@
 
 # Plugins
     plugin-minotaur = "2.8.7"
-    plugin-curseforge-gradle = "1.1.18"
+    plugin-curseforge-gradle = "1.1.24"
     plugin-idea-ext = "1.1.8"
     plugin-forge-gradle = "[6.0,6.2)"
     plugin-mixin = "0.7.+"
