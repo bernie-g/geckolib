@@ -7,6 +7,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -161,7 +162,8 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * <p>
 	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
-	public final void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
+	@ApiStatus.Internal
+	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 		Double currentTick = animationState.getData(DataTickets.TICK);
