@@ -193,21 +193,14 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	 */
 	protected void renderInGui(ItemDisplayContext transformType, PoseStack poseStack,
 							   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		if (this.useEntityGuiLighting) {
-			Lighting.setupForEntityInInventory();
-		}
-		else {
-			Lighting.setupForFlatItems();
-		}
+		setupLightingForGuiRender();
 
-		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ?
-				bufferSource2 : Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
+		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ? bufferSource2 : Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), defaultBufferSource, Minecraft.getInstance().getFrameTime());
 		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
 		poseStack.pushPose();
-		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer,
-				0, Minecraft.getInstance().getFrameTime(), packedLight);
+		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer, 0, Minecraft.getInstance().getFrameTime(), packedLight);
 		defaultBufferSource.endBatch();
 		RenderSystem.enableDepthTest();
 		Lighting.setupFor3DItems();
@@ -259,6 +252,20 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,
 				alpha);
+	}
+
+	/**
+	 * Set the current lighting normals for the current render pass
+	 * <p>
+	 * Only used for {@link ItemDisplayContext#GUI} rendering
+	 */
+	public void setupLightingForGuiRender() {
+		if (this.useEntityGuiLighting) {
+			Lighting.setupForEntityInInventory();
+		}
+		else {
+			Lighting.setupForFlatItems();
+		}
 	}
 
 	/**
