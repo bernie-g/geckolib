@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
@@ -168,6 +169,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	@Override
+	@ApiStatus.Internal
 	public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
 			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		this.animatable = (T)stack.getItem();
@@ -184,6 +186,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer,
 					0, Minecraft.getInstance().getFrameTime(), packedLight);
 		}
+
+		this.animatable = null;
 	}
 
 	/**

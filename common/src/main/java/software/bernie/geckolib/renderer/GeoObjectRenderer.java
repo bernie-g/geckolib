@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
@@ -116,6 +117,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 * @param buffer The VertexConsumer to use for rendering, or null to use the default for the RenderType
 	 * @param packedLight The light level at the given render position for rendering
 	 */
+	@ApiStatus.Internal
 	public void render(PoseStack poseStack, T animatable, @Nullable MultiBufferSource bufferSource, @Nullable RenderType renderType,
 					   @Nullable VertexConsumer buffer, int packedLight) {
 		this.animatable = animatable;
@@ -125,6 +127,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 			bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
 
 		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, 0, mc.getFrameTime(), packedLight);
+
+		this.animatable = null;
 	}
 
 	/**

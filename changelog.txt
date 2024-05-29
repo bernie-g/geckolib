@@ -3,3 +3,4 @@ v4.5.3
 - Move the lighting setup in GeoItemRenderer to before the buffer VertexConsumer setup so that custom handlers can apply proper context #584
 - Move lighting setup in GeoItemRenderer to its own method #setupLightingForGuiRender for easier manipulation
 - Remove `final` from GeoModel#handleAnimations in exchange for an APIStatus.Internal annotation to allow for overriding. Users should continue to avoid overriding this unless explicitly necessary
+- Remove unused cached animatable instance in renderers after rendering to avoid memory leaks

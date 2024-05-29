@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -126,11 +127,14 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	}
 
 	@Override
+	@ApiStatus.Internal
 	public void render(T animatable, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource,
 			int packedLight, int packedOverlay) {
 		this.animatable = animatable;
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, null, 0, partialTick, packedLight);
+
+		this.animatable = null;
 	}
 
 	/**

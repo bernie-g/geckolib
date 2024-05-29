@@ -16,6 +16,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
@@ -294,6 +295,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	@Override
+	@ApiStatus.Internal
 	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight,
 							   int packedOverlay, float red, float green, float blue, float alpha) {
 		Minecraft mc = Minecraft.getInstance();
@@ -308,6 +310,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, buffer,
 				0, partialTick, packedLight);
+
+		this.animatable = null;
 	}
 
 	/**
