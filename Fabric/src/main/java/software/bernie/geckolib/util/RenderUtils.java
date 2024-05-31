@@ -280,7 +280,7 @@ public final class RenderUtils {
 	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForItem(Item item) {
-		if(RenderProvider.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
+		if (RenderProvider.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
 			return geoRenderer.getGeoModel();
 
 		return null;

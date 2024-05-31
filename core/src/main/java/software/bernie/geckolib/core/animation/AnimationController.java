@@ -470,15 +470,15 @@ public class AnimationController<T extends GeoAnimatable> {
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
 					CoreGeoBone bone = bones.get(boneAnimation.boneName());
 
+					if (boneSnapshot == null)
+						continue;
+
 					if (bone == null) {
 						if (crashWhenCantFindBone)
 							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName());
 
 						continue;
 					}
-
-					if (boneSnapshot == null)
-						continue;
 
 					KeyframeStack<Keyframe<IValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
 					KeyframeStack<Keyframe<IValue>> positionKeyFrames = boneAnimation.positionKeyFrames();

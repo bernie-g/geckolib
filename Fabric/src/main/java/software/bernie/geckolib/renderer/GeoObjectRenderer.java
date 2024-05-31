@@ -151,9 +151,10 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
+			GeoModel<T> currentModel = getGeoModel();
 
-			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			currentModel.handleAnimations(animatable, instanceId, animationState);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());

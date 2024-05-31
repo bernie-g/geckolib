@@ -15,41 +15,38 @@ import java.util.Map;
  */
 public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProperties properties) {
 	public static GeometryTree fromModel(Model model) {
-		Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
-		MinecraftGeometry geometry = model.minecraftGeometry()[0];
-		List<Bone> bones = new ObjectArrayList<>(geometry.bones());
-		int index = bones.size() - 1;
+		final Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
+		final MinecraftGeometry geometry = model.minecraftGeometry()[0];
+		final Bone[] bones = geometry.bones();
+		final Map<String, BoneStructure> lookup = new Object2ObjectOpenHashMap<>(bones.length);
 
-		while (true) {
-			Bone bone = bones.get(index);
+		for (Bone bone : bones) {
+			final BoneStructure boneStructure = new BoneStructure(bone);
 
-			if (bone.parent() == null) {
-				topLevelBones.put(bone.name(), new BoneStructure(bone));
-				bones.remove(index);
-			}
-			else {
-				BoneStructure structure = findBoneStructureInTree(topLevelBones, bone.parent());
+			lookup.put(bone.name(), boneStructure);
 
-				if (structure != null) {
-					structure.children().put(bone.name(), new BoneStructure(bone));
-					bones.remove(index);
-				}
-			}
+			if (bone.parent() == null)
+				topLevelBones.put(bone.name(), boneStructure);
+		}
 
-			if (index == 0) {
-				index = bones.size() - 1;
+		for (Bone bone : bones) {
+			final String parentName = bone.parent();
 
-				if (index == -1)
-					break;
-			}
-			else {
-				index--;
+			if (parentName != null) {
+				final String boneName = bone.name();
+				final BoneStructure parentStructure = lookup.get(parentName);
+
+				if (parentStructure == null)
+					throw new IllegalArgumentException("Invalid model definition. Found bone with undefined parent (child -> parent): " + boneName + " -> " + parentName);
+
+				parentStructure.children().put(boneName, lookup.get(boneName));
 			}
 		}
 
 		return new GeometryTree(topLevelBones, geometry.modelProperties());
 	}
 
+	@Deprecated(forRemoval = true)
 	private static BoneStructure findBoneStructureInTree(Map<String, BoneStructure> bones, String boneName) {
 		for (BoneStructure entry : bones.values()) {
 			if (boneName.equals(entry.self().name()))

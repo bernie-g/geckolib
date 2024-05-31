@@ -28,14 +28,14 @@ public abstract class MixinHumanoidArmorLayer<T extends LivingEntity, A extends 
     private ItemStack gl_storedItemStack;
 
     @Inject(method = "renderArmorPiece", at = @At(value = "HEAD"))
-    public void armorModelHook(PoseStack poseStack, MultiBufferSource multiBufferSource, T livingEntity, EquipmentSlot equipmentSlot, int i, A humanoidModel, CallbackInfo ci){
+    public void armorModelHook(PoseStack poseStack, MultiBufferSource multiBufferSource, T livingEntity, EquipmentSlot equipmentSlot, int i, A humanoidModel, CallbackInfo ci) {
         this.gl_storedEntity = livingEntity;
         this.gl_storedSlot = equipmentSlot;
         this.gl_storedItemStack = livingEntity.getItemBySlot(equipmentSlot);
     }
 
     @ModifyArg(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/HumanoidModel;ZFFFLjava/lang/String;)V"), index = 4)
-    public A injectArmor(A humanoidModel){
+    public A injectArmor(A humanoidModel) {
         return (A)RenderProvider.of(this.gl_storedItemStack).getGenericArmorModel(this.gl_storedEntity, this.gl_storedItemStack, this.gl_storedSlot, (HumanoidModel<LivingEntity>) humanoidModel);
     }
 }

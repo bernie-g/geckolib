@@ -49,7 +49,7 @@ public final class GeckoArmorItem extends ArmorItem implements GeoItem {
 
 			@Override
 			public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<LivingEntity> original) {
-				if(this.renderer == null)
+				if (this.renderer == null)
 					this.renderer = new GeckoArmorRenderer();
 
 				// This prepares our GeoArmorRenderer for the current render frame.

@@ -188,7 +188,7 @@ publishing {
             //We don't want users to have mclib as a dep when the jar that's published already contains the dependency.
             pom.withXml {
                 asNode().dependencies.dependency.each { dep ->
-                    if("mclib".equals(dep.artifactId.last().value().last())) {
+                    if ("mclib".equals(dep.artifactId.last().value().last())) {
                         assert dep.parent().remove(dep)
                     }
                 }

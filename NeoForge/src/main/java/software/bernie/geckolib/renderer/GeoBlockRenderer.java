@@ -139,13 +139,14 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
+			GeoModel<T> currentModel = getGeoModel();
 
 			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
 			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
-			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
+			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			poseStack.translate(0.5, 0, 0.5);
 			rotateBlock(getFacing(animatable), poseStack);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
