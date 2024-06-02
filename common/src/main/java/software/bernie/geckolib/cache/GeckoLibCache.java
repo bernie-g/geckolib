@@ -51,13 +51,8 @@ public final class GeckoLibCache {
 	public static void registerReloadListener() {
 		Minecraft mc = Minecraft.getInstance();
 
-		if (mc == null)
-			return;
-
-		if (!(mc.getResourceManager() instanceof ReloadableResourceManager resourceManager))
-			throw new RuntimeException("GeckoLib was initialized too early!");
-
-		resourceManager.registerReloadListener(GeckoLibCache::reload);
+		if (mc != null && mc.getResourceManager() instanceof ReloadableResourceManager resourceManager)
+			resourceManager.registerReloadListener(GeckoLibCache::reload);
 	}
 
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
