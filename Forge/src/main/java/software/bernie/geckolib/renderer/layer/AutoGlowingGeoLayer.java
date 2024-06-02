@@ -22,8 +22,9 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	}
 
 	/**
-	 * Get the render type to use for this glowlayer renderer.<br>
-	 * Uses {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances.
+	 * Get the render type to use for this glowlayer renderer
+	 * <p>
+	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances
 	 */
 	protected RenderType getRenderType(T animatable) {
 		return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
