@@ -35,8 +35,10 @@ runs {
         systemProperty("forge.logging.console.level", "debug")
         systemProperty("forge.enabledGameTestNamespaces", modId)
 
-        modSource(project.sourceSets.getByName("main"))
-        modSource(project(":common").sourceSets.getByName("main"))
+        modSources {
+            add(project.sourceSets.getByName("main"))
+            local(project(":common").sourceSets.getByName("main"))
+        }
     }
 
     create("client") {
@@ -69,7 +71,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //implementation(libs.examplemod.neoforge)
+    //localRuntime(libs.examplemod.neoforge)
 }
 
 tasks.withType<JavaCompile>().matching{!it.name.startsWith("neo")}.configureEach {

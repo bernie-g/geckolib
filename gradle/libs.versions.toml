@@ -21,8 +21,8 @@
 
 # Neoforge Settings
     neoforge-loader-range = "[2,)"
-    neoforge-range = "[20.6.78-beta,)"
-    neoforge = "20.6.113-beta"
+    neoforge-range = "[20.6.115,)"
+    neoforge = "20.6.115"
 
 # Dependencies
     mixin = "0.8.6"
