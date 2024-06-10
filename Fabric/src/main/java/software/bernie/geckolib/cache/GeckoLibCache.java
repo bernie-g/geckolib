@@ -88,13 +88,18 @@ public final class GeckoLibCache {
 
 	private static CompletableFuture<Void> loadModels(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedGeoModel> elementConsumer) {
 		return loadResources(backgroundExecutor, resourceManager, "geo", resource -> {
-			Model model = FileLoader.loadModelFile(resource, resourceManager);
+			try {
+				Model model = FileLoader.loadModelFile(resource, resourceManager);
 
-			if (model.formatVersion() != FormatVersion.V_1_12_0)
-				throw new GeckoLibException(resource, "Unsupported geometry json version. Supported versions: 1.12.0");
+				if (model.formatVersion() != FormatVersion.V_1_12_0)
+					throw new IllegalArgumentException("Unsupported geometry json version. Supported versions: 1.12.0");
 
-			return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
-			}, elementConsumer);
+				return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
+			}
+			catch (Exception ex) {
+				throw new GeckoLibException(resource, "Error loading model file", ex);
+			}
+		}, elementConsumer);
 	}
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
