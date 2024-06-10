@@ -100,23 +100,8 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			List<Pair<String, JsonElement>> list = new ObjectArrayList<>();
 
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
-					String timestamp = entry.getKey();
-					double time = NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
-
-					if (entryObj.has("pre")) {
-						JsonElement postElement = entryObj.get("pre");
-						JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : GsonHelper.getAsJsonArray(postElement.getAsJsonObject(), "vector");
-
-						list.add(Pair.of(timestamp, array));
-					}
-
-					if (entryObj.has("post")) {
-						JsonElement postElement = entryObj.get("post");
-						JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : GsonHelper.getAsJsonArray(postElement.getAsJsonObject(), "vector");
-
-						list.add(Pair.of(String.valueOf(time + 0.0000001), array));
-					}
+				if (entry.getValue() instanceof JsonObject entryObj) {
+					list.add(getTripletObjBedrock(entry.getKey(), entryObj));
 
 					continue;
 				}
@@ -128,6 +113,39 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		}
 
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
+	}
+
+	private static Pair<String, JsonElement> getTripletObjBedrock(String timestamp, JsonObject keyframe) {
+		if (keyframe.has("vector")) {
+			JsonElement values = keyframe.get("vector");
+
+			if (values instanceof JsonPrimitive primitive) {
+				JsonArray array = new JsonArray(3);
+
+				array.add(primitive);
+				array.add(primitive);
+				array.add(primitive);
+
+				return Pair.of(timestamp, array);
+			}
+
+			if (values instanceof JsonArray array)
+				return Pair.of(timestamp, array);
+		}
+		else if (keyframe.has("pre")) {
+			JsonElement postElement = keyframe.get("pre");
+			JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : GsonHelper.getAsJsonArray(postElement.getAsJsonObject(), "vector");
+
+			return Pair.of(timestamp, array);
+		}
+		else if (keyframe.has("post")) {
+			JsonElement postElement = keyframe.get("post");
+			JsonArray array = postElement.isJsonArray() ? postElement.getAsJsonArray() : GsonHelper.getAsJsonArray(postElement.getAsJsonObject(), "vector");
+
+			return Pair.of(String.valueOf(NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0 + 0.0000001), array);
+		}
+
+		throw new JsonParseException("Invalid keyframe data - expected array, found " + keyframe);
 	}
 
 	private KeyframeStack<Keyframe<IValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {
