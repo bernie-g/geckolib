@@ -1,9 +1,6 @@
-v4.4.5
+v4.4.6
 
-- Remove final and add internal annotation to GeoModel#handleAnimations
-- Extract gui lighting to its own method for easier overriding in GeoItemRenderer, move to before VertexConsumer init #584
-- Fix some inconsistent code formatting
-- Improved performance and logging on model loading (roughly related to #573)
-- Add default animation for dying (#569)
-- Use GeoRenderer#getModel in place of direct field access for subclass overriding support
-- Fix crash caused by swapping the baked geomodel and animations in the same frame
+- Add some additional error handling for model file parsing
+- Add some additional error handling for animation file parsing
+- Add a sanity check for invalid models that somehow parent themselves
+- Add additional handling for edge-case bedrock animation files
