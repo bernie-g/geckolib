@@ -86,8 +86,14 @@ public final class GeckoLibCache {
 	}
 
 	private static CompletableFuture<Void> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedAnimations> elementConsumer) {
-		return loadResources(backgroundExecutor, resourceManager, "animations", resource ->
-				FileLoader.loadAnimationsFile(resource, resourceManager), elementConsumer);
+		return loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
+			try {
+				return FileLoader.loadAnimationsFile(resource, resourceManager);
+			}
+			catch (Exception ex) {
+				throw new GeckoLibException(resource, "Error loading animation file", ex);
+			}
+		}, elementConsumer);
 	}
 
 	private static CompletableFuture<Void> loadModels(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedGeoModel> elementConsumer) {
