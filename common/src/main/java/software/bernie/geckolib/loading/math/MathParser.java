@@ -26,6 +26,7 @@ import software.bernie.geckolib.loading.math.value.*;
 import software.bernie.geckolib.util.CompoundException;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
@@ -46,7 +47,7 @@ public class MathParser {
     private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
     private static final Pattern OPERATIVE_SYMBOLS = Pattern.compile("[?:]");
     private static final String MOLANG_RETURN = "return ";
-    private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new HashMap<>(18), map -> {
+    private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
         map.put("math.abs", AbsFunction::new);
         map.put("math.acos", ACosFunction::new);
         map.put("math.asin", ASinFunction::new);
@@ -77,7 +78,7 @@ public class MathParser {
         map.put("math.to_deg", ToDegFunction::new);
         map.put("math.to_rad", ToRadFunction::new);
     });
-    private static final Map<String, Variable> VARIABLES = Util.make(new HashMap<>(), map -> {
+    private static final Map<String, Variable> VARIABLES = Util.make(new ConcurrentHashMap<>(), map -> {
         map.put("PI", new Variable("PI", Math.PI));
         map.put("E", new Variable("E", Math.E));
         map.put(MolangQueries.ANIM_TIME, new Variable(MolangQueries.ANIM_TIME, 0));
