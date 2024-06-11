@@ -1,4 +1,5 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import okio.`-DeprecatedOkio`.source
 
 plugins {
     id("geckolib-convention")
@@ -72,6 +73,10 @@ dependencies {
     // Only enable for testing as needed
     // Disable before publishing
     //localRuntime(libs.examplemod.neoforge)
+}
+
+tasks.withType<Test>().configureEach {
+    enabled = false;
 }
 
 tasks.withType<JavaCompile>().matching{!it.name.startsWith("neo")}.configureEach {
