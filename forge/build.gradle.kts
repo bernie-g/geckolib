@@ -105,7 +105,7 @@ dependencies {
 
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
-    //testCompileOnly(libs.mixinextras.common)
+    testCompileOnly(libs.mixinextras.common)
 
     runtimeOnly(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge) {
