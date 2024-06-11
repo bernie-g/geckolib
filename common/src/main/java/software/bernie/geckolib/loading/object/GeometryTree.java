@@ -32,6 +32,10 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 
 			if (parentName != null) {
 				final String boneName = bone.name();
+
+				if (parentName.equals(boneName))
+					throw new IllegalArgumentException("Invalid model definition. Bone has defined itself as its own parent: " + boneName);
+
 				final BoneStructure parentStructure = lookup.get(parentName);
 
 				if (parentStructure == null)
