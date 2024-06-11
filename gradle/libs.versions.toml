@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "4.5.3"
+    geckolib = "4.5.4"
 
 # General Dependencies
     minecraft-range = "[1.20.6,)"
