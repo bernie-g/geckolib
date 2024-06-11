@@ -1,6 +1,5 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.minecraftforge.gradle.userdev.tasks.JarJar
-import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 
 plugins {
     id("geckolib-convention")
@@ -29,16 +28,10 @@ minecraft {
     mappings("parchment", "${mappingsMcVersion}-${parchmentVersion}-${mcVersion}")
     accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
 
+    reobf = false
     copyIdeResources = true
 
     runs {
-        sourceSets.forEach {
-            val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
-
-            it.output.setResourcesDir(dir)
-            it.java.destinationDirectory = dir
-        }
-
         create("client") {
             workingDirectory(project.file("runs/" + name))
             ideaModule("${rootProject.name}.${project.name}.main")
@@ -112,7 +105,7 @@ dependencies {
 
     compileOnly(libs.mixinextras.common)
     annotationProcessor(libs.mixinextras.common)
-    testCompileOnly(libs.mixinextras.common)
+    //testCompileOnly(libs.mixinextras.common)
 
     runtimeOnly(libs.mixinextras.forge)
     jarJar(libs.mixinextras.forge) {
@@ -141,6 +134,10 @@ tasks.withType<JavaCompile>().configureEach {
 
 tasks.named<Jar>("sourcesJar").configure {
     from(project(":common").sourceSets.getByName("main").allSource)
+}
+
+tasks.named<DefaultTask>("assemble").configure {
+    dependsOn("jarJar")
 }
 
 tasks.withType<Javadoc>().configureEach {
@@ -198,5 +195,12 @@ publishing {
 tasks.named<DefaultTask>("publish").configure {
     finalizedBy("modrinth")
     finalizedBy("publishToCurseForge")
+}
+
+sourceSets.forEach {
+    val dir = layout.buildDirectory.dir("sourcesSets/${it}.name")
+
+    it.output.setResourcesDir(dir)
+    it.java.destinationDirectory = dir
 }
 

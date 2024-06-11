@@ -70,7 +70,8 @@ tasks.withType<Jar>().configureEach {
                 "Implementation-Title"    to modDisplayName,
                 "Implementation-Version"  to modVersion,
                 "Implementation-Vendor"   to modAuthors,
-                "Built-On-Minecraft"      to mcVersion
+                "Built-On-Minecraft"      to mcVersion,
+                "MixinConfigs"            to "$modId.mixins.json"
         ))
     }
 }
@@ -100,7 +101,7 @@ tasks.withType<ProcessResources>().configureEach {
             "neoforge_loader_range" to neoforgeLoaderVersionRange
     )
 
-    filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
+    filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml", "*.mixins.json")) {
         expand(expandProps)
     }
 
