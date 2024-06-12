@@ -1,5 +1,4 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import okio.`-DeprecatedOkio`.source
 
 plugins {
     id("geckolib-convention")
