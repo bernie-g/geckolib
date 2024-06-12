@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.ClientUtil;
  * Forge service implementation for GeckoLib's networking functionalities
  */
 public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
-    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(new ResourceLocation(GeckoLibConstants.MODID, "main")).optional().networkProtocolVersion(1).payloadChannel().play();
+    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(new ResourceLocation(GeckoLibConstants.MODID, "main")).networkProtocolVersion(1).optional().payloadChannel().play();
     public static Channel<CustomPacketPayload> CHANNEL;
 
     public static void init() {
