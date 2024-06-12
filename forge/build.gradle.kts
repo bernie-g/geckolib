@@ -162,7 +162,7 @@ modrinth {
 		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 		gameVersions.set(listOf(mcVersion))
 		loaders.set(listOf("forge"))
-        debugMode = true
+
         //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -176,7 +176,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 17")
     mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-    debugMode = true
+
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
