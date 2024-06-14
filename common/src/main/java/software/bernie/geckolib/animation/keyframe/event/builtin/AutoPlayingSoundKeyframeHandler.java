@@ -28,7 +28,7 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
     @Override
     public void handle(SoundKeyframeEvent<A> event) {
         String[] segments = event.getKeyframeData().getSound().split("\\|");
-        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(new ResourceLocation(segments[0]));
+        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.read(segments[0]).getOrThrow());
 
         if (sound != null) {
             Entity entity = event.getAnimatable() instanceof Entity e ? e : null;

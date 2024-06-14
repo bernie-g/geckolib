@@ -11,6 +11,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.texture.AutoGlowingTexture;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.util.Color;
 
 /**
  * {@link GeoRenderLayer} for rendering the auto-generated glowlayer functionality implemented by Geckolib using the <i>_glowing</i> appendixed texture files
@@ -42,6 +43,6 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 
 		getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
 				bufferSource.getBuffer(renderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
-				1, 1, 1, 1);
+				Color.WHITE.argbInt());
 	}
 }

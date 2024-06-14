@@ -53,7 +53,7 @@ dependencies {
     compileOnly(project(":common"))
 
     // ExampleMod
-    modLocalRuntime(libs.examplemod.fabric)
+    //modLocalRuntime(libs.examplemod.fabric)
 }
 
 loom {

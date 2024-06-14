@@ -73,7 +73,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:geo/entity/animal/goat.geo.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedModelPath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "geo/" + subtype() + "/" + basePath.getPath() + ".geo.json");
+		return basePath.withPath("geo/" + subtype() + "/" + basePath.getPath() + ".geo.json");
 	}
 
 	/**
@@ -83,7 +83,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.animation.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
+		return basePath.withPath("animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * @return The formatted texture resource path based on recommended defaults. E.G. <pre>{@code "mymod:textures/entity/animal/goat.png"}</pre>
 	 */
 	public ResourceLocation buildFormattedTexturePath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "textures/" + subtype() + "/" + basePath.getPath() + ".png");
+		return basePath.withPath("textures/" + subtype() + "/" + basePath.getPath() + ".png");
 	}
 
 	/**

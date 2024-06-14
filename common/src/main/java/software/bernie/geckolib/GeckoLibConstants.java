@@ -24,7 +24,7 @@ public final class GeckoLibConstants {
      * Helper method to create a ResourceLocation predefined with GeckoLib's {@link #MODID}
      */
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(GeckoLibConstants.MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(GeckoLibConstants.MODID, path);
     }
 
     /**

@@ -33,6 +33,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 /**
@@ -66,7 +67,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	@NotNull
 	protected EquipmentSlot getEquipmentSlotForBone(GeoBone bone, ItemStack stack, T animatable) {
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			if (slot.getType() == EquipmentSlot.Type.ARMOR) {
+			if (slot.getType() == EquipmentSlot.Type.HUMANOID_ARMOR) {
 				if (stack == animatable.getItemBySlot(slot))
 					return slot;
 			}
@@ -147,7 +148,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 					prepModelPartForRender(poseStack, bone, modelPart);
 					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
 					geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, model);
-					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 1, 1, 1, 1);
+					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
 				}
 				else if (armorStack.getItem() instanceof ArmorItem) {
 					prepModelPartForRender(poseStack, bone, modelPart);
@@ -169,10 +170,10 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		Holder<ArmorMaterial> material = ((ArmorItem)armorStack.getItem()).getMaterial();
 
 		for (ArmorMaterial.Layer layer : material.value().layers()) {
-			int color = armorStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(armorStack, -6265536) : 0xFFFFFF;
+			int color = armorStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(armorStack, -6265536) : -1;
 			VertexConsumer buffer = getVanillaArmorBuffer(bufferSource, animatable, armorStack, slot, bone, layer, packedLight, packedOverlay, false);
 
-			modelPart.render(poseStack, buffer, packedLight, packedOverlay, (color >> 16 & 255) / 255f, (color >> 8 & 255) / 255f, (color & 255) / 255f, 1);
+			modelPart.render(poseStack, buffer, packedLight, packedOverlay, color);
 		}
 
 		ArmorTrim trim = armorStack.get(DataComponents.TRIM);
@@ -184,7 +185,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		}
 
 		if (armorStack.hasFoil())
-			modelPart.render(poseStack, getVanillaArmorBuffer(bufferSource, animatable, armorStack, slot, bone, null, packedLight, packedOverlay, true), packedLight, packedOverlay, 1, 1, 1, 1);
+			modelPart.render(poseStack, getVanillaArmorBuffer(bufferSource, animatable, armorStack, slot, bone, null, packedLight, packedOverlay, true), packedLight, packedOverlay, Color.WHITE.argbInt());
 	}
 
 	/**

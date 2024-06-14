@@ -100,6 +100,6 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 		String path = location.getPath();
 		int i = path.lastIndexOf('.');
 
-		return new ResourceLocation(location.getNamespace(), path.substring(0, i) + suffix + path.substring(i));
+		return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), path.substring(0, i) + suffix + path.substring(i));
 	}
 }

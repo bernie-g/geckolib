@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,25 +32,22 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
     }
 
     @Override
-    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 
         if (!isReRender)
-            checkBoneDyeCache(animatable, model, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+            checkBoneDyeCache(animatable, model, partialTick, packedLight, packedOverlay, colour);
     }
 
     @Override
-    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
         if (this.dyeableBones.contains(bone)) {
             final Color color = getColorForBone(bone);
 
-            red *= color.getRedFloat();
-            green *= color.getGreenFloat();
-            blue *= color.getBlueFloat();
-            alpha *= color.getAlphaFloat();
+            colour = FastColor.ARGB32.multiply(colour, color.argbInt());
         }
 
-        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
     }
 
     /**
@@ -74,7 +72,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
      * <p>
      * The less this forces re-computation, the better for performance
      */
-    protected void checkBoneDyeCache(T animatable, BakedGeoModel model, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+    protected void checkBoneDyeCache(T animatable, BakedGeoModel model, float partialTick, int packedLight, int packedOverlay, int colour) {
         if (model != this.lastModel) {
             this.dyeableBones.clear();
             this.lastModel = model;

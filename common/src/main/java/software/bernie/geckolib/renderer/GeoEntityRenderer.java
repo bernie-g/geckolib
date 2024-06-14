@@ -166,8 +166,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
-						  float alpha) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
@@ -191,7 +190,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
-							   int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+							   int packedLight, int packedOverlay, int colour) {
 		poseStack.pushPose();
 
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
@@ -252,7 +251,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			animationState.setData(DataTickets.ENTITY, animatable);
 			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		poseStack.translate(0, 0.01f, 0);
@@ -261,7 +260,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, red, green, blue, alpha);
+					packedLight, packedOverlay, colour);
 
 		poseStack.popPose();
 	}
@@ -283,7 +282,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	@Override
-	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int colour) {
 		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
 
 		if (animatable instanceof Mob mob) {
@@ -299,7 +298,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								  int packedOverlay, float red, float green, float blue, float alpha) {
+								  int packedOverlay, int colour) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
@@ -317,12 +316,12 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
-		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
 		if (!isReRender)
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
-		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 
 		poseStack.popPose();
 	}
@@ -505,7 +504,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	/**
 	 * Static rendering code for rendering a leash segment
 	 * <p>
-	 * It's a like-for-like from {@link net.minecraft.client.renderer.entity.MobRenderer#addVertexPair} that had to be duplicated here for flexible usage
+	 * It's a like-for-like from {@link EntityRenderer#addVertexPair} that had to be duplicated here for flexible usage
 	 */
 	private static void renderLeashPiece(VertexConsumer buffer, Matrix4f positionMatrix, float xDif, float yDif,
 										 float zDif, int entityBlockLight, int holderBlockLight, int entitySkyLight,
@@ -522,8 +521,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		float y = yDif > 0.0f ? yDif * piecePosPercent * piecePosPercent : yDif - yDif * (1.0f - piecePosPercent) * (1.0f - piecePosPercent);
 		float z = zDif * piecePosPercent;
 
-		buffer.vertex(positionMatrix, x - xOffset, y + yOffset, z + zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
-		buffer.vertex(positionMatrix, x + xOffset, y + width - yOffset, z - zOffset).color(red, green, blue, 1).uv2(packedLight).endVertex();
+		buffer.addVertex(positionMatrix, x - xOffset, y + yOffset, z + zOffset).setColor(red, green, blue, 1).setLight(packedLight);
+		buffer.addVertex(positionMatrix, x + xOffset, y + width - yOffset, z - zOffset).setColor(red, green, blue, 1).setLight(packedLight);
 	}
 
 	/**

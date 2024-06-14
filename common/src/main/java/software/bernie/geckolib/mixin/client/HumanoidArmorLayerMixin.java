@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.util.Color;
 
 /**
  * Injection into the render point for armour on HumanoidModels (Players, Zombies, etc) to defer to GeckoLib item-armor rendering as applicable
@@ -32,7 +33,7 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
                 geoArmorRenderer.prepForRender(entity, stack, equipmentSlot, baseModel);
 
             baseModel.copyPropertiesTo((A)geckolibModel);
-            geckolibModel.renderToBuffer(poseStack, null, packedLight, OverlayTexture.NO_OVERLAY, 1, 1, 1, 1);
+            geckolibModel.renderToBuffer(poseStack, null, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.argbInt());
             ci.cancel();
         }
     }

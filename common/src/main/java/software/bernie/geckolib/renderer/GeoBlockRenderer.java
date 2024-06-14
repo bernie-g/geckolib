@@ -116,8 +116,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
-						  float alpha) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
 		this.blockRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (!isReRender)
@@ -145,7 +144,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-							   int packedOverlay, float red, float green, float blue, float alpha) {
+							   int packedOverlay, int colour) {
 		if (!isReRender) {
 			AnimationState<T> animationState = new AnimationState<T>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
@@ -155,14 +154,14 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			animationState.setData(DataTickets.BLOCK_ENTITY, animatable);
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			rotateBlock(getFacing(animatable), poseStack);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, red, green, blue, alpha);
+					packedLight, packedOverlay, colour);
 	}
 
 	/**
@@ -170,7 +169,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								  int packedOverlay, float red, float green, float blue, float alpha) {
+								  int packedOverlay, int colour) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.blockRenderTranslations);
@@ -182,8 +181,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,
-				alpha);
+		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay,
+				colour);
 	}
 
 	/**

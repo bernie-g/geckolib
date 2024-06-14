@@ -80,16 +80,6 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Get the baked model data for this model based on the provided string location
-	 *
-	 * @param location The resource path of the baked model (usually the animatable's id string)
-	 * @return The BakedGeoModel
-	 */
-	public final BakedGeoModel getBakedGeoModel(String location) {
-		return getBakedModel(new ResourceLocation(location));
-	}
-
-	/**
 	 * Get the baked geo model object used for rendering from the given resource path
 	 */
 	public BakedGeoModel getBakedModel(ResourceLocation location) {
@@ -163,7 +153,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
 	@ApiStatus.Internal
-	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
+	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 		Double currentTick = animationState.getData(DataTickets.TICK);
@@ -172,9 +162,9 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 			currentTick = animatable instanceof Entity entity ? (double)entity.tickCount : RenderUtil.getCurrentTick();
 
 		if (animatableManager.getFirstTickTime() == -1)
-			animatableManager.startedAt(currentTick + mc.getFrameTime());
+			animatableManager.startedAt(currentTick + partialTick);
 
-		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + partialTick : currentTick - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)

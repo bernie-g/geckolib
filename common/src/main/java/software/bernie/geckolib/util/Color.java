@@ -57,6 +57,20 @@ public record Color(int argbInt) {
 	}
 
 	/**
+	 * Creates a new {@code Color} instance from ARGB values
+	 */
+	public static Color ofARGB(float a, float r, float g, float b) {
+		return ofARGB((int)(r * 255f + 0.5), (int)(g * 255f + 0.5f), (int)(b * 255f + 0.5f), (int)(a * 255f + 0.5f));
+	}
+
+	/**
+	 * Creates a new {@code Color} instance from ARGB values
+	 */
+	public static Color ofARGB(int a, int r, int g, int b) {
+		return new Color(((a & 0xFF) << 24) | ((r & 0xFF) << 16) | ((g & 0xFF) << 8) | (b & 0xFF));
+	}
+
+	/**
 	 * Creates a new {@code Color} instance from HSB values with 100% opacity
 	 */
 	public static Color ofHSB(float hue, float saturation, float brightness) {
