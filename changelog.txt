@@ -1,5 +1,3 @@
-v4.5.4
+v4.5.4.1
 
-- Add additional handling for weirdly formatted bedrock animation jsons
-- Fixed ConcurrentModificationException sometimes happening during startup
-- Add a sanity check for invalid models that somehow parent themselves
+- Fix networking bug on Forge
