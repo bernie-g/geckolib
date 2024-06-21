@@ -14,8 +14,6 @@ val modId: String by project
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
-val fabricVersion = libs.versions.fabric.asProvider().get()
-val fapiVersion = libs.versions.fabric.api.get()
 
 base {
     archivesName = "geckolib-fabric-${mcVersion}"
