@@ -13,6 +13,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.ContextAwareAnimatableManager;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
@@ -28,6 +29,15 @@ import java.util.Optional;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
  */
 public interface GeoItem extends SingletonGeoAnimatable {
+	/**
+	 * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions
+	 * <p>
+	 * This should be called inside the constructor of your object.
+	 */
+	static void registerSyncedAnimatable(GeoAnimatable animatable) {
+		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
+	}
+
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT},
 	 * or {@link Long#MAX_VALUE} if one hasn't been assigned
