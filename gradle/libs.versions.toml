@@ -11,6 +11,7 @@
 # Fabric Settings
     fabric = "0.15.11"
     fabric-api = "0.100.1+1.21"
+    fabric-api-range = "0.100.0+1.21"
 
 # Forge Settings
     forge-fml-range = "[51,)"
