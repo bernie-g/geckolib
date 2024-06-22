@@ -80,7 +80,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
