@@ -549,14 +549,6 @@ public class MathParser {
     /**
      * @return Whether the given String should be considered an operator or operator-like symbol
      */
-    @Deprecated(forRemoval = true)
-    public static boolean isOperativeSymbol(Object symbol) {
-        return symbol instanceof String st && isOperativeSymbol(st);
-    }
-
-    /**
-     * @return Whether the given String should be considered an operator or operator-like symbol
-     */
     public static boolean isOperativeSymbol(@NotNull String symbol) {
         return Operator.isOperator(symbol) || OPERATIVE_SYMBOLS.matcher(symbol).matches();
     }
