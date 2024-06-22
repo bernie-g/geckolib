@@ -1,3 +1,8 @@
-v4.5.4.1
+v4.5.6
 
-- Fix networking bug on Forge
+- Fix regression of animation file parsing from 4.5.5
+- Add a helper overload for SingleteonGeoAnimatable#registerSyncedAnimatable in GeoItem
+- Fix obscure crash caused by change in buffer handling in 1.21 #592
+- Removed old nullable annotations on dynamic renderers
+- Added native compatibility with the scale attribute on entities and updated GeoEntityRenderer#applyRotations
+- Remove deprecated unused method in MathParser
