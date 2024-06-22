@@ -1,6 +1,5 @@
-v4.4.6
+v4.4.7
 
-- Add some additional error handling for model file parsing
-- Add some additional error handling for animation file parsing
-- Add a sanity check for invalid models that somehow parent themselves
-- Add additional handling for edge-case bedrock animation files
+- Fix regression of animation file parsing from 4.4.6
+- Add a helper overload for SingleteonGeoAnimatable#registerSyncedAnimatable in GeoItem
+- Swap javax annotations in DynamicGeoEntityRenderer to jetbrains
