@@ -17,6 +17,7 @@ accessible field net/minecraft/client/model/AgeableListModel babyBodyScale F
 accessible field net/minecraft/client/model/AgeableListModel bodyYOffset F
 
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
+accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
 
 accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
 accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
