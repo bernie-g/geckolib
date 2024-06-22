@@ -1,5 +1,6 @@
 package software.bernie.geckolib.renderer.specialty;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -114,10 +115,13 @@ public abstract class DynamicGeoBlockRenderer<T extends BlockEntity & GeoAnimata
 			super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
 		if (renderTypeOverride != null)
-			buffer = bufferSource.getBuffer(getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick));
+			buffer = bufferSource.getBuffer(renderType);
 
 		if (!isReRender)
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
+		if (buffer instanceof BufferBuilder builder && !builder.building)
+			buffer = bufferSource.getBuffer(renderType);
 
 		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.renderer;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -351,8 +352,12 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
-		if (!isReRender)
+		if (!isReRender) {
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
+			if (buffer instanceof BufferBuilder builder && !builder.building)
+				buffer = bufferSource.getBuffer(renderType);
+		}
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 

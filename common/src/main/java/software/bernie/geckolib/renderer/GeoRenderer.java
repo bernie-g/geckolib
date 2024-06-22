@@ -1,5 +1,6 @@
 package software.bernie.geckolib.renderer;
 
+import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -248,8 +249,12 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		RenderUtil.prepMatrixForBone(poseStack, bone);
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
-		if (!isReRender)
+		if (!isReRender) {
 			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
+			if (buffer instanceof BufferBuilder builder && !builder.building)
+				buffer = bufferSource.getBuffer(renderType);
+		}
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 		poseStack.popPose();
