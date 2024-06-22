@@ -33,6 +33,14 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	String ID_NBT_KEY = "GeckoLibID";
 
 	/**
+	 * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions.<br>
+	 * This should be called inside the constructor of your object.
+	 */
+	static void registerSyncedAnimatable(GeoAnimatable animatable) {
+		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
+	}
+
+	/**
 	 * Safety wrapper to distance the client-side code from common code.<br>
 	 * This should be cached in your {@link net.minecraft.world.item.Item Item} class
 	 */

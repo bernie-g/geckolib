@@ -28,6 +28,14 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	static final String ID_NBT_KEY = "GeckoLibID";
 
 	/**
+	 * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions.<br>
+	 * This should be called inside the constructor of your object.
+	 */
+	static void registerSyncedAnimatable(GeoAnimatable animatable) {
+		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
+	}
+
+	/**
 	 * Gets the unique identifying number from this ItemStack's {@link net.minecraft.nbt.Tag NBT},
 	 * or {@link Long#MAX_VALUE} if one hasn't been assigned
 	 */

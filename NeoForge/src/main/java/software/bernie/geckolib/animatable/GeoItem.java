@@ -13,6 +13,7 @@ import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.ContextAwareAnimatableManager;
+import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.util.RenderUtils;
 
 import java.util.EnumMap;
@@ -26,6 +27,14 @@ import java.util.Map;
  */
 public interface GeoItem extends SingletonGeoAnimatable {
 	static final String ID_NBT_KEY = "GeckoLibID";
+
+	/**
+	 * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions.<br>
+	 * This should be called inside the constructor of your object.
+	 */
+	static void registerSyncedAnimatable(GeoAnimatable animatable) {
+		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
+	}
 
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link net.minecraft.nbt.Tag NBT},
