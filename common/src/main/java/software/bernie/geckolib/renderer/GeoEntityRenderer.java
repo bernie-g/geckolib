@@ -328,6 +328,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 	/**
 	 * Applies rotation transformations to the renderer prior to render time to account for various entity states
+	 * @deprecated Use {@link #applyRotations(Entity, PoseStack, float, float, float, float)}
 	 */
 	@Deprecated(forRemoval = true)
 	protected void applyRotations(T animatable, PoseStack poseStack, float ageInTicks, float rotationYaw,
