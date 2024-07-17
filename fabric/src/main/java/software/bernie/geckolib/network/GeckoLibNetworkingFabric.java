@@ -27,8 +27,9 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
     @Override
     public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
         if (isClientBound) {
+            PayloadTypeRegistry.playS2C().register(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec);
             if (GeckoLibServices.PLATFORM.isPhysicalClient())
-                GeckoLibClient.registerPacket(payloadType, codec);
+                GeckoLibClient.registerPacket(payloadType);
         }
         else {
             PayloadTypeRegistry.playC2S().register(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec);
