@@ -321,7 +321,7 @@ public class MathParser {
                     else if (groupChar == ')') {
                         groupState--;
                     }
-                    else if (groupChar == ',') {
+                    else if (groupChar == ',' && groupState == 1) {
                         subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
                         buffer.setLength(0);
 
