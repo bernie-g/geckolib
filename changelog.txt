@@ -1,5 +1,4 @@
-v4.4.7
+v4.4.8
 
-- Fix regression of animation file parsing from 4.4.6
-- Add a helper overload for SingleteonGeoAnimatable#registerSyncedAnimatable in GeoItem
-- Swap javax annotations in DynamicGeoEntityRenderer to jetbrains
+- Weaken access modifier for `DefaultedEntityGeoModel.turnsHead` for subclass usage
+-
