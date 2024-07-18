@@ -42,8 +42,7 @@ public class GeckoLibClient implements ClientModInitializer {
     }
 
     @ApiStatus.Internal
-    public static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> packetType, StreamCodec<B, P> codec) {
-        PayloadTypeRegistry.playS2C().register(packetType, (StreamCodec<FriendlyByteBuf, P>)codec);
+    public static <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacket(CustomPacketPayload.Type<P> packetType) {
         ClientPlayNetworking.registerGlobalReceiver(packetType, (packet, context) -> packet.receiveMessage(context.player(), context.client()::execute));
     }
 }
