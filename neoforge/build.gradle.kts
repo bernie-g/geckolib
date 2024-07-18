@@ -37,7 +37,6 @@ runs {
 
         modSources {
             add(project.sourceSets.getByName("main"))
-            //local(project(":common").sourceSets.getByName("main"))
         }
     }
 
