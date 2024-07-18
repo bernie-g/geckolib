@@ -14,7 +14,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
  * Additionally it can automatically handle head-turning if the entity has a "head" bone
  */
 public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
-	private final boolean turnsHead;
+	protected final boolean turnsHead;
 
 	/**
 	 * Create a new instance of this model class.<br>
