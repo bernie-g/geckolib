@@ -1,8 +1,6 @@
-v4.5.6
+v4.5.7
 
-- Fix regression of animation file parsing from 4.5.5
-- Add a helper overload for SingleteonGeoAnimatable#registerSyncedAnimatable in GeoItem
-- Fix obscure crash caused by change in buffer handling in 1.21 #592
-- Removed old nullable annotations on dynamic renderers
-- Added native compatibility with the scale attribute on entities and updated GeoEntityRenderer#applyRotations
-- Remove deprecated unused method in MathParser
+- Additional fixes for Molang parsing after rewrite. Closes #598
+- Fix packets not being registered on both sides in Fabric. Closes #597
+- Additional fixes to bufferbuilding error in rendering. Closes #592
+- Weaken access modifier for DefaultedEntityGeoModel.turnsHead for subclass usage
