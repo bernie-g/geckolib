@@ -247,13 +247,16 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 								   int packedOverlay, int colour) {
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
+
+		if (!isReRender) {
+			if (buffer instanceof BufferBuilder builder && !builder.building)
+				buffer = bufferSource.getBuffer(renderType);
+		}
+
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
 		if (!isReRender) {
 			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-
-			if (buffer instanceof BufferBuilder builder && !builder.building)
-				buffer = bufferSource.getBuffer(renderType);
 		}
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);

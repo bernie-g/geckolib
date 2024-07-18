@@ -317,13 +317,15 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
+		if (!isReRender) {
+			if (buffer instanceof BufferBuilder builder && !builder.building)
+				buffer = bufferSource.getBuffer(renderType);
+		}
+
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
 		if (!isReRender) {
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-
-			if (buffer instanceof BufferBuilder builder && !builder.building)
-				buffer = bufferSource.getBuffer(renderType);
 		}
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
