@@ -16,8 +16,8 @@
 # Forge Settings
     forge-fml-range = "[51,)"
     forge-range = "[51.0.0,)"
-    forge = "51.0.25"
-    forge-mc = "1.21-51.0.16"
+    forge = "51.0.31"
+    forge-mc = "1.21-51.0.31"
     jopt-simple = "5.0.4"
 
 # Neoforge Settings
