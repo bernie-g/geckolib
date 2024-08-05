@@ -6,7 +6,7 @@
     minecraft-range = "[1.21,)"
     minecraft = "1.21"
     parchment-minecraft = "1.21"
-    parchment = "2024.07.07"
+    parchment = "2024.07.28"
 
 # Fabric Settings
     fabric = "0.15.11"
@@ -22,8 +22,8 @@
 
 # Neoforge Settings
     neoforge-loader-range = "[4,)"
-    neoforge-range = "[21.0.2-beta,)"
-    neoforge = "21.0.106-beta"
+    neoforge-range = "[21.0.143,)"
+    neoforge = "21.0.160"
 
 # Dependencies
     mixin = "0.8.7"
@@ -38,7 +38,7 @@
     plugin-forge-gradle = "[6.0.24,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.0.151"
+    plugin-neoforge-gradle = "7.0.157"
     plugin-loom = "1.7-SNAPSHOT"
     plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
 
