@@ -6,11 +6,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.texture.AutoGlowingTexture;
 import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.Color;
 
 /**
@@ -39,7 +41,12 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 */
 	@Override
 	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		renderType = getRenderType(animatable);
+		if (animatable instanceof Entity entity && entity.isInvisible() && !entity.isInvisibleTo(ClientUtil.getClientPlayer())) {
+			renderType = RenderType.itemEntityTranslucentCull(getTextureResource(animatable));
+		}
+		else {
+			renderType = getRenderType(animatable);
+		}
 
 		getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
 				bufferSource.getBuffer(renderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
