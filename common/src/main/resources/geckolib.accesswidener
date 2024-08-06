@@ -6,6 +6,7 @@ accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$WriteMaskStateShard
+accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;

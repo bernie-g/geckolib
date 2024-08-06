@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
@@ -76,7 +75,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 
 		if (renderType != null) {
 			getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
-					bufferSource.getBuffer(renderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
+					bufferSource.getBuffer(renderType), partialTick, 15728640, packedOverlay,
 					getRenderer().getRenderColor(animatable, partialTick, packedLight).argbInt());
 		}
 	}
