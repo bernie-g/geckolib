@@ -25,6 +25,7 @@ import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -42,7 +43,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		RenderSystem.defaultBlendFunc();
 	});
 	private static final RenderStateShard.WriteMaskStateShard WRITE_MASK = new RenderStateShard.WriteMaskStateShard(true, true);
-	private static final Function<ResourceLocation, RenderType> RENDER_TYPE_FUNCTION = Util.memoize(texture -> {
+	private static final BiFunction<ResourceLocation, Boolean, RenderType> GLOWING_RENDER_TYPE = Util.memoize((texture, isGlowing) -> {
 		RenderStateShard.TextureStateShard textureState = new RenderStateShard.TextureStateShard(texture, false, false);
 
 		return RenderType.create("geo_glowing_layer", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
@@ -50,8 +51,13 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 						.setShaderState(SHADER_STATE)
 						.setTextureState(textureState)
 						.setTransparencyState(TRANSPARENCY_STATE)
-						.setWriteMaskState(WRITE_MASK).createCompositeState(false));
+						.setWriteMaskState(WRITE_MASK).createCompositeState(isGlowing));
 	});
+	/**
+	 * @deprecated Use {@link #GLOWING_RENDER_TYPE}
+	 */
+	@Deprecated(forRemoval = true)
+	private static final Function<ResourceLocation, RenderType> RENDER_TYPE_FUNCTION = Util.memoize(texture -> GLOWING_RENDER_TYPE.apply(texture, false));
 	private static final String APPENDIX = "_glowmask";
 	/**
 	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)
@@ -152,11 +158,20 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	}
 
 	/**
-	 * Return a cached instance of the RenderType for the given texture for GeoGlowingLayer rendering
+	 * Return a cached instance of the RenderType for the given texture for AutoGlowingGeoLayer rendering
 	 *
 	 * @param texture The texture of the resource to apply a glow layer to
 	 */
 	public static RenderType getRenderType(ResourceLocation texture) {
-		return RENDER_TYPE_FUNCTION.apply(getEmissiveResource(texture));
+		return GLOWING_RENDER_TYPE.apply(getEmissiveResource(texture), false);
+	}
+
+	/**
+	 * Return a cached instance of the RenderType for the given texture for AutoGlowingGeoLayer rendering, while the entity has an outline
+	 *
+	 * @param texture The texture of the resource to apply a glow layer to
+	 */
+	public static RenderType getOutlineRenderType(ResourceLocation texture) {
+		return GLOWING_RENDER_TYPE.apply(getEmissiveResource(texture), true);
 	}
 }

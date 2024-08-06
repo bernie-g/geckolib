@@ -2,6 +2,7 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -29,9 +30,40 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 * Get the render type to use for this glowlayer renderer
 	 * <p>
 	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances
+	 * @deprecated Use {@link #getRenderType(GeoAnimatable, MultiBufferSource)}
 	 */
+	@Deprecated(forRemoval = true)
 	protected RenderType getRenderType(T animatable) {
-		return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+		return getRenderType(animatable, null);
+	}
+
+	/**
+	 * Get the render type to use for this glowlayer renderer, or null if the layer should not render
+	 * <p>
+	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances.<br>
+	 * Automatically accounts for entity states like invisibility and glowing
+	 *
+	 * @param bufferSource Nullable until {@link #getRenderType(GeoAnimatable)} is removed for backward compatibility
+	 */
+	@Nullable
+	protected RenderType getRenderType(T animatable, @Nullable MultiBufferSource bufferSource) {
+		if (!(animatable instanceof Entity entity))
+			return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+
+		boolean invisible = entity.isInvisible();
+		ResourceLocation texture = AutoGlowingTexture.getEmissiveResource(getTextureResource(animatable));
+
+		if (invisible && !entity.isInvisibleTo(ClientUtil.getClientPlayer()))
+			return RenderType.itemEntityTranslucentCull(texture);
+
+		if (Minecraft.getInstance().shouldEntityAppearGlowing(entity)) {
+			if (invisible)
+				return RenderType.outline(texture);
+
+			return AutoGlowingTexture.getOutlineRenderType(getTextureResource(animatable));
+		}
+
+		return invisible ? null : AutoGlowingTexture.getRenderType(getTextureResource(animatable));
 	}
 
 	/**
@@ -41,15 +73,12 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 */
 	@Override
 	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if (animatable instanceof Entity entity && entity.isInvisible() && !entity.isInvisibleTo(ClientUtil.getClientPlayer())) {
-			renderType = RenderType.itemEntityTranslucentCull(getTextureResource(animatable));
-		}
-		else {
-			renderType = getRenderType(animatable);
-		}
+		renderType = getRenderType(animatable);
 
-		getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
-				bufferSource.getBuffer(renderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
-				Color.WHITE.argbInt());
+		if (renderType != null) {
+			getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
+					bufferSource.getBuffer(renderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
+					Color.WHITE.argbInt());
+		}
 	}
 }
