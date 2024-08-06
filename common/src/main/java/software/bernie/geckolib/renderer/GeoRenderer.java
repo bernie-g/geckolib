@@ -209,6 +209,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		}
 	}
 
+	// TODO append renderColor to layers
 	/**
 	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
 	 */
