@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -317,8 +316,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
-		if (!isReRender && buffer instanceof BufferBuilder builder && !builder.building)
-			buffer = bufferSource.getBuffer(renderType);
+		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 

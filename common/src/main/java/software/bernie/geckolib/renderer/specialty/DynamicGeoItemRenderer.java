@@ -115,8 +115,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 		if (!isReRender)
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
-		if (buffer instanceof BufferBuilder builder && !builder.building)
-			buffer = bufferSource.getBuffer(renderType);
+		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
 		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 

@@ -3,22 +3,25 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import software.bernie.geckolib.cache.object.*;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.cache.object.*;
+import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -248,8 +251,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
 
-		if (!isReRender && buffer instanceof BufferBuilder builder && !builder.building)
-			buffer = bufferSource.getBuffer(renderType);
+		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
 		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
 
@@ -363,4 +365,31 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * @see AnimatableTexture#setAndUpdate
 	 */
 	void updateAnimatedTextureFrame(T animatable);
+
+	/**
+	 * Bandaid-patch to fix the buffer change Mojang made in 1.21.
+	 *
+	 * This will be removed in a future breaking update, but will require an adjustment to the underlying GeckoLib API.
+	 */
+	@Deprecated(forRemoval = true)
+	@ApiStatus.Internal
+	default VertexConsumer checkAndRefreshBuffer(boolean isReRender, VertexConsumer buffer, MultiBufferSource bufferSource, RenderType renderType) {
+		if (isReRender)
+			return buffer;
+
+		return switch (buffer) {
+			case BufferBuilder builder when !builder.building -> bufferSource.getBuffer(renderType);
+			case OutlineBufferSource.EntityOutlineGenerator outlines when checkBuffer(outlines.delegate()) ->
+					new OutlineBufferSource.EntityOutlineGenerator(bufferSource.getBuffer(renderType), outlines.color());
+			case VertexMultiConsumer.Double pair when checkBuffer(pair.first) || checkBuffer(pair.second) ->
+				new VertexMultiConsumer.Double(checkBuffer(pair.first) ? bufferSource.getBuffer(renderType) : pair.first, checkBuffer(pair.second) ? bufferSource.getBuffer(renderType) : pair.second);
+			default -> buffer;
+		};
+	}
+
+	@Deprecated(forRemoval = true)
+	@ApiStatus.Internal
+	private boolean checkBuffer(VertexConsumer consumer) {
+		return consumer instanceof BufferBuilder builder && !builder.building;
+	}
 }
