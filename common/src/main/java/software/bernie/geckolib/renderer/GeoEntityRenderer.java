@@ -37,6 +37,7 @@ import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
+import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -133,6 +134,21 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		this.scaleHeight = scaleHeight;
 
 		return this;
+	}
+
+	/**
+	 * Gets a tint-applying color to render the given animatable with
+	 * <p>
+	 * Returns {@link Color#WHITE} by default, modified for invisibility in spectator
+	 */
+	@Override
+	public Color getRenderColor(T animatable, float partialTick, int packedLight) {
+		Color color = GeoRenderer.super.getRenderColor(animatable, partialTick, packedLight);
+
+		if (animatable.isInvisible() && !animatable.isInvisibleTo(ClientUtil.getClientPlayer()))
+			color = Color.ofARGB(Mth.ceil(color.getAlpha() * 38 / 255f), color.getRed(), color.getGreen(), color.getBlue());
+
+		return color;
 	}
 
 	/**
