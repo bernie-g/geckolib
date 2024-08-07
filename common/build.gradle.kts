@@ -20,6 +20,7 @@ minecraft {
 dependencies {
     compileOnly(libs.mixin)
     compileOnly(libs.mixinextras.common)
+    //compileOnly(libs.iris)
 
     // Only enable for testing as needed
     // Disable before publishing

@@ -37,6 +37,17 @@ repositories {
             includeModuleByRegex("software.bernie.geckolib", "geckolib-examples.*?")
         }
     }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Modrinth"
+                url = uri("https://api.modrinth.com/maven")
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 val libs = project.versionCatalogs.find("libs")
