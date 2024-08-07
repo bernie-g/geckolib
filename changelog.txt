@@ -1,6 +1,6 @@
-v4.5.7
+v4.5.8
 
-- Additional fixes for Molang parsing after rewrite. Closes #598
-- Fix packets not being registered on both sides in Fabric. Closes #597
-- Additional fixes to bufferbuilding error in rendering. Closes #592
-- Weaken access modifier for DefaultedEntityGeoModel.turnsHead for subclass usage
+- Add support for invisible, partially-invisible, and glowing entities for AutoGlowingGeoLayer
+- Add additional checks for invalid buffer states while rendering. This is still a temporary fix util I can rewrite the underlying API in the next breaking version
+- Account for translucent rendering when rendering invisible entities in spectator mode
+- Make AutoGlowingGeoLayer account for overlay colouring when rendering
