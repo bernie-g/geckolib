@@ -362,7 +362,7 @@ public class MathParser {
      */
     public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 2) {
-            Optional<String> prefix = symbols.getFirst().left().filter(left -> isQueryOrFunctionName(left) || left.equals("-"));
+            Optional<String> prefix = symbols.getFirst().left().filter(left -> left.equals("-") || left.equals("!") || isFunctionRegistered(left));
             Optional<List<MathValue>> group = symbols.get(1).right();
 
             if (prefix.isPresent() && group.isPresent())
