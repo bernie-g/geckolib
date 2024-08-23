@@ -439,7 +439,7 @@ public class MathParser {
 
         for (int i = 0; i < symbolCount; i++) {
             Operator operator = symbols.get(i).left()
-                    .filter(MathParser::isOperativeSymbol)
+                    .filter(Operator::isOperator)
                     .map(MathParser::getOperatorFor).orElse(null);
 
             if (operator == null)
