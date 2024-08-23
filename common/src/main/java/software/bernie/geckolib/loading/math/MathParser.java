@@ -591,7 +591,7 @@ public class MathParser {
      * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
      */
     protected static boolean isLikelyVariable(String string) {
-        return !isNumeric(string) && !isFunctionRegistered(string) && !isOperativeSymbol(string);
+        return !isNumeric(string) && !isFunctionRegistered(string) && !Operator.isOperator(string);
     }
 
     /**
