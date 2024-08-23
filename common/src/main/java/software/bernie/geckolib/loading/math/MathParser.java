@@ -362,7 +362,7 @@ public class MathParser {
      */
     public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 2) {
-            Optional<String> prefix = symbols.get(0).left().filter(left -> isQueryOrFunctionName(left) || left.equals("-"));
+            Optional<String> prefix = symbols.getFirst().left().filter(left -> isQueryOrFunctionName(left) || left.equals("-"));
             Optional<List<MathValue>> group = symbols.get(1).right();
 
             if (prefix.isPresent() && group.isPresent())
@@ -386,7 +386,7 @@ public class MathParser {
     @Nullable
     protected static MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 1)
-            return compileSingleValue(symbols.get(0));
+            return compileSingleValue(symbols.getFirst());
 
         Ternary ternary = compileTernary(symbols);
 
@@ -405,7 +405,7 @@ public class MathParser {
     @Nullable
     protected static MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
         if (symbol.right().isPresent())
-            return new Group(symbol.right().get().get(0));
+            return new Group(symbol.right().get().getFirst());
 
         return symbol.left().map(string -> {
             if (string.startsWith("!"))
@@ -526,14 +526,14 @@ public class MathParser {
     protected static MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
             if (name.length() == 1)
-                return new BooleanNegate(args.get(0));
+                return new BooleanNegate(args.getFirst());
 
             return new BooleanNegate(compileFunction(name.substring(1), args));
         }
 
         if (name.startsWith("-")) {
             if (name.length() == 1)
-                return new Negative(args.get(0));
+                return new Negative(args.getFirst());
 
             return new Negative(compileFunction(name.substring(1), args));
         }
