@@ -481,20 +481,25 @@ public class MathParser {
         Supplier<MathValue> ifTrue = null;
         int ternaryState = 0;
         int lastColon = -1;
+        int queryIndex = -1;
 
         for (int i = 0; i < symbolCount; i++) {
             final int i2 = i;
             final String string = symbols.get(i).left().orElse(null);
 
             if ("?".equals(string)) {
-                if (condition == null)
+                if (condition == null) {
                     condition = () -> parseSymbols(symbols.subList(0, i2));
+                    queryIndex = i2 + 1;
+                }
 
                 ternaryState++;
             }
             else if (":".equals(string)) {
-                if (ternaryState == 1 && ifTrue == null)
-                    ifTrue = () -> parseSymbols(symbols.subList(0, i2));
+                if (ternaryState == 1 && ifTrue == null && queryIndex > 0) {
+                    final int queryIndex2 = queryIndex;
+                    ifTrue = () -> parseSymbols(symbols.subList(queryIndex2, i2));
+                }
 
                 ternaryState--;
                 lastColon = i;
