@@ -414,7 +414,7 @@ public class MathParser {
             if (isNumeric(string))
                 return new Constant(Double.parseDouble(string));
 
-            if (isQueryOrFunctionName(string)) {
+            if (isLikelyVariable(string)) {
                 if (string.startsWith("-"))
                     return new Negative(getVariableFor(string.substring(1)));
 
@@ -578,9 +578,20 @@ public class MathParser {
      * Determine if the given string is likely to be a variable/function of some kind.
      * <p>
      * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
+     * @deprecated This is no longer used and isn't really a reliable check, try {@link #isFunctionRegistered(String)} or {@link #isLikelyVariable(String)}
      */
+    @Deprecated(forRemoval = true)
     protected static boolean isQueryOrFunctionName(String string) {
         return !isNumeric(string) && !isOperativeSymbol(string);
+    }
+
+    /**
+     * Determine if the given string is likely to be an existing or new variable declaration
+     * <p>
+     * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
+     */
+    protected static boolean isLikelyVariable(String string) {
+        return !isNumeric(string) && !isFunctionRegistered(string) && !isOperativeSymbol(string);
     }
 
     /**
