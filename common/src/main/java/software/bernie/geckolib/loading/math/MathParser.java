@@ -147,7 +147,7 @@ public class MathParser {
      * @return The registered {@link Variable} instance for the given name
      */
     public static Variable getVariableFor(String name) {
-        return VARIABLES.computeIfAbsent(name, key -> new Variable(key, 0));
+        return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
     }
 
     /**
@@ -576,5 +576,22 @@ public class MathParser {
      */
     protected static boolean isQueryOrFunctionName(String string) {
         return !isNumeric(string) && !isOperativeSymbol(string);
+    }
+
+    /**
+     * Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
+     *
+     * @param text The base text to parse
+     * @param properName The "correct" prefix to apply
+     * @param aliases The available prefixes to check and replace
+     * @return The unaliased string, or the original string if no aliases match
+     */
+    private static String applyPrefixAliases(String text, String properName, String... aliases) {
+        for (String alias : aliases) {
+            if (text.startsWith(alias))
+                return properName + text.substring(alias.length());
+        }
+
+        return text;
     }
 }
