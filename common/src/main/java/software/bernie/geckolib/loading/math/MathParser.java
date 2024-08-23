@@ -42,12 +42,11 @@ import java.util.regex.Pattern;
 public class MathParser {
     private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:.,()]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
-    @Deprecated(forRemoval = true)
-    private static final Pattern STATEMENT_DELIMITER = Pattern.compile(";");
     private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
     private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
     private static final Pattern OPERATIVE_SYMBOLS = Pattern.compile("[?:]");
     private static final String MOLANG_RETURN = "return ";
+    private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
         map.put("math.abs", AbsFunction::new);
         map.put("math.acos", ACosFunction::new);
