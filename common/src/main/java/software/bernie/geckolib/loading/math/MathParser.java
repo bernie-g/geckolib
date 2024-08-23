@@ -192,11 +192,11 @@ public class MathParser {
         if (expression.startsWith(MOLANG_RETURN)) {
             expression = expression.substring(MOLANG_RETURN.length());
 
-            if (expression.contains(";"))
-                expression = expression.substring(0, expression.indexOf(";"));
+            if (expression.contains(STATEMENT_DELIMITER))
+                expression = expression.substring(0, expression.indexOf(STATEMENT_DELIMITER));
         }
-        else if (expression.contains(";")) {
-            final String[] subExpressions = expression.split(";");
+        else if (expression.contains(STATEMENT_DELIMITER)) {
+            final String[] subExpressions = expression.split(STATEMENT_DELIMITER);
             final List<MathValue> subValues = new ObjectArrayList<>(subExpressions.length);
 
             for (String subExpression : subExpressions) {
