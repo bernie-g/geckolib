@@ -1,29 +1,29 @@
 [versions]
 # GeckoLib
-    geckolib = "4.5.8"
+    geckolib = "4.6"
 
 # General Dependencies
     minecraft-range = "[1.21,)"
-    minecraft = "1.21"
+    minecraft = "1.21.1"
     parchment-minecraft = "1.21"
     parchment = "2024.07.28"
 
 # Fabric Settings
-    fabric = "0.15.11"
-    fabric-api = "0.100.7+1.21"
+    fabric = "0.16.2"
+    fabric-api = "0.102.1+1.21.1"
     fabric-api-range = "0.100.0+1.21"
 
 # Forge Settings
     forge-fml-range = "[51,)"
     forge-range = "[51.0.0,)"
-    forge = "51.0.31"
-    forge-mc = "1.21-51.0.31"
+    forge = "52.0.8"
+    forge-mc = "1.21.1-52.0.8"
     jopt-simple = "5.0.4"
 
 # Neoforge Settings
     neoforge-loader-range = "[4,)"
     neoforge-range = "[21.0.143,)"
-    neoforge = "21.0.160"
+    neoforge = "21.1.23"
 
 # Dependencies
     mixin = "0.8.7"
@@ -34,12 +34,12 @@
 
 # Plugins
     plugin-minotaur = "2.8.7"
-    plugin-curseforge-gradle = "1.1.24"
+    plugin-curseforge-gradle = "1.1.25"
     plugin-idea-ext = "1.1.8"
     plugin-forge-gradle = "[6.0.24,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.0.157"
+    plugin-neoforge-gradle = "7.0.161"
     plugin-loom = "1.7-SNAPSHOT"
     plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
 
