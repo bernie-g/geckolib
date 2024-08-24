@@ -380,21 +380,21 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		return switch (buffer) {
 			case BufferBuilder builder when !builder.building -> bufferSource.getBuffer(renderType);
-			case OutlineBufferSource.EntityOutlineGenerator outlines when checkBuffer(outlines.delegate()) ->
+			case OutlineBufferSource.EntityOutlineGenerator outlines when bufferNeedsRefresh(outlines.delegate()) ->
 					new OutlineBufferSource.EntityOutlineGenerator(bufferSource.getBuffer(renderType), outlines.color());
-			case VertexMultiConsumer.Double pair when checkBuffer(pair.first) || checkBuffer(pair.second) ->
-				new VertexMultiConsumer.Double(checkBuffer(pair.first) ? bufferSource.getBuffer(renderType) : pair.first, checkBuffer(pair.second) ? bufferSource.getBuffer(renderType) : pair.second);
+			case VertexMultiConsumer.Double pair when bufferNeedsRefresh(pair.first) || bufferNeedsRefresh(pair.second) ->
+				new VertexMultiConsumer.Double(bufferNeedsRefresh(pair.first) ? bufferSource.getBuffer(renderType) : pair.first, bufferNeedsRefresh(pair.second) ? bufferSource.getBuffer(renderType) : pair.second);
 			default -> buffer;
 		};
 	}
 
 	@Deprecated(forRemoval = true)
 	@ApiStatus.Internal
-	private boolean checkBuffer(VertexConsumer buffer) {
+	private boolean bufferNeedsRefresh(VertexConsumer buffer) {
 		return switch (buffer) {
 			case BufferBuilder builder -> !builder.building;
-			case OutlineBufferSource.EntityOutlineGenerator outlines -> checkBuffer(outlines.delegate());
-			case VertexMultiConsumer.Double pair -> checkBuffer(pair.first) || checkBuffer(pair.second);
+			case OutlineBufferSource.EntityOutlineGenerator outlines -> bufferNeedsRefresh(outlines.delegate());
+			case VertexMultiConsumer.Double pair -> bufferNeedsRefresh(pair.first) || bufferNeedsRefresh(pair.second);
 			default -> false;
 		};
 	}
