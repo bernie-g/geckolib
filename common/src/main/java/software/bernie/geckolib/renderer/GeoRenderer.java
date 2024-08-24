@@ -390,7 +390,12 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 	@Deprecated(forRemoval = true)
 	@ApiStatus.Internal
-	private boolean checkBuffer(VertexConsumer consumer) {
-		return consumer instanceof BufferBuilder builder && !builder.building;
+	private boolean checkBuffer(VertexConsumer buffer) {
+		return switch (buffer) {
+			case BufferBuilder builder -> !builder.building;
+			case OutlineBufferSource.EntityOutlineGenerator outlines -> checkBuffer(outlines.delegate());
+			case VertexMultiConsumer.Double pair -> checkBuffer(pair.first) || checkBuffer(pair.second);
+			default -> false;
+		};
 	}
 }
