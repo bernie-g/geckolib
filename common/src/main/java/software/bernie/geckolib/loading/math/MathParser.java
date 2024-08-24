@@ -25,7 +25,10 @@ import software.bernie.geckolib.loading.math.function.round.*;
 import software.bernie.geckolib.loading.math.value.*;
 import software.bernie.geckolib.util.CompoundException;
 
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -44,7 +47,6 @@ public class MathParser {
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
     private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
-    private static final Pattern OPERATIVE_SYMBOLS = Pattern.compile("[?:]");
     private static final String MOLANG_RETURN = "return ";
     private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
@@ -258,6 +260,33 @@ public class MathParser {
     }
 
     /**
+     * Attempt to construct the most relevant operator given the input character array and start index
+     * <p>
+     * This allows for arbitrary-length operators and best-matching for partially-colliding operators
+     */
+    @Nullable
+    protected static String tryMergeOperativeSymbols(char[] chars, int index) {
+        char ch = chars[index];
+
+        if (!Operator.isOperativeSymbol(ch))
+            return null;
+
+        int maxLength = Math.min(chars.length - index, Operator.maxOperatorLength());
+
+        for (int length = maxLength; length > 0; length--) {
+            String testOperator = String.copyValueOf(chars, index, length);
+
+            if (Operator.isOperator(testOperator))
+                return testOperator;
+        }
+
+        if (ch == '?' || ch == ':' || ch == ',')
+            return String.valueOf(ch);
+
+        return null;
+    }
+
+    /**
      * Compile a collection of 'symbols' from the given char array representing the expression split into individual characters
      *
      * @return A list of either string symbols, or a group of pre-compiled arguments of a grouping
@@ -272,35 +301,28 @@ public class MathParser {
     public static List<Either<String, List<MathValue>>> compileSymbols(char[] chars) {
         final List<Either<String, List<MathValue>>> symbols = new ObjectArrayList<>();
         final StringBuilder buffer = new StringBuilder();
+        int lastSymbolIndex = -1;
 
         for (int i = 0; i < chars.length; i++) {
             final char ch = chars[i];
-            final boolean isMultiCharOperator = i > 0 && isOperativeSymbol(chars[i - 1] + "" + ch);
 
-            if (isOperativeSymbol(ch) || isMultiCharOperator || ch == ',') {
-                if (ch == '-' && buffer.isEmpty()) {
-                    String lastSymbol;
+            if (ch == '-' && buffer.isEmpty() && (symbols.isEmpty() || lastSymbolIndex == symbols.size() - 1)) {
+                buffer.append(ch);
 
-                    if (symbols.isEmpty() || isOperativeSymbol(lastSymbol = symbols.getLast().left().orElse("")) || ",".equals(lastSymbol)) {
-                        buffer.append(ch);
+                continue;
+            }
 
-                        continue;
-                    }
-                }
+            final String operator = tryMergeOperativeSymbols(chars, i);
 
-                if (isMultiCharOperator) {
-                    if (!buffer.isEmpty())
-                        symbols.add(Either.left(buffer.substring(0, buffer.length() - 1)));
+            if (operator != null) {
+                i += operator.length() - 1;
 
-                    symbols.add(Either.left(chars[i - 1] + "" + ch));
-                }
-                else {
-                    if (!buffer.isEmpty())
-                        symbols.add(Either.left(buffer.toString()));
+                if (!buffer.isEmpty())
+                    symbols.add(Either.left(buffer.toString()));
 
-                    symbols.add(Either.left(String.valueOf(ch)));
-                }
+                lastSymbolIndex = symbols.size();
 
+                symbols.add(Either.left(operator));
                 buffer.setLength(0);
             }
             else if (ch == '(') {
@@ -545,17 +567,21 @@ public class MathParser {
     }
 
     /**
+     * @deprecated Has no functional use, see {@link Operator#isOperator(String)}
      * @return Whether the given String should be considered an operator or operator-like symbol
      */
+    @Deprecated(forRemoval = true)
     public static boolean isOperativeSymbol(char symbol) {
         return isOperativeSymbol(String.valueOf(symbol));
     }
 
     /**
+     * @deprecated Has no functional use, see {@link Operator#isOperator(String)}
      * @return Whether the given String should be considered an operator or operator-like symbol
      */
+    @Deprecated(forRemoval = true)
     public static boolean isOperativeSymbol(@NotNull String symbol) {
-        return Operator.isOperator(symbol) || OPERATIVE_SYMBOLS.matcher(symbol).matches();
+        return Operator.isOperator(symbol) || symbol.equals("?") || symbol.equals(":");
     }
 
     /**

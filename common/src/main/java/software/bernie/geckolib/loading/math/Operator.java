@@ -1,8 +1,12 @@
 package software.bernie.geckolib.loading.math;
 
+import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
+import it.unimi.dsi.fastutil.chars.CharSet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.Util;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,7 +18,9 @@ import java.util.function.BiFunction;
  * Each record should represent a distinct mathematical function for computational purposes, with each function being deterministic and immutable.
  */
 public record Operator(String symbol, int precedence, Operation operation) implements Comparable<Operator> {
-    private static final Map<String, Operator> OPERATORS = new HashMap<>(14);
+    private static final Map<String, Operator> OPERATORS = new Object2ObjectOpenHashMap<>(14);
+    private static final CharSet OPERATOR_SYMBOLS = Util.make(new CharOpenHashSet(15), set -> set.addAll(Arrays.asList('?', ':', ',')));
+    private static int LONGEST_OPERATOR;
 
     public static final Operator ADD = register("+", 1, (a, b) -> a + b);
     public static final Operator SUB = register("-", 1, (a, b) -> a - b);
@@ -46,6 +52,12 @@ public record Operator(String symbol, int precedence, Operation operation) imple
         if (OPERATORS.put(symbol, operator) != null)
             throw new IllegalArgumentException("Attempting to register an already existing operator! '" + symbol + "'");
 
+        for (char symbolChar : symbol.toCharArray()) {
+            OPERATOR_SYMBOLS.add(symbolChar);
+        }
+
+        LONGEST_OPERATOR = Math.max(LONGEST_OPERATOR, symbol.length());
+
         return operator;
     }
 
@@ -63,6 +75,20 @@ public record Operator(String symbol, int precedence, Operation operation) imple
      */
     public static Optional<Operator> getOperatorFor(String symbol) {
         return Optional.ofNullable(OPERATORS.get(symbol));
+    }
+
+    /**
+     * Returns the character length of the longest currently registered operator
+     */
+    public static int maxOperatorLength() {
+        return LONGEST_OPERATOR;
+    }
+
+    /**
+     * Returns whether the given character is a part of any registered operators or otherwise acts like an operative separator for expressions
+     */
+    public static boolean isOperativeSymbol(char symbol) {
+        return OPERATOR_SYMBOLS.contains(symbol);
     }
 
     /**
