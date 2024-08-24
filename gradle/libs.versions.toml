@@ -10,6 +10,7 @@
 
 # Fabric Settings
     fabric = "0.16.2"
+    fabric-range = "0.15"
     fabric-api = "0.102.1+1.21.1"
     fabric-api-range = "0.100.0+1.21"
 

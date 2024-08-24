@@ -66,6 +66,7 @@ val mcVersionRange = libs.get().findVersion("minecraft.range").get()
 val fapiVersion = libs.get().findVersion("fabric.api").get()
 val fapiVersionRange = libs.get().findVersion("fabric.api.range").get()
 val fabricVersion = libs.get().findVersion("fabric").get()
+val fabricVersionRange = libs.get().findVersion("fabric.range").get()
 val neoforgeVersion = libs.get().findVersion("neoforge").get()
 val neoforgeLoaderVersionRange = libs.get().findVersion("neoforge.loader.range").get()
 
@@ -105,6 +106,7 @@ tasks.withType<ProcessResources>().configureEach {
             "fabric_api_version" to fapiVersion,
             "fabric_api_version_range" to fapiVersionRange,
             "fabric_loader_version" to fabricVersion,
+            "fabric_loader_version_range" to fabricVersionRange,
             "mod_display_name" to modDisplayName,
             "mod_authors" to modAuthors,
             "mod_id" to modId,
