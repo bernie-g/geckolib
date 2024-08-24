@@ -1,6 +1,87 @@
-v4.5.8
+v4.6
 
-- Add support for invisible, partially-invisible, and glowing entities for AutoGlowingGeoLayer
-- Add additional checks for invalid buffer states while rendering. This is still a temporary fix util I can rewrite the underlying API in the next breaking version
-- Account for translucent rendering when rendering invisible entities in spectator mode
-- Make AutoGlowingGeoLayer account for overlay colouring when rendering
+- Fix GeckoLib breaking PBR compatibility in iris/oculus
+- Move fabric loader dependency to its own value, to prevent Geckolib forcing players to need the latest fabric at all times
+- Add 'q.' alias for queries in molang
+- Fix compound molang statements not being parsed
+- Fixed ternary expressions not being compiled properly
+- Add clarifying javadoc timing comment on GeckoLibUtil#addDataTicket
+- Improve false-positive avoidance on function and variable recognition when parsing complex molang statements
+- Further refine general molang parsing to improve stability and performance
+- Further improve bufferbuilder bandaid for 1.21 breaking issue to account for more edge-cases
+- Moved the default Molang queries to an 'actor' system
+    All default queries now no longer need to be updated every render pass, and instead we just update the current actor.
+    This should improve performance overall, and allows for O(1) complexity for increased query count
+- Fix `query.actor_count` not representing the correct value
+- Fix `query.is_in_water_or_rain` not representing the correct value
+- Fix `query.is_on_fire` not applying to non-living entities
+- Fix `query.yaw_speed` not applying to non-living entities
+- Fix `query.yaw_speed` not representing the correct value
+- Add `query.block_state` molang query
+- Add `query.blocking` molang query
+- Add `query.body_x_rotation` molang query
+- Add `query.body_y_rotation` molang query
+- Add `query.can_climb` molang query
+- Add `query.can_fly` molang query
+- Add `query.can_swim` molang query
+- Add `query.can_walk` molang query
+- Add `query.cardinal_facing_2d` molang query
+- Add `query.cardinal_facing` molang query
+- Add `query.cardinal_player_facing` molang query
+- Add `query.day` molang query
+- Add `query.death_ticks` molang query
+- Add `query.equipment_count` molang query
+- Add `query.frame_alpha` molang query
+- Add `query.get_actor_info_id` molang query
+- Add `query.has_cape` molang query
+- Add `query.has_collision` molang query
+- Add `query.has_gravity` molang query
+- Add `query.has_head_gear` molang query
+- Add `query.has_owner` molang query
+- Add `query.has_player_rider` molang query
+- Add `query.has_rider` molang query
+- Add `query.head_x_rotation` molang query
+- Add `query.head_y_rotation` molang query
+- Add `query.hurt_time` molang query
+- Add `query.invulnerable_ticks` molang query
+- Add `query.is_alive` molang query
+- Add `query.is_angry` molang query
+- Add `query.is_baby` molang query
+- Add `query.is_breathing` molang query
+- Add `query.is_enchanted` molang query
+- Add `query.is_fire_immune` molang query
+- Add `query.is_first_person` molang query
+- Add `query.is_in_contact_with_water` molang query
+- Add `query.is_in_lava` molang query
+- Add `query.is_invisible` molang query
+- Add `query.is_leashed` molang query
+- Add `query.is_moving` molang query
+- Add `query.is_powered` molang query
+- Add `query.is_riding` molang query
+- Add `query.is_saddled` molang query
+- Add `query.is_silent` molang query
+- Add `query.is_sleeping` molang query
+- Add `query.is_sneaking` molang query
+- Add `query.is_sprinting` molang query
+- Add `query.is_stackable` molang query
+- Add `query.is_swimming` molang query
+- Add `query.is_using_item` molang query
+- Add `query.is_wall_climbing` molang query
+- Add `query.item_max_use_duration` molang query
+- Add `query.main_hand_item_max_duration` molang query
+- Add `query.main_hand_item_use_duration` molang query
+- Add `query.max_durability` molang query
+- Add `query.moon_brightness` molang query
+- Add `query.movement_direction` molang query
+- Add `query.player_level` molang query
+- Add `query.remaining_durability` molang query
+- Add `query.rider_body_x_rotation` molang query
+- Add `query.rider_body_x_rotation` molang query
+- Add `query.rider_head_x_rotation` molang query
+- Add `query.rider_head_y_rotation` molang query
+- Add `query.scale` molang query
+- Add `query.sleep_rotation` molang query
+- Add `query.time_stamp` molang query
+- Add `query.vertical_speed` molang query
+- Remove internal usage of RenderUtil#booleanToFloat to allow for compile-time optimisations
+- Various minor codebase cleanups
