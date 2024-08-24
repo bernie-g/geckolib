@@ -55,48 +55,30 @@ public class MathParser {
         map.put("math.asin", ASinFunction::new);
         map.put("math.atan", ATanFunction::new);
         map.put("math.atan2", ATan2Function::new);
-        map.put("math.cos", CosFunction::new);
-        map.put("math.exp", ExpFunction::new);
-        map.put("math.ln", LogFunction::new);
-        map.put("math.mod", ModFunction::new);
-        map.put("math.pow", PowFunction::new);
-        map.put("math.sin", SinFunction::new);
-        map.put("math.sqrt", SqrtFunction::new);
+        map.put("math.ceil", CeilFunction::new);
         map.put("math.clamp", ClampFunction::new);
-        map.put("math.max", MaxFunction::new);
-        map.put("math.min", MinFunction::new);
+        map.put("math.cos", CosFunction::new);
         map.put("math.die_roll", DieRollFunction::new);
         map.put("math.die_roll_integer", DieRollIntegerFunction::new);
-        map.put("math.random", RandomFunction::new);
-        map.put("math.random_integer", RandomIntegerFunction::new);
-        map.put("math.ceil", CeilFunction::new);
+        map.put("math.exp", ExpFunction::new);
         map.put("math.floor", FloorFunction::new);
         map.put("math.hermite_blend", HermiteBlendFunction::new);
         map.put("math.lerp", LerpFunction::new);
         map.put("math.lerprotate", LerpRotFunction::new);
-        map.put("math.round", RoundFunction::new);
-        map.put("math.trunc", TruncateFunction::new);
+        map.put("math.ln", LogFunction::new);
+        map.put("math.max", MaxFunction::new);
+        map.put("math.min", MinFunction::new);
+        map.put("math.mod", ModFunction::new);
         map.put("math.pi", PiFunction::new);
+        map.put("math.pow", PowFunction::new);
+        map.put("math.random", RandomFunction::new);
+        map.put("math.random_integer", RandomIntegerFunction::new);
+        map.put("math.round", RoundFunction::new);
+        map.put("math.sin", SinFunction::new);
+        map.put("math.sqrt", SqrtFunction::new);
         map.put("math.to_deg", ToDegFunction::new);
         map.put("math.to_rad", ToRadFunction::new);
-    });
-    private static final Map<String, Variable> VARIABLES = Util.make(new ConcurrentHashMap<>(), map -> {
-        map.put("PI", new Variable("PI", Math.PI));
-        map.put("E", new Variable("E", Math.E));
-        map.put(MolangQueries.ANIM_TIME, new Variable(MolangQueries.ANIM_TIME, 0));
-        map.put(MolangQueries.LIFE_TIME, new Variable(MolangQueries.LIFE_TIME, 0));
-        map.put(MolangQueries.ACTOR_COUNT, new Variable(MolangQueries.ACTOR_COUNT, 0));
-        map.put(MolangQueries.TIME_OF_DAY, new Variable(MolangQueries.TIME_OF_DAY, 0));
-        map.put(MolangQueries.MOON_PHASE, new Variable(MolangQueries.MOON_PHASE, 0));
-        map.put(MolangQueries.DISTANCE_FROM_CAMERA, new Variable(MolangQueries.DISTANCE_FROM_CAMERA, 0));
-        map.put(MolangQueries.IS_ON_GROUND, new Variable(MolangQueries.IS_ON_GROUND, 0));
-        map.put(MolangQueries.IS_IN_WATER, new Variable(MolangQueries.IS_IN_WATER, 0));
-        map.put(MolangQueries.IS_IN_WATER_OR_RAIN, new Variable(MolangQueries.IS_IN_WATER_OR_RAIN, 0));
-        map.put(MolangQueries.HEALTH, new Variable(MolangQueries.HEALTH, 0));
-        map.put(MolangQueries.MAX_HEALTH, new Variable(MolangQueries.MAX_HEALTH, 0));
-        map.put(MolangQueries.IS_ON_FIRE, new Variable(MolangQueries.IS_ON_FIRE, 0));
-        map.put(MolangQueries.GROUND_SPEED, new Variable(MolangQueries.GROUND_SPEED, 0));
-        map.put(MolangQueries.YAW_SPEED, new Variable(MolangQueries.YAW_SPEED, 0));
+        map.put("math.trunc", TruncateFunction::new);
     });
 
     /**
@@ -142,14 +124,14 @@ public class MathParser {
      * Technically supports overriding by matching keys, though you should try to update the existing variable instances instead if possible
      */
     public static void registerVariable(Variable variable) {
-        VARIABLES.put(variable.name(), variable);
+        MolangQueries.registerVariable(variable);
     }
 
     /**
      * @return The registered {@link Variable} instance for the given name
      */
     public static Variable getVariableFor(String name) {
-        return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
+        return MolangQueries.getVariableFor(name);
     }
 
     /**
@@ -617,26 +599,9 @@ public class MathParser {
      * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
      */
     protected static boolean isLikelyVariable(String string) {
-        if (VARIABLES.containsKey(string))
+        if (MolangQueries.isExistingVariable(string))
             return true;
 
         return !isNumeric(string) && !isFunctionRegistered(string) && !Operator.isOperator(string) && !string.equals("?") && !string.equals(":");
-    }
-
-    /**
-     * Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
-     *
-     * @param text The base text to parse
-     * @param properName The "correct" prefix to apply
-     * @param aliases The available prefixes to check and replace
-     * @return The unaliased string, or the original string if no aliases match
-     */
-    private static String applyPrefixAliases(String text, String properName, String... aliases) {
-        for (String alias : aliases) {
-            if (text.startsWith(alias))
-                return properName + text.substring(alias.length());
-        }
-
-        return text;
     }
 }

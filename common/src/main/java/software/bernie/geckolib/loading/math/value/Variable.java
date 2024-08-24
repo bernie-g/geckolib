@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,7 +25,14 @@ public record Variable(String name, AtomicReference<DoubleSupplier> value) imple
 
     @Override
     public double get() {
-        return this.value.get().getAsDouble();
+        try {
+            return this.value.get().getAsDouble();
+        }
+        catch (Exception ex) {
+            GeckoLibConstants.LOGGER.error("Attempted to use Molang variable for incompatible animatable type (" + this.name + "). An animation json needs to be fixed", ex.getMessage());
+
+            return 0;
+        }
     }
 
     public void set(final double value) {

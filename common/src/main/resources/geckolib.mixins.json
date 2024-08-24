@@ -12,6 +12,7 @@
   "client": [
     "client.BlockEntityWithoutLevelRendererMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.LevelRendererMixin",
     "client.TextureManagerMixin"
   ]
 }

@@ -3,10 +3,7 @@ package software.bernie.geckolib.model;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -21,14 +18,13 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
-import software.bernie.geckolib.loading.math.MathParser;
-import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.DoubleSupplier;
 
 /**
  * Base class for all code-based model objects
@@ -204,37 +200,11 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
 	 * <p>
-	 * Is generally overridden by default to apply the builtin queries, but can be extended further for custom query handling.
+	 * Use this method to set custom {@link software.bernie.geckolib.loading.math.value.Variable Variable} values via
+	 * {@link software.bernie.geckolib.loading.math.MathParser#setVariable(String, DoubleSupplier) MathParser.setVariable}
 	 *
 	 * @param animationState The AnimationState data for the current render frame
 	 * @param animTime The internal tick counter kept by the {@link AnimatableManager manager} for this animatable
 	 */
-	public void applyMolangQueries(AnimationState<T> animationState, double animTime) {
-		Minecraft mc = Minecraft.getInstance();
-		T animatable = animationState.getAnimatable();
-
-		MathParser.setVariable(MolangQueries.LIFE_TIME, () -> animTime / 20d);
-		MathParser.setVariable(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
-		MathParser.setVariable(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);
-		MathParser.setVariable(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
-
-		if (animatable instanceof Entity entity) {
-			MathParser.setVariable(MolangQueries.DISTANCE_FROM_CAMERA, () -> mc.gameRenderer.getMainCamera().getPosition().distanceTo(entity.position()));
-			MathParser.setVariable(MolangQueries.IS_ON_GROUND, () -> RenderUtil.booleanToFloat(entity.onGround()));
-			MathParser.setVariable(MolangQueries.IS_IN_WATER, () -> RenderUtil.booleanToFloat(entity.isInWater()));
-			MathParser.setVariable(MolangQueries.IS_IN_WATER_OR_RAIN, () -> RenderUtil.booleanToFloat(entity.isInWaterRainOrBubble()));
-
-			if (entity instanceof LivingEntity livingEntity) {
-				MathParser.setVariable(MolangQueries.HEALTH, livingEntity::getHealth);
-				MathParser.setVariable(MolangQueries.MAX_HEALTH, livingEntity::getMaxHealth);
-				MathParser.setVariable(MolangQueries.IS_ON_FIRE, () -> RenderUtil.booleanToFloat(livingEntity.isOnFire()));
-				MathParser.setVariable(MolangQueries.GROUND_SPEED, () -> {
-					Vec3 velocity = livingEntity.getDeltaMovement();
-
-					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
-				});
-				MathParser.setVariable(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)animTime - livingEntity.getViewYRot((float)animTime - 0.1f)));
-			}
-		}
-	}
+	public void applyMolangQueries(AnimationState<T> animationState, double animTime) {}
 }

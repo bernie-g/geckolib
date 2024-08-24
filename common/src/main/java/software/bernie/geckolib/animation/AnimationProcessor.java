@@ -10,6 +10,7 @@ import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Collection;
@@ -266,6 +267,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * Apply transformations and settings prior to acting on any animation-related functionality
 	 */
 	public void preAnimationSetup(AnimationState<T> animationState, double animTime) {
+		MolangQueries.updateActor(animationState, animTime);
 		this.model.applyMolangQueries(animationState, animTime);
 	}
 
