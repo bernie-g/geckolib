@@ -24,9 +24,12 @@ public abstract class TextureManagerMixin {
 		AbstractTexture existing = this.byPath.get(path);
 
 		if (existing == null) {
-			existing = new AnimatableTexture(path);
+			AnimatableTexture animatableTexture = new AnimatableTexture(path);
 
-			register(path, existing);
+			register(path, animatableTexture);
+
+			if (!animatableTexture.isAnimated())
+				this.byPath.remove(path);
 		}
 	}
 }

@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class AnimatableTexture extends SimpleTexture {
 	private AnimationContents animationContents = null;
+	private boolean isAnimated = false;
 
 	public AnimatableTexture(final ResourceLocation location) {
 		super(location);
@@ -54,19 +55,26 @@ public class AnimatableTexture extends SimpleTexture {
 					return;
 				}
 
+				this.isAnimated = true;
+
 				onRenderThread(() -> {
 					TextureUtil.prepareImage(getId(), 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height());
 					nativeImage.upload(0, 0, 0, 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false, false);
 				});
-
-				return;
 			}
 		}
 		catch (RuntimeException exception) {
 			GeckoLib.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
 		}
+	}
 
-		super.load(manager);
+	/**
+	 * Returns whether the texture found any valid animation metadata when loading.
+	 * <p>
+	 * If false, then this is no different to a standard {@link SimpleTexture}
+	 */
+	public boolean isAnimated() {
+		return this.isAnimated;
 	}
 
 	public static void setAndUpdate(ResourceLocation texturePath) {
