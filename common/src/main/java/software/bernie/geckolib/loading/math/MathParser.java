@@ -366,7 +366,7 @@ public class MathParser {
      */
     public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 2) {
-            Optional<String> prefix = symbols.getFirst().left().filter(left -> left.equals("-") || left.equals("!") || isFunctionRegistered(left));
+            Optional<String> prefix = symbols.getFirst().left().filter(left -> left.startsWith("-") || left.startsWith("!") || isFunctionRegistered(left));
             Optional<List<MathValue>> group = symbols.get(1).right();
 
             if (prefix.isPresent() && group.isPresent())
@@ -441,7 +441,7 @@ public class MathParser {
         int operatorIndex = -1;
         Operator lastOperator = null;
 
-        for (int i = 0; i < symbolCount; i++) {
+        for (int i = 1; i < symbolCount; i++) {
             Operator operator = symbols.get(i).left()
                     .filter(Operator::isOperator)
                     .map(MathParser::getOperatorFor).orElse(null);
