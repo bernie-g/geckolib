@@ -77,6 +77,9 @@ public final class GeckoLibUtil {
 	/**
 	 * Register a custom {@link SerializableDataTicket} with GeckoLib for handling custom data transmission.<br>
 	 * NOTE: You do not need to register non-serializable {@link software.bernie.geckolib.core.object.DataTicket DataTickets}.
+	 * <p>
+	 * <b><u>MUST be called during mod construct</u></b>
+	 *
 	 * @param dataTicket The SerializableDataTicket to register
 	 * @return The dataTicket you passed in
 	 */
