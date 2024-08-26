@@ -425,6 +425,9 @@ public class MathParser {
                 return getVariableFor(string);
             }
 
+            if (isFunctionRegistered(string))
+                return compileFunction(string, List.of());
+
             return null;
         }).orElse(null);
     }
