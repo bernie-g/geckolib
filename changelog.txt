@@ -1,3 +1,3 @@
-v4.6.1
+v4.6.2
 
-- Fix a bug with negation of functions in molang
+- Fix no-arg functions (oxymoron?) being left out of parsing
