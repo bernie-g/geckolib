@@ -105,7 +105,9 @@ def replaceProperties = [
         mod_description: mod_description,
         minecraft_version: minecraft_version,
         fabric_loader_version: fabric_loader_version,
-        fabric_api_version: fabric_api_version
+        fabric_loader_version_range: fabric_loader_version_range,
+        fabric_api_version: fabric_api_version,
+        fabric_api_version_range: fabric_api_version_range
 ]
 
 processResources {
