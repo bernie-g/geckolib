@@ -233,6 +233,18 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	@Override
+	public void doPostRenderCleanup() {
+		this.animatable = null;
+		this.currentItemStack = null;
+		this.renderPerspective = null;
+	}
+
+	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override

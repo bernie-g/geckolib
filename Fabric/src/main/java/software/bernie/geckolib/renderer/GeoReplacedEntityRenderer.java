@@ -290,6 +290,16 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	@Override
+	public void doPostRenderCleanup() {
+		this.currentEntity = null;
+	}
+
+	/**
 	 * Called after rendering the model to buffer. Post-render modifications should be performed here.<br>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */

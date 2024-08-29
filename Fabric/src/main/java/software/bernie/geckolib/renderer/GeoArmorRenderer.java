@@ -308,6 +308,20 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	@Override
+	public void doPostRenderCleanup() {
+		this.baseModel = null;
+		this.currentEntity = null;
+		this.currentStack = null;
+		this.animatable = null;
+		this.currentSlot = null;
+	}
+
+	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
