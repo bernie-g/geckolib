@@ -1,3 +1,4 @@
 v4.4.9
 
 - Move fabric loader dependency to its own value, to prevent Geckolib forcing players to need the latest fabric at all times
+- Fixed a crash on Forge/Neoforge related to rendering armour
