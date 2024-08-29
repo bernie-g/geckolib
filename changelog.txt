@@ -1,4 +1,9 @@
 v4.4.8
 
+- Fix GeckoLib breaking Iris/Oculus PBR
+- Implement post-render cleanup for GeoRenderers, removing a number of potential memory leaks
 - Weaken access modifier for `DefaultedEntityGeoModel.turnsHead` for subclass usage
--
+- Add clarifying javadoc comment on GeckoLibUtil#addDataTicket
+- Fix `query.is_in_water_or_rain` not representing the correct value
+- Fix `query.yaw_speed` not representing the correct value
+- Fix `query.is_on_fire` not applying to non-living entities
