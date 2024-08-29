@@ -315,11 +315,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public void doPostRenderCleanup() {
-		this.baseModel = null;
-		this.currentEntity = null;
-		this.currentStack = null;
-		this.animatable = null;
-		this.currentSlot = null;
+		// Disabled temporarily on Forge/Neoforge due to an incompatibility with the model retrieval hook
+		//this.baseModel = null;
+		//this.currentEntity = null;
+		//this.currentStack = null;
+		//this.animatable = null;
+		//this.currentSlot = null;
 	}
 
 	/**
