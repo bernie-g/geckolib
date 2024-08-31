@@ -175,6 +175,13 @@ public final class MolangQueries {
 	}
 
 	/**
+	 * Cleanup method called automatically by {@link software.bernie.geckolib.renderer.GeoRenderer#defaultRender} to eliminate a memory leak
+	 */
+	public static void clearActor() {
+		ACTOR = null;
+	}
+
+	/**
 	 * Container record holding animation frame information for the currently rendering animatable.
 	 * <p>
 	 * This is used by Molang queries to retrieve information for evaluation.

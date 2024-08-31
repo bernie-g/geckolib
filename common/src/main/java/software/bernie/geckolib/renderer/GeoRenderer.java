@@ -19,6 +19,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.cache.texture.AnimatableTexture;
+import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.Color;
@@ -150,6 +151,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		renderFinal(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 		doPostRenderCleanup();
+		MolangQueries.clearActor();
 	}
 
 	/**
