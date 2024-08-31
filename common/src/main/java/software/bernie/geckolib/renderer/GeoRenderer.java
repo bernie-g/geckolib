@@ -149,6 +149,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		poseStack.popPose();
 
 		renderFinal(poseStack, animatable, model, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
+		doPostRenderCleanup();
 	}
 
 	/**
@@ -242,6 +243,13 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	default void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight,
 							 int packedOverlay, int colour) {}
+
+	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	default void doPostRenderCleanup() {}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones

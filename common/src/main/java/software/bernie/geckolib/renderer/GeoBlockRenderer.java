@@ -132,8 +132,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 		this.animatable = animatable;
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, null, 0, partialTick, packedLight);
-
-		this.animatable = null;
 	}
 
 	/**
@@ -162,6 +160,16 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
 					packedLight, packedOverlay, colour);
+	}
+
+	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	@Override
+	public void doPostRenderCleanup() {
+		this.animatable = null;
 	}
 
 	/**

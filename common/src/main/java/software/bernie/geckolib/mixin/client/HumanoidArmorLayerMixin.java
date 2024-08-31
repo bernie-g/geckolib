@@ -37,4 +37,12 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
             ci.cancel();
         }
     }
+
+    @Inject(method = "renderArmorPiece", at = @At("TAIL"))
+    public void geckolib$cleanupPostRender(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci) {
+        final ItemStack stack = entity.getItemBySlot(equipmentSlot);
+
+        if (GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, equipmentSlot, baseModel) instanceof GeoArmorRenderer geoArmorRenderer)
+            geoArmorRenderer.doArmourPostRenderCleanup();
+    }
 }

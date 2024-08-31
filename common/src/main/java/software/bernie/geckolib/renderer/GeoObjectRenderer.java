@@ -121,14 +121,11 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	public void render(PoseStack poseStack, T animatable, @Nullable MultiBufferSource bufferSource, @Nullable RenderType renderType,
 					   @Nullable VertexConsumer buffer, int packedLight, float partialTick) {
 		this.animatable = animatable;
-		Minecraft mc = Minecraft.getInstance();
 
 		if (buffer == null)
-			bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
+			bufferSource =  Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 
 		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, 0, partialTick, packedLight);
-
-		this.animatable = null;
 	}
 
 	/**
@@ -172,6 +169,16 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 					packedLight, packedOverlay, colour);
 
 		poseStack.popPose();
+	}
+
+	/**
+	 * Called after all render operations are completed and the render pass is considered functionally complete.
+	 * <p>
+	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
+	 */
+	@Override
+	public void doPostRenderCleanup() {
+		this.animatable = null;
 	}
 
 	/**
