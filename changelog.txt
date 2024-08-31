@@ -1,3 +1,4 @@
-v4.6.2
+v4.6.3
 
-- Fix no-arg functions (oxymoron?) being left out of parsing
+- Add post-render cleanup to eliminate memory leaks and reduce overall memory usage
+- Added some additional error logging information related to model FormatVersion
