@@ -9,22 +9,22 @@
     parchment = "2024.07.28"
 
 # Fabric Settings
-    fabric = "0.16.3"
+    fabric = "0.16.5"
     fabric-range = "0.15"
-    fabric-api = "0.103.0+1.21.1"
+    fabric-api = "0.104.0+1.21.1"
     fabric-api-range = "0.100.0+1.21"
 
 # Forge Settings
     forge-fml-range = "[51,)"
     forge-range = "[51.0.0,)"
-    forge = "52.0.9"
-    forge-mc = "1.21.1-52.0.9"
+    forge = "52.0.10"
+    forge-mc = "1.21.1-52.0.10"
     jopt-simple = "5.0.4"
 
 # Neoforge Settings
     neoforge-loader-range = "[4,)"
     neoforge-range = "[21.1.0,)"
-    neoforge = "21.1.31"
+    neoforge = "21.1.50"
 
 # Dependencies
     mixin = "0.8.7"
@@ -40,7 +40,7 @@
     plugin-forge-gradle = "[6.0.24,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.0.162"
+    plugin-neoforge-gradle = "7.0.163"
     plugin-loom = "1.7-SNAPSHOT"
     plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
 
