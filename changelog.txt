@@ -1,4 +1,3 @@
-v4.6.3
+v4.6.4
 
-- Add post-render cleanup to eliminate memory leaks and reduce overall memory usage
-- Added some additional error logging information related to model FormatVersion
+- Fix some broken singleton networking calls. Fixes #631
