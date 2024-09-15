@@ -1,3 +1,3 @@
-v4.6.4
+v4.6.5
 
-- Fix some broken singleton networking calls. Fixes #631
+- Fix incorrect classname lookup for SingletonGeoAnimatables. Fixes #632
