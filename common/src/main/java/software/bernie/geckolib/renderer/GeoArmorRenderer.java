@@ -428,16 +428,16 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @param stack The ItemStack being rendered
 	 * @param slot The slot being rendered
 	 * @param baseModel The default (vanilla) model that would have been rendered if this model hadn't replaced it
+	 * @deprecated Use {@link #prepForRender(Entity, ItemStack, EquipmentSlot, HumanoidModel, MultiBufferSource, float, float, float, float, float)}
 	 */
+	@Deprecated(forRemoval = true)
 	public void prepForRender(@Nullable Entity entity, ItemStack stack, @Nullable EquipmentSlot slot, @Nullable HumanoidModel<?> baseModel) {
 		if (entity == null || slot == null || baseModel == null)
 			return;
 
-		this.baseModel = baseModel;
-		this.currentEntity = entity;
-		this.currentStack = stack;
-		this.animatable = (T)stack.getItem();
-		this.currentSlot = slot;
+		final Minecraft mc = Minecraft.getInstance();
+
+		prepForRender(entity, stack, slot, baseModel, mc.levelRenderer.renderBuffers.bufferSource(), mc.getTimer().getGameTimeDeltaPartialTick(true), 0, 0, 0, 0);
 	}
 
 	/**
