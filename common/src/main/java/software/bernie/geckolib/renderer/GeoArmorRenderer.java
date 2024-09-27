@@ -353,16 +353,21 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Called after all render operations are completed and the render pass is considered functionally complete.
 	 * <p>
 	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
-	 * <p>
-	 * This method is used instead of {@link GeoRenderer#doPostRenderCleanup()} because of the way GeckoLib armour renders, requiring a different callpoint
 	 */
-	public void doArmourPostRenderCleanup() {
+	@Override
+	public void doPostRenderCleanup() {
 		this.baseModel = null;
 		this.currentEntity = null;
 		this.currentStack = null;
 		this.animatable = null;
 		this.currentSlot = null;
 	}
+
+	/**
+	 * Being removed now that the injection point has been moved to a safer spot
+	 */
+	@Deprecated(forRemoval = true)
+	public void doArmourPostRenderCleanup() {}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
