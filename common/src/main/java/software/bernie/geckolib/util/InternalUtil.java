@@ -47,7 +47,7 @@ public class InternalUtil {
         partVisibilitySetter.accept(baseModel, equipmentSlot);
 
         if (geckolibModel instanceof GeoArmorRenderer<?> geoArmorRenderer)
-            geoArmorRenderer.prepForRender(entity, stack, equipmentSlot, baseModel);
+            geoArmorRenderer.prepForRender(entity, stack, equipmentSlot, baseModel, bufferSource, partialTick, limbSwing, limbSwingAmount, netHeadYaw, headPitch);
 
         baseModel.copyPropertiesTo((A)geckolibModel);
         geckolibModel.renderToBuffer(poseStack, null, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.argbInt());

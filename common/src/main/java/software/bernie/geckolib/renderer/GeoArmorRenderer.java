@@ -67,6 +67,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected Entity currentEntity = null;
 	protected ItemStack currentStack = null;
 	protected EquipmentSlot currentSlot = null;
+	protected MultiBufferSource bufferSource = null;
+	protected float partialTick;
+	protected float limbSwing;
+	protected float limbSwingAmount;
+	protected float netHeadYaw;
+	protected float headPitch;
 
 	public GeoArmorRenderer(GeoModel<T> model) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
@@ -361,6 +367,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.currentStack = null;
 		this.animatable = null;
 		this.currentSlot = null;
+		this.bufferSource = null;
+		this.partialTick = 0;
+		this.limbSwing = 0;
+		this.limbSwingAmount = 0;
+		this.netHeadYaw = 0;
+		this.headPitch = 0;
 	}
 
 	/**
@@ -426,6 +438,37 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.currentStack = stack;
 		this.animatable = (T)stack.getItem();
 		this.currentSlot = slot;
+	}
+
+	/**
+	 * Prepare the renderer for the current render pass
+	 * <p>
+	 * Must be called prior to render as the default HumanoidModel doesn't give render context
+	 *
+	 * @param entity The entity being rendered with the armor on
+	 * @param stack The ItemStack being rendered
+	 * @param slot The slot being rendered
+	 * @param baseModel The default (vanilla) model that would have been rendered if this model hadn't replaced it
+	 * @param bufferSource The buffer supplier for the current render context
+	 * @param partialTick The fraction of a tick passed since the last game tick
+	 * @param limbSwing The position in the limb swing cycle that the entity is in
+	 * @param limbSwingAmount The frame-relative velocity of the entity's limb swing
+	 * @param netHeadYaw The entity's Y rotation, discounting any head rotation
+	 * @param headPitch The entity's X rotation
+	 */
+	public void prepForRender(Entity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> baseModel, MultiBufferSource bufferSource,
+							  float partialTick, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
+		this.baseModel = baseModel;
+		this.currentEntity = entity;
+		this.currentStack = stack;
+		this.animatable = (T)stack.getItem();
+		this.currentSlot = slot;
+		this.bufferSource = bufferSource;
+		this.partialTick = partialTick;
+		this.limbSwing = limbSwing;
+		this.limbSwingAmount = limbSwingAmount;
+		this.netHeadYaw = netHeadYaw;
+		this.headPitch = headPitch;
 	}
 
 	/**
