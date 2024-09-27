@@ -1,5 +1,8 @@
 package software.bernie.geckolib.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -23,9 +26,21 @@ import software.bernie.geckolib.util.Color;
  */
 @Mixin(HumanoidArmorLayer.class)
 public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends HumanoidModel<T>> {
+    @ModifyExpressionValue(
+            method = "renderArmorPiece",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"
+            )
+    )
+    private ItemStack geckolib$captureItemBySlot(ItemStack original, @Share("item_by_slot") LocalRef<ItemStack> itemBySlotRef) {
+        itemBySlotRef.set(original);
+        return original;
+    }
+
     @Inject(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;usesInnerModel(Lnet/minecraft/world/entity/EquipmentSlot;)Z"), cancellable = true)
-    public void geckolib$renderGeckoLibModel(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci) {
-        final ItemStack stack = entity.getItemBySlot(equipmentSlot);
+    private void geckolib$renderGeckoLibModel(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci, @Share("item_by_slot") LocalRef<ItemStack> itemBySlotRef) {
+        final ItemStack stack = itemBySlotRef.get();
         final HumanoidModel<?> geckolibModel = GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, equipmentSlot, baseModel);
 
         if (geckolibModel != null) {
@@ -39,8 +54,8 @@ public abstract class HumanoidArmorLayerMixin<T extends LivingEntity, A extends 
     }
 
     @Inject(method = "renderArmorPiece", at = @At("TAIL"))
-    public void geckolib$cleanupPostRender(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci) {
-        final ItemStack stack = entity.getItemBySlot(equipmentSlot);
+    private void geckolib$cleanupPostRender(PoseStack poseStack, MultiBufferSource bufferSource, T entity, EquipmentSlot equipmentSlot, int packedLight, A baseModel, CallbackInfo ci, @Share("item_by_slot") LocalRef<ItemStack> itemBySlotRef) {
+        final ItemStack stack = itemBySlotRef.get();
 
         if (GeoRenderProvider.of(stack).getGeoArmorRenderer(entity, stack, equipmentSlot, baseModel) instanceof GeoArmorRenderer geoArmorRenderer)
             geoArmorRenderer.doArmourPostRenderCleanup();
