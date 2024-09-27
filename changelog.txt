@@ -1,3 +1,5 @@
-v4.6.5
+v4.6.6
 
-- Fix incorrect classname lookup for SingletonGeoAnimatables. Fixes #632
+- Fix incompatibility with Neoforge 21.1.62. Fixes #634
+- GeckoLib can now render any Equipable item, not just ArmorItems, allowing for more flexibility in armor rendering
+- GeoArmorRenderer now captures additional render context data for use
