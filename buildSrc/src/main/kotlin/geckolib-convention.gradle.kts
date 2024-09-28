@@ -58,6 +58,7 @@ val modAuthors: String by project
 val modLicense: String by project
 val modDescription: String by project
 val modVersion = libs.get().findVersion("geckolib").get()
+version = modVersion
 val mcVersion = libs.get().findVersion("minecraft").get()
 val forgeVersion = libs.get().findVersion("forge").get()
 val forgeVersionRange = libs.get().findVersion("forge.range").get()

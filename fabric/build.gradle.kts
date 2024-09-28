@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-version = libs.versions.geckolib.get()
 val modId: String by project
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()

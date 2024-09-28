@@ -12,7 +12,6 @@ plugins {
 }
 
 val modId: String by project
-version = libs.versions.geckolib.get()
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val mappingsMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
