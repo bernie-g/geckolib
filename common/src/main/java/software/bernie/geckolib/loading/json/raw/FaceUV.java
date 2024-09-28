@@ -7,6 +7,7 @@ import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
+//TODO Rotated FaceUVs
 /**
  * Container class for face UV information, only used in deserialization at startup
  */
