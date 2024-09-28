@@ -25,7 +25,7 @@ public class InternalUtil {
     /**
      * Attempt to render a GeckoLib {@link GeoArmorRenderer armor piece} for the given slot
      * <p>
-     * This is typically only called by {@link software.bernie.geckolib.mixin.client.HumanoidArmorLayerMixin mixin}
+     * This is typically only called by an internal mixin
      *
      * @return true if the armor piece was a GeckoLib armor piece and rendered
      * @param <T> The entity that is rendering its armor

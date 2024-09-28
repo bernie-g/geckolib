@@ -72,7 +72,7 @@ tasks.withType<Test>().configureEach {
     enabled = false;
 }
 
-tasks.withType<JavaCompile>().matching{!it.name.startsWith("neo")}.configureEach {
+tasks.named<JavaCompile>("compileJava").configure {
     source(project(":common").sourceSets.getByName("main").allSource)
 }
 

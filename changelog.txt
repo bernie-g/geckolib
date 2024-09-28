@@ -1,3 +1,4 @@
 v?
 
 - Change crashes to warnings for unsupported model format versions for geo models
+- Fix incorrect version range for NeoForge mods
