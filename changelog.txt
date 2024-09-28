@@ -1,5 +1,3 @@
-v4.6.6
+v?
 
-- Fix incompatibility with Neoforge 21.1.62. Fixes #634
-- GeckoLib can now render any Equipable item, not just ArmorItems, allowing for more flexibility in armor rendering
-- GeoArmorRenderer now captures additional render context data for use
+- Change crashes to warnings for unsupported model format versions for geo models
