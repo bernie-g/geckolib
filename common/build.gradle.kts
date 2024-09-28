@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
+version = libs.versions.geckolib.get()
+
 base {
     archivesName = "geckolib-common-${libs.versions.minecraft.asProvider().get()}"
 }

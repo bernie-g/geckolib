@@ -58,7 +58,6 @@ val modAuthors: String by project
 val modLicense: String by project
 val modDescription: String by project
 val modVersion = libs.get().findVersion("geckolib").get()
-version = modVersion
 val mcVersion = libs.get().findVersion("minecraft").get()
 val forgeVersion = libs.get().findVersion("forge").get()
 val forgeVersionRange = libs.get().findVersion("forge.range").get()
@@ -98,7 +97,7 @@ tasks.withType<JavaCompile>().configureEach {
 tasks.withType<ProcessResources>().configureEach {
     val expandProps = mapOf(
             "version" to modVersion,
-            "group" to project.group, // Else we target the task's group.
+            "group" to project.group,
             "minecraft_version" to mcVersion,
             "forge_version" to forgeVersion,
             "forge_loader_range" to fmlVersionRange,

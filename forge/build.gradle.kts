@@ -17,6 +17,8 @@ val mappingsMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
 val forgeVersion = libs.versions.forge.asProvider().get()
 
+version = libs.versions.geckolib.get()
+
 base {
     archivesName = "geckolib-forge-${mcVersion}"
 }

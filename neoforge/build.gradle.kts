@@ -5,7 +5,7 @@ plugins {
 
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
-    alias(libs.plugins.neogradle)
+    alias(libs.plugins.moddevgradle)
 }
 
 val modId: String by project
@@ -14,38 +14,34 @@ val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
 val neoforgeVersion = libs.versions.neoforge.asProvider().get()
 
+version = libs.versions.geckolib.get()
+
 base {
     archivesName = "geckolib-neoforge-${mcVersion}"
 }
 
-subsystems {
-    parchment {
-        minecraftVersion = parchmentMcVersion
-        mappingsVersion = parchmentVersion
-    }
-}
+neoForge {
+    version = neoforgeVersion
 
-minecraft {
-    accessTransformers.file(project(":common").file("src/main/resources/META-INF/accesstransformer-nf.cfg"))
-}
+    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer-nf.cfg"))
+    parchment.minecraftVersion.set(parchmentMcVersion)
+    parchment.mappingsVersion.set(parchmentVersion)
 
-runs {
-    configureEach {
-        systemProperty("forge.logging.console.level", "debug")
-        systemProperty("forge.enabledGameTestNamespaces", modId)
-
-        modSources {
-            add(project.sourceSets.getByName("main"))
+    runs {
+        configureEach {
+            logLevel = org.slf4j.event.Level.DEBUG
         }
-    }
 
-    create("client") {
-        systemProperty("neoforge.enabledGameTestNamespaces", modId)
-    }
+        mods.create(modId).sourceSet(project.sourceSets.getByName("main"))
 
-    create("server") {
-        systemProperty("neoforge.enabledGameTestNamespaces", modId)
-        programArgument("--nogui")
+        create("client") {
+            client()
+        }
+
+        create("server") {
+            server()
+            programArgument("--nogui")
+        }
     }
 }
 
