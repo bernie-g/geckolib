@@ -2,26 +2,27 @@
 # GeckoLib
     geckolib = "4.6.6"
 
-# General Dependencies
+# Common
     minecraft-range = "[1.21,)"
     minecraft = "1.21.1"
     parchment-minecraft = "1.21"
     parchment = "2024.07.28"
+    neoform = "1.21-20240613.152323"
+    jopt-simple = "5.0.4"
 
-# Fabric Settings
+# Fabric
     fabric = "0.16.5"
     fabric-range = "0.15"
     fabric-api = "0.105.0+1.21.1"
     fabric-api-range = "0.100.0+1.21"
 
-# Forge Settings
+# Forge
     forge-fml-range = "[51,)"
     forge-range = "[51.0.0,)"
     forge = "52.0.16"
     forge-mc = "1.21.1-52.0.15"
-    jopt-simple = "5.0.4"
 
-# Neoforge Settings
+# Neoforge
     neoforge-loader-range = "[4,)"
     neoforge-range = "[21.1.62,)"
     neoforge = "21.1.62"
@@ -34,6 +35,7 @@
     iris = "kuOV4Ece"
 
 # Plugins
+    plugin-moddevgradle = "2.0.31-beta"
     plugin-minotaur = "2.8.7"
     plugin-curseforge-gradle = "1.1.25"
     plugin-idea-ext = "1.1.8"
@@ -74,6 +76,7 @@
 
 # Platform
     vanillagradle = { id = "org.spongepowered.gradle.vanilla", version.ref = "plugin-vanilla-gradle" }
+    moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
     neogradle = { id = "net.neoforged.gradle.userdev", version.ref = "plugin-neoforge-gradle" }
     forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
     loom = { id = "fabric-loom", version.ref = "plugin-loom" }

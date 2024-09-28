@@ -27,7 +27,7 @@ subsystems {
 }
 
 minecraft {
-    accessTransformers.file("src/main/resources/META-INF/accesstransformer.cfg")
+    accessTransformers.file(project(":common").file("src/main/resources/META-INF/accesstransformer-nf.cfg"))
 }
 
 runs {

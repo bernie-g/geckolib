@@ -4,19 +4,22 @@ issueTrackerURL="https://github.com/bernie-g/geckolib/issues"
 license="${mod_license}"
 
 [[mods]]
-modId="${mod_id}"
-version="${version}"
-displayName="${mod_display_name}"
-displayURL="http://geckolib.com/"
-logoFile="geckolib.png" 
-credits="${mod_authors}"
-authors="${mod_authors}"
-description='''
+    modId="${mod_id}"
+    version="${version}"
+    displayName="${mod_display_name}"
+    displayURL="http://geckolib.com/"
+    logoFile="geckolib.png"
+    credits="${mod_authors}"
+    authors="${mod_authors}"
+    description='''
 ${mod_description}
 '''
 
 [[mixins]]
-config = "${mod_id}.mixins.json"
+    config = "${mod_id}.mixins.json"
+
+[[accessTransformers]]
+    file = "META-INF/accesstransformer-nf.cfg"
 
 [[dependencies.geckolib]]
     modId="neoforge"

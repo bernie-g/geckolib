@@ -1,20 +1,22 @@
 plugins {
     id("geckolib-convention")
 
-    alias(libs.plugins.vanillagradle)
+    alias(libs.plugins.moddevgradle)
 }
 
-val modId: String by project
 version = libs.versions.geckolib.get()
-val mcVersion = libs.versions.minecraft.asProvider().get()
 
 base {
-    archivesName = "geckolib-common-${mcVersion}"
+    archivesName = "geckolib-common-${libs.versions.minecraft.asProvider().get()}"
 }
 
-minecraft {
-    version(mcVersion)
-    accessWideners(file("src/main/resources/${modId}.accesswidener"))
+neoForge {
+    neoFormVersion = libs.versions.neoform.get()
+    validateAccessTransformers = true
+    accessTransformers.files.setFrom("src/main/resources/META-INF/accesstransformer-nf.cfg")
+
+    parchment.minecraftVersion.set(libs.versions.parchment.minecraft.get())
+    parchment.mappingsVersion.set(libs.versions.parchment.asProvider().get())
 }
 
 dependencies {
