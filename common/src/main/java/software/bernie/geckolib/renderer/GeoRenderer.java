@@ -27,6 +27,7 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 
+//TODO Split sources support
 /**
  * Base interface for all GeckoLib renderers.<br>
  */
