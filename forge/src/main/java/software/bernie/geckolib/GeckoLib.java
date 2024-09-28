@@ -14,8 +14,8 @@ import software.bernie.geckolib.network.GeckoLibNetworkingForge;
 public final class GeckoLib {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS_REGISTER = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE.key(), GeckoLibConstants.MODID);
 
-    public GeckoLib() {
-        DATA_COMPONENTS_REGISTER.register(FMLJavaModLoadingContext.get().getModEventBus());
+    public GeckoLib(FMLJavaModLoadingContext context) {
+        DATA_COMPONENTS_REGISTER.register(context.getModEventBus());
         GeckoLibNetworkingForge.init();
         DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
     }
