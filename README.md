@@ -10,7 +10,15 @@ GeckoLib is an animation and rendering engine for Minecraft Mods, with support f
 </p>
 <hr>
 <br>
-
+</p>
+<b>
+<p align="center">
+This version is considered legacy-stable, and is no longer supported with further updates.
+</p>
+</b>
+<br>
+<hr>
+<br>
 <p align="center">
 <img src="https://i.imgur.com/A8uUFuB.png" alt="Installation"/> 
 </p>
