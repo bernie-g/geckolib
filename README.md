@@ -1,18 +1,18 @@
 <p align="center">
-<img src="https://www.bisecthosting.com/images/CF/GeckoLib/bh_GL_header.png" alt="GeckoLib"/>
+<img src="https://i.imgur.com/fjDJ4jM.png" alt="GeckoLib"/>
 </p>
 <p align="center">
 <a href="https://discord.gg/pPEqBgJtZW"><img src="https://img.shields.io/discord/730912704776110121?color=green&label=Discord&logo=Discord&logoColor=green&style=for-the-badge" alt="Discord"/></a>
 <a href="https://ko-fi.com/geckolib"><img src="https://shields.io/badge/kofi-Buy_a_coffee-ff5f5f?logo=ko-fi&type=patrons&style=for-the-badge&color=green&logoColor=green" alt="Kofi"/></a>
 </p>
 <p align="center">
-GeckoLib is a powerful animation library for Minecraft Java Edition available for all major modloaders. Includes out-of-the-box support for easings, math-based animations, resource pack overloading, and animation stacking.
+GeckoLib is an animation and rendering engine for Minecraft Mods, with support for complex 3D keyframe-based animations, 30+ easings, concurrent animation support, sound and particle keyframes, event keyframes, and more. Available for Forge, Fabric, and NeoForge
 </p>
 <hr>
 <br>
 
 <p align="center">
-<img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_2.png" alt="Installation"/> 
+<img src="https://i.imgur.com/A8uUFuB.png" alt="Installation"/> 
 </p>
 <p align="center">
 You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">here</a>.
@@ -20,7 +20,7 @@ You can view installation instructions for modders <a href="https://github.com/b
 <br>
 
 <p align="center">
-    <img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_3.png" alt="Documentation"/> 
+    <img src="https://i.imgur.com/epUcGHM.png" alt="Documentation"/> 
 </p>
 <p align="center">
 GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">wiki</a>.<br>We spent many hours writing the wiki, so please read it!
@@ -28,7 +28,7 @@ GeckoLib provides detailed documentation in the form of a <a href="https://githu
 <br>
 
 <p align="center">
-<img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_4.png" alt="Support"/> 
+<img src="https://i.imgur.com/uwtfzfz.png" alt="Support"/> 
 </p>
 <p align="center">
 If you have questions or need help getting up and running with questions, join our discord!
@@ -36,7 +36,7 @@ If you have questions or need help getting up and running with questions, join o
 <br>
 
 <p align="center">
-<img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_5.png" alt="Contributing"/>
+<img src="https://i.imgur.com/MXReurz.png" alt="Contributing"/>
 </p>
 <p align="center">
 Pull requests are welcome. For significant changes, please open an issue first to discuss what you would like to change. If you would like to support GeckoLib, feel free to donate on <a href="https://ko-fi.com/geckolib">Ko-fi.</a>
@@ -44,7 +44,7 @@ Pull requests are welcome. For significant changes, please open an issue first t
 <br>
 
 <p align="center">
-<img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_6.png" alt="License"/> 
+<img src="https://i.imgur.com/h3CvewU.png" alt="License"/> 
 </p>
 <p align="center">
 <img src="https://img.shields.io/github/license/bernie-g/geckolib?style=for-the-badge" alt="MIT" height="50"/> 
@@ -60,7 +60,7 @@ Sponsored by BisectHosting
 Need a server to play with friends? Don't know how to one up? Just rent an already configured server from BisectHosting!
 </p>
 <p align="center">
-<a href="https://bisecthosting.com/gecko"><img src="https://f000.backblazeb2.com/file/softwarelocker/bh_GL_promo.png" alt="BisectHosting promo"/></a>
+<a href="https://bisecthosting.com/gecko"><img src="https://i.imgur.com/zOm6Tyq.png" alt="Bisect Hosting" style="max-width: 512px"/></a>
 </p>
 <p align="center">
 Click on the picture above, select plan (at least 4GB), and use my code gecko to get 25% off your first month and enjoy playing with your friends!
