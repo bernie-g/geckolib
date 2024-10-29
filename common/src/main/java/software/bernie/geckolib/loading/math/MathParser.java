@@ -23,7 +23,7 @@ import software.bernie.geckolib.loading.math.function.random.RandomFunction;
 import software.bernie.geckolib.loading.math.function.random.RandomIntegerFunction;
 import software.bernie.geckolib.loading.math.function.round.*;
 import software.bernie.geckolib.loading.math.value.*;
-import software.bernie.geckolib.util.CompoundException;
+import software.bernie.geckolib.object.CompoundException;
 
 import java.util.List;
 import java.util.Locale;

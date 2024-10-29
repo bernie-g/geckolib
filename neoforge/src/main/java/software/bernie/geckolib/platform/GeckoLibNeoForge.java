@@ -1,6 +1,7 @@
 package software.bernie.geckolib.platform;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import software.bernie.geckolib.GeckoLib;
@@ -36,6 +37,16 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
     @Override
     public boolean isPhysicalClient() {
         return FMLEnvironment.dist.isClient();
+    }
+
+    /**
+     * Helper method to account for Forge/NeoForge's custom fluid implementation in relation to swimming in fluids
+     *
+     * @return Whether the entity is in a swimmable fluid or not
+     */
+    @Override
+    public boolean isInSwimmableFluid(Entity entity) {
+        return GeckoLibPlatform.super.isInSwimmableFluid(entity) || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType));
     }
 
     /**

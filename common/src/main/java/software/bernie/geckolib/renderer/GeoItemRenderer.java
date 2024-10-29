@@ -10,9 +10,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -109,16 +107,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	/**
-	 * Shadowing override of {@link EntityRenderer#getTextureLocation}
-	 * <p>
-	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
-	 */
-	@Override
-	public ResourceLocation getTextureLocation(T animatable) {
-		return GeoRenderer.super.getTextureLocation(animatable);
-	}
-
-	/**
 	 * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
 	 */
 	@Override
@@ -174,17 +162,16 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 		this.animatable = (T)stack.getItem();
 		this.currentItemStack = stack;
 		this.renderPerspective = transformType;
-		float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+		float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
 		if (transformType == ItemDisplayContext.GUI) {
 			renderInGui(transformType, poseStack, bufferSource, packedLight, packedOverlay, partialTick);
 		}
 		else {
 			RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick);
-			VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, false, this.currentItemStack != null && this.currentItemStack.hasFoil());
+			VertexConsumer buffer = renderType == null ? null : ItemRenderer.getFoilBuffer(bufferSource, renderType, false, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
-			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer,
-					0, partialTick, packedLight);
+			defaultRender(poseStack, this.animatable, bufferSource, renderType, buffer, partialTick, packedLight);
 		}
 
 		this.animatable = null;
@@ -201,10 +188,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 
 		MultiBufferSource.BufferSource defaultBufferSource = bufferSource instanceof MultiBufferSource.BufferSource bufferSource2 ? bufferSource2 : Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), defaultBufferSource, partialTick);
-		VertexConsumer buffer = ItemRenderer.getFoilBufferDirect(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
+		VertexConsumer buffer = ItemRenderer.getFoilBuffer(bufferSource, renderType, true, this.currentItemStack != null && this.currentItemStack.hasFoil());
 
 		poseStack.pushPose();
-		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer, 0, partialTick, packedLight);
+		defaultRender(poseStack, this.animatable, defaultBufferSource, renderType, buffer, partialTick, packedLight);
 		defaultBufferSource.endBatch();
 		RenderSystem.enableDepthTest();
 		Lighting.setupFor3DItems();

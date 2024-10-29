@@ -57,6 +57,11 @@ repositories {
             includeGroup("software.bernie.geckolib")
         }
     }
+    /*maven {
+        name = "Geckolib Examples"
+        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+    }
+    mavenLocal()*/
 }
 
 dependencies {
@@ -65,7 +70,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //localRuntime(libs.examplemod.neoforge)
+    //implementation(libs.examplemod.neoforge)
 }
 
 tasks.withType<Test>().configureEach {

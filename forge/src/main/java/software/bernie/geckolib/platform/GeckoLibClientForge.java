@@ -1,10 +1,14 @@
 package software.bernie.geckolib.platform;
 
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentModel;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -26,11 +30,11 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      */
     @NotNull
     @Override
-    public <T extends LivingEntity & GeoAnimatable> HumanoidModel<?> getArmorModelForItem(T animatable, ItemStack stack, EquipmentSlot slot, HumanoidModel<LivingEntity> defaultModel) {
+    public <E extends LivingEntity & GeoAnimatable, S extends HumanoidRenderState> Model getArmorModelForItem(E animatable, S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentModel.LayerType type, HumanoidModel<S> defaultModel) {
         Item item = stack.getItem();
-        HumanoidModel<?> model = IClientItemExtensions.of(item).getHumanoidArmorModel(animatable, stack, slot, defaultModel);
+        Model model = IClientItemExtensions.of(item).getHumanoidArmorModel(entityRenderState, stack, slot, defaultModel);
 
-        if (model == defaultModel && GeoRenderProvider.of(item).getGeoArmorRenderer(animatable, stack, slot, defaultModel) instanceof GeoArmorRenderer<?> geoArmorRenderer)
+        if (model == defaultModel && GeoRenderProvider.of(item).getGeoArmorRenderer(animatable, stack, slot, type, defaultModel) instanceof GeoArmorRenderer<?> geoArmorRenderer)
             return geoArmorRenderer;
 
         return model;
@@ -60,11 +64,13 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      */
     @Nullable
     @Override
-    public GeoModel<?> getGeoModelForArmor(ItemStack armour) {
-        if (IClientItemExtensions.of(armour).getHumanoidArmorModel(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+    public GeoModel<?> getGeoModelForArmor(ItemStack armour, EquipmentSlot slot, EquipmentModel.LayerType type) {
+        final HumanoidModel<?> defaultModel = slot == EquipmentSlot.LEGS ? GENERIC_INNER_ARMOR_MODEL.get() : GENERIC_OUTER_ARMOR_MODEL.get();
+
+        if (IClientItemExtensions.of(armour).getHumanoidArmorModel(new LivingEntityRenderState(), armour, slot, defaultModel) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
-        if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, null, null) instanceof GeoArmorRenderer<?> armorRenderer)
+        if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, slot, type, defaultModel) instanceof GeoArmorRenderer<?> armorRenderer)
             return armorRenderer.getGeoModel();
 
         return null;

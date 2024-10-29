@@ -96,7 +96,7 @@ public class AnimatableTexture extends SimpleTexture {
 	}
 
 	public void setAnimationFrame(int tick) {
-		if (this.animationContents != null)
+		if (this.animationContents != null && this.animationContents.animatedTexture != null)
 			this.animationContents.animatedTexture.setCurrentFrame(tick);
 	}
 
@@ -247,7 +247,7 @@ public class AnimatableTexture extends SimpleTexture {
 							int blendedGreen = interpolate(frameProgress, prevFramePixel >> 8 & 255, nextFramePixel >> 8 & 255);
 							int blendedBlue = interpolate(frameProgress, prevFramePixel & 255, nextFramePixel & 255);
 
-							this.interpolatedFrame.setPixelRGBA(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
+							this.interpolatedFrame.setPixel(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
 						}
 					}
 
@@ -257,7 +257,7 @@ public class AnimatableTexture extends SimpleTexture {
 			}
 
 			private int getPixel(int frameIndex, int x, int y) {
-				return this.baseImage.getPixelRGBA(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
+				return this.baseImage.getPixel(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
 			}
 
 			private int interpolate(double frameProgress, double prevColour, double nextColour) {

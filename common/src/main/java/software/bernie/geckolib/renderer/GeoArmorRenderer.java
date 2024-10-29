@@ -30,7 +30,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -78,7 +78,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
 
 		this.model = model;
-		this.young = false;
 	}
 
 	/**
@@ -302,20 +301,18 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 	@Override
 	@ApiStatus.Internal
-	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight,
-							   int packedOverlay, int colour) {
+	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
 		Minecraft mc = Minecraft.getInstance();
 		MultiBufferSource bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
 
 		if (mc.levelRenderer.shouldShowEntityOutlines() && mc.shouldEntityAppearGlowing(this.currentEntity))
 			bufferSource =  mc.levelRenderer.renderBuffers.outlineBufferSource();
 
-		float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(true);
+		float partialTick = mc.getDeltaTracker().getGameTimeDeltaPartialTick(true);
 		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick);
-		buffer = ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, this.currentStack.hasFoil());
+		buffer = renderType == null ? null : ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, this.currentStack.hasFoil());
 
-		defaultRender(poseStack, this.animatable, bufferSource, null, buffer,
-				0, partialTick, packedLight);
+		defaultRender(poseStack, this.animatable, bufferSource, null, buffer, partialTick, packedLight);
 
 		this.animatable = null;
 	}
@@ -417,30 +414,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Prepare the renderer for the current render cycle
-	 * <p>
-	 * Must be called prior to render as the default HumanoidModel doesn't give render context
-	 * <p>
-	 * Params have been left nullable so that the renderer can be called for model/texture purposes safely.
-	 * If you do grab the renderer using null parameters, you should not use it for actual rendering
-	 *
-	 * @param entity The entity being rendered with the armor on
-	 * @param stack The ItemStack being rendered
-	 * @param slot The slot being rendered
-	 * @param baseModel The default (vanilla) model that would have been rendered if this model hadn't replaced it
-	 * @deprecated Use {@link #prepForRender(Entity, ItemStack, EquipmentSlot, HumanoidModel, MultiBufferSource, float, float, float, float, float)}
-	 */
-	@Deprecated(forRemoval = true)
-	public void prepForRender(@Nullable Entity entity, ItemStack stack, @Nullable EquipmentSlot slot, @Nullable HumanoidModel<?> baseModel) {
-		if (entity == null || slot == null || baseModel == null)
-			return;
-
-		final Minecraft mc = Minecraft.getInstance();
-
-		prepForRender(entity, stack, slot, baseModel, mc.levelRenderer.renderBuffers.bufferSource(), mc.getTimer().getGameTimeDeltaPartialTick(true), 0, 0, 0, 0);
-	}
-
-	/**
 	 * Prepare the renderer for the current render pass
 	 * <p>
 	 * Must be called prior to render as the default HumanoidModel doesn't give render context
@@ -451,13 +424,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * @param baseModel The default (vanilla) model that would have been rendered if this model hadn't replaced it
 	 * @param bufferSource The buffer supplier for the current render context
 	 * @param partialTick The fraction of a tick passed since the last game tick
-	 * @param limbSwing The position in the limb swing cycle that the entity is in
-	 * @param limbSwingAmount The frame-relative velocity of the entity's limb swing
 	 * @param netHeadYaw The entity's Y rotation, discounting any head rotation
 	 * @param headPitch The entity's X rotation
 	 */
 	public void prepForRender(Entity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> baseModel, MultiBufferSource bufferSource,
-							  float partialTick, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
+							  float partialTick, float netHeadYaw, float headPitch) {
 		this.baseModel = baseModel;
 		this.currentEntity = entity;
 		this.currentStack = stack;
@@ -465,8 +436,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.currentSlot = slot;
 		this.bufferSource = bufferSource;
 		this.partialTick = partialTick;
-		this.limbSwing = limbSwing;
-		this.limbSwingAmount = limbSwingAmount;
 		this.netHeadYaw = netHeadYaw;
 		this.headPitch = headPitch;
 	}
@@ -475,11 +444,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Applies settings and transformations pre-render based on the default model
 	 */
 	protected void applyBaseModel(HumanoidModel<?> baseModel) {
-		this.young = baseModel.young;
-		this.crouching = baseModel.crouching;
-		this.riding = baseModel.riding;
-		this.rightArmPose = baseModel.rightArmPose;
-		this.leftArmPose = baseModel.leftArmPose;
+		//this.young = baseModel.young;
+		//this.crouching = baseModel.crouching;
+		//this.riding = baseModel.riding;
+		//this.rightArmPose = baseModel.rightArmPose;
+		//this.leftArmPose = baseModel.leftArmPose;
 	}
 
 	/**
@@ -617,10 +586,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Apply custom scaling to account for {@link net.minecraft.client.model.AgeableListModel AgeableListModel} baby models
+	 * Apply custom scaling to account for AgeableListModel baby models
 	 */
 	public void scaleModelForBaby(PoseStack poseStack, T animatable, float partialTick, boolean isReRender) {
-		if (!this.young || isReRender)
+		/*if (!this.young || isReRender)
 			return;
 
 		if (this.currentSlot == EquipmentSlot.HEAD) {
@@ -637,7 +606,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 			poseStack.scale(bodyScale, bodyScale, bodyScale);
 			poseStack.translate(0, this.baseModel.bodyYOffset / 16f, 0);
-		}
+		}*/
 	}
 
 	/**

@@ -16,7 +16,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.value.Constant;
 import software.bernie.geckolib.loading.object.BakedAnimations;
-import software.bernie.geckolib.util.CompoundException;
+import software.bernie.geckolib.object.CompoundException;
 import software.bernie.geckolib.util.JsonUtil;
 
 import java.lang.reflect.Type;

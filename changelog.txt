@@ -1,4 +1,8 @@
-v?
+v4.7-beta-1
 
+- Update to 1.21.3
+    - THIS IS A BREAKING VERSION. I have released this so modders dependent on GeckoLib can begin porting, but I have breaking changes to come
+    - EntityRenderState is wrapped and ignored - you do not need to worry about this when using GeckoLib (for now)
+- Removed the `query.is_powered` molang query as it is no longer practically feasible
 - Change crashes to warnings for unsupported model format versions for geo models
 - Fix incorrect version range for NeoForge mods

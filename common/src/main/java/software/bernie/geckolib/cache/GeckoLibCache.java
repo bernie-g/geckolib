@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -17,7 +16,7 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.util.CompoundException;
+import software.bernie.geckolib.object.CompoundException;
 
 import java.util.Collections;
 import java.util.Locale;
@@ -54,9 +53,7 @@ public final class GeckoLibCache {
 			resourceManager.registerReloadListener(GeckoLibCache::reload);
 	}
 
-	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager,
-			ProfilerFiller preparationsProfiler, ProfilerFiller reloadProfiler, Executor backgroundExecutor,
-			Executor gameExecutor) {
+	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
 		Map<ResourceLocation, BakedAnimations> animations = new Object2ObjectOpenHashMap<>();
 		Map<ResourceLocation, BakedGeoModel> models = new Object2ObjectOpenHashMap<>();
 

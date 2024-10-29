@@ -1,6 +1,7 @@
 package software.bernie.geckolib.service;
 
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.world.entity.Entity;
 
 import java.nio.file.Path;
 import java.util.function.Supplier;
@@ -24,6 +25,15 @@ public interface GeckoLibPlatform {
      * @return The root game directory (./run)
      */
     Path getGameDir();
+
+    /**
+     * Helper method to account for Forge/NeoForge's custom fluid implementation in relation to swimming in fluids
+     *
+     * @return Whether the entity is in a swimmable fluid or not
+     */
+    default boolean isInSwimmableFluid(Entity entity) {
+        return entity.isInWater();
+    }
 
     /**
      * Register a {@link DataComponentType}

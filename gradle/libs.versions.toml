@@ -1,50 +1,48 @@
 [versions]
 # GeckoLib
-    geckolib = "4.6.6"
+    geckolib = "4.7-beta-1"
 
 # Common
-    minecraft-range = "[1.21,)"
-    minecraft = "1.21.1"
+    minecraft-range = "[1.21.3,)"
+    minecraft = "1.21.3"
     parchment-minecraft = "1.21"
     parchment = "2024.07.28"
-    neoform = "1.21-20240613.152323"
+    neoform = "1.21.3-20241023.131943"
     jopt-simple = "5.0.4"
 
 # Fabric
-    fabric = "0.16.5"
-    fabric-range = "0.15"
-    fabric-api = "0.105.0+1.21.1"
-    fabric-api-range = "0.100.0+1.21"
+    fabric = "0.16.7"
+    fabric-range = "0.16"
+    fabric-api = "0.106.1+1.21.3"
+    fabric-api-range = "0.106.0+1.21.3"
 
 # Forge
-    forge-fml-range = "[51,)"
-    forge-range = "[51.0.0,)"
-    forge = "52.0.16"
-    forge-mc = "1.21.1-52.0.15"
+    forge-fml-range = "[53,)"
+    forge-range = "[53.0.0,)"
+    forge = "53.0.0"
+    forge-mc = "1.21.3-53.0.0"
 
 # Neoforge
     neoforge-loader-range = "[4,)"
-    neoforge-range = "[21.1.62,)"
-    neoforge = "21.1.62"
+    neoforge-range = "[21.3.2-beta,)"
+    neoforge = "21.3.2-beta"
 
 # Dependencies
     mixin = "0.8.7"
-    mixinextras = "0.3.5"
-    mixinextras-range = "[0.3.5,)"
+    mixinextras = "0.4.1"
+    mixinextras-range = "[0.4.1,)"
     examplemod = "1.0.0"
     iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.31-beta"
+    plugin-moddevgradle = "2.0.42-beta"
     plugin-minotaur = "2.8.7"
     plugin-curseforge-gradle = "1.1.25"
     plugin-idea-ext = "1.1.8"
     plugin-forge-gradle = "[6.0.24,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.0.165"
-    plugin-loom = "1.7-SNAPSHOT"
-    plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
+    plugin-loom = "1.8-SNAPSHOT"
 
 [libraries]
 # Mixin
@@ -60,10 +58,10 @@
     minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
 
 # Testing
-    examplemod-common = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-common-1.21", version.ref = "examplemod" }
-    examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-1.21", version.ref = "examplemod" }
-    examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-1.21", version.ref = "examplemod" }
-    examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-1.21", version.ref = "examplemod" }
+    examplemod-common = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-common-1.21.3", version.ref = "examplemod" }
+    examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-1.21.3", version.ref = "examplemod" }
+    examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-1.21.3", version.ref = "examplemod" }
+    examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-1.21.3", version.ref = "examplemod" }
 
 # Other
     jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version.ref = "jopt-simple" } # Forge's temporary hacky solution
@@ -75,9 +73,7 @@
     curseforgegradle = { id = "net.darkhax.curseforgegradle", version.ref = "plugin-curseforge-gradle" }
 
 # Platform
-    vanillagradle = { id = "org.spongepowered.gradle.vanilla", version.ref = "plugin-vanilla-gradle" }
     moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
-    neogradle = { id = "net.neoforged.gradle.userdev", version.ref = "plugin-neoforge-gradle" }
     forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
     loom = { id = "fabric-loom", version.ref = "plugin-loom" }
     parchmentforgegradle = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "plugin-parchment-forge-gradle" }

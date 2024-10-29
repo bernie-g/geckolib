@@ -131,7 +131,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			int packedLight, int packedOverlay) {
 		this.animatable = animatable;
 
-		defaultRender(poseStack, this.animatable, bufferSource, null, null, 0, partialTick, packedLight);
+		defaultRender(poseStack, this.animatable, bufferSource, null, null, partialTick, packedLight);
 	}
 
 	/**

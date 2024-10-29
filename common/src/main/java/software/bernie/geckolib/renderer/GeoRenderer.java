@@ -22,7 +22,7 @@ import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -124,7 +124,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * All GeckoLib renderers should immediately defer their respective default {@code render} calls to this, for consistent handling
 	 */
 	default void defaultRender(PoseStack poseStack, T animatable, MultiBufferSource bufferSource, @Nullable RenderType renderType, @Nullable VertexConsumer buffer,
-							   float yaw, float partialTick, int packedLight) {
+							   float partialTick, int packedLight) {
 		poseStack.pushPose();
 
 		int renderColor = getRenderColor(animatable, partialTick, packedLight).argbInt();

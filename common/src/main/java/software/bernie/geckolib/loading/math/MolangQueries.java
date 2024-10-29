@@ -81,7 +81,6 @@ public final class MolangQueries {
 	public static final String IS_MOVING = "query.is_moving";
 	public static final String IS_ON_FIRE = "query.is_on_fire";
 	public static final String IS_ON_GROUND = "query.is_on_ground";
-	public static final String IS_POWERED = "query.is_powered";
 	public static final String IS_RIDING = "query.is_riding";
 	public static final String IS_SADDLED = "query.is_saddled";
 	public static final String IS_SILENT = "query.is_silent";
@@ -258,14 +257,13 @@ public final class MolangQueries {
 		MolangQueries.<Entity>setActorVariable(IS_MOVING, actor -> actor.animationState.isMoving() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_ON_FIRE, actor -> actor.animatable.isOnFire() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_ON_GROUND, actor -> actor.animatable.onGround() ? 1 : 0);
-		MolangQueries.<Entity>setActorVariable(IS_POWERED, actor -> actor.animatable instanceof PowerableMob powerable && powerable.isPowered() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_RIDING, actor -> actor.animatable.isPassenger() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SADDLED, actor -> actor.animatable instanceof Saddleable saddleable && saddleable.isSaddled() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SILENT, actor -> actor.animatable.isSilent() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SNEAKING, actor -> actor.animatable.isCrouching() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SPRINTING, actor -> actor.animatable.isSprinting() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SWIMMING, actor -> actor.animatable.isSwimming() ? 1 : 0);
-		MolangQueries.<Entity>setActorVariable(MOVEMENT_DIRECTION, actor -> actor.animationState.isMoving() ? Direction.getNearest(actor.animatable.getDeltaMovement()).get3DDataValue() : 6);
+		MolangQueries.<Entity>setActorVariable(MOVEMENT_DIRECTION, actor -> actor.animationState.isMoving() ? Direction.getApproximateNearest(actor.animatable.getDeltaMovement()).get3DDataValue() : 6);
 		MolangQueries.<Entity>setActorVariable(RIDER_BODY_X_ROTATION, actor -> actor.animatable.isVehicle() ? actor.animatable.getFirstPassenger() instanceof LivingEntity ? 0 : actor.animatable.getFirstPassenger().getViewXRot(actor.animationState.getPartialTick()) : 0);
 		MolangQueries.<Entity>setActorVariable(RIDER_BODY_Y_ROTATION, actor -> actor.animatable.isVehicle() ? actor.animatable.getFirstPassenger() instanceof LivingEntity living ? Mth.lerp(actor.animationState.getPartialTick(), living.yBodyRotO, living.yBodyRot) : actor.animatable.getFirstPassenger().getViewYRot(actor.animationState.getPartialTick()) : 0);
 		MolangQueries.<Entity>setActorVariable(RIDER_HEAD_X_ROTATION, actor -> actor.animatable.getFirstPassenger() instanceof LivingEntity living ? living.getViewXRot(actor.animationState.getPartialTick()) : 0);

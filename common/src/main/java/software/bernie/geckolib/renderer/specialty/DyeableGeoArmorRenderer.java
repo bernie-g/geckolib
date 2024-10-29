@@ -4,16 +4,16 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.object.Color;
 
 import java.util.Collection;
 import java.util.Set;
@@ -44,7 +44,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
         if (this.dyeableBones.contains(bone)) {
             final Color color = getColorForBone(bone);
 
-            colour = FastColor.ARGB32.multiply(colour, color.argbInt());
+            colour = ARGB.multiply(colour, color.argbInt());
         }
 
         super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);

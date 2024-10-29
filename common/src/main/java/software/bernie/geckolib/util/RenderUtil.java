@@ -9,16 +9,20 @@ import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentModel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -27,9 +31,9 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
@@ -263,9 +267,7 @@ public final class RenderUtil {
 	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForEntityType(EntityType<?> entityType) {
-		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
-
-		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+		return Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType) instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
 	}
 
 	/**
@@ -276,9 +278,7 @@ public final class RenderUtil {
 	 */
 	@Nullable
 	public static GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
-		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType);
-
-		return renderer instanceof GeoReplacedEntityRenderer<?, ?> replacedEntityRenderer ? replacedEntityRenderer.getAnimatable() : null;
+		return Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType) instanceof GeoReplacedEntityRenderer<?, ?> replacedEntityRenderer ? replacedEntityRenderer.getAnimatable() : null;
 	}
 
 	/**
@@ -293,9 +293,7 @@ public final class RenderUtil {
 	 */
 	@Nullable
 	public static GeoModel<?> getGeoModelForEntity(Entity entity) {
-		EntityRenderer<?> renderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
-
-		return renderer instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
+		return Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity) instanceof GeoRenderer<?> geoRenderer ? geoRenderer.getGeoModel() : null;
 	}
 
 	/**
@@ -338,10 +336,81 @@ public final class RenderUtil {
 	 * Generally speaking you probably shouldn't be calling this method at all
 	 *
 	 * @param stack The ItemStack to retrieve the GeoModel for
+	 * @param slot The equipment slot the stack would be equipped in
+	 * @param type The equipment model type to retrieve
 	 * @return The GeoModel, or null if one isn't found
 	 */
 	@Nullable
-	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
-		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack);
+	public static GeoModel<?> getGeoModelForArmor(ItemStack stack, EquipmentSlot slot, EquipmentModel.LayerType type) {
+		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack, slot, type);
+	}
+
+	/**
+	 * Replica of {@link LivingEntityRenderer#extractRenderState(LivingEntity, LivingEntityRenderState, float)}, moved here for external convenience.
+	 * <p>
+	 * It is expected that the entityRenderState has already been pre-filled by
+	 * {@link net.minecraft.client.renderer.entity.EntityRenderer#extractRenderState(Entity, EntityRenderState, float)} prior to this call
+	 */
+	public static void prepLivingEntityRenderState(LivingEntity entity, LivingEntityRenderState entityRenderState, float partialTick) {
+		Minecraft mc = Minecraft.getInstance();
+		ItemRenderer itemRenderer = mc.getItemRenderer();
+		float yHeadRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
+
+		if (!entity.isPassenger() && entity.isAlive()) {
+			entityRenderState.walkAnimationPos = entity.walkAnimation.position(partialTick);
+			entityRenderState.walkAnimationSpeed = entity.walkAnimation.speed(partialTick);
+		}
+		else {
+			entityRenderState.walkAnimationPos = 0;
+			entityRenderState.walkAnimationSpeed = 0;
+		}
+
+		if (entity.getVehicle() instanceof LivingEntity mount) {
+			float yBodyRot = Mth.rotLerp(partialTick, mount.yBodyRotO, mount.yBodyRot);
+			float headBodyRotDelta = Mth.clamp(Mth.wrapDegrees(yHeadRot - yBodyRot), -85f, 85f);
+			yBodyRot = yHeadRot - headBodyRotDelta;
+
+			if (Math.abs(headBodyRotDelta) > 50f)
+				yBodyRot += headBodyRotDelta * 0.2f;
+
+			entityRenderState.bodyRot = yBodyRot;
+			entityRenderState.wornHeadAnimationPos = mount.walkAnimation.position(partialTick);
+		}
+		else {
+			entityRenderState.bodyRot = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
+			entityRenderState.wornHeadAnimationPos = entityRenderState.walkAnimationPos;
+		}
+
+		entityRenderState.customName = entity.getCustomName();
+		entityRenderState.isUpsideDown = LivingEntityRenderer.isEntityUpsideDown(entity);
+		entityRenderState.scale = entity.getScale();
+		entityRenderState.ageScale = entity.getAgeScale();
+		entityRenderState.pose = entity.getPose();
+		entityRenderState.bedOrientation = entity.getBedOrientation();
+		entityRenderState.isFullyFrozen = entity.isFullyFrozen();
+		entityRenderState.isBaby = entity.isBaby();
+		entityRenderState.isInWater = GeckoLibServices.PLATFORM.isInSwimmableFluid(entity);
+		entityRenderState.isAutoSpinAttack = entity.isAutoSpinAttack();
+		entityRenderState.hasRedOverlay = entity.hurtTime > 0 || entity.deathTime > 0;
+		entityRenderState.deathTime = entity.deathTime > 0 ? (float)entity.deathTime + partialTick : 0;
+		entityRenderState.mainArm = entity.getMainArm();
+		entityRenderState.headItem = entity.getItemBySlot(EquipmentSlot.HEAD).copy();
+		entityRenderState.rightHandItem = entity.getItemHeldByArm(HumanoidArm.RIGHT).copy();
+		entityRenderState.leftHandItem = entity.getItemHeldByArm(HumanoidArm.LEFT).copy();
+		entityRenderState.headItemModel = itemRenderer.resolveItemModel(entityRenderState.headItem, entity, ItemDisplayContext.HEAD);
+		entityRenderState.rightHandItemModel = itemRenderer.resolveItemModel(entityRenderState.rightHandItem, entity, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
+		entityRenderState.leftHandItemModel = itemRenderer.resolveItemModel(entityRenderState.leftHandItem, entity, ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
+		entityRenderState.isInvisibleToPlayer = entityRenderState.isInvisible && entity.isInvisibleTo(mc.player);
+		entityRenderState.appearsGlowing = mc.shouldEntityAppearGlowing(entity);
+		entityRenderState.yRot = Mth.wrapDegrees(yHeadRot - entityRenderState.bodyRot);
+		entityRenderState.xRot = entity.getXRot(partialTick);
+
+		if (entityRenderState.isUpsideDown) {
+			entityRenderState.xRot *= -1;
+			entityRenderState.yRot *= -1;
+		}
+
+		if (entityRenderState.bedOrientation != null)
+			entityRenderState.eyeHeight = entity.getEyeHeight(Pose.STANDING);
 	}
 }

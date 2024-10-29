@@ -1,7 +1,7 @@
 /*
     Direct copy of https://github.com/shedaniel/cloth-basic-math/blob/master/src/main/java/me/shedaniel/math/Color.java under the unlicense.
  */
-package software.bernie.geckolib.util;
+package software.bernie.geckolib.object;
 
 /**
  * Color holder object for storing a packed int argb value.

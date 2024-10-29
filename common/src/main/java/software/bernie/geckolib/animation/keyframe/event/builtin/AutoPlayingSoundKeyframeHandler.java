@@ -2,7 +2,6 @@ package software.bernie.geckolib.animation.keyframe.event.builtin;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.monster.Enemy;
@@ -28,9 +27,8 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
     @Override
     public void handle(SoundKeyframeEvent<A> event) {
         String[] segments = event.getKeyframeData().getSound().split("\\|");
-        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.read(segments[0]).getOrThrow());
 
-        if (sound != null) {
+        BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.read(segments[0]).getOrThrow()).ifPresent(sound -> {
             Entity entity = event.getAnimatable() instanceof Entity e ? e : null;
             Vec3 position = entity != null ? entity.position() : event.getAnimatable() instanceof BlockEntity blockEntity ? blockEntity.getBlockPos().getCenter() : null;
 
@@ -41,6 +39,6 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
 
                 ClientUtil.getLevel().playSound(null, position.x, position.y, position.z, sound, source, volume, pitch);
             }
-        }
+        });
     }
 }

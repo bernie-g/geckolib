@@ -1,4 +1,4 @@
-package software.bernie.geckolib.util;
+package software.bernie.geckolib.object;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 

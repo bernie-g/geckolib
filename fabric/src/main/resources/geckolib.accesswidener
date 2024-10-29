@@ -10,18 +10,16 @@ accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShar
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
-accessible field net/minecraft/client/model/AgeableListModel scaleHead Z
-accessible field net/minecraft/client/model/AgeableListModel babyYHeadOffset F
-accessible field net/minecraft/client/model/AgeableListModel babyZHeadOffset F
-accessible field net/minecraft/client/model/AgeableListModel babyHeadScale F
-accessible field net/minecraft/client/model/AgeableListModel babyBodyScale F
-accessible field net/minecraft/client/model/AgeableListModel bodyYOffset F
 
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
 accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
 
 accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
 accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
+accessible field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
+mutable field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
+extendable method net/minecraft/client/renderer/entity/EntityRenderer createRenderState (Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
+extendable method net/minecraft/client/model/Model renderToBuffer (Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V
 
 # TEMP FOR BUFFERBUILDER
 accessible class net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator

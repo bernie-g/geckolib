@@ -5,17 +5,15 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.texture.AnimatableTexture;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
@@ -59,16 +57,6 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	@Override
 	public T getAnimatable() {
 		return this.animatable;
-	}
-
-	/**
-	 * Shadowing override of {@link EntityRenderer#getTextureLocation}
-	 * <p>
-	 * This redirects the call to {@link GeoRenderer#getTextureLocation}
-	 */
-	@Override
-	public ResourceLocation getTextureLocation(T animatable) {
-		return GeoRenderer.super.getTextureLocation(animatable);
 	}
 
 	/**
@@ -125,7 +113,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 		if (buffer == null)
 			bufferSource =  Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 
-		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, 0, partialTick, packedLight);
+		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, partialTick, packedLight);
 	}
 
 	/**

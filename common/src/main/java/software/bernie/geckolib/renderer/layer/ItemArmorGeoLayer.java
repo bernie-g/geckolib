@@ -4,23 +4,25 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.SkullModelBase;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelPart.Cube;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.core.Holder;
+import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.armortrim.ArmorTrim;
-import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentModel;
+import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import org.jetbrains.annotations.NotNull;
@@ -31,9 +33,11 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.service.GeckoLibClient;
 import software.bernie.geckolib.util.RenderUtil;
 
 /**
@@ -44,8 +48,7 @@ import software.bernie.geckolib.util.RenderUtil;
  * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering
  */
 public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
-	protected static final HumanoidModel<LivingEntity> INNER_ARMOR_MODEL = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
-	protected static final HumanoidModel<LivingEntity> OUTER_ARMOR_MODEL = new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR));
+	protected final EquipmentLayerRenderer equipmentRenderer;
 
 	@Nullable
 	protected ItemStack mainHandStack;
@@ -57,6 +60,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	public ItemArmorGeoLayer(GeoRenderer<T> geoRenderer) {
 		super(geoRenderer);
+
+		this.equipmentRenderer = new EquipmentLayerRenderer(Minecraft.getInstance().getEquipmentModels(), Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET));
 	}
 
 	/**
@@ -146,13 +151,19 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 				if (model instanceof GeoArmorRenderer<?> geoArmorRenderer) {
 					prepModelPartForRender(poseStack, bone, modelPart);
-					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model);
+					geoArmorRenderer.prepForRender(animatable, armorStack, slot, model, bufferSource, partialTick, 0, 0);
 					geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, model);
 					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, Color.WHITE.argbInt());
 				}
-				else if (armorStack.getItem() instanceof ArmorItem) {
-					prepModelPartForRender(poseStack, bone, modelPart);
-					renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
+				else {
+					Equippable equippable = armorStack.get(DataComponents.EQUIPPABLE);
+
+					if (equippable != null && equippable.slot() == slot) {
+						equippable.model().ifPresent(modelPath -> {
+							prepModelPartForRender(poseStack, bone, modelPart);
+							renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, equippable, modelPath, model, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
+						});
+					}
 				}
 
 				poseStack.popPose();
@@ -163,47 +174,12 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	/**
 	 * Renders an individual armor piece base on the given {@link GeoBone} and {@link ItemStack}
 	 */
-	protected <I extends Item & GeoItem> void renderVanillaArmorPiece(PoseStack poseStack, T animatable, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
-															   ModelPart modelPart, MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
-		Holder<ArmorMaterial> material = ((ArmorItem)armorStack.getItem()).getMaterial();
+	protected void renderVanillaArmorPiece(PoseStack poseStack, T animatable, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
+										   Equippable equippable, ResourceLocation modelPath, HumanoidModel<?> model, ModelPart modelPart,
+										   MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
+		EquipmentModel.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID;
 
-		for (ArmorMaterial.Layer layer : material.value().layers()) {
-			int color = armorStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(armorStack, -6265536) : -1;
-			VertexConsumer buffer = getVanillaArmorBuffer(bufferSource, animatable, armorStack, slot, bone, layer, packedLight, packedOverlay, false);
-
-			modelPart.render(poseStack, buffer, packedLight, packedOverlay, color);
-		}
-
-		ArmorTrim trim = armorStack.get(DataComponents.TRIM);
-
-		if (trim != null) {
-			TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET).getSprite(slot == EquipmentSlot.LEGS ? trim.innerTexture(material) : trim.outerTexture(material));
-			VertexConsumer buffer = sprite.wrap(bufferSource.getBuffer(Sheets.armorTrimsSheet(trim.pattern().value().decal())));
-			modelPart.render(poseStack, buffer, packedLight, packedOverlay);
-		}
-
-		if (armorStack.hasFoil())
-			modelPart.render(poseStack, getVanillaArmorBuffer(bufferSource, animatable, armorStack, slot, bone, null, packedLight, packedOverlay, true), packedLight, packedOverlay, Color.WHITE.argbInt());
-	}
-
-	/**
-	 * Returns the standard VertexConsumer for armor rendering from the given buffer source
-	 *
-	 * @param bufferSource The BufferSource to draw the buffer from
-	 * @param animatable The GeoAnimatable the armor piece is rendering on
-	 * @param stack The ItemStack for the armor piece
-	 * @param slot The EquipmentSlot the armor piece is in
-	 * @param bone The GeoBone related to the armor piece
-	 * @param layer The currently rendering material layer for the armor piece, or null if not rendering a specific layer
-	 * @param packedLight The packed sky/block light value for the entity the armor piece is rendering on
-	 * @param packedOverlay The packed red/white overlay value for the entity the armor piece is rendering on
-	 * @return The buffer to draw to
-	 */
-	protected VertexConsumer getVanillaArmorBuffer(MultiBufferSource bufferSource, T animatable, ItemStack stack, EquipmentSlot slot, GeoBone bone, @Nullable ArmorMaterial.Layer layer, int packedLight, int packedOverlay, boolean forGlint) {
-		if (forGlint)
-			return bufferSource.getBuffer(RenderType.armorEntityGlint());
-
-		return bufferSource.getBuffer(RenderType.armorCutoutNoCull(layer.texture(slot == EquipmentSlot.LEGS)));
+		this.equipmentRenderer.renderLayers(layerType, modelPath, model, armorStack, poseStack, bufferSource, packedLight);
 	}
 
 	/**
@@ -211,9 +187,10 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	@NotNull
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
-		HumanoidModel<LivingEntity> defaultModel = slot == EquipmentSlot.LEGS ? INNER_ARMOR_MODEL : OUTER_ARMOR_MODEL;
-		
-		return GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(animatable, stack, slot, defaultModel);
+		HumanoidModel<HumanoidRenderState> defaultModel = slot == EquipmentSlot.LEGS ? GeckoLibClient.GENERIC_INNER_ARMOR_MODEL.get() : GeckoLibClient.GENERIC_OUTER_ARMOR_MODEL.get();
+		Model model = GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(animatable, getRenderer() instanceof GeoEntityRenderer<T> entityRenderer && entityRenderer.getEntityRenderState() instanceof HumanoidRenderState renderState ? renderState : new HumanoidRenderState(), stack, slot, slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID, defaultModel);
+
+		return model instanceof HumanoidModel<?> humanoidModel ? humanoidModel : defaultModel;
 	}
 
 	/**
@@ -240,8 +217,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
-		final GeoCube firstCube = bone.getCubes().get(0);
-		final Cube armorCube = sourcePart.cubes.get(0);
+		final GeoCube firstCube = bone.getCubes().getFirst();
+		final Cube armorCube = sourcePart.cubes.getFirst();
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
