@@ -1,8 +1,17 @@
-v4.7-beta-1
+v4.7-beta-2
 
-- Update to 1.21.3
-    - THIS IS A BREAKING VERSION. I have released this so modders dependent on GeckoLib can begin porting, but I have breaking changes to come
-    - EntityRenderState is wrapped and ignored - you do not need to worry about this when using GeckoLib (for now)
-- Removed the `query.is_powered` molang query as it is no longer practically feasible
-- Change crashes to warnings for unsupported model format versions for geo models
-- Fix incorrect version range for NeoForge mods
+- Added support for UV Face Rotation
+- Added a deferred GeoRenderProvider for split-sources support
+- Added a stop triggered animation function, to allow for stopping of triggered animations in the same way you triggered them in the first place
+- Added a fallback hook for animations - you can now declare multiple animation files in a single GeoModel to look for animations (for polymorphic/modular animatables)
+- GeoModels now receive the renderer in #getTextureResource and #getModelResource, to allow for render-context dependent models and textures
+- Keyframe events now have the AnimationState passed to them for additional context
+- Moved the AnimationState creation in GeoRenderer to its own method for easy overriding
+- Pass the render colour from the renderer to the render layers
+- Fixed Color#ofARGB actually being RGBA
+- Removed previously deprecated methods
+- Fixed some issues with Entity and ReplacedEntity geo renderers
+- Fixed entity velocity being determined mostly from x-coordinate velocity
+- Fixed the controller-agnostic triggered anim function not working
+- Introduced additional safeties to prevent unexpected crashes for some networking functions
+- Moved animated texture ticking to an internal handler, preventing GeoRenderer implementations from needing to handle it

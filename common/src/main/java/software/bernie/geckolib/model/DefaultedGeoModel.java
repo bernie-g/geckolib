@@ -2,6 +2,7 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 /**
  * Defaulted model class for GeckoLib models
@@ -111,12 +112,12 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	protected abstract String subtype();
 
 	@Override
-	public ResourceLocation getModelResource(T animatable) {
+	public ResourceLocation getModelResource(T animatable, GeoRenderer<T> renderer) {
 		return this.modelPath;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(T animatable) {
+	public ResourceLocation getTextureResource(T animatable, GeoRenderer<T> renderer) {
 		return this.texturePath;
 	}
 

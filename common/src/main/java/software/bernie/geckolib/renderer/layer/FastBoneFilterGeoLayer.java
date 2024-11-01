@@ -47,7 +47,7 @@ public class FastBoneFilterGeoLayer<T extends GeoAnimatable> extends BoneFilterG
 
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource,
-						  @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+                          @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		for (String boneName : getAffectedBones()) {
 			this.renderer.getGeoModel().getBone(boneName).ifPresent(bone -> checkAndApply(bone, animatable, partialTick));
 		}

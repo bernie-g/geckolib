@@ -253,6 +253,14 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Gets the currently playing {@link RawAnimation triggered animation}, if present
+	 */
+	@Nullable
+	public RawAnimation getTriggeredAnimation() {
+		return this.triggeredAnimation;
+	}
+
+	/**
 	 * Returns the current state of this controller.
 	 */
 	public State getAnimationState() {
@@ -396,6 +404,26 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Stops and removes a previously triggered animation, effectively ending it immediately.
+	 *
+	 * @return true if a triggered animation was stopped
+	 */
+	protected boolean stopTriggeredAnimation() {
+		if (this.triggeredAnimation == null)
+			return false;
+
+		if (this.currentRawAnimation == this.triggeredAnimation) {
+			this.currentAnimation = null;
+			this.currentRawAnimation = null;
+		}
+
+		this.triggeredAnimation = null;
+		this.needsAnimationReload = true;
+
+		return true;
+	}
+
+	/**
 	 * Handle a given AnimationState, alongside the current triggered animation if applicable
 	 */
 	protected PlayState handleAnimationState(AnimationState<T> state) {
@@ -466,7 +494,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		if (getAnimationState() == State.RUNNING) {
-			processCurrentAnimation(adjustedTick, seekTime, crashWhenCantFindBone);
+			processCurrentAnimation(adjustedTick, seekTime, crashWhenCantFindBone, state);
 		}
 		else if (this.animationState == State.TRANSITIONING) {
 			if (this.lastPollTime != seekTime && (adjustedTick == 0 || this.isJustStarting)) {
@@ -536,7 +564,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param seekTime The lerped tick (current tick + partial tick)
 	 * @param crashWhenCantFindBone Whether the controller should throw an exception when unable to find the required bone, or continue with the remaining bones
 	 */
-	private void processCurrentAnimation(double adjustedTick, double seekTime, boolean crashWhenCantFindBone) {
+	private void processCurrentAnimation(double adjustedTick, double seekTime, boolean crashWhenCantFindBone, AnimationState<T> animationState) {
 		if (adjustedTick >= this.currentAnimation.animation().length()) {
 			if (this.currentAnimation.loopType().shouldPlayAgain(this.animatable, this, this.currentAnimation.animation())) {
 				if (this.animationState != State.PAUSED) {
@@ -615,7 +643,7 @@ public class AnimationController<T extends GeoAnimatable> {
 					break;
 				}
 
-				this.soundKeyframeHandler.handle(new SoundKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
+				this.soundKeyframeHandler.handle(new SoundKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
 			}
 		}
 
@@ -627,7 +655,7 @@ public class AnimationController<T extends GeoAnimatable> {
 					break;
 				}
 
-				this.particleKeyframeHandler.handle(new ParticleKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
+				this.particleKeyframeHandler.handle(new ParticleKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
 			}
 		}
 
@@ -639,7 +667,7 @@ public class AnimationController<T extends GeoAnimatable> {
 					break;
 				}
 
-				this.customKeyframeHandler.handle(new CustomInstructionKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData));
+				this.customKeyframeHandler.handle(new CustomInstructionKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
 			}
 		}
 

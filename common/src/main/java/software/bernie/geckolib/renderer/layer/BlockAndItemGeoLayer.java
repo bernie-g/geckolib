@@ -74,7 +74,7 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
      */
     @Override
     public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
-                              VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+                              VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
         ItemStack stack = getStackForBone(bone, animatable);
         BlockState blockState = getBlockForBone(bone, animatable);
 

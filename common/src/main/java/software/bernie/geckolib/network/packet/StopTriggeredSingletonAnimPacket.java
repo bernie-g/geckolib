@@ -14,14 +14,14 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record SingletonAnimTriggerPacket(String syncableId, long instanceId, Optional<String> controllerName, String animName) implements MultiloaderPacket {
-    public static final CustomPacketPayload.Type<SingletonAnimTriggerPacket> TYPE = new Type<>(GeckoLibConstants.id("singleton_anim_trigger"));
-    public static final StreamCodec<FriendlyByteBuf, SingletonAnimTriggerPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8, SingletonAnimTriggerPacket::syncableId,
-            ByteBufCodecs.VAR_LONG, SingletonAnimTriggerPacket::instanceId,
-            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), SingletonAnimTriggerPacket::controllerName,
-            ByteBufCodecs.STRING_UTF8, SingletonAnimTriggerPacket::animName,
-            SingletonAnimTriggerPacket::new);
+public record StopTriggeredSingletonAnimPacket(String syncableId, long instanceId, Optional<String> controllerName, Optional<String> animName) implements MultiloaderPacket {
+    public static final Type<StopTriggeredSingletonAnimPacket> TYPE = new Type<>(GeckoLibConstants.id("stop_triggered_singleton_anim"));
+    public static final StreamCodec<FriendlyByteBuf, StopTriggeredSingletonAnimPacket> CODEC = StreamCodec.composite(
+            ByteBufCodecs.STRING_UTF8, StopTriggeredSingletonAnimPacket::syncableId,
+            ByteBufCodecs.VAR_LONG, StopTriggeredSingletonAnimPacket::instanceId,
+            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), StopTriggeredSingletonAnimPacket::controllerName,
+            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), StopTriggeredSingletonAnimPacket::animName,
+            StopTriggeredSingletonAnimPacket::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -37,7 +37,7 @@ public record SingletonAnimTriggerPacket(String syncableId, long instanceId, Opt
                 AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
 
                 if (animatableManager != null)
-                    animatableManager.tryTriggerAnimation(this.controllerName.orElse(null), this.animName);
+                    animatableManager.tryTriggerAnimation(this.controllerName.orElse(null), this.animName.orElse(null));
             }
         });
     }

@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Texture object type responsible for GeckoLib's emissive render textures
@@ -55,11 +54,6 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 						.setOverlayState(new RenderStateShard.OverlayStateShard(true))
 						.setWriteMaskState(WRITE_MASK).createCompositeState(isGlowing));
 	});
-	/**
-	 * @deprecated Use {@link #GLOWING_RENDER_TYPE}
-	 */
-	@Deprecated(forRemoval = true)
-	private static final Function<ResourceLocation, RenderType> RENDER_TYPE_FUNCTION = Util.memoize(texture -> GLOWING_RENDER_TYPE.apply(texture, false));
 	private static final String APPENDIX = "_glowmask";
 	/**
 	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)

@@ -1,5 +1,7 @@
 package software.bernie.geckolib.loading.math;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.function.DoubleSupplier;
 
 /**
@@ -24,9 +26,9 @@ public interface MathValue extends DoubleSupplier {
     }
 
     /**
-     * Use {@link #get}
+     * Overloaded, use {@link #get} instead
      */
-    @Deprecated()
+    @ApiStatus.Internal
     @Override
     default double getAsDouble() {
         return get();

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -18,16 +19,14 @@ import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.*;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.object.Color;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 
-//TODO Split sources support
 /**
  * Base interface for all GeckoLib renderers.<br>
  */
@@ -46,7 +45,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Gets the texture resource location to render for the given animatable
 	 */
 	default ResourceLocation getTextureLocation(T animatable) {
-		return getGeoModel().getTextureResource(animatable);
+		return getGeoModel().getTextureResource(animatable, this);
 	}
 
 	/**
@@ -129,7 +128,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		int renderColor = getRenderColor(animatable, partialTick, packedLight).argbInt();
 		int packedOverlay = getPackedOverlay(animatable, 0, partialTick);
-		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
+		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable, this));
 
 		if (renderType == null)
 			renderType = getRenderType(animatable, getTextureLocation(animatable), bufferSource, partialTick);
@@ -140,10 +139,10 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		preRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
 
 		if (firePreRenderEvent(poseStack, model, bufferSource, partialTick, packedLight)) {
-			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay);
+			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay, renderColor);
 			actuallyRender(poseStack, animatable, model, renderType,
 					bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
-			applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 			postRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
 			firePostRenderEvent(poseStack, model, bufferSource, partialTick, packedLight);
 		}
@@ -162,22 +161,22 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	default void reRender(BakedGeoModel model, PoseStack poseStack, MultiBufferSource bufferSource, T animatable,
 						  RenderType renderType, VertexConsumer buffer, float partialTick,
-						  int packedLight, int packedOverlay, int colour) {
+						  int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
-		preRender(poseStack, animatable, model, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, colour);
-		actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, colour);
-		postRender(poseStack, animatable, model, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, colour);
+		preRender(poseStack, animatable, model, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, renderColor);
+		actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, renderColor);
+		postRender(poseStack, animatable, model, bufferSource, buffer, true, partialTick, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
 	}
 
 	/**
-	 * The actual render method that sub-type renderers should override to handle their specific rendering tasks
+	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
 	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	default void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 								MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
-								int packedLight, int packedOverlay, int colour) {
+								int packedLight, int packedOverlay, int renderColor) {
 		if (buffer == null) {
 			if (renderType == null)
 				return;
@@ -185,11 +184,11 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			buffer = bufferSource.getBuffer(renderType);
 		}
 
-		updateAnimatedTextureFrame(animatable);
+		RenderSystem.setShaderTexture(0, getTextureLocation(animatable));
 
 		for (GeoBone group : model.topLevelBones()) {
 			renderRecursively(poseStack, animatable, group, renderType, bufferSource, buffer, isReRender, partialTick, packedLight,
-					packedOverlay, colour);
+					packedOverlay, renderColor);
 		}
 	}
 
@@ -197,9 +196,9 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#preRender pre-render} actions.
 	 */
 	default void preApplyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource,
-								   @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+									  @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		for (GeoRenderLayer<T> renderLayer : getRenderLayers()) {
-			renderLayer.preRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			renderLayer.preRender(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 		}
 	}
 
@@ -207,20 +206,19 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#renderForBone per-bone} render actions.
 	 */
 	default void applyRenderLayersForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
-										  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+										  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		for (GeoRenderLayer<T> renderLayer : getRenderLayers()) {
-			renderLayer.renderForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			renderLayer.renderForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 		}
 	}
 
-	// TODO append renderColor to layers
 	/**
 	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
 	 */
 	default void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource,
-								   @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+								   @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		for (GeoRenderLayer<T> renderLayer : getRenderLayers()) {
-			renderLayer.render(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			renderLayer.render(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 		}
 	}
 
@@ -230,14 +228,14 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	default void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-						   int packedOverlay, int colour) {}
+						   int packedOverlay, int renderColor) {}
 
 	/**
 	 * Called after rendering the model to buffer. Post-render modifications should be performed here
 	 * <p>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
-	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {}
+	default void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
@@ -245,7 +243,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	default void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight,
-							 int packedOverlay, int colour) {}
+							 int packedOverlay, int renderColor) {}
 
 	/**
 	 * Called after all render operations are completed and the render pass is considered functionally complete.
@@ -259,18 +257,18 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	default void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
 								   VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								   int packedOverlay, int colour) {
+								   int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
 
 		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
-		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, renderColor);
 
 		if (!isReRender)
-			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 
-		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
 	}
 
@@ -278,13 +276,13 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Renders the {@link GeoCube GeoCubes} associated with a given {@link GeoBone}
 	 */
 	default void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight,
-								   int packedOverlay, int colour) {
+								   int packedOverlay, int renderColor) {
 		if (bone.isHidden())
 			return;
 
 		for (GeoCube cube : bone.getCubes()) {
 			poseStack.pushPose();
-			renderCube(poseStack, cube, buffer, packedLight, packedOverlay, colour);
+			renderCube(poseStack, cube, buffer, packedLight, packedOverlay, renderColor);
 			poseStack.popPose();
 		}
 	}
@@ -295,12 +293,12 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Note that this does not render the bone itself. That should be done through {@link GeoRenderer#renderCubesOfBone} separately
 	 */
 	default void renderChildBones(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
-								  boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+								  boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isHidingChildren())
 			return;
 
 		for (GeoBone childBone : bone.getChildBones()) {
-			renderRecursively(poseStack, animatable, childBone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+			renderRecursively(poseStack, animatable, childBone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 		}
 	}
 
@@ -310,7 +308,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * This tends to be called recursively from something like {@link GeoRenderer#renderCubesOfBone}
 	 */
 	default void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight,
-							int packedOverlay, int colour) {
+							int packedOverlay, int renderColor) {
 		RenderUtil.translateToPivotPoint(poseStack, cube);
 		RenderUtil.rotateMatrixAroundCube(poseStack, cube);
 		RenderUtil.translateAwayFromPivotPoint(poseStack, cube);
@@ -325,7 +323,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
 			
 			RenderUtil.fixInvertedFlatCube(cube, normal);
-			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, colour);
+			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, renderColor);
 		}
 	}
 
@@ -333,14 +331,27 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Applies the {@link GeoQuad Quad's} {@link GeoVertex vertices} to the given {@link VertexConsumer buffer} for rendering
 	 */
 	default void createVerticesOfQuad(GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
-									  int packedLight, int packedOverlay, int colour) {
+									  int packedLight, int packedOverlay, int renderColor) {
 		for (GeoVertex vertex : quad.vertices()) {
 			Vector3f position = vertex.position();			
 			Vector4f vector4f = poseState.transform(new Vector4f(position.x(), position.y(), position.z(), 1.0f));
 
-			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), colour, vertex.texU(),
+			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), renderColor, vertex.texU(),
 					vertex.texV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}
+	}
+
+	/**
+	 * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling.
+	 * <p>
+	 * Override this method to add additional {@link software.bernie.geckolib.constant.DataTickets data} to the AnimationState as needed
+	 */
+	default AnimationState<T> createAnimationState(T animatable, long instanceId, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
+		AnimationState<T> animationState = new AnimationState<>(animatable, limbSwing, limbSwingAmount, partialTick, isMoving);
+
+		getGeoModel().addAdditionalStateData(animatable, instanceId, animationState::setData);
+
+		return animationState;
 	}
 
 	/**
@@ -368,15 +379,6 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		if (!isReRender && (widthScale != 1 || heightScale != 1))
 			poseStack.scale(widthScale, heightScale, widthScale);
 	}
-
-	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
-	 * <p>
-	 * This should only be called immediately prior to rendering
-	 *
-	 * @see AnimatableTexture#setAndUpdate
-	 */
-	void updateAnimatedTextureFrame(T animatable);
 
 	/**
 	 * Bandaid-patch to fix the buffer change Mojang made in 1.21.

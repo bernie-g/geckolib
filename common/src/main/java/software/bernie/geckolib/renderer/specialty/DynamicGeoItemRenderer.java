@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer.specialty;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -72,7 +71,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	 * @return Whether the renderer should skip rendering the {@link GeoCube cubes} of the given GeoBone or not
 	 */
 	protected boolean boneRenderOverride(PoseStack poseStack, GeoBone bone, MultiBufferSource bufferSource, VertexConsumer buffer,
-										 float partialTick, int packedLight, int packedOverlay, int colour) {
+										 float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		return false;
 	}
 
@@ -80,7 +79,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
@@ -106,18 +105,18 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 		if (renderTypeOverride != null)
 			buffer = bufferSource.getBuffer(renderTypeOverride);
 
-		if (!boneRenderOverride(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, colour))
-			super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+		if (!boneRenderOverride(poseStack, bone, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor))
+			super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, renderColor);
 
 		if (renderTypeOverride != null)
 			buffer = bufferSource.getBuffer(renderType);
 
 		if (!isReRender)
-			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 
 		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
-		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
 	}
@@ -128,10 +127,10 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
 	@Override
-	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		this.textureOverride = null;
 
-		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 	}
 
 	/**
@@ -141,10 +140,10 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 	 */
 	@Override
 	public void createVerticesOfQuad(GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
-									 int packedLight, int packedOverlay, int colour) {
+									 int packedLight, int packedOverlay, int renderColor) {
 		if (this.textureOverride == null) {
 			super.createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay,
-					colour);
+					renderColor);
 
 			return;
 		}
@@ -154,7 +153,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 
 		if (boneTextureSize == null || itemTextureSize == null) {
 			super.createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay,
-					colour);
+					renderColor);
 
 			return;
 		}
@@ -164,7 +163,7 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 			float texU = (vertex.texU() * itemTextureSize.firstInt()) / boneTextureSize.firstInt();
 			float texV = (vertex.texV() * itemTextureSize.secondInt()) / boneTextureSize.secondInt();
 
-			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), colour, texU, texV,
+			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), renderColor, texU, texV,
 					packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}
 	}

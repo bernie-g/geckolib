@@ -46,7 +46,7 @@ public class BoneFilterGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		for (GeoBone bone : bakedModel.topLevelBones()) {
 			checkChildBones(bone, animatable, partialTick);
 		}

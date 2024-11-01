@@ -7,6 +7,7 @@ package software.bernie.geckolib.animation.keyframe.event;
 
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
 
 /**
@@ -15,17 +16,9 @@ import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
  * Called when a sound instruction keyframe is encountered
  */
 public class SoundKeyframeEvent<T extends GeoAnimatable> extends KeyFrameEvent<T, SoundKeyframeData> {
-	/**
-	 * This stores all the fields that are needed in the AnimationTestEvent
-	 *
-	 * @param entity        The entity
-	 * @param animationTick The amount of ticks that have passed in either the
-	 *                      current transition or animation, depending on the
-	 *                      controller's AnimationState.
-	 * @param controller    The controller
-	 */
-	public SoundKeyframeEvent(T entity, double animationTick, AnimationController<T> controller, SoundKeyframeData keyFrameData) {
-		super(entity, animationTick, controller, keyFrameData);
+	public SoundKeyframeEvent(T entity, double animationTick, AnimationController<T> controller,
+							  SoundKeyframeData keyFrameData, AnimationState<T> animationState) {
+		super(entity, animationTick, controller, keyFrameData, animationState);
 	}
 
 	@Override

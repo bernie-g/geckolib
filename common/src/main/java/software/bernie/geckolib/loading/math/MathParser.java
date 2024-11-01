@@ -6,7 +6,6 @@ import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
 import org.apache.logging.log4j.Level;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -552,24 +551,6 @@ public class MathParser {
     }
 
     /**
-     * @deprecated Has no functional use, see {@link Operator#isOperator(String)}
-     * @return Whether the given String should be considered an operator or operator-like symbol
-     */
-    @Deprecated(forRemoval = true)
-    public static boolean isOperativeSymbol(char symbol) {
-        return isOperativeSymbol(String.valueOf(symbol));
-    }
-
-    /**
-     * @deprecated Has no functional use, see {@link Operator#isOperator(String)}
-     * @return Whether the given String should be considered an operator or operator-like symbol
-     */
-    @Deprecated(forRemoval = true)
-    public static boolean isOperativeSymbol(@NotNull String symbol) {
-        return Operator.isOperator(symbol) || symbol.equals("?") || symbol.equals(":");
-    }
-
-    /**
      * Determine if the given string can be considered numeric, supporting both negative values and decimal values, but not strings omitting a preceding digit before a decimal point
      *
      * @return Whether the string is numeric
@@ -583,17 +564,6 @@ public class MathParser {
      */
     protected static Operator getOperatorFor(String op) throws CompoundException {
         return Operator.getOperatorFor(op).orElseThrow(() -> new CompoundException("Unknown operator symbol '" + op + "'"));
-    }
-
-    /**
-     * Determine if the given string is likely to be a variable/function of some kind.
-     * <p>
-     * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
-     * @deprecated This is no longer used and isn't really a reliable check, try {@link #isFunctionRegistered(String)} or {@link #isLikelyVariable(String)}
-     */
-    @Deprecated(forRemoval = true)
-    protected static boolean isQueryOrFunctionName(String string) {
-        return !isNumeric(string) && !isOperativeSymbol(string);
     }
 
     /**

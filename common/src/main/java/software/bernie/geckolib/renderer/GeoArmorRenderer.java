@@ -20,17 +20,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -286,7 +285,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource,
 						  @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-						  int packedOverlay, int colour) {
+						  int packedOverlay, int renderColor) {
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		applyBaseModel(this.baseModel);
@@ -301,7 +300,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 	@Override
 	@ApiStatus.Internal
-	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
+	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight, int packedOverlay, int renderColor) {
 		Minecraft mc = Minecraft.getInstance();
 		MultiBufferSource bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
 
@@ -325,31 +324,41 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
-							   int packedLight, int packedOverlay, int colour) {
+							   int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		poseStack.translate(0, 24 / 16f, 0);
 		poseStack.scale(-1, -1, 1);
 
 		if (!isReRender) {
-			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
-			GeoModel<T> currentModel = getGeoModel();
 
-			animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
-			animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
-			animationState.setData(DataTickets.ENTITY, this.currentEntity);
-			animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
-			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
+			getGeoModel().handleAnimations(animatable, instanceId, createAnimationState(animatable, instanceId, 0, 0, partialTick, false), partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, colour);
+					packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
+	}
+
+	/**
+	 * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling.
+	 * <p>
+	 * Override this method to add additional {@link software.bernie.geckolib.constant.DataTickets data} to the AnimationState as needed
+	 */
+	@Override
+	public AnimationState<T> createAnimationState(T animatable, long instanceId, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
+		AnimationState<T> animationState = GeoRenderer.super.createAnimationState(animatable, instanceId, limbSwing, limbSwingAmount, partialTick, isMoving);
+
+		animationState.setData(DataTickets.TICK, animatable.getTick(this.currentEntity));
+		animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
+		animationState.setData(DataTickets.ENTITY, this.currentEntity);
+		animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
+
+		return animationState;
 	}
 
 	/**
@@ -373,17 +382,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	/**
-	 * Being removed now that the injection point has been moved to a safer spot
-	 */
-	@Deprecated(forRemoval = true)
-	public void doArmourPostRenderCleanup() {}
-
-	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								  int packedOverlay, int colour) {
+								  int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
@@ -391,7 +394,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			bone.setLocalSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations));
 		}
 
-		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 	}
 
 	/**
@@ -617,19 +620,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			return;
 
 		bone.setHidden(!visible);
-	}
-
-	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
-	 * <p>
-	 * This should only be called immediately prior to rendering
-	 *
-	 * @see AnimatableTexture#setAndUpdate
-	 */
-	@Override
-	public void updateAnimatedTextureFrame(T animatable) {
-		if (this.currentEntity != null)
-			AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
 	}
 
 	/**

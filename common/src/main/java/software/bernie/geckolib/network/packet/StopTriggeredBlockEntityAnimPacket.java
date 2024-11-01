@@ -14,13 +14,13 @@ import software.bernie.geckolib.util.ClientUtil;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record BlockEntityAnimTriggerPacket(BlockPos pos, Optional<String> controllerName, String animName) implements MultiloaderPacket {
-    public static final CustomPacketPayload.Type<BlockEntityAnimTriggerPacket> TYPE = new Type<>(GeckoLibConstants.id("blockentity_anim_trigger"));
-    public static final StreamCodec<FriendlyByteBuf, BlockEntityAnimTriggerPacket> CODEC = StreamCodec.composite(
-            BlockPos.STREAM_CODEC, BlockEntityAnimTriggerPacket::pos,
-            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), BlockEntityAnimTriggerPacket::controllerName,
-            ByteBufCodecs.STRING_UTF8, BlockEntityAnimTriggerPacket::animName,
-            BlockEntityAnimTriggerPacket::new);
+public record StopTriggeredBlockEntityAnimPacket(BlockPos pos, Optional<String> controllerName, Optional<String> animName) implements MultiloaderPacket {
+    public static final Type<StopTriggeredBlockEntityAnimPacket> TYPE = new Type<>(GeckoLibConstants.id("stop_triggered_blockentity_anim"));
+    public static final StreamCodec<FriendlyByteBuf, StopTriggeredBlockEntityAnimPacket> CODEC = StreamCodec.composite(
+            BlockPos.STREAM_CODEC, StopTriggeredBlockEntityAnimPacket::pos,
+            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), StopTriggeredBlockEntityAnimPacket::controllerName,
+            ByteBufCodecs.STRING_UTF8.apply(ByteBufCodecs::optional), StopTriggeredBlockEntityAnimPacket::animName,
+            StopTriggeredBlockEntityAnimPacket::new);
 
     @Override
     public Type<? extends CustomPacketPayload> type() {
@@ -31,7 +31,7 @@ public record BlockEntityAnimTriggerPacket(BlockPos pos, Optional<String> contro
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
             if (ClientUtil.getLevel().getBlockEntity(this.pos) instanceof GeoBlockEntity blockEntity)
-                blockEntity.triggerAnim(this.controllerName.orElse(null), this.animName);
+                blockEntity.stopTriggeredAnim(this.controllerName.orElse(null), this.animName.orElse(null));
         });
     }
 }

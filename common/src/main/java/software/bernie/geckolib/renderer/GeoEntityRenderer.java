@@ -29,14 +29,13 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
-import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
@@ -177,7 +176,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
@@ -196,7 +195,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
-							   int packedLight, int packedOverlay, int colour) {
+							   int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 
 		LivingEntity livingEntity = animatable instanceof LivingEntity entity ? entity : null;
@@ -247,19 +246,15 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		}
 
 		if (!isReRender) {
-			float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
 			float motionThreshold = getMotionAnimThreshold(animatable);
 			Vec3 velocity = animatable.getDeltaMovement();
-			float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z) / 2f);
-			AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
+			float avgVelocity = (float)((Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f);
+			float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
 			long instanceId = getInstanceId(animatable);
-			GeoModel<T> currentModel = getGeoModel();
+			AnimationState<T> animationState = createAnimationState(animatable, instanceId, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
 
-			animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
-			animationState.setData(DataTickets.ENTITY, animatable);
 			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
-			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
+			getGeoModel().handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		poseStack.translate(0, 0.01f, 0);
@@ -268,9 +263,24 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, colour);
+					packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
+	}
+
+	/**
+	 * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling.
+	 * <p>
+	 * Override this method to add additional {@link software.bernie.geckolib.constant.DataTickets data} to the AnimationState as needed
+	 */
+	@Override
+	public AnimationState<T> createAnimationState(T animatable, long instanceId, float limbSwing, float limbSwingAmount, float partialTick, boolean isMoving) {
+		AnimationState<T> animationState = GeoRenderer.super.createAnimationState(animatable, instanceId, limbSwing, limbSwingAmount, partialTick, isMoving);
+
+		animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
+		animationState.setData(DataTickets.ENTITY, animatable);
+
+		return animationState;
 	}
 
 	/**
@@ -278,10 +288,10 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void applyRenderLayers(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
-								  MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
-								  int packedLight, int packedOverlay) {
+                                  MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
+                                  int packedLight, int packedOverlay, int renderColor) {
 		if (!animatable.isSpectator())
-			GeoRenderer.super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			GeoRenderer.super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 	}
 
 	/**
@@ -290,7 +300,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	@Override
-	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		super.render(getEntityRenderState(), poseStack, bufferSource, packedLight);
 	}
 
@@ -311,7 +321,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								  int packedOverlay, int colour) {
+								  int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
@@ -331,12 +341,12 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 
-		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, renderColor);
 
 		if (!isReRender)
-			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay, renderColor);
 
-		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
 	}
@@ -460,18 +470,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	}
 
 	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
-	 * <p>
-	 * This should only be called immediately prior to rendering
-	 *
-	 * @see AnimatableTexture#setAndUpdate
-	 */
-	@Override
-	public void updateAnimatedTextureFrame(T animatable) {
-		AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
-	}
-
-	/**
 	 * Create the EntityRenderState for vanilla.
 	 * <p>
 	 * GeckoLib defers creation of this to allow for dynamic handling in {@link #extractRenderState(Entity, EntityRenderState, float)}
@@ -495,6 +493,9 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@ApiStatus.Internal
 	@Override
 	public final EntityRenderState createRenderState(T entity, float partialTick) {
+		this.animatable = entity;
+		this.partialTick = partialTick;
+
 		if (this.reusedState == null)
 			this.reusedState = entity instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState();
 
@@ -511,9 +512,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@ApiStatus.Internal
 	@Override
 	public void extractRenderState(T entity, @Nullable EntityRenderState entityRenderState, float partialTick) {
-		this.animatable = entity;
-		this.partialTick = partialTick;
-
 		super.extractRenderState(entity, entityRenderState, partialTick);
 
 		if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState)

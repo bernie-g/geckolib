@@ -10,10 +10,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
@@ -122,7 +120,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
+	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		this.objectRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
@@ -138,23 +136,20 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	@Override
 	public void actuallyRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick,
-							   int packedLight, int packedOverlay, int colour) {
+							   int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 
 		if (!isReRender) {
-			AnimationState<T> animationState = new AnimationState<>(animatable, 0, 0, partialTick, false);
 			long instanceId = getInstanceId(animatable);
-			GeoModel<T> currentModel = getGeoModel();
 
-			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
+			getGeoModel().handleAnimations(animatable, instanceId, createAnimationState(animatable, instanceId, 0, 0, partialTick, false), partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick,
-					packedLight, packedOverlay, colour);
+					packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
 	}
@@ -174,7 +169,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 */
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
-								  int packedOverlay, int colour) {
+								  int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
@@ -183,19 +178,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay,
-				colour);
-	}
-
-	/**
-	 * Update the current frame of a {@link AnimatableTexture potentially animated} texture used by this GeoRenderer
-	 * <p>
-	 * This should only be called immediately prior to rendering
-	 *
-	 * @see AnimatableTexture#setAndUpdate
-	 */
-	@Override
-	public void updateAnimatedTextureFrame(T animatable) {
-		AnimatableTexture.setAndUpdate(getTextureLocation(animatable));
+				renderColor);
 	}
 
 	/**

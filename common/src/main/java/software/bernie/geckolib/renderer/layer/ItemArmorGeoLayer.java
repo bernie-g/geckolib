@@ -108,7 +108,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	@Override
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource,
-						  @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+                          @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		this.mainHandStack = animatable.getItemBySlot(EquipmentSlot.MAINHAND);
 		this.offhandStack = animatable.getItemBySlot(EquipmentSlot.OFFHAND);
 		this.helmetStack = animatable.getItemBySlot(EquipmentSlot.HEAD);
@@ -131,7 +131,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	@Override
 	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
-							  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+							  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		ItemStack armorStack = getArmorItemForBone(bone, animatable);
 
 		if (armorStack == null)

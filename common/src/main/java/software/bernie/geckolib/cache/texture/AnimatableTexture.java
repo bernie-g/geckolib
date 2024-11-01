@@ -7,9 +7,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.Tickable;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +26,7 @@ import java.util.List;
 /**
  * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
  */
-public class AnimatableTexture extends SimpleTexture {
+public class AnimatableTexture extends SimpleTexture implements Tickable {
 	private AnimationContents animationContents = null;
 	private boolean isAnimated = false;
 
@@ -77,22 +76,9 @@ public class AnimatableTexture extends SimpleTexture {
 		return this.isAnimated;
 	}
 
-	public static void setAndUpdate(ResourceLocation texturePath) {
-		setAndUpdate(texturePath, (int) RenderUtil.getCurrentTick());
-	}
-
-	/**
-	 * Setting a specific frame for the animated texture does not work well because of how Minecraft buffers rendering passes
-	 * <p>
-	 * Use the non-specified method above unless you know what you're doing
-	 */
-	public static void setAndUpdate(ResourceLocation texturePath, int frameTick) {
-		AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(texturePath);
-
-		if (texture instanceof AnimatableTexture animatableTexture)
-			animatableTexture.setAnimationFrame(frameTick);
-
-		RenderSystem.setShaderTexture(0, texture.getId());
+	@Override
+	public void tick() {
+		setAnimationFrame((int)RenderUtil.getCurrentTick());
 	}
 
 	public void setAnimationFrame(int tick) {
@@ -260,8 +246,8 @@ public class AnimatableTexture extends SimpleTexture {
 				return this.baseImage.getPixel(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
 			}
 
-			private int interpolate(double frameProgress, double prevColour, double nextColour) {
-				return (int)(frameProgress * prevColour + (1 - frameProgress) * nextColour);
+			private int interpolate(double frameProgress, double prevColor, double nextColor) {
+				return (int)(frameProgress * prevColor + (1 - frameProgress) * nextColor);
 			}
 
 			@Override

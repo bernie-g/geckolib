@@ -32,22 +32,19 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
     }
 
     @Override
-    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    public void preRender(PoseStack poseStack, T animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int renderColor) {
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, renderColor);
 
         if (!isReRender)
-            checkBoneDyeCache(animatable, model, partialTick, packedLight, packedOverlay, colour);
+            checkBoneDyeCache(animatable, model, partialTick, packedLight, packedOverlay, renderColor);
     }
 
     @Override
-    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, int colour) {
-        if (this.dyeableBones.contains(bone)) {
-            final Color color = getColorForBone(bone);
+    public void renderCubesOfBone(PoseStack poseStack, GeoBone bone, VertexConsumer buffer, int packedLight, int packedOverlay, int renderColor) {
+        if (this.dyeableBones.contains(bone))
+            renderColor = ARGB.multiply(renderColor, getColorForBone(bone).argbInt());
 
-            colour = ARGB.multiply(colour, color.argbInt());
-        }
-
-        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+        super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, renderColor);
     }
 
     /**
@@ -72,7 +69,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem> extends 
      * <p>
      * The less this forces re-computation, the better for performance
      */
-    protected void checkBoneDyeCache(T animatable, BakedGeoModel model, float partialTick, int packedLight, int packedOverlay, int colour) {
+    protected void checkBoneDyeCache(T animatable, BakedGeoModel model, float partialTick, int packedLight, int packedOverlay, int renderColor) {
         if (model != this.lastModel) {
             this.dyeableBones.clear();
             this.lastModel = model;

@@ -33,10 +33,11 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 
 	/**
 	 * Gets the {@link BakedGeoModel} instance that is currently being used.
+	 * <p>
 	 * This can be directly used for re-rendering
 	 */
-	public BakedGeoModel getDefaultBakedModel(T animatable) {
-		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
+	public BakedGeoModel getDefaultBakedModel(T animatable, GeoRenderer<T> renderer) {
+		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable, renderer));
 	}
 
 	/**
@@ -47,8 +48,9 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Get the texture resource path for the given {@link GeoAnimatable}.<br>
-	 * By default, falls back to {@link GeoModel#getTextureResource(GeoAnimatable)}
+	 * Get the texture resource path for the given {@link GeoAnimatable}.
+	 * <p>
+	 * By default, falls back to {@link GeoModel#getTextureResource(GeoAnimatable, GeoRenderer)}
 	 */
 	protected ResourceLocation getTextureResource(T animatable) {
 		return this.renderer.getTextureLocation(animatable);
@@ -61,7 +63,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 */
 	public void preRender(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
 						  MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
-						  int packedLight, int packedOverlay) {}
+						  int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * This is the method that is actually called by the render for your render layer to function
@@ -72,8 +74,8 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * and you may need to factor this in to your design
 	 */
 	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType,
-								MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
-								int packedLight, int packedOverlay) {}
+					   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick,
+					   int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * This method is called by the {@link GeoRenderer} for each bone being rendered
@@ -88,5 +90,5 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * using {@link MultiBufferSource#getBuffer} before ending the method
 	 */
 	public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType,
-							  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {}
+							  MultiBufferSource bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {}
 }

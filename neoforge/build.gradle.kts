@@ -46,22 +46,14 @@ neoForge {
 }
 
 repositories {
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Geckolib Examples"
-                url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-            }
-        }
-        filter {
+    maven {
+        name = "Geckolib Examples"
+        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
+        content {
             includeGroup("software.bernie.geckolib")
         }
     }
-    /*maven {
-        name = "Geckolib Examples"
-        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-    }
-    mavenLocal()*/
+    mavenLocal()
 }
 
 dependencies {

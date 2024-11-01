@@ -84,7 +84,46 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibServices.NETWORK.triggerBlockEntityAnim(blockEntity.getBlockPos(), controllerName, animName, (ServerLevel)level);
+			GeckoLibServices.NETWORK.triggerBlockEntityAnim(blockEntity.getBlockPos(), (ServerLevel)level, controllerName, animName);
+		}
+	}
+
+	/**
+	 * TStop a previously triggered animation for this BlockEntity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnim(@Nullable String controllerName, @Nullable String animName) {
+		BlockEntity blockEntity = (BlockEntity)this;
+		Level level = blockEntity.getLevel();
+
+		if (level == null) {
+			GeckoLibConstants.LOGGER.error("Attempting to stop a triggered animation for a BlockEntity too early! Must wait until after the BlockEntity has been set in the world. (" + blockEntity.getClass().toString() + ")");
+
+			return;
+		}
+
+		if (level.isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(0);
+
+			if (animatableManager == null)
+				return;
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			GeckoLibServices.NETWORK.stopTriggeredBlockEntityAnim(blockEntity.getBlockPos(), (ServerLevel)level, controllerName, animName);
 		}
 	}
 

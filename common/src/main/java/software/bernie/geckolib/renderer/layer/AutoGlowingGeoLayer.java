@@ -25,26 +25,13 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	}
 
 	/**
-	 * Get the render type to use for this glowlayer renderer
-	 * <p>
-	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances
-	 * @deprecated Use {@link #getRenderType(GeoAnimatable, MultiBufferSource)}
-	 */
-	@Deprecated(forRemoval = true)
-	protected RenderType getRenderType(T animatable) {
-		return getRenderType(animatable, null);
-	}
-
-	/**
 	 * Get the render type to use for this glowlayer renderer, or null if the layer should not render
 	 * <p>
 	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances.<br>
 	 * Automatically accounts for entity states like invisibility and glowing
-	 *
-	 * @param bufferSource Nullable until {@link #getRenderType(GeoAnimatable)} is removed for backward compatibility
 	 */
 	@Nullable
-	protected RenderType getRenderType(T animatable, @Nullable MultiBufferSource bufferSource) {
+	protected RenderType getRenderType(T animatable, MultiBufferSource bufferSource) {
 		if (!(animatable instanceof Entity entity))
 			return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
 
@@ -70,8 +57,8 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
 	 */
 	@Override
-	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		renderType = getRenderType(animatable);
+	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
+		renderType = getRenderType(animatable, bufferSource);
 
 		if (renderType != null) {
 			getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
