@@ -1,5 +1,13 @@
-v4.7-beta-2
+v4.7
 
+- ItemArmorGeoLayer now renders trims and other vanilla armor decorations properly, and allows for mod-customised part visibility
+
+Summary of changes for 4.7:
+- Update to 1.21.3
+    - EntityRenderState is wrapped and ignored - you do not need to worry about this when using GeckoLib (for now)
+- Removed the `query.is_powered` molang query as it is no longer practically feasible
+- Change crashes to warnings for unsupported model format versions for geo models
+- Fix incorrect version range for NeoForge mods
 - Added support for UV Face Rotation
 - Added a deferred GeoRenderProvider for split-sources support
 - Added a stop triggered animation function, to allow for stopping of triggered animations in the same way you triggered them in the first place

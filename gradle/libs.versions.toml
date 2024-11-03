@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "4.7-beta-2"
+    geckolib = "4.7"
 
 # Common
     minecraft-range = "[1.21.3,)"
@@ -25,7 +25,7 @@
 # Neoforge
     neoforge-loader-range = "[4,)"
     neoforge-range = "[21.3.7-beta,)"
-    neoforge = "21.3.7-beta"
+    neoforge = "21.3.10-beta"
 
 # Dependencies
     mixin = "0.8.7"

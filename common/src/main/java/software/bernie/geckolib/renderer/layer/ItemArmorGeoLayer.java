@@ -179,7 +179,37 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 										   MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 		EquipmentModel.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID;
 
+		setVanillaModelPartVisibility(model, slot);
 		this.equipmentRenderer.renderLayers(layerType, modelPath, model, armorStack, poseStack, bufferSource, packedLight);
+	}
+
+	/**
+	 * Replica of {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#setPartVisibility(HumanoidModel, EquipmentSlot)}.
+	 * <p>
+	 * Hide all non-relevant parts for the armor-player model, so it only renders the correct one
+	 */
+	protected void setVanillaModelPartVisibility(HumanoidModel<?> baseModel, EquipmentSlot slot) {
+		baseModel.setAllVisible(false);
+
+		switch (slot) {
+			case HEAD:
+				baseModel.head.visible = true;
+				baseModel.hat.visible = true;
+				break;
+			case CHEST:
+				baseModel.body.visible = true;
+				baseModel.rightArm.visible = true;
+				baseModel.leftArm.visible = true;
+				break;
+			case LEGS:
+				baseModel.body.visible = true;
+				baseModel.rightLeg.visible = true;
+				baseModel.leftLeg.visible = true;
+				break;
+			case FEET:
+				baseModel.rightLeg.visible = true;
+				baseModel.leftLeg.visible = true;
+		}
 	}
 
 	/**
