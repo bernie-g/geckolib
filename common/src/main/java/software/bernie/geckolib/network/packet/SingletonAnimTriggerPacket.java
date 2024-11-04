@@ -15,14 +15,10 @@ import java.util.function.Consumer;
 public record SingletonAnimTriggerPacket(String syncableId, long instanceId, String controllerName, String animName) implements MultiloaderPacket {
     public static final CustomPacketPayload.Type<SingletonAnimTriggerPacket> TYPE = new Type<>(GeckoLibConstants.id("singleton_anim_trigger"));
     public static final StreamCodec<FriendlyByteBuf, SingletonAnimTriggerPacket> CODEC = StreamCodec.composite(
-            ByteBufCodecs.STRING_UTF8,
-            SingletonAnimTriggerPacket::syncableId,
-            ByteBufCodecs.VAR_LONG,
-            SingletonAnimTriggerPacket::instanceId,
-            ByteBufCodecs.STRING_UTF8,
-            SingletonAnimTriggerPacket::controllerName,
-            ByteBufCodecs.STRING_UTF8,
-            SingletonAnimTriggerPacket::animName,
+            ByteBufCodecs.STRING_UTF8, SingletonAnimTriggerPacket::syncableId,
+            ByteBufCodecs.VAR_LONG, SingletonAnimTriggerPacket::instanceId,
+            ByteBufCodecs.STRING_UTF8, SingletonAnimTriggerPacket::controllerName,
+            ByteBufCodecs.STRING_UTF8, SingletonAnimTriggerPacket::animName,
             SingletonAnimTriggerPacket::new);
 
     @Override

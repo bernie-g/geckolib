@@ -13,7 +13,6 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.ContextAwareAnimatableManager;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;

@@ -1,14 +1,10 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
@@ -134,7 +130,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	/**
 	 * Attempt to trigger an animation from a given controller name and registered triggerable animation name
 	 *
-	 * @param controllerName The name of the controller name the animation belongs to
+	 * @param controllerName The name of the controller the animation belongs to
 	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	public void tryTriggerAnimation(String controllerName, String animName) {
@@ -145,16 +141,39 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Stop a triggered animation, or all triggered animations, depending on the current state of animations and the passed argument
+	 *
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(@Nullable String animName) {
+		for (AnimationController<?> controller : getAnimationControllers().values()) {
+			if ((animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()) && controller.stopTriggeredAnimation())
+				return;
+		}
+	}
+
+	/**
+	 * Stop a triggered animation or all triggered animations on a given controller, depending on the current state of animations and the passed arguments
+	 *
+	 * @param controllerName The name of the controller the triggered animation belongs to
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(String controllerName, @Nullable String animName) {
+		AnimationController<?> controller = getAnimationControllers().get(controllerName);
+
+		if (controller != null && (animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()))
+			controller.stopTriggeredAnimation();
+	}
+
+	/**
 	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
 	 */
-	//@ reviewer conversion to record
 	public record ControllerRegistrar(List<AnimationController<? extends GeoAnimatable>> controllers) {
-
 		/**
 		 * Add multiple {@link AnimationController}s to this registrar
 		 */
 		public ControllerRegistrar add(AnimationController<?>... controllers) {
-			this.controllers().addAll(Arrays.asList(controllers));
+			controllers().addAll(Arrays.asList(controllers));
 
 			return this;
 		}
@@ -163,7 +182,8 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		 * Add an {@link AnimationController} to this registrar
 		 */
 		public ControllerRegistrar add(AnimationController<?> controller) {
-			this.controllers().add(controller);
+			controllers().add(controller);
+
 			return this;
 		}
 
@@ -173,16 +193,16 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		 * This is mostly only useful if you're sub-classing an existing animatable object and want to modify the super list
 		 */
 		public ControllerRegistrar remove(String name) {
-			this.controllers().removeIf(controller -> controller.getName().equals(name));
+			controllers().removeIf(controller -> controller.getName().equals(name));
 
 			return this;
 		}
 
 		@ApiStatus.Internal
 		private <T extends GeoAnimatable> Object2ObjectArrayMap<String, AnimationController<T>> build() {
-			Object2ObjectArrayMap<String, AnimationController<?>> map = new Object2ObjectArrayMap<>(this.controllers().size());
+			Object2ObjectArrayMap<String, AnimationController<?>> map = new Object2ObjectArrayMap<>(controllers().size());
 
-			this.controllers().forEach(controller -> map.put(controller.getName(), controller));
+			controllers().forEach(controller -> map.put(controller.getName(), controller));
 
 			return (Object2ObjectArrayMap)map;
 		}

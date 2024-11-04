@@ -65,7 +65,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //localRuntime(libs.examplemod.neoforge)
+    //implementation(libs.examplemod.neoforge)
 }
 
 tasks.withType<Test>().configureEach {

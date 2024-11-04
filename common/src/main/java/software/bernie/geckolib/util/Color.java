@@ -60,7 +60,7 @@ public record Color(int argbInt) {
 	 * Creates a new {@code Color} instance from ARGB values
 	 */
 	public static Color ofARGB(float a, float r, float g, float b) {
-		return ofARGB((int)(r * 255f + 0.5), (int)(g * 255f + 0.5f), (int)(b * 255f + 0.5f), (int)(a * 255f + 0.5f));
+		return ofARGB((int)(a * 255f + 0.5f), (int)(r * 255f + 0.5), (int)(g * 255f + 0.5f), (int)(b * 255f + 0.5f));
 	}
 
 	/**
@@ -220,11 +220,11 @@ public record Color(int argbInt) {
 
 	@Override
 	public int hashCode() {
-		return argbInt;
+		return this.argbInt;
 	}
 
 	@Override
 	public String toString() {
-		return String.valueOf(argbInt);
+		return String.valueOf(this.argbInt);
 	}
 }

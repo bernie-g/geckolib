@@ -1,5 +1,6 @@
 package software.bernie.geckolib.animation;
 
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
@@ -124,6 +125,29 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	public void tryTriggerAnimation(String controllerName, String animName) {
 		for (AnimatableManager<T> manager : this.managers.values()) {
 			manager.tryTriggerAnimation(controllerName, animName);
+		}
+	}
+
+	/**
+	 * Stop a triggered animation, or all triggered animations, depending on the current state of animations and the passed argument
+	 *
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(@Nullable String animName) {
+		for (AnimatableManager<T> manager : this.managers.values()) {
+			manager.stopTriggeredAnimation(animName);
+		}
+	}
+
+	/**
+	 * Stop a triggered animation or all triggered animations on a given controller, depending on the current state of animations and the passed arguments
+	 *
+	 * @param controllerName The name of the controller the triggered animation belongs to
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(String controllerName, @Nullable String animName) {
+		for (AnimatableManager<T> manager : this.managers.values()) {
+			manager.stopTriggeredAnimation(controllerName, animName);
 		}
 	}
 

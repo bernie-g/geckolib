@@ -57,6 +57,17 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public abstract ResourceLocation getAnimationResource(T animatable);
 
 	/**
+	 * Returns the resource path for the {@link BakedAnimations} (animation json file) fallback locations in the event
+	 * your animation isn't present in the {@link #getAnimationResource(GeoAnimatable) primary resource}.
+	 * <p>
+	 * Should <b><u>NOT</u></b> be used as the primary animation resource path, and in general shouldn't be used
+	 * at all unless you know what you are doing
+	 */
+	public ResourceLocation[] getAnimationResourceFallbacks(T animatable) {
+		return new ResourceLocation[0];
+	}
+
+	/**
 	 * Override this and return true if Geckolib should crash when attempting to animate the model, but fails to find a bone
 	 * <p>
 	 * By default, GeckoLib will just gracefully ignore a missing bone, which might cause oddities with incorrect models or mismatching variables
@@ -113,9 +124,22 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * @param name The name of the animation to retrieve
 	 * @return The {@code Animation} instance for the provided {@code name}, or null if none match
 	 */
+	@Nullable
 	public Animation getAnimation(T animatable, String name) {
 		ResourceLocation location = getAnimationResource(animatable);
 		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(location);
+		Animation animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
+
+		if (animation != null)
+			return animation;
+
+		for (ResourceLocation fallbackLocation : getAnimationResourceFallbacks(animatable)) {
+			bakedAnimations = GeckoLibCache.getBakedAnimations().get(location = fallbackLocation);
+			animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
+
+			if (animation != null)
+				return animation;
+		}
 
 		if (bakedAnimations == null) {
 			if (!location.getPath().contains("animations/"))
@@ -124,7 +148,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 			throw GeckoLibConstants.exception(location, "Unable to find animation file.");
 		}
 
-		return bakedAnimations.getAnimation(name);
+		return null;
 	}
 
 	/**

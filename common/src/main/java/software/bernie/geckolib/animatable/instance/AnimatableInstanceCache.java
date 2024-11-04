@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animatable.instance;
 
 import com.google.common.base.Suppliers;
+import org.apache.commons.lang3.mutable.MutableObject;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -8,7 +9,6 @@ import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 /**
@@ -26,11 +26,11 @@ public abstract class AnimatableInstanceCache {
 			if (!(this.animatable instanceof SingletonGeoAnimatable singleton) || !GeckoLibServices.PLATFORM.isPhysicalClient())
 				return null;
 
-			final AtomicReference<GeoRenderProvider> consumer = new AtomicReference<>(GeoRenderProvider.DEFAULT);
+			final MutableObject<GeoRenderProvider> consumer = new MutableObject<>(GeoRenderProvider.DEFAULT);
 
-			singleton.createGeoRenderer(consumer::set);
+			singleton.createGeoRenderer(consumer::setValue);
 
-			return consumer.get();
+			return consumer.getValue();
 		});
 	}
 

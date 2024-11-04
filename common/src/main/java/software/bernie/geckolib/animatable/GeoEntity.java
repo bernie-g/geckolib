@@ -58,6 +58,8 @@ public interface GeoEntity extends GeoAnimatable {
 	/**
 	 * Trigger an animation for this Entity, based on the controller name and animation name
 	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
 	 * <b><u>DO NOT OVERRIDE</u></b>
 	 *
 	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
@@ -68,10 +70,47 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.level().isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
+			if (controllerName != null) {
+				getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
+			}
+			else {
+				getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(animName);
+			}
 		}
 		else {
 			GeckoLibServices.NETWORK.triggerEntityAnim(entity, false, controllerName, animName);
+		}
+	}
+
+	/**
+	 * Stop a previously triggered animation for this Entity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnim(@Nullable String controllerName, @Nullable String animName) {
+		Entity entity = (Entity)this;
+
+		if (entity.level().isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
+
+			if (animatableManager == null)
+				return;
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			GeckoLibServices.NETWORK.stopTriggeredEntityAnim(entity, false, controllerName, animName);
 		}
 	}
 	
