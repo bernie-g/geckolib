@@ -184,7 +184,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * @deprecated Use {@link #setVanillaModelPartVisibility(LivingEntity, HumanoidModel, ModelPart, EquipmentSlot)}
+	 * @deprecated Use {@link #setVanillaModelPartVisibility(LivingEntity, ItemStack, GeoBone, HumanoidModel, ModelPart, EquipmentSlot, float)}
 	 */
 	@Deprecated(forRemoval = true)
 	protected void setVanillaModelPartVisibility(HumanoidModel<?> baseModel, EquipmentSlot slot) {}
