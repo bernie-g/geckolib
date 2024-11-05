@@ -134,7 +134,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 							  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
 		ItemStack armorStack = getArmorItemForBone(bone, animatable);
 
-		if (armorStack == null)
+		if (armorStack == null || armorStack.isEmpty())
 			return;
 
 		if (armorStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock skullBlock) {
@@ -158,7 +158,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 				else {
 					Equippable equippable = armorStack.get(DataComponents.EQUIPPABLE);
 
-					if (equippable != null && equippable.slot() == slot) {
+					if (equippable != null) {
 						equippable.model().ifPresent(modelPath -> {
 							prepModelPartForRender(poseStack, bone, modelPart);
 							renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, equippable, modelPath, model, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
@@ -179,37 +179,26 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 										   MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 		EquipmentModel.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID;
 
-		setVanillaModelPartVisibility(model, slot);
+		setVanillaModelPartVisibility(animatable, armorStack, bone, model, modelPart, slot, partialTick);
 		this.equipmentRenderer.renderLayers(layerType, modelPath, model, armorStack, poseStack, bufferSource, packedLight);
 	}
 
 	/**
-	 * Replica of {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#setPartVisibility(HumanoidModel, EquipmentSlot)}.
-	 * <p>
-	 * Hide all non-relevant parts for the armor-player model, so it only renders the correct one
+	 * @deprecated Use {@link #setVanillaModelPartVisibility(LivingEntity, HumanoidModel, ModelPart, EquipmentSlot)}
 	 */
-	protected void setVanillaModelPartVisibility(HumanoidModel<?> baseModel, EquipmentSlot slot) {
-		baseModel.setAllVisible(false);
+	@Deprecated(forRemoval = true)
+	protected void setVanillaModelPartVisibility(HumanoidModel<?> baseModel, EquipmentSlot slot) {}
 
-		switch (slot) {
-			case HEAD:
-				baseModel.head.visible = true;
-				baseModel.hat.visible = true;
-				break;
-			case CHEST:
-				baseModel.body.visible = true;
-				baseModel.rightArm.visible = true;
-				baseModel.leftArm.visible = true;
-				break;
-			case LEGS:
-				baseModel.body.visible = true;
-				baseModel.rightLeg.visible = true;
-				baseModel.leftLeg.visible = true;
-				break;
-			case FEET:
-				baseModel.rightLeg.visible = true;
-				baseModel.leftLeg.visible = true;
-		}
+	/**
+	 * Spiritual replica of {@link net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer#setPartVisibility(HumanoidModel, EquipmentSlot)}.
+	 * <p>
+	 * Hide all non-relevant parts for the armor-player model, so it only renders the correct one.
+	 * <p>
+	 * Because GeckoLib models rely on per-bone rendering for armour part alignment, for the most part we just hide all model parts except the one we've specifically called to render
+	 */
+	protected void setVanillaModelPartVisibility(T animatable, ItemStack armorStack, GeoBone bone, HumanoidModel<?> baseModel, ModelPart modelPart, EquipmentSlot slot, float partialTick) {
+		baseModel.setAllVisible(false);
+		modelPart.visible = true;
 	}
 
 	/**
