@@ -89,7 +89,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	}
 
 	/**
-	 * TStop a previously triggered animation for this BlockEntity for the given controller name and animation name
+	 * Stop a previously triggered animation for this BlockEntity for the given controller name and animation name
 	 * <p>
 	 * This can be fired from either the client or the server, but optimally you would call it from the server
 	 * <p>

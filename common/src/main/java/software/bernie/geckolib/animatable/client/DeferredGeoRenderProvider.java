@@ -23,11 +23,14 @@ public interface DeferredGeoRenderProvider extends GeoRenderProvider {
      */
     MutableObject<GeoRenderProvider> getRenderProvider();
 
+    @Override
     @Nullable
     default BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
         return getRenderProvider().getValue().getGeoItemRenderer();
     }
 
+    @Override
+    @Nullable
     default <E extends LivingEntity, S extends HumanoidRenderState> HumanoidModel<?> getGeoArmorRenderer(@Nullable E livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, EquipmentModel.LayerType type, HumanoidModel<S> original) {
         return getRenderProvider().getValue().getGeoArmorRenderer(livingEntity, itemStack, equipmentSlot, type, original);
     }

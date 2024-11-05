@@ -16,8 +16,6 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.service.GeckoLibNetworking;
 
-import java.util.function.Consumer;
-
 /**
  * NeoForge service implementation for GeckoLib's networking functionalities
  */
@@ -25,7 +23,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
     private static PayloadRegistrar registrar = null;
 
     public static void init(IEventBus modBus) {
-        modBus.addListener((Consumer<RegisterPayloadHandlersEvent>) event -> {
+        modBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
             registrar = event.registrar(GeckoLibConstants.MODID);
             GeckoLibNetworking.init();
             registrar = null;

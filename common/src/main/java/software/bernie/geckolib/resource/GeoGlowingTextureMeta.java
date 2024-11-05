@@ -80,7 +80,7 @@ public class GeoGlowingTextureMeta {
 
 		for (int x = 0; x < glowLayer.getWidth(); x++) {
 			for (int y = 0; y < glowLayer.getHeight(); y++) {
-				int color = glowLayer.getPixel(x, y); // ABGR. Why?
+				int color = glowLayer.getPixel(x, y);
 
 				if (color != 0)
 					pixels.add(new Pixel(x, y, ARGB.alpha(color)));
@@ -101,7 +101,7 @@ public class GeoGlowingTextureMeta {
 			int color = originalImage.getPixel(pixel.x, pixel.y); // ABGR. Why?
 
 			if (pixel.alpha > 0)
-				color = ARGB.color(pixel.alpha, ARGB.blue(color), ARGB.green(color), ARGB.red(color));
+				color = ARGB.color(pixel.alpha, ARGB.red(color), ARGB.green(color), ARGB.blue(color));
 
 			newImage.setPixel(pixel.x, pixel.y, color);
 			originalImage.setPixel(pixel.x, pixel.y, 0);
