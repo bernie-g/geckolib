@@ -57,7 +57,6 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.neoforge)
     compileOnly(project(":common"))
 
     // Only enable for testing as needed
