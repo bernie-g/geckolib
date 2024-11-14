@@ -18,7 +18,7 @@
 
 # Forge
     forge-fml-range = "[51,)"
-    forge-range = "[51.0.0,)"
+    forge-range = "[51.0.9,)"
     forge = "52.0.24"
     forge-mc = "1.21.1-52.0.15"
 
