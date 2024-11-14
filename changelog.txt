@@ -1,10 +1,3 @@
-v4.7
+v4.7.1
 
-- Added support for UV Rotation
-- Added stopTriggeredAnimation, allowing for stopping a triggered animation in a similar manner in which it was started
-- Add DeferredGeoRenderProvider, to support split sources
-- Change crashes to warnings for unsupported model format versions for geo models
-- Fix incorrect version range for NeoForge mods
-- Fixed controller-agnostic triggerAnim either crashing or not working
-- Fixed Color#ofARGB using RGBA
-- Various internal cleanup
+- Add minimum version requirement to Forge
