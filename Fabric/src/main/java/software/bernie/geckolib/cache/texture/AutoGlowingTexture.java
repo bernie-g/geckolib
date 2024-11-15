@@ -2,7 +2,6 @@ package software.bernie.geckolib.cache.texture;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 import java.util.concurrent.CompletableFuture;
 
