@@ -15,6 +15,7 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
@@ -37,17 +38,25 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 
 	@Override
 	public final void load(ResourceManager resourceManager) throws IOException {
-		RenderCall renderCall = loadTexture(resourceManager, Minecraft.getInstance());
+		CompletableFuture<RenderCall> futureRenderCall = CompletableFuture.supplyAsync(() -> {
+			try {
+				return loadTexture(resourceManager, Minecraft.getInstance());
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
+		}, Minecraft.getInstance());
 
-		if (renderCall == null)
-			return;
+		futureRenderCall.thenAccept(renderCall -> {
+			if (renderCall == null)
+				return;
 
-		if (!RenderSystem.isOnRenderThreadOrInit()) {
-			RenderSystem.recordRenderCall(renderCall);
-		}
-		else {
-			renderCall.execute();
-		}
+			if (!RenderSystem.isOnRenderThreadOrInit()) {
+				RenderSystem.recordRenderCall(renderCall);
+			} else {
+				renderCall.execute();
+			}
+		});
 	}
 
 	/**
