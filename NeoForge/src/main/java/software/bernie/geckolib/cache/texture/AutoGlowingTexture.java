@@ -82,7 +82,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	protected RenderCall loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException {
 		CompletableFuture<AbstractTexture> futureTexture = mc.submit(() -> mc.getTextureManager().getTexture(this.textureBase));
 		
-		futureTexture.thenAcceptAsync(originalTexture -> {
+		return futureTexture.<RenderCall>thenApplyAsync(originalTexture -> {
 			try {
 				Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
 				NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
@@ -134,12 +134,8 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			} catch (IOException e) {
 				GeckoLib.LOGGER.error("Failed to load texture: {}", this.textureBase, e);
 			}
-		}, mc).exceptionally(e -> {
-			GeckoLib.LOGGER.error("Failed to load texture: {}", this.textureBase, e);
-			return null;
-		});
-	
-		return null;
+		return () -> {}; // Return a valid RenderCall instance
+		}, mc).join();
 	}
 
 	/**
