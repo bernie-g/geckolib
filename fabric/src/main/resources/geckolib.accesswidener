@@ -15,7 +15,7 @@ accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/
 accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
 
 accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
-accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
+#accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
 accessible field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 mutable field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 extendable method net/minecraft/client/renderer/entity/EntityRenderer createRenderState (Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
