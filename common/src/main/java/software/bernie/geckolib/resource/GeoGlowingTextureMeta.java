@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
@@ -18,7 +17,7 @@ import java.util.function.Function;
  */
 public record GeoGlowingTextureMeta(List<Pixel> pixels) {
 	public static final Codec<GeoGlowingTextureMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-			Pixel.FROM_REGIONS_CODEC.forGetter(GeoGlowingTextureMeta::pixels)
+			Pixel.FROM_REGIONS_CODEC.fieldOf("sections").forGetter(GeoGlowingTextureMeta::pixels)
 	).apply(builder, GeoGlowingTextureMeta::new));
 	public static final MetadataSectionType<GeoGlowingTextureMeta> TYPE = new MetadataSectionType<>("glowsections", CODEC);
 
@@ -66,16 +65,14 @@ public record GeoGlowingTextureMeta(List<Pixel> pixels) {
 	 * @param alpha The alpha value of the mask
 	 */
 	private record Pixel(int x, int y, int alpha) {
-		public static final MapCodec<Pixel> SINGLE_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+		public static final Codec<Pixel> SINGLE_CODEC = RecordCodecBuilder.create(builder -> builder.group(
 				Codec.INT.fieldOf("x").forGetter(Pixel::x),
 				Codec.INT.fieldOf("y").forGetter(Pixel::y),
 				Codec.INT.fieldOf("alpha").forGetter(Pixel::alpha)
 		).apply(builder, Pixel::new));
-		public static final MapCodec<List<Pixel>> FROM_REGIONS_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
-				Region.CODEC.flatComapMap(Region::toPixels, Region::fromPixels)
-						.validate(list -> list.isEmpty() ? DataResult.error(() -> "Empty region! Pixel region must have at least one pixel!") : DataResult.success(list))
-						.fieldOf("sections").forGetter(Function.identity())
-		).apply(builder, Function.identity()));
+		public static final Codec<List<Pixel>> FROM_REGIONS_CODEC = Region.CODEC
+				.flatComapMap(Region::toPixels, Region::fromPixels)
+				.validate(list -> list.isEmpty() ? DataResult.error(() -> "Empty region! Pixel region must have at least one pixel!") : DataResult.success(list));
 
 		private record Region(int xMin, int yMin, Either<Integer, Integer> x2, Either<Integer, Integer> y2, int alpha) {
 			public static final Codec<Region> CODEC = RecordCodecBuilder.create(builder -> builder.group(
