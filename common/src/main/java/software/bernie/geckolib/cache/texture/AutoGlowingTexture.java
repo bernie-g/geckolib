@@ -102,9 +102,9 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
 				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
 		NativeImage glowImage = null;
-		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.SERIALIZER);
-		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
-		boolean clamp = textureBaseMeta.isPresent() && textureBaseMeta.get().isClamp();
+		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.TYPE);
+		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().blur();
+		boolean clamp = textureBaseMeta.isPresent() && textureBaseMeta.get().clamp();
 
 		try {
 			Optional<Resource> glowLayerResource = resourceManager.getResource(this.glowLayer);
@@ -115,7 +115,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 				glowLayerMeta = GeoGlowingTextureMeta.fromExistingImage(glowImage);
 			}
 			else {
-				Optional<GeoGlowingTextureMeta> meta = textureBaseResource.metadata().getSection(GeoGlowingTextureMeta.DESERIALIZER);
+				Optional<GeoGlowingTextureMeta> meta = textureBaseResource.metadata().getSection(GeoGlowingTextureMeta.TYPE);
 
 				if (meta.isPresent()) {
 					glowLayerMeta = meta.get();

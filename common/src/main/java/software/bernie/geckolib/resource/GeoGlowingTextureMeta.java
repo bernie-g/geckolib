@@ -1,76 +1,26 @@
 package software.bernie.geckolib.resource;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.datafixers.util.Either;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.server.packs.metadata.MetadataSectionSerializer;
+import net.minecraft.server.packs.metadata.MetadataSectionType;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.GsonHelper;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Metadata class that stores the data for GeckoLib's {@link software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer emissive texture feature} for a given texture
  */
-public class GeoGlowingTextureMeta {
-	public static final MetadataSectionSerializer<GeoGlowingTextureMeta> DESERIALIZER = new MetadataSectionSerializer<>() {
-		@Override
-		public String getMetadataSectionName() {
-			return "glowsections";
-		}
-
-		@Override
-		public GeoGlowingTextureMeta fromJson(JsonObject json) {
-			List<Pixel> pixels = fromSections(GsonHelper.getAsJsonArray(json, "sections", null));
-
-			if (pixels.isEmpty())
-				throw new JsonParseException("Empty glowlayer sections file. Must have at least one glow section!");
-
-			return new GeoGlowingTextureMeta(pixels);
-		}
-
-		/**
-		 * Generate a {@link Pixel} collection from the "sections" array of the mcmeta file
-		 */
-		private List<Pixel> fromSections(@Nullable JsonArray sectionsArray) {
-			if (sectionsArray == null)
-				return List.of();
-
-			List<Pixel> pixels = new ObjectArrayList<>();
-
-			for (JsonElement element : sectionsArray) {
-				if (!(element instanceof JsonObject obj))
-					throw new JsonParseException("Invalid glowsections json format, expected a JsonObject, found: " + element.getClass());
-
-				int x1 = GsonHelper.getAsInt(obj, "x1", GsonHelper.getAsInt(obj, "x", 0));
-				int y1 = GsonHelper.getAsInt(obj, "y1", GsonHelper.getAsInt(obj, "y", 0));
-				int x2 = GsonHelper.getAsInt(obj, "x2", GsonHelper.getAsInt(obj, "w", 0) + x1);
-				int y2 = GsonHelper.getAsInt(obj, "y2", GsonHelper.getAsInt(obj, "h", 0) + y1);
-				int alpha = GsonHelper.getAsInt(obj, "alpha", GsonHelper.getAsInt(obj, "a", 0));
-
-				if (x1 + y1 + x2 + y2 == 0)
-					throw new IllegalArgumentException("Invalid glowsections section object, section must be at least one pixel in size");
-
-				for (int x = x1; x <= x2; x++) {
-					for (int y = y1; y <= y2; y++) {
-						pixels.add(new Pixel(x, y, alpha));
-					}
-				}
-			}
-
-			return pixels;
-		}
-	};
-
-	private final List<Pixel> pixels;
-
-	public GeoGlowingTextureMeta(List<Pixel> pixels) {
-		this.pixels = pixels;
-	}
+public record GeoGlowingTextureMeta(List<Pixel> pixels) {
+	public static final Codec<GeoGlowingTextureMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+			Pixel.FROM_REGIONS_CODEC.forGetter(GeoGlowingTextureMeta::pixels)
+	).apply(builder, GeoGlowingTextureMeta::new));
+	public static final MetadataSectionType<GeoGlowingTextureMeta> TYPE = new MetadataSectionType<>("glowsections", CODEC);
 
 	/**
 	 * Generate the GlowLayer pixels list from an existing image resource, instead of using the .png.mcmeta file
@@ -98,7 +48,7 @@ public class GeoGlowingTextureMeta {
 	 */
 	public void createImageMask(NativeImage originalImage, NativeImage newImage) {
 		for (Pixel pixel : this.pixels) {
-			int color = originalImage.getPixel(pixel.x, pixel.y); // ABGR. Why?
+			int color = originalImage.getPixel(pixel.x, pixel.y);
 
 			if (pixel.alpha > 0)
 				color = ARGB.color(pixel.alpha, ARGB.red(color), ARGB.green(color), ARGB.blue(color));
@@ -115,5 +65,68 @@ public class GeoGlowingTextureMeta {
 	 * @param y The Y coordinate of the pixel
 	 * @param alpha The alpha value of the mask
 	 */
-	private record Pixel(int x, int y, int alpha) {}
+	private record Pixel(int x, int y, int alpha) {
+		public static final MapCodec<Pixel> SINGLE_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+				Codec.INT.fieldOf("x").forGetter(Pixel::x),
+				Codec.INT.fieldOf("y").forGetter(Pixel::y),
+				Codec.INT.fieldOf("alpha").forGetter(Pixel::alpha)
+		).apply(builder, Pixel::new));
+		public static final MapCodec<List<Pixel>> FROM_REGIONS_CODEC = RecordCodecBuilder.mapCodec(builder -> builder.group(
+				Region.CODEC.flatComapMap(Region::toPixels, Region::fromPixels)
+						.validate(list -> list.isEmpty() ? DataResult.error(() -> "Empty region! Pixel region must have at least one pixel!") : DataResult.success(list))
+						.fieldOf("sections").forGetter(Function.identity())
+		).apply(builder, Function.identity()));
+
+		private record Region(int xMin, int yMin, Either<Integer, Integer> x2, Either<Integer, Integer> y2, int alpha) {
+			public static final Codec<Region> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+					Codec.mapEither(Codec.INT.fieldOf("x1"), Codec.INT.optionalFieldOf("x", 0))
+							.xmap(either -> either.map(Function.identity(), Function.identity()), Either::right).forGetter(Region::xMin),
+					Codec.mapEither(Codec.INT.fieldOf("y1"), Codec.INT.optionalFieldOf("y", 0))
+							.xmap(either -> either.map(Function.identity(), Function.identity()), Either::right).forGetter(Region::yMin),
+					Codec.mapEither(Codec.INT.fieldOf("x2"), Codec.INT.optionalFieldOf("w", 0)).forGetter(Region::x2),
+					Codec.mapEither(Codec.INT.fieldOf("y2"), Codec.INT.optionalFieldOf("h", 0)).forGetter(Region::y2),
+					Codec.INT.fieldOf("alpha").forGetter(Region::alpha)
+			).apply(builder, Region::new));
+
+			private List<Pixel> toPixels() {
+				int xMax = this.x2.map(Function.identity(), w -> w + this.xMin);
+				int yMax = this.y2.map(Function.identity(), h -> h + this.yMin);
+				List<Pixel> pixels = new ObjectArrayList<>();
+
+				for (int x = this.xMin; x <= xMax; x++) {
+					for (int y = this.yMin; y <= yMax; y++) {
+						pixels.add(new Pixel(x, y, this.alpha));
+					}
+				}
+
+				return pixels;
+			}
+
+			private static DataResult<Region> fromPixels(List<Pixel> pixels) {
+				if (pixels.isEmpty())
+					return DataResult.error(() -> "Pixel region must not be empty!");
+
+				int minX = 0;
+				int minY = 0;
+				int maxX = 0;
+				int maxY = 0;
+				int alpha = pixels.getFirst().alpha;
+
+				for (Pixel pixel : pixels) {
+					minX = Math.min(minX, pixel.x);
+					minY = Math.min(minY, pixel.y);
+					maxX = Math.max(maxX, pixel.x);
+					maxY = Math.max(maxY, pixel.y);
+
+					if (pixel.alpha != alpha)
+						return DataResult.error(() -> "Pixel in region has mismatching alpha value! All pixels in a region must have the same alpha value");
+				}
+
+				if ((maxX - minX) * (maxY - minY) != pixels.size())
+					return DataResult.error(() -> "Invalid pixel region defined. Pixel regions must be contiguous square or rectangular sections");
+
+				return DataResult.success(new Region(minX, minY, Either.left(maxX), Either.left(maxY), alpha));
+			}
+		}
+	}
 }
