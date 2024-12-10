@@ -20,7 +20,7 @@
     forge-fml-range = "[54,)"
     forge-range = "[54.0.0,)"
     forge = "54.0.6"
-    forge-mc = "1.21.5-54.0.6"
+    forge-mc = "1.21.4-54.0.6"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
