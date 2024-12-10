@@ -1,7 +1,6 @@
 accessWidener	v1	named
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;ILnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-accessible field net/minecraft/client/renderer/entity/EntityRenderDispatcher renderers Ljava/util/Map;
 accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
@@ -9,17 +8,20 @@ accessible class net/minecraft/client/renderer/RenderStateShard$WriteMaskStateSh
 accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
 accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
-accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
-
-accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
-accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
-
 accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
-#accessible field net/minecraft/client/renderer/entity/ItemRenderer blockEntityRenderer Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;
+accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
+
+accessible field net/minecraft/client/renderer/entity/EntityRenderDispatcher renderers Ljava/util/Map;
 accessible field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 mutable field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 extendable method net/minecraft/client/renderer/entity/EntityRenderer createRenderState (Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
+
 extendable method net/minecraft/client/model/Model renderToBuffer (Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V
+accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
+
+accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
+
+accessible field net/minecraft/client/renderer/texture/AbstractTexture defaultBlur Z
 
 # TEMP FOR BUFFERBUILDER
 accessible class net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator

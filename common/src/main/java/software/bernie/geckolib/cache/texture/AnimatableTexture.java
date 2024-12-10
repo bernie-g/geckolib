@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.client.renderer.texture.Tickable;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
@@ -35,6 +36,11 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 	}
 
 	@Override
+	public TextureContents loadContents(ResourceManager resourceManager) throws IOException {
+		return super.loadContents(resourceManager);
+	}
+
+	@Override
 	public void load(ResourceManager manager) throws IOException {
 		Resource resource = manager.getResourceOrThrow(this.location);
 
@@ -45,7 +51,7 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 				nativeImage = NativeImage.read(inputstream);
 			}
 
-			this.animationContents = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
+			this.animationContents = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
 
 			if (this.animationContents != null) {
 				if (!this.animationContents.isValid()) {

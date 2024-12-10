@@ -1,11 +1,11 @@
 package software.bernie.geckolib.cache.texture;
 
-import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.CoreShaders;
@@ -13,19 +13,22 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.ReloadableTexture;
+import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.TriState;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 
 /**
@@ -61,11 +64,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	public static boolean PRINT_DEBUG_IMAGES = false;
 
 	protected final ResourceLocation textureBase;
-	protected final ResourceLocation glowLayer;
 
 	public AutoGlowingTexture(ResourceLocation originalLocation, ResourceLocation location) {
+		super(location);
+
 		this.textureBase = originalLocation;
-		this.glowLayer = location;
 	}
 
 	/**
@@ -86,71 +89,56 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	/**
 	 * Generates the glow layer {@link NativeImage} and appropriately modifies the base texture for use in glow render layers
 	 */
-	@Nullable
 	@Override
-	protected RenderCall loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException {
-		AbstractTexture originalTexture;
+	protected TextureContents loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException {
+		Resource baseTextureResource = resourceManager.getResourceOrThrow(this.textureBase);
+		Optional<Resource> glowmaskResource = resourceManager.getResource(resourceId());
+		AbstractTexture baseTexture = mc.getTextureManager().getTexture(this.textureBase);
+		NativeImage baseImage = baseTexture instanceof DynamicTexture dynamicTexture ? dynamicTexture.getPixels() : null;
+		ResourceMetadata baseTextureMeta = baseTextureResource.metadata();
+		TextureMetadataSection baseTextureMetaSection = baseTextureMeta.getSection(TextureMetadataSection.TYPE).orElse(null);
 
-		try {
-			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(this.textureBase)).get();
-		}
-		catch (InterruptedException | ExecutionException e) {
-			throw new IOException("Failed to load original texture: " + this.textureBase, e);
-		}
-
-		Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
-		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
-				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
-		NativeImage glowImage = null;
-		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.TYPE);
-		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().blur();
-		boolean clamp = textureBaseMeta.isPresent() && textureBaseMeta.get().clamp();
-
-		try {
-			Optional<Resource> glowLayerResource = resourceManager.getResource(this.glowLayer);
-			GeoGlowingTextureMeta glowLayerMeta = null;
-
-			if (glowLayerResource.isPresent()) {
-				glowImage = NativeImage.read(glowLayerResource.get().open());
-				glowLayerMeta = GeoGlowingTextureMeta.fromExistingImage(glowImage);
-			}
-			else {
-				Optional<GeoGlowingTextureMeta> meta = textureBaseResource.metadata().getSection(GeoGlowingTextureMeta.TYPE);
-
-				if (meta.isPresent()) {
-					glowLayerMeta = meta.get();
-					glowImage = new NativeImage(baseImage.getWidth(), baseImage.getHeight(), true);
-				}
-			}
-
-			if (glowLayerMeta != null) {
-				glowLayerMeta.createImageMask(baseImage, glowImage);
-
-				if (PRINT_DEBUG_IMAGES && GeckoLibServices.PLATFORM.isDevelopmentEnvironment()) {
-					printDebugImageToDisk(this.textureBase, baseImage);
-					printDebugImageToDisk(this.glowLayer, glowImage);
-				}
+		if (baseImage == null) {
+			try (InputStream stream = baseTextureResource.open()) {
+				baseImage = NativeImage.read(stream);
 			}
 		}
-		catch (IOException e) {
-			GeckoLibConstants.LOGGER.warn("Resource failed to open for glowlayer meta: {}", this.glowLayer, e);
+
+		NativeImage referenceImage = baseImage;
+		Pair<NativeImage, GeoGlowingTextureMeta> contents = glowmaskResource.map(resource -> {
+			NativeImage image;
+
+			try (InputStream stream = resource.open()) {
+				image = NativeImage.read(stream);
+			}
+			catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return Pair.of(image, GeoGlowingTextureMeta.fromExistingImage(image));
+        }).orElseGet(() -> {
+			return Pair.of(new NativeImage(referenceImage.getWidth(), referenceImage.getHeight(), true),
+					baseTextureMeta.getSection(GeoGlowingTextureMeta.TYPE).orElseGet(() -> {
+						GeckoLibConstants.LOGGER.error("Attempting to use a glowmask but no glowmask or .png.mcmeta was found for texture: {}", this.textureBase);
+
+						return new GeoGlowingTextureMeta(List.of());
+					}));
+		});
+
+		contents.right().createImageMask(referenceImage, contents.left());
+
+		if (PRINT_DEBUG_IMAGES && GeckoLibServices.PLATFORM.isDevelopmentEnvironment()) {
+			printDebugImageToDisk(this.textureBase, referenceImage);
+			printDebugImageToDisk(resourceId(), contents.left());
 		}
 
-		NativeImage mask = glowImage;
+		switch (baseTexture) {
+			case ReloadableTexture reloadable -> reloadable.apply(new TextureContents(referenceImage, baseTextureMetaSection));
+			case DynamicTexture dynamicTexture -> dynamicTexture.upload();
+			default -> uploadTexture(baseTexture, new TextureContents(referenceImage, baseTextureMetaSection));
+		}
 
-		if (mask == null)
-			return null;
-
-		return () -> {
-			uploadSimple(getId(), mask, blur, clamp);
-
-			if (originalTexture instanceof DynamicTexture dynamicTexture) {
-				dynamicTexture.upload();
-			}
-			else {
-				uploadSimple(originalTexture.getId(), baseImage, blur, clamp);
-			}
-		};
+		return new TextureContents(contents.left(), baseTextureMetaSection);
 	}
 
 	/**

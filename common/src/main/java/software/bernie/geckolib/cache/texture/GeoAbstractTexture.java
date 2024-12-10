@@ -5,12 +5,9 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 
 import java.io.File;
@@ -22,7 +19,11 @@ import java.util.function.Consumer;
  * <p>
  * Mostly just handles boilerplate
  */
-public abstract class GeoAbstractTexture extends AbstractTexture {
+public abstract class GeoAbstractTexture extends ReloadableTexture {
+	public GeoAbstractTexture(ResourceLocation resourceId) {
+		super(resourceId);
+	}
+
 	/**
 	 * Generates the texture instance for the given path with the given appendix if it hasn't already been generated
 	 */
@@ -32,23 +33,13 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 
 		TextureManager textureManager = Minecraft.getInstance().getTextureManager();
 
-		if (!(textureManager.getTexture(texturePath, MissingTextureAtlasSprite.getTexture()) instanceof GeoAbstractTexture))
+		if (!(textureManager.getTexture(texturePath) instanceof GeoAbstractTexture))
 			textureManagerConsumer.accept(textureManager);
 	}
 
 	@Override
-	public final void load(ResourceManager resourceManager) throws IOException {
-		RenderCall renderCall = loadTexture(resourceManager, Minecraft.getInstance());
-
-		if (renderCall == null)
-			return;
-
-		if (!RenderSystem.isOnRenderThreadOrInit()) {
-			RenderSystem.recordRenderCall(renderCall);
-		}
-		else {
-			renderCall.execute();
-		}
+	public TextureContents loadContents(ResourceManager resourceManager) throws IOException {
+		return loadTexture(resourceManager, Minecraft.getInstance());
 	}
 
 	/**
@@ -79,23 +70,47 @@ public abstract class GeoAbstractTexture extends AbstractTexture {
 	}
 
 	/**
-	 * Called at {@link AbstractTexture#load} time to load this texture for the first time into the render cache
+	 * Called from {@link ReloadableTexture#loadContents} to create the {@link NativeImage} for this texture to be uploaded to memory
 	 * <p>
-	 * Generate and apply the necessary functions here, then return the RenderCall to submit to the render pipeline
+	 * Perform any necessary pre-computation work here, then return this texture's associated TextureContents
 	 *
-	 * @return The RenderCall to submit to the render pipeline, or null if no further action required
+	 * @return The TextureContents to submit to for upload
 	 */
-	@Nullable
-	protected abstract RenderCall loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException;
+	protected abstract TextureContents loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException;
 
 	/**
-	 * No-frills helper method for uploading {@link NativeImage images} into memory for use
+	 * No-frills helper method for uploading {@link AbstractTexture textures} into memory for use
 	 */
-	public static void uploadSimple(int texture, NativeImage image, boolean blur, boolean clamp) {
-		TextureUtil.prepareImage(texture, 0, image.getWidth(), image.getHeight());
-		image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), blur, clamp, false, true);
+	public static void uploadTexture(AbstractTexture texture, TextureContents textureContents) {
+		boolean clamp = textureContents.clamp();
+		boolean blur = texture.defaultBlur = textureContents.blur();
+		NativeImage image = textureContents.image();
+		RenderCall uploadTask = () -> {
+			TextureUtil.prepareImage(texture.getId(), 0, image.getWidth(), image.getHeight());
+			texture.setFilter(blur, false);
+			texture.setClamp(clamp);
+			image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), true);
+		};
+
+		if (!RenderSystem.isOnRenderThreadOrInit()) {
+			RenderSystem.recordRenderCall(uploadTask);
+		}
+		else {
+			uploadTask.execute();
+		}
 	}
 
+	/**
+	 * Append a suffix to a given ResourceLocation's path
+	 * <p>
+	 * E.G.
+	 * <code>("minecraft:test_path", "_extended") -> "minecraft:test_path_extended"</code>
+	 *
+	 * @param location The base ResourceLocation
+	 * @param suffix The suffix to append literally to the base location's path
+	 *
+	 * @return The newly created ResourceLocation
+	 */
 	public static ResourceLocation appendToPath(ResourceLocation location, String suffix) {
 		String path = location.getPath();
 		int i = path.lastIndexOf('.');
