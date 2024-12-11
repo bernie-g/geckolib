@@ -2,7 +2,6 @@ package software.bernie.geckolib.cache.texture;
 
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
@@ -10,12 +9,16 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.client.renderer.texture.Tickable;
+import net.minecraft.client.resources.metadata.animation.AnimationFrame;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
+import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceMetadata;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.util.RenderUtil;
 
@@ -35,44 +38,6 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 		super(location);
 	}
 
-	@Override
-	public TextureContents loadContents(ResourceManager resourceManager) throws IOException {
-		return super.loadContents(resourceManager);
-	}
-
-	@Override
-	public void load(ResourceManager manager) throws IOException {
-		Resource resource = manager.getResourceOrThrow(this.location);
-
-		try {
-			NativeImage nativeImage;
-
-			try (InputStream inputstream = resource.open()) {
-				nativeImage = NativeImage.read(inputstream);
-			}
-
-			this.animationContents = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
-
-			if (this.animationContents != null) {
-				if (!this.animationContents.isValid()) {
-					nativeImage.close();
-
-					return;
-				}
-
-				this.isAnimated = true;
-
-				onRenderThread(() -> {
-					TextureUtil.prepareImage(getId(), 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height());
-					nativeImage.upload(0, 0, 0, 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false, false);
-				});
-			}
-		}
-		catch (RuntimeException exception) {
-			GeckoLibConstants.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
-		}
-	}
-
 	/**
 	 * Returns whether the texture found any valid animation metadata when loading.
 	 * <p>
@@ -80,6 +45,32 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 	 */
 	public boolean isAnimated() {
 		return this.isAnimated;
+	}
+
+	@Override
+	public TextureContents loadContents(ResourceManager resourceManager) throws IOException {
+		Resource resource = resourceManager.getResourceOrThrow(resourceId());
+		ResourceMetadata resourceMeta = resource.metadata();
+		NativeImage image;
+
+		try (InputStream inputstream = resource.open()) {
+			image = NativeImage.read(inputstream);
+		}
+
+		this.animationContents = resourceMeta.getSection(AnimationMetadataSection.TYPE).map(animMeta -> new AnimationContents(image, animMeta)).orElse(null);
+		TextureContents textureContents = new TextureContents(image, resourceMeta.getSection(TextureMetadataSection.TYPE).orElse(null));
+
+		if (this.animationContents != null && this.animationContents.isValid()) {
+			this.isAnimated = true;
+			this.defaultBlur = textureContents.blur();
+
+			GeoAbstractTexture.uploadTexture(this, image, textureContents.clamp(), textureContents.blur(), 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false);
+		}
+		else {
+			image.close();
+		}
+		
+		return textureContents;
 	}
 
 	@Override
@@ -103,47 +94,47 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 
 	private class AnimationContents {
 		private final FrameSize frameSize;
+		@Nullable
 		private final Texture animatedTexture;
 
 		private AnimationContents(NativeImage image, AnimationMetadataSection animMeta) {
 			this.frameSize = animMeta.calculateFrameSize(image.getWidth(), image.getHeight());
-			this.animatedTexture = generateAnimatedTexture(image, animMeta);
+			this.animatedTexture = createTexture(image, animMeta);
 		}
 
 		private boolean isValid() {
 			return this.animatedTexture != null;
 		}
 
-		private Texture generateAnimatedTexture(NativeImage image, AnimationMetadataSection animMeta) {
+		@Nullable
+		private Texture createTexture(NativeImage image, AnimationMetadataSection animMeta) {
 			if (!Mth.isMultipleOf(image.getWidth(), this.frameSize.width()) || !Mth.isMultipleOf(image.getHeight(), this.frameSize.height())) {
-				GeckoLibConstants.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.location, image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
+				GeckoLibConstants.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.resourceId(), image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
 
 				return null;
 			}
 
 			int columns = image.getWidth() / this.frameSize.width();
 			int rows = image.getHeight() / this.frameSize.height();
-			int frameCount = columns * rows;
-			List<Frame> frames = new ObjectArrayList<>();
+			int maxFrameCount = columns * rows;
+			int defaultFrameTime = animMeta.defaultFrameTime();
+			List<Frame> frames = new ObjectArrayList<>(animMeta.frames().map(List::size).orElse(maxFrameCount));
 
-			animMeta.forEachFrame((frame, frameTime) -> frames.add(new Frame(frame, frameTime)));
-
-			if (frames.isEmpty()) {
-				for (int frame = 0; frame < frameCount; ++frame) {
-					frames.add(new Frame(frame, animMeta.getDefaultFrameTime()));
+			animMeta.frames().ifPresentOrElse(animFrames -> {
+				for (AnimationFrame frame : animFrames) {
+					frames.add(new Frame(frame.index(), frame.timeOr(defaultFrameTime)));
 				}
-			}
-			else {
+
 				int index = 0;
 				IntSet unusedFrames = new IntOpenHashSet();
 
 				for (Frame frame : frames) {
 					if (frame.time <= 0) {
-						GeckoLibConstants.LOGGER.warn("Invalid frame duration on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.time);
+						GeckoLibConstants.LOGGER.warn("Invalid frame duration on sprite {} frame {}: {}", AnimatableTexture.this.resourceId(), index, frame.time);
 						unusedFrames.add(frame.index);
 					}
-					else if (frame.index < 0 || frame.index >= frameCount) {
-						GeckoLibConstants.LOGGER.warn("Invalid frame index on sprite {} frame {}: {}", AnimatableTexture.this.location, index, frame.index);
+					else if (frame.index < 0 || frame.index >= maxFrameCount) {
+						GeckoLibConstants.LOGGER.warn("Invalid frame index on sprite {} frame {}: {}", AnimatableTexture.this.resourceId(), index, frame.index);
 						unusedFrames.add(frame.index);
 					}
 
@@ -151,10 +142,15 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 				}
 
 				if (!unusedFrames.isEmpty())
-					GeckoLibConstants.LOGGER.warn("Unused frames in sprite {}: {}", AnimatableTexture.this.location, Arrays.toString(unusedFrames.toArray()));
-			}
+					GeckoLibConstants.LOGGER.warn("Unused frames in sprite {}: {}", AnimatableTexture.this.resourceId(), Arrays.toString(unusedFrames.toArray()));
+			}, () -> {
+				for (int i = 0; i < maxFrameCount; i++) {
+					frames.add(new Frame(i, defaultFrameTime));
+				}
+			});
 
-			return frames.size() <= 1 ? null : new Texture(image, frames.toArray(new Frame[0]), columns, animMeta.isInterpolatedFrames());
+			return frames.size() <= 1 ? null : new Texture(image, frames.toArray(new Frame[0]), columns, animMeta.interpolatedFrames(),
+					this.animatedTexture != null && this.animatedTexture.clamp, this.animatedTexture != null && this.animatedTexture.blur);
 		}
 
 		private record Frame(int index, int time) {}
@@ -166,16 +162,20 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 			private final boolean interpolating;
 			private final NativeImage interpolatedFrame;
 			private final int totalFrameTime;
+			private final boolean clamp;
+			private final boolean blur;
 
 			private int currentFrame;
 			private int currentSubframe;
 
-			private Texture(NativeImage baseImage, Frame[] frames, int framePanelSize, boolean interpolating) {
+			private Texture(NativeImage baseImage, Frame[] frames, int framePanelSize, boolean interpolating, boolean clamp, boolean blur) {
 				this.baseImage = baseImage;
 				this.frames = frames;
 				this.framePanelSize = framePanelSize;
 				this.interpolating = interpolating;
 				this.interpolatedFrame = interpolating ? new NativeImage(AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false) : null;
+				this.clamp = clamp;
+				this.blur = blur;
 				int time = 0;
 
 				for (Frame frame : this.frames) {
@@ -215,10 +215,11 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 				}
 
 				if (this.currentFrame != lastFrame && this.currentSubframe == 0) {
-					onRenderThread(() -> {
-						TextureUtil.prepareImage(AnimatableTexture.this.getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
-						this.baseImage.upload(0, 0, 0, getFrameX(this.currentFrame) * AnimationContents.this.frameSize.width(), getFrameY(this.currentFrame) * AnimationContents.this.frameSize.height(), AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
-					});
+					int frameWidth = AnimationContents.this.frameSize.width();
+					int frameHeight = AnimationContents.this.frameSize.height();
+
+					GeoAbstractTexture.uploadTexture(AnimatableTexture.this, this.baseImage, this.clamp, this.blur,
+							getFrameX(this.currentFrame) * frameWidth, getFrameY(this.currentFrame) * frameHeight, frameWidth, frameHeight, false);
 				}
 				else if (this.currentSubframe != lastSubframe && this.interpolating) {
 					onRenderThread(this::generateInterpolatedFrame);
@@ -243,8 +244,8 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 						}
 					}
 
-					TextureUtil.prepareImage(AnimatableTexture.this.getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
-					this.interpolatedFrame.upload(0, 0, 0, 0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
+					GeoAbstractTexture.uploadTexture(AnimatableTexture.this, this.interpolatedFrame, this.clamp, this.blur,
+							0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false);
 				}
 			}
 

@@ -82,14 +82,21 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 	 * No-frills helper method for uploading {@link AbstractTexture textures} into memory for use
 	 */
 	public static void uploadTexture(AbstractTexture texture, TextureContents textureContents) {
-		boolean clamp = textureContents.clamp();
-		boolean blur = texture.defaultBlur = textureContents.blur();
-		NativeImage image = textureContents.image();
+		uploadTexture(texture, textureContents.image(), textureContents.clamp(), textureContents.blur(), 0, 0, textureContents.image().getWidth(), textureContents.image().getHeight(), true);
+	}
+
+	/**
+	 * No-frills helper method for uploading {@link AbstractTexture textures} into memory for use
+	 * <p>
+	 * Includes an overload for specifying the remaining configurable values in the process
+	 */
+	public static void uploadTexture(AbstractTexture texture, NativeImage image, boolean clamp, boolean blur, int skipXPixels, int skipYPixels, int width, int height, boolean autoClose) {
+		texture.defaultBlur = blur;
 		RenderCall uploadTask = () -> {
-			TextureUtil.prepareImage(texture.getId(), 0, image.getWidth(), image.getHeight());
+			TextureUtil.prepareImage(texture.getId(), 0, width, height);
 			texture.setFilter(blur, false);
 			texture.setClamp(clamp);
-			image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), true);
+			image.upload(0, 0, 0, skipXPixels, skipYPixels, width, height, autoClose);
 		};
 
 		if (!RenderSystem.isOnRenderThreadOrInit()) {
