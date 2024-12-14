@@ -1,5 +1,6 @@
 package software.bernie.geckolib.resource;
 
+import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
@@ -17,7 +18,16 @@ import java.util.function.Function;
  */
 public record GeoGlowingTextureMeta(List<Pixel> pixels) {
 	public static final Codec<GeoGlowingTextureMeta> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-			Pixel.FROM_REGIONS_CODEC.fieldOf("sections").forGetter(GeoGlowingTextureMeta::pixels)
+			Pixel.FROM_REGION_CODEC
+					.listOf()
+					.comapFlatMap(pixelsLists -> {
+						ImmutableList.Builder<Pixel> pixelsBuilder = ImmutableList.builder();
+
+						pixelsLists.forEach(pixelsBuilder::addAll);
+
+						return DataResult.success((List<Pixel>)pixelsBuilder.build());
+					}, List::of)
+					.fieldOf("sections").forGetter(GeoGlowingTextureMeta::pixels)
 	).apply(builder, GeoGlowingTextureMeta::new));
 	public static final MetadataSectionType<GeoGlowingTextureMeta> TYPE = new MetadataSectionType<>("glowsections", CODEC);
 
@@ -70,7 +80,7 @@ public record GeoGlowingTextureMeta(List<Pixel> pixels) {
 				Codec.INT.fieldOf("y").forGetter(Pixel::y),
 				Codec.INT.fieldOf("alpha").forGetter(Pixel::alpha)
 		).apply(builder, Pixel::new));
-		public static final Codec<List<Pixel>> FROM_REGIONS_CODEC = Region.CODEC
+		public static final Codec<List<Pixel>> FROM_REGION_CODEC = Region.CODEC
 				.flatComapMap(Region::toPixels, Region::fromPixels)
 				.validate(list -> list.isEmpty() ? DataResult.error(() -> "Empty region! Pixel region must have at least one pixel!") : DataResult.success(list));
 
@@ -82,7 +92,7 @@ public record GeoGlowingTextureMeta(List<Pixel> pixels) {
 							.xmap(either -> either.map(Function.identity(), Function.identity()), Either::right).forGetter(Region::yMin),
 					Codec.mapEither(Codec.INT.fieldOf("x2"), Codec.INT.optionalFieldOf("w", 0)).forGetter(Region::x2),
 					Codec.mapEither(Codec.INT.fieldOf("y2"), Codec.INT.optionalFieldOf("h", 0)).forGetter(Region::y2),
-					Codec.INT.fieldOf("alpha").forGetter(Region::alpha)
+					Codec.INT.optionalFieldOf("alpha", 255).forGetter(Region::alpha)
 			).apply(builder, Region::new));
 
 			private List<Pixel> toPixels() {

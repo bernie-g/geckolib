@@ -81,7 +81,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	public static ResourceLocation getEmissiveResource(ResourceLocation baseResource) {
 		ResourceLocation path = appendToPath(baseResource, APPENDIX);
 
-		generateTexture(path, textureManager -> textureManager.register(path, new AutoGlowingTexture(baseResource, path)));
+		generateTexture(path, textureManager -> textureManager.registerAndLoad(path, new AutoGlowingTexture(baseResource, path)));
 
 		return path;
 	}
