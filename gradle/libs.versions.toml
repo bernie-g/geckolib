@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "4.7.1"
+    geckolib = "4.8"
 
 # Common
     minecraft-range = "[1.21.4,)"
@@ -13,7 +13,7 @@
 # Fabric
     fabric = "0.16.9"
     fabric-range = "0.16"
-    fabric-api = "0.111.0+1.21.4"
+    fabric-api = "0.112.0+1.21.4"
     fabric-api-range = "0.110.5+1.21.4"
 
 # Forge
@@ -25,7 +25,7 @@
 # Neoforge
     neoforge-loader-range = "[5,)"
     neoforge-range = "[21.4.0-beta,)"
-    neoforge = "21.4.12-beta"
+    neoforge = "21.4.23-beta"
 
 # Dependencies
     mixin = "0.8.7"
@@ -35,7 +35,7 @@
     iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.52-beta"
+    plugin-moddevgradle = "2.0.59-beta"
     plugin-minotaur = "2.8.7"
     plugin-curseforge-gradle = "1.1.25"
     plugin-idea-ext = "1.1.8"
