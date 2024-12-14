@@ -10,11 +10,11 @@
   "mixins": [
   ],
   "client": [
-    "client.BlockEntityWithoutLevelRendererMixin",
     "client.EntityRenderDispatcherMixin",
     "client.EntityRenderStateMixin",
     "client.HumanoidArmorLayerMixin",
     "client.LevelRendererMixin",
+    "client.SpecialModelRenderersMixin",
     "client.TextureManagerMixin"
   ]
 }

@@ -26,7 +26,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      */
     @NotNull
     @Override
-    public <E extends LivingEntity & GeoAnimatable, S extends HumanoidRenderState> HumanoidModel<?> getArmorModelForItem(E animatable, S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentModel.LayerType type, HumanoidModel<S> defaultModel) {
+    public <E extends LivingEntity & GeoAnimatable, S extends HumanoidRenderState> HumanoidModel<?> getArmorModelForItem(E animatable, S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return GeoRenderProvider.of(stack).getGeoArmorRenderer(animatable, stack, slot, type, defaultModel) instanceof GeoArmorRenderer<?> geoArmorRenderer ? geoArmorRenderer : defaultModel;
     }
 
@@ -51,7 +51,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      */
     @Nullable
     @Override
-    public GeoModel<?> getGeoModelForArmor(ItemStack armour, EquipmentSlot slot, EquipmentModel.LayerType type) {
+    public GeoModel<?> getGeoModelForArmor(ItemStack armour, EquipmentSlot slot, EquipmentClientInfo.LayerType type) {
         final HumanoidModel<?> defaultModel = slot == EquipmentSlot.LEGS ? GENERIC_INNER_ARMOR_MODEL.get() : GENERIC_OUTER_ARMOR_MODEL.get();
 
         if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, slot, type, defaultModel) instanceof GeoArmorRenderer<?> armorRenderer)

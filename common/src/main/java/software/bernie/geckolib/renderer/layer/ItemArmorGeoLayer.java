@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.EquipmentModel;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
@@ -177,7 +177,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	protected void renderVanillaArmorPiece(PoseStack poseStack, T animatable, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
 										   Equippable equippable, ResourceLocation modelPath, HumanoidModel<?> model, ModelPart modelPart,
 										   MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
-		EquipmentModel.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID;
+		EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
 
 		setVanillaModelPartVisibility(animatable, armorStack, bone, model, modelPart, slot, partialTick);
 		this.equipmentRenderer.renderLayers(layerType, modelPath, model, armorStack, poseStack, bufferSource, packedLight);
@@ -207,7 +207,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	@NotNull
 	protected HumanoidModel<?> getModelForItem(GeoBone bone, EquipmentSlot slot, ItemStack stack, T animatable) {
 		HumanoidModel<HumanoidRenderState> defaultModel = slot == EquipmentSlot.LEGS ? GeckoLibClient.GENERIC_INNER_ARMOR_MODEL.get() : GeckoLibClient.GENERIC_OUTER_ARMOR_MODEL.get();
-		Model model = GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(animatable, getRenderer() instanceof GeoEntityRenderer<T> entityRenderer && entityRenderer.getEntityRenderState() instanceof HumanoidRenderState renderState ? renderState : new HumanoidRenderState(), stack, slot, slot == EquipmentSlot.LEGS ? EquipmentModel.LayerType.HUMANOID_LEGGINGS : EquipmentModel.LayerType.HUMANOID, defaultModel);
+		Model model = GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(animatable, getRenderer() instanceof GeoEntityRenderer<T> entityRenderer && entityRenderer.getEntityRenderState() instanceof HumanoidRenderState renderState ? renderState : new HumanoidRenderState(), stack, slot, slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID, defaultModel);
 
 		return model instanceof HumanoidModel<?> humanoidModel ? humanoidModel : defaultModel;
 	}

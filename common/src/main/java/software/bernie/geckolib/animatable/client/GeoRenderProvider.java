@@ -1,13 +1,12 @@
 package software.bernie.geckolib.animatable.client;
 
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.EquipmentModel;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
@@ -50,14 +49,14 @@ public interface GeoRenderProvider {
     }
 
     /**
-     * Get the cached {@link BlockEntityWithoutLevelRenderer} instance for this provider.
+     * Get the cached {@link GeoItemRenderer} instance for this provider.
      * <p>
      * Normally this would be an instance of {@link GeoItemRenderer}
      *
      * @return The cached BEWLR instance for this provider, or null if not applicable
      */
     @Nullable
-    default BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
+    default GeoItemRenderer<?> getGeoItemRenderer() {
         return null;
     }
 
@@ -74,7 +73,7 @@ public interface GeoRenderProvider {
      * @return The cached HumanoidModel instance for this provider, or null if no armor renderer applies
      */
     @Nullable
-    default <E extends LivingEntity, S extends HumanoidRenderState> HumanoidModel<?> getGeoArmorRenderer(@Nullable E livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, EquipmentModel.LayerType type, HumanoidModel<S> original) {
+    default <E extends LivingEntity, S extends HumanoidRenderState> HumanoidModel<?> getGeoArmorRenderer(@Nullable E livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, EquipmentClientInfo.LayerType type, HumanoidModel<S> original) {
         return null;
     }
 }

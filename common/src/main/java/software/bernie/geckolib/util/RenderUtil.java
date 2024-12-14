@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -22,7 +23,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.EquipmentModel;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -341,7 +341,7 @@ public final class RenderUtil {
 	 * @return The GeoModel, or null if one isn't found
 	 */
 	@Nullable
-	public static GeoModel<?> getGeoModelForArmor(ItemStack stack, EquipmentSlot slot, EquipmentModel.LayerType type) {
+	public static GeoModel<?> getGeoModelForArmor(ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type) {
 		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack, slot, type);
 	}
 

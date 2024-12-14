@@ -6,7 +6,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
@@ -14,7 +13,6 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibServices;
@@ -36,7 +34,7 @@ import java.util.List;
  * <p>
  * All items added to be rendered by GeckoLib should use an instance of this class.
  */
-public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntityWithoutLevelRenderer implements GeoRenderer<T> {
+public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRenderer<T> {
 	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
@@ -56,8 +54,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 	}
 
 	public GeoItemRenderer(BlockEntityRenderDispatcher dispatcher, EntityModelSet modelSet, GeoModel<T> model) {
-		super(dispatcher, modelSet);
-
 		this.model = model;
 	}
 
@@ -154,12 +150,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			poseStack.translate(0.5f, 0.51f, 0.5f);
 	}
 
-	@Override
-	@ApiStatus.Internal
-	public void renderByItem(ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
-			MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
-		this.animatable = (T)stack.getItem();
-		this.currentItemStack = stack;
+	public void render(GeckolibSpecialRenderer.RenderData renderData, ItemDisplayContext transformType, PoseStack poseStack,
+			MultiBufferSource bufferSource, int packedLight, int packedOverlay, boolean hasGlint) {
+		this.animatable = (T)renderData.item();
+		this.currentItemStack = renderData.itemstack();
 		this.renderPerspective = transformType;
 		float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
