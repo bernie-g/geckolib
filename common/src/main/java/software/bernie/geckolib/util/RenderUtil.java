@@ -9,20 +9,25 @@ import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -349,12 +354,23 @@ public final class RenderUtil {
 	 * Replica of {@link LivingEntityRenderer#extractRenderState(LivingEntity, LivingEntityRenderState, float)}, moved here for external convenience.
 	 * <p>
 	 * It is expected that the entityRenderState has already been pre-filled by
-	 * {@link net.minecraft.client.renderer.entity.EntityRenderer#extractRenderState(Entity, EntityRenderState, float)} prior to this call
+	 * {@link EntityRenderer#extractRenderState(Entity, EntityRenderState, float)} prior to this call
 	 */
-	public static void prepLivingEntityRenderState(LivingEntity entity, LivingEntityRenderState entityRenderState, float partialTick) {
-		Minecraft mc = Minecraft.getInstance();
-		ItemRenderer itemRenderer = mc.getItemRenderer();
-		float yHeadRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
+	public static void prepLivingEntityRenderState(LivingEntity entity, LivingEntityRenderState entityRenderState, float partialTick, ItemModelResolver itemModelResolver) {
+		final Minecraft minecraft = Minecraft.getInstance();
+		final float yHeadRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
+		final ItemStack headStack = entity.getItemBySlot(EquipmentSlot.HEAD);
+
+		entityRenderState.bodyRot = LivingEntityRenderer.solveBodyRot(entity, yHeadRot, partialTick);
+		entityRenderState.yRot = Mth.wrapDegrees(yHeadRot - entityRenderState.bodyRot);
+		entityRenderState.xRot = entity.getXRot(partialTick);
+		entityRenderState.customName = entity.getCustomName();
+		entityRenderState.isUpsideDown = LivingEntityRenderer.isEntityUpsideDown(entity);
+
+		if (entityRenderState.isUpsideDown) {
+			entityRenderState.xRot *= -1;
+			entityRenderState.yRot *= -1;
+		}
 
 		if (!entity.isPassenger() && entity.isAlive()) {
 			entityRenderState.walkAnimationPos = entity.walkAnimation.position(partialTick);
@@ -365,52 +381,46 @@ public final class RenderUtil {
 			entityRenderState.walkAnimationSpeed = 0;
 		}
 
-		if (entity.getVehicle() instanceof LivingEntity mount) {
-			float yBodyRot = Mth.rotLerp(partialTick, mount.yBodyRotO, mount.yBodyRot);
-			float headBodyRotDelta = Mth.clamp(Mth.wrapDegrees(yHeadRot - yBodyRot), -85f, 85f);
-			yBodyRot = yHeadRot - headBodyRotDelta;
-
-			if (Math.abs(headBodyRotDelta) > 50f)
-				yBodyRot += headBodyRotDelta * 0.2f;
-
-			entityRenderState.bodyRot = yBodyRot;
-			entityRenderState.wornHeadAnimationPos = mount.walkAnimation.position(partialTick);
+		if (entity.getVehicle() instanceof LivingEntity livingVehicle) {
+			entityRenderState.wornHeadAnimationPos = livingVehicle.walkAnimation.position(partialTick);
 		}
 		else {
-			entityRenderState.bodyRot = Mth.rotLerp(partialTick, entity.yBodyRotO, entity.yBodyRot);
 			entityRenderState.wornHeadAnimationPos = entityRenderState.walkAnimationPos;
 		}
 
-		entityRenderState.customName = entity.getCustomName();
-		entityRenderState.isUpsideDown = LivingEntityRenderer.isEntityUpsideDown(entity);
 		entityRenderState.scale = entity.getScale();
 		entityRenderState.ageScale = entity.getAgeScale();
 		entityRenderState.pose = entity.getPose();
 		entityRenderState.bedOrientation = entity.getBedOrientation();
-		entityRenderState.isFullyFrozen = entity.isFullyFrozen();
-		entityRenderState.isBaby = entity.isBaby();
-		entityRenderState.isInWater = GeckoLibServices.PLATFORM.isInSwimmableFluid(entity);
-		entityRenderState.isAutoSpinAttack = entity.isAutoSpinAttack();
-		entityRenderState.hasRedOverlay = entity.hurtTime > 0 || entity.deathTime > 0;
-		entityRenderState.deathTime = entity.deathTime > 0 ? (float)entity.deathTime + partialTick : 0;
-		entityRenderState.mainArm = entity.getMainArm();
-		entityRenderState.headItem = entity.getItemBySlot(EquipmentSlot.HEAD).copy();
-		entityRenderState.rightHandItem = entity.getItemHeldByArm(HumanoidArm.RIGHT).copy();
-		entityRenderState.leftHandItem = entity.getItemHeldByArm(HumanoidArm.LEFT).copy();
-		entityRenderState.headItemModel = itemRenderer.resolveItemModel(entityRenderState.headItem, entity, ItemDisplayContext.HEAD);
-		entityRenderState.rightHandItemModel = itemRenderer.resolveItemModel(entityRenderState.rightHandItem, entity, ItemDisplayContext.THIRD_PERSON_RIGHT_HAND);
-		entityRenderState.leftHandItemModel = itemRenderer.resolveItemModel(entityRenderState.leftHandItem, entity, ItemDisplayContext.THIRD_PERSON_LEFT_HAND);
-		entityRenderState.isInvisibleToPlayer = entityRenderState.isInvisible && entity.isInvisibleTo(mc.player);
-		entityRenderState.appearsGlowing = mc.shouldEntityAppearGlowing(entity);
-		entityRenderState.yRot = Mth.wrapDegrees(yHeadRot - entityRenderState.bodyRot);
-		entityRenderState.xRot = entity.getXRot(partialTick);
-
-		if (entityRenderState.isUpsideDown) {
-			entityRenderState.xRot *= -1;
-			entityRenderState.yRot *= -1;
-		}
 
 		if (entityRenderState.bedOrientation != null)
 			entityRenderState.eyeHeight = entity.getEyeHeight(Pose.STANDING);
+
+		entityRenderState.isFullyFrozen = entity.isFullyFrozen();
+		entityRenderState.isBaby = entity.isBaby();
+		entityRenderState.isInWater = entity.isInWater();
+		entityRenderState.isAutoSpinAttack = entity.isAutoSpinAttack();
+		entityRenderState.hasRedOverlay = entity.hurtTime > 0 || entity.deathTime > 0;
+
+		if (headStack.getItem() instanceof BlockItem headItem && headItem.getBlock() instanceof AbstractSkullBlock skullBlock) {
+			entityRenderState.wornHeadType = skullBlock.getType();
+			entityRenderState.wornHeadProfile = headStack.get(DataComponents.PROFILE);
+			entityRenderState.headItem.clear();
+		}
+		else {
+			entityRenderState.wornHeadType = null;
+			entityRenderState.wornHeadProfile = null;
+
+			if (!HumanoidArmorLayer.shouldRender(headStack, EquipmentSlot.HEAD)) {
+				itemModelResolver.updateForLiving(entityRenderState.headItem, headStack, ItemDisplayContext.HEAD, false, entity);
+			}
+			else {
+				entityRenderState.headItem.clear();
+			}
+		}
+
+		entityRenderState.deathTime = entity.deathTime > 0 ? (float)entity.deathTime + partialTick : 0;
+		entityRenderState.isInvisibleToPlayer = entityRenderState.isInvisible && entity.isInvisibleTo(minecraft.player);
+		entityRenderState.appearsGlowing = minecraft.shouldEntityAppearGlowing(entity);
 	}
 }

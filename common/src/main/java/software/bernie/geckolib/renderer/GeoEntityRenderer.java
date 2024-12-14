@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -50,6 +51,7 @@ import java.util.List;
 public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityRenderer<T, EntityRenderState> implements GeoRenderer<T> {
 	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
+	protected final ItemModelResolver itemModelResolver;
 
 	protected T animatable;
 	protected float partialTick;
@@ -59,10 +61,11 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	protected Matrix4f entityRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
-	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
-		super(renderManager);
+	public GeoEntityRenderer(EntityRendererProvider.Context context, GeoModel<T> model) {
+		super(context);
 
 		this.model = model;
+		this.itemModelResolver = context.getItemModelResolver();
 	}
 
 	/**
@@ -515,7 +518,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 		super.extractRenderState(entity, entityRenderState, partialTick);
 
 		if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState)
-			RenderUtil.prepLivingEntityRenderState((LivingEntity)entity, livingEntityRenderState, partialTick);
+			RenderUtil.prepLivingEntityRenderState((LivingEntity)entity, livingEntityRenderState, partialTick, this.itemModelResolver);
 	}
 
 	/**
