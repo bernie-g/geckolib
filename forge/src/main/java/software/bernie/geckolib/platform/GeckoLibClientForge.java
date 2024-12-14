@@ -4,11 +4,11 @@ import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.EquipmentModel;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,9 +48,6 @@ public final class GeckoLibClientForge implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForItem(ItemStack item) {
-        if (IClientItemExtensions.of(item).getCustomRenderer() instanceof GeoRenderer<?> geoRenderer)
-            return geoRenderer.getGeoModel();
-
         if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?> geoRenderer)
             return geoRenderer.getGeoModel();
 

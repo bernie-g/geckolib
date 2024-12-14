@@ -2,6 +2,7 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
@@ -10,18 +11,18 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelPart.Cube;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
@@ -40,6 +41,8 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.service.GeckoLibClient;
 import software.bernie.geckolib.util.RenderUtil;
 
+import java.util.function.Function;
+
 /**
  * Builtin class for handling dynamic armor rendering on GeckoLib entities
  * <p>
@@ -49,6 +52,7 @@ import software.bernie.geckolib.util.RenderUtil;
  */
 public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
 	protected final EquipmentLayerRenderer equipmentRenderer;
+	protected final Function<SkullBlock.Type, SkullModelBase> skullModels;
 
 	@Nullable
 	protected ItemStack mainHandStack;
@@ -58,10 +62,11 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	@Nullable protected ItemStack leggingsStack;
 	@Nullable protected ItemStack bootsStack;
 
-	public ItemArmorGeoLayer(GeoRenderer<T> geoRenderer) {
+	public ItemArmorGeoLayer(GeoRenderer<T> geoRenderer, EquipmentLayerRenderer equipmentLayerRenderer) {
 		super(geoRenderer);
 
-		this.equipmentRenderer = new EquipmentLayerRenderer(Minecraft.getInstance().getEquipmentModels(), Minecraft.getInstance().getModelManager().getAtlas(Sheets.ARMOR_TRIMS_SHEET));
+		this.equipmentRenderer = equipmentLayerRenderer;
+		this.skullModels = Util.memoize(type -> SkullBlockRenderer.createModel(Minecraft.getInstance().getEntityModels(), type));
 	}
 
 	/**
@@ -159,7 +164,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 					Equippable equippable = armorStack.get(DataComponents.EQUIPPABLE);
 
 					if (equippable != null) {
-						equippable.model().ifPresent(modelPath -> {
+						equippable.assetId().ifPresent(modelPath -> {
 							prepModelPartForRender(poseStack, bone, modelPart);
 							renderVanillaArmorPiece(poseStack, animatable, bone, slot, armorStack, equippable, modelPath, model, modelPart, bufferSource, partialTick, packedLight, packedOverlay);
 						});
@@ -175,12 +180,12 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * Renders an individual armor piece base on the given {@link GeoBone} and {@link ItemStack}
 	 */
 	protected void renderVanillaArmorPiece(PoseStack poseStack, T animatable, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
-										   Equippable equippable, ResourceLocation modelPath, HumanoidModel<?> model, ModelPart modelPart,
+										   Equippable equippable, ResourceKey<EquipmentAsset> equipmentAsset, HumanoidModel<?> model, ModelPart modelPart,
 										   MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
 		EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
 
 		setVanillaModelPartVisibility(animatable, armorStack, bone, model, modelPart, slot, partialTick);
-		this.equipmentRenderer.renderLayers(layerType, modelPath, model, armorStack, poseStack, bufferSource, packedLight);
+		this.equipmentRenderer.renderLayers(layerType, equipmentAsset, model, armorStack, poseStack, bufferSource, packedLight);
 	}
 
 	/**
@@ -217,7 +222,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	protected void renderSkullAsArmor(PoseStack poseStack, GeoBone bone, ItemStack stack, AbstractSkullBlock skullBlock, MultiBufferSource bufferSource, int packedLight) {
 		SkullBlock.Type type = skullBlock.getType();
-		SkullModelBase model = SkullBlockRenderer.createSkullRenderers(Minecraft.getInstance().getEntityModels()).get(type);
+		SkullModelBase model = this.skullModels.apply(type);
 		RenderType renderType = SkullBlockRenderer.getRenderType(type, stack.get(DataComponents.PROFILE));
 
 		poseStack.pushPose();

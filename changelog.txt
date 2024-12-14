@@ -1,7 +1,5 @@
-v4.7.1
+v4.7.2
 
-- Add some missing annotations to the methods in DeferredGeoRenderProvider
-- Fixed stray letter in GeoBlockEntity comment
-- Fixed StopTriggeredAnim packets not being registered
-- Fixed AutoGlowingGeoLayer rendering the wrong colour
-- Fixed ItemArmorGeoRenderer not rendering pieces correctly
+- Update to 1.21.4
+- Fix a potential stuck InputStream when loading glowmasks
+- Fixed Geo animated textures not properly supporting customised frametimes
