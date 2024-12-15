@@ -99,11 +99,18 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 			image.upload(0, 0, 0, skipXPixels, skipYPixels, width, height, autoClose);
 		};
 
-		if (!RenderSystem.isOnRenderThreadOrInit()) {
-			RenderSystem.recordRenderCall(uploadTask);
+		runOnRenderThread(uploadTask);
+	}
+
+	/**
+	 * Run the given RenderCall on the render thread safely
+	 */
+	public static void runOnRenderThread(RenderCall renderCall) {
+		if (!RenderSystem.isOnRenderThread()) {
+			RenderSystem.recordRenderCall(renderCall);
 		}
 		else {
-			uploadTask.execute();
+			renderCall.execute();
 		}
 	}
 

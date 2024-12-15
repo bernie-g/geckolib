@@ -1,8 +1,7 @@
 package software.bernie.geckolib.cache.texture;
 
-import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.platform.TextureUtil;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
@@ -51,26 +51,48 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 	public TextureContents loadContents(ResourceManager resourceManager) throws IOException {
 		Resource resource = resourceManager.getResourceOrThrow(resourceId());
 		ResourceMetadata resourceMeta = resource.metadata();
+		Optional<AnimationMetadataSection> animationMeta = resourceMeta.getSection(AnimationMetadataSection.TYPE);
+		TextureMetadataSection textureMeta = resourceMeta.getSection(TextureMetadataSection.TYPE).orElse(null);
+
 		NativeImage image;
+		TextureContents textureContents;
 
-		try (InputStream inputstream = resource.open()) {
-			image = NativeImage.read(inputstream);
-		}
+		if (animationMeta.isEmpty()) {
+			image = new NativeImage(1, 1, false);
+			textureContents = new TextureContents(image, textureMeta);
 
-		this.animationContents = resourceMeta.getSection(AnimationMetadataSection.TYPE).map(animMeta -> new AnimationContents(image, animMeta)).orElse(null);
-		TextureContents textureContents = new TextureContents(image, resourceMeta.getSection(TextureMetadataSection.TYPE).orElse(null));
-
-		if (this.animationContents != null && this.animationContents.isValid()) {
-			this.isAnimated = true;
-			this.defaultBlur = textureContents.blur();
-
-			GeoAbstractTexture.uploadTexture(this, image, textureContents.clamp(), textureContents.blur(), 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false);
-		}
-		else {
 			image.close();
 		}
-		
+		else {
+			try (InputStream inputstream = resource.open()) {
+				image = NativeImage.read(inputstream);
+			}
+
+			textureContents = new TextureContents(image, textureMeta);
+			this.animationContents = new AnimationContents(image, animationMeta.get());
+
+			if (this.animationContents.isValid()) {
+				this.isAnimated = true;
+				this.defaultBlur = textureContents.blur();
+
+				tick();
+			}
+		}
+
 		return textureContents;
+	}
+
+	@Override
+	public void apply(TextureContents textureContents) {
+		tick();
+	}
+
+	@Override
+	public void doLoad(NativeImage image, boolean blur, boolean clamp) {
+		TextureUtil.prepareImage(getId(), 0, image.getWidth(), image.getHeight());
+		setFilter(blur, false);
+		setClamp(clamp);
+		image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), false);
 	}
 
 	@Override
@@ -81,15 +103,6 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 	public void setAnimationFrame(int tick) {
 		if (this.animationContents != null && this.animationContents.animatedTexture != null)
 			this.animationContents.animatedTexture.setCurrentFrame(tick);
-	}
-
-	private static void onRenderThread(RenderCall renderCall) {
-		if (!RenderSystem.isOnRenderThread()) {
-			RenderSystem.recordRenderCall(renderCall);
-		}
-		else {
-			renderCall.execute();
-		}
 	}
 
 	private class AnimationContents {
@@ -222,7 +235,7 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 							getFrameX(this.currentFrame) * frameWidth, getFrameY(this.currentFrame) * frameHeight, frameWidth, frameHeight, false);
 				}
 				else if (this.currentSubframe != lastSubframe && this.interpolating) {
-					onRenderThread(this::generateInterpolatedFrame);
+					GeoAbstractTexture.runOnRenderThread(this::generateInterpolatedFrame);
 				}
 			}
 

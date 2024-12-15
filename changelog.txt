@@ -1,5 +1,8 @@
-v4.7.2
+v4.8
 
 - Update to 1.21.4
 - Fix a potential stuck InputStream when loading glowmasks
 - Fixed Geo animated textures not properly supporting customised frametimes
+- GeckoLib now requires a `assets/modid/item` json file to define its rendering as being special.
+Will be investigating ways to streamline this in the future, see
+https://github.com/bernie-g/geckolib-examples/tree/Multiloader-1.21.4/common/src/main/resources/assets/examplemod/items for examples
