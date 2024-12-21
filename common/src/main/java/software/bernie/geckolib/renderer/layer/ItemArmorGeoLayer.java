@@ -125,8 +125,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	/**
 	 * This method is called by the {@link GeoRenderer} for each bone being rendered
 	 * <p>
-	 * This is a more expensive call, particularly if being used to render something on a different buffer
-	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time
+	 * This is a more expensive call, particularly if being used to render something on a different buffer<br>
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time<br>
 	 * It's recommended to avoid using this unless necessary
 	 * <p>
 	 * The {@link GeoBone} in question has already been rendered by this stage
@@ -235,6 +235,9 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	/**
 	 * Prepares the given {@link ModelPart} for render by setting its translation, position, and rotation values based on the provided {@link GeoBone}
+	 * <p>
+	 * This implementation uses the <b><u>FIRST</u></b> cube in the source part
+	 * to determine the scale and position of the GeoArmor to be rendered
 	 *
 	 * @param poseStack The PoseStack being used for rendering
 	 * @param bone The GeoBone to base the translations on
