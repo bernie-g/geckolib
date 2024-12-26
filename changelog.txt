@@ -1,3 +1,6 @@
 v4.7.1
 
 - Add minimum version requirement to Forge
+- Cleaned up Geckolib animated texture loading to be a bit more efficient
+- Improved the documentation for ItemArmorGeoLayers
+- Extract ItemArmorGeoLayer's ModelPart bone matcher to its own method for easy overriding
