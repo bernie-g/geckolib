@@ -38,33 +38,29 @@ public class AnimatableTexture extends SimpleTexture {
 	@Override
 	public void load(ResourceManager manager) throws IOException {
 		Resource resource = manager.getResourceOrThrow(this.location);
+		AnimationMetadataSection animMeta = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).orElse(null);
 
-		try {
+		if (animMeta != null) {
 			NativeImage nativeImage;
 
 			try (InputStream inputstream = resource.open()) {
 				nativeImage = NativeImage.read(inputstream);
 			}
 
-			this.animationContents = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
+			this.animationContents = new AnimationContents(nativeImage, animMeta);
 
-			if (this.animationContents != null) {
-				if (!this.animationContents.isValid()) {
-					nativeImage.close();
+			if (!this.animationContents.isValid()) {
+				nativeImage.close();
 
-					return;
-				}
-
-				this.isAnimated = true;
-
-				onRenderThread(() -> {
-					TextureUtil.prepareImage(getId(), 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height());
-					nativeImage.upload(0, 0, 0, 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false, false);
-				});
+				return;
 			}
-		}
-		catch (RuntimeException exception) {
-			GeckoLibConstants.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
+
+			this.isAnimated = true;
+
+			onRenderThread(() -> {
+				TextureUtil.prepareImage(getId(), 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height());
+				nativeImage.upload(0, 0, 0, 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false, false);
+			});
 		}
 	}
 
