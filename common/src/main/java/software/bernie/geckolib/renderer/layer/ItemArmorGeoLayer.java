@@ -234,17 +234,14 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	/**
 	 * Prepares the given {@link ModelPart} for render by setting its translation, position, and rotation values based on the provided {@link GeoBone}
-	 * <p>
-	 * This implementation uses the <b><u>FIRST</u></b> cube in the source part
-	 * to determine the scale and position of the GeoArmor to be rendered
 	 *
 	 * @param poseStack The PoseStack being used for rendering
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
-		final GeoCube firstCube = bone.getCubes().get(0);
-		final Cube armorCube = sourcePart.cubes.get(0);
+		final GeoCube firstCube = bone.getCubes().getFirst();
+		final Cube armorCube = getReferenceCubeForModel(bone, sourcePart);
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
@@ -264,5 +261,16 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		sourcePart.zRot = bone.getRotZ();
 
 		poseStack.scale(scaleX, scaleY, scaleZ);
+	}
+
+	/**
+	 * Get the cube from the source part that GeckoLib should use as the reference cube for scaling the GeckoLib bone
+	 * for rendering.
+	 * <p>
+	 * By default, this uses the <b><u>FIRST</u></b> cube in the source part
+	 * to determine the scale and position of the GeoArmor to be rendered
+	 */
+	protected Cube getReferenceCubeForModel(GeoBone bone, ModelPart sourcePart) {
+		return sourcePart.cubes.getFirst();
 	}
 }
