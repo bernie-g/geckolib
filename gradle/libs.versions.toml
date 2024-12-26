@@ -1,31 +1,31 @@
 [versions]
 # GeckoLib
-    geckolib = "4.7"
+    geckolib = "4.8"
 
 # Common
     minecraft-range = "[1.21,)"
     minecraft = "1.21.1"
-    parchment-minecraft = "1.21"
-    parchment = "2024.07.28"
-    neoform = "1.21-20240613.152323"
+    parchment-minecraft = "1.21.1"
+    parchment = "2024.11.17"
+    neoform = "1.21.1-20240808.144430"
     jopt-simple = "5.0.4"
 
 # Fabric
     fabric = "0.16.9"
-    fabric-range = "0.15"
-    fabric-api = "0.107.0+1.21.1"
+    fabric-range = "0.16"
+    fabric-api = "0.110.0+1.21.1"
     fabric-api-range = "0.100.0+1.21"
 
 # Forge
-    forge-fml-range = "[51,)"
-    forge-range = "[51.0.9,)"
-    forge = "52.0.24"
-    forge-mc = "1.21.1-52.0.15"
+    forge-fml-range = "[52,)"
+    forge-range = "[52.0.0,)"
+    forge = "52.0.37"
+    forge-mc = "1.21.1-52.0.37"
 
 # Neoforge
     neoforge-loader-range = "[4,)"
     neoforge-range = "[21.1.62,)"
-    neoforge = "21.1.73"
+    neoforge = "21.1.90"
 
 # Dependencies
     mixin = "0.8.7"
@@ -35,16 +35,14 @@
     iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.42-beta"
+    plugin-moddevgradle = "2.0.62-beta"
     plugin-minotaur = "2.8.7"
     plugin-curseforge-gradle = "1.1.25"
     plugin-idea-ext = "1.1.8"
     plugin-forge-gradle = "[6.0.24,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-neoforge-gradle = "7.0.166"
-    plugin-loom = "1.8-SNAPSHOT"
-    plugin-vanilla-gradle = "0.2.1-SNAPSHOT"
+    plugin-loom = "1.9-SNAPSHOT"
 
 [libraries]
 # Mixin
@@ -75,9 +73,7 @@
     curseforgegradle = { id = "net.darkhax.curseforgegradle", version.ref = "plugin-curseforge-gradle" }
 
 # Platform
-    vanillagradle = { id = "org.spongepowered.gradle.vanilla", version.ref = "plugin-vanilla-gradle" }
     moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
-    neogradle = { id = "net.neoforged.gradle.userdev", version.ref = "plugin-neoforge-gradle" }
     forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
     loom = { id = "fabric-loom", version.ref = "plugin-loom" }
     parchmentforgegradle = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "plugin-parchment-forge-gradle" }
