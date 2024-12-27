@@ -2,12 +2,14 @@ package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
+import software.bernie.geckolib.network.packet.StopTriggeredEntityAnimPacket;
 
 import javax.annotation.Nullable;
 import java.util.function.Consumer;
@@ -51,8 +53,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
-			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data);
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimDataSyncPacket, relatedEntity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data), relatedEntity);
 		}
 	}
 
@@ -68,8 +69,38 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName);
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, relatedEntity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName), relatedEntity);
+		}
+	}
+
+	/**
+	 * Stop a previously triggered animation for this Entity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param relatedEntity An entity related to the state of the data for syncing
+	 * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnimation(Entity relatedEntity, @Nullable String controllerName, @Nullable String animName) {
+		if (relatedEntity.level().isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(relatedEntity.getId());
+
+			if (animatableManager == null)
+				return;
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new StopTriggeredEntityAnimPacket(relatedEntity.getId(), controllerName, animName), relatedEntity);
 		}
 	}
 	

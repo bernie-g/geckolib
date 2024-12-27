@@ -138,6 +138,31 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Stop a triggered animation, or all triggered animations, depending on the current state of animations and the passed argument
+	 *
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(String animName) {
+		for (AnimationController<?> controller : getAnimationControllers().values()) {
+			if ((animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()) && controller.stopTriggeredAnimation())
+				return;
+		}
+	}
+
+	/**
+	 * Stop a triggered animation or all triggered animations on a given controller, depending on the current state of animations and the passed arguments
+	 *
+	 * @param controllerName The name of the controller the triggered animation belongs to
+	 * @param animName The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	public void stopTriggeredAnimation(String controllerName, String animName) {
+		AnimationController<?> controller = getAnimationControllers().get(controllerName);
+
+		if (controller != null && (animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()))
+			controller.stopTriggeredAnimation();
+	}
+
+	/**
 	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
 	 */
 	// TODO 1.20+ Convert to record

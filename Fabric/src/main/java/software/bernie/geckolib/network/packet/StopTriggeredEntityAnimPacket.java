@@ -1,7 +1,5 @@
 package software.bernie.geckolib.network.packet;
 
-import javax.annotation.Nullable;
-
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.Minecraft;
@@ -11,33 +9,30 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.network.AbstractPacket;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.RenderUtils;
 
-/**
- * Packet for syncing user-definable animations that can be triggered from the
- * server for {@link net.minecraft.world.entity.Entity Entities}
- */
-public class EntityAnimTriggerPacket extends AbstractPacket {
+import javax.annotation.Nullable;
+
+public class StopTriggeredEntityAnimPacket extends AbstractPacket {
     private final int entityId;
     private final boolean isReplacedEntity;
 
     private final String controllerName;
     private final String animName;
 
-    public EntityAnimTriggerPacket(int entityId, @Nullable String controllerName, String animName) {
+    public StopTriggeredEntityAnimPacket(int entityId, @Nullable String controllerName, @Nullable String animName) {
         this(entityId, false, controllerName, animName);
     }
 
-    public EntityAnimTriggerPacket(int entityId, boolean isReplacedEntity, @Nullable String controllerName,
-                                   String animName) {
+    public StopTriggeredEntityAnimPacket(int entityId, boolean isReplacedEntity, @Nullable String controllerName,
+                                         @Nullable String animName) {
         this.entityId = entityId;
         this.isReplacedEntity = isReplacedEntity;
         this.controllerName = controllerName == null ? "" : controllerName;
-        this.animName = animName;
+        this.animName = animName == null ? "" : animName;
     }
 
     @Override
@@ -55,7 +50,7 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
 
     @Override
     public ResourceLocation getPacketID() {
-        return GeckoLibNetwork.ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID;
+        return GeckoLibNetwork.STOP_TRIGGERED_ENTITY_ANIM_PACKET_ID;
     }
 
     public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
@@ -76,12 +71,12 @@ public class EntityAnimTriggerPacket extends AbstractPacket {
 
         if (!isReplacedEntity) {
             if (entity instanceof GeoEntity geoEntity)
-                geoEntity.triggerAnim(controllerName.isEmpty() ? null : controllerName, animName);
+                geoEntity.stopTriggeredAnimation(controllerName.isEmpty() ? null : controllerName, animName);
 
             return;
         }
 
         if (RenderUtils.getReplacedAnimatable(entity.getType()) instanceof GeoReplacedEntity replacedEntity)
-            replacedEntity.triggerAnim(entity, controllerName.isEmpty() ? null : controllerName, animName);
+            replacedEntity.stopTriggeredAnimation(entity, controllerName.isEmpty() ? null : controllerName, animName.isEmpty() ? null : animName);
     }
 }

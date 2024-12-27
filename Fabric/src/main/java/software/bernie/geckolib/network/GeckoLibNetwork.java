@@ -17,18 +17,22 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Network handling class for GeckoLib.<br>
+ * Network handling class for GeckoLib.
+ * <p>
  * Handles packet registration and some networking functions
  */
 public final class GeckoLibNetwork {
     public static final ResourceLocation ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_data_sync");
     public static final ResourceLocation ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_trigger_sync");
+    public static final ResourceLocation STOP_TRIGGERED_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_anim");
 
     public static final ResourceLocation ENTITY_ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_data_sync");
     public static final ResourceLocation ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_trigger_sync");
+    public static final ResourceLocation STOP_TRIGGERED_ENTITY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_entity_anim");
 
     public static final ResourceLocation BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_data_sync");
     public static final ResourceLocation BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_trigger_sync");
+    public static final ResourceLocation STOP_TRIGGERED_BLOCK_ENTITY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_block_entity_anim");
 
     public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
@@ -38,12 +42,15 @@ public final class GeckoLibNetwork {
     public static void registerClientReceiverPackets() {
         ClientPlayNetworking.registerGlobalReceiver(ANIM_DATA_SYNC_PACKET_ID, AnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(ANIM_TRIGGER_SYNC_PACKET_ID, AnimTriggerPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_ANIM_PACKET_ID, StopTriggeredSingletonAnimPacket::receive);
 
         ClientPlayNetworking.registerGlobalReceiver(ENTITY_ANIM_DATA_SYNC_PACKET_ID, EntityAnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, EntityAnimTriggerPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_ENTITY_ANIM_PACKET_ID, StopTriggeredEntityAnimPacket::receive);
 
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID, BlockEntityAnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, BlockEntityAnimTriggerPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_BLOCK_ENTITY_ANIM_PACKET_ID, StopTriggeredBlockEntityAnimPacket::receive);
     }
 
     /**

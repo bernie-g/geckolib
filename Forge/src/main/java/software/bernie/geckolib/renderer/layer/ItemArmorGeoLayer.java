@@ -42,9 +42,11 @@ import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Builtin class for handling dynamic armor rendering on GeckoLib entities.<br>
- * Supports both {@link GeoItem GeckoLib} and {@link ArmorItem Vanilla} armor models.<br>
- * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering.
+ * Builtin class for handling dynamic armor rendering on GeckoLib entities
+ * <p>
+ * Supports both {@link GeoItem GeckoLib} and {@link ArmorItem Vanilla} armor models
+ * <p>
+ * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering
  */
 public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends GeoRenderLayer<T> {
 	protected static final Map<String, ResourceLocation> ARMOR_PATH_CACHE = new Object2ObjectOpenHashMap<>();
@@ -63,7 +65,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * Return an EquipmentSlot for a given {@link ItemStack} and animatable instance.<br>
+	 * Return an EquipmentSlot for a given {@link ItemStack} and animatable instance
+	 * <p>
 	 * This is what determines the base model to use for rendering a particular stack
 	 */
 	@Nonnull
@@ -79,7 +82,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * Return a ModelPart for a given {@link GeoBone}.<br>
+	 * Return a ModelPart for a given {@link GeoBone}
+	 * <p>
 	 * This is then transformed into position for the final render
 	 */
 	@Nonnull
@@ -88,8 +92,9 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * Get the {@link ItemStack} relevant to the bone being rendered.<br>
-	 * Return null if this bone should be ignored
+	 * Get the {@link ItemStack} relevant to the bone being rendered
+	 *
+	 * @return The ItemStack for the bone being rendered, or null if this bone should be ignored
 	 */
 	@Nullable
 	protected ItemStack getArmorItemForBone(GeoBone bone, T animatable) {
@@ -97,7 +102,8 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called.<br>
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called
+	 * <p>
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones
 	 */
 	@Override
@@ -112,13 +118,14 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} for each bone being rendered.<br>
-	 * This is a more expensive call, particularly if being used to render something on a different buffer.<br>
-	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time.<br>
-	 * It's recommended to avoid using this unless necessary.<br>
-	 * <br>
-	 * The {@link GeoBone} in question has already been rendered by this stage.<br>
-	 * <br>
+	 * This method is called by the {@link GeoRenderer} for each bone being rendered
+	 * <p>
+	 * This is a more expensive call, particularly if being used to render something on a different buffer<br>
+	 * It does however have the benefit of having the matrix translations and other transformations already applied from render-time<br>
+	 * It's recommended to avoid using this unless necessary
+	 * <p>
+	 * The {@link GeoBone} in question has already been rendered by this stage
+	 * <p>
 	 * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
 	 * using {@link MultiBufferSource#getBuffer} before ending the method
 	 */
@@ -182,6 +189,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	/**
 	 * Returns the standard VertexConsumer for armor rendering from the given buffer source.
+	 *
 	 * @param bufferSource The BufferSource to draw the buffer from
 	 * @param renderType The RenderType to use for rendering, or null to use the default
 	 * @param texturePath The texture path for the render. May be null if renderType is not null
@@ -269,13 +277,14 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 
 	/**
 	 * Prepares the given {@link ModelPart} for render by setting its translation, position, and rotation values based on the provided {@link GeoBone}
+	 *
 	 * @param poseStack The PoseStack being used for rendering
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.getCubes().get(0);
-		final Cube armorCube = sourcePart.cubes.get(0);
+		final Cube armorCube = getReferenceCubeForModel(bone, sourcePart);
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
@@ -295,5 +304,16 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		sourcePart.zRot = bone.getRotZ();
 
 		poseStack.scale(scaleX, scaleY, scaleZ);
+	}
+
+	/**
+	 * Get the cube from the source part that GeckoLib should use as the reference cube for scaling the GeckoLib bone
+	 * for rendering.
+	 * <p>
+	 * By default, this uses the <b><u>FIRST</u></b> cube in the source part
+	 * to determine the scale and position of the GeoArmor to be rendered
+	 */
+	protected Cube getReferenceCubeForModel(GeoBone bone, ModelPart sourcePart) {
+		return sourcePart.cubes.get(0);
 	}
 }

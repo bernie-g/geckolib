@@ -85,6 +85,44 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	}
 
 	/**
+	 * Stop a previously triggered animation for this BlockEntity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnimation(@Nullable String controllerName, @Nullable String animName) {
+		BlockEntity blockEntity = (BlockEntity)this;
+		Level level = blockEntity.getLevel();
+
+		if (level == null) {
+			GeckoLib.LOGGER.error("Attempting to stop a triggered animation for a BlockEntity too early! Must wait until after the BlockEntity has been set in the world. (" + blockEntity.getClass().toString() + ")");
+
+			return;
+		}
+
+		if (level.isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(0);
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			BlockPos pos = blockEntity.getBlockPos();
+
+			GeckoLibNetwork.send(new StopTriggeredBlockEntityAnimPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+		}
+	}
+
+	/**
 	 * Returns the current age/tick of the animatable instance.<br>
 	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
 	 * @param blockEntity The BlockEntity representing this animatable

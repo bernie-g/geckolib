@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.PacketDistributor;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -11,6 +12,7 @@ import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.BlockEntityAnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.BlockEntityAnimTriggerPacket;
+import software.bernie.geckolib.network.packet.StopTriggeredBlockEntityAnimPacket;
 import software.bernie.geckolib.util.RenderUtils;
 
 import javax.annotation.Nullable;
@@ -81,6 +83,44 @@ public interface GeoBlockEntity extends GeoAnimatable {
 			BlockPos pos = blockEntity.getBlockPos();
 
 			GeckoLibNetwork.send(new BlockEntityAnimTriggerPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
+		}
+	}
+
+	/**
+	 * Stop a previously triggered animation for this BlockEntity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnimation(@Nullable String controllerName, @Nullable String animName) {
+		BlockEntity blockEntity = (BlockEntity)this;
+		Level level = blockEntity.getLevel();
+
+		if (level == null) {
+			GeckoLib.LOGGER.error("Attempting to stop a triggered animation for a BlockEntity too early! Must wait until after the BlockEntity has been set in the world. (" + blockEntity.getClass().toString() + ")");
+
+			return;
+		}
+
+		if (level.isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(0);
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			BlockPos pos = blockEntity.getBlockPos();
+
+			GeckoLibNetwork.send(new StopTriggeredBlockEntityAnimPacket<>(pos, controllerName, animName), PacketDistributor.TRACKING_CHUNK.with(() -> level.getChunkAt(pos)));
 		}
 	}
 

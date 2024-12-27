@@ -27,10 +27,13 @@ public final class GeckoLibNetwork {
 
 		PACKET_CHANNEL.registerMessage(id++, AnimDataSyncPacket.class, AnimDataSyncPacket::encode, AnimDataSyncPacket::decode, AnimDataSyncPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, AnimTriggerPacket.class, AnimTriggerPacket::encode, AnimTriggerPacket::decode, AnimTriggerPacket::receivePacket);
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredSingletonAnimPacket.class, StopTriggeredSingletonAnimPacket::encode, StopTriggeredSingletonAnimPacket::decode, StopTriggeredSingletonAnimPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, EntityAnimDataSyncPacket.class, EntityAnimDataSyncPacket::encode, EntityAnimDataSyncPacket::decode, EntityAnimDataSyncPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, EntityAnimTriggerPacket.class, EntityAnimTriggerPacket::encode, EntityAnimTriggerPacket::decode, EntityAnimTriggerPacket::receivePacket);
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredEntityAnimPacket.class, StopTriggeredEntityAnimPacket::encode, StopTriggeredEntityAnimPacket::decode, StopTriggeredEntityAnimPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimDataSyncPacket.class, BlockEntityAnimDataSyncPacket::encode, BlockEntityAnimDataSyncPacket::decode, BlockEntityAnimDataSyncPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::encode, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket);
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredBlockEntityAnimPacket.class, StopTriggeredBlockEntityAnimPacket::encode, StopTriggeredBlockEntityAnimPacket::decode, StopTriggeredBlockEntityAnimPacket::receivePacket);
 	}
 
 	/**

@@ -1,12 +1,14 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.EntityAnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.EntityAnimTriggerPacket;
+import software.bernie.geckolib.network.packet.StopTriggeredEntityAnimPacket;
 
 import javax.annotation.Nullable;
 
@@ -43,8 +45,7 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
 		}
 		else {
-			EntityAnimDataSyncPacket<D> entityAnimDataSyncPacket = new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data);
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimDataSyncPacket, entity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimDataSyncPacket<>(entity.getId(), dataTicket, data), entity);
 		}
 	}
 
@@ -61,8 +62,39 @@ public interface GeoEntity extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(entity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			EntityAnimTriggerPacket entityAnimTriggerPacket = new EntityAnimTriggerPacket(entity.getId(), controllerName, animName);
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(entityAnimTriggerPacket, entity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimTriggerPacket(entity.getId(), controllerName, animName), entity);
+		}
+	}
+
+	/**
+	 * Stop a previously triggered animation for this Entity for the given controller name and animation name
+	 * <p>
+	 * This can be fired from either the client or the server, but optimally you would call it from the server
+	 * <p>
+	 * <b><u>DO NOT OVERRIDE</u></b>
+	 *
+	 * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+	 */
+	@ApiStatus.NonExtendable
+	default void stopTriggeredAnimation(@Nullable String controllerName, @Nullable String animName) {
+		Entity entity = (Entity)this;
+
+		if (entity.level().isClientSide()) {
+			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
+
+			if (animatableManager == null)
+				return;
+
+			if (controllerName != null) {
+				animatableManager.stopTriggeredAnimation(controllerName, animName);
+			}
+			else {
+				animatableManager.stopTriggeredAnimation(animName);
+			}
+		}
+		else {
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new StopTriggeredEntityAnimPacket(entity.getId(), controllerName, animName), entity);
 		}
 	}
 	

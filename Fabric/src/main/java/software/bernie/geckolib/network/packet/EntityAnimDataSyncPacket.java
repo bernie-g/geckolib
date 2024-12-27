@@ -19,23 +19,23 @@ import software.bernie.geckolib.util.ClientUtils;
  * {@link net.minecraft.world.entity.Entity Entities}
  */
 public class EntityAnimDataSyncPacket<D> extends AbstractPacket {
-	private final int ENTITY_ID;
-	private final SerializableDataTicket<D> DATA_TICKET;
-	private final D DATA;
+	private final int entityId;
+	private final SerializableDataTicket<D> dataTicket;
+	private final D data;
 
 	public EntityAnimDataSyncPacket(int entityId, SerializableDataTicket<D> dataTicket, D data) {
-		this.ENTITY_ID = entityId;
-		this.DATA_TICKET = dataTicket;
-		this.DATA = data;
+		this.entityId = entityId;
+		this.dataTicket = dataTicket;
+		this.data = data;
 	}
 
 	@Override
 	public FriendlyByteBuf encode() {
 		FriendlyByteBuf buf = PacketByteBufs.create();
 
-		buf.writeVarInt(this.ENTITY_ID);
-		buf.writeUtf(this.DATA_TICKET.id());
-		this.DATA_TICKET.encode(this.DATA, buf);
+		buf.writeVarInt(this.entityId);
+		buf.writeUtf(this.dataTicket.id());
+		this.dataTicket.encode(this.data, buf);
 
 		return buf;
 	}
@@ -46,11 +46,11 @@ public class EntityAnimDataSyncPacket<D> extends AbstractPacket {
 	}
 
 	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		final int ENTITY_ID = buf.readVarInt();
-		final SerializableDataTicket<D> DATA_TICKET = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
-		final D DATA = DATA_TICKET.decode(buf);
+		final int entityId = buf.readVarInt();
+		final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buf.readUtf());
+		final D data = dataTicket.decode(buf);
 
-		client.execute(() -> runOnThread(ENTITY_ID, DATA_TICKET, DATA));
+		client.execute(() -> runOnThread(entityId, dataTicket, data));
 	}
 
 	private static <D> void runOnThread(int entityId, SerializableDataTicket<D> dataTicket, D data) {

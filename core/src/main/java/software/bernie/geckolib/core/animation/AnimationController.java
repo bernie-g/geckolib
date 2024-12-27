@@ -233,6 +233,13 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Gets the currently playing {@link RawAnimation triggered animation}, if present
+	 */
+	public RawAnimation getTriggeredAnimation() {
+		return this.triggeredAnimation;
+	}
+
+	/**
 	 * Returns the current state of this controller.
 	 */
 	public State getAnimationState() {
@@ -371,6 +378,26 @@ public class AnimationController<T extends GeoAnimatable> {
 			this.shouldResetTick = true;
 			this.justStartedTransition = true;
 		}
+
+		return true;
+	}
+
+	/**
+	 * Stops and removes a previously triggered animation, effectively ending it immediately.
+	 *
+	 * @return true if a triggered animation was stopped
+	 */
+	protected boolean stopTriggeredAnimation() {
+		if (this.triggeredAnimation == null)
+			return false;
+
+		if (this.currentRawAnimation == this.triggeredAnimation) {
+			this.currentAnimation = null;
+			this.currentRawAnimation = null;
+		}
+
+		this.triggeredAnimation = null;
+		this.needsAnimationReload = true;
 
 		return true;
 	}
