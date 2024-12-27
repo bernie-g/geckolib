@@ -36,7 +36,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * This can be directly used for re-rendering
 	 */
 	public BakedGeoModel getDefaultBakedModel(T animatable) {
-		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
+		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable, getRenderer()));
 	}
 
 	/**
@@ -48,10 +48,10 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 
 	/**
 	 * Get the texture resource path for the given {@link GeoAnimatable}.<br>
-	 * By default, falls back to {@link GeoModel#getTextureResource(GeoAnimatable)}
+	 * By default, falls back to {@link GeoRenderer#getTextureLocation(GeoAnimatable)}
 	 */
 	protected ResourceLocation getTextureResource(T animatable) {
-		return this.renderer.getTextureLocation(animatable);
+		return getRenderer().getTextureLocation(animatable);
 	}
 
 	/**
