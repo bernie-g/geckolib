@@ -30,6 +30,7 @@ public final class FileLoader {
 
 	/**
 	 * Load up and deserialize a geo model json file to its respective {@link BakedGeoModel} format
+	 *
 	 * @param location The resource path of the model file
 	 * @param manager The Minecraft {@code ResourceManager} responsible for maintaining in-memory resource access
 	 */

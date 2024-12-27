@@ -101,8 +101,18 @@ public final class GeckoLibCache {
 			try {
 				Model model = FileLoader.loadModelFile(resource, resourceManager);
 
-				if (model.formatVersion() != FormatVersion.V_1_12_0)
-					throw new IllegalArgumentException("Unsupported geometry json version. Supported versions: 1.12.0");
+				if (model.formatVersion() == null) {
+					GeckoLib.LOGGER.warn("Unsupported geometry json version for model {}. Supported versions: 1.12.0", resource);
+				}
+				else {
+					switch (model.formatVersion()) {
+						case V_1_12_0 -> {}
+						case V_1_14_0 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.14.0 for model {}. This model may not appear as expected", resource);
+						case V_1_21_0 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.21.0 for model {}. Supported versions: 1.12.0. Remove any rotated face UVs and re-export the model to fix", resource);
+						case V_1_21_2 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.21.2 for model {}. Supported versions: 1.12.0. Remove any rotated face UVs and re-export the model to fix", resource);
+						default -> GeckoLib.LOGGER.warn("Unsupported geometry json version for model {}. Supported versions: 1.12.0", resource);
+					}
+				}
 
 				return BakedModelFactory.getForNamespace(resource.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
 			}
