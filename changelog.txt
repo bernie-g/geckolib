@@ -1,4 +1,9 @@
-v4.4.9
+v4.7
 
-- Move fabric loader dependency to its own value, to prevent Geckolib forcing players to need the latest fabric at all times
-- Fixed a crash on Forge/Neoforge related to rendering armour
+- Added `getTriggeredAnimation` to AnimationController
+- Added stop triggered animation functionality to all geo animatables
+- Change crashes to warnings for unsupported model format versions for geo models
+- Add support for rotated face UVs
+- Added a fallback hook for animations - you can now declare multiple animation files in a single GeoModel to look for animations (for polymorphic/modular animatables)
+- Fixed entity velocity being determined mostly from x-coordinate velocity
+- Added GeoRenderer context to GeoModel getters for context-specific handling
