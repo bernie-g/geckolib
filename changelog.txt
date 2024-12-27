@@ -1,3 +1,4 @@
-v4.7.2
+v4.7.3
 
-- Fix Singleton animatable Stop trigger actions not actually stopping
+- Fixed entity velocity being determined mostly from x-coordinate velocity
+- `getTextureResource` and `getModelResource` now receive the renderer for context-sensitive variants
