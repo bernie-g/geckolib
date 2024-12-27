@@ -208,7 +208,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			float headPitch = Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot());
 			float motionThreshold = getMotionAnimThreshold(animatable);
 			Vec3 velocity = animatable.getDeltaMovement();
-			float avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f;
+			float avgVelocity = (float)((Math.abs(velocity.x) + Math.abs(velocity.z)) / 2f);
 			AnimationState<T> animationState = new AnimationState<T>(animatable, limbSwing, limbSwingAmount, partialTick, avgVelocity >= motionThreshold && limbSwingAmount != 0);
 			long instanceId = getInstanceId(animatable);
 			GeoModel<T> currentModel = getGeoModel();
