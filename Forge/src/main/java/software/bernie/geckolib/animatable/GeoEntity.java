@@ -95,7 +95,7 @@ public interface GeoEntity extends GeoAnimatable {
 			}
 		}
 		else {
-			GeckoLibNetwork.send(new StopTriggeredEntityAnimPacket<>(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
+			GeckoLibNetwork.send(new StopTriggeredEntityAnimPacket(entity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity));
 		}
 	}
 
