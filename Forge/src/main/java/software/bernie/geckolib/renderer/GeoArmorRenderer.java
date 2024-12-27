@@ -252,7 +252,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
 		applyBaseModel(this.baseModel);
-		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable)));
+		grabRelevantBones(getGeoModel().getBakedModel(getGeoModel().getModelResource(this.animatable, this)));
 		applyBaseTransformations(this.baseModel);
 		scaleModelForBaby(poseStack, animatable, partialTick, isReRender);
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);

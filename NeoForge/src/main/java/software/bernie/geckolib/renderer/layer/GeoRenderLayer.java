@@ -34,7 +34,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable> {
 	 * This can be directly used for re-rendering
 	 */
 	public BakedGeoModel getDefaultBakedModel(T animatable) {
-		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
+		return getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable, getRenderer()));
 	}
 
 	/**

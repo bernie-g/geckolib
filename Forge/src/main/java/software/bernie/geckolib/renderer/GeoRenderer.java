@@ -40,7 +40,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * Gets the texture resource location to render for the given animatable
 	 */
 	default ResourceLocation getTextureLocation(T animatable) {
-		return getGeoModel().getTextureResource(animatable);
+		return getGeoModel().getTextureResource(animatable, this);
 	}
 
 	/**
@@ -127,7 +127,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		float blue = renderColor.getBlueFloat();
 		float alpha = renderColor.getAlphaFloat();
 		int packedOverlay = getPackedOverlay(animatable, 0, partialTick);
-		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable));
+		BakedGeoModel model = getGeoModel().getBakedModel(getGeoModel().getModelResource(animatable, this));
 
 		if (renderType == null)
 			renderType = getRenderType(animatable, getTextureLocation(animatable), bufferSource, partialTick);
