@@ -8,6 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibException;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -58,6 +59,17 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	public abstract ResourceLocation getAnimationResource(T animatable);
 
 	/**
+	 * Returns the resource path for the {@link BakedAnimations} (animation json file) fallback locations in the event
+	 * your animation isn't present in the {@link #getAnimationResource(GeoAnimatable) primary resource}.
+	 * <p>
+	 * Should <b><u>NOT</u></b> be used as the primary animation resource path, and in general shouldn't be used
+	 * at all unless you know what you are doing
+	 */
+	public ResourceLocation[] getAnimationResourceFallbacks(T animatable) {
+		return new ResourceLocation[0];
+	}
+
+	/**
 	 * Override this and return true if Geckolib should crash when attempting to animate the model, but fails to find a bone.<br>
 	 * By default, GeckoLib will just gracefully ignore a missing bone, which might cause oddities with incorrect models or mismatching variables.<br>
 	 */
@@ -104,17 +116,37 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	}
 
 	/**
-	 * Get the baked animation object used for rendering from the given resource path
+	 * Gets the loaded {@link Animation} for the given animation {@code name}, if it exists
+	 *
+	 * @param animatable The {@code GeoAnimatable} instance being referred to
+	 * @param name The name of the animation to retrieve
+	 * @return The {@code Animation} instance for the provided {@code name}, or null if none match
 	 */
-	@Override
+	@Nullable
 	public Animation getAnimation(T animatable, String name) {
 		ResourceLocation location = getAnimationResource(animatable);
 		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(location);
+		Animation animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
 
-		if (bakedAnimations == null)
-			throw new GeckoLibException(location, "Unable to find animation.");
+		if (animation != null)
+			return animation;
 
-		return bakedAnimations.getAnimation(name);
+		for (ResourceLocation fallbackLocation : getAnimationResourceFallbacks(animatable)) {
+			bakedAnimations = GeckoLibCache.getBakedAnimations().get(location = fallbackLocation);
+			animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
+
+			if (animation != null)
+				return animation;
+		}
+
+		if (bakedAnimations == null) {
+			if (!location.getPath().contains("animations/"))
+				throw new GeckoLibException(location, "Invalid animation resource path provided - GeckoLib animations must be placed in assets/<modid>/animations/");
+
+			throw new GeckoLibException(location, "Unable to find animation file.");
+		}
+
+		return null;
 	}
 
 	@Override
