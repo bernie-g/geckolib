@@ -129,13 +129,13 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
-    publishing {
-        publications {
-            create<MavenPublication>("geckolib") {
-                from(components["java"])
-                artifactId = base.archivesName.get()
-            }
+publishing {
+    publications {
+        create<MavenPublication>("geckolib") {
+            from(components["java"])
+            artifactId = base.archivesName.get()
         }
+    }
 }
 
 tasks.named<DefaultTask>("publish").configure {
