@@ -26,9 +26,12 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
     protected abstract void setPartVisibility(A baseModel, EquipmentSlot equipmentSlot);
 
     @WrapWithCondition(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V"))
+            at = {
+            @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V"),
+            @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V")
+            })
     public boolean geckolib$wrapArmorPieceRender(HumanoidArmorLayer<S, M, A> renderLayer, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack, EquipmentSlot equipmentSlot, int packedLight, A baseModel,
                                                  PoseStack poseStack2, MultiBufferSource bufferSource2, int packedLight2, S humanoidRenderState, float netHeadYaw, float headPitch) {
         final GeoEntityRenderState geoRenderState = (GeoEntityRenderState)humanoidRenderState;
