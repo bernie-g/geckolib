@@ -1,7 +1,3 @@
-v4.7.1
+v4.7.2
 
-- Add some missing annotations to the methods in DeferredGeoRenderProvider
-- Fixed stray letter in GeoBlockEntity comment
-- Fixed StopTriggeredAnim packets not being registered
-- Fixed AutoGlowingGeoLayer rendering the wrong colour
-- Fixed ItemArmorGeoRenderer not rendering pieces correctly
+- Fixed crashing mixin on Forge
