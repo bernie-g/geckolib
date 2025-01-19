@@ -205,7 +205,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		processor.preAnimationSetup(animationState, this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animatableManager, currentTick > 0 ? this.animTime : 0, animationState, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationState);
 	}
