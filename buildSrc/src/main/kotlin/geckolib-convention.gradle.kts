@@ -1,7 +1,3 @@
-import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.java
-import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.publishing
-import gradle.kotlin.dsl.accessors._6278ecd4aeba9585571b9ac6e140379d.versionCatalogs
-
 plugins {
     `java`
     `maven-publish`
