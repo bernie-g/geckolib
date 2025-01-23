@@ -26,14 +26,23 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
     protected abstract void setPartVisibility(A baseModel, EquipmentSlot equipmentSlot);
 
     @WrapWithCondition(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
-            at = {
-                    @At(value = "INVOKE",
-                            target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V"),
-                    @At(value = "INVOKE",
-                            target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V")
-            })
+            require = 0,
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;)V"))
     public boolean geckolib$wrapArmorPieceRender(HumanoidArmorLayer<S, M, A> renderLayer, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack, EquipmentSlot equipmentSlot, int packedLight, A baseModel,
                                                  PoseStack poseStack2, MultiBufferSource bufferSource2, int packedLight2, S humanoidRenderState, float netHeadYaw, float headPitch) {
+        final GeoEntityRenderState geoRenderState = (GeoEntityRenderState)humanoidRenderState;
+
+        return !InternalUtil.tryRenderGeoArmorPiece(poseStack, bufferSource, (LivingEntity)geoRenderState.geckolib$getEntity(), stack, equipmentSlot, renderLayer.getParentModel(), baseModel,
+                geoRenderState.geckolib$getPartialTick(), packedLight, netHeadYaw, headPitch, this::setPartVisibility);
+    }
+
+    @WrapWithCondition(method = "render(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
+            require = 0,
+            at = @At(value = "INVOKE",
+                    target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/model/HumanoidModel;Lnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V", remap = false))
+    public boolean geckolib$wrapArmorPieceRenderForge(HumanoidArmorLayer<S, M, A> renderLayer, PoseStack poseStack, MultiBufferSource bufferSource, ItemStack stack, EquipmentSlot equipmentSlot, int packedLight, A baseModel,
+                                                      S humanoidRenderState, PoseStack poseStack2, MultiBufferSource bufferSource2, int packedLight2, S humanoidRenderState2, float netHeadYaw, float headPitch) {
         final GeoEntityRenderState geoRenderState = (GeoEntityRenderState)humanoidRenderState;
 
         return !InternalUtil.tryRenderGeoArmorPiece(poseStack, bufferSource, (LivingEntity)geoRenderState.geckolib$getEntity(), stack, equipmentSlot, renderLayer.getParentModel(), baseModel,
