@@ -47,6 +47,7 @@ public final class GeckoLibCache {
 		return MODELS;
 	}
 
+	@ApiStatus.Internal
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
 		Map<ResourceLocation, BakedAnimations> animations = new Object2ObjectOpenHashMap<>();
 		Map<ResourceLocation, BakedGeoModel> models = new Object2ObjectOpenHashMap<>();
