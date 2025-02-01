@@ -184,7 +184,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	 */
 	@ApiStatus.Internal
 	@Override
-	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
+	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 		Double currentTick = animationState.getData(DataTickets.TICK);
@@ -193,9 +193,9 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 			currentTick = animatable instanceof Entity entity ? (double)entity.tickCount : RenderUtils.getCurrentTick();
 
 		if (animatableManager.getFirstTickTime() == -1)
-			animatableManager.startedAt(currentTick + mc.getFrameTime());
+			animatableManager.startedAt(currentTick + partialTick);
 
-		double currentFrameTime = animatable instanceof Entity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+		double currentFrameTime = animatable instanceof Entity ? currentTick + partialTick : currentTick - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)

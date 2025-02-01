@@ -243,7 +243,7 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 			animationState.setData(DataTickets.ENTITY, this.currentEntity);
 			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		poseStack.translate(0, 0.01f, 0);

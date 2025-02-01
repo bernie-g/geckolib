@@ -217,7 +217,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			animationState.setData(DataTickets.ENTITY, animatable);
 			animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, livingEntity != null && livingEntity.isBaby(), -netHeadYaw, -headPitch));
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		poseStack.translate(0, 0.01f, 0);

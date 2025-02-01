@@ -224,7 +224,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> extends BlockEntity
 			animationState.setData(DataTickets.ITEMSTACK, this.currentItemStack);
 			animatable.getAnimatableInstanceCache().getManagerForId(instanceId).setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.renderPerspective);
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
