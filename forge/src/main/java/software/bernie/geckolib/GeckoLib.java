@@ -17,6 +17,5 @@ public final class GeckoLib {
     public GeckoLib(FMLJavaModLoadingContext context) {
         DATA_COMPONENTS_REGISTER.register(context.getModEventBus());
         GeckoLibNetworkingForge.init();
-        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> GeckoLibCache::registerReloadListener);
     }
 }

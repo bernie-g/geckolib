@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -44,13 +45,6 @@ public final class GeckoLibCache {
 
 	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
 		return MODELS;
-	}
-
-	public static void registerReloadListener() {
-		Minecraft mc = Minecraft.getInstance();
-
-		if (mc != null && mc.getResourceManager() instanceof ReloadableResourceManager resourceManager)
-			resourceManager.registerReloadListener(GeckoLibCache::reload);
 	}
 
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {

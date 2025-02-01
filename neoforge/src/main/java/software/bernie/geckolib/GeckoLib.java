@@ -16,8 +16,5 @@ public final class GeckoLib {
         GeckoLibNetworkingNeoForge.init(modBus);
         DATA_COMPONENTS_REGISTER.register(modBus);
         GeckoLibConstants.init();
-
-        if (FMLEnvironment.dist == Dist.CLIENT)
-            GeckoLibClient.init();
     }
 }
