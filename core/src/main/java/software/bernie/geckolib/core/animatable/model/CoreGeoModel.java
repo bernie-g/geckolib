@@ -46,7 +46,7 @@ public interface CoreGeoModel<E extends GeoAnimatable> {
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>
 	 * It is an internal method for automated animation parsing. Use {@link CoreGeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
-	void handleAnimations(E animatable, long instanceId, AnimationState<E> animationState);
+	void handleAnimations(E animatable, long instanceId, AnimationState<E> animationState, float partialTick);
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered.<br>

@@ -298,7 +298,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			animationState.setData(DataTickets.ENTITY, this.currentEntity);
 			animationState.setData(DataTickets.EQUIPMENT_SLOT, this.currentSlot);
 			this.model.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			this.model.handleAnimations(animatable, instanceId, animationState);
+			this.model.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());

@@ -155,7 +155,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 			GeoModel<T> currentModel = getGeoModel();
 
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());

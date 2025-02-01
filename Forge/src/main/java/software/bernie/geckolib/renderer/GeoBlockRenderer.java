@@ -147,7 +147,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			currentModel.addAdditionalStateData(animatable, instanceId, animationState::setData);
 			poseStack.translate(0.5, 0, 0.5);
 			rotateBlock(getFacing(animatable), poseStack);
-			currentModel.handleAnimations(animatable, instanceId, animationState);
+			currentModel.handleAnimations(animatable, instanceId, animationState, partialTick);
 		}
 
 		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
