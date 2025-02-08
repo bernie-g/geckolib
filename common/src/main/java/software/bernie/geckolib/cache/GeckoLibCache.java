@@ -2,10 +2,8 @@ package software.bernie.geckolib.cache;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -34,6 +32,7 @@ import java.util.function.Function;
  * and {@link GeoModel Models}
  */
 public final class GeckoLibCache {
+	public static final ResourceLocation RELOAD_LISTENER_ID = GeckoLibConstants.id("geckolib_resources");
 	private static final Set<String> EXCLUDED_NAMESPACES = ObjectOpenHashSet.of("moreplayermodels", "customnpcs", "gunsrpg");
 
 	private static Map<ResourceLocation, BakedAnimations> ANIMATIONS = Collections.emptyMap();

@@ -25,7 +25,7 @@ public class GeckoLibClient implements ClientModInitializer {
                 .registerReloadListener(new IdentifiableResourceReloadListener() {
                     @Override
                     public ResourceLocation getFabricId() {
-                        return GeckoLibConstants.id("models_animations");
+                        return GeckoLibCache.RELOAD_LISTENER_ID;
                     }
 
                     @Override
