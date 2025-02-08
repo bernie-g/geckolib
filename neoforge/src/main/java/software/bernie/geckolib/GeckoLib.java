@@ -1,10 +1,8 @@
 package software.bernie.geckolib;
 
 import net.minecraft.core.registries.Registries;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.network.GeckoLibNetworkingNeoForge;
 
