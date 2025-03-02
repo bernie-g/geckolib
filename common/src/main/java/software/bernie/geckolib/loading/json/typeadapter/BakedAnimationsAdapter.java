@@ -100,10 +100,13 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 
 		if (element instanceof JsonObject obj) {
 			List<Pair<String, JsonElement>> list = new ObjectArrayList<>();
+			KeyframeType lastKeyframeType = KeyframeType.LINEAR;
 
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
 				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
-					list.add(getTripletObjBedrock(entry.getKey(), entryObj));
+					Pair<Pair<String, JsonElement>, KeyframeType> result = getTripletObjBedrock(entry.getKey(), entryObj, lastKeyframeType);
+					list.add(result.getFirst());
+					lastKeyframeType = result.getSecond();
 
 					continue;
 				}
@@ -117,20 +120,37 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
-	private static Pair<String, JsonElement> getTripletObjBedrock(String timestamp, JsonObject keyframe) {
-		JsonArray keyframeValues = null;
+	private static Pair<Pair<String, JsonElement>, KeyframeType> getTripletObjBedrock(String timestamp, JsonObject keyframe, KeyframeType lastKeyframesType) {
+		JsonArray array = null;
+		JsonObject keyframeValues = new JsonObject();
 
-		if (keyframe.has("pre")) {
-			JsonElement pre = keyframe.get("pre");
-			keyframeValues = pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector");
-		}
-		else if (keyframe.has("post")) {
-			JsonElement post = keyframe.get("post");
-			keyframeValues = post.isJsonArray() ? post.getAsJsonArray() : GsonHelper.getAsJsonArray(post.getAsJsonObject(), "vector");
+		switch (lastKeyframesType) {
+			case SMOOTH -> keyframeValues.addProperty("easing", "bedrock_catmullrom");
+			case STEP -> keyframeValues.addProperty("easing", "bedrock_step");
 		}
 
-		if (keyframeValues != null)
-			return Pair.of(NumberUtils.isCreatable(timestamp) ? timestamp : "0", keyframeValues);
+		if (keyframe.isJsonArray()) {
+			keyframeValues.add("vector", keyframe);
+			return Pair.of(Pair.of(NumberUtils.isCreatable(timestamp) ? timestamp : "0", keyframeValues), KeyframeType.LINEAR);
+		}
+
+		if (keyframe.has("post")) {
+			if (keyframe.has("lerp_mode")) {
+				JsonElement post = keyframe.get("post");
+				array = post.isJsonArray() ? post.getAsJsonArray() : GsonHelper.getAsJsonArray(post.getAsJsonObject(), "vector");
+				if (array != null) {
+					keyframeValues.add("vector", array);
+					return Pair.of(Pair.of(NumberUtils.isCreatable(timestamp) ? timestamp : "0", keyframeValues), KeyframeType.SMOOTH);
+				}
+			}
+			else if (keyframe.has("pre")) {
+				JsonElement pre = keyframe.get("pre");
+				array = pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector");
+				keyframeValues.add("vector", array);
+				keyframeValues.add("post", keyframe.get("post"));
+				return Pair.of(Pair.of(NumberUtils.isCreatable(timestamp) ? timestamp : "0", keyframeValues), KeyframeType.STEP);
+			}
+		}
 
 		throw new JsonParseException("Invalid keyframe data - expected array, found " + keyframe);
 	}
@@ -147,6 +167,8 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		MathValue yPrev = null;
 		MathValue zPrev = null;
 		Pair<String, JsonElement> prevEntry = null;
+
+		JsonArray bedrockPost = null;
 
 		for (Pair<String, JsonElement> entry : entries) {
 			String key = entry.getFirst();
@@ -177,13 +199,42 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, easingArgs));
 			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, easingArgs));
 
+			if (easingType == EasingType.STEP && bedrockPost != null) {
+				rawXValue = MathParser.parseJson(bedrockPost.get(0));
+				rawYValue = MathParser.parseJson(bedrockPost.get(1));
+				rawZValue = MathParser.parseJson(bedrockPost.get(2));
+				xValue = isForRotation && rawXValue instanceof Constant ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue;
+				yValue = isForRotation && rawYValue instanceof Constant ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue;
+				zValue = isForRotation && rawZValue instanceof Constant ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue;
+				xFrames.getLast().easingArgs().add(xValue);
+				yFrames.getLast().easingArgs().add(yValue);
+				zFrames.getLast().easingArgs().add(zValue);
+			}
+			if (entryObj.has("post")) {
+				bedrockPost = entryObj.getAsJsonArray("post");
+			}
+
 			xPrev = xValue;
 			yPrev = yValue;
 			zPrev = zValue;
 			prevEntry = entry;
 		}
 
+		applyCatmullRomEasing(xFrames);
+		applyCatmullRomEasing(yFrames);
+		applyCatmullRomEasing(zFrames);
+
 		return new KeyframeStack<>(xFrames, yFrames, zFrames);
+	}
+
+	private void applyCatmullRomEasing(List<Keyframe<MathValue>> frames) {
+		for (int i=0; i < frames.size(); i++) {
+			Keyframe<MathValue> frame = frames.get(i);
+			if (frame.easingType() == EasingType.BEDROCK_CATMULLROM) {
+				frame.easingArgs().add(i-2 >= 0 ? frames.get(i-2).endValue() : frames.get(0).endValue());
+				frame.easingArgs().add(i+1 < frames.size()-1 ? frames.get(i+1).endValue() : frames.get(frames.size()-1).endValue());
+			}
+		}
 	}
 
 	private static double calculateAnimationLength(BoneAnimation[] boneAnimations) {
@@ -196,5 +247,11 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		}
 
 		return length == 0 ? Double.MAX_VALUE : length;
+	}
+
+	public enum KeyframeType {
+		SMOOTH,
+		STEP,
+		LINEAR
 	}
 }

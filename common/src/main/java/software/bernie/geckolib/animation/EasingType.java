@@ -6,7 +6,9 @@ import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
+import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,6 +58,8 @@ public interface EasingType {
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
+	EasingType BEDROCK_CATMULLROM = register("bedrock_catmullrom", new CatmullRomKeyframe());
+	EasingType BEDROCk_STEP = register("bedrock_step", new StepKeyframe());
 
 	Double2DoubleFunction buildTransformer(Double value);
 
@@ -71,7 +75,7 @@ public interface EasingType {
 	default double apply(AnimationPoint animationPoint) {
 		Double easingVariable = null;
 
-		if (animationPoint.keyFrame() != null && animationPoint.keyFrame().easingArgs().size() > 0)
+		if (animationPoint.keyFrame() != null && !animationPoint.keyFrame().easingArgs().isEmpty())
 			easingVariable = animationPoint.keyFrame().easingArgs().get(0).get();
 
 		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength());
@@ -132,7 +136,7 @@ public interface EasingType {
 	static Double2DoubleFunction linear(Double2DoubleFunction function) {
 		return function;
 	}
-	
+
 	/**
 	 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
 	 * <p>
@@ -376,5 +380,44 @@ public interface EasingType {
 
 			return leftBorderIndex * stepLength;
 		};
+	}
+
+	class CatmullRomKeyframe implements EasingType {
+		/**
+		 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes {@link Mth#catmullrom}
+		 */
+		static double catmullRom(double time, double controlPoint1, double controlPoint2, double controlPoint3, double controlPoint4) {
+			return 0.5 * (2.0 * controlPoint2 + (controlPoint3 - controlPoint1) * time +
+					(2.0 * controlPoint1 - 5.0 * controlPoint2 + 4.0 * controlPoint3 - controlPoint4) * time * time +
+					(3.0 * controlPoint2 - controlPoint1 - 3.0 * controlPoint3 + controlPoint4) * time * time * time);
+		}
+
+		@Override
+		public Double2DoubleFunction buildTransformer(Double value) {
+			return null;
+		}
+
+		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+			if (animationPoint.currentTick() >= animationPoint.transitionLength())
+				return (float)animationPoint.animationEndValue();
+
+			List<? extends MathValue> easingArgs = animationPoint.keyFrame().easingArgs();
+
+			return catmullRom(lerpValue, easingArgs.get(0).get(), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get());
+		}
+	}
+
+	class StepKeyframe implements EasingType {
+		@Override
+		public Double2DoubleFunction buildTransformer(Double value) {
+			return null;
+		}
+
+		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+			if (animationPoint.currentTick() >= animationPoint.transitionLength())
+				return (float)animationPoint.animationEndValue();
+
+			return lerpValue == 1 ? animationPoint.animationEndValue() : easingValue;
+		}
 	}
 }
