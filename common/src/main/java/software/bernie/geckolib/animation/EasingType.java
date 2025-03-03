@@ -59,7 +59,7 @@ public interface EasingType {
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
 	EasingType BEDROCK_CATMULLROM = register("bedrock_catmullrom", new CatmullRomKeyframe());
-	EasingType BEDROCk_STEP = register("bedrock_step", new StepKeyframe());
+	EasingType BEDROCK_STEP = register("bedrock_step", new StepKeyframe());
 
 	Double2DoubleFunction buildTransformer(Double value);
 
