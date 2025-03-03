@@ -210,7 +210,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 				yFrames.getLast().easingArgs().add(yValue);
 				zFrames.getLast().easingArgs().add(zValue);
 			}
-			if (entryObj.has("post")) {
+			if (entryObj != null && entryObj.has("post")) {
 				bedrockPost = entryObj.getAsJsonArray("post");
 			}
 
