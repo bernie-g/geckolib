@@ -194,11 +194,11 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			List<MathValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
 					JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
 					new ObjectArrayList<>();
-			boolean seperateArgs = easingType == EasingType.SINGLE_STEP || easingType == EasingType.CATMULLROM;
+			boolean separateArgs = easingType == EasingType.SINGLE_STEP || easingType == EasingType.CATMULLROM;
 
-			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
-			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
-			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
+			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, separateArgs ? new ObjectArrayList<>() : easingArgs));
+			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, separateArgs ? new ObjectArrayList<>() : easingArgs));
+			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, separateArgs ? new ObjectArrayList<>() : easingArgs));
 
 			xPrev = xValue;
 			yPrev = yValue;
