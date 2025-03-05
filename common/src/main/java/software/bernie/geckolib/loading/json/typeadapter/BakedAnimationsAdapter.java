@@ -121,7 +121,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 	}
 
 	private static Pair<Pair<String, JsonElement>, KeyframeType> getTripletObjBedrock(String timestamp, JsonObject keyframe, KeyframeType lastKeyframesType) {
-		JsonArray array = null;
+		JsonArray array;
 		JsonObject keyframeValues = new JsonObject();
 
 		switch (lastKeyframesType) {
@@ -194,12 +194,18 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			List<MathValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
 					JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
 					new ObjectArrayList<>();
+			boolean isStep = easingType == EasingType.BEDROCK_STEP;
 
-			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, easingArgs));
-			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, easingArgs));
-			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, easingArgs));
+			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
+			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
+			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
 
-			if (easingType == EasingType.STEP && bedrockPost != null) {
+			xPrev = xValue;
+			yPrev = yValue;
+			zPrev = zValue;
+			prevEntry = entry;
+
+			if (easingType == EasingType.BEDROCK_STEP && bedrockPost != null) {
 				rawXValue = MathParser.parseJson(bedrockPost.get(0));
 				rawYValue = MathParser.parseJson(bedrockPost.get(1));
 				rawZValue = MathParser.parseJson(bedrockPost.get(2));
@@ -213,11 +219,6 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			if (entryObj != null && entryObj.has("post")) {
 				bedrockPost = entryObj.getAsJsonArray("post");
 			}
-
-			xPrev = xValue;
-			yPrev = yValue;
-			zPrev = zValue;
-			prevEntry = entry;
 		}
 
 		applyCatmullRomEasing(xFrames);
