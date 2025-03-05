@@ -57,9 +57,8 @@ public interface EasingType {
 	EasingType EASE_IN_BOUNCE = register("easeinbounce", value -> easeIn(bounce(value)));
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
-	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
-	EasingType BEDROCK_CATMULLROM = register("bedrock_catmullrom", new CatmullRomKeyframe());
-	EasingType BEDROCK_STEP = register("bedrock_step", new StepKeyframe());
+	EasingType CATMULLROM = register("catmullrom", new CatmullRomEasing());
+	EasingType SINGLE_STEP = register("single_step", new SingleStepEasing());
 
 	Double2DoubleFunction buildTransformer(Double value);
 
@@ -382,7 +381,7 @@ public interface EasingType {
 		};
 	}
 
-	class CatmullRomKeyframe implements EasingType {
+	class CatmullRomEasing implements EasingType {
 		/**
 		 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes {@link Mth#catmullrom}
 		 */
@@ -394,7 +393,7 @@ public interface EasingType {
 
 		@Override
 		public Double2DoubleFunction buildTransformer(Double value) {
-			return null;
+			return easeInOut(EasingType::catmullRom);
 		}
 
 		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
@@ -403,19 +402,24 @@ public interface EasingType {
 
 			List<? extends MathValue> easingArgs = animationPoint.keyFrame().easingArgs();
 
+			if (easingArgs.size() < 2)
+				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
+
 			return catmullRom(lerpValue, easingArgs.get(0).get(), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get());
 		}
 	}
 
-	class StepKeyframe implements EasingType {
+	class SingleStepEasing implements EasingType {
 		@Override
 		public Double2DoubleFunction buildTransformer(Double value) {
-			return null;
+			return time -> time == 1 ? 1 : 0;
 		}
 
 		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
 			if (animationPoint.currentTick() >= animationPoint.transitionLength())
 				return (float)animationPoint.animationEndValue();
+
+			if (easingValue == null) easingValue = animationPoint.animationStartValue();
 
 			return lerpValue == 1 ? animationPoint.animationEndValue() : easingValue;
 		}

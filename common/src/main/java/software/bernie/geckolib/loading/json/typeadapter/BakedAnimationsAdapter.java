@@ -125,8 +125,8 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 		JsonObject keyframeValues = new JsonObject();
 
 		switch (lastKeyframesType) {
-			case SMOOTH -> keyframeValues.addProperty("easing", "bedrock_catmullrom");
-			case STEP -> keyframeValues.addProperty("easing", "bedrock_step");
+			case SMOOTH -> keyframeValues.addProperty("easing", "catmullrom");
+			case STEP -> keyframeValues.addProperty("easing", "single_step");
 		}
 
 		if (keyframe.isJsonArray()) {
@@ -194,18 +194,18 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 			List<MathValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
 					JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
 					new ObjectArrayList<>();
-			boolean isStep = easingType == EasingType.BEDROCK_STEP;
+			boolean seperateArgs = easingType == EasingType.SINGLE_STEP || easingType == EasingType.CATMULLROM;
 
-			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
-			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
-			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, isStep ? new ObjectArrayList<>() : easingArgs));
+			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
+			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
+			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, seperateArgs ? new ObjectArrayList<>() : easingArgs));
 
 			xPrev = xValue;
 			yPrev = yValue;
 			zPrev = zValue;
 			prevEntry = entry;
 
-			if (easingType == EasingType.BEDROCK_STEP && bedrockPost != null) {
+			if (easingType == EasingType.SINGLE_STEP && bedrockPost != null) {
 				rawXValue = MathParser.parseJson(bedrockPost.get(0));
 				rawYValue = MathParser.parseJson(bedrockPost.get(1));
 				rawZValue = MathParser.parseJson(bedrockPost.get(2));
@@ -231,7 +231,7 @@ public  class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations
 	private void applyCatmullRomEasing(List<Keyframe<MathValue>> frames) {
 		for (int i=0; i < frames.size(); i++) {
 			Keyframe<MathValue> frame = frames.get(i);
-			if (frame.easingType() == EasingType.BEDROCK_CATMULLROM) {
+			if (frame.easingType() == EasingType.CATMULLROM) {
 				frame.easingArgs().add(i-2 >= 0 ? frames.get(i-2).endValue() : frames.get(0).endValue());
 				frame.easingArgs().add(i+1 < frames.size()-1 ? frames.get(i+1).endValue() : frames.get(frames.size()-1).endValue());
 			}
