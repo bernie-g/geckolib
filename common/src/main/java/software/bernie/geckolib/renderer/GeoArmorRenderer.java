@@ -294,8 +294,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		scaleModelForBaby(poseStack, animatable, partialTick, isReRender);
 		scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
 
-		if (!(this.currentEntity instanceof GeoAnimatable))
-			applyBoneVisibilityBySlot(this.currentSlot);
+		if (!(this.currentEntity instanceof GeoAnimatable)) {
+			applyBoneVisibilityFromBaseModel(this.baseModel);
+		}
 	}
 
 	@Override
@@ -480,6 +481,15 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			}
 			default -> {}
 		}
+	}
+	
+	protected void applyBoneVisibilityFromBaseModel(HumanoidModel<?> model) {
+		setBoneVisible(this.head, model.head.visible);
+		setBoneVisible(this.body, model.body.visible);
+		setBoneVisible(this.rightArm, model.rightArm.visible);
+		setBoneVisible(this.leftArm, model.leftArm.visible);
+		setBoneVisible(this.rightLeg, model.rightLeg.visible);
+		setBoneVisible(this.leftLeg, model.leftLeg.visible);
 	}
 
 	/**
