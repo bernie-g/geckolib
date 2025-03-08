@@ -476,11 +476,20 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Applies settings and transformations pre-render based on the default model
 	 */
 	protected void applyBaseModel(HumanoidModel<?> baseModel) {
-		this.young = baseModel.young;
-		this.crouching = baseModel.crouching;
-		this.riding = baseModel.riding;
-		this.rightArmPose = baseModel.rightArmPose;
-		this.leftArmPose = baseModel.leftArmPose;
+		HumanoidModel<?> self = (HumanoidModel<?>)this;
+
+		self.young = baseModel.young;
+		self.crouching = baseModel.crouching;
+		self.riding = baseModel.riding;
+		self.rightArmPose = baseModel.rightArmPose;
+		self.leftArmPose = baseModel.leftArmPose;
+		self.head.visible = baseModel.head.visible;
+		self.hat.visible = baseModel.hat.visible;
+		self.body.visible = baseModel.body.visible;
+		self.rightArm.visible = baseModel.rightArm.visible;
+		self.leftArm.visible = baseModel.leftArm.visible;
+		self.rightLeg.visible = baseModel.rightLeg.visible;
+		self.leftLeg.visible = baseModel.leftLeg.visible;
 	}
 
 	/**
