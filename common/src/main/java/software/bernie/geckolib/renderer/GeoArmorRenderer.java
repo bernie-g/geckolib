@@ -9,6 +9,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
@@ -486,25 +487,26 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Resets the bone visibility for the model based on the currently rendering slot,
 	 * and then sets bones relevant to the current slot as visible for rendering
 	 * <p>
-	 * This is only called by default for non-geo entities (I.E. players or vanilla mobs)
+	 * This is only called by default for non-geo entities (I.E. players or vanilla humanoid mobs)
 	 */
 	protected void applyBoneVisibilityBySlot(EquipmentSlot currentSlot) {
-		setAllVisible(false);
+		setAllBonesVisible(false);
+		HumanoidModel<?> model = this;
 
 		switch (currentSlot) {
-			case HEAD -> setBoneVisible(this.head, true);
+			case HEAD -> setBoneVisible(this.head, model.head.visible);
 			case CHEST -> {
-				setBoneVisible(this.body, true);
-				setBoneVisible(this.rightArm, true);
-				setBoneVisible(this.leftArm, true);
+				setBoneVisible(this.body, model.body.visible);
+				setBoneVisible(this.rightArm, model.rightArm.visible);
+				setBoneVisible(this.leftArm, model.leftArm.visible);
 			}
 			case LEGS -> {
-				setBoneVisible(this.rightLeg, true);
-				setBoneVisible(this.leftLeg, true);
+				setBoneVisible(this.rightLeg, model.rightLeg.visible);
+				setBoneVisible(this.leftLeg, model.leftLeg.visible);
 			}
 			case FEET -> {
-				setBoneVisible(this.rightBoot, true);
-				setBoneVisible(this.leftBoot, true);
+				setBoneVisible(this.rightBoot, model.rightLeg.visible);
+				setBoneVisible(this.leftBoot, model.leftLeg.visible);
 			}
 			default -> {}
 		}
@@ -603,17 +605,25 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	}
 
 	@Override
-	public void setAllVisible(boolean pVisible) {
-		super.setAllVisible(pVisible);
+	public void setAllVisible(boolean visible) {
+		super.setAllVisible(visible);
+		setAllBonesVisible(visible);
+	}
 
-		setBoneVisible(this.head, pVisible);
-		setBoneVisible(this.body, pVisible);
-		setBoneVisible(this.rightArm, pVisible);
-		setBoneVisible(this.leftArm, pVisible);
-		setBoneVisible(this.rightLeg, pVisible);
-		setBoneVisible(this.leftLeg, pVisible);
-		setBoneVisible(this.rightBoot, pVisible);
-		setBoneVisible(this.leftBoot, pVisible);
+	/**
+	 * Equivalent to {@link HumanoidModel#setAllVisible(boolean)}, but explicitly only for the GeoBones.
+	 * <p>
+	 * This allows for resetting of model visibility whilst still allowing inheritance of visibility from the {@link HumanoidArmorLayer}
+	 */
+	protected void setAllBonesVisible(boolean visible) {
+		setBoneVisible(this.head, visible);
+		setBoneVisible(this.body, visible);
+		setBoneVisible(this.rightArm, visible);
+		setBoneVisible(this.leftArm, visible);
+		setBoneVisible(this.rightLeg, visible);
+		setBoneVisible(this.leftLeg, visible);
+		setBoneVisible(this.rightBoot, visible);
+		setBoneVisible(this.leftBoot, visible);
 	}
 
 	/**
