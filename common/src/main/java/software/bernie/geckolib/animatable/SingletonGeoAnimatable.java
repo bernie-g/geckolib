@@ -81,7 +81,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      */
     @ApiStatus.NonExtendable
     default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
-        GeckoLibServices.NETWORK.syncSingletonAnimData(getClass(), instanceId, dataTicket, data, entityToTrack);
+        GeckoLibServices.NETWORK.syncSingletonAnimData(this, instanceId, dataTicket, data, entityToTrack);
     }
 
     /**
@@ -107,7 +107,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
             }
         }
         else {
-            GeckoLibServices.NETWORK.triggerSingletonAnim(getClass(), relatedEntity, instanceId, controllerName, animName);
+            GeckoLibServices.NETWORK.triggerSingletonAnim(this, relatedEntity, instanceId, controllerName, animName);
         }
     }
 
