@@ -39,7 +39,7 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
                 float pitch = segments.length > 2 ? Float.parseFloat(segments[2]) : 1;
                 SoundSource source = entity == null ? SoundSource.BLOCKS : entity instanceof Enemy ? SoundSource.HOSTILE : SoundSource.NEUTRAL;
 
-                ClientUtil.getLevel().playSound(null, position.x, position.y, position.z, sound, source, volume, pitch);
+                ClientUtil.getLevel().playLocalSound(position.x, position.y, position.z, sound, source, volume, pitch, false);
             }
         }
     }
