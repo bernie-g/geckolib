@@ -144,7 +144,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				if (saveSnapshot.isRotAnimInProgress())
 					saveSnapshot.stopRotAnim(animTime);
 
-				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
+				double percentageReset = resetTickLength == 0 ? 1 : Math.min((animTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
 
 				bone.setRotX((float)Mth.lerp(percentageReset, saveSnapshot.getRotX(), initialSnapshot.getRotX()));
 				bone.setRotY((float)Mth.lerp(percentageReset, saveSnapshot.getRotY(), initialSnapshot.getRotY()));
@@ -161,7 +161,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				if (saveSnapshot.isPosAnimInProgress())
 					saveSnapshot.stopPosAnim(animTime);
 
-				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
+				double percentageReset = resetTickLength == 0 ? 1 : Math.min((animTime - saveSnapshot.getLastResetPositionTick()) / resetTickLength, 1);
 
 				bone.setPosX((float)Mth.lerp(percentageReset, saveSnapshot.getOffsetX(), initialSnapshot.getOffsetX()));
 				bone.setPosY((float)Mth.lerp(percentageReset, saveSnapshot.getOffsetY(), initialSnapshot.getOffsetY()));
@@ -178,7 +178,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				if (saveSnapshot.isScaleAnimInProgress())
 					saveSnapshot.stopScaleAnim(animTime);
 
-				double percentageReset = Math.min((animTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
+				double percentageReset = resetTickLength == 0 ? 1 : Math.min((animTime - saveSnapshot.getLastResetScaleTick()) / resetTickLength, 1);
 
 				bone.setScaleX((float)Mth.lerp(percentageReset, saveSnapshot.getScaleX(), initialSnapshot.getScaleX()));
 				bone.setScaleY((float)Mth.lerp(percentageReset, saveSnapshot.getScaleY(), initialSnapshot.getScaleY()));

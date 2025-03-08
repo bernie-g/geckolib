@@ -48,7 +48,7 @@ public interface GeoAnimatable {
 	 * should return {@link GeoBone GeoBones} that currently have no animations to their default position
 	 */
 	default double getBoneResetTime() {
-		return 1;
+		return 0;
 	}
 
 	/**
