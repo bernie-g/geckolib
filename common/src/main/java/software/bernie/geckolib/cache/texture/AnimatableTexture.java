@@ -28,8 +28,9 @@ import java.util.List;
  * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
  */
 public class AnimatableTexture extends SimpleTexture {
-	private AnimationContents animationContents = null;
-	private boolean isAnimated = false;
+	protected AnimationContents animationContents = null;
+	protected int glowMaskId = -1;
+	protected boolean isAnimated = false;
 
 	public AnimatableTexture(final ResourceLocation location) {
 		super(location);
@@ -105,9 +106,9 @@ public class AnimatableTexture extends SimpleTexture {
 		}
 	}
 
-	private class AnimationContents {
-		private final FrameSize frameSize;
-		private final Texture animatedTexture;
+	protected class AnimationContents {
+		protected final FrameSize frameSize;
+		protected final Texture animatedTexture;
 
 		private AnimationContents(NativeImage image, AnimationMetadataSection animMeta) {
 			this.frameSize = animMeta.calculateFrameSize(image.getWidth(), image.getHeight());
@@ -161,18 +162,18 @@ public class AnimatableTexture extends SimpleTexture {
 			return frames.size() <= 1 ? null : new Texture(image, frames.toArray(new Frame[0]), columns, animMeta.isInterpolatedFrames());
 		}
 
-		private record Frame(int index, int time) {}
+		protected record Frame(int index, int time) {}
 
-		private class Texture implements AutoCloseable {
-			private final NativeImage baseImage;
-			private final Frame[] frames;
-			private final int framePanelSize;
-			private final boolean interpolating;
-			private final NativeImage interpolatedFrame;
-			private final int totalFrameTime;
+		protected class Texture implements AutoCloseable {
+			protected final NativeImage baseImage;
+			protected final Frame[] frames;
+			protected final int framePanelSize;
+			protected final boolean interpolating;
+			protected final NativeImage interpolatedFrame;
+			protected final int totalFrameTime;
 
-			private int currentFrame;
-			private int currentSubframe;
+			protected int currentFrame;
+			protected int currentSubframe;
 
 			private Texture(NativeImage baseImage, Frame[] frames, int framePanelSize, boolean interpolating) {
 				this.baseImage = baseImage;
@@ -220,7 +221,7 @@ public class AnimatableTexture extends SimpleTexture {
 
 				if (this.currentFrame != lastFrame && this.currentSubframe == 0) {
 					onRenderThread(() -> {
-						TextureUtil.prepareImage(AnimatableTexture.this.getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
+						TextureUtil.prepareImage(getTextureIdToUpload(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
 						this.baseImage.upload(0, 0, 0, getFrameX(this.currentFrame) * AnimationContents.this.frameSize.width(), getFrameY(this.currentFrame) * AnimationContents.this.frameSize.height(), AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
 					});
 				}
@@ -247,7 +248,7 @@ public class AnimatableTexture extends SimpleTexture {
 						}
 					}
 
-					TextureUtil.prepareImage(AnimatableTexture.this.getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
+					TextureUtil.prepareImage(getTextureIdToUpload(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
 					this.interpolatedFrame.upload(0, 0, 0, 0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
 				}
 			}
@@ -258,6 +259,10 @@ public class AnimatableTexture extends SimpleTexture {
 
 			private int interpolate(double frameProgress, double prevColor, double nextColor) {
 				return (int)(frameProgress * prevColor + (1 - frameProgress) * nextColor);
+			}
+
+			private int getTextureIdToUpload() {
+				return AnimatableTexture.this.glowMaskId == -1 ? AnimatableTexture.this.getId() : AnimatableTexture.this.glowMaskId;
 			}
 
 			@Override

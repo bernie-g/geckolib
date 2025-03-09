@@ -105,7 +105,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 		Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
 		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
-				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
+								dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
 		NativeImage glowImage = null;
 		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.SERIALIZER);
 		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
@@ -145,6 +145,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 		if (mask == null)
 			return null;
+
+		if (originalTexture instanceof AnimatableTexture animatableTexture) {
+			animatableTexture.glowMaskId = getId();
+			animatableTexture.animationContents.animatedTexture.baseImage.copyFrom(glowImage);
+		}
 
 		return () -> {
 			uploadSimple(getId(), mask, blur, clamp);
