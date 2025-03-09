@@ -122,10 +122,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 * Gets the id that represents the current animatable's instance for animation purposes
 	 * <p>
 	 * This is mostly useful for things like items, which have a single registered instance for all objects
+	 * <p>
+	 * For GeckoLib armor specifically, this creates a paired negative-id to allow for
+	 * armor to have different animations to its associated item
 	 */
 	@Override
 	public long getInstanceId(T animatable) {
-		return GeoItem.getId(this.currentStack) + this.currentEntity.getId();
+		return -GeoItem.getId(this.currentStack);
 	}
 
 	/**

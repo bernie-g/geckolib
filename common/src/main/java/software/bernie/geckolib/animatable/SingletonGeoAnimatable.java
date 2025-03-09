@@ -144,6 +144,40 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     }
 
     /**
+     * Trigger a client-side animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+     * <p>
+     * This can be fired from either the client or the server, but optimally you would call it from the server
+     * <p>
+     * <b><u>DO NOT OVERRIDE</u></b>
+     *
+     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param instanceId     The unique id that identifies the specific animatable instance
+     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+     * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
+     */
+    @ApiStatus.NonExtendable
+    default void triggerArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
+        triggerAnim(relatedEntity, -instanceId, controllerName, animName);
+    }
+
+    /**
+     * Stop a previously triggered animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+     * <p>
+     * This can be fired from either the client or the server, but optimally you would call it from the server
+     * <p>
+     * <b><u>DO NOT OVERRIDE</u></b>
+     *
+     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param instanceId The unique id that identifies the specific animatable instance
+     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+     * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+     */
+    @ApiStatus.NonExtendable
+    default void stopTriggeredArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
+        stopTriggeredAnim(relatedEntity, -instanceId, controllerName, animName);
+    }
+
+    /**
      * Override the default handling for instantiating an AnimatableInstanceCache for this animatable
      * <p>
      * Don't override this unless you know what you're doing
