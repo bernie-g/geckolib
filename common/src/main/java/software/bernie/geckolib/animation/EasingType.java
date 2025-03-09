@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
 
@@ -57,7 +58,7 @@ public interface EasingType {
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
 
-	Double2DoubleFunction buildTransformer(Double value);
+	Double2DoubleFunction buildTransformer(@Nullable Double value);
 
 	static double lerpWithOverride(AnimationPoint animationPoint, EasingType override) {
 		EasingType easingType = override;
@@ -77,7 +78,7 @@ public interface EasingType {
 		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength());
 	}
 
-	default double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+	default double apply(AnimationPoint animationPoint, @Nullable Double easingValue, double lerpValue) {
 		if (animationPoint.currentTick() >= animationPoint.transitionLength())
 			return (float)animationPoint.animationEndValue();
 
