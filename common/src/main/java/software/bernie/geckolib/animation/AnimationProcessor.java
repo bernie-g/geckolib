@@ -145,10 +145,35 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					saveSnapshot.stopRotAnim(animTime);
 
 				double percentageReset = resetTickLength == 0 ? 1 : Math.min((animTime - saveSnapshot.getLastResetRotationTick()) / resetTickLength, 1);
+				float initialRotX = initialSnapshot.getRotX();
+				float initialRotY = initialSnapshot.getRotY();
+				float initialRotZ = initialSnapshot.getRotZ();
+				float lastXRot = saveSnapshot.getRotX();
+				float lastYRot = saveSnapshot.getRotY();
+				float lastZRot = saveSnapshot.getRotZ();
 
-				bone.setRotX((float)Mth.lerp(percentageReset, saveSnapshot.getRotX(), initialSnapshot.getRotX()));
-				bone.setRotY((float)Mth.lerp(percentageReset, saveSnapshot.getRotY(), initialSnapshot.getRotY()));
-				bone.setRotZ((float)Mth.lerp(percentageReset, saveSnapshot.getRotZ(), initialSnapshot.getRotZ()));
+				// Let's capture suspected full-rotations and prevent them from back-lerping
+				// Far from perfect, but the best I can think of until I redo the system itself
+				if (percentageReset == 0) {
+					if (lastXRot != initialRotX && isSuspectedCompletedRotation(lastXRot)) {
+						lastXRot = initialRotX;
+						percentageReset = 1;
+					}
+
+					if (lastYRot != initialRotY && isSuspectedCompletedRotation(lastYRot)) {
+						lastYRot = initialRotY;
+						percentageReset = 1;
+					}
+
+					if (lastZRot != initialRotZ && isSuspectedCompletedRotation(lastZRot)) {
+						lastZRot = initialRotZ;
+						percentageReset = 1;
+					}
+				}
+
+				bone.setRotX((float)Mth.lerp(percentageReset, lastXRot, initialRotX));
+				bone.setRotY((float)Mth.lerp(percentageReset, lastYRot, initialRotY));
+				bone.setRotZ((float)Mth.lerp(percentageReset, lastZRot, initialRotZ));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
@@ -191,6 +216,18 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 
 		resetBoneTransformationMarkers();
 		animatableManager.finishFirstTick();
+	}
+
+	/**
+	 * Bandaid helper to try to detect suspected completed rotations in an animation frame
+	 * <p>
+	 * By no means perfectly accurate, but is the best we can do until the system is changed
+	 */
+	private boolean isSuspectedCompletedRotation(float lastRotation) {
+		float rotations = Mth.abs(lastRotation / (360f * Mth.DEG_TO_RAD));
+		float partialRotation = 1 - (rotations - (int)rotations);
+
+		return partialRotation == 1 || partialRotation < 0.026 * rotations;
 	}
 
 	/**
