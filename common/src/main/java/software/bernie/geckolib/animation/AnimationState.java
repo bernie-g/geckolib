@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
@@ -103,6 +104,7 @@ public class AnimationState<T extends GeoAnimatable> {
 	 * @param dataTicket The {@link DataTicket} for the data to retrieve
 	 * @return The cached data for the given {@code DataTicket}, or null if not saved
 	 */
+	@Nullable
 	public <D> D getData(DataTicket<D> dataTicket) {
 		return dataTicket.getData(this.extraData);
 	}
