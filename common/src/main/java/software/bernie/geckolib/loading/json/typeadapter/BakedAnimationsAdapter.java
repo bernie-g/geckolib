@@ -224,7 +224,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			if (frame.easingType() == EasingType.CATMULLROM) {
 				// TODO Taylor-approximation? Worthwhile? Probably not
 				frame.easingArgs().set(0, i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue());
-				frame.easingArgs().add(1, i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frames.get(i + 1).endValue(), frame.endValue()))) : frames.get(i + 1).endValue());
+				frame.easingArgs().add(1, i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i - 1).endValue()))) : frames.get(i + 1).endValue());
 			}
 		}
 
