@@ -24,8 +24,6 @@ import software.bernie.geckolib.util.JsonUtil;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 /**
@@ -225,8 +223,8 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 
 			if (frame.easingType() == EasingType.CATMULLROM) {
 				// TODO Taylor-approximation? Worthwhile? Probably not
-				frame.easingArgs().add(i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue());
-				frame.easingArgs().add(i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frames.get(i + 1).endValue(), frame.endValue()))) : frames.get(i + 1).endValue());
+				frame.easingArgs().set(0, i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue());
+				frame.easingArgs().add(1, i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frames.get(i + 1).endValue(), frame.endValue()))) : frames.get(i + 1).endValue());
 			}
 		}
 
@@ -254,27 +252,5 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 
 	private static double readTimestamp(String timestamp) {
 		return NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
-	}
-
-	public static class Compressor {
-		private final Map<Double, Constant> CACHE = new ConcurrentHashMap<>();
-
-		public <T extends MathValue> Optional<List<MathValue>> tryCompressList(List<T> values) {
-			final List<MathValue> compressedValues = new ObjectArrayList<>(values.size());
-			boolean compressed = false;
-
-            for (T value : values) {
-				boolean mutable = value.isMutable();
-				compressed |= !mutable;
-
-				compressedValues.add(mutable ? value : CACHE.computeIfAbsent(value.get(), Constant::new));
-            }
-
-			return compressed ? Optional.of(compressedValues) : Optional.empty();
-		}
-
-		public <T extends MathValue> Optional<Constant> tryCompress(T value) {
-			return value.isMutable() ? Optional.empty() : Optional.of(CACHE.computeIfAbsent(value.get(), Constant::new));
-		}
 	}
 }
