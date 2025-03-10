@@ -7,7 +7,9 @@ import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
+import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -56,7 +58,8 @@ public interface EasingType {
 	EasingType EASE_IN_BOUNCE = register("easeinbounce", value -> easeIn(bounce(value)));
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
-	EasingType CATMULLROM = register("catmullrom", value -> easeInOut(EasingType::catmullRom));
+	EasingType CATMULLROM = register("catmullrom", new CatmullRomEasing());
+	//EasingType SINGLE_STEP = register("single_step", new SingleStepEasing());
 
 	Double2DoubleFunction buildTransformer(@Nullable Double value);
 
@@ -72,8 +75,8 @@ public interface EasingType {
 	default double apply(AnimationPoint animationPoint) {
 		Double easingVariable = null;
 
-		if (animationPoint.keyFrame() != null && animationPoint.keyFrame().easingArgs().size() > 0)
-			easingVariable = animationPoint.keyFrame().easingArgs().get(0).get();
+		if (animationPoint.keyFrame() != null && !animationPoint.keyFrame().easingArgs().isEmpty())
+			easingVariable = animationPoint.keyFrame().easingArgs().getFirst().get();
 
 		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength());
 	}
@@ -135,14 +138,16 @@ public interface EasingType {
 	}
 	
 	/**
-	 * Performs a Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
+	 * Performs an approximation of Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
+	 * <p>
+	 * Given that by necessity, this only accepts a single argument, making this only technically a spline interpolation for n=1
 	 * <p>
 	 * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
 	 */
 	static double catmullRom(double n) {
-		return (0.5f * (2.0f * (n + 1) + ((n + 2) - n) * 1
-				+ (2.0f * n - 5.0f * (n + 1) + 4.0f * (n + 2) - (n + 3)) * 1
-				+ (3.0f * (n + 1) - n - 3.0f * (n + 2) + (n + 3)) * 1));
+		return 0.5d * (2d * (n + 1d) + 2d
+				+ (2d * n - 5d * (n + 1d) + 4d * (n + 2d) - (n + 3d))
+				+ (3d * (n + 1d) - n - 3d * (n + 2d) + (n + 3d)));
 	}
 
 	/**
@@ -378,4 +383,64 @@ public interface EasingType {
 			return leftBorderIndex * stepLength;
 		};
 	}
+
+	/**
+	 * Custom EasingType implementation required for special-handling of spline-based interpolation
+	 */
+	class CatmullRomEasing implements EasingType {
+		/**
+         * Generates a value from a given Catmull-Rom spline range with Centripetal parameterization (alpha=0.5)
+         * <p>
+         * Per standard implementation, this generates a spline curve over control points p1-p2, with p0 and p3
+         * acting as curve anchors.<br>
+		 * We then apply the delta to determine the point on the generated spline to return.
+		 * <p>
+		 * Functionally equivalent to {@link Mth#catmullrom(float, float, float, float, float)}
+         *
+         * @see <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline">Wikipedia</a>
+         */
+		public static double getPointOnSpline(double delta, double p0, double p1, double p2, double p3) {
+			return 0.5d * (2d * p1 + (p2 - p0) * delta +
+						  (2d * p0 - 5d * p1 + 4d * p2 - p3) * delta * delta +
+						  (3d * p1 - p0 - 3d * p2 + p3) * delta * delta * delta);
+		}
+
+		@Override
+		public Double2DoubleFunction buildTransformer(Double value) {
+			return easeInOut(EasingType::catmullRom);
+		}
+
+		@Override
+		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+			if (animationPoint.currentTick() >= animationPoint.transitionLength())
+				return animationPoint.animationEndValue();
+
+			List<? extends MathValue> easingArgs = animationPoint.keyFrame().easingArgs();
+
+			if (easingArgs.size() < 2)
+				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
+
+			return getPointOnSpline(lerpValue, easingArgs.get(0).get(), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get());
+		}
+	}/*
+
+	*//**
+	 * Custom EasingType implementation that acts as a zero-interpolation easing type.
+	 * <p>
+	 * Implemented as a custom EasingType due to the need to arbitrarily insert the resultant value
+	 *//*
+	class SingleStepEasing implements EasingType {
+		@Override
+		public Double2DoubleFunction buildTransformer(@Nullable Double value) {
+			return time -> time == 1 ? 1 : 0;
+		}
+
+		@Override
+		public double apply(AnimationPoint animationPoint, @Nullable Double easingValue, double lerpValue) {
+			if (lerpValue == 1 || animationPoint.currentTick() >= animationPoint.transitionLength())
+				return animationPoint.animationEndValue();
+
+			return easingValue == null ? animationPoint.animationStartValue() : easingValue;
+		}
+	}*/
 }

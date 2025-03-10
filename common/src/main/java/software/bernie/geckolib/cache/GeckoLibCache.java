@@ -13,6 +13,7 @@ import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.FileLoader;
 import software.bernie.geckolib.loading.json.raw.Model;
+import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
@@ -25,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -70,19 +72,22 @@ public final class GeckoLibCache {
 	}
 
 	private static CompletableFuture<Void> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedAnimations> elementConsumer) {
-		return loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
-			try {
-				return FileLoader.loadAnimationsFile(resource, resourceManager);
-			}
-			catch (CompoundException ex) {
-				ex.withMessage(resource.toString() + ": Error loading animation file").printStackTrace();
+		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), backgroundExecutor)
+				.thenRunAsync(() ->
+									  loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
+										  try {
+											  return FileLoader.loadAnimationsFile(resource, resourceManager);
+										  }
+										  catch (CompoundException ex) {
+											  ex.withMessage(resource.toString() + ": Error loading animation file").printStackTrace();
 
-				return new BakedAnimations(new Object2ObjectOpenHashMap<>());
-			}
-			catch (Exception ex) {
-				throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
-			}
-		}, elementConsumer);
+											  return new BakedAnimations(new Object2ObjectOpenHashMap<>());
+										  }
+										  catch (Exception ex) {
+											  throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
+										  }
+									  }, elementConsumer))
+				.thenRunAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = null);
 	}
 
 	private static CompletableFuture<Void> loadModels(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedGeoModel> elementConsumer) {
