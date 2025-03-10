@@ -3,6 +3,7 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -75,7 +76,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 
 		if (renderType != null) {
 			getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
-					bufferSource.getBuffer(renderType), partialTick, 15728640, packedOverlay,
+								   bufferSource.getBuffer(renderType), partialTick, LightTexture.FULL_SKY, packedOverlay,
 					getRenderer().getRenderColor(animatable, partialTick, packedLight).argbInt());
 		}
 	}
