@@ -59,7 +59,6 @@ public interface EasingType {
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 	EasingType CATMULLROM = register("catmullrom", new CatmullRomEasing());
-	//EasingType SINGLE_STEP = register("single_step", new SingleStepEasing());
 
 	Double2DoubleFunction buildTransformer(@Nullable Double value);
 
@@ -422,25 +421,5 @@ public interface EasingType {
 
 			return getPointOnSpline(lerpValue, easingArgs.get(0).get(), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get());
 		}
-	}/*
-
-	*//**
-	 * Custom EasingType implementation that acts as a zero-interpolation easing type.
-	 * <p>
-	 * Implemented as a custom EasingType due to the need to arbitrarily insert the resultant value
-	 *//*
-	class SingleStepEasing implements EasingType {
-		@Override
-		public Double2DoubleFunction buildTransformer(@Nullable Double value) {
-			return time -> time == 1 ? 1 : 0;
-		}
-
-		@Override
-		public double apply(AnimationPoint animationPoint, @Nullable Double easingValue, double lerpValue) {
-			if (lerpValue == 1 || animationPoint.currentTick() >= animationPoint.transitionLength())
-				return animationPoint.animationEndValue();
-
-			return easingValue == null ? animationPoint.animationStartValue() : easingValue;
-		}
-	}*/
+	}
 }
