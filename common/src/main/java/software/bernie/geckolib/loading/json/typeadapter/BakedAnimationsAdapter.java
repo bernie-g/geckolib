@@ -222,12 +222,12 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			Keyframe<MathValue> frame = frames.get(i);
 
 			if (frame.easingType() == EasingType.CATMULLROM) {
-				if (!frame.easingArgs().isEmpty())
-					frame.easingArgs().clear();
-
 				// TODO Taylor-approximation? Worthwhile? Probably not
-				frame.easingArgs().add(i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue());
-				frame.easingArgs().add(i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i - 1).endValue()))) : frames.get(i + 1).endValue());
+				frame = new Keyframe<>(frame.length(), frame.startValue(), frame.endValue(), frame.easingType(), ObjectArrayList.of(
+						i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue(),
+						i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i - 1).endValue()))) : frames.get(i + 1).endValue()
+				));
+				frames.set(i, frame);
 			}
 		}
 
