@@ -1,4 +1,14 @@
-v4.7.3
+v4.7.4
 
-- Fixed entity velocity being determined mostly from x-coordinate velocity
-- `getTextureResource` and `getModelResource` now receive the renderer for context-sensitive variants
+- Added native support for catmull-rom (smooth) easings for bedrock-style animation jsons
+- Made GeoArmorRenderer inherit bone visibility from HumanoidArmorLayer#setPartVisibility to better work with third-party mods
+- Default boneResetTime to 5-ticks, and auto-complete the reset the tick time is 0. This prevents unavoidable partial-tick bone resets
+- Introduced an identity-based lookup for synced singleton animatables, to hopefully eliminate class-duplication collisions
+- Fixed middle-clicking on synced animatable items causing them to conflict when using triggered animations or synced data (#681)
+- Synced animatable items no longer prevent stacking with each other
+- Bones that now use animations to do a full rotation _should_ now no longer counter-rotate when resetting, allowing for cleaner rotation animations
+- Marked AnimationState#getData as nullable to avoid confusion
+- Added `triggerArmorAnim` for triggering armor animations (#433)
+- Animated textures now support glowmasks (#456)
+- Marked the easingType argument in EasingType as nullable to avoid confusion
+- Added memory compression to animation data. Larger modpacks should receive a reduction in memory usage
