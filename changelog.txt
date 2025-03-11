@@ -1,6 +1,6 @@
 v4.7.4
 
-- Added native support for catmull-rom (smooth) easings for bedrock-style animation jsons
+- Added native support for catmull-rom (smooth) easings for bedrock-style animation jsons (thanks for the initial work Zigy)
 - Made GeoArmorRenderer inherit bone visibility from HumanoidArmorLayer#setPartVisibility to better work with third-party mods
 - Default boneResetTime to 5-ticks, and auto-complete the reset the tick time is 0. This prevents unavoidable partial-tick bone resets
 - Introduced an identity-based lookup for synced singleton animatables, to hopefully eliminate class-duplication collisions
