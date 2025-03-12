@@ -29,7 +29,6 @@ import java.util.List;
  */
 public class AnimatableTexture extends SimpleTexture {
 	protected AnimationContents animationContents = null;
-	protected int glowMaskId = -1;
 	protected boolean isAnimated = false;
 
 	public AnimatableTexture(final ResourceLocation location) {
@@ -172,6 +171,10 @@ public class AnimatableTexture extends SimpleTexture {
 			protected final NativeImage interpolatedFrame;
 			protected final int totalFrameTime;
 
+			protected int glowMaskTextureId = -1;
+			protected NativeImage glowmaskImage = null;
+			protected NativeImage glowmaskInterpolatedFrame = null;
+
 			protected int currentFrame;
 			protected int currentSubframe;
 
@@ -198,6 +201,13 @@ public class AnimatableTexture extends SimpleTexture {
 				return frameIndex / this.framePanelSize;
 			}
 
+			public void setGlowMaskTexture(AutoGlowingTexture texture, NativeImage baseImage, NativeImage glowMask) {
+				this.glowMaskTextureId = texture.getId();
+				this.glowmaskImage = glowMask;
+				this.glowmaskInterpolatedFrame = this.interpolating ? new NativeImage(AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false) : null;
+				this.baseImage.copyFrom(baseImage);
+			}
+
 			public void setCurrentFrame(int ticks) {
 				ticks %= this.totalFrameTime;
 
@@ -221,48 +231,54 @@ public class AnimatableTexture extends SimpleTexture {
 
 				if (this.currentFrame != lastFrame && this.currentSubframe == 0) {
 					onRenderThread(() -> {
-						TextureUtil.prepareImage(getTextureIdToUpload(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
+						TextureUtil.prepareImage(getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
 						this.baseImage.upload(0, 0, 0, getFrameX(this.currentFrame) * AnimationContents.this.frameSize.width(), getFrameY(this.currentFrame) * AnimationContents.this.frameSize.height(), AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
+
+						if (this.glowmaskImage != null) {
+							TextureUtil.prepareImage(this.glowMaskTextureId, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
+							this.glowmaskImage.upload(0, 0, 0, getFrameX(this.currentFrame) * AnimationContents.this.frameSize.width(), getFrameY(this.currentFrame) * AnimationContents.this.frameSize.height(), AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
+						}
 					});
 				}
 				else if (this.currentSubframe != lastSubframe && this.interpolating) {
-					onRenderThread(this::generateInterpolatedFrame);
+					onRenderThread(() -> {
+						generateInterpolatedFrame(getId(), this.baseImage, this.interpolatedFrame);
+
+						if (this.glowmaskImage != null)
+							generateInterpolatedFrame(this.glowMaskTextureId, this.glowmaskImage, this.glowmaskInterpolatedFrame);
+					});
 				}
 			}
 
-			private void generateInterpolatedFrame() {
+			private void generateInterpolatedFrame(int textureId, NativeImage image, NativeImage interpolatedFrame) {
 				Frame frame = this.frames[this.currentFrame];
 				double frameProgress = 1 - (double)this.currentSubframe / (double)frame.time;
 				int nextFrameIndex = this.frames[(this.currentFrame + 1) % this.frames.length].index;
 
 				if (frame.index != nextFrameIndex) {
-					for (int y = 0; y < this.interpolatedFrame.getHeight(); ++y) {
-						for (int x = 0; x < this.interpolatedFrame.getWidth(); ++x) {
-							int prevFramePixel = getPixel(frame.index, x, y);
-							int nextFramePixel = getPixel(nextFrameIndex, x, y);
+					for (int y = 0; y < interpolatedFrame.getHeight(); ++y) {
+						for (int x = 0; x < interpolatedFrame.getWidth(); ++x) {
+							int prevFramePixel = getPixel(image, frame.index, x, y);
+							int nextFramePixel = getPixel(image, nextFrameIndex, x, y);
 							int blendedRed = interpolate(frameProgress, prevFramePixel >> 16 & 255, nextFramePixel >> 16 & 255);
 							int blendedGreen = interpolate(frameProgress, prevFramePixel >> 8 & 255, nextFramePixel >> 8 & 255);
 							int blendedBlue = interpolate(frameProgress, prevFramePixel & 255, nextFramePixel & 255);
 
-							this.interpolatedFrame.setPixelRGBA(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
+							interpolatedFrame.setPixelRGBA(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
 						}
 					}
 
-					TextureUtil.prepareImage(getTextureIdToUpload(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
-					this.interpolatedFrame.upload(0, 0, 0, 0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
+					TextureUtil.prepareImage(textureId, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
+					interpolatedFrame.upload(0, 0, 0, 0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
 				}
 			}
 
-			private int getPixel(int frameIndex, int x, int y) {
-				return this.baseImage.getPixelRGBA(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
+			private int getPixel(NativeImage image, int frameIndex, int x, int y) {
+				return image.getPixelRGBA(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
 			}
 
 			private int interpolate(double frameProgress, double prevColor, double nextColor) {
 				return (int)(frameProgress * prevColor + (1 - frameProgress) * nextColor);
-			}
-
-			private int getTextureIdToUpload() {
-				return AnimatableTexture.this.glowMaskId == -1 ? AnimatableTexture.this.getId() : AnimatableTexture.this.glowMaskId;
 			}
 
 			@Override
@@ -271,6 +287,12 @@ public class AnimatableTexture extends SimpleTexture {
 
 				if (this.interpolatedFrame != null)
 					this.interpolatedFrame.close();
+
+				if (this.glowmaskImage != null)
+					this.glowmaskImage.close();
+
+				if (this.glowmaskInterpolatedFrame != null)
+					this.glowmaskInterpolatedFrame.close();
 			}
 		}
 	}

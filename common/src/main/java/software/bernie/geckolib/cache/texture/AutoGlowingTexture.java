@@ -63,7 +63,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	/**
 	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)
 	 */
-	public static boolean PRINT_DEBUG_IMAGES = false;
+	public static boolean PRINT_DEBUG_IMAGES = true;
 
 	protected final ResourceLocation textureBase;
 	protected final ResourceLocation glowLayer;
@@ -146,13 +146,14 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		if (mask == null)
 			return null;
 
-		if (originalTexture instanceof AnimatableTexture animatableTexture) {
-			animatableTexture.glowMaskId = getId();
-			animatableTexture.animationContents.animatedTexture.baseImage.copyFrom(glowImage);
-		}
+		boolean animated = originalTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
+
+		if (animated)
+			((AnimatableTexture)originalTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, mask);
 
 		return () -> {
-			uploadSimple(getId(), mask, blur, clamp);
+			if (!animated)
+				uploadSimple(getId(), mask, blur, clamp);
 
 			if (originalTexture instanceof DynamicTexture dynamicTexture) {
 				dynamicTexture.upload();
