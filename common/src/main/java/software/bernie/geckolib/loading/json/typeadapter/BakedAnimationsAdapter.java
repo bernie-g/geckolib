@@ -104,10 +104,16 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			return ObjectArrayList.of(DoubleObjectPair.of(0, array));
 
 		if (element instanceof JsonObject obj) {
+			if (obj.has("vector"))
+				return ObjectArrayList.of(DoubleObjectPair.of(0, obj));
+
 			List<DoubleObjectPair<JsonElement>> list = new ObjectArrayList<>();
 
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
 				double timestamp = readTimestamp(entry.getKey());
+
+				if (timestamp == 0 && !list.isEmpty())
+					throw new JsonParseException("Invalid keyframe data - multiple starting keyframes?" + entry.getKey());
 
 				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
 					addBedrockKeyframes(timestamp, entryObj, list);
