@@ -139,7 +139,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
             }
         }
         else {
-            GeckoLibServices.NETWORK.stopTriggeredSingletonAnim(getClass(), relatedEntity, instanceId, controllerName, animName);
+            GeckoLibServices.NETWORK.stopTriggeredSingletonAnim(this, relatedEntity, instanceId, controllerName, animName);
         }
     }
 

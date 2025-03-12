@@ -167,8 +167,19 @@ public interface GeckoLibNetworking {
     /**
      * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#stopTriggeredAnim(Entity, long, String, String) Stop}
      * a previously triggered animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
+     *
+     * @deprecated Use {@link #stopTriggeredSingletonAnim(GeoAnimatable, Entity, long, String, String)}
      */
+    @Deprecated(forRemoval = true)
     default void stopTriggeredSingletonAnim(Class<?> animatableClass, Entity entityToTrack, long instanceId, @Nullable String controllerName, @Nullable String animName) {
-        sendToAllPlayersTrackingEntity(new StopTriggeredSingletonAnimPacket(animatableClass.getName(), instanceId, controllerName == null ? "" : controllerName, animName == null ? "" : animName), entityToTrack);
+        sendToAllPlayersTrackingEntity(new StopTriggeredSingletonAnimPacket(animatableClass.getName() + "0", instanceId, controllerName == null ? "" : controllerName, animName == null ? "" : animName), entityToTrack);
+    }
+
+    /**
+     * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#stopTriggeredAnim(Entity, long, String, String) Stop}
+     * a previously triggered animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
+     */
+    default void stopTriggeredSingletonAnim(GeoAnimatable animatable, Entity entityToTrack, long instanceId, @Nullable String controllerName, @Nullable String animName) {
+        sendToAllPlayersTrackingEntity(new StopTriggeredSingletonAnimPacket(GeckoLibUtil.getSyncedSingletonAnimatableId(animatable), instanceId, controllerName == null ? "" : controllerName, animName == null ? "" : animName), entityToTrack);
     }
 }
