@@ -109,9 +109,6 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
 				double timestamp = readTimestamp(entry.getKey());
 
-				if (timestamp == 0 && !list.isEmpty())
-					throw new JsonParseException("Invalid keyframe timestamp: " + entry.getKey());
-
 				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
 					addBedrockKeyframes(timestamp, entryObj, list);
 
