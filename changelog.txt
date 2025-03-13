@@ -1,5 +1,5 @@
-v4.7.4.1
+v4.7.5
 
-- Fix a loading issue with some non-standard animation jsons
-- Fixed the stop triggered anim for singleton animatables not working properly, mostly
-- Fixed animated glowing textures with only partial glowing not loading right
+- Re-handle invalid case animation keyframe. Succeed gracefully rather than failing
+- Add `query.controller_speed` Molang Query.
+- Remove the forRemoval deprecations in GeoModel for `getTextureResource` and `getModelResource`
