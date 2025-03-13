@@ -51,7 +51,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	/**
 	 * Returns the resource path for the {@link BakedGeoModel} (model json file) to render based on the provided animatable
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public abstract ResourceLocation getModelResource(T animatable);
 
 	/**
@@ -64,7 +64,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	/**
 	 * Returns the resource path for the texture file to render based on the provided animatable
 	 */
-	@Deprecated(forRemoval = true)
+	@Deprecated
 	public abstract ResourceLocation getTextureResource(T animatable);
 
 	/**
