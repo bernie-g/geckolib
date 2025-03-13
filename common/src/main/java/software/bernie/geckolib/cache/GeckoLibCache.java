@@ -111,9 +111,9 @@ public final class GeckoLibCache {
 	}
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
-			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
+			String path, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
-				() -> resourceManager.listResources(type, fileName -> fileName.toString().endsWith(".json")), executor)
+				() -> resourceManager.listResources(path, fileName -> fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
