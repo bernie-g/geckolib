@@ -4,12 +4,12 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.Mth;
 import org.apache.logging.log4j.Level;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 
