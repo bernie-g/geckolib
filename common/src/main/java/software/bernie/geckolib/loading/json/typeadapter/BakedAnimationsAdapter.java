@@ -14,8 +14,6 @@ import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.animation.keyframe.KeyframeStack;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MathValue;
-import software.bernie.geckolib.loading.math.Operator;
-import software.bernie.geckolib.loading.math.value.Calculation;
 import software.bernie.geckolib.loading.math.value.Constant;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.util.CompoundException;
@@ -225,10 +223,9 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			Keyframe<MathValue> frame = frames.get(i);
 
 			if (frame.easingType() == EasingType.CATMULLROM) {
-				// TODO Taylor-approximation? Worthwhile? Probably not
 				frames.set(i, new Keyframe<>(frame.length(), frame.startValue(), frame.endValue(), frame.easingType(), ObjectArrayList.of(
-						i == 0 ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i + 1).endValue()))) : frames.get(i - 1).endValue(),
-						i + 1 >= frames.size() ? compressMathValue(new Calculation(Operator.ADD, frame.endValue(), new Calculation(Operator.SUB, frame.endValue(), frames.get(i - 1).endValue()))) : frames.get(i + 1).endValue()
+						i == 0 ? frame.startValue() : frames.get(i - 1).endValue(),
+						i + 1 >= frames.size() ? frame.endValue() : frames.get(i + 1).endValue()
 				)));
 			}
 		}
