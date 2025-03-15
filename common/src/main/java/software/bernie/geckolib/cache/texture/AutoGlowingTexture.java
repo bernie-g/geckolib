@@ -63,7 +63,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	/**
 	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)
 	 */
-	public static boolean PRINT_DEBUG_IMAGES = true;
+	public static boolean PRINT_DEBUG_IMAGES = false;
 
 	protected final ResourceLocation textureBase;
 	protected final ResourceLocation glowLayer;
