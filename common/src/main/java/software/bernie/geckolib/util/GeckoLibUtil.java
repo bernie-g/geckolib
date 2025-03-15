@@ -119,15 +119,18 @@ public final class GeckoLibUtil {
 
 	/**
 	 * Gets a registered synced {@link GeoAnimatable} object by name
+	 * <p>
+	 * The input string <b>MUST</b> be the {@link Class#getName()} of the animatable, passed through
+	 * {@link #getSyncedSingletonAnimatableId(GeoAnimatable)}
 	 *
-	 * @param className the className
+	 * @param syncedAnimatableId the animatable id
 	 */
 	@Nullable
-	public static GeoAnimatable getSyncedAnimatable(String className) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
+	public static GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
+		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
 
 		if (animatable == null)
-			GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
+			GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + syncedAnimatableId + ")");
 
 		return animatable;
 	}

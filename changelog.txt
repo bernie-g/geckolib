@@ -1,3 +1,3 @@
-v4.7.5.1
+v?
 
-- Remove frame extrapolation from spline lerping
+- Clean up javadoc and param naming for GeckoLibUtil#getSyncedAnimatable
