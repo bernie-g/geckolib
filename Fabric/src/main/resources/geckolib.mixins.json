@@ -6,6 +6,8 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "AbstractContainerMenuMixin",
+    "ItemStackMixin"
   ],
   "client": [
     "ItemRendererAccessor",
