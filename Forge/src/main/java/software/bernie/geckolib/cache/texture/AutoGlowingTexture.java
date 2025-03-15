@@ -62,8 +62,10 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	}
 
 	/**
-	 * Get the emissive resource equivalent of the input resource path.<br>
-	 * Additionally prepares the texture manager for the missing texture if the resource is not present
+	 * Get the emissive resource equivalent of the input resource path.
+	 * <p>
+	 * Additionally, prepares the texture manager for the missing texture if the resource is not present
+	 *
 	 * @return The glowlayer resourcepath for the provided input path
 	 */
 	private static ResourceLocation getEmissiveResource(ResourceLocation baseResource) {
