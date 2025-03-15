@@ -3,7 +3,7 @@ package software.bernie.geckolib.loading.json.typeadapter;
 import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import com.google.gson.*;
-import com.mojang.datafixers.util.Pair;
+import it.unimi.dsi.fastutil.doubles.DoubleObjectPair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
@@ -66,11 +66,11 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		for (Map.Entry<String, JsonElement> entry : bonesObj.entrySet()) {
 			JsonObject entryObj = entry.getValue().getAsJsonObject();
 			KeyframeStack<Keyframe<IValue>> scaleFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("scale")), false);
+					getKeyframes(entryObj.get("scale")), false);
 			KeyframeStack<Keyframe<IValue>> positionFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("position")), false);
+					getKeyframes(entryObj.get("position")), false);
 			KeyframeStack<Keyframe<IValue>> rotationFrames = buildKeyframeStack(
-					getTripletObj(entryObj.get("rotation")), true);
+					getKeyframes(entryObj.get("rotation")), true);
 
 			animations[index] = new BoneAnimation(entry.getKey(), rotationFrames, positionFrames, scaleFrames);
 			index++;
@@ -79,7 +79,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return animations;
 	}
 
-	private static List<Pair<String, JsonElement>> getTripletObj(JsonElement element) {
+	private static List<DoubleObjectPair<JsonElement>> getKeyframes(JsonElement element) {
 		if (element == null)
 			return List.of();
 
@@ -94,19 +94,27 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		}
 
 		if (element instanceof JsonArray array)
-			return ObjectArrayList.of(Pair.of("0", array));
+			return ObjectArrayList.of(DoubleObjectPair.of(0, array));
 
 		if (element instanceof JsonObject obj) {
-			List<Pair<String, JsonElement>> list = new ObjectArrayList<>();
+			if (obj.has("vector"))
+				return ObjectArrayList.of(DoubleObjectPair.of(0, obj));
+
+			List<DoubleObjectPair<JsonElement>> list = new ObjectArrayList<>();
 
 			for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
+				double timestamp = readTimestamp(entry.getKey());
+
+				if (timestamp == 0 && !list.isEmpty())
+					throw new JsonParseException("Invalid keyframe data - multiple starting keyframes?" + entry.getKey());
+
 				if (entry.getValue() instanceof JsonObject entryObj && !entryObj.has("vector")) {
-					list.add(getTripletObjBedrock(entry.getKey(), entryObj));
+					addBedrockKeyframes(timestamp, entryObj, list);
 
 					continue;
 				}
 
-				list.add(Pair.of(entry.getKey(), entry.getValue()));
+				list.add(DoubleObjectPair.of(timestamp, entry.getValue()));
 			}
 
 			return list;
@@ -115,25 +123,40 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
-	private static Pair<String, JsonElement> getTripletObjBedrock(String timestamp, JsonObject keyframe) {
-		JsonArray keyframeValues = null;
+	private static void addBedrockKeyframes(double timestamp, JsonObject keyframe, List<DoubleObjectPair<JsonElement>> keyframes) {
+		boolean addedFrame = false;
 
 		if (keyframe.has("pre")) {
 			JsonElement pre = keyframe.get("pre");
-			keyframeValues = pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector");
+			addedFrame = true;
+
+			keyframes.add(DoubleObjectPair.of(timestamp == 0 ? timestamp : timestamp - 0.001d, pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector")));
 		}
-		else if (keyframe.has("post")) {
+
+		if (keyframe.has("post")) {
 			JsonElement post = keyframe.get("post");
-			keyframeValues = post.isJsonArray() ? post.getAsJsonArray() : GsonHelper.getAsJsonArray(post.getAsJsonObject(), "vector");
+			JsonArray values = post.isJsonArray() ? post.getAsJsonArray() : GsonHelper.getAsJsonArray(post.getAsJsonObject(), "vector");
+
+			if (keyframe.has("lerp_mode")) {
+				JsonObject keyframeObj = new JsonObject();
+
+				keyframeObj.add("vector", values);
+				keyframeObj.add("easing", keyframe.get("lerp_mode"));
+
+				keyframes.add(DoubleObjectPair.of(timestamp, keyframeObj));
+			}
+			else {
+				keyframes.add(DoubleObjectPair.of(timestamp, values));
+			}
+
+			return;
 		}
 
-		if (keyframeValues != null)
-			return Pair.of(NumberUtils.isCreatable(timestamp) ? timestamp : "0", keyframeValues);
-
-		throw new JsonParseException("Invalid keyframe data - expected array, found " + keyframe);
+		if (!addedFrame)
+			throw new JsonParseException("Invalid keyframe data - expected array, found " + keyframe);
 	}
 
-	private KeyframeStack<Keyframe<IValue>> buildKeyframeStack(List<Pair<String, JsonElement>> entries, boolean isForRotation) throws MolangException {
+	private KeyframeStack<Keyframe<IValue>> buildKeyframeStack(List<DoubleObjectPair<JsonElement>> entries, boolean isForRotation) throws MolangException {
 		if (entries.isEmpty())
 			return new KeyframeStack<>();
 
@@ -144,17 +167,13 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		IValue xPrev = null;
 		IValue yPrev = null;
 		IValue zPrev = null;
-		Pair<String, JsonElement> prevEntry = null;
+		DoubleObjectPair<JsonElement> prevEntry = null;
 
-		for (Pair<String, JsonElement> entry : entries) {
-			String key = entry.getFirst();
-			JsonElement element = entry.getSecond();
+		for (DoubleObjectPair<JsonElement> entry : entries) {
+			JsonElement element = entry.right();
 
-			if (key.equals("easing") || key.equals("easingArgs") || key.equals("lerp_mode"))
-				continue;
-
-			double prevTime = prevEntry != null ? Double.parseDouble(prevEntry.getFirst()) : 0;
-			double curTime = NumberUtils.isCreatable(key) ? Double.parseDouble(entry.getFirst()) : 0;
+			double prevTime = prevEntry != null ? prevEntry.leftDouble() : 0;
+			double curTime = entry.leftDouble();
 			double timeDelta = curTime - prevTime;
 
 			JsonArray keyFrameVector = element instanceof JsonArray array ? array : GsonHelper.getAsJsonArray(element.getAsJsonObject(), "vector");
@@ -168,8 +187,8 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;
 			List<IValue> easingArgs = entryObj != null && entryObj.has("easingArgs") ?
-					JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
-					new ObjectArrayList<>();
+									  JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
+									  new ObjectArrayList<>();
 
 			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, easingArgs));
 			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, easingArgs));
@@ -181,7 +200,32 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			prevEntry = entry;
 		}
 
-		return new KeyframeStack<>(xFrames, yFrames, zFrames);
+		return new KeyframeStack<>(addSplineArgs(xFrames), addSplineArgs(yFrames), addSplineArgs(zFrames));
+	}
+
+	private List<Keyframe<IValue>> addSplineArgs(List<Keyframe<IValue>> frames) {
+		if (frames.size() == 1) {
+			Keyframe<IValue> frame = frames.get(0);
+
+			if (frame.easingType() != EasingType.LINEAR) {
+				frames.set(0, new Keyframe<>(frame.length(), frame.startValue(), frame.endValue()));
+
+				return frames;
+			}
+		}
+
+		for (int i = 0; i < frames.size(); i++) {
+			Keyframe<IValue> frame = frames.get(i);
+
+			if (frame.easingType() == EasingType.CATMULLROM) {
+				frames.set(i, new Keyframe<>(frame.length(), frame.startValue(), frame.endValue(), frame.easingType(), ObjectArrayList.of(
+						i == 0 ? frame.startValue() : frames.get(i - 1).endValue(),
+						i + 1 >= frames.size() ? frame.endValue() : frames.get(i + 1).endValue()
+				)));
+			}
+		}
+
+		return frames;
 	}
 
 	private static double calculateAnimationLength(BoneAnimation[] boneAnimations) {
@@ -194,5 +238,9 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		}
 
 		return length == 0 ? Double.MAX_VALUE : length;
+	}
+
+	private static double readTimestamp(String timestamp) {
+		return NumberUtils.isCreatable(timestamp) ? Double.parseDouble(timestamp) : 0;
 	}
 }
