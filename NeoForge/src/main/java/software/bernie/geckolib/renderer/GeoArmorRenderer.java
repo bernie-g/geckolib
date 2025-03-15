@@ -113,7 +113,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	 */
 	@Override
 	public long getInstanceId(T animatable) {
-		return GeoItem.getId(this.currentStack) + this.currentEntity.getId();
+		return -GeoItem.getId(this.currentStack);
 	}
 
 	/**

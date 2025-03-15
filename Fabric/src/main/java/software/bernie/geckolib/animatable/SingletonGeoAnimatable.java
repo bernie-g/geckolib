@@ -1,16 +1,19 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.network.GeckoLibNetwork;
 import software.bernie.geckolib.network.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.AnimDataSyncPacket;
 import software.bernie.geckolib.network.packet.AnimTriggerPacket;
+import software.bernie.geckolib.network.packet.StopTriggeredSingletonAnimPacket;
 
-import javax.annotation.Nullable;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -107,11 +110,78 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     }
 
     /**
+     * Stop a previously triggered animation for this GeoAnimatable for the given controller name and animation name
+     * <p>
+     * This can be fired from either the client or the server, but optimally you would call it from the server
+     * <p>
+     * <b><u>DO NOT OVERRIDE</u></b>
+     *
+     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param instanceId The unique id that identifies the specific animatable instance
+     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+     * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+     */
+    @ApiStatus.NonExtendable
+    default void stopTriggeredAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
+        if (relatedEntity.level().isClientSide()) {
+            AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(instanceId);
+
+            if (animatableManager == null)
+                return;
+
+            if (controllerName != null) {
+                animatableManager.stopTriggeredAnimation(controllerName, animName);
+            }
+            else {
+                animatableManager.stopTriggeredAnimation(animName);
+            }
+        }
+        else {
+            GeckoLibNetwork.sendToTrackingEntityAndSelf(new StopTriggeredSingletonAnimPacket(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, controllerName, animName), relatedEntity);
+        }
+    }
+
+    /**
+     * Trigger a client-side animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+     * <p>
+     * This can be fired from either the client or the server, but optimally you would call it from the server
+     * <p>
+     * <b><u>DO NOT OVERRIDE</u></b>
+     *
+     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param instanceId     The unique id that identifies the specific animatable instance
+     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+     * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
+     */
+    @ApiStatus.NonExtendable
+    default void triggerArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
+        triggerAnim(relatedEntity, -instanceId, controllerName, animName);
+    }
+
+    /**
+     * Stop a previously triggered animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+     * <p>
+     * This can be fired from either the client or the server, but optimally you would call it from the server
+     * <p>
+     * <b><u>DO NOT OVERRIDE</u></b>
+     *
+     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param instanceId The unique id that identifies the specific animatable instance
+     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+     * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
+     */
+    @ApiStatus.NonExtendable
+    default void stopTriggeredArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
+        stopTriggeredAnim(relatedEntity, -instanceId, controllerName, animName);
+    }
+
+    /**
      * Override the default handling for instantiating an AnimatableInstanceCache for this animatable.<br>
      * Don't override this unless you know what you're doing.
      */
+    @Nullable
     @Override
-    default @Nullable AnimatableInstanceCache animatableCacheOverride() {
+    default AnimatableInstanceCache animatableCacheOverride() {
         return new SingletonAnimatableInstanceCache(this);
     }
 
