@@ -45,7 +45,7 @@ public interface GeoAnimatable {
 	 * to their default position.
 	 */
 	default double getBoneResetTime() {
-		return 1;
+		return 0;
 	}
 
 	/**
