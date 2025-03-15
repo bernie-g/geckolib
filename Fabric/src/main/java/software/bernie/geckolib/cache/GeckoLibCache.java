@@ -13,7 +13,6 @@ import software.bernie.geckolib.GeckoLibException;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
 import software.bernie.geckolib.loading.FileLoader;
-import software.bernie.geckolib.loading.json.FormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
@@ -119,9 +118,9 @@ public final class GeckoLibCache {
 	}
 
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
-			String type, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
+			String path, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
-				() -> resourceManager.listResources(type, fileName -> fileName.toString().endsWith(".json")), executor)
+				() -> resourceManager.listResources(path, fileName -> fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
