@@ -167,7 +167,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
 	 */
 	@ApiStatus.NonExtendable
-	default void triggerArmorAnim(Entity relatedEntity, long instanceId, @org.jetbrains.annotations.Nullable String controllerName, String animName) {
+	default void triggerArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
 		triggerAnim(relatedEntity, -instanceId, controllerName, animName);
 	}
 
@@ -184,7 +184,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
 	 */
 	@ApiStatus.NonExtendable
-	default void stopTriggeredArmorAnim(Entity relatedEntity, long instanceId, @org.jetbrains.annotations.Nullable String controllerName, @org.jetbrains.annotations.Nullable String animName) {
+	default void stopTriggeredArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
 		stopTriggeredAnim(relatedEntity, -instanceId, controllerName, animName);
 	}
 
