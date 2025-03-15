@@ -165,9 +165,9 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					}
 				}
 
-				bone.setRotX((float)Interpolations.lerp(percentageReset, lastXRot, initialRotX));
-				bone.setRotY((float)Interpolations.lerp(percentageReset, lastYRot, initialRotY));
-				bone.setRotZ((float)Interpolations.lerp(percentageReset, lastZRot, initialRotZ));
+				bone.setRotX((float)Interpolations.lerp(lastXRot, initialRotX, percentageReset));
+				bone.setRotY((float)Interpolations.lerp(lastYRot, initialRotY, percentageReset));
+				bone.setRotZ((float)Interpolations.lerp(lastZRot, initialRotZ, percentageReset));
 
 				if (percentageReset >= 1)
 					saveSnapshot.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
