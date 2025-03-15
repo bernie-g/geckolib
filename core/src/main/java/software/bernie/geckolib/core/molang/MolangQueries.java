@@ -5,6 +5,7 @@ package software.bernie.geckolib.core.molang;
  * These do not constitute a definitive list of queries; merely the default ones
  */
 public final class MolangQueries {
+	public static final String CONTROLLER_SPEED = "query.controller_speed";
 	public static final String ANIM_TIME = "query.anim_time";
 	public static final String LIFE_TIME = "query.life_time";
 	public static final String ACTOR_COUNT = "query.actor_count";

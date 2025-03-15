@@ -210,6 +210,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		this.lastRenderedInstance = instanceId;
 		AnimationProcessor<T> processor = getAnimationProcessor();
 
+		MolangParser.INSTANCE.setValue(MolangQueries.CONTROLLER_SPEED, () -> animationState.getController().getAnimationSpeed());
 		processor.preAnimationSetup(animationState.getAnimatable(), this.animTime);
 
 		if (!processor.getRegisteredBones().isEmpty())

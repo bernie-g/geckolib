@@ -73,6 +73,7 @@ public class MolangParser extends MathBuilder {
 	}
 
 	private void registerAdditionalVariables() {
+		register(new LazyVariable(MolangQueries.CONTROLLER_SPEED, 0));
 		register(new LazyVariable(MolangQueries.ANIM_TIME, 0));
 		register(new LazyVariable(MolangQueries.LIFE_TIME, 0));
 		register(new LazyVariable(MolangQueries.ACTOR_COUNT, 0));
