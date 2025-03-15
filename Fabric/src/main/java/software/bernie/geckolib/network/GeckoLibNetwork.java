@@ -1,5 +1,7 @@
 package software.bernie.geckolib.network;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -34,6 +36,7 @@ public final class GeckoLibNetwork {
     public static final ResourceLocation BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_trigger_sync");
     public static final ResourceLocation STOP_TRIGGERED_BLOCK_ENTITY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_block_entity_anim");
 
+    private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
     public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
     /**
@@ -96,6 +99,25 @@ public final class GeckoLibNetwork {
         for (ServerPlayer trackingPlayer : PlayerLookup.tracking(level, blockPos)) {
             ServerPlayNetworking.send(trackingPlayer, packet.getPacketID(), packet.encode());
         }
+    }
+
+    /**
+     * Get a synced singleton animatable's id for use with {@link #SYNCED_ANIMATABLES}
+     * <p>
+     * This <b><u>MUST</u></b> be used when retrieving from {@link #SYNCED_ANIMATABLES}
+     * as this method eliminates class duplication collisions
+     */
+    public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
+        return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
+            String baseId = animatable.getClass().getName();
+            i = 0;
+
+            while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
+                i++;
+            }
+
+            return baseId + i;
+        });
     }
 
     public interface IPacketCallback {

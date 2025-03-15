@@ -68,7 +68,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param packetTarget The distribution method determining which players to sync the data to
 	 */
 	default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, PacketDistributor.PacketTarget packetTarget) {
-		GeckoLibNetwork.send(new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data), packetTarget);
+		GeckoLibNetwork.send(new AnimDataSyncPacket<>(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, dataTicket, data), packetTarget);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			triggerAnim(instanceId, controllerName, animName, PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
 		}
 	}
 
@@ -100,7 +100,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
 	 * @param packetTarget   The distribution method determining which players to sync the data to
 	 */
 	default <D> void triggerAnim(long instanceId, @Nullable String controllerName, String animName, PacketDistributor.PacketTarget packetTarget) {
-		GeckoLibNetwork.send(new AnimTriggerPacket<>(getClass().toString(), instanceId, controllerName, animName), packetTarget);
+		GeckoLibNetwork.send(new AnimTriggerPacket<>(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, controllerName, animName), packetTarget);
 	}
 
 	/**

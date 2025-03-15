@@ -70,7 +70,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @param data       The data to sync
      */
     default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
-        GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimDataSyncPacket<>(getClass().toString(), instanceId, dataTicket, data), entityToTrack);
+        GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimDataSyncPacket<>(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, dataTicket, data), entityToTrack);
     }
 
     /**
@@ -88,7 +88,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
             getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
         }
         else {
-            GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName), relatedEntity);
+            GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimTriggerPacket(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, controllerName, animName), relatedEntity);
         }
     }
 
@@ -103,7 +103,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @param packetCallback The packet callback. Used to call a custom network code
      */
     default void triggerAnim(long instanceId, @Nullable String controllerName, String animName, GeckoLibNetwork.IPacketCallback packetCallback) {
-        GeckoLibNetwork.sendWithCallback(new AnimTriggerPacket(getClass().toString(), instanceId, controllerName, animName), packetCallback);
+        GeckoLibNetwork.sendWithCallback(new AnimTriggerPacket(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, controllerName, animName), packetCallback);
     }
 
     /**

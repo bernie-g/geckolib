@@ -1,5 +1,7 @@
 package software.bernie.geckolib.network;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkRegistry;
@@ -20,6 +22,7 @@ public final class GeckoLibNetwork {
 	private static final String VER = "1";
 	private static final SimpleChannel PACKET_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GeckoLib.MOD_ID, "main"), () -> VER, VER::equals, VER::equals);
 
+	private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
 	private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
 	public static void init() {
@@ -41,10 +44,10 @@ public final class GeckoLibNetwork {
 	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
 	 */
 	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
+		GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
 
 		if (existing == null)
-			GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass().toString());
+			GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
 	}
 
 	/**
@@ -66,5 +69,24 @@ public final class GeckoLibNetwork {
 	 */
 	public static <M> void send(M packet, PacketDistributor.PacketTarget distributor) {
 		PACKET_CHANNEL.send(distributor, packet);
+	}
+
+	/**
+	 * Get a synced singleton animatable's id for use with {@link #SYNCED_ANIMATABLES}
+	 * <p>
+	 * This <b><u>MUST</u></b> be used when retrieving from {@link #SYNCED_ANIMATABLES}
+	 * as this method eliminates class duplication collisions
+	 */
+	public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
+		return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
+			String baseId = animatable.getClass().getName();
+			i = 0;
+
+			while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
+				i++;
+			}
+
+			return baseId + i;
+		});
 	}
 }
