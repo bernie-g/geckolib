@@ -45,11 +45,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		RenderStateShard.TextureStateShard textureState = new RenderStateShard.TextureStateShard(texture, false, false);
 
 		return RenderType.create("geo_glowing_layer", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
-				RenderType.CompositeState.builder()
-						.setShaderState(SHADER_STATE)
-						.setTextureState(textureState)
-						.setTransparencyState(TRANSPARENCY_STATE)
-						.setWriteMaskState(WRITE_MASK).createCompositeState(false));
+								 RenderType.CompositeState.builder()
+										 .setShaderState(SHADER_STATE)
+										 .setTextureState(textureState)
+										 .setTransparencyState(TRANSPARENCY_STATE)
+										 .setWriteMaskState(WRITE_MASK).createCompositeState(false));
 	});
 	private static final String APPENDIX = "_glowmask";
 
@@ -91,7 +91,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 		Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
 		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
-				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
+								dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
 		NativeImage glowImage = null;
 		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.SERIALIZER);
 		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
@@ -132,8 +132,14 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		if (mask == null)
 			return null;
 
+		boolean animated = originalTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
+
+		if (animated)
+			((AnimatableTexture)originalTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, mask);
+
 		return () -> {
-			uploadSimple(getId(), mask, blur, clamp);
+			if (!animated)
+				uploadSimple(getId(), mask, blur, clamp);
 
 			if (originalTexture instanceof DynamicTexture dynamicTexture) {
 				dynamicTexture.upload();

@@ -1,19 +1,11 @@
 package software.bernie.geckolib.cache.texture;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.function.Function;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.mojang.blaze3d.pipeline.RenderCall;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -26,8 +18,14 @@ import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 /**
  * Texture object type responsible for GeckoLib's emissive render textures
@@ -47,11 +45,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		RenderStateShard.TextureStateShard textureState = new RenderStateShard.TextureStateShard(texture, false, false);
 
 		return RenderType.create("geo_glowing_layer", DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 256, false, true,
-				RenderType.CompositeState.builder()
-						.setShaderState(SHADER_STATE)
-						.setTextureState(textureState)
-						.setTransparencyState(TRANSPARENCY_STATE)
-						.setWriteMaskState(WRITE_MASK).createCompositeState(false));
+								 RenderType.CompositeState.builder()
+										 .setShaderState(SHADER_STATE)
+										 .setTextureState(textureState)
+										 .setTransparencyState(TRANSPARENCY_STATE)
+										 .setWriteMaskState(WRITE_MASK).createCompositeState(false));
 	});
 	private static final String APPENDIX = "_glowmask";
 
@@ -93,7 +91,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 		Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
 		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
-				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
+								dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
 		NativeImage glowImage = null;
 		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.SERIALIZER);
 		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
@@ -134,8 +132,14 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		if (mask == null)
 			return null;
 
+		boolean animated = originalTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
+
+		if (animated)
+			((AnimatableTexture)originalTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, mask);
+
 		return () -> {
-			uploadSimple(getId(), mask, blur, clamp);
+			if (!animated)
+				uploadSimple(getId(), mask, blur, clamp);
 
 			if (originalTexture instanceof DynamicTexture dynamicTexture) {
 				dynamicTexture.upload();
