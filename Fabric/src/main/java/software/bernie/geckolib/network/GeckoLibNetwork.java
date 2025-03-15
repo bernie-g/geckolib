@@ -61,7 +61,7 @@ public final class GeckoLibNetwork {
      * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
      */
     synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-        GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().toString(), animatable);
+        GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
 
         if (existing == null)
             GeckoLib.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
