@@ -39,7 +39,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 		RenderType emissiveRenderType = getRenderType(animatable);
 
 		getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, emissiveRenderType,
-				bufferSource.getBuffer(emissiveRenderType), partialTick, 15728640, OverlayTexture.NO_OVERLAY,
+				bufferSource.getBuffer(emissiveRenderType), partialTick, LightTexture.FULL_SKY, OverlayTexture.NO_OVERLAY,
 				1, 1, 1, 1);
 	}
 }
