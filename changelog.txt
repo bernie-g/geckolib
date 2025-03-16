@@ -1,3 +1,4 @@
 v?
 
 - Clean up javadoc and param naming for GeckoLibUtil#getSyncedAnimatable
+- Allow for manually changed GeckoLib stack ids (???) to be synced as normal
