@@ -30,10 +30,7 @@ public class AbstractContainerMenuMixin {
      */
     @Redirect(method = "synchronizeSlotToRemote", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     public boolean geckolib$forceGeckolibIdSync(ItemStack stack, ItemStack other) {
-        return ItemStack.matches(stack, other) &&
-               stack.hasTag() && stack.getTag().contains(GeoItem.ID_NBT_KEY) &&
-               other.hasTag() && other.getTag().contains(GeoItem.ID_NBT_KEY) &&
-               stack.getTag().get(GeoItem.ID_NBT_KEY).equals(other.getTag().get(GeoItem.ID_NBT_KEY));
+        return ItemStack.matches(stack, other) && geckolib$xnorGeckolibStackIds(stack.getTag(), other.getTag());
     }
 
     /**
@@ -41,9 +38,11 @@ public class AbstractContainerMenuMixin {
      */
     @Redirect(method = "triggerSlotListeners", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     public boolean geckolib$forceGeckolibSlotChange(ItemStack stack, ItemStack other) {
-        return ItemStack.matches(stack, other) &&
-               stack.hasTag() && stack.getTag().contains(GeoItem.ID_NBT_KEY) &&
-               other.hasTag() && other.getTag().contains(GeoItem.ID_NBT_KEY) &&
-               stack.getTag().get(GeoItem.ID_NBT_KEY).equals(other.getTag().get(GeoItem.ID_NBT_KEY));
+        return ItemStack.matches(stack, other) && geckolib$xnorGeckolibStackIds(stack.getTag(), other.getTag());
+    }
+
+    @Unique
+    private static boolean geckolib$xnorGeckolibStackIds(CompoundTag tag1, CompoundTag tag2) {
+        return (tag1 == null ? -1 : tag1.getInt(GeoItem.ID_NBT_KEY)) == (tag2 == null ? -1 : tag2.getInt(GeoItem.ID_NBT_KEY));
     }
 }
