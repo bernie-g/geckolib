@@ -31,7 +31,7 @@ public class AbstractContainerMenuMixin {
      */
     @WrapOperation(method = "synchronizeSlotToRemote", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     public boolean geckolib$forceGeckolibIdSync(ItemStack stack, ItemStack other, Operation<Boolean> original) {
-        return original.call(stack, other) && stack.has(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()) == other.has(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
+        return original.call(stack, other) && stack.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), -1).equals(other.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), -1));
     }
 
     /**
@@ -39,6 +39,6 @@ public class AbstractContainerMenuMixin {
      */
     @WrapOperation(method = "triggerSlotListeners", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;matches(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z"))
     public boolean geckolib$forceGeckolibSlotChange(ItemStack stack, ItemStack other, Operation<Boolean> original) {
-        return original.call(stack, other) && stack.has(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()) == other.has(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
+        return original.call(stack, other) && stack.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), -1).equals(other.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), -1));
     }
 }
