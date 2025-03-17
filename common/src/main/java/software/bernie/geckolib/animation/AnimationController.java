@@ -558,6 +558,16 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Proceeds to the next queued animation, stopping playback if no further animations are present.
+	 * <p>
+	 * This method removes the current animation from the queue, allowing subsequent animations to be processed
+	 * in the next animation cycle. If the queue is empty, the controller will transition to a stopped state.
+	 */
+	public void nextAnimationStage() {
+		this.animationQueue.poll();
+	}
+
+	/**
 	 * Handle the current animation's state modifications and translations
 	 *
 	 * @param adjustedTick The controller-adjusted tick for animation purposes
