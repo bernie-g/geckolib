@@ -8,8 +8,6 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "common.AbstractContainerMenuMixin",
-    "common.ItemStackMixin"
   ],
   "client": [
     "client.TextureManagerMixin"
