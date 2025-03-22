@@ -1,5 +1,7 @@
 package software.bernie.geckolib.mixins.fabric;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -10,7 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 
@@ -29,9 +30,9 @@ public class MixinItemRenderer {
            renderer.renderByItem(itemStack, transformType, poseStack, multiBufferSource, i, j);
     }
 
-    @Redirect(method = "render", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
-    public void cancelRender(BlockEntityWithoutLevelRenderer renderer, ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int i, int j) {
+    @WrapOperation(method = "render", require = 0, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/BlockEntityWithoutLevelRenderer;renderByItem(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;II)V"))
+    public void cancelRender(BlockEntityWithoutLevelRenderer renderer, ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Operation<Void> original) {
         if (RenderProvider.of(itemStack).getCustomRenderer() == renderer)
-            renderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, i, j);
+            renderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }
