@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.ApiStatus;
-import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.network.packet.MultiloaderPacket;
 
 import java.util.concurrent.CompletableFuture;
@@ -25,12 +25,12 @@ public class GeckoLibClient implements ClientModInitializer {
                 .registerReloadListener(new IdentifiableResourceReloadListener() {
                     @Override
                     public ResourceLocation getFabricId() {
-                        return GeckoLibCache.RELOAD_LISTENER_ID;
+                        return GeckoLibResources.RELOAD_LISTENER_ID;
                     }
 
                     @Override
-                    public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor executor, Executor executor2) {
-                        return GeckoLibCache.reload(preparationBarrier, resourceManager, executor, executor2);
+                    public CompletableFuture<Void> reload(PreparationBarrier preparationBarrier, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
+                        return GeckoLibResources.reload(preparationBarrier, resourceManager, backgroundExecutor, gameExecutor);
                     }
                 });
     }

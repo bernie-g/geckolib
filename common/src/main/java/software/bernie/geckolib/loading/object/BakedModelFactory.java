@@ -23,7 +23,7 @@ public interface BakedModelFactory {
 	BakedModelFactory DEFAULT_FACTORY = new Builtin();
 
 	/**
-	 * Construct the output model from the given {@link GeometryTree}.<br>
+	 * Construct the output model from the given {@link GeometryTree}
 	 */
 	BakedGeoModel constructGeoModel(GeometryTree geometryTree);
 

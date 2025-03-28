@@ -13,7 +13,7 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.cache.GeckoLibCache;
+import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
@@ -90,7 +90,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * Get the baked geo model object used for rendering from the given resource path
 	 */
 	public BakedGeoModel getBakedModel(ResourceLocation location) {
-		BakedGeoModel model = GeckoLibCache.getBakedModels().get(location);
+		BakedGeoModel model = GeckoLibResources.getBakedModels().get(location);
 
 		if (model == null) {
 			if (!location.getPath().contains("geo/"))
@@ -127,14 +127,14 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	@Nullable
 	public Animation getAnimation(T animatable, String name) {
 		ResourceLocation location = getAnimationResource(animatable);
-		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(location);
+		BakedAnimations bakedAnimations = GeckoLibResources.getBakedAnimations().get(location);
 		Animation animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
 
 		if (animation != null)
 			return animation;
 
 		for (ResourceLocation fallbackLocation : getAnimationResourceFallbacks(animatable, null)) {
-			bakedAnimations = GeckoLibCache.getBakedAnimations().get(location = fallbackLocation);
+			bakedAnimations = GeckoLibResources.getBakedAnimations().get(location = fallbackLocation);
 			animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
 
 			if (animation != null)
