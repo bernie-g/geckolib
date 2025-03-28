@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.TextureUtil;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureContents;
 import net.minecraft.client.renderer.texture.Tickable;
@@ -31,8 +32,8 @@ import java.util.Optional;
  * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
  */
 public class AnimatableTexture extends SimpleTexture implements Tickable {
-	private AnimationContents animationContents = null;
-	private boolean isAnimated = false;
+	protected AnimationContents animationContents = null;
+	protected boolean isAnimated = false;
 
 	public AnimatableTexture(final ResourceLocation location) {
 		super(location);
@@ -105,10 +106,10 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 			this.animationContents.animatedTexture.setCurrentFrame(tick);
 	}
 
-	private class AnimationContents {
-		private final FrameSize frameSize;
+	protected class AnimationContents {
+		protected final FrameSize frameSize;
 		@Nullable
-		private final Texture animatedTexture;
+		protected final Texture animatedTexture;
 
 		private AnimationContents(NativeImage image, AnimationMetadataSection animMeta) {
 			this.frameSize = animMeta.calculateFrameSize(image.getWidth(), image.getHeight());
@@ -166,20 +167,23 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 					this.animatedTexture != null && this.animatedTexture.clamp, this.animatedTexture != null && this.animatedTexture.blur);
 		}
 
-		private record Frame(int index, int time) {}
+		protected record Frame(int index, int time) {}
 
-		private class Texture implements AutoCloseable {
-			private final NativeImage baseImage;
-			private final Frame[] frames;
-			private final int framePanelSize;
-			private final boolean interpolating;
-			private final NativeImage interpolatedFrame;
-			private final int totalFrameTime;
-			private final boolean clamp;
-			private final boolean blur;
+		protected class Texture implements AutoCloseable {
+			protected final NativeImage baseImage;
+			protected final Frame[] frames;
+			protected final int framePanelSize;
+			protected final boolean interpolating;
+			protected final NativeImage interpolatedFrame;
+			protected final int totalFrameTime;
+			protected final boolean clamp;
+			protected final boolean blur;
+			protected AbstractTexture glowMaskTexture = null;
+			protected NativeImage glowmaskImage = null;
+			protected NativeImage glowmaskInterpolatedFrame = null;
 
-			private int currentFrame;
-			private int currentSubframe;
+			protected int currentFrame;
+			protected int currentSubframe;
 
 			private Texture(NativeImage baseImage, Frame[] frames, int framePanelSize, boolean interpolating, boolean clamp, boolean blur) {
 				this.baseImage = baseImage;
@@ -204,6 +208,13 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 
 			private int getFrameY(int frameIndex) {
 				return frameIndex / this.framePanelSize;
+			}
+
+			public void setGlowMaskTexture(AutoGlowingTexture texture, NativeImage baseImage, NativeImage glowMask) {
+				this.glowMaskTexture = texture;
+				this.glowmaskImage = glowMask;
+				this.glowmaskInterpolatedFrame = this.interpolating ? new NativeImage(AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false) : null;
+				this.baseImage.copyFrom(baseImage);
 			}
 
 			public void setCurrentFrame(int ticks) {
@@ -233,37 +244,47 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 
 					GeoAbstractTexture.uploadTexture(AnimatableTexture.this, this.baseImage, this.clamp, this.blur,
 							getFrameX(this.currentFrame) * frameWidth, getFrameY(this.currentFrame) * frameHeight, frameWidth, frameHeight, false);
+
+					if (this.glowmaskImage != null) {
+						GeoAbstractTexture.uploadTexture(this.glowmaskTexture, this.glowmaskImage, this.clamp, this.blur,
+														 getFrameX(this.currentFrame) * frameWidth, getFrameY(this.currentFrame) * frameHeight, frameWidth, frameHeight, false);
+					}
 				}
 				else if (this.currentSubframe != lastSubframe && this.interpolating) {
-					GeoAbstractTexture.runOnRenderThread(this::generateInterpolatedFrame);
+					GeoAbstractTexture.runOnRenderThread(() -> {
+						generateInterpolatedFrame(AnimatableTexture.this, this.baseImage, this.interpolatedFrame);
+
+						if (this.glowmaskImage != null)
+							generateInterpolatedFrame(this.glowMaskTexture, this.glowmaskImage, this.glowmaskInterpolatedFrame);
+					});
 				}
 			}
 
-			private void generateInterpolatedFrame() {
+			private void generateInterpolatedFrame(AbstractTexture texture, NativeImage image, NativeImage interpolatedFrame) {
 				Frame frame = this.frames[this.currentFrame];
 				double frameProgress = 1 - (double)this.currentSubframe / (double)frame.time;
 				int nextFrameIndex = this.frames[(this.currentFrame + 1) % this.frames.length].index;
 
 				if (frame.index != nextFrameIndex) {
-					for (int y = 0; y < this.interpolatedFrame.getHeight(); ++y) {
-						for (int x = 0; x < this.interpolatedFrame.getWidth(); ++x) {
-							int prevFramePixel = getPixel(frame.index, x, y);
-							int nextFramePixel = getPixel(nextFrameIndex, x, y);
+					for (int y = 0; y < interpolatedFrame.getHeight(); ++y) {
+						for (int x = 0; x < interpolatedFrame.getWidth(); ++x) {
+							int prevFramePixel = getPixel(image, frame.index, x, y);
+							int nextFramePixel = getPixel(image, nextFrameIndex, x, y);
 							int blendedRed = interpolate(frameProgress, prevFramePixel >> 16 & 255, nextFramePixel >> 16 & 255);
 							int blendedGreen = interpolate(frameProgress, prevFramePixel >> 8 & 255, nextFramePixel >> 8 & 255);
 							int blendedBlue = interpolate(frameProgress, prevFramePixel & 255, nextFramePixel & 255);
 
-							this.interpolatedFrame.setPixel(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
+							interpolatedFrame.setPixel(x, y, prevFramePixel & -16777216 | blendedRed << 16 | blendedGreen << 8 | blendedBlue);
 						}
 					}
 
-					GeoAbstractTexture.uploadTexture(AnimatableTexture.this, this.interpolatedFrame, this.clamp, this.blur,
+					GeoAbstractTexture.uploadTexture(texture, this.interpolatedFrame, this.clamp, this.blur,
 							0, 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false);
 				}
 			}
 
-			private int getPixel(int frameIndex, int x, int y) {
-				return this.baseImage.getPixel(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
+			private int getPixel(NativeImage image, int frameIndex, int x, int y) {
+				return image.getPixel(x + getFrameX(frameIndex) * AnimationContents.this.frameSize.width(), y + getFrameY(frameIndex) * AnimationContents.this.frameSize.height());
 			}
 
 			private int interpolate(double frameProgress, double prevColor, double nextColor) {
@@ -276,6 +297,12 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 
 				if (this.interpolatedFrame != null)
 					this.interpolatedFrame.close();
+
+				if (this.glowmaskImage != null)
+					this.glowmaskImage.close();
+
+				if (this.glowmaskInterpolatedFrame != null)
+					this.glowmaskInterpolatedFrame.close();
 			}
 		}
 	}

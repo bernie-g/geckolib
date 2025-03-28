@@ -74,7 +74,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	/**
 	 * Get the emissive resource equivalent of the input resource path
 	 * <p>
-	 * Additionally prepares the texture manager for the missing texture if the resource is not present
+	 * Additionally, prepares the texture manager for the missing texture if the resource is not present
 	 *
 	 * @return The glowlayer resourcepath for the provided input path
 	 */
@@ -132,10 +132,18 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			printDebugImageToDisk(resourceId(), contents.left());
 		}
 
+		boolean animated = baseTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
+
+		if (animated)
+			((AnimatableTexture)baseTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, contents.left());
+
 		switch (baseTexture) {
 			case ReloadableTexture reloadable -> reloadable.apply(new TextureContents(referenceImage, baseTextureMetaSection));
 			case DynamicTexture dynamicTexture -> dynamicTexture.upload();
-			default -> uploadTexture(baseTexture, new TextureContents(referenceImage, baseTextureMetaSection));
+			default -> {
+				if (!animated)
+					uploadTexture(baseTexture, new TextureContents(referenceImage, baseTextureMetaSection));
+			}
 		}
 
 		return new TextureContents(contents.left(), baseTextureMetaSection);

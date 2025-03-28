@@ -10,8 +10,10 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.network.packet.*;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Optional;
 
@@ -83,8 +85,8 @@ public interface GeckoLibNetworking {
     /**
      * Sync a {@link SerializableDataTicket} from server to clientside for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
      */
-    default <D> void syncSingletonAnimData(Class<?> animatableClass, long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
-        sendToAllPlayersTrackingEntity(new SingletonDataSyncPacket<>(animatableClass.getName(), instanceId, dataTicket, data), entityToTrack);
+    default <D> void syncSingletonAnimData(GeoAnimatable animatable, long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
+        sendToAllPlayersTrackingEntity(new SingletonDataSyncPacket<>(GeckoLibUtil.getSyncedSingletonAnimatableId(animatable), instanceId, dataTicket, data), entityToTrack);
     }
 
     /**
@@ -107,8 +109,8 @@ public interface GeckoLibNetworking {
      * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#triggerAnim(Entity, long, String, String) Trigger}
      * an animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
      */
-    default void triggerSingletonAnim(Class<?> animatableClass, Entity entityToTrack, long instanceId, @Nullable String controllerName, String animName) {
-        sendToAllPlayersTrackingEntity(new SingletonAnimTriggerPacket(animatableClass.getName(), instanceId, Optional.ofNullable(controllerName), animName), entityToTrack);
+    default void triggerSingletonAnim(GeoAnimatable animatable, Entity entityToTrack, long instanceId, @Nullable String controllerName, String animName) {
+        sendToAllPlayersTrackingEntity(new SingletonAnimTriggerPacket(GeckoLibUtil.getSyncedSingletonAnimatableId(animatable), instanceId, Optional.ofNullable(controllerName), animName), entityToTrack);
     }
 
     /**
@@ -131,7 +133,7 @@ public interface GeckoLibNetworking {
      * {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#stopTriggeredAnim(Entity, long, String, String) Stop}
      * a previously triggered animation for the given {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable SingletonGeoAnimatable}
      */
-    default void stopTriggeredSingletonAnim(Class<?> animatableClass, Entity entityToTrack, long instanceId, @Nullable String controllerName, @Nullable String animName) {
-        sendToAllPlayersTrackingEntity(new StopTriggeredSingletonAnimPacket(animatableClass.getName(), instanceId, Optional.ofNullable(controllerName), Optional.ofNullable(animName)), entityToTrack);
+    default void stopTriggeredSingletonAnim(GeoAnimatable animatable, Entity entityToTrack, long instanceId, @Nullable String controllerName, @Nullable String animName) {
+        sendToAllPlayersTrackingEntity(new StopTriggeredSingletonAnimPacket(GeckoLibUtil.getSyncedSingletonAnimatableId(animatable), instanceId, Optional.ofNullable(controllerName), Optional.ofNullable(animName)), entityToTrack);
     }
 }

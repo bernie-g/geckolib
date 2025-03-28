@@ -46,6 +46,7 @@ public final class MolangQueries {
 	public static final String CARDINAL_FACING = "query.cardinal_facing";
 	public static final String CARDINAL_FACING_2D = "query.cardinal_facing_2d";
 	public static final String CARDINAL_PLAYER_FACING = "query.cardinal_player_facing";
+	public static final String CONTROLLER_SPEED = "query.controller_speed";
 	public static final String DAY = "query.day";
 	public static final String DEATH_TICKS = "query.death_ticks";
 	public static final String DISTANCE_FROM_CAMERA = "query.distance_from_camera";
@@ -205,6 +206,7 @@ public final class MolangQueries {
 	private static void setDefaultQueryValues() {
 		getVariableFor("PI").set(Math.PI);
 		getVariableFor("E").set(Math.E);
+		setActorVariable(CONTROLLER_SPEED, actor -> actor.animationState.getController().getAnimationSpeed());
 		setActorVariable(CARDINAL_PLAYER_FACING, actor -> actor.mc.player.getDirection().ordinal());
 		setActorVariable(DAY, actor -> actor.level.getGameTime() / 24000d);
 		setActorVariable(FRAME_ALPHA, actor -> actor.animationState().getPartialTick());

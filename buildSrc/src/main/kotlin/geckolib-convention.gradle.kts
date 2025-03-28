@@ -1,8 +1,8 @@
 plugins {
-    `java`
+    java
     `maven-publish`
-    `idea`
-    `eclipse`
+    idea
+    eclipse
 }
 
 java {

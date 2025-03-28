@@ -16,6 +16,7 @@ import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.json.ModelFormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
+import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
 import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
@@ -30,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
@@ -67,10 +69,12 @@ public final class GeckoLibResources {
 		CompletableFuture<Map<ResourceLocation, BakedAnimations>> animations = loadAnimations(backgroundExecutor, resourceManager);
 		CompletableFuture<Map<ResourceLocation, BakedGeoModel>> models = loadModels(backgroundExecutor, resourceManager);
 
-		return CompletableFuture.allOf(animations, models).thenCompose(stage::wait).thenRunAsync(() -> {
-			GeckoLibResources.ANIMATIONS = animations.join();
-			GeckoLibResources.MODELS = models.join();
-		}, gameExecutor);
+		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), backgroundExecutor)
+				.thenCompose(ignored -> CompletableFuture.allOf(animations, models).thenCompose(stage::wait).thenRunAsync(() -> {
+					GeckoLibResources.ANIMATIONS = animations.join();
+					GeckoLibResources.MODELS = models.join();
+					BakedAnimationsAdapter.COMPRESSION_CACHE = null;
+				}, gameExecutor));
 	}
 
 	/**
@@ -90,7 +94,7 @@ public final class GeckoLibResources {
 	}
 
 	/**
-	 * Retrieve all asset json files from a given location, then bake them into their final form.
+	 * Retrieve all asset JSON files from a given location, then bake them into their final form.
 	 * <p>
 	 * Automatically handles sequentially managed file I/O and parallelized task deployment
 	 */

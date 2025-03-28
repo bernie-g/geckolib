@@ -8,6 +8,10 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "common.AbstractContainerMenuMixin",
+    "common.HashedStackMixin",
+    "common.ItemStackMixin",
+    "common.SynchronizedRemoteSlotMixin"
   ],
   "client": [
     "client.EntityRenderDispatcherMixin",

@@ -776,7 +776,7 @@ public class AnimationController<T extends GeoAnimatable> {
 				return new KeyframeLocation<>(frame, (ageInTicks - (totalFrameTime - frame.length())));
 		}
 
-		return new KeyframeLocation<>(frames.get(frames.size() - 1), ageInTicks);
+		return new KeyframeLocation<>(frames.getLast(), ageInTicks);
 	}
 
 	/**

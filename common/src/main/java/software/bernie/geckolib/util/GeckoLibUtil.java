@@ -1,20 +1,22 @@
 package software.bernie.geckolib.util;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.InstancedAnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.EasingType;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
-import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
+import software.bernie.geckolib.loading.object.BakedModelFactory;
 
 import java.util.Map;
 
@@ -22,6 +24,7 @@ import java.util.Map;
  * Helper class for various GeckoLib-specific functions.
  */
 public final class GeckoLibUtil {
+	private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
 	public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
 	/**
@@ -108,24 +111,43 @@ public final class GeckoLibUtil {
 	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
 	 */
 	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(animatable.getClass().getName(), animatable);
+		GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
 
 		if (existing == null)
-			GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
+            GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for {}", animatable.getClass());
 	}
 
 	/**
 	 * Gets a registered synced {@link GeoAnimatable} object by name
 	 *
-	 * @param className the className
+	 * @param syncedAnimatableId the className
 	 */
 	@Nullable
-	public static GeoAnimatable getSyncedAnimatable(String className) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(className);
+	public static GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
+		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
 
 		if (animatable == null)
-			GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + className + ")");
+            GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! ({})", syncedAnimatableId);
 
 		return animatable;
+	}
+
+	/**
+	 * Get a synced singleton animatable's id for use with {@link #SYNCED_ANIMATABLES}
+	 * <p>
+	 * This <b><u>MUST</u></b> be used when retrieving from {@link #SYNCED_ANIMATABLES}
+	 * as this method eliminates class duplication collisions
+	 */
+	public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
+		return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
+			String baseId = animatable.getClass().getName();
+			i = 0;
+
+			while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
+				i++;
+			}
+
+			return baseId + i;
+		});
 	}
 }
