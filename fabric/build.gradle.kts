@@ -102,7 +102,7 @@ modrinth {
     versionNumber.set(project.version.toString())
     versionName = "Fabric ${mcVersion}"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
-    changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
+    changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
     gameVersions.set(listOf(mcVersion))
     versionType = "release"
     loaders.set(listOf("fabric"))
@@ -123,7 +123,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
 
     //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties

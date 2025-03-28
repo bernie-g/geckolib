@@ -90,7 +90,7 @@ modrinth {
     versionNumber.set(project.version.toString())
     versionName = "NeoForge ${mcVersion}"
     uploadFile.set(tasks.named<Jar>("jar"))
-    changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
     gameVersions.set(listOf(mcVersion))
     loaders.set(listOf("neoforge"))
 
@@ -107,7 +107,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addModLoader("NeoForge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
 
     //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties

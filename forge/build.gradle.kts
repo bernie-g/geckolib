@@ -161,7 +161,7 @@ modrinth {
 		versionNumber.set(project.version.toString())
 		versionName = "Forge ${mcVersion}"
 		uploadFile.set(tasks.jarJar)
-		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
+		changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 		gameVersions.set(listOf(mcVersion))
 		loaders.set(listOf("forge"))
 
@@ -177,7 +177,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 17")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
