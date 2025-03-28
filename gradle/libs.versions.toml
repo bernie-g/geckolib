@@ -3,29 +3,29 @@
     geckolib = "4.8.4"
 
 # Common
-    minecraft-range = "[1.21.4,)"
-    minecraft = "1.21.4"
+    minecraft-range = "[1.21.5,)"
+    minecraft = "1.21.5"
     parchment-minecraft = "1.21.4"
-    parchment = "2024.12.07"
-    neoform = "1.21.4-20241203.161809"
+    parchment = "2025.03.23"
+    neoform = "1.21.5-20250325.162830"
     jopt-simple = "5.0.4"
 
 # Fabric
     fabric = "0.16.10"
     fabric-range = "0.16"
-    fabric-api = "0.115.1+1.21.4"
-    fabric-api-range = "0.110.5+1.21.4"
+    fabric-api = "0.119.5+1.21.5"
+    fabric-api-range = "0.119.5+1.21.5"
 
 # Forge
-    forge-fml-range = "[54,)"
-    forge-range = "[54.0.0,)"
-    forge = "54.0.26"
-    forge-mc = "1.21.4-54.0.26"
+    forge-fml-range = "[55,)"
+    forge-range = "[55.0.0,)"
+    forge = "55.0.3"
+    forge-mc = "1.21.5-55.0.3"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
-    neoforge-range = "[21.4.84-beta,)"
-    neoforge = "21.4.86-beta"
+    neoforge-range = "[21.5.0-beta,)"
+    neoforge = "21.5.0-beta"
 
 # Dependencies
     mixin = "0.8.7"
@@ -35,14 +35,14 @@
     iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.77"
+    plugin-moddevgradle = "2.0.80"
     plugin-minotaur = "2.8.7"
-    plugin-curseforge-gradle = "1.1.25"
-    plugin-idea-ext = "1.1.8"
-    plugin-forge-gradle = "[6.0.24,6.2)"
+    plugin-curseforge-gradle = "1.1.26"
+    plugin-idea-ext = "1.1.10"
+    plugin-forge-gradle = "[6.0.35,6.2)"
     plugin-mixin = "0.7.+"
     plugin-parchment-forge-gradle = "1.+"
-    plugin-loom = "1.9-SNAPSHOT"
+    plugin-loom = "1.10-SNAPSHOT"
 
 [libraries]
 # Mixin

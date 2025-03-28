@@ -1,12 +1,12 @@
 accessWidener	v1	named
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;ILnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$WriteMaskStateShard
-accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
-accessible class net/minecraft/client/renderer/RenderType$CompositeState
+#accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+#accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;ILnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
+#accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
+#accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+#accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
+#accessible class net/minecraft/client/renderer/RenderStateShard$WriteMaskStateShard
+#accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
+#accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
 accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
