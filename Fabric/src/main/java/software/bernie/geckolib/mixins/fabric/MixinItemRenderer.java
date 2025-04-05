@@ -34,5 +34,7 @@ public class MixinItemRenderer {
     public void cancelRender(BlockEntityWithoutLevelRenderer renderer, ItemStack itemStack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, int packedOverlay, Operation<Void> original) {
         if (RenderProvider.of(itemStack).getCustomRenderer() == renderer)
             renderer.renderByItem(itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
+        else
+            original.call(renderer, itemStack, displayContext, poseStack, bufferSource, packedLight, packedOverlay);
     }
 }
