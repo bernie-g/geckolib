@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.random;
 
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -44,16 +45,16 @@ public final class DieRollFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        final int rolls = (int)(Math.floor(this.rolls.get()));
-        final double min = this.min.get();
-        final double max = this.max.get();
+    public double compute(AnimationState<?> animationState) {
+        final int rolls = (int)(Math.floor(this.rolls.get(animationState)));
+        final double min = this.min.get(animationState);
+        final double max = this.max.get(animationState);
         double sum = 0;
         Random random;
 
         if (this.random != null) {
             random = this.random;
-            random.setSeed((long)this.seed.get());
+            random.setSeed((long)this.seed.get(animationState));
         }
         else {
             random = ThreadLocalRandom.current();

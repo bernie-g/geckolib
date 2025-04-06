@@ -5,6 +5,7 @@ import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.loading.math.MathValue;
@@ -62,25 +63,25 @@ public interface EasingType {
 
 	Double2DoubleFunction buildTransformer(@Nullable Double value);
 
-	static double lerpWithOverride(AnimationPoint animationPoint, EasingType override) {
+	static double lerpWithOverride(AnimationPoint animationPoint, EasingType override, AnimationState<?> animationState) {
 		EasingType easingType = override;
 
 		if (override == null)
 			easingType = animationPoint.keyFrame() == null ? LINEAR : animationPoint.keyFrame().easingType();
 
-		return easingType.apply(animationPoint);
+		return easingType.apply(animationPoint, animationState);
 	}
 
-	default double apply(AnimationPoint animationPoint) {
+	default double apply(AnimationPoint animationPoint, AnimationState<?> animationState) {
 		Double easingVariable = null;
 
 		if (animationPoint.keyFrame() != null && !animationPoint.keyFrame().easingArgs().isEmpty())
-			easingVariable = animationPoint.keyFrame().easingArgs().getFirst().get();
+			easingVariable = animationPoint.keyFrame().easingArgs().getFirst().get(animationState);
 
-		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength());
+		return apply(animationPoint, easingVariable, animationPoint.currentTick() / animationPoint.transitionLength(), animationState);
 	}
 
-	default double apply(AnimationPoint animationPoint, @Nullable Double easingValue, double lerpValue) {
+	default double apply(AnimationPoint animationPoint, @Nullable Double easingValue, double lerpValue, AnimationState<?> animationState) {
 		if (animationPoint.currentTick() >= animationPoint.transitionLength())
 			return (float)animationPoint.animationEndValue();
 
@@ -410,7 +411,7 @@ public interface EasingType {
 		}
 
 		@Override
-		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue) {
+		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue, AnimationState<?> animationState) {
 			if (animationPoint.currentTick() >= animationPoint.transitionLength())
 				return animationPoint.animationEndValue();
 
@@ -419,7 +420,7 @@ public interface EasingType {
 			if (easingArgs.size() < 2)
 				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
 
-			return getPointOnSpline(lerpValue, easingArgs.get(0).get(), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get());
+			return getPointOnSpline(lerpValue, easingArgs.get(0).get(animationState), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get(animationState));
 		}
 	}
 }

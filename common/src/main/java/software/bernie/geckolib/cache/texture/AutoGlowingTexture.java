@@ -1,3 +1,4 @@
+/*
 package software.bernie.geckolib.cache.texture;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -31,11 +32,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
+*/
 /**
  * Texture object type responsible for GeckoLib's emissive render textures
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
- */
+ *//*
+
 public class AutoGlowingTexture extends GeoAbstractTexture {
 	private static final RenderStateShard.ShaderStateShard SHADER_STATE = new RenderStateShard.ShaderStateShard(CoreShaders.RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE);
 	private static final RenderStateShard.TransparencyStateShard TRANSPARENCY_STATE = new RenderStateShard.TransparencyStateShard("translucent_transparency", () -> {
@@ -58,9 +61,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 						.setWriteMaskState(WRITE_MASK).createCompositeState(isGlowing));
 	});
 	private static final String APPENDIX = "_glowmask";
-	/**
+	*/
+/**
 	 * Set to true <u><b>IN DEV</b></u> to have GeckoLib print out the base texture and generated glowlayer textures to the base game directory (./run)
-	 */
+	 *//*
+
 	public static boolean PRINT_DEBUG_IMAGES = false;
 
 	protected final ResourceLocation textureBase;
@@ -71,14 +76,16 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		this.textureBase = originalLocation;
 	}
 
-	/**
+	*/
+/**
 	 * Get the emissive resource equivalent of the input resource path
 	 * <p>
 	 * Additionally, prepares the texture manager for the missing texture if the resource is not present
 	 *
 	 * @return The glowlayer resourcepath for the provided input path
-	 */
-	public static ResourceLocation getEmissiveResource(ResourceLocation baseResource) {
+	 *//*
+
+	public static ResourceLocation getOrCreateEmissiveTexture(ResourceLocation baseResource) {
 		ResourceLocation path = appendToPath(baseResource, APPENDIX);
 
 		generateTexture(path, textureManager -> textureManager.registerAndLoad(path, new AutoGlowingTexture(baseResource, path)));
@@ -86,9 +93,11 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		return path;
 	}
 
-	/**
+	*/
+/**
 	 * Generates the glow layer {@link NativeImage} and appropriately modifies the base texture for use in glow render layers
-	 */
+	 *//*
+
 	@Override
 	protected TextureContents loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException {
 		Resource baseTextureResource = resourceManager.getResourceOrThrow(this.textureBase);
@@ -149,21 +158,26 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 		return new TextureContents(contents.left(), baseTextureMetaSection);
 	}
 
-	/**
+	*/
+/**
 	 * Return a cached instance of the RenderType for the given texture for AutoGlowingGeoLayer rendering
 	 *
 	 * @param texture The texture of the resource to apply a glow layer to
-	 */
+	 *//*
+
 	public static RenderType getRenderType(ResourceLocation texture) {
-		return GLOWING_RENDER_TYPE.apply(getEmissiveResource(texture), false);
+		return GLOWING_RENDER_TYPE.apply(texture, false);
 	}
 
-	/**
+	*/
+/**
 	 * Return a cached instance of the RenderType for the given texture for AutoGlowingGeoLayer rendering, while the entity has an outline
 	 *
 	 * @param texture The texture of the resource to apply a glow layer to
-	 */
+	 *//*
+
 	public static RenderType getOutlineRenderType(ResourceLocation texture) {
-		return GLOWING_RENDER_TYPE.apply(getEmissiveResource(texture), true);
+		return GLOWING_RENDER_TYPE.apply(texture, true);
 	}
 }
+*/

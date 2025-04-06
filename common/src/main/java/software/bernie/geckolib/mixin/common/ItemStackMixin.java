@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.util.InternalUtil;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 /**
  * Injection into ItemStack functionality to handle duplication and splitting with GeckoLib stack identifiers
@@ -38,6 +38,6 @@ public class ItemStackMixin {
         if (!(a instanceof PatchedDataComponentMap components) || !(b instanceof PatchedDataComponentMap components2))
             return false;
 
-        return InternalUtil.areComponentsMatchingIgnoringGeckoLibId(components, components2);
+        return GeckoLibUtil.areComponentsMatchingIgnoringGeckoLibId(components, components2);
     }
 }

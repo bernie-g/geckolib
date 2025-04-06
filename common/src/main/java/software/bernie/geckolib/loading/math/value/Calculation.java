@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.Operator;
 
@@ -39,12 +40,12 @@ public final class Calculation implements MathValue {
     }
 
     @Override
-    public double get() {
+    public double get(AnimationState<?> animationState) {
         if (this.isMutable)
-            return this.operator.compute(this.argA.get(), this.argB.get());
+            return this.operator.compute(this.argA.get(animationState), this.argB.get(animationState));
 
         if (this.cachedValue == Double.MIN_VALUE)
-            this.cachedValue = this.operator.compute(this.argA.get(), this.argB.get());
+            this.cachedValue = this.operator.compute(this.argA.get(animationState), this.argB.get(animationState));
 
         return this.cachedValue;
     }

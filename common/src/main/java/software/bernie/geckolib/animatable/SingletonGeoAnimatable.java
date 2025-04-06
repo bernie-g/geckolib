@@ -7,10 +7,10 @@ import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.cache.SyncedSingletonAnimatableCache;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
@@ -23,12 +23,12 @@ import java.util.function.Consumer;
  */
 public interface SingletonGeoAnimatable extends GeoAnimatable {
     /**
-     * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions
+     * Register this as a synched {@code SingletonGeoAnimatable} instance with GeckoLib's networking functions
      * <p>
      * This should be called inside the constructor of your object.
      */
-    static void registerSyncedAnimatable(GeoAnimatable animatable) {
-        GeckoLibUtil.registerSyncedAnimatable(animatable);
+    static void registerSyncedAnimatable(SingletonGeoAnimatable animatable) {
+        SyncedSingletonAnimatableCache.registerSyncedAnimatable(animatable);
     }
 
     /**
@@ -45,7 +45,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     @ApiStatus.NonExtendable
     @Nullable
     default <D> D getAnimData(long instanceId, SerializableDataTicket<D> dataTicket) {
-        return getAnimatableInstanceCache().getManagerForId(instanceId).getData(dataTicket);
+        return getAnimatableInstanceCache().getManagerForId(instanceId).getAnimatableData(dataTicket);
     }
 
     /**
@@ -61,7 +61,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
     @ApiStatus.NonExtendable
     default <D> void setAnimData(Entity relatedEntity, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
         if (relatedEntity.level().isClientSide()) {
-            getAnimatableInstanceCache().getManagerForId(instanceId).setData(dataTicket, data);
+            getAnimatableInstanceCache().getManagerForId(instanceId).setAnimatableData(dataTicket, data);
         }
         else {
             syncAnimData(instanceId, dataTicket, data, relatedEntity);

@@ -1,19 +1,19 @@
 package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.function.BiFunction;
@@ -22,15 +22,15 @@ import java.util.function.BiFunction;
  * {@link GeoRenderLayer} for rendering {@link BlockState BlockStates}
  * or {@link ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
-public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
-    protected final BiFunction<GeoBone, T, ItemStack> stackForBone;
-    protected final BiFunction<GeoBone, T, BlockState> blockForBone;
+public class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+    protected final BiFunction<GeoBone, GeoRenderState, ItemStack> stackForBone;
+    protected final BiFunction<GeoBone, GeoRenderState, BlockState> blockForBone;
 
-    public BlockAndItemGeoLayer(GeoRenderer<T> renderer) {
+    public BlockAndItemGeoLayer(GeoRenderer<T, O, R> renderer) {
         this(renderer, (bone, animatable) -> null, (bone, animatable) -> null);
     }
 
-    public BlockAndItemGeoLayer(GeoRenderer<T> renderer, BiFunction<GeoBone, T, ItemStack> stackForBone, BiFunction<GeoBone, T, BlockState> blockForBone) {
+    public BlockAndItemGeoLayer(GeoRenderer<T, O, R> renderer, BiFunction<GeoBone, GeoRenderState, ItemStack> stackForBone, BiFunction<GeoBone, GeoRenderState, BlockState> blockForBone) {
         super(renderer);
 
         this.stackForBone = stackForBone;
@@ -41,78 +41,72 @@ public class BlockAndItemGeoLayer<T extends GeoAnimatable> extends GeoRenderLaye
      * Return an ItemStack relevant to this bone for rendering, or null if no ItemStack to render
      */
     @Nullable
-    protected ItemStack getStackForBone(GeoBone bone, T animatable) {
-        return this.stackForBone.apply(bone, animatable);
+    protected ItemStack getStackForBone(GeoBone bone, R renderState) {
+        return this.stackForBone.apply(bone, renderState);
     }
 
     /**
      * Return a BlockState relevant to this bone for rendering, or null if no BlockState to render
      */
     @Nullable
-    protected BlockState getBlockForBone(GeoBone bone, T animatable) {
-        return this.blockForBone.apply(bone, animatable);
+    protected BlockState getBlockForBone(GeoBone bone, R renderState) {
+        return this.blockForBone.apply(bone, renderState);
     }
 
     /**
      * Return a specific TransFormType for this {@link ItemStack} render for this bone.
      */
-    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, T animatable) {
+    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, R renderState) {
         return ItemDisplayContext.NONE;
     }
 
     /**
      * This method is called by the {@link GeoRenderer} for each bone being rendered
      * <p>
-     * This is a more expensive call, particularly if being used to render something on a different buffer.
-     * It does however have the benefit of having the matrix translations and other transformations already applied from render-time
-     * It's recommended to avoid using this unless necessary
+     * You would use this to render something at or for a given GeoBone's position and orientation.
      * <p>
-     * The {@link GeoBone} in question has already been rendered by this stage
-     * <p>
-     * If you <i>do</i> use it, and you render something that changes the {@link VertexConsumer buffer}, you need to reset it back to the previous buffer
-     * using {@link MultiBufferSource#getBuffer} before ending the method
+     * You <b><u>MUST NOT</u></b> perform any rendering operations here, and instead must contain all your functionality in the returned Runnable
      */
+    @Nullable
     @Override
-    public void renderForBone(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource,
-                              VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
-        ItemStack stack = getStackForBone(bone, animatable);
-        BlockState blockState = getBlockForBone(bone, animatable);
+    public Runnable createPerBoneRender(R renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource) {
+        ItemStack stack = getStackForBone(bone, renderState);
+        BlockState blockState = getBlockForBone(bone, renderState);
 
         if (stack == null && blockState == null)
-            return;
+            return null;
 
-        poseStack.pushPose();
-        RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
+        return () -> {
+            poseStack.pushPose();
+            RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
-        if (stack != null)
-            renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
+            int packedLight = renderState.getGeckolibData(DataTickets.PACKED_LIGHT);
+            int packedOverlay = renderState.getGeckolibData(DataTickets.PACKED_OVERLAY);
 
-        if (blockState != null)
-            renderBlockForBone(poseStack, bone, blockState, animatable, bufferSource, partialTick, packedLight, packedOverlay);
+            if (stack != null)
+                renderStackForBone(poseStack, bone, stack, renderState, bufferSource, packedLight, packedOverlay);
 
-        poseStack.popPose();
+            if (blockState != null)
+                renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay);
+
+            poseStack.popPose();
+        };
     }
 
     /**
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, T animatable, MultiBufferSource bufferSource,
-                                      float partialTick, int packedLight, int packedOverlay) {
-        if (animatable instanceof LivingEntity livingEntity) {
-            Minecraft.getInstance().getItemRenderer().renderStatic(livingEntity, stack,
-                    getTransformTypeForStack(bone, stack, animatable), false, poseStack, bufferSource, livingEntity.level(),
-                    packedLight, packedOverlay, livingEntity.getId());
-        } else {
-            Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, animatable),
-                    packedLight, packedOverlay, poseStack, bufferSource, Minecraft.getInstance ().level, (int) this.renderer.getInstanceId(animatable));
-        }
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, R renderState, MultiBufferSource bufferSource,
+                                      int packedLight, int packedOverlay) {
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, renderState), packedLight, packedOverlay,
+                                                               poseStack, bufferSource, Minecraft.getInstance ().level, renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
     }
 
     /**
      * Render the given {@link BlockState} for the provided {@link GeoBone}.
      */
-    protected void renderBlockForBone(PoseStack poseStack, GeoBone bone, BlockState state, T animatable, MultiBufferSource bufferSource,
-                                      float partialTick, int packedLight, int packedOverlay) {
+    protected void renderBlockForBone(PoseStack poseStack, GeoBone bone, BlockState state, R renderState, MultiBufferSource bufferSource,
+                                      int packedLight, int packedOverlay) {
         poseStack.pushPose();
         poseStack.translate(-0.25f, -0.25f, -0.25f);
         poseStack.scale(0.5f, 0.5f, 0.5f);

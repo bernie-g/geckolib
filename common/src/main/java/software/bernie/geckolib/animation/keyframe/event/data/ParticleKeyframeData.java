@@ -43,6 +43,6 @@ public class ParticleKeyframeData extends KeyFrameData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getStartTick(), effect, locator, script);
+		return Objects.hash(getStartTick(), this.effect, this.locator, this.script);
 	}
 }

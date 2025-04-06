@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.random;
 
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -43,12 +44,12 @@ public final class RandomFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
+    public double compute(AnimationState<?> animationState) {
         double result;
-        double valueA = this.valueA.get();
+        double valueA = this.valueA.get(animationState);
 
         if (this.random != null) {
-            this.random.setSeed((long)this.seed.get());
+            this.random.setSeed((long)this.seed.get(animationState));
 
             result = this.random.nextDouble();
         }
@@ -57,7 +58,7 @@ public final class RandomFunction extends MathFunction {
         }
 
         if (this.valueB != null) {
-            double valueB = this.valueB.get();
+            double valueB = this.valueB.get(animationState);
             double min = Math.min(valueA, valueB);
             double max = Math.max(valueA, valueB);
 

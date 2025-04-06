@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.StringJoiner;
@@ -15,12 +16,12 @@ import java.util.StringJoiner;
  */
 public record CompoundValue(MathValue[] subValues) implements MathValue {
     @Override
-    public double get() {
+    public double get(AnimationState<?> animationState) {
         for (int i = 0; i < this.subValues.length - 1; i++) {
-            this.subValues[i].get();
+            this.subValues[i].get(animationState);
         }
 
-        return this.subValues[this.subValues.length - 1].get();
+        return this.subValues[this.subValues.length - 1].get(animationState);
     }
 
     @Override

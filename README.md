@@ -15,7 +15,7 @@ GeckoLib is an animation and rendering engine for Minecraft Mods, with support f
 <img src="https://i.imgur.com/A8uUFuB.png" alt="Installation"/> 
 </p>
 <p align="center">
-You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">here</a>.
+You can view installation instructions for modders <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib5)">here</a>.
 </p>
 <br>
 
@@ -23,7 +23,7 @@ You can view installation instructions for modders <a href="https://github.com/b
     <img src="https://i.imgur.com/epUcGHM.png" alt="Documentation"/> 
 </p>
 <p align="center">
-GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib4)">wiki</a>.<br>We spent many hours writing the wiki, so please read it!
+GeckoLib provides detailed documentation in the form of a <a href="https://github.com/bernie-g/geckolib/wiki/Installation-(Geckolib5)">wiki</a>.<br>We spent many hours writing the wiki, so please read it!
 </p>
 <br>
 

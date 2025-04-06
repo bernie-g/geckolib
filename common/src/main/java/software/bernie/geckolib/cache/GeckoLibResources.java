@@ -36,6 +36,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +48,8 @@ public final class GeckoLibResources {
 	public static final ResourceLocation RELOAD_LISTENER_ID = GeckoLibConstants.id("geckolib_resources");
 	public static final ResourceLocation ANIMATIONS_PATH = GeckoLibConstants.id("geckolib/animations");
 	public static final ResourceLocation MODELS_PATH = GeckoLibConstants.id("geckolib/models");
+	public static final Pattern SUFFIX_STRIPPER = Pattern.compile("((\\.geo)|((\\.animation)s?))?(\\.json)$");
+	public static final Pattern PREFIX_STRIPPER = Pattern.compile("^(geckolib/)((animations/)|(models/))?");
 
 	private static Map<ResourceLocation, BakedAnimations> ANIMATIONS = Collections.emptyMap();
 	private static Map<ResourceLocation, BakedGeoModel> MODELS = Collections.emptyMap();
@@ -78,6 +82,21 @@ public final class GeckoLibResources {
 	}
 
 	/**
+	 * Strip the asset prefix and suffix from the given filepath, returning the stripped location
+	 *
+	 * @return The stripped location, or the original path if no match is found
+	 */
+	public static ResourceLocation stripPrefixAndSuffix(ResourceLocation path) {
+		String newPath = path.getPath();
+		Matcher prefixMatcher = PREFIX_STRIPPER.matcher(newPath);
+		newPath = prefixMatcher.find() ? newPath.substring(prefixMatcher.end()) : newPath;
+		Matcher suffixMatcher = SUFFIX_STRIPPER.matcher(newPath);
+		newPath = suffixMatcher.find() ? newPath.substring(0, suffixMatcher.start()) : newPath;
+
+		return newPath.length() == path.getPath().length() ? path : path.withPath(newPath);
+	}
+
+	/**
 	 * Provide a {@link Future} for retrieving and baking all animation jsons from the {@link #ANIMATIONS_PATH}
 	 */
 	private static CompletableFuture<Map<ResourceLocation, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
@@ -100,11 +119,13 @@ public final class GeckoLibResources {
 	 */
 	private static <BAKED> CompletableFuture<Map<ResourceLocation, BAKED>> bakeJsonResources(Executor backgroundExecutor, ResourceManager resourceManager, String assetPath,
 																							 BiFunction<ResourceLocation, JsonObject, BAKED> elementFactory, Function<Throwable, BAKED> exceptionalFactory) {
+
+
 		return loadResources(backgroundExecutor, resourceManager, assetPath, "json", GeckoLibResources::readJsonFile)
 				.thenCompose(resources -> {
 					List<CompletableFuture<Pair<ResourceLocation, BAKED>>> tasks = new ObjectArrayList<>(resources.size());
 
-					resources.forEach(pair -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(pair.left(), elementFactory.apply(pair.left(), pair.right())), backgroundExecutor)
+					resources.forEach(pair -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(stripPrefixAndSuffix(pair.left()), elementFactory.apply(pair.left(), pair.right())), backgroundExecutor)
 																.exceptionally(ex -> Pair.of(pair.left(), exceptionalFactory.apply(ex)))));
 
 					return CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))

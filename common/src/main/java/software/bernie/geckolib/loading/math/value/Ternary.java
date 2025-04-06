@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 /**
@@ -13,8 +14,8 @@ import software.bernie.geckolib.loading.math.MathValue;
  */
 public record Ternary(MathValue condition, MathValue trueValue, MathValue falseValue) implements MathValue {
     @Override
-    public double get() {
-        return this.condition.get() != 0 ? this.trueValue.get() : this.falseValue.get();
+    public double get(AnimationState<?> animationState) {
+        return this.condition.get(animationState) != 0 ? this.trueValue.get(animationState) : this.falseValue.get(animationState);
     }
 
     @Override

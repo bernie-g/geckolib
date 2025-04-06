@@ -9,8 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.ContextAwareAnimatableManager;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.manager.ContextAwareAnimatableManager;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.util.RenderUtil;
@@ -33,7 +33,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	 * <p>
 	 * This should be called inside the constructor of your object.
 	 */
-	static void registerSyncedAnimatable(GeoAnimatable animatable) {
+	static void registerSyncedAnimatable(SingletonGeoAnimatable animatable) {
 		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
 	}
 
@@ -130,7 +130,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 					@Override
 					public ItemDisplayContext getCurrentContext() {
-						ItemDisplayContext context = getData(DataTickets.ITEM_RENDER_PERSPECTIVE);
+						ItemDisplayContext context = getAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE);
 
 						return context == null ? ItemDisplayContext.NONE : context;
 					}

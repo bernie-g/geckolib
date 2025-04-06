@@ -1,22 +1,24 @@
 package software.bernie.geckolib.animation.keyframe;
 
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.object.GeoBone;
+
+import java.util.LinkedList;
 
 /**
  * A bone pseudo-stack for bone animation positions, scales, and rotations
  * <p>
  * Animation points are calculated then pushed onto their respective queues to be used for transformations in rendering
  */
-public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueue, AnimationPointQueue rotationYQueue,
-								 AnimationPointQueue rotationZQueue, AnimationPointQueue positionXQueue, AnimationPointQueue positionYQueue,
-								 AnimationPointQueue positionZQueue, AnimationPointQueue scaleXQueue, AnimationPointQueue scaleYQueue,
-								 AnimationPointQueue scaleZQueue) {
+public record BoneAnimationQueue(GeoBone bone, LinkedList<AnimationPoint> rotationXQueue, LinkedList<AnimationPoint> rotationYQueue,
+								 LinkedList<AnimationPoint> rotationZQueue, LinkedList<AnimationPoint> positionXQueue, LinkedList<AnimationPoint> positionYQueue,
+								 LinkedList<AnimationPoint> positionZQueue, LinkedList<AnimationPoint> scaleXQueue, LinkedList<AnimationPoint> scaleYQueue,
+								 LinkedList<AnimationPoint> scaleZQueue) {
 	public BoneAnimationQueue(GeoBone bone) {
-		this(bone, new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
-				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue(),
-				new AnimationPointQueue(), new AnimationPointQueue(), new AnimationPointQueue());
+		this(bone, new LinkedList<>(), new LinkedList<>(), new LinkedList<>(),
+             new LinkedList<>(), new LinkedList<>(), new LinkedList<>(),
+             new LinkedList<>(), new LinkedList<>(), new LinkedList<>());
 	}
 
 	/**

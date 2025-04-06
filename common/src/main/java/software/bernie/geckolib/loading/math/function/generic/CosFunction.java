@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -27,8 +28,8 @@ public final class CosFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return Mth.cos((float)this.value.get() * Mth.DEG_TO_RAD);
+    public double compute(AnimationState<?> animationState) {
+        return Mth.cos((float)this.value.get(animationState) * Mth.DEG_TO_RAD);
     }
 
     @Override

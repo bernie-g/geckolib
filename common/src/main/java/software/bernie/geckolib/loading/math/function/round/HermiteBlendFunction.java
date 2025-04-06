@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.round;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -26,8 +27,8 @@ public final class HermiteBlendFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        final double value = this.valueA.get();
+    public double compute(AnimationState<?> animationState) {
+        final double value = this.valueA.get(animationState);
 
         return (3 * value * value) - (2 * value * value * value);
     }

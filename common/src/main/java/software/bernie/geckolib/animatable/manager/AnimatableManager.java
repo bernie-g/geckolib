@@ -1,4 +1,4 @@
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.animatable.manager;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -6,6 +6,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
@@ -22,7 +23,7 @@ import java.util.Map;
 public class AnimatableManager<T extends GeoAnimatable> {
 	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
 	private final Map<String, AnimationController<T>> animationControllers;
-	private Map<DataTicket<?>, Object> extraData;
+	private Map<DataTicket<?>, Object> animatableInstanceData;
 
 	private double lastUpdateTime;
 	private boolean isFirstTick = true;
@@ -32,7 +33,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * Instantiates a new AnimatableManager for the given animatable, calling {@link GeoAnimatable#registerControllers} to define its controllers
 	 */
 	public AnimatableManager(GeoAnimatable animatable) {
-		ControllerRegistrar registrar = new ControllerRegistrar(new ObjectArrayList<>(2));
+		ControllerRegistrar registrar = new ControllerRegistrar(new ObjectArrayList<>(1));
 
 		animatable.registerControllers(registrar);
 
@@ -87,7 +88,8 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		return this.isFirstTick;
 	}
 
-	protected void finishFirstTick() {
+	@ApiStatus.Internal
+	public void finishFirstTick() {
 		this.isFirstTick = false;
 	}
 
@@ -97,18 +99,18 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * @param dataTicket The DataTicket for the data point
 	 * @param data The piece of data to store
 	 */
-	public <D> void setData(DataTicket<D> dataTicket, D data) {
-		if (this.extraData == null)
-			this.extraData = new Object2ObjectOpenHashMap<>();
+	public <D> void setAnimatableData(DataTicket<D> dataTicket, D data) {
+		if (this.animatableInstanceData == null)
+			this.animatableInstanceData = new Object2ObjectOpenHashMap<>();
 
-		this.extraData.put(dataTicket, data);
+		this.animatableInstanceData.put(dataTicket, data);
 	}
 
 	/**
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
 	 */
-	public <D> D getData(DataTicket<D> dataTicket) {
-		return this.extraData != null ? dataTicket.getData(this.extraData) : null;
+	public <D> D getAnimatableData(DataTicket<D> dataTicket) {
+		return this.animatableInstanceData != null ? (D)this.animatableInstanceData.get(dataTicket) : null;
 	}
 
 	/**
@@ -147,7 +149,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 */
 	public void stopTriggeredAnimation(@Nullable String animName) {
 		for (AnimationController<?> controller : getAnimationControllers().values()) {
-			if ((animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()) && controller.stopTriggeredAnimation())
+			if ((animName == null || controller.isTriggeredAnimation(animName)) && controller.stopTriggeredAnimation())
 				return;
 		}
 	}
@@ -161,7 +163,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	public void stopTriggeredAnimation(String controllerName, @Nullable String animName) {
 		AnimationController<?> controller = getAnimationControllers().get(controllerName);
 
-		if (controller != null && (animName == null || controller.triggerableAnimations.get(animName) == controller.getTriggeredAnimation()))
+		if (controller != null && (animName == null || controller.isTriggeredAnimation(animName)))
 			controller.stopTriggeredAnimation();
 	}
 

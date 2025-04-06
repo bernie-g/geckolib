@@ -2,7 +2,7 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 /**
  * Defaulted model class for GeckoLib models
@@ -74,7 +74,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:geo/entity/animal/goat.geo.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedModelPath(ResourceLocation basePath) {
-		return basePath.withPath("geo/" + subtype() + "/" + basePath.getPath() + ".geo.json");
+		return basePath.withPrefix(subtype() + "/");
 	}
 
 	/**
@@ -84,7 +84,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.animation.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
-		return basePath.withPath("animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
+		return basePath.withPrefix(subtype() + "/");
 	}
 
 	/**
@@ -112,12 +112,12 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	protected abstract String subtype();
 
 	@Override
-	public ResourceLocation getModelResource(T animatable, GeoRenderer<T> renderer) {
+	public ResourceLocation getModelResource(GeoRenderState renderState) {
 		return this.modelPath;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(T animatable, GeoRenderer<T> renderer) {
+	public ResourceLocation getTextureResource(GeoRenderState renderState) {
 		return this.texturePath;
 	}
 

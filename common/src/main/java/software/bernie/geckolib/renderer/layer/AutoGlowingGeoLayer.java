@@ -2,27 +2,33 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.texture.AutoGlowingTexture;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.ClientUtil;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 /**
  * {@link GeoRenderLayer} for rendering the auto-generated glowlayer functionality implemented by Geckolib using the <i>_glowing</i> appendixed texture files
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
-public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
-	public AutoGlowingGeoLayer(GeoRenderer<T> renderer) {
+public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+	public AutoGlowingGeoLayer(GeoRenderer<T, O, R> renderer) {
 		super(renderer);
+	}
+
+	/**
+	 * Return the texture for the emissive rendering layer
+	 * <p>
+	 * You probably shouldn't override this unless you know what you're doing
+	 */
+	protected ResourceLocation getTextureForGlowlayer(R renderState) {
+		return getTextureResource(renderState);// AutoGlowingTexture.getOrCreateEmissiveTexture(getTextureResource(renderState));
 	}
 
 	/**
@@ -32,24 +38,26 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 * Automatically accounts for entity states like invisibility and glowing
 	 */
 	@Nullable
-	protected RenderType getRenderType(T animatable, MultiBufferSource bufferSource) {
-		if (!(animatable instanceof Entity entity))
-			return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+	protected RenderType getRenderType(R renderState) {
+		return null;
+		/*ResourceLocation texture = getTextureForGlowlayer(renderState);
 
-		boolean invisible = entity.isInvisible();
-		ResourceLocation texture = AutoGlowingTexture.getEmissiveResource(getTextureResource(animatable));
+		if (!(renderState instanceof EntityRenderState entityRenderState))
+			return AutoGlowingTexture.getRenderType(texture);
 
-		if (invisible && !entity.isInvisibleTo(ClientUtil.getClientPlayer()))
+		boolean invisible = entityRenderState.isInvisible;
+
+		if (invisible && !renderState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER))
 			return RenderType.itemEntityTranslucentCull(texture);
 
-		if (Minecraft.getInstance().shouldEntityAppearGlowing(entity)) {
+		if (renderState.getGeckolibData(DataTickets.IS_GLOWING)) {
 			if (invisible)
 				return RenderType.outline(texture);
 
-			return AutoGlowingTexture.getOutlineRenderType(getTextureResource(animatable));
+			return AutoGlowingTexture.getOutlineRenderType(texture);
 		}
 
-		return invisible ? null : AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+		return invisible ? null : AutoGlowingTexture.getRenderType(texture);*/
 	}
 
 	/**
@@ -58,13 +66,11 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
 	 */
 	@Override
-	public void render(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
-		renderType = getRenderType(animatable, bufferSource);
+	public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
+					   int packedLight, int packedOverlay, int renderColor) {
+		renderType = getRenderType(renderState);
 
-		if (renderType != null) {
-			getRenderer().reRender(bakedModel, poseStack, bufferSource, animatable, renderType,
-								   bufferSource.getBuffer(renderType), partialTick, LightTexture.FULL_SKY, packedOverlay,
-								   getRenderer().getRenderColor(animatable, partialTick, packedLight).argbInt());
-		}
+		if (renderType != null)
+			getRenderer().reRender(renderState, poseStack, bakedModel, bufferSource, renderType, bufferSource.getBuffer(renderType), LightTexture.FULL_SKY, packedOverlay, renderColor);
 	}
 }

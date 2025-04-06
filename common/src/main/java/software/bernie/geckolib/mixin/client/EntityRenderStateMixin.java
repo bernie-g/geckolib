@@ -1,42 +1,78 @@
 package software.bernie.geckolib.mixin.client;
 
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.world.entity.Entity;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import software.bernie.geckolib.renderer.GeoEntityRenderState;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+
+import java.util.Map;
 
 /**
- * Duck-typing mixin to apply the {@link GeoEntityRenderState} duck interface to <code>EntityRenderStates</code>
+ * Duck-typing mixin to apply the {@link GeoRenderState} duck interface to <code>EntityRenderStates</code>
  */
 @Mixin(EntityRenderState.class)
-public class EntityRenderStateMixin implements GeoEntityRenderState {
+public class EntityRenderStateMixin implements GeoRenderState {
     @Unique
-    private float geckolib$partialTick;
-    @Unique
-    private Entity geckolib$entity;
+    private final Map<DataTicket<?>, Object> geckolib$data = new Reference2ObjectOpenHashMap<>();
 
     @Unique
     @Override
-    public void geckolib$setPartialTick(float partialTick) {
-        this.geckolib$partialTick = partialTick;
+    public <D> void addGeckolibData(DataTicket<D> dataTicket, @Nullable D data) {
+        this.geckolib$data.put(dataTicket, data);
     }
 
     @Unique
     @Override
-    public float geckolib$getPartialTick() {
-        return this.geckolib$partialTick;
+    public boolean hasGeckolibData(DataTicket<?> dataTicket) {
+        return this.geckolib$data.containsKey(dataTicket);
     }
 
     @Unique
+    @Nullable
     @Override
-    public void geckolib$setEntity(Entity entity) {
-        this.geckolib$entity = entity;
+    public <D> D getGeckolibData(DataTicket<D> dataTicket) {
+        Object data = this.geckolib$data.get(dataTicket);
+
+        if (data == null && !hasGeckolibData(dataTicket))
+            throw new IllegalArgumentException("Attempted to retrieve data from GeoRenderState that does not exist. Check your code!");
+
+        try {
+            return (D)data;
+        }
+        catch (ClassCastException ex) {
+            GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
+
+            throw ex;
+        }
     }
 
     @Unique
+    @Nullable
     @Override
-    public Entity geckolib$getEntity() {
-        return this.geckolib$entity;
+    public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+        Object data = this.geckolib$data.get(dataTicket);
+
+        if (data == null && !hasGeckolibData(dataTicket))
+            return defaultValue;
+
+        try {
+            return (D)data;
+        }
+        catch (ClassCastException ex) {
+            GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
+
+            return defaultValue;
+        }
+    }
+
+    @ApiStatus.Internal
+    @Override
+    public Map<DataTicket<?>, Object> getDataMap() {
+        return this.geckolib$data;
     }
 }

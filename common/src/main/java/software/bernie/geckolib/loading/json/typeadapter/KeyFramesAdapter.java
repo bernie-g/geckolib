@@ -14,12 +14,12 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * {@link Gson} {@link JsonDeserializer} for {@link Animation.Keyframes}
+ * {@link Gson} {@link JsonDeserializer} for {@link Animation.KeyframeMarkers}
  * <p>
  * Acts as the deserialization interface for {@code Keyframes}
  */
-public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {
-	public static final Gson GEO_GSON = new GsonBuilder().setLenient()
+public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMarkers> {
+	public static final Gson GEO_GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
 			.registerTypeAdapter(Bone.class, Bone.deserializer())
 			.registerTypeAdapter(Cube.class, Cube.deserializer())
 			.registerTypeAdapter(FaceUV.class, FaceUV.deserializer())
@@ -33,18 +33,18 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {
 			.registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())
 			.registerTypeAdapter(UVFaces.class, UVFaces.deserializer())
 			.registerTypeAdapter(UVUnion.class, UVUnion.deserializer())
-			.registerTypeAdapter(Animation.Keyframes.class, new KeyFramesAdapter())
+			.registerTypeAdapter(Animation.KeyframeMarkers.class, new KeyFramesAdapter())
 			.registerTypeAdapter(BakedAnimations.class, new BakedAnimationsAdapter())
 			.create();
 
 	@Override
-	public Animation.Keyframes deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+	public Animation.KeyframeMarkers deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject obj = json.getAsJsonObject();
 		SoundKeyframeData[] sounds = buildSoundFrameData(obj);
 		ParticleKeyframeData[] particles = buildParticleFrameData(obj);
 		CustomInstructionKeyframeData[] customInstructions = buildCustomFrameData(obj);
 
-		return new Animation.Keyframes(sounds, particles, customInstructions);
+		return new Animation.KeyframeMarkers(sounds, particles, customInstructions);
 	}
 
 	private static SoundKeyframeData[] buildSoundFrameData(JsonObject rootObj) {

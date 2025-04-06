@@ -1,73 +1,36 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation.keyframe.event;
 
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.animation.keyframe.event.data.KeyFrameData;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 /**
- * The base class for {@link Keyframe} events
- * <p>
- * These will be passed to one of the controllers in {@link AnimationController} when encountered during animation
+ * Keyframe event object generated when a keyframe marker is encountered for the current render pass by an
+ * {@link AnimationController}
  *
- * @see CustomInstructionKeyframeEvent
- * @see ParticleKeyframeEvent
- * @see SoundKeyframeEvent
+ * @param animationState The {@link AnimationState} for the current render pass
+ * @param controller The {@link AnimationController} responsible for the currently playing animation
+ * @param keyframeData The {@link KeyFrameData} relevant to the encountered {@link Keyframe}
+ *
+ * @see AnimationController.KeyframeEventHandler
  */
-public abstract class KeyFrameEvent<T extends GeoAnimatable, E extends KeyFrameData> {
-	private final T animatable;
-	private final double animationTick;
-	private final AnimationController<T> controller;
-	private final E eventKeyFrame;
-	private final AnimationState<T> animationState;
-
-	public KeyFrameEvent(T animatable, double animationTick, AnimationController<T> controller, E eventKeyFrame, AnimationState<T> animationState) {
-		this.animatable = animatable;
-		this.animationTick = animationTick;
-		this.controller = controller;
-		this.eventKeyFrame = eventKeyFrame;
-		this.animationState = animationState;
+public record KeyFrameEvent<T extends GeoAnimatable, E extends KeyFrameData>(AnimationState<T> animationState, AnimationController<T> controller, E keyframeData) {
+	/**
+	 * Gets the {@link GeoRenderState} for the current render pass responsible for triggering this keyframe
+	 */
+	public GeoRenderState getRenderState() {
+		return this.animationState.renderState();
 	}
 
 	/**
-	 * Gets the amount of ticks that have passed in either the current transition or
+	 * Gets the amount of time (in ticks) that have passed in either the current transition or
 	 * animation, depending on the controller's AnimationState.
 	 */
 	public double getAnimationTick() {
-		return animationTick;
-	}
-
-	/**
-	 * Gets the {@link GeoAnimatable} object being rendered
-	 */
-	public T getAnimatable() {
-		return animatable;
-	}
-
-	/**
-	 * Gets the {@link AnimationController} responsible for the currently playing animation
-	 */
-	public AnimationController<T> getController() {
-		return controller;
-	}
-
-	/**
-	 * Returns the {@link KeyFrameData} relevant to the encountered {@link Keyframe}
-	 */
-	public E getKeyframeData() {
-		return this.eventKeyFrame;
-	}
-
-	/**
-	 * Returns the {@link AnimationState} for the current render pass
-	 */
-	public AnimationState<T> getAnimationState() {
-		return this.animationState;
+		return this.animationState.renderState().getGeckolibData(DataTickets.ANIMATION_TICKS);
 	}
 }

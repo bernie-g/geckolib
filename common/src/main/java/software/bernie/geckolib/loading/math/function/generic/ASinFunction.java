@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -27,8 +28,8 @@ public final class ASinFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return Math.asin(this.value.get() * Mth.DEG_TO_RAD);
+    public double compute(AnimationState<?> animationState) {
+        return Math.asin(this.value.get(animationState) * Mth.DEG_TO_RAD);
     }
 
     @Override

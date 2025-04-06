@@ -25,6 +25,6 @@ public class CustomInstructionKeyframeData extends KeyFrameData {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(getStartTick(), instructions);
+		return Objects.hash(getStartTick(), this.instructions);
 	}
 }

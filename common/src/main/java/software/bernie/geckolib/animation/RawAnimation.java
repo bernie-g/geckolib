@@ -1,14 +1,12 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.ApiStatus;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * A builder class for a raw/unbaked animation. These are constructed to pass to the
@@ -141,13 +139,19 @@ public final class RawAnimation {
 		return Objects.hash(this.animationList);
 	}
 
+	@Override
+	public String toString() {
+		return "RawAnimation{" + this.animationList.stream().map(Stage::toString).collect(Collectors.joining(" -> ")) + "}";
+	}
+
 	/**
 	 * An animation stage for a {@link RawAnimation} builder
 	 * <p>
 	 * This is an entry object representing a single animation stage of the final compiled animation.
 	 */
 	public record Stage(String animationName, Animation.LoopType loopType, int additionalTicks) {
-		static final String WAIT = "internal.wait";
+		@ApiStatus.Internal
+		public static final String WAIT = "internal.wait";
 
 		public Stage(String animationName, Animation.LoopType loopType) {
 			this(animationName, loopType, 0);
@@ -162,6 +166,11 @@ public final class RawAnimation {
 				return false;
 
 			return hashCode() == obj.hashCode();
+		}
+
+		@Override
+		public String toString() {
+			return this.animationName;
 		}
 
 		@Override

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.round;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 import software.bernie.geckolib.util.RenderUtil;
@@ -31,8 +32,8 @@ public final class LerpRotFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return RenderUtil.lerpYaw(this.delta.get(), this.min.get(), this.max.get());
+    public double compute(AnimationState<?> animationState) {
+        return RenderUtil.lerpYaw(this.delta.get(animationState), this.min.get(animationState), this.max.get(animationState));
     }
 
     @Override

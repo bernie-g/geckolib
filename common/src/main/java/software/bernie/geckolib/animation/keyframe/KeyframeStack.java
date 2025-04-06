@@ -1,13 +1,11 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation.keyframe;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Stores a triplet of {@link Keyframe Keyframes} in an ordered stack
@@ -17,8 +15,25 @@ public record KeyframeStack<T extends Keyframe<?>>(List<T> xKeyframes, List<T> y
 		this(new ObjectArrayList<>(), new ObjectArrayList<>(), new ObjectArrayList<>());
 	}
 
-	public static <F extends Keyframe<?>> KeyframeStack<F> from(KeyframeStack<F> otherStack) {
-		return new KeyframeStack<>(otherStack.xKeyframes, otherStack.yKeyframes, otherStack.zKeyframes);
+	/**
+	 * Extract and collect all {@link Variable}s used in this keyframe stack
+	 */
+	public Set<Variable> getUsedVariables() {
+		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
+
+		for (T keyframe : this.xKeyframes) {
+			usedVariables.addAll(keyframe.getUsedVariables());
+		}
+
+		for (T keyframe : this.yKeyframes) {
+			usedVariables.addAll(keyframe.getUsedVariables());
+		}
+
+		for (T keyframe : this.zKeyframes) {
+			usedVariables.addAll(keyframe.getUsedVariables());
+		}
+
+		return usedVariables;
 	}
 
 	public double getLastKeyframeTime() {

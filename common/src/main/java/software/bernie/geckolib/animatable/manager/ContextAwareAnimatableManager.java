@@ -1,7 +1,8 @@
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.animatable.manager;
 
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
@@ -12,7 +13,7 @@ import java.util.Map;
  * <p>
  * This can be used for things like perspective-dependent animation handling and other similar functionality
  * <p>
- * This relies entirely on data present in {@link AnimatableManager#extraData} saved to this manager to determine context
+ * This relies entirely on data present in {@link AnimatableManager#getAnimatableData} saved to this manager to determine context
  */
 public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> extends AnimatableManager<T> {
 	private final Map<C, AnimatableManager<T>> managers;
@@ -97,7 +98,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 		return getManagerForContext(getCurrentContext()).isFirstTick();
 	}
 
-	protected void finishFirstTick() {
+	public void finishFirstTick() {
 		getManagerForContext(getCurrentContext()).finishFirstTick();
 	}
 
@@ -159,8 +160,8 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	 * @param dataTicket The DataTicket for the data point
 	 * @param data The piece of data to store
 	 */
-	public <D> void setData(DataTicket<D> dataTicket, D data) {
-		super.setData(dataTicket, data);
+	public <D> void setAnimatableData(DataTicket<D> dataTicket, D data) {
+		super.setAnimatableData(dataTicket, data);
 	}
 
 	/**
@@ -168,7 +169,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	 * <p>
 	 * Sub-managers do not have their data set, and instead it is all kept in this parent manager
 	 */
-	public <D> D getData(DataTicket<D> dataTicket) {
-		return super.getData(dataTicket);
+	public <D> D getAnimatableData(DataTicket<D> dataTicket) {
+		return super.getAnimatableData(dataTicket);
 	}
 }

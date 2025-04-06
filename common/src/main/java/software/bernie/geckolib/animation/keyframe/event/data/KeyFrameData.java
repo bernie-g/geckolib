@@ -1,8 +1,3 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation.keyframe.event.data;
 
 import software.bernie.geckolib.animation.keyframe.Keyframe;

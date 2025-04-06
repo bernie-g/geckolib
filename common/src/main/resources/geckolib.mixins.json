@@ -8,6 +8,7 @@
     "defaultRequire": 1
   },
   "mixins": [
+    "client.EntityRendererMixin",
     "common.AbstractContainerMenuMixin",
     "common.HashedStackMixin",
     "common.ItemStackMixin",
@@ -17,7 +18,7 @@
     "client.EntityRenderDispatcherMixin",
     "client.EntityRenderStateMixin",
     "client.HumanoidArmorLayerMixin",
-    "client.LevelRendererMixin",
+    "client.LivingEntityRendererMixin",
     "client.SpecialModelRenderersMixin",
     "client.TextureManagerMixin"
   ]

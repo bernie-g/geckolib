@@ -2,29 +2,28 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.GeoReplacedEntity;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationProcessor;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.AnimationProcessor;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.loading.object.BakedAnimations;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.util.RenderUtil;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
-import java.util.function.DoubleSupplier;
+import java.util.function.ToDoubleFunction;
 
 /**
  * Base class for all code-based model objects
@@ -37,43 +36,34 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
-	private double animTime;
+	private double animationTicks;
 	private double lastGameTickTime;
 	private long lastRenderedInstance = -1;
 
 	/**
-	 * Returns the resource path for the {@link BakedGeoModel} (model json file) to render based on the provided animatable
+	 * Returns the resource ID for the {@link BakedGeoModel} (model JSON file) to render based on the provided {@link GeoRenderState}
 	 */
-	public abstract ResourceLocation getModelResource(T animatable, @Nullable GeoRenderer<T> renderer);
+	public abstract ResourceLocation getModelResource(GeoRenderState renderState);
 
 	/**
-	 * Returns the resource path for the texture file to render based on the provided animatable
+	 * Returns the resource path for the texture file to render based on the provided {@link GeoRenderState}
 	 */
-	public abstract ResourceLocation getTextureResource(T animatable, @Nullable GeoRenderer<T> renderer);
+	public abstract ResourceLocation getTextureResource(GeoRenderState renderState);
 
 	/**
-	 * Returns the resource path for the {@link BakedAnimations} (animation json file) to use for animations based on the provided animatable
+	 * Returns the resource ID for the {@link BakedAnimations} (animation JSON file) to use for animations based on the provided animatable
 	 */
 	public abstract ResourceLocation getAnimationResource(T animatable);
 
 	/**
-	 * Returns the resource path for the {@link BakedAnimations} (animation json file) fallback locations in the event
+	 * Returns the resource path for the {@link BakedAnimations} (animation JSON file) fallback locations in the event
 	 * your animation isn't present in the {@link #getAnimationResource(GeoAnimatable) primary resource}.
 	 * <p>
 	 * Should <b><u>NOT</u></b> be used as the primary animation resource path, and in general shouldn't be used
 	 * at all unless you know what you are doing
 	 */
-	public ResourceLocation[] getAnimationResourceFallbacks(T animatable, GeoRenderer<T> renderer) {
+	public ResourceLocation[] getAnimationResourceFallbacks(T animatable) {
 		return new ResourceLocation[0];
-	}
-
-	/**
-	 * Override this and return true if Geckolib should crash when attempting to animate the model, but fails to find a bone
-	 * <p>
-	 * By default, GeckoLib will just gracefully ignore a missing bone, which might cause oddities with incorrect models or mismatching variables
-	 */
-	public boolean crashIfBoneMissing() {
-		return false;
 	}
 
 	/**
@@ -82,29 +72,8 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions taking place
 	 */
 	@Nullable
-	public RenderType getRenderType(T animatable, ResourceLocation texture) {
+	public RenderType getRenderType(GeoRenderState renderState, ResourceLocation texture) {
 		return RenderType.entityCutoutNoCull(texture);
-	}
-
-	/**
-	 * Get the baked geo model object used for rendering from the given resource path
-	 */
-	public BakedGeoModel getBakedModel(ResourceLocation location) {
-		BakedGeoModel model = GeckoLibResources.getBakedModels().get(location);
-
-		if (model == null) {
-			if (!location.getPath().contains("geo/"))
-				throw GeckoLibConstants.exception(location, "Invalid model resource path provided - GeckoLib models must be placed in assets/<modid>/geo/");
-
-			throw GeckoLibConstants.exception(location, "Unable to find model");
-		}
-
-		if (model != this.currentModel) {
-			this.processor.setActiveModel(model);
-			this.currentModel = model;
-		}
-
-		return this.currentModel;
 	}
 
 	/**
@@ -118,40 +87,6 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the loaded {@link Animation} for the given animation {@code name}, if it exists
-	 *
-	 * @param animatable The {@code GeoAnimatable} instance being referred to
-	 * @param name The name of the animation to retrieve
-	 * @return The {@code Animation} instance for the provided {@code name}, or null if none match
-	 */
-	@Nullable
-	public Animation getAnimation(T animatable, String name) {
-		ResourceLocation location = getAnimationResource(animatable);
-		BakedAnimations bakedAnimations = GeckoLibResources.getBakedAnimations().get(location);
-		Animation animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
-
-		if (animation != null)
-			return animation;
-
-		for (ResourceLocation fallbackLocation : getAnimationResourceFallbacks(animatable, null)) {
-			bakedAnimations = GeckoLibResources.getBakedAnimations().get(location = fallbackLocation);
-			animation = bakedAnimations != null ? bakedAnimations.getAnimation(name) : null;
-
-			if (animation != null)
-				return animation;
-		}
-
-		if (bakedAnimations == null) {
-			if (!location.getPath().contains("animations/"))
-				throw GeckoLibConstants.exception(location, "Invalid animation resource path provided - GeckoLib animations must be placed in assets/<modid>/animations/");
-
-			throw GeckoLibConstants.exception(location, "Unable to find animation file.");
-		}
-
-		return null;
-	}
-
-	/**
 	 * Gets the {@link AnimationProcessor} for this model.
 	 */
 	public AnimationProcessor<T> getAnimationProcessor() {
@@ -162,29 +97,120 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * Add additional {@link DataTicket DataTickets} to the {@link AnimationState} to be handled by your animation handler at render time
 	 *
 	 * @param animatable The animatable instance currently being animated
-	 * @param instanceId The unique instance id of the animatable being animated
-	 * @param dataConsumer The DataTicket + data consumer to be added to the AnimationEvent
+	 * @param renderState The GeoRenderState to capture data in
 	 */
-	public void addAdditionalStateData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
+	public void addAdditionalStateData(T animatable, GeoRenderState renderState) {}
 
 	/**
 	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
 	 * <p>
-	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
+	 * Override to set custom animations (such as head rotation, etc)
+	 *
+	 * @param animationState An {@link AnimationState} instance created to hold animation data for the animatable for this render pass
+	 */
+	public void setCustomAnimations(AnimationState<T> animationState) {}
+
+	/**
+	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * <p>
+	 * Use this method to set custom {@link software.bernie.geckolib.loading.math.value.Variable Variable} values via
+	 * {@link software.bernie.geckolib.loading.math.MathParser#setVariable(String, ToDoubleFunction) MathParser.setVariable}
+	 *
+	 * @param animatable The {@link GeoAnimatable} instance about to be rendered
+	 */
+	public void applyMolangQueries(T animatable) {}
+
+	/**
+	 * Get the baked geo model object used for rendering from the given resource path
+	 */
+	public BakedGeoModel getBakedModel(ResourceLocation location) {
+		BakedGeoModel model = GeckoLibResources.getBakedModels().get(location);
+
+		if (model == null) {
+			ResourceLocation strippedPath = GeckoLibResources.stripPrefixAndSuffix(location);
+
+			if (!location.equals(strippedPath)) {
+				GeckoLibConstants.LOGGER.debug("Unnecessary prefix or suffix found in model resource path: {} ({}). Remove this from your getModelResource",
+											   location.getPath(), location.getPath().replace(strippedPath.getPath(), ""));
+
+				model = GeckoLibResources.getBakedModels().get(location = strippedPath);
+			}
+
+			if (model == null)
+				throw new IllegalArgumentException("Unable to find model file: " + location);
+		}
+
+		if (model != this.currentModel) {
+			this.processor.setActiveModel(model);
+			this.currentModel = model;
+		}
+
+		return this.currentModel;
+	}
+
+	/**
+	 * Gets the loaded {@link Animation} for the given animation {@code name}, if it exists
+	 *
+	 * @param animatable The {@link GeoAnimatable} for the upcoming render pass
+	 * @param name The name of the animation to retrieve
+	 * @return The Animation instance for the provided {@code name}, or null if none match
+	 */
+	@Nullable
+	public Animation getAnimation(T animatable, String name) throws RuntimeException {
+		ResourceLocation location = getAnimationResource(animatable);
+		ResourceLocation[] fallbackLocations = getAnimationResourceFallbacks(animatable);
+		Map<ResourceLocation, BakedAnimations> animations = GeckoLibResources.getBakedAnimations();
+		int fallbackIndex = -1;
+		BakedAnimations bakedAnimations;
+
+		do {
+			bakedAnimations = animations.get(location);
+
+			if (bakedAnimations == null) {
+				ResourceLocation strippedPath = GeckoLibResources.stripPrefixAndSuffix(location);
+
+				if (!strippedPath.equals(location)) {
+					GeckoLibConstants.LOGGER.debug("Unnecessary prefix or suffix found in animations resource path: {} ({}). Remove this from your getAnimationResource",
+												   location.getPath(), location.getPath().replace(strippedPath.getPath(), ""));
+
+					bakedAnimations = animations.get(strippedPath);
+				}
+			}
+
+			if (bakedAnimations != null) {
+				Animation animation = bakedAnimations.getAnimation(name);
+
+				if (animation != null)
+					return animation;
+			}
+
+			location = fallbackLocations[++fallbackIndex];
+		}
+		while (fallbackIndex < fallbackLocations.length - 2);
+
+		if (bakedAnimations == null)
+			throw new IllegalArgumentException("Unable to find animation file '" + location + "' for animatable '" + animatable.getClass().getName() + "'");
+
+		GeckoLibConstants.LOGGER.error("Unable to find animation: '{}' in animation file '{}' for animatable '{}'", name, location, animatable.getClass().getName());
+
+		return null;
+	}
+
+	/**
+	 * Perform the necessary preparations for the upcoming render pass
 	 */
 	@ApiStatus.Internal
-	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState, float partialTick) {
+	public void prepareForRenderPass(T animatable, GeoRenderState renderState) {
 		Minecraft mc = Minecraft.getInstance();
-		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
-		Double currentTick = animationState.getData(DataTickets.TICK);
-
-		if (currentTick == null)
-			currentTick = animatable instanceof Entity entity ? (double)entity.tickCount : RenderUtil.getCurrentTick();
+		long instanceId = renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID);
+		AnimatableManager<T> animatableManager = renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER);
+		EntityRenderState entityRenderState = renderState instanceof EntityRenderState state ? state : null;
+		double animatableRenderTime = entityRenderState != null ? entityRenderState.ageInTicks : renderState.getGeckolibData(DataTickets.TICK);
 
 		if (animatableManager.getFirstTickTime() == -1)
-			animatableManager.startedAt(currentTick + partialTick);
+			animatableManager.startedAt(animatableRenderTime);
 
-		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + partialTick : currentTick - animatableManager.getFirstTickTime();
+		double currentFrameTime = entityRenderState != null ? animatableRenderTime : animatableRenderTime - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)
@@ -194,41 +220,30 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 			animatableManager.updatedAt(currentFrameTime);
 
 			double lastUpdateTime = animatableManager.getLastUpdateTime();
-			this.animTime += lastUpdateTime - this.lastGameTickTime;
+			this.animationTicks += lastUpdateTime - this.lastGameTickTime;
 			this.lastGameTickTime = lastUpdateTime;
 		}
 
-		animationState.animationTick = this.animTime;
 		this.lastRenderedInstance = instanceId;
-		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationState, this.animTime);
-
-		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
-
-		setCustomAnimations(animatable, instanceId, animationState);
+		addAdditionalStateData(animatable, renderState);
+		renderState.addGeckolibData(DataTickets.ANIMATION_TICKS, this.animationTicks);
+		applyMolangQueries(animatable);
+		getAnimationProcessor().prepareForRenderPass(animatable, animatableManager, renderState, this.animationTicks, this);
 	}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * This method is called once per-render frame for each {@link GeoAnimatable} being rendered
 	 * <p>
-	 * Override to set custom animations (such as head rotation, etc)
-	 *
-	 * @param animatable The {@code GeoAnimatable} instance currently being rendered
-	 * @param instanceId The instance id of the {@code GeoAnimatable}
-	 * @param animationState An {@link AnimationState} instance created to hold animation data for the {@code animatable} for this method call
+	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(AnimationState)} for custom animation work
 	 */
-	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {}
+	@ApiStatus.Internal
+	public void handleAnimations(AnimationState<T> animationState) {
+		AnimationProcessor<T> processor = getAnimationProcessor();
 
-	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
-	 * <p>
-	 * Use this method to set custom {@link software.bernie.geckolib.loading.math.value.Variable Variable} values via
-	 * {@link software.bernie.geckolib.loading.math.MathParser#setVariable(String, DoubleSupplier) MathParser.setVariable}
-	 *
-	 * @param animationState The AnimationState data for the current render frame
-	 * @param animTime The internal tick counter kept by the {@link AnimatableManager manager} for this animatable
-	 */
-	public void applyMolangQueries(AnimationState<T> animationState, double animTime) {}
+		if (!processor.getRegisteredBones().isEmpty())
+			processor.tickAnimation(animationState);
+
+		setCustomAnimations(animationState);
+	}
 }

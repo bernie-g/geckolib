@@ -1,26 +1,32 @@
-package software.bernie.geckolib.animation;
+package software.bernie.geckolib.animatable.processing;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
 import net.minecraft.core.Direction.Axis;
 import org.apache.logging.log4j.Level;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.EasingType;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.keyframe.*;
-import software.bernie.geckolib.animation.keyframe.event.CustomInstructionKeyframeEvent;
-import software.bernie.geckolib.animation.keyframe.event.ParticleKeyframeEvent;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.animation.keyframe.event.KeyFrameEvent;
 import software.bernie.geckolib.animation.keyframe.event.data.CustomInstructionKeyframeData;
 import software.bernie.geckolib.animation.keyframe.event.data.KeyFrameData;
 import software.bernie.geckolib.animation.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.math.value.Constant;
+import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.*;
@@ -33,7 +39,6 @@ import java.util.function.Function;
  * one to control attacks, one to control size, etc.
  */
 public class AnimationController<T extends GeoAnimatable> {
-	protected final T animatable;
 	protected final String name;
 	protected final AnimationStateHandler<T> stateHandler;
 	protected final Map<String, BoneAnimationQueue> boneAnimationQueues = new Object2ObjectOpenHashMap<>();
@@ -46,9 +51,9 @@ public class AnimationController<T extends GeoAnimatable> {
 	private boolean justStopped = true;
 	protected boolean justStartedTransition = false;
 
-	protected SoundKeyframeHandler<T> soundKeyframeHandler = null;
-	protected ParticleKeyframeHandler<T> particleKeyframeHandler = null;
-	protected CustomKeyframeHandler<T> customKeyframeHandler = null;
+	protected KeyframeEventHandler<T, SoundKeyframeData> soundKeyframeHandler = null;
+	protected KeyframeEventHandler<T, ParticleKeyframeData> particleKeyframeHandler = null;
+	protected KeyframeEventHandler<T, CustomInstructionKeyframeData> customKeyframeHandler = null;
 
 	protected final Map<String, RawAnimation> triggerableAnimations = new Object2ObjectOpenHashMap<>(0);
 	protected RawAnimation triggeredAnimation = null;
@@ -60,21 +65,28 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected State animationState = State.STOPPED;
 	protected double tickOffset;
 	protected double lastPollTime = -1;
+	protected double animationSpeed = 1;
 	protected Function<T, Double> animationSpeedModifier = animatable -> 1d;
-	protected Function<T, EasingType> overrideEasingTypeFunction = animatable -> null;
+	protected Function<AnimationState<T>, EasingType> overrideEasingTypeFunction = animationState -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
-	protected GeoModel<T> lastModel;
+
+	protected GeoModel<T> currentModel;
+	protected T currentAnimatable;
+	protected double currentAnimationSeconds;
+	protected PlayState nextPlaystate;
+
+	protected AnimationState<T> currentAnimationState;
+	protected double processedAnimationTick;
 
 	/**
 	 * Instantiates a new {@code AnimationController}
 	 * <p>
 	 * This constructor assumes a 0-tick transition length between animations, and a generic name
 	 *
-	 * @param animatable The object that will be animated by this controller
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, AnimationStateHandler<T> animationHandler) {
-		this(animatable, "base_controller", 0, animationHandler);
+	public AnimationController(AnimationStateHandler<T> animationHandler) {
+		this("base_controller", 0, animationHandler);
 	}
 
 	/**
@@ -82,12 +94,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * <p>
 	 * This constructor assumes a 0-tick transition length between animations
 	 *
-	 * @param animatable The object that will be animated by this controller
 	 * @param name The name of the controller - should represent what animations it handles
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, String name, AnimationStateHandler<T> animationHandler) {
-		this(animatable, name, 0, animationHandler);
+	public AnimationController(String name, AnimationStateHandler<T> animationHandler) {
+		this(name, 0, animationHandler);
 	}
 
 	/**
@@ -95,59 +106,56 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * <p>
 	 * This constructor assumes a generic name
 	 *
-	 * @param animatable The object that will be animated by this controller
 	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
 	 *                              Lerping is automatically applied where possible
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, int transitionTickTime, AnimationStateHandler<T> animationHandler) {
-		this(animatable, "base_controller", transitionTickTime, animationHandler);
+	public AnimationController(int transitionTickTime, AnimationStateHandler<T> animationHandler) {
+		this("base_controller", transitionTickTime, animationHandler);
 	}
 
 	/**
 	 * Instantiates a new {@code AnimationController}
 	 *
-	 * @param animatable The object that will be animated by this controller
 	 * @param name The name of the controller - should represent what animations it handles
 	 * @param transitionTickTime The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
 	 *                              Lerping is automatically applied where possible
 	 * @param animationHandler The {@link AnimationStateHandler} animation state handler responsible for deciding which animations to play
 	 */
-	public AnimationController(T animatable, String name, int transitionTickTime, AnimationStateHandler<T> animationHandler) {
-		this.animatable = animatable;
+	public AnimationController(String name, int transitionTickTime, AnimationStateHandler<T> animationHandler) {
 		this.name = name;
 		this.transitionLength = transitionTickTime;
 		this.stateHandler = animationHandler;
 	}
 
 	/**
-	 * Applies the given {@link SoundKeyframeHandler} to this controller, for handling {@link SoundKeyframeEvent sound keyframe instructions}
+	 * Adds the provided {@link KeyframeEventHandler} to this controller, for handling {@link SoundKeyframeData} keyframe events
 	 *
 	 * @return this
 	 */
-	public AnimationController<T> setSoundKeyframeHandler(SoundKeyframeHandler<T> soundHandler) {
+	public AnimationController<T> setSoundKeyframeHandler(KeyframeEventHandler<T, SoundKeyframeData> soundHandler) {
 		this.soundKeyframeHandler = soundHandler;
 
 		return this;
 	}
 
 	/**
-	 * Applies the given {@link ParticleKeyframeHandler} to this controller, for handling {@link ParticleKeyframeEvent particle keyframe instructions}
+	 * Adds the provided {@link KeyframeEventHandler} to this controller, for handling {@link ParticleKeyframeData} keyframe events
 	 *
 	 * @return this
 	 */
-	public AnimationController<T> setParticleKeyframeHandler(ParticleKeyframeHandler<T> particleHandler) {
+	public AnimationController<T> setParticleKeyframeHandler(KeyframeEventHandler<T, ParticleKeyframeData> particleHandler) {
 		this.particleKeyframeHandler = particleHandler;
 
 		return this;
 	}
 
 	/**
-	 * Applies the given {@link CustomKeyframeHandler} to this controller, for handling {@link CustomInstructionKeyframeEvent sound keyframe instructions}
+	 * Adds the provided {@link KeyframeEventHandler} to this controller, for handling {@link CustomInstructionKeyframeData} keyframe events
 	 *
 	 * @return this
 	 */
-	public AnimationController<T> setCustomInstructionKeyframeHandler(CustomKeyframeHandler<T> customInstructionHandler) {
+	public AnimationController<T> setCustomInstructionKeyframeHandler(KeyframeEventHandler<T, CustomInstructionKeyframeData> customInstructionHandler) {
 		this.customKeyframeHandler = customInstructionHandler;
 
 		return this;
@@ -156,7 +164,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	/**
 	 * Applies the given modifier function to this controller, for handling the speed that the controller should play its animations at
 	 * <p>
-	 * An output value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc
+	 * An output value of 1 is considered neutral, with 2 playing an animation twice as fast, 0.5 playing half as fast, etc.
 	 *
 	 * @param speedModFunction The function to apply to this controller to handle animation speed
 	 * @return this
@@ -199,7 +207,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param easingType The new {@code EasingType} to use
 	 * @return this
 	 */
-	public AnimationController<T> setOverrideEasingTypeFunction(Function<T, EasingType> easingType) {
+	public AnimationController<T> setOverrideEasingTypeFunction(Function<AnimationState<T>, EasingType> easingType) {
 		this.overrideEasingTypeFunction = easingType;
 
 		return this;
@@ -275,14 +283,21 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Gets the current animation speed modifier
+	 * Returns the time (in seconds) that the currently played animation has been running for
+	 */
+	public double getCurrentAnimationSeconds() {
+		return this.currentAnimationSeconds;
+	}
+
+	/**
+	 * Gets the current animation speed modifier, as of the last time the controller updated it
 	 * <p>
 	 * This modifier defines the relative speed in which animations will be played based on the current state of the game
 	 *
 	 * @return The computed current animation speed modifier
 	 */
 	public double getAnimationSpeed() {
-		return this.animationSpeedModifier.apply(this.animatable);
+		return this.animationSpeed;
 	}
 
 	/**
@@ -345,6 +360,13 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Directly set the state of this controller for the next (or current) animation pass
+	 */
+	public void setAnimationState(State state) {
+		this.animationState = state;
+	}
+
+	/**
 	 * Sets the currently loaded animation to the one provided
 	 * <p>
 	 * This method may be safely called every render frame, as passing the same builder that is already loaded will do nothing
@@ -361,8 +383,8 @@ public class AnimationController<T extends GeoAnimatable> {
 		}
 
 		if (this.needsAnimationReload || !rawAnimation.equals(this.currentRawAnimation)) {
-			if (this.lastModel != null) {
-				Queue<AnimationProcessor.QueuedAnimation> animations = this.lastModel.getAnimationProcessor().buildAnimationQueue(this.animatable, rawAnimation);
+			if (this.currentModel != null) {
+				Queue<AnimationProcessor.QueuedAnimation> animations = this.currentModel.getAnimationProcessor().buildAnimationQueue(this.currentAnimatable, rawAnimation);
 
 				if (animations != null) {
 					this.animationQueue = animations;
@@ -408,7 +430,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 *
 	 * @return true if a triggered animation was stopped
 	 */
-	protected boolean stopTriggeredAnimation() {
+	public boolean stopTriggeredAnimation() {
 		if (this.triggeredAnimation == null)
 			return false;
 
@@ -424,49 +446,74 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Handle a given AnimationState, alongside the current triggered animation if applicable
+	 * Returns whether the given {@link #triggerableAnim(String, RawAnimation) registered triggerable animation} is currently triggered
+	 * on this controller.
+	 *
+	 * @param animName The name matching the name the triggered animation was registered with
 	 */
-	protected PlayState handleAnimationState(AnimationState<T> state) {
+	public boolean isTriggeredAnimation(String animName) {
+		return this.triggeredAnimation != null && this.triggeredAnimation.equals(this.triggerableAnimations.get(animName));
+	}
+
+	/**
+	 * Handle a given AnimationTest alongside the current triggered animation if applicable
+	 */
+	protected PlayState handleAnimationState(AnimationTest<T> animationTest) {
 		if (this.triggeredAnimation != null) {
 			if (this.currentRawAnimation != this.triggeredAnimation)
 				this.currentAnimation = null;
 
 			setAnimation(this.triggeredAnimation);
 
-			if (!hasAnimationFinished() && (!this.handlingTriggeredAnimations || this.stateHandler.handle(state) == PlayState.CONTINUE))
+			if (!hasAnimationFinished() && (!this.handlingTriggeredAnimations || this.stateHandler.handle(animationTest) == PlayState.CONTINUE))
 				return PlayState.CONTINUE;
 
 			this.triggeredAnimation = null;
 			this.needsAnimationReload = true;
 		}
 
-		return this.stateHandler.handle(state);
+		return this.stateHandler.handle(animationTest);
+	}
+
+	/**
+	 * Perform the prepatory work for the upcoming render pass.
+	 * <p>
+	 * This is done to allow for upcoming {@link Animation}s to be accounted for in data-gathering
+	 */
+	public void prepareForRenderPass(T animatable, AnimatableManager<T> manager, MolangQueries.Actor<T> actor, Reference2DoubleMap<Variable> variables, double lerpedAnimationTick, GeoModel<T> model) {
+		this.isJustStarting = manager.isFirstTick();
+		this.currentModel = model;
+		this.currentAnimatable = animatable;
+		this.animationSpeed = this.animationSpeedModifier.apply(animatable);
+		this.processedAnimationTick = adjustTick(lerpedAnimationTick);
+
+		if (this.animationState == State.TRANSITIONING && this.processedAnimationTick >= this.transitionLength) {
+			this.shouldResetTick = true;
+			this.animationState = State.RUNNING;
+			this.processedAnimationTick = adjustTick(lerpedAnimationTick);
+		}
+
+		this.nextPlaystate = handleAnimationState(new AnimationTest<>(animatable, actor.renderState(), manager, this));
+
+		if (this.nextPlaystate != PlayState.STOP) {
+			for (AnimationProcessor.QueuedAnimation queuedAnimation : this.animationQueue) {
+				MolangQueries.buildActorVariables(actor, queuedAnimation.animation().usedVariables(), variables);
+			}
+		}
 	}
 
 	/**
 	 * This method is called every frame in order to populate the animation point
 	 * queues, and process animation state logic
 	 *
-	 * @param model					The model currently being processed
-	 * @param state                 The animation test state
-	 * @param bones                 The registered {@link GeoBone bones} for this model
-	 * @param snapshots             The {@link BoneSnapshot} map
-	 * @param seekTime              The current tick + partial tick
-	 * @param crashWhenCantFindBone Whether to hard-fail when a bone can't be found, or to continue with the remaining bones
+	 * @param state The animation test state
+	 * @param bones The registered {@link GeoBone bones} for this model
+	 * @param snapshots The {@link BoneSnapshot} map
+	 * @param lerpedAnimationTick The current tick + partial tick for the animatable
 	 */
-	public void process(GeoModel<T> model, AnimationState<T> state, Map<String, GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double seekTime, boolean crashWhenCantFindBone) {
-		double adjustedTick = adjustTick(seekTime);
-		this.lastModel = model;
-
-		if (animationState == State.TRANSITIONING && adjustedTick >= this.transitionLength) {
-			this.shouldResetTick = true;
-			this.animationState = State.RUNNING;
-			adjustedTick = adjustTick(seekTime);
-		}
-
-		PlayState playState = handleAnimationState(state);
-
-		if (playState == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.isEmpty())) {
+	@ApiStatus.Internal
+	public void beginTick(AnimationState<T> state, Map<String, GeoBone> bones, Map<String, BoneSnapshot> snapshots, final double lerpedAnimationTick) {
+		if (this.nextPlaystate == PlayState.STOP || (this.currentAnimation == null && this.animationQueue.isEmpty())) {
 			this.animationState = State.STOPPED;
 			this.justStopped = true;
 
@@ -477,7 +524,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
 		if (this.justStartedTransition && (this.shouldResetTick || this.justStopped)) {
 			this.justStopped = false;
-			adjustedTick = adjustTick(seekTime);
+			this.processedAnimationTick = adjustTick(lerpedAnimationTick);
 
 			if (this.currentAnimation == null)
 				this.animationState = State.TRANSITIONING;
@@ -487,19 +534,19 @@ public class AnimationController<T extends GeoAnimatable> {
 			this.animationState = State.TRANSITIONING;
 			this.justStartedTransition = true;
 			this.needsAnimationReload = false;
-			adjustedTick = adjustTick(seekTime);
+			this.processedAnimationTick = adjustTick(lerpedAnimationTick);
 		}
 		else if (this.animationState != State.TRANSITIONING) {
 			this.animationState = State.RUNNING;
 		}
 
 		if (getAnimationState() == State.RUNNING) {
-			processCurrentAnimation(adjustedTick, seekTime, crashWhenCantFindBone, state);
+			processCurrentAnimation(state, this.processedAnimationTick, lerpedAnimationTick);
 		}
 		else if (this.animationState == State.TRANSITIONING) {
-			if (this.lastPollTime != seekTime && (adjustedTick == 0 || this.isJustStarting)) {
+			if (this.lastPollTime != lerpedAnimationTick && (this.processedAnimationTick == 0 || this.isJustStarting)) {
 				this.justStartedTransition = false;
-				this.lastPollTime = seekTime;
+				this.lastPollTime = lerpedAnimationTick;
 				this.currentAnimation = this.animationQueue.poll();
 
 				resetEventKeyFrames();
@@ -511,46 +558,39 @@ public class AnimationController<T extends GeoAnimatable> {
 			}
 
 			if (this.currentAnimation != null) {
-				MathParser.setVariable(MolangQueries.ANIM_TIME, () -> 0);
+				this.currentAnimationSeconds = 0;
 
 				for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 					BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 					BoneSnapshot boneSnapshot = this.boneSnapshots.get(boneAnimation.boneName());
 					GeoBone bone = bones.get(boneAnimation.boneName());
 
-					if (boneSnapshot == null)
+					if (boneSnapshot == null || bone == null)
 						continue;
-
-					if (bone == null) {
-						if (crashWhenCantFindBone)
-							throw new RuntimeException("Could not find bone: " + boneAnimation.boneName());
-
-						continue;
-					}
 
 					KeyframeStack<Keyframe<MathValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
 					KeyframeStack<Keyframe<MathValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
 					KeyframeStack<Keyframe<MathValue>> scaleKeyFrames = boneAnimation.scaleKeyFrames();
 
 					if (!rotationKeyFrames.xKeyframes().isEmpty()) {
-						boneAnimationQueue.addNextRotation(null, adjustedTick, this.transitionLength, boneSnapshot, bone.getInitialSnapshot(),
-								getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), 0, true, Axis.X),
-								getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), 0, true, Axis.Y),
-								getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), 0, true, Axis.Z));
+						boneAnimationQueue.addNextRotation(null, this.processedAnimationTick, this.transitionLength, boneSnapshot, bone.getInitialSnapshot(),
+								getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), state, 0, true, Axis.X),
+								getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), state, 0, true, Axis.Y),
+								getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), state, 0, true, Axis.Z));
 					}
 
 					if (!positionKeyFrames.xKeyframes().isEmpty()) {
-						boneAnimationQueue.addNextPosition(null, adjustedTick, this.transitionLength, boneSnapshot,
-								getAnimationPointAtTick(positionKeyFrames.xKeyframes(), 0, false, Axis.X),
-								getAnimationPointAtTick(positionKeyFrames.yKeyframes(), 0, false, Axis.Y),
-								getAnimationPointAtTick(positionKeyFrames.zKeyframes(), 0, false, Axis.Z));
+						boneAnimationQueue.addNextPosition(null, this.processedAnimationTick, this.transitionLength, boneSnapshot,
+								getAnimationPointAtTick(positionKeyFrames.xKeyframes(), state, 0, false, Axis.X),
+								getAnimationPointAtTick(positionKeyFrames.yKeyframes(), state, 0, false, Axis.Y),
+								getAnimationPointAtTick(positionKeyFrames.zKeyframes(), state, 0, false, Axis.Z));
 					}
 
 					if (!scaleKeyFrames.xKeyframes().isEmpty()) {
-						boneAnimationQueue.addNextScale(null, adjustedTick, this.transitionLength, boneSnapshot,
-								getAnimationPointAtTick(scaleKeyFrames.xKeyframes(), 0, false, Axis.X),
-								getAnimationPointAtTick(scaleKeyFrames.yKeyframes(), 0, false, Axis.Y),
-								getAnimationPointAtTick(scaleKeyFrames.zKeyframes(), 0, false, Axis.Z));
+						boneAnimationQueue.addNextScale(null, this.processedAnimationTick, this.transitionLength, boneSnapshot,
+								getAnimationPointAtTick(scaleKeyFrames.xKeyframes(), state, 0, false, Axis.X),
+								getAnimationPointAtTick(scaleKeyFrames.yKeyframes(), state, 0, false, Axis.Y),
+								getAnimationPointAtTick(scaleKeyFrames.zKeyframes(), state, 0, false, Axis.Z));
 					}
 				}
 			}
@@ -558,19 +598,28 @@ public class AnimationController<T extends GeoAnimatable> {
 	}
 
 	/**
+	 * Do post-animation cleanup as needed
+	 */
+	@ApiStatus.Internal
+	public void finishRenderPass() {
+		this.currentModel = null;
+		this.currentAnimationState = null;
+		this.nextPlaystate = null;
+	}
+
+	/**
 	 * Handle the current animation's state modifications and translations
 	 *
 	 * @param adjustedTick The controller-adjusted tick for animation purposes
-	 * @param seekTime The lerped tick (current tick + partial tick)
-	 * @param crashWhenCantFindBone Whether the controller should throw an exception when unable to find the required bone, or continue with the remaining bones
+	 * @param lerpedAnimationTick The lerped tick (current tick + partial tick)
 	 */
-	private void processCurrentAnimation(double adjustedTick, double seekTime, boolean crashWhenCantFindBone, AnimationState<T> animationState) {
+	private void processCurrentAnimation(AnimationState<T> animationState, double adjustedTick, double lerpedAnimationTick) {
 		if (adjustedTick >= this.currentAnimation.animation().length()) {
-			if (this.currentAnimation.loopType().shouldPlayAgain(this.animatable, this, this.currentAnimation.animation())) {
+			if (this.currentAnimation.loopType().shouldPlayAgain(animationState, this, this.currentAnimation.animation())) {
 				if (this.animationState != State.PAUSED) {
 					this.shouldResetTick = true;
 
-					adjustedTick = adjustTick(seekTime);
+					adjustedTick = adjustTick(lerpedAnimationTick);
 					resetEventKeyFrames();
 				}
 			}
@@ -587,25 +636,19 @@ public class AnimationController<T extends GeoAnimatable> {
 				else {
 					this.animationState = State.TRANSITIONING;
 					this.shouldResetTick = true;
-					adjustedTick = adjustTick(seekTime);
+					adjustedTick = adjustTick(lerpedAnimationTick);
 					this.currentAnimation = this.animationQueue.poll();
 				}
 			}
 		}
 
-		final double finalAdjustedTick = adjustedTick;
-
-		MathParser.setVariable(MolangQueries.ANIM_TIME, () -> finalAdjustedTick / 20d);
+		this.currentAnimationSeconds = adjustedTick / 20d;
 
 		for (BoneAnimation boneAnimation : this.currentAnimation.animation().boneAnimations()) {
 			BoneAnimationQueue boneAnimationQueue = this.boneAnimationQueues.get(boneAnimation.boneName());
 
-			if (boneAnimationQueue == null) {
-				if (crashWhenCantFindBone)
-					throw new RuntimeException("Could not find bone: " + boneAnimation.boneName());
-
+			if (boneAnimationQueue == null)
 				continue;
-			}
 
 			KeyframeStack<Keyframe<MathValue>> rotationKeyFrames = boneAnimation.rotationKeyFrames();
 			KeyframeStack<Keyframe<MathValue>> positionKeyFrames = boneAnimation.positionKeyFrames();
@@ -613,61 +656,61 @@ public class AnimationController<T extends GeoAnimatable> {
 
 			if (!rotationKeyFrames.xKeyframes().isEmpty()) {
 				boneAnimationQueue.addRotations(
-						getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), adjustedTick, true, Axis.X),
-						getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), adjustedTick, true, Axis.Y),
-						getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), adjustedTick, true, Axis.Z));
+						getAnimationPointAtTick(rotationKeyFrames.xKeyframes(), animationState, adjustedTick, true, Axis.X),
+						getAnimationPointAtTick(rotationKeyFrames.yKeyframes(), animationState, adjustedTick, true, Axis.Y),
+						getAnimationPointAtTick(rotationKeyFrames.zKeyframes(), animationState, adjustedTick, true, Axis.Z));
 			}
 
 			if (!positionKeyFrames.xKeyframes().isEmpty()) {
 				boneAnimationQueue.addPositions(
-						getAnimationPointAtTick(positionKeyFrames.xKeyframes(), adjustedTick, false, Axis.X),
-						getAnimationPointAtTick(positionKeyFrames.yKeyframes(), adjustedTick, false, Axis.Y),
-						getAnimationPointAtTick(positionKeyFrames.zKeyframes(), adjustedTick, false, Axis.Z));
+						getAnimationPointAtTick(positionKeyFrames.xKeyframes(), animationState, adjustedTick, false, Axis.X),
+						getAnimationPointAtTick(positionKeyFrames.yKeyframes(), animationState, adjustedTick, false, Axis.Y),
+						getAnimationPointAtTick(positionKeyFrames.zKeyframes(), animationState, adjustedTick, false, Axis.Z));
 			}
 
 			if (!scaleKeyFrames.xKeyframes().isEmpty()) {
 				boneAnimationQueue.addScales(
-						getAnimationPointAtTick(scaleKeyFrames.xKeyframes(), adjustedTick, false, Axis.X),
-						getAnimationPointAtTick(scaleKeyFrames.yKeyframes(), adjustedTick, false, Axis.Y),
-						getAnimationPointAtTick(scaleKeyFrames.zKeyframes(), adjustedTick, false, Axis.Z));
+						getAnimationPointAtTick(scaleKeyFrames.xKeyframes(), animationState, adjustedTick, false, Axis.X),
+						getAnimationPointAtTick(scaleKeyFrames.yKeyframes(), animationState, adjustedTick, false, Axis.Y),
+						getAnimationPointAtTick(scaleKeyFrames.zKeyframes(), animationState, adjustedTick, false, Axis.Z));
 			}
 		}
 
 		adjustedTick += this.transitionLength;
 
-		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().sounds()) {
+		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyframeMarkers().sounds()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.soundKeyframeHandler == null) {
-					GeckoLibConstants.LOGGER.log(Level.WARN, "Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Sound Keyframe found for {} -> {}, but no keyframe handler registered", animationState.getData(DataTickets.ANIMATABLE_CLASS).getName(), getName());
 
 					break;
 				}
 
-				this.soundKeyframeHandler.handle(new SoundKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
+				this.soundKeyframeHandler.handle(new KeyFrameEvent<>(animationState, this, keyframeData));
 			}
 		}
 
-		for (ParticleKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().particles()) {
+		for (ParticleKeyframeData keyframeData : this.currentAnimation.animation().keyframeMarkers().particles()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.particleKeyframeHandler == null) {
-					GeckoLibConstants.LOGGER.log(Level.WARN, "Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Particle Keyframe found for {} -> {}, but no keyframe handler registered", animationState.getData(DataTickets.ANIMATABLE_CLASS).getName(), getName());
 
 					break;
 				}
 
-				this.particleKeyframeHandler.handle(new ParticleKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
+				this.particleKeyframeHandler.handle(new KeyFrameEvent<>(animationState, this, keyframeData));
 			}
 		}
 
-		for (CustomInstructionKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().customInstructions()) {
+		for (CustomInstructionKeyframeData keyframeData : this.currentAnimation.animation().keyframeMarkers().customInstructions()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.customKeyframeHandler == null) {
-					GeckoLibConstants.LOGGER.log(Level.WARN, "Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLibConstants.LOGGER.log(Level.WARN, "Custom Instruction Keyframe found for {} -> {}, but no keyframe handler registered", animationState.getData(DataTickets.ANIMATABLE_CLASS).getName(), getName());
 
 					break;
 				}
 
-				this.customKeyframeHandler.handle(new CustomInstructionKeyframeEvent<>(this.animatable, adjustedTick, this, keyframeData, animationState));
+				this.customKeyframeHandler.handle(new KeyFrameEvent<>(animationState, this, keyframeData));
 			}
 		}
 
@@ -719,7 +762,7 @@ public class AnimationController<T extends GeoAnimatable> {
 	 */
 	protected double adjustTick(double tick) {
 		if (!this.shouldResetTick)
-			return this.animationSpeedModifier.apply(this.animatable) * Math.max(tick - this.tickOffset, 0);
+			return this.animationSpeed * Math.max(tick - this.tickOffset, 0);
 
 		if (getAnimationState() != State.STOPPED)
 			this.tickOffset = tick;
@@ -732,12 +775,11 @@ public class AnimationController<T extends GeoAnimatable> {
 	/**
 	 * Convert a {@link KeyframeLocation} to an {@link AnimationPoint}
 	 */
-	private AnimationPoint getAnimationPointAtTick(List<Keyframe<MathValue>> frames, double tick, boolean isRotation,
-												   Axis axis) {
+	private AnimationPoint getAnimationPointAtTick(List<Keyframe<MathValue>> frames, AnimationState<?> animationState, double tick, boolean isRotation, Axis axis) {
 		KeyframeLocation<Keyframe<MathValue>> location = getCurrentKeyFrameLocation(frames, tick);
 		Keyframe<MathValue> currentFrame = location.keyframe();
-		double startValue = currentFrame.startValue().get();
-		double endValue = currentFrame.endValue().get();
+		double startValue = currentFrame.startValue().get(animationState);
+		double endValue = currentFrame.endValue().get(animationState);
 
 		if (isRotation) {
 			if (!(currentFrame.startValue() instanceof Constant)) {
@@ -807,45 +849,23 @@ public class AnimationController<T extends GeoAnimatable> {
 	@FunctionalInterface
 	public interface AnimationStateHandler<A extends GeoAnimatable> {
 		/**
-		 * The handling method, called each frame
+		 * The handling method, called before each render frame
 		 * <p>
 		 * Return {@link PlayState#CONTINUE} to tell the controller to continue animating,
 		 * or return {@link PlayState#STOP} to tell it to stop playing all animations and wait for the next {@link PlayState#CONTINUE} return.
 		 */
-		PlayState handle(AnimationState<A> state);
+		PlayState handle(AnimationTest<A> animatable);
 	}
 
 	/**
-	 * A handler for when a predefined sound keyframe is hit
+	 * A handler for keyframe instructions defined in the animation json
 	 * <p>
-	 * When the keyframe is encountered, the {@link SoundKeyframeHandler#handle(SoundKeyframeEvent)} method will be called.
-	 * Play the sound(s) of your choice at this time.
-	 */
-	@FunctionalInterface
-	public interface SoundKeyframeHandler<A extends GeoAnimatable> {
-		void handle(SoundKeyframeEvent<A> event);
-	}
-
-	/**
-	 * A handler for when a predefined particle keyframe is hit
-	 * <p>
-	 * When the keyframe is encountered, the {@link ParticleKeyframeHandler#handle(ParticleKeyframeEvent)} method will be called.
-	 * Spawn the particles/effects of your choice at this time.
-	 */
-	@FunctionalInterface
-	public interface ParticleKeyframeHandler<A extends GeoAnimatable> {
-		void handle(ParticleKeyframeEvent<A> event);
-	}
-
-	/**
-	 * A handler for pre-defined custom instruction keyframes
-	 * <p>
-	 * When the keyframe is encountered, the {@link CustomKeyframeHandler#handle(CustomInstructionKeyframeEvent)} method will be called.
+	 * When the keyframe is encountered, the {@link KeyframeEventHandler#handle(KeyFrameEvent)} method will be called.
 	 * You can then take whatever action you want at this point.
 	 */
 	@FunctionalInterface
-	public interface CustomKeyframeHandler<A extends GeoAnimatable> {
-		void handle(CustomInstructionKeyframeEvent<A> event);
+	public interface KeyframeEventHandler<A extends GeoAnimatable, E extends KeyFrameData> {
+		void handle(KeyFrameEvent<A, E> event);
 	}
 
 	public enum State {

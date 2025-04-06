@@ -2,11 +2,10 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.data.EntityModelData;
 
 /**
  * {@link DefaultedGeoModel} specific to {@link net.minecraft.world.entity.Entity Entities}
@@ -49,17 +48,18 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 	}
 
 	@Override
-	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
+	public void setCustomAnimations(AnimationState<T> animationState) {
 		if (!this.turnsHead)
 			return;
 
 		GeoBone head = getAnimationProcessor().getBone("head");
 
 		if (head != null) {
-			EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+			float pitch = animationState.getData(DataTickets.ENTITY_PITCH);
+			float yaw = animationState.getData(DataTickets.ENTITY_YAW);
 
-			head.setRotX(entityData.headPitch() * Mth.DEG_TO_RAD);
-			head.setRotY(entityData.netHeadYaw() * Mth.DEG_TO_RAD);
+			head.setRotX(-pitch * Mth.DEG_TO_RAD);
+			head.setRotY(-yaw * Mth.DEG_TO_RAD);
 		}
 	}
 

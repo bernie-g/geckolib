@@ -1,9 +1,12 @@
 package software.bernie.geckolib.constant.dataticket;
 
+import it.unimi.dsi.fastutil.Pair;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.constant.DataTickets;
 
 /**
@@ -11,20 +14,36 @@ import software.bernie.geckolib.constant.DataTickets;
  * <p>
  * Used for sending data from server -> client in an easy manner
  */
-public abstract class SerializableDataTicket<D> extends DataTicket<D> {
+public final class SerializableDataTicket<D> extends DataTicket<D> {
 	public static final StreamCodec<RegistryFriendlyByteBuf, SerializableDataTicket<?>> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.STRING_UTF8,
 			SerializableDataTicket::id,
             DataTickets::byName);
 
-	public SerializableDataTicket(String id, Class<? extends D> objectType) {
+	private final StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec;
+
+	private SerializableDataTicket(String id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
 		super(id, objectType);
+
+		this.streamCodec = streamCodec;
+	}
+	/**
+	 * Create a new network-syncable DataTicket for a given name and object type
+	 * <p>
+	 * <b><u>MUST</u></b> be created during mod construct
+	 * <p>
+	 * This DataTicket should then be stored statically somewhere and re-used.
+	 */
+	public static <D> SerializableDataTicket<D> create(String id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
+		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id), pair -> DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, streamCodec)));
 	}
 
 	/**
 	 * @return The {@link StreamCodec} for the given SerializableDataTicket
 	 */
-	public abstract StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec();
+	public StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec() {
+		return this.streamCodec;
+	}
 
 	// Pre-defined typings for use
 
@@ -34,12 +53,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Double> ofDouble(ResourceLocation id) {
-		return new SerializableDataTicket<>(id.toString(), Double.class) {
-			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, Double> streamCodec() {
-				return ByteBufCodecs.DOUBLE;
-			}
-		};
+		return SerializableDataTicket.create(id.toString(), Double.class, ByteBufCodecs.DOUBLE);
 	}
 
 	/**
@@ -48,12 +62,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Float> ofFloat(ResourceLocation id) {
-		return new SerializableDataTicket<>(id.toString(), Float.class) {
-			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, Float> streamCodec() {
-				return ByteBufCodecs.FLOAT;
-			}
-		};
+		return SerializableDataTicket.create(id.toString(), Float.class, ByteBufCodecs.FLOAT);
 	}
 
 	/**
@@ -62,12 +71,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Boolean> ofBoolean(ResourceLocation id) {
-		return new SerializableDataTicket<>(id.toString(), Boolean.class) {
-			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, Boolean> streamCodec() {
-				return ByteBufCodecs.BOOL;
-			}
-		};
+		return SerializableDataTicket.create(id.toString(), Boolean.class, ByteBufCodecs.BOOL);
 	}
 
 	/**
@@ -76,12 +80,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Integer> ofInt(ResourceLocation id) {
-		return new SerializableDataTicket<>(id.toString(), Integer.class) {
-			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, Integer> streamCodec() {
-				return ByteBufCodecs.VAR_INT;
-			}
-		};
+		return SerializableDataTicket.create(id.toString(), Integer.class, ByteBufCodecs.INT);
 	}
 
 	/**
@@ -90,12 +89,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<String> ofString(ResourceLocation id) {
-		return new SerializableDataTicket<>(id.toString(), String.class) {
-			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, String> streamCodec() {
-				return ByteBufCodecs.STRING_UTF8;
-			}
-		};
+		return SerializableDataTicket.create(id.toString(), String.class, ByteBufCodecs.STRING_UTF8);
 	}
 
 	/**
@@ -104,21 +98,44 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static <E extends Enum<E>> SerializableDataTicket<E> ofEnum(ResourceLocation id, Class<E> enumClass) {
-		return new SerializableDataTicket<>(id.toString(), enumClass) {
+		return SerializableDataTicket.create(id.toString(), enumClass, new StreamCodec<>() {
 			@Override
-			public StreamCodec<? super RegistryFriendlyByteBuf, E> streamCodec() {
-				return new StreamCodec<>() {
-                    @Override
-                    public E decode(RegistryFriendlyByteBuf buf) {
-                        return Enum.valueOf(enumClass, buf.readUtf());
-                    }
-
-                    @Override
-                    public void encode(RegistryFriendlyByteBuf buf, E data) {
-                        buf.writeUtf(data.toString());
-                    }
-                };
+			public E decode(RegistryFriendlyByteBuf buf) {
+				return Enum.valueOf(enumClass, buf.readUtf());
 			}
-		};
+
+			@Override
+			public void encode(RegistryFriendlyByteBuf buf, E data) {
+				buf.writeUtf(data.toString());
+			}
+		});
+	}
+
+	/**
+	 * Generate a new {@code SerializableDataTicket<Vec3>} for the given id
+	 *
+	 * @param id The unique id of your ticket. Include your modid
+	 */
+	public static SerializableDataTicket<Vec3> ofVec3(ResourceLocation id) {
+		return SerializableDataTicket.create(id.toString(), Vec3.class, ByteBufCodecs.VECTOR3F.map(Vec3::new, Vec3::toVector3f));
+	}
+
+	/**
+	 * Generate a new {@code SerializableDataTicket<BlockPos>} for the given id
+	 *
+	 * @param id The unique id of your ticket. Include your modid
+	 */
+	public static SerializableDataTicket<BlockPos> ofBlockPos(ResourceLocation id) {
+		return SerializableDataTicket.create(id.toString(), BlockPos.class, new StreamCodec<>() {
+			@Override
+			public BlockPos decode(RegistryFriendlyByteBuf buf) {
+				return buf.readBlockPos();
+			}
+
+			@Override
+			public void encode(RegistryFriendlyByteBuf buf, BlockPos blockPos) {
+				buf.writeBlockPos(blockPos);
+			}
+		});
 	}
 }

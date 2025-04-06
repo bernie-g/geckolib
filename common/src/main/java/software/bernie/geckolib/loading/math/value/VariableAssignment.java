@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 /**
@@ -12,8 +13,8 @@ import software.bernie.geckolib.loading.math.MathValue;
  */
 public record VariableAssignment(Variable variable, MathValue value) implements MathValue {
     @Override
-    public double get() {
-        this.variable.set(this.value.get());
+    public double get(AnimationState<?> animationState) {
+        this.variable.set(this.value.get(animationState));
 
         return 0;
     }

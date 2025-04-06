@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.round;
 
 import net.minecraft.util.Mth;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -31,8 +32,8 @@ public final class LerpFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return Mth.lerp(this.delta.get(), this.min.get(), this.max.get());
+    public double compute(AnimationState<?> animationState) {
+        return Mth.lerp(this.delta.get(animationState), this.min.get(animationState), this.max.get(animationState));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.limit;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -28,8 +29,8 @@ public final class MaxFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return Math.max(this.valueA.get(), this.valueB.get());
+    public double compute(AnimationState<?> animationState) {
+        return Math.max(this.valueA.get(animationState), this.valueB.get(animationState));
     }
 
     @Override

@@ -8,10 +8,9 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import software.bernie.geckolib.cache.texture.AnimatableTexture;
 
 /**
- * Injection into TextureManager's access point for runtime-derived textures to allow GeckoLib to swap them out with {@link AnimatableTexture} for animated texture purposes
+ * Injection into TextureManager's access point for runtime-derived textures to allow GeckoLib to swap them out with {@code AnimatableTexture} for animated texture purposes
  * <p>
  * Because AnimatedTexture extends {@link net.minecraft.client.renderer.texture.SimpleTexture SimpleTexture}, the replacement should be seamless
  */
@@ -25,7 +24,8 @@ public abstract class TextureManagerMixin {
 			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
 			require = 0)
 	private SimpleTexture geckolib$replaceAnimatableTexture(ResourceLocation location, Operation<SimpleTexture> original) {
-		AnimatableTexture animatableTexture = new AnimatableTexture(location);
+		// TODO reinstate
+		/*AnimatableTexture animatableTexture = new AnimatableTexture(location);
 
 		TextureContents contents = loadContentsSafe(location, animatableTexture);
 
@@ -34,7 +34,7 @@ public abstract class TextureManagerMixin {
 			register(location, animatableTexture);
 
 			return animatableTexture;
-		}
+		}*/
 
 		return original.call(location);
 	}
@@ -43,6 +43,6 @@ public abstract class TextureManagerMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),
 			require = 0)
 	private boolean geckolib$skipAnimatableTextureRegistration(TextureManager textureManager, ResourceLocation id, ReloadableTexture texture) {
-		return !(texture instanceof AnimatableTexture);
+		return true;//!(texture instanceof AnimatableTexture);
 	}
 }

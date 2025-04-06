@@ -1,11 +1,10 @@
 package software.bernie.geckolib.util;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -18,15 +17,12 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 
-import java.util.Map;
+import java.util.Objects;
 
 /**
  * Helper class for various GeckoLib-specific functions.
  */
 public final class GeckoLibUtil {
-	private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
-	public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
-
 	/**
 	 * Creates a new AnimatableInstanceCache for the given animatable object
 	 *
@@ -106,48 +102,32 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Registers a synced {@link GeoAnimatable} object for networking support
+	 * Perform an {@link Object#equals(Object)} check on two {@link PatchedDataComponentMap}s,
+	 * ignoring any GeckoLib stack ids that may be present.
 	 * <p>
-	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
+	 * This is typically only called by an internal mixin
 	 */
-	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
+	@ApiStatus.Internal
+	public static boolean areComponentsMatchingIgnoringGeckoLibId(PatchedDataComponentMap map1, PatchedDataComponentMap map2) {
+		final DataComponentType<Long> stackId = GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get();
+		boolean patched = false;
 
-		if (existing == null)
-            GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for {}", animatable.getClass());
-	}
+		if (map1.has(stackId)) {
+			PatchedDataComponentMap prevMap = map1;
+			boolean copyOnWrite = prevMap.copyOnWrite;
+			(map1 = map1.copy()).remove(stackId);
+			map1.copyOnWrite = copyOnWrite;
+			patched = true;
+		}
 
-	/**
-	 * Gets a registered synced {@link GeoAnimatable} object by name
-	 *
-	 * @param syncedAnimatableId the className
-	 */
-	@Nullable
-	public static GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
+		if (map2.has(stackId)) {
+			PatchedDataComponentMap prevMap = map2;
+			boolean copyOnWrite = prevMap.copyOnWrite;
+			(map2 = map2.copy()).remove(stackId);
+			map2.copyOnWrite = copyOnWrite;
+			patched = true;
+		}
 
-		if (animatable == null)
-            GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! ({})", syncedAnimatableId);
-
-		return animatable;
-	}
-
-	/**
-	 * Get a synced singleton animatable's id for use with {@link #SYNCED_ANIMATABLES}
-	 * <p>
-	 * This <b><u>MUST</u></b> be used when retrieving from {@link #SYNCED_ANIMATABLES}
-	 * as this method eliminates class duplication collisions
-	 */
-	public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
-		return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
-			String baseId = animatable.getClass().getName();
-			i = 0;
-
-			while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
-				i++;
-			}
-
-			return baseId + i;
-		});
+		return patched && Objects.equals(map1, map2);
 	}
 }

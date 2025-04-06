@@ -59,12 +59,12 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		double length = animationObj.has("animation_length") ? GsonHelper.getAsDouble(animationObj, "animation_length") * 20d : -1;
 		Animation.LoopType loopType = Animation.LoopType.fromJson(animationObj.get("loop"));
 		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()));
-		Animation.Keyframes keyframes = context.deserialize(animationObj, Animation.Keyframes.class);
+		Animation.KeyframeMarkers keyframes = context.deserialize(animationObj, Animation.KeyframeMarkers.class);
 
 		if (length == -1)
 			length = calculateAnimationLength(boneAnimations);
 
-		return new Animation(name, length, loopType, boneAnimations, keyframes);
+		return Animation.create(name, length, loopType, boneAnimations, keyframes);
 	}
 
 	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws CompoundException {
@@ -185,9 +185,9 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			MathValue rawXValue = MathParser.parseJson(keyFrameVector.get(0));
 			MathValue rawYValue = MathParser.parseJson(keyFrameVector.get(1));
 			MathValue rawZValue = MathParser.parseJson(keyFrameVector.get(2));
-			MathValue xValue = compressMathValue(isForRotation && rawXValue instanceof Constant ? new Constant(Math.toRadians(-rawXValue.get())) : rawXValue);
-			MathValue yValue = compressMathValue(isForRotation && rawYValue instanceof Constant ? new Constant(Math.toRadians(-rawYValue.get())) : rawYValue);
-			MathValue zValue = compressMathValue(isForRotation && rawZValue instanceof Constant ? new Constant(Math.toRadians(rawZValue.get())) : rawZValue);
+			MathValue xValue = compressMathValue(isForRotation && rawXValue instanceof Constant ? new Constant(Math.toRadians(-rawXValue.get(null))) : rawXValue);
+			MathValue yValue = compressMathValue(isForRotation && rawYValue instanceof Constant ? new Constant(Math.toRadians(-rawYValue.get(null))) : rawYValue);
+			MathValue zValue = compressMathValue(isForRotation && rawZValue instanceof Constant ? new Constant(Math.toRadians(rawZValue.get(null))) : rawZValue);
 
 			JsonObject entryObj = element instanceof JsonObject obj ? obj : null;
 			EasingType easingType = entryObj != null && entryObj.has("easing") ? EasingType.fromJson(entryObj.get("easing")) : EasingType.LINEAR;
@@ -237,7 +237,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		if (COMPRESSION_CACHE == null || input.isMutable())
 			return input;
 
-		return COMPRESSION_CACHE.computeIfAbsent(input.get(), Constant::new);
+		return COMPRESSION_CACHE.computeIfAbsent(input.get(null), Constant::new);
 	}
 
 	private static double calculateAnimationLength(BoneAnimation[] boneAnimations) {

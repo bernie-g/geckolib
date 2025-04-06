@@ -1,16 +1,14 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation.keyframe;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import software.bernie.geckolib.animation.EasingType;
 import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Animation keyframe data
@@ -28,6 +26,36 @@ public record Keyframe<T extends MathValue>(double length, T startValue, T endVa
 
 	public Keyframe(double length, T startValue, T endValue, EasingType easingType) {
 		this(length, startValue, endValue, easingType, new ObjectArrayList<>(0));
+	}
+
+	/**
+	 * Extract and collect all {@link Variable}s used in this keyframe
+	 */
+	public Set<Variable> getUsedVariables() {
+		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
+
+		if (this.startValue.isMutable())
+			usedVariables.addAll(this.startValue.getUsedVariables());
+
+		if (this.endValue.isMutable())
+			usedVariables.addAll(this.endValue.getUsedVariables());
+
+		for (MathValue easingArg : this.easingArgs) {
+			if (easingArg.isMutable())
+				usedVariables.addAll(easingArg.getUsedVariables());
+		}
+
+		return usedVariables;
+	}
+
+	/**
+	 * Extract and collect all {@link Variable}s used in the given {@link MathValue}
+	 */
+	private static void findVariablesFromMathValue(MathValue mathValue, Set<Variable> variables) {
+		if (!mathValue.isMutable())
+			return;
+
+		variables.addAll(mathValue.getUsedVariables());
 	}
 
 	@Override

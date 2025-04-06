@@ -6,7 +6,7 @@ import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
 import java.util.function.Supplier;
@@ -46,24 +46,24 @@ public abstract class AnimatableInstanceCache {
 	public abstract <T extends GeoAnimatable> AnimatableManager<T> getManagerForId(long uniqueId);
 
 	/**
-	 * Helper method to set a data point in the {@link AnimatableManager#setData manager} for this animatable
+	 * Helper method to set a data point in the {@link AnimatableManager#setAnimatableData manager} for this animatable
 	 *
 	 * @param uniqueId The unique identifier for this animatable instance
 	 * @param dataTicket The DataTicket for the data
 	 * @param data The data to store
 	 */
 	public <D> void addDataPoint(long uniqueId, DataTicket<D> dataTicket, D data) {
-		getManagerForId(uniqueId).setData(dataTicket, data);
+		getManagerForId(uniqueId).setAnimatableData(dataTicket, data);
 	}
 
 	/**
-	 * Helper method to get a data point from the {@link AnimatableManager#getData data collection} for this animatable
+	 * Helper method to get a data point from the {@link AnimatableManager#getAnimatableData data collection} for this animatable
 	 *
 	 * @param uniqueId The unique identifier for this animatable instance
 	 * @param dataTicket The DataTicket for the data
 	 */
 	public <D> D getDataPoint(long uniqueId, DataTicket<D> dataTicket) {
-		return getManagerForId(uniqueId).getData(dataTicket);
+		return getManagerForId(uniqueId).getAnimatableData(dataTicket);
 	}
 
 	/**

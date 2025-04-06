@@ -7,8 +7,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.RenderUtil;
 
@@ -31,7 +31,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	@ApiStatus.NonExtendable
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getAnimatableInstanceCache().getManagerForId(0).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(0).getAnimatableData(dataTicket);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(0).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(0).setAnimatableData(dataTicket, data);
 		}
 		else {
 			GeckoLibServices.NETWORK.syncBlockEntityAnimData(blockEntity.getBlockPos(), dataTicket, data, (ServerLevel)level);

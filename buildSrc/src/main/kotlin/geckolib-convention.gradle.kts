@@ -51,6 +51,7 @@ val libs = project.versionCatalogs.find("libs")
 val modId: String by project
 val modDisplayName: String by project
 val modAuthors: String by project
+val modContributors: String by project
 val modLicense: String by project
 val modDescription: String by project
 val modVersion = libs.get().findVersion("geckolib").get()
@@ -105,6 +106,7 @@ tasks.withType<ProcessResources>().configureEach {
             "fabric_loader_version_range" to fabricVersionRange,
             "mod_display_name" to modDisplayName,
             "mod_authors" to modAuthors,
+            "mod_contributors" to modContributors,
             "mod_id" to modId,
             "mod_license" to modLicense,
             "mod_description" to modDescription,

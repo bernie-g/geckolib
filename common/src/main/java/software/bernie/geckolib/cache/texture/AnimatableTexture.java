@@ -1,3 +1,4 @@
+/*
 package software.bernie.geckolib.cache.texture;
 
 import com.mojang.blaze3d.platform.NativeImage;
@@ -28,9 +29,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+*/
 /**
  * Wrapper for {@link SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
- */
+ *//*
+
 public class AnimatableTexture extends SimpleTexture implements Tickable {
 	protected AnimationContents animationContents = null;
 	protected boolean isAnimated = false;
@@ -39,11 +42,13 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 		super(location);
 	}
 
-	/**
+	*/
+/**
 	 * Returns whether the texture found any valid animation metadata when loading.
 	 * <p>
 	 * If false, then this is no different to a standard {@link SimpleTexture}
-	 */
+	 *//*
+
 	public boolean isAnimated() {
 		return this.isAnimated;
 	}
@@ -307,3 +312,4 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 		}
 	}
 }
+*/

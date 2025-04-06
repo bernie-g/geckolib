@@ -9,8 +9,8 @@ license="${mod_license}"
     displayName="${mod_display_name}"
     displayURL="http://geckolib.com/"
     logoFile="geckolib.png"
-    credits="${mod_authors}"
     authors="${mod_authors}"
+    credits="${mod_contributors}"
     description='''
 ${mod_description}
 '''

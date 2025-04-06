@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
+import software.bernie.geckolib.cache.SyncedSingletonAnimatableCache;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.util.ClientUtil;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
 
@@ -35,7 +35,7 @@ public record SingletonDataSyncPacket<D>(String syncableId, long instanceId, Ser
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
+            GeoAnimatable animatable = SyncedSingletonAnimatableCache.getSyncedAnimatable(this.syncableId);
 
             if (animatable instanceof SingletonGeoAnimatable singleton)
                 singleton.setAnimData(ClientUtil.getClientPlayer(), this.instanceId, this.dataTicket, this.data);

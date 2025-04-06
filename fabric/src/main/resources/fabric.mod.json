@@ -7,6 +7,9 @@
 	"authors": [
 		"${mod_authors}"
 	],
+	"contributors": [
+		"${mod_contributors}"
+	],
 	"contact": {
 		"homepage": "https://www.curseforge.com/minecraft/mc-mods/geckolib",
 		"issues": "https://github.com/bernie-g/geckolib/issues",

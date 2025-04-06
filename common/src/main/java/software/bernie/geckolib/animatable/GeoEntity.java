@@ -4,8 +4,8 @@ import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 /**
@@ -32,7 +32,7 @@ public interface GeoEntity extends GeoAnimatable {
 	@ApiStatus.NonExtendable
 	@Nullable
 	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getAnimatableData(dataTicket);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public interface GeoEntity extends GeoAnimatable {
 		Entity entity = (Entity)this;
 
 		if (entity.level().isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(entity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(entity.getId()).setAnimatableData(dataTicket, data);
 		}
 		else {
 			GeckoLibServices.NETWORK.syncEntityAnimData(entity, false, dataTicket, data);
@@ -128,7 +128,7 @@ public interface GeoEntity extends GeoAnimatable {
 	 * @return The current tick/age of the animatable, for animation purposes
 	 */
 	@Override
-	default double getTick(Object entity) {
-		return ((Entity)entity).tickCount;
+	default double getTick(@Nullable Object entity) {
+		return ((Entity)this).tickCount;
 	}
 }

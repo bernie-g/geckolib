@@ -8,14 +8,17 @@ accessWidener	v1	named
 #accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
 #accessible class net/minecraft/client/renderer/RenderType$CompositeState
 
-accessible method net/minecraft/client/renderer/LevelRenderer shouldShowEntityOutlines ()Z
+accessible method com/mojang/blaze3d/vertex/PoseStack$Pose set (Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)V
+
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
+accessible field net/minecraft/client/renderer/LevelRenderer visibleEntityCount I
 
 accessible field net/minecraft/client/renderer/entity/EntityRenderDispatcher renderers Ljava/util/Map;
 accessible field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 mutable field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 extendable method net/minecraft/client/renderer/entity/EntityRenderer createRenderState (Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer solveBodyRot (Lnet/minecraft/world/entity/LivingEntity;FF)F
+accessible method net/minecraft/client/renderer/entity/HumanoidMobRenderer getEquipmentIfRenderable (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;
 
 extendable method net/minecraft/client/model/Model renderToBuffer (Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -26,8 +27,8 @@ public final class AbsFunction extends MathFunction {
     }
 
     @Override
-    public double compute() {
-        return Math.abs(this.value.get());
+    public double compute(AnimationState<?> animationState) {
+        return Math.abs(this.value.get(animationState));
     }
 
     @Override

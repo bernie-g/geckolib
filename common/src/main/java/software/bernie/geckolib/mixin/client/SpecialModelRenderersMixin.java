@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.renderer.GeckolibSpecialRenderer;
+import software.bernie.geckolib.renderer.base.GeckolibItemSpecialRenderer;
 
 @Mixin(SpecialModelRenderers.class)
 public class SpecialModelRenderersMixin {
@@ -20,6 +20,6 @@ public class SpecialModelRenderersMixin {
 
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private static void geckolib$addSpecialRenderer(CallbackInfo ci) {
-        ID_MAPPER.put(GeckoLibConstants.id("geckolib"), GeckolibSpecialRenderer.Unbaked.MAP_CODEC);
+        ID_MAPPER.put(GeckoLibConstants.id("geckolib"), GeckolibItemSpecialRenderer.Unbaked.MAP_CODEC);
     }
 }

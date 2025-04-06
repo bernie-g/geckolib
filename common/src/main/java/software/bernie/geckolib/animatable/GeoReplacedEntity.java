@@ -6,8 +6,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.function.Consumer;
@@ -41,7 +41,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	@ApiStatus.NonExtendable
 	@Nullable
 	default <D> D getAnimData(Entity entity, SerializableDataTicket<D> dataTicket) {
-		return getAnimatableInstanceCache().getManagerForId(entity.getId()).getData(dataTicket);
+		return getAnimatableInstanceCache().getManagerForId(entity.getId()).getAnimatableData(dataTicket);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	@ApiStatus.NonExtendable
 	default <D> void setAnimData(Entity relatedEntity, SerializableDataTicket<D> dataTicket, D data) {
 		if (relatedEntity.level().isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
+			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setAnimatableData(dataTicket, data);
 		}
 		else {
 			GeckoLibServices.NETWORK.syncEntityAnimData(relatedEntity, true, dataTicket, data);

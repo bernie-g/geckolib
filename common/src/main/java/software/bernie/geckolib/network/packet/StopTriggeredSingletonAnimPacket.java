@@ -8,8 +8,8 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.cache.SyncedSingletonAnimatableCache;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -31,7 +31,7 @@ public record StopTriggeredSingletonAnimPacket(String syncableId, long instanceI
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
+            GeoAnimatable animatable = SyncedSingletonAnimatableCache.getSyncedAnimatable(this.syncableId);
 
             if (animatable != null) {
                 AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);

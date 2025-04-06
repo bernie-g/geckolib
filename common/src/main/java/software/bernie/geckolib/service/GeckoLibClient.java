@@ -8,12 +8,11 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.function.Supplier;
 
@@ -30,7 +29,7 @@ public interface GeckoLibClient {
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
     @NotNull
-    <E extends LivingEntity & GeoAnimatable, S extends HumanoidRenderState> Model getArmorModelForItem(E animatable, S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
+    <S extends HumanoidRenderState & GeoRenderState> Model getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
 
     /**
      * Helper method for retrieving an (ideally) cached instance of the GeoModel for the given item
@@ -47,4 +46,11 @@ public interface GeckoLibClient {
      */
     @Nullable
     GeoModel<?> getGeoModelForArmor(ItemStack armour, EquipmentSlot slot, EquipmentClientInfo.LayerType type);
+
+    /**
+     * Return the dye value for a given ItemStack, or the defaul value if not present.
+     * <p>
+     * This is split off to allow for handling of loader-specific handling for dyed items
+     */
+    int getDyedItemColor(ItemStack itemStack, int defaultColor);
 }

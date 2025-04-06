@@ -1,6 +1,6 @@
 package software.bernie.geckolib.animation.state;
 
-import software.bernie.geckolib.animation.AnimationProcessor;
+import software.bernie.geckolib.animatable.processing.AnimationProcessor;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 /**

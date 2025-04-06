@@ -1,10 +1,11 @@
 package software.bernie.geckolib.animatable;
 
-import software.bernie.geckolib.animation.AnimationProcessor;
-import software.bernie.geckolib.cache.object.GeoBone;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationProcessor;
+import software.bernie.geckolib.cache.object.GeoBone;
 
 /**
  * This is the root interface for all animatable objects in Geckolib
@@ -63,12 +64,12 @@ public interface GeoAnimatable {
 	/**
 	 * Returns the current age/tick of the animatable instance
 	 * <p>
-	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
+	 * By default, this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
 	 *
 	 * @param object An object related to this animatable relevant to tick calculation. Different subclasses will use this differently
 	 * @return The current tick/age of the animatable, for animation purposes
 	 */
-	double getTick(Object object);
+	double getTick(@Nullable Object object);
 
 	/**
 	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable

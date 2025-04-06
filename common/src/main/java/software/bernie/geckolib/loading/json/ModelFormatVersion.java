@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.json;
 
 import com.google.common.base.Suppliers;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.Util;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ public enum ModelFormatVersion {
 	V_1_14_0("1.14.0"),
 	V_1_21_0("1.21.0");
 
-	private static final Supplier<Map<String, ModelFormatVersion>> LOOKUP = Suppliers.memoize(() -> Util.make(new Object2ObjectArrayMap<>(), map -> {
+	private static final Supplier<Map<String, ModelFormatVersion>> LOOKUP = Suppliers.memoize(() -> Util.make(new Object2ObjectOpenHashMap<>(), map -> {
 		for (ModelFormatVersion formatVersion : values()) {
 			map.put(formatVersion.serializedName, formatVersion);
 			map.put(formatVersion.name(), formatVersion);

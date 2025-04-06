@@ -8,6 +8,7 @@ import net.minecraft.Util;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 import software.bernie.geckolib.loading.math.function.generic.*;
 import software.bernie.geckolib.loading.math.function.limit.ClampFunction;
@@ -29,8 +30,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
 import java.util.regex.Pattern;
 
 /**
@@ -139,7 +140,7 @@ public class MathParser {
      * @param name The name of the variable - this should match the name in the expression string
      * @param value The new value to set the Variable to
      */
-    public static void setVariable(String name, DoubleSupplier value) {
+    public static void setVariable(String name, ToDoubleFunction<AnimationState<?>> value) {
         getVariableFor(name).set(value);
     }
 

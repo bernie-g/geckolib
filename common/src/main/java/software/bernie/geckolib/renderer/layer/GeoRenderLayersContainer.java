@@ -2,7 +2,8 @@ package software.bernie.geckolib.renderer.layer;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 import java.util.List;
 
@@ -11,19 +12,19 @@ import java.util.List;
  * <p>
  * Each renderer should contain an instance of this, for holding its layers and handling events
  */
-public class GeoRenderLayersContainer<T extends GeoAnimatable> {
-	private final GeoRenderer<T> renderer;
-	private final List<GeoRenderLayer<T>> layers = new ObjectArrayList<>();
+public class GeoRenderLayersContainer<T extends GeoAnimatable, O, R extends GeoRenderState> {
+	private final GeoRenderer<T, O, R> renderer;
+	private final List<GeoRenderLayer<T, O, R>> layers = new ObjectArrayList<>();
 	private boolean compiledLayers = false;
 
-	public GeoRenderLayersContainer(GeoRenderer<T> renderer) {
+	public GeoRenderLayersContainer(GeoRenderer<T, O, R> renderer) {
 		this.renderer = renderer;
 	}
 
 	/**
 	 * Get the {@link GeoRenderLayer} list for usage
 	 */
-	public List<GeoRenderLayer<T>> getRenderLayers() {
+	public List<GeoRenderLayer<T, O, R>> getRenderLayers() {
 		if (!this.compiledLayers)
 			fireCompileRenderLayersEvent();
 
@@ -33,7 +34,7 @@ public class GeoRenderLayersContainer<T extends GeoAnimatable> {
 	/**
 	 * Add a new render layer to the container
 	 */
-	public void addLayer(GeoRenderLayer<T> layer) {
+	public void addLayer(GeoRenderLayer<T, O, R> layer) {
 		this.layers.add(layer);
 	}
 

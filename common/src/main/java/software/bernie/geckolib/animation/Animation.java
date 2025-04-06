@@ -1,19 +1,22 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.keyframe.BoneAnimation;
 import software.bernie.geckolib.animation.keyframe.event.data.CustomInstructionKeyframeData;
 import software.bernie.geckolib.animation.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
+import software.bernie.geckolib.loading.math.value.Variable;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -21,12 +24,32 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable
  */
-public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Keyframes keyFrames) {
-	public record Keyframes(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
+public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, List<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
+	/**
+	 * Create a new Animation instance from the given values, automatically compiling the {@link #usedVariables} list
+	 *
+	 * @param name The name of the animation
+	 * @param length The length (in seconds) of the animation
+	 * @param loopType The type of looping this animation should have once finished
+	 * @param boneAnimations The keyframe stacks for each bone in this animation
+	 * @param keyframeMarkers Any custom keyframe instructions this animation contains
+	 */
+	public static Animation create(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, KeyframeMarkers keyframeMarkers) {
+		Set<Variable> usedVariables = new ReferenceArraySet<>();
 
-	static Animation generateWaitAnimation(double length) {
-		return new Animation(RawAnimation.Stage.WAIT, length, LoopType.PLAY_ONCE, new BoneAnimation[0],
-				new Keyframes(new SoundKeyframeData[0], new ParticleKeyframeData[0], new CustomInstructionKeyframeData[0]));
+		for (BoneAnimation boneAnimation : boneAnimations) {
+			usedVariables.addAll(boneAnimation.getUsedVariables());
+		}
+
+		return new Animation(name, length, loopType, boneAnimations, new ReferenceArrayList<>(usedVariables), keyframeMarkers);
+	}
+
+	public record KeyframeMarkers(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
+
+	@ApiStatus.Internal
+	public static Animation generateWaitAnimation(double length) {
+		return new Animation(RawAnimation.Stage.WAIT, length, LoopType.PLAY_ONCE, new BoneAnimation[0], new ReferenceArrayList<>(0),
+				new KeyframeMarkers(new SoundKeyframeData[0], new ParticleKeyframeData[0], new CustomInstructionKeyframeData[0]));
 	}
 
 	/**
@@ -38,24 +61,24 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	public interface LoopType {
 		Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
-		LoopType DEFAULT = (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation);
-		LoopType PLAY_ONCE = register("play_once", register("false", (animatable, controller, currentAnimation) -> false));
-		LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (animatable, controller, currentAnimation) -> {
-			controller.animationState = AnimationController.State.PAUSED;
+		LoopType DEFAULT = (animationState, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animationState, controller, currentAnimation);
+		LoopType PLAY_ONCE = register("play_once", register("false", (animationState, controller, currentAnimation) -> false));
+		LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (animationState, controller, currentAnimation) -> {
+			controller.setAnimationState(AnimationController.State.PAUSED);
 
 			return true;
 		});
-		LoopType LOOP = register("loop", register("true", (animatable, controller, currentAnimation) -> true));
+		LoopType LOOP = register("loop", register("true", (animationState, controller, currentAnimation) -> true));
 
 		/**
 		 * Override in a custom instance to dynamically decide whether an animation should repeat or stop
 		 *
-		 * @param animatable The animating object relevant to this method call
+		 * @param animationState The {@link AnimationState} for the current render pass
 		 * @param controller The {@link AnimationController} playing the current animation
 		 * @param currentAnimation The current animation that just played
 		 * @return Whether the animation should play again, or stop
 		 */
-		boolean shouldPlayAgain(GeoAnimatable animatable, AnimationController<? extends GeoAnimatable> controller, Animation currentAnimation);
+		boolean shouldPlayAgain(AnimationState<?> animationState, AnimationController<? extends GeoAnimatable> controller, Animation currentAnimation);
 
 		/**
 		 * Retrieve a LoopType instance based on a {@link JsonElement}

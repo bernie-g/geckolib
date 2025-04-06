@@ -1,11 +1,10 @@
-/*
- * Copyright (c) 2020.
- * Author: Bernie G. (Gecko)
- */
-
 package software.bernie.geckolib.animation.keyframe;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.value.Variable;
+
+import java.util.Set;
 
 /**
  * A record of a deserialized animation for a given bone
@@ -21,4 +20,16 @@ public record BoneAnimation(String boneName,
 							KeyframeStack<Keyframe<MathValue>> rotationKeyFrames,
 							KeyframeStack<Keyframe<MathValue>> positionKeyFrames,
 							KeyframeStack<Keyframe<MathValue>> scaleKeyFrames) {
+	/**
+	 * Extract and collect all {@link Variable}s used in this bone animation
+	 */
+	public Set<Variable> getUsedVariables() {
+		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
+
+		usedVariables.addAll(this.rotationKeyFrames.getUsedVariables());
+		usedVariables.addAll(this.positionKeyFrames.getUsedVariables());
+		usedVariables.addAll(this.scaleKeyFrames.getUsedVariables());
+
+		return usedVariables;
+	}
 }
