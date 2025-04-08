@@ -1,4 +1,9 @@
-## GeckoLib v5.0
+## GeckoLib v5.0-alpha1
+
+## NOTE
+* As of `alpha1` glowmasks and animated textures are not functional. This will be resolved soon :)
+* Additionally, I'm looking into alternate solutions for per-bone render handling since Mojang has made the previous Dynamic renderers not practical.
+* If you use any of these functionalities, wait until the 5.0 full release, thanks.
 
 ## General Changes
 * Updated to Minecraft 1.21.5
