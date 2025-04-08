@@ -142,7 +142,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	 */
 	@Override
 	public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
-		return GeckoLibServices.Client.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0);
+		return GeckoLibServices.Client.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
 	}
 
 	/**

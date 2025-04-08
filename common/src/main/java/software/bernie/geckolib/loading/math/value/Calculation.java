@@ -1,8 +1,11 @@
 package software.bernie.geckolib.loading.math.value;
 
+import org.apache.commons.lang3.mutable.MutableDouble;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.Operator;
+
+import java.util.Set;
 
 /**
  * {@link MathValue} value supplier
@@ -12,31 +15,9 @@ import software.bernie.geckolib.loading.math.Operator;
  * <br>
  * A computed value of argA and argB defined by the contract of the {@link Operator}
  */
-public final class Calculation implements MathValue {
-    private final Operator operator;
-    private final MathValue argA;
-    private final MathValue argB;
-    private final boolean isMutable;
-
-    private double cachedValue = Double.MIN_VALUE;
-
+public record Calculation(Operator operator, MathValue argA, MathValue argB, boolean isMutable, Set<Variable> usedVariables, MutableDouble cachedValue) implements MathValue {
     public Calculation(Operator operator, MathValue argA, MathValue argB) {
-        this.operator = operator;
-        this.argA = argA;
-        this.argB = argB;
-        this.isMutable = this.argA.isMutable() || this.argB.isMutable();
-    }
-
-    public Operator operator() {
-        return this.operator;
-    }
-
-    public MathValue argA() {
-        return this.argA;
-    }
-
-    public MathValue argB() {
-        return this.argB;
+        this(operator, argA, argB, argA.isMutable() || argB.isMutable(), MathValue.collectUsedVariables(argA, argB), new MutableDouble(Double.MIN_VALUE));
     }
 
     @Override
@@ -44,15 +25,15 @@ public final class Calculation implements MathValue {
         if (this.isMutable)
             return this.operator.compute(this.argA.get(animationState), this.argB.get(animationState));
 
-        if (this.cachedValue == Double.MIN_VALUE)
-            this.cachedValue = this.operator.compute(this.argA.get(animationState), this.argB.get(animationState));
+        if (this.cachedValue.getValue() == Double.MIN_VALUE)
+            this.cachedValue.setValue(this.operator.compute(this.argA.get(animationState), this.argB.get(animationState)));
 
-        return this.cachedValue;
+        return this.cachedValue.getValue();
     }
 
     @Override
-    public boolean isMutable() {
-        return this.isMutable;
+    public Set<Variable> getUsedVariables() {
+        return this.usedVariables;
     }
 
     @Override

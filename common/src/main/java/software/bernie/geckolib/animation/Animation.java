@@ -2,8 +2,7 @@ package software.bernie.geckolib.animation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
-import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.processing.AnimationController;
@@ -14,7 +13,6 @@ import software.bernie.geckolib.animation.keyframe.event.data.ParticleKeyframeDa
 import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.loading.math.value.Variable;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of <code>Animation</code> is considered final and immutable
  */
-public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, List<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
+public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Set<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
 	/**
 	 * Create a new Animation instance from the given values, automatically compiling the {@link #usedVariables} list
 	 *
@@ -35,20 +33,20 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	 * @param keyframeMarkers Any custom keyframe instructions this animation contains
 	 */
 	public static Animation create(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, KeyframeMarkers keyframeMarkers) {
-		Set<Variable> usedVariables = new ReferenceArraySet<>();
+		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
 
 		for (BoneAnimation boneAnimation : boneAnimations) {
 			usedVariables.addAll(boneAnimation.getUsedVariables());
 		}
 
-		return new Animation(name, length, loopType, boneAnimations, new ReferenceArrayList<>(usedVariables), keyframeMarkers);
+		return new Animation(name, length, loopType, boneAnimations, usedVariables, keyframeMarkers);
 	}
 
 	public record KeyframeMarkers(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {}
 
 	@ApiStatus.Internal
 	public static Animation generateWaitAnimation(double length) {
-		return new Animation(RawAnimation.Stage.WAIT, length, LoopType.PLAY_ONCE, new BoneAnimation[0], new ReferenceArrayList<>(0),
+		return new Animation(RawAnimation.Stage.WAIT, length, LoopType.PLAY_ONCE, new BoneAnimation[0], ReferenceOpenHashSet.of(),
 				new KeyframeMarkers(new SoundKeyframeData[0], new ParticleKeyframeData[0], new CustomInstructionKeyframeData[0]));
 	}
 

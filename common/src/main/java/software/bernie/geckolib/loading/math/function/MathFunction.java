@@ -2,7 +2,9 @@ package software.bernie.geckolib.loading.math.function;
 
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.value.Variable;
 
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -14,12 +16,14 @@ import java.util.StringJoiner;
  */
 public abstract class MathFunction implements MathValue {
     private final boolean isMutable;
+    private final Set<Variable> usedVariables;
     private double cachedValue = Double.MIN_VALUE;
 
     protected MathFunction(MathValue... values) {
         validate(values);
 
         this.isMutable = isMutable(values);
+        this.usedVariables = MathValue.collectUsedVariables(values);
     }
 
     /**
@@ -81,6 +85,11 @@ public abstract class MathFunction implements MathValue {
     @Override
     public final boolean isMutable() {
         return this.isMutable;
+    }
+
+    @Override
+    public Set<Variable> getUsedVariables() {
+        return this.usedVariables;
     }
 
     @Override

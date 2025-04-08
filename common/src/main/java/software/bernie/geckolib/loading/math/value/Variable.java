@@ -4,6 +4,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.ToDoubleFunction;
 
@@ -42,6 +43,11 @@ public record Variable(String name, AtomicReference<ToDoubleFunction<AnimationSt
 
     public void set(final ToDoubleFunction<AnimationState<?>> value) {
         this.value.set(value);
+    }
+
+    @Override
+    public Set<Variable> getUsedVariables() {
+        return Set.of(this);
     }
 
     @Override

@@ -148,7 +148,6 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		renderState.addGeckolibData(DataTickets.BONE_RESET_TIME, animatable.getBoneResetTime());
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
 		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new ObjectArrayList<>(0));
-		getGeoModel().prepareForRenderPass(animatable, renderState);
 
 		return renderState;
 	}
@@ -169,6 +168,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		}
 
 		fireCompileRenderStateEvent(animatable, relatedObject, renderState);
+		getGeoModel().prepareForRenderPass(animatable, renderState);
 
 		return renderState;
 	}

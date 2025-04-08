@@ -67,7 +67,7 @@ public final class GeckoLibResources {
 	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
 		return MODELS;
 	}
-	// TODO CHECK ERROR VISIBILITY
+
 	@ApiStatus.Internal
 	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
 		CompletableFuture<Map<ResourceLocation, BakedAnimations>> animations = loadAnimations(backgroundExecutor, resourceManager);
@@ -126,7 +126,11 @@ public final class GeckoLibResources {
 					List<CompletableFuture<Pair<ResourceLocation, BAKED>>> tasks = new ObjectArrayList<>(resources.size());
 
 					resources.forEach(pair -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(stripPrefixAndSuffix(pair.left()), elementFactory.apply(pair.left(), pair.right())), backgroundExecutor)
-																.exceptionally(ex -> Pair.of(pair.left(), exceptionalFactory.apply(ex)))));
+																.exceptionally(ex -> {
+																	ex.printStackTrace();
+
+																	return Pair.of(pair.left(), exceptionalFactory.apply(ex));
+																})));
 
 					return CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
 							.thenApply(ignored -> tasks.stream().map(CompletableFuture::join).filter(Objects::nonNull).collect(Collectors.toMap(Pair::left, Pair::right)));

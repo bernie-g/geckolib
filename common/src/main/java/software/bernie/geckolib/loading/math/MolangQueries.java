@@ -23,9 +23,9 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
 /**
@@ -228,7 +228,7 @@ public final class MolangQueries {
 	 * @param valueMap The map to store the computed values into
 	 * @param <T> The lowest-common type of object your actor needs to be in order to evaluate this variable
 	 */
-	public static <T extends GeoAnimatable> void buildActorVariables(Actor<T> actor, List<Variable> variables, Reference2DoubleMap<Variable> valueMap) {
+	public static <T extends GeoAnimatable> void buildActorVariables(Actor<T> actor, Set<Variable> variables, Reference2DoubleMap<Variable> valueMap) {
 		for (Variable variable : variables) {
 			if (ACTOR_VARIABLES.containsKey(variable))
 				valueMap.computeIfAbsent(variable, v -> ACTOR_VARIABLES.get(v).applyAsDouble(actor));
@@ -255,7 +255,7 @@ public final class MolangQueries {
 		setVariableValue("E", Math.E);
 
 		setActorVariable(ACTOR_COUNT, actor -> ClientUtil.getVisibleEntityCount());
-		setActorVariable(ANIM_TIME, actor -> actor.animationTicks);
+		setActorVariable(ANIM_TIME, actor -> actor.controller().getValue().getCurrentAnimationSeconds());
 		setActorVariable(CONTROLLER_SPEED, actor -> actor.controller.getValue().getAnimationSpeed());
 		setActorVariable(CARDINAL_PLAYER_FACING, actor -> actor.clientPlayer.getDirection().ordinal());
 		setActorVariable(DAY, actor -> actor.level.getGameTime() / 24000d);

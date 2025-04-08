@@ -213,9 +213,6 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		double currentFrameTime = entityRenderState != null ? animatableRenderTime : animatableRenderTime - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
-		if (isReRender && instanceId == this.lastRenderedInstance)
-			return;
-
 		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
 			animatableManager.updatedAt(currentFrameTime);
 
@@ -224,10 +221,14 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 			this.lastGameTickTime = lastUpdateTime;
 		}
 
+		renderState.addGeckolibData(DataTickets.ANIMATION_TICKS, this.animationTicks);
+		addAdditionalStateData(animatable, renderState);
+
+		if (isReRender && instanceId == this.lastRenderedInstance)
+			return;
+
 		this.lastRenderedInstance = instanceId;
 
-		addAdditionalStateData(animatable, renderState);
-		renderState.addGeckolibData(DataTickets.ANIMATION_TICKS, this.animationTicks);
 		applyMolangQueries(animatable);
 		getAnimationProcessor().prepareForRenderPass(animatable, animatableManager, renderState, this.animationTicks, this);
 	}

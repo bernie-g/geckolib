@@ -3,6 +3,8 @@ package software.bernie.geckolib.loading.math.value;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.Set;
+
 /**
  * {@link MathValue} value supplier
  *
@@ -20,6 +22,11 @@ public record BooleanNegate(MathValue value) implements MathValue {
     @Override
     public boolean isMutable() {
         return this.value.isMutable();
+    }
+
+    @Override
+    public Set<Variable> getUsedVariables() {
+        return this.value.getUsedVariables();
     }
 
     @Override

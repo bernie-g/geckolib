@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animatable.processing;
 
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -21,7 +22,7 @@ public record AnimationState<T extends GeoAnimatable>(GeoRenderState renderState
 		this(renderState,
 			 renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER),
 			 renderState.getGeckolibData(DataTickets.PARTIAL_TICK),
-			 renderState.getGeckolibData(DataTickets.QUERY_VALUES),
+			 renderState.getOrDefaultGeckolibData(DataTickets.QUERY_VALUES, new Reference2DoubleOpenHashMap<>(0)),
 			 null);
 	}
 

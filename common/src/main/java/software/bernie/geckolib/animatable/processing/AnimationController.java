@@ -496,10 +496,31 @@ public class AnimationController<T extends GeoAnimatable> {
 		this.nextPlaystate = handleAnimationState(new AnimationTest<>(animatable, actor.renderState(), manager, this));
 
 		if (this.nextPlaystate != PlayState.STOP) {
-			for (AnimationProcessor.QueuedAnimation queuedAnimation : this.animationQueue) {
-				MolangQueries.buildActorVariables(actor, queuedAnimation.animation().usedVariables(), variables);
-			}
+			Set<Variable> usedVariables = getUsedVariables();
+
+			if (!usedVariables.isEmpty())
+				MolangQueries.buildActorVariables(actor, usedVariables, variables);
 		}
+	}
+
+	/**
+	 * Compile a set of the {@link Variable}s that this controller is or could be using for the upcoming render pass
+	 */
+	protected Set<Variable> getUsedVariables() {
+		if (this.currentAnimation == null && this.animationQueue.isEmpty())
+			return Set.of();
+
+		Set<Variable> usedVariables = new ObjectOpenHashSet<>();
+
+		if (this.currentAnimation != null)
+			usedVariables.addAll(this.currentAnimation.animation().usedVariables());
+
+		AnimationProcessor.QueuedAnimation queuedAnimation = this.animationQueue.peek();
+
+		if (queuedAnimation != null)
+			usedVariables.addAll(queuedAnimation.animation().usedVariables());
+
+		return usedVariables;
 	}
 
 	/**

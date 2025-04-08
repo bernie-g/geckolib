@@ -1,11 +1,12 @@
 package software.bernie.geckolib.loading.math;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-import java.util.List;
+import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
 /**
@@ -36,8 +37,30 @@ public interface MathValue extends ToDoubleFunction<AnimationState<?>> {
      * <p>
      * This is used to optimise value retrieval during {@link GeoRenderState creation}
      */
-    default List<Variable> getUsedVariables() {
-        return List.of();
+    default Set<Variable> getUsedVariables() {
+        return Set.of();
+    }
+
+    /**
+     * Returns the collection of {@link Variable}s used by all the variables passed in
+     * <p>
+     * Only used internally when building the MathValue instance
+     */
+    @ApiStatus.Internal
+    public static Set<Variable> collectUsedVariables(MathValue... values) {
+        if (values.length == 0)
+            return Set.of();
+
+        if (values.length == 1)
+            return values[0].getUsedVariables();
+
+        Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
+
+        for (MathValue value : values) {
+            usedVariables.addAll(value.getUsedVariables());
+        }
+
+        return usedVariables;
     }
 
     /**

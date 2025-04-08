@@ -3,6 +3,7 @@ package software.bernie.geckolib.loading.math.value;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -14,7 +15,11 @@ import java.util.StringJoiner;
  * Contains a collection of sub-expressions that evaluate before returning the last expression, or 0 if no return is defined.
  * Sub-expressions have no bearing on the final return with exception for where they may be setting variable values
  */
-public record CompoundValue(MathValue[] subValues) implements MathValue {
+public record CompoundValue(MathValue[] subValues, Set<Variable> usedVariables) implements MathValue {
+    public CompoundValue(MathValue[] subValues) {
+        this(subValues, MathValue.collectUsedVariables(subValues));
+    }
+
     @Override
     public double get(AnimationState<?> animationState) {
         for (int i = 0; i < this.subValues.length - 1; i++) {

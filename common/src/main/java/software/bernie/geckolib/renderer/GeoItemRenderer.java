@@ -145,7 +145,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		renderState.addGeckolibData(DataTickets.MAX_DURABILITY, itemStack.getMaxDamage());
 		renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, itemStack.isDamageableItem() ? itemStack.getMaxDamage() - itemStack.getDamageValue() : 1);
 		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new ObjectArrayList<>(0));
-		getGeoModel().prepareForRenderPass(animatable, renderState);
 
 		return renderState;
 	}

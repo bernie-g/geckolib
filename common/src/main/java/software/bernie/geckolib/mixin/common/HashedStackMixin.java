@@ -18,7 +18,6 @@ import java.util.Optional;
  */
 @Mixin(HashedStack.ActualItem.class)
 public class HashedStackMixin {
-    // TODO CHECK ON THIS ABSOLUTE MONSTROSITY
     /**
      * In {@code ItemStackMixin#geckolib$skipGeckolibIdOnCompare}, we tell Minecraft to ignore the contents of GeckoLib
      * stack ids for the purposes of ItemStack parity.

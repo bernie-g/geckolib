@@ -42,10 +42,10 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			}
 			catch (Exception ex) {
 				if (ex instanceof CompoundException compoundEx) {
-					GeckoLibConstants.LOGGER.error(compoundEx.withMessage("Unable to parse animation: " + entry.getKey()).getLocalizedMessage());
+					compoundEx.withMessage("Unable to parse animation: " + entry.getKey());
 				}
 				else {
-					GeckoLibConstants.LOGGER.error("Unable to parse animation: " + entry.getKey());
+                    GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", entry.getKey());
 				}
 
 				ex.printStackTrace();

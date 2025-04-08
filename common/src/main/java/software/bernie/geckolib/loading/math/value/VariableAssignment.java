@@ -3,6 +3,8 @@ package software.bernie.geckolib.loading.math.value;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.Set;
+
 /**
  * {@link MathValue} value supplier
  *
@@ -17,6 +19,11 @@ public record VariableAssignment(Variable variable, MathValue value) implements 
         this.variable.set(this.value.get(animationState));
 
         return 0;
+    }
+
+    @Override
+    public Set<Variable> getUsedVariables() {
+        return this.value.getUsedVariables();
     }
 
     @Override

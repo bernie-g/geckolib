@@ -305,8 +305,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	@Override
 	public void actuallyRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		poseStack.pushPose();
-
 		if (!isReRender) {
 			LivingEntityRenderState livingRenderState =  renderState instanceof LivingEntityRenderState state ? state : null;
 			float nativeScale = livingRenderState != null ? livingRenderState.scale : 1;
@@ -331,8 +329,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 
 		if (buffer != null)
 			GeoRenderer.super.actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
-
-		poseStack.popPose();
 	}
 
 	/**

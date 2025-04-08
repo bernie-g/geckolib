@@ -81,6 +81,6 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      */
     @Override
     public int getDyedItemColor(ItemStack itemStack, int defaultColor) {
-        return itemStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(itemStack, 0) : 0;
+        return itemStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(itemStack, defaultColor) : defaultColor;
     }
 }

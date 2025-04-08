@@ -64,6 +64,7 @@
 * `CustomInstructionKeyframeEvent`, `SoundKeyframeEvent`, and `ParticleKeyframeEvent` have all been consolidated into `KeyFrameEvent`
 * `CustomInstructionKeyframeHandler`, `SoundKeyframeHandler`, and `ParticleKeyframeHandler` have all been consolidated into `KeyframeEventHandler`
 * Converted `KeyFrameEvent` to a record
+* Converted `Calculation` to a record
 * `MolangQueries` is once again side-agnostic
 * Various parts of the GeoRenderers are additionally provided an associated object for handling (ItemStack, replaced entity, etc.)
 * Moved `prepLivingEntityRenderState` into `GeoEntityRenderer` so it can be overridden if needed

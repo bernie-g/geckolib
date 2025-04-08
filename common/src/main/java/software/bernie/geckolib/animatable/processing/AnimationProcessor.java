@@ -2,7 +2,6 @@ package software.bernie.geckolib.animatable.processing;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Reference2DoubleMaps;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.mutable.MutableObject;
@@ -52,7 +51,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		MolangQueries.Actor<T> actor = new MolangQueries.Actor<>(animatable, renderState, new MutableObject<>(), lerpedAnimationTick, renderState.getGeckolibData(DataTickets.PARTIAL_TICK), ClientUtil.getLevel(), ClientUtil.getClientPlayer(), ClientUtil.getCameraPos());
 		Reference2DoubleMap<Variable> variables = new Reference2DoubleOpenHashMap<>();
 
-		renderState.addGeckolibData(DataTickets.QUERY_VALUES, Reference2DoubleMaps.unmodifiable(variables));
+		renderState.addGeckolibData(DataTickets.QUERY_VALUES, variables);
 
 		for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
 			actor.controller().setValue(controller);
