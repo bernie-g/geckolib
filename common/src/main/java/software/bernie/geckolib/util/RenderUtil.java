@@ -253,6 +253,13 @@ public final class RenderUtil {
 	}
 
 	/**
+	 * Helper method to create the glowmask resource location for a given input texture
+	 */
+	public static ResourceLocation getEmissiveResource(ResourceLocation textureLocation) {
+		return textureLocation.withPath(path -> path.replace(".png", "_glowmask.png"));
+	}
+
+	/**
 	 * Gets a {@link GeoModel} instance from a given {@link EntityType}
 	 * <p>
 	 * This only works if you're calling this method for an EntityType known to be using a {@link GeoRenderer GeckoLib Renderer}

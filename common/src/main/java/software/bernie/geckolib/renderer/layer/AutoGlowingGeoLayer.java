@@ -1,63 +1,89 @@
 package software.bernie.geckolib.renderer.layer;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.Util;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.TriState;
+import org.apache.commons.lang3.function.TriFunction;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.util.RenderUtil;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
 
 /**
- * {@link GeoRenderLayer} for rendering the auto-generated glowlayer functionality implemented by Geckolib using the <i>_glowing</i> appendixed texture files
+ * Built-in {@link GeoRenderLayer} for rendering an emissive layer over an existing GeoAnimatable.
+ * <p>
+ * By default, it uses a custom RenderType created by GeckoLib to make things easier, but it can be overridden as needed
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
 public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+	private final Map<ResourceLocation, ResourceLocation> emissiveResourceCache = new Object2ObjectOpenHashMap<>();
+	protected static final RenderPipeline RENDER_PIPELINE = RenderPipelines.register(createRenderPipeline());
+	protected static final TriFunction<ResourceLocation, Boolean, Boolean, RenderType> RENDER_TYPE = memoizeRenderType(AutoGlowingGeoLayer::createRenderType);
+
 	public AutoGlowingGeoLayer(GeoRenderer<T, O, R> renderer) {
 		super(renderer);
 	}
 
+	@Override
+	protected ResourceLocation getTextureResource(R renderState) {
+		return this.emissiveResourceCache.computeIfAbsent(super.getTextureResource(renderState), RenderUtil::getEmissiveResource);
+	}
+
 	/**
-	 * Return the texture for the emissive rendering layer
+	 * Override to return true if you want your emissive texture to respect lighting in the world.
 	 * <p>
-	 * You probably shouldn't override this unless you know what you're doing
+	 * This will lower its overall brightness slightly but allow it to shade properly.
 	 */
-	protected ResourceLocation getTextureForGlowlayer(R renderState) {
-		return getTextureResource(renderState);// AutoGlowingTexture.getOrCreateEmissiveTexture(getTextureResource(renderState));
+	protected boolean shouldRespectWorldLighting() {
+		return false;
 	}
 
 	/**
 	 * Get the render type to use for this glowlayer renderer, or null if the layer should not render
 	 * <p>
-	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default, which may not be ideal in all circumstances.<br>
+	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default
+	 * <p>
 	 * Automatically accounts for entity states like invisibility and glowing
 	 */
 	@Nullable
 	protected RenderType getRenderType(R renderState) {
-		return null;
-		/*ResourceLocation texture = getTextureForGlowlayer(renderState);
+		ResourceLocation texture = getTextureResource(renderState);
+		boolean respectLighting = shouldRespectWorldLighting();
 
 		if (!(renderState instanceof EntityRenderState entityRenderState))
-			return AutoGlowingTexture.getRenderType(texture);
+			return RENDER_TYPE.apply(texture, false, respectLighting);
 
 		boolean invisible = entityRenderState.isInvisible;
 
-		if (invisible && !renderState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER))
+		if (invisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
 			return RenderType.itemEntityTranslucentCull(texture);
 
-		if (renderState.getGeckolibData(DataTickets.IS_GLOWING)) {
+		if (renderState.getOrDefaultGeckolibData(DataTickets.IS_GLOWING, false)) {
 			if (invisible)
 				return RenderType.outline(texture);
 
-			return AutoGlowingTexture.getOutlineRenderType(texture);
+			return RENDER_TYPE.apply(texture, true, respectLighting);
 		}
 
-		return invisible ? null : AutoGlowingTexture.getRenderType(texture);*/
+		return invisible ? null : RENDER_TYPE.apply(texture, false, respectLighting);
 	}
 
 	/**
@@ -72,5 +98,58 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 
 		if (renderType != null)
 			getRenderer().reRender(renderState, poseStack, bakedModel, bufferSource, renderType, bufferSource.getBuffer(renderType), LightTexture.FULL_SKY, packedOverlay, renderColor);
+	}
+
+	/**
+	 * Triplet version of {@link Util#memoize(BiFunction)} for inclusion of a light-sensitive option
+	 */
+	private static <T, O, L, R> TriFunction<T, O, L, R> memoizeRenderType(final TriFunction<T, O, L, R> function) {
+		return new TriFunction<>() {
+			private final Map<Triple<T, O, L>, R> cache = new ConcurrentHashMap<>();
+
+			@Override
+			public R apply(T texture, O outline, L respectLighting) {
+				return this.cache.computeIfAbsent(Triple.of(texture, outline, respectLighting), triple -> function.apply(triple.getLeft(), triple.getMiddle(), triple.getRight()));
+			}
+
+			@Override
+			public String toString() {
+				return "memoize/3[function=" + function + ", size=" + this.cache.size() + "]";
+			}
+		};
+	}
+
+	/**
+	 * Create GeckoLib's custom {@link RenderPipeline} for emissive rendering since <code>EYES</code> isn't quite right
+	 */
+	private static RenderPipeline createRenderPipeline() {
+		return RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_FOG_SNIPPET)
+				.withLocation("pipeline/eyes")
+				.withVertexShader("core/entity")
+				.withFragmentShader("core/entity")
+				.withShaderDefine("EMISSIVE")
+				.withShaderDefine("NO_OVERLAY")
+				.withShaderDefine("NO_CARDINAL_LIGHTING")
+				.withSampler("Sampler0")
+				.withBlend(BlendFunction.TRANSLUCENT)
+				.withDepthWrite(false)
+				.withCull(false)
+				.withVertexFormat(DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS)
+				.build();
+	}
+
+	/**
+	 * Create GeckoLib's custom {@link RenderType} for emissive rendering since <code>EYES</code> isn't quite right
+	 */
+	private static RenderType createRenderType(ResourceLocation texture, boolean outline, boolean respectLighting) {
+		return respectLighting ? RenderType.entityTranslucentEmissive(texture, outline) :
+			   RenderType.create("geckolib_emissive",
+						  RenderType.TRANSIENT_BUFFER_SIZE,
+						  false,
+						  true,
+						  RENDER_PIPELINE,
+						  RenderType.CompositeState.builder()
+								  .setTextureState(new RenderStateShard.TextureStateShard(texture, TriState.FALSE, false))
+								  .createCompositeState(outline));
 	}
 }
