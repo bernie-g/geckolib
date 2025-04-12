@@ -169,6 +169,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 		renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
 		renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
 		renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
+		renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState.isInvisibleToPlayer);
+		renderState.addGeckolibData(DataTickets.IS_GLOWING, renderState.appearsGlowing);
 
 		return renderState;
 	}
@@ -513,6 +515,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 			GeoArmorRenderer renderer = entry.getValue().left();
 			ItemStack stack = entry.getValue().right();
 			RenderData renderData = new RenderData(stack, entry.getKey(), entity);
+
 			renderer.fillRenderState((GeoAnimatable)stack.getItem(), renderData, baseRenderState, partialTick);
 			slotRenderData.put(entry.getKey(), new Reference2ObjectOpenHashMap<>(dataMap));
 			dataMap.clear();
