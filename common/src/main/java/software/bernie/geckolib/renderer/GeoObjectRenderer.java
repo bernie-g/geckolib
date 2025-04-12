@@ -11,6 +11,7 @@ import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -100,7 +101,11 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 		if (bufferSource == null)
 			bufferSource = Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 
-		defaultRender(fillRenderState(animatable, null, new GeoRenderState.Impl(), partialTick), poseStack, bufferSource, renderType, buffer);
+		GeoRenderState renderState = fillRenderState(animatable, null, new GeoRenderState.Impl(), partialTick);
+
+		renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
+
+		defaultRender(renderState, poseStack, bufferSource, renderType, buffer);
 	}
 
 	/**
