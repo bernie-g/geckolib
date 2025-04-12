@@ -1,18 +1,23 @@
 accessWidener	v1	named
-#accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;IZZLnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-#accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;Lcom/mojang/blaze3d/vertex/VertexFormat;Lcom/mojang/blaze3d/vertex/VertexFormat$Mode;ILnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
-#accessible class net/minecraft/client/renderer/RenderStateShard$ShaderStateShard
-#accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
-#accessible class net/minecraft/client/renderer/RenderStateShard$TransparencyStateShard
-#accessible class net/minecraft/client/renderer/RenderStateShard$WriteMaskStateShard
-#accessible class net/minecraft/client/renderer/RenderStateShard$OverlayStateShard
-#accessible class net/minecraft/client/renderer/RenderType$CompositeState
+# Custom RenderTypes
+accessible class net/minecraft/client/renderer/RenderType$CompositeState
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTextureState (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
+accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
+accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
+accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_COLOR_FOG_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
+accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
 
+# Per-Bone PoseStack Manipulation
 accessible method com/mojang/blaze3d/vertex/PoseStack$Pose set (Lcom/mojang/blaze3d/vertex/PoseStack$Pose;)V
 
+# Direct RenderBuffer Access Because Iris Bad Patch
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
+
+# ACTOR_COUNT Molang Query
 accessible field net/minecraft/client/renderer/LevelRenderer visibleEntityCount I
 
+# Entity Rendering
 accessible field net/minecraft/client/renderer/entity/EntityRenderDispatcher renderers Ljava/util/Map;
 accessible field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
 mutable field net/minecraft/client/renderer/entity/EntityRenderer reusedState Lnet/minecraft/client/renderer/entity/state/EntityRenderState;
@@ -20,20 +25,13 @@ extendable method net/minecraft/client/renderer/entity/EntityRenderer createRend
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer solveBodyRot (Lnet/minecraft/world/entity/LivingEntity;FF)F
 accessible method net/minecraft/client/renderer/entity/HumanoidMobRenderer getEquipmentIfRenderable (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;
 
+# GeoArmorRenderer
 extendable method net/minecraft/client/model/Model renderToBuffer (Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;III)V
+
+# ItemArmorGeoLayer
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
 
-accessible field com/mojang/blaze3d/vertex/BufferBuilder building Z
-
-accessible field net/minecraft/client/renderer/texture/AbstractTexture defaultBlur Z
-accessible method net/minecraft/client/renderer/texture/ReloadableTexture doLoad (Lcom/mojang/blaze3d/platform/NativeImage;ZZ)V
-extendable method net/minecraft/client/renderer/texture/ReloadableTexture doLoad (Lcom/mojang/blaze3d/platform/NativeImage;ZZ)V
-
+# Synced GeoAnimatable ItemStack Stackability
 accessible field net/minecraft/core/component/PatchedDataComponentMap copyOnWrite Z
 
-# TEMP FOR BUFFERBUILDER
-accessible class net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator
-accessible class com/mojang/blaze3d/vertex/VertexMultiConsumer$Double
-accessible method net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator <init> (Lcom/mojang/blaze3d/vertex/VertexConsumer;I)V
-accessible field com/mojang/blaze3d/vertex/VertexMultiConsumer$Double first Lcom/mojang/blaze3d/vertex/VertexConsumer;
-accessible field com/mojang/blaze3d/vertex/VertexMultiConsumer$Double second Lcom/mojang/blaze3d/vertex/VertexConsumer;
+
