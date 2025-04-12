@@ -52,7 +52,7 @@ import java.util.List;
  * <p>
  * This also includes {@link net.minecraft.world.entity.projectile.Projectile Projectiles}
  */
-public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<T, EntityRenderState> implements GeoRenderer<T, Void, R> {
+public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<T, R> implements GeoRenderer<T, Void, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 	protected final ItemModelResolver itemModelResolver;
@@ -293,8 +293,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 
 	@ApiStatus.Internal
 	@Override
-	public void render(EntityRenderState renderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-		defaultRender((R)renderState, poseStack, bufferSource, null, null);
+	public void render(R renderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+		defaultRender(renderState, poseStack, bufferSource, null, null);
 	}
 
 	/**
@@ -439,7 +439,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	@ApiStatus.Internal
 	@Nullable
 	@Override
-	public EntityRenderState createRenderState() {
+	public R createRenderState() {
 		return null;
 	}
 
@@ -452,7 +452,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 */
 	@ApiStatus.Internal
 	@Override
-	public final EntityRenderState createRenderState(T entity, float partialTick) {
+	public final R createRenderState(T entity, float partialTick) {
 		if (this.reusedState == null)
 			this.reusedState = createBaseRenderState(entity);
 
@@ -479,13 +479,13 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 */
 	@ApiStatus.OverrideOnly
 	@Override
-	public void extractRenderState(T entity, EntityRenderState entityRenderState, float partialTick) {
+	public void extractRenderState(T entity, R entityRenderState, float partialTick) {
 		super.extractRenderState(entity, entityRenderState, partialTick);
 
 		if (entityRenderState instanceof LivingEntityRenderState livingEntityRenderState)
 			extractLivingEntityRenderState((LivingEntity)entity, livingEntityRenderState, partialTick, this.itemModelResolver);
 
-		fillRenderState(entity, null, (R)entityRenderState, partialTick);
+		fillRenderState(entity, null, entityRenderState, partialTick);
 	}
 
 	/**
