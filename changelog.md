@@ -1,7 +1,7 @@
 ## GeckoLib v5.0-alpha2
 
 ## NOTE
-* Additionally, I'm looking into alternate solutions for per-bone render handling since Mojang has made the previous Dynamic renderers not practical.
+* Still looking into alternate solutions for per-bone render handling since Mojang has made the previous Dynamic renderers not practical.
 
 ## Bug Fixes
 * Fixed GeoObjectRenderer not storing packed light (#712)
