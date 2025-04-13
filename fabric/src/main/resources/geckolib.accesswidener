@@ -34,4 +34,5 @@ accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List
 # Synced GeoAnimatable ItemStack Stackability
 accessible field net/minecraft/core/component/PatchedDataComponentMap copyOnWrite Z
 
-
+# Animated Texture
+accessible method net/minecraft/client/renderer/texture/ReloadableTexture doLoad (Lcom/mojang/blaze3d/platform/NativeImage;ZZ)V

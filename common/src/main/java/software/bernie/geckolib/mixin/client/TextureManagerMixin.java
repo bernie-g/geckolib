@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
+import software.bernie.geckolib.renderer.texture.GeckoLibAnimatedTexture;
 
 /**
  * Injection into TextureManager's access point for runtime-derived textures to allow GeckoLib to swap them out with {@code AnimatableTexture} for animated texture purposes
@@ -24,8 +25,7 @@ public abstract class TextureManagerMixin {
 			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
 			require = 0)
 	private SimpleTexture geckolib$replaceAnimatableTexture(ResourceLocation location, Operation<SimpleTexture> original) {
-		// TODO reinstate
-		/*AnimatableTexture animatableTexture = new AnimatableTexture(location);
+		GeckoLibAnimatedTexture animatableTexture = new GeckoLibAnimatedTexture(location);
 
 		TextureContents contents = loadContentsSafe(location, animatableTexture);
 
@@ -34,7 +34,9 @@ public abstract class TextureManagerMixin {
 			register(location, animatableTexture);
 
 			return animatableTexture;
-		}*/
+		}
+
+		animatableTexture.close();
 
 		return original.call(location);
 	}
@@ -43,6 +45,6 @@ public abstract class TextureManagerMixin {
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),
 			require = 0)
 	private boolean geckolib$skipAnimatableTextureRegistration(TextureManager textureManager, ResourceLocation id, ReloadableTexture texture) {
-		return true;//!(texture instanceof AnimatableTexture);
+		return !(texture instanceof GeckoLibAnimatedTexture);
 	}
 }
