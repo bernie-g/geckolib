@@ -65,7 +65,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
             this.baseImage = NativeImage.read(stream);
         }
 
-        this.animatedTexture = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(this::buildAnimatedTexture).orElse(null);
+        if (this.baseImage != null)
+            this.animatedTexture = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(this::buildAnimatedTexture).orElse(null);
 
         return new TextureContents(this.baseImage, resource.metadata().getSection(TextureMetadataSection.TYPE).orElse(null));
     }
@@ -176,7 +177,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
 
     @Override
     public void close() {
-        this.baseImage.close();
+        if (this.baseImage != null)
+            this.baseImage.close();
 
         if (this.animatedTexture != null)
             this.animatedTexture.close();
