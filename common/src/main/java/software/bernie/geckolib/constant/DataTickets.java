@@ -1,8 +1,7 @@
 package software.bernie.geckolib.constant;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -70,15 +69,15 @@ public final class DataTickets {
 	public static final DataTicket<EquipmentSlot> EQUIPMENT_SLOT = DataTicket.create("equipment_slot", EquipmentSlot.class);
 	public static final DataTicket<HumanoidModel> HUMANOID_MODEL = DataTicket.create("humanoid_model", HumanoidModel.class);
 	public static final DataTicket<Boolean> IS_GECKOLIB_WEARER = DataTicket.create("is_geckolib_wearer", Boolean.class);
-	public static final DataTicket<Reference2ReferenceMap> WORN_ARMOR_BY_STACK = DataTicket.create("worn_armor_by_stack", Reference2ReferenceMap.class);
-	public static final DataTicket<Reference2ReferenceMap> EQUIPMENT_BY_SLOT = DataTicket.create("equipment_by_slot", Reference2ReferenceMap.class);
+	public static final DataTicket<EnumMap> EQUIPMENT_BY_SLOT = DataTicket.create("equipment_by_slot", EnumMap.class);
+	public static final DataTicket<Boolean> IS_LEFT_HANDED = DataTicket.create("is_left_handed", Boolean.class);
 
 	@ApiStatus.Internal
 	public static final DataTicket<EnumMap> PER_SLOT_RENDER_DATA = DataTicket.create("per_slot_render_data", EnumMap.class);
 	@ApiStatus.Internal
 	public static final DataTicket<Reference2DoubleMap> QUERY_VALUES = DataTicket.create("query_values", Reference2DoubleMap.class);
 	@ApiStatus.Internal
-	public static final DataTicket<ObjectArrayList> PER_BONE_TASKS = DataTicket.create("query_values", ObjectArrayList.class);
+	public static final DataTicket<Reference2ObjectMap> PER_BONE_TASKS = DataTicket.create("per_bone_render_tasks", Reference2ObjectMap.class);
 
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples and for ease of use

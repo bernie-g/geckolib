@@ -3,12 +3,14 @@ package software.bernie.geckolib.renderer.base;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.WalkAnimationState;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
@@ -147,7 +149,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		renderState.addGeckolibData(DataTickets.IS_MOVING, false);
 		renderState.addGeckolibData(DataTickets.BONE_RESET_TIME, animatable.getBoneResetTime());
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
-		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new ObjectArrayList<>(0));
+		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new Reference2ObjectOpenHashMap<>(0));
 
 		return renderState;
 	}
@@ -242,21 +244,13 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	/**
 	 * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#preRender pre-render} actions.
 	 */
-	default void preApplyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight, int packedOverlay, int renderColor) {
+	default void preApplyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
+									  int packedLight, int packedOverlay, int renderColor) {
+		Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> perBoneTasks = getPerBoneTasks(renderState);
+
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
 			renderLayer.preRender(renderState, poseStack, model, renderType, bufferSource, buffer, packedLight, packedOverlay, renderColor);
-		}
-	}
-
-	/**
-	 * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#createPerBoneRender per-bone} render actions.
-	 */
-	default void applyRenderLayersForBone(R renderState, GeoBone bone, PoseStack poseStack, RenderType renderType, MultiBufferSource bufferSource) {
-		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
-			Runnable boneTask = renderLayer.createPerBoneRender(renderState, poseStack, bone, renderType, bufferSource);
-
-			if (boneTask != null)
-				renderState.getGeckolibData(DataTickets.PER_BONE_TASKS).add(Pair.of(poseStack.last().copy(), boneTask));
+			renderLayer.addPerBoneRender(renderState, model, (boneName, renderOp) -> perBoneTasks.put(boneName, Pair.of(new MutableObject<>(), renderOp)));
 		}
 	}
 
@@ -265,11 +259,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 */
 	default void applyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
 								   int packedLight, int packedOverlay, int renderColor) {
-		for (Pair<PoseStack.Pose, Runnable> perBoneTask : (ObjectArrayList<Pair<PoseStack.Pose, Runnable>>)renderState.getGeckolibData(DataTickets.PER_BONE_TASKS)) {
-			poseStack.pushPose();
-			poseStack.last().set(perBoneTask.left());
-			perBoneTask.right().run();
-			poseStack.popPose();
+		for (Reference2ObjectMap.Entry<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> perBoneTask : getPerBoneTasks(renderState).reference2ObjectEntrySet()) {
+			perBoneTask.getValue().right().runTask(renderState, poseStack, perBoneTask.getKey(), perBoneTask.getValue().left().getValue(), renderType, bufferSource, packedLight, packedOverlay, renderColor);
 		}
 
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
@@ -282,14 +273,16 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
-	default void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {}
+	default void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+						   int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * Called after rendering the model to buffer. Post-render modifications should be performed here
 	 * <p>
 	 * {@link PoseStack} transformations will be unused and lost once this method ends
 	 */
-	default void postRender(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {}
+	default void postRender(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+							int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
@@ -313,10 +306,12 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
 
-		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
+		Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
 
-		if (!isReRender)
-			applyRenderLayersForBone(renderState, bone, poseStack, renderType, bufferSource);
+		if (boneRenderTask != null)
+			boneRenderTask.left().setValue(poseStack.last().copy());
+
+		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
 
 		renderChildBones(renderState, bone, poseStack, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
@@ -451,4 +446,11 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
 	 */
 	void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource);
+
+	/**
+	 * Internal helper method to help with type-resolution of the {@link DataTickets#PER_BONE_TASKS} DataTicket
+	 */
+	private Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> getPerBoneTasks(R renderState) {
+		return renderState.getGeckolibData(DataTickets.PER_BONE_TASKS);
+	}
 }

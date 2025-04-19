@@ -388,9 +388,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
 		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
 
-		if (!isReRender)
-			applyRenderLayersForBone(renderState, bone, poseStack, renderType, bufferSource);
-
 		renderChildBones(renderState, bone, poseStack, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();

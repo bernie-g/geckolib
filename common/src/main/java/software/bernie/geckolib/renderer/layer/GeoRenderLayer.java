@@ -12,8 +12,11 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
+
+import java.util.function.BiConsumer;
 
 /**
  * Render layer base class for rendering additional layers of effects or textures over an existing model at runtime
@@ -97,14 +100,12 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 					   int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} for each bone being rendered
+	 * Register per-bone render operations, to be rendered after the main model is done.
 	 * <p>
-	 * You would use this to render something at or for a given GeoBone's position and orientation.
-	 * <p>
-	 * You <b><u>MUST NOT</u></b> perform any rendering operations here, and instead must contain all your functionality in the returned Runnable
+	 * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
+	 * is currently rendering.
+	 *
+	 * @param consumer The registrar to accept the per-bone render tasks
 	 */
-	@Nullable
-	public Runnable createPerBoneRender(R renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource) {
-		return null;
-	}
+	public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
 }

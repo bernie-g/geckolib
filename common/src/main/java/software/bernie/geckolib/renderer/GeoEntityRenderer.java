@@ -268,7 +268,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 		renderState.addGeckolibData(DataTickets.BLOCKPOS, animatable.blockPosition());
 		renderState.addGeckolibData(DataTickets.POSITION, livingRenderState != null ? new Vec3(livingRenderState.x, livingRenderState.y, livingRenderState.z) : animatable.getPosition(1));
 		renderState.addGeckolibData(DataTickets.SPRINTING, animatable.isSprinting());
-		renderState.addGeckolibData(DataTickets.IS_MOVING, (animatable instanceof LivingEntity livingEntity ? livingEntity.walkAnimation.speed() : animatable.getDeltaMovement().lengthSqr())  >= getMotionAnimThreshold(animatable));
+		renderState.addGeckolibData(DataTickets.IS_MOVING, (animatable instanceof LivingEntity livingEntity ? livingEntity.walkAnimation.speed() : animatable.getDeltaMovement().lengthSqr()) >= getMotionAnimThreshold(animatable));
 
 		if (animatable instanceof LivingEntity livingEntity) {
 			renderState.addGeckolibData(DataTickets.SWINGING_ARM, livingEntity.swinging);
@@ -376,10 +376,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
 		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
-
-		if (!isReRender)
-			applyRenderLayersForBone(renderState, bone, poseStack, renderType, bufferSource);
-
 		renderChildBones(renderState, bone, poseStack, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();

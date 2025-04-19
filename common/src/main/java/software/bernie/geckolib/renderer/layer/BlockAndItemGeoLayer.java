@@ -1,105 +1,107 @@
 package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.util.RenderUtil;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.util.ClientUtil;
 
+import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 /**
  * {@link GeoRenderLayer} for rendering {@link BlockState BlockStates}
  * or {@link ItemStack ItemStacks} on a given {@link GeoAnimatable}
  */
-public class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
-    protected final BiFunction<GeoBone, GeoRenderState, ItemStack> stackForBone;
-    protected final BiFunction<GeoBone, GeoRenderState, BlockState> blockForBone;
-
+public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public BlockAndItemGeoLayer(GeoRenderer<T, O, R> renderer) {
-        this(renderer, (bone, animatable) -> null, (bone, animatable) -> null);
-    }
-
-    public BlockAndItemGeoLayer(GeoRenderer<T, O, R> renderer, BiFunction<GeoBone, GeoRenderState, ItemStack> stackForBone, BiFunction<GeoBone, GeoRenderState, BlockState> blockForBone) {
         super(renderer);
-
-        this.stackForBone = stackForBone;
-        this.blockForBone = blockForBone;
     }
 
     /**
-     * Return an ItemStack relevant to this bone for rendering, or null if no ItemStack to render
-     */
-    @Nullable
-    protected ItemStack getStackForBone(GeoBone bone, R renderState) {
-        return this.stackForBone.apply(bone, renderState);
-    }
-
-    /**
-     * Return a BlockState relevant to this bone for rendering, or null if no BlockState to render
-     */
-    @Nullable
-    protected BlockState getBlockForBone(GeoBone bone, R renderState) {
-        return this.blockForBone.apply(bone, renderState);
-    }
-
-    /**
-     * Return a specific TransFormType for this {@link ItemStack} render for this bone.
-     */
-    protected ItemDisplayContext getTransformTypeForStack(GeoBone bone, ItemStack stack, R renderState) {
-        return ItemDisplayContext.NONE;
-    }
-
-    /**
-     * This method is called by the {@link GeoRenderer} for each bone being rendered
+     * Return a list of the bone names that this layer will render for.
      * <p>
-     * You would use this to render something at or for a given GeoBone's position and orientation.
-     * <p>
-     * You <b><u>MUST NOT</u></b> perform any rendering operations here, and instead must contain all your functionality in the returned Runnable
+     * Ideally, you would cache this list in a class-field if you don't need any data from the input renderState or model
      */
-    @Nullable
+    protected abstract List<RenderData<R>> getRelevantBones(R renderState, BakedGeoModel model);
+
+    /**
+     * Override to add any custom {@link DataTicket}s you need to capture for rendering.
+     * <p>
+     * The animatable is discarded from the rendering context after this, so any data needed
+     * for rendering should be captured in the renderState provided
+     *
+     * @param animatable The animatable instance being rendered
+     * @param relatedObject An object related to the render pass or null if not applicable.
+     *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+     * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     */
     @Override
-    public Runnable createPerBoneRender(R renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource) {
-        ItemStack stack = getStackForBone(bone, renderState);
-        BlockState blockState = getBlockForBone(bone, renderState);
+    public abstract void addRenderData(T animatable, O relatedObject, R renderState);
 
-        if (stack == null && blockState == null)
-            return null;
+    /**
+     * Container for data needed to render an item or block for a bone.
+     *
+     * @param boneName The name of the bone to render the armor piece for
+     * @param displayContext The {@link ItemDisplayContext} to use when rendering the item
+     * @param retrievalFunction The function to retrieve the {@link ItemStack} or {@link BlockState} to render. You probably need to override
+     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} as well
+     */
+    public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<@NotNull ItemStack, @NotNull BlockState>> retrievalFunction) {}
 
-        return () -> {
-            poseStack.pushPose();
-            RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
-            int packedLight = renderState.getGeckolibData(DataTickets.PACKED_LIGHT);
-            int packedOverlay = renderState.getGeckolibData(DataTickets.PACKED_OVERLAY);
+    /**
+     * Register per-bone render operations, to be rendered after the main model is done.
+     * <p>
+     * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
+     * is currently rendering.
+     *
+     * @param consumer The registrar to accept the per-bone render tasks
+     */
+    @Override
+    public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+        for (RenderData<R> renderData : getRelevantBones(renderState, model)) {
+            model.getBone(renderData.boneName).ifPresentOrElse(bone -> createPerBoneRender(bone, renderData, consumer, renderState), () ->
+                    GeckoLibConstants.LOGGER.error("Unable to find bone for ItemArmorGeoLayer: {}, skipping", renderData.boneName));
+        }
+    }
 
-            if (stack != null)
-                renderStackForBone(poseStack, bone, stack, renderState, bufferSource, packedLight, packedOverlay);
+    private void createPerBoneRender(GeoBone bone, RenderData<R> renderData, BiConsumer<GeoBone, PerBoneRender<R>> consumer, R renderState) {
+        Either<ItemStack, BlockState> renderObject = renderData.retrievalFunction().apply(bone, renderState);
 
-            if (blockState != null)
-                renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay);
-
-            poseStack.popPose();
-        };
+        renderObject.ifLeft(stack -> {
+            if (!stack.isEmpty())
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor) ->
+                        renderStackForBone(poseStack, bone, stack, renderData.displayContext, renderState, bufferSource, packedLight, packedOverlay));
+        }).ifRight(blockState -> {
+            if (!blockState.isAir())
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor) ->
+                        renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay));
+        });
     }
 
     /**
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, R renderState, MultiBufferSource bufferSource,
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, MultiBufferSource bufferSource,
                                       int packedLight, int packedOverlay) {
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, getTransformTypeForStack(bone, stack, renderState), packedLight, packedOverlay,
-                                                               poseStack, bufferSource, Minecraft.getInstance ().level, renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
+        Minecraft.getInstance().getItemRenderer().renderStatic(stack, displayContext, packedLight, packedOverlay, poseStack, bufferSource, ClientUtil.getLevel(),
+                                                               renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
     }
 
     /**

@@ -1,7 +1,6 @@
 package software.bernie.geckolib.platform;
 
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.tags.ItemTags;
@@ -27,7 +26,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
     @Override
-    public @NotNull <S extends HumanoidRenderState & GeoRenderState> Model getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public @NotNull <S extends HumanoidRenderState & GeoRenderState> HumanoidModel<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return GeoRenderProvider.of(stack).getGeoArmorRenderer(renderState, stack, slot, type, defaultModel) instanceof GeoArmorRenderer<?, ?> geoArmorRenderer ? geoArmorRenderer : defaultModel;
     }
 

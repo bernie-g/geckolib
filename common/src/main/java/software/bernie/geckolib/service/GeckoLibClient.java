@@ -2,8 +2,8 @@ package software.bernie.geckolib.service;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
@@ -22,6 +22,7 @@ import java.util.function.Supplier;
 public interface GeckoLibClient {
     Supplier<HumanoidModel<HumanoidRenderState>> GENERIC_INNER_ARMOR_MODEL = Suppliers.memoize(() -> new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR)));
     Supplier<HumanoidModel<HumanoidRenderState>> GENERIC_OUTER_ARMOR_MODEL = Suppliers.memoize(() -> new HumanoidModel<>(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_OUTER_ARMOR)));
+    Supplier<ElytraModel> GENERIC_ELYTRA_MODEL = Suppliers.memoize(() -> new ElytraModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ELYTRA)));
 
     /**
      * Helper method for retrieving an (ideally) cached instance of the armor model for a given Item
@@ -29,7 +30,7 @@ public interface GeckoLibClient {
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
     @NotNull
-    <S extends HumanoidRenderState & GeoRenderState> Model getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
+    <S extends HumanoidRenderState & GeoRenderState> HumanoidModel<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
 
     /**
      * Helper method for retrieving an (ideally) cached instance of the GeoModel for the given item

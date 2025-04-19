@@ -31,14 +31,14 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      */
     @NotNull
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> Model getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState & GeoRenderState> HumanoidModel<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         Item item = stack.getItem();
         Model model = IClientItemExtensions.of(item).getHumanoidArmorModel(entityRenderState, stack, slot, defaultModel);
 
         if (model == defaultModel && GeoRenderProvider.of(item).getGeoArmorRenderer(entityRenderState, stack, slot, type, defaultModel) instanceof GeoArmorRenderer<?, ?> geoArmorRenderer)
             return geoArmorRenderer;
 
-        return model;
+        return model instanceof HumanoidModel<?> humanoidModel ? humanoidModel : defaultModel;
     }
 
     /**

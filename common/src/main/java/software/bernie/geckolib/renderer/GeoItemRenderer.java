@@ -3,7 +3,7 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -144,7 +144,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, itemStack.getUseDuration(ClientUtil.getClientPlayer()));
 		renderState.addGeckolibData(DataTickets.MAX_DURABILITY, itemStack.getMaxDamage());
 		renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, itemStack.isDamageableItem() ? itemStack.getMaxDamage() - itemStack.getDamageValue() : 1);
-		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new ObjectArrayList<>(0));
+		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new Reference2ObjectOpenHashMap<>(0));
 
 		return renderState;
 	}
