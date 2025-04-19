@@ -107,6 +107,14 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		public static RenderData rightLeg(String boneName) {
 			return new RenderData(boneName, EquipmentSlot.LEGS, model -> model.rightLeg);
 		}
+
+		public static RenderData leftFoot(String boneName) {
+			return new RenderData(boneName, EquipmentSlot.FEET, model -> model.leftLeg);
+		}
+
+		public static RenderData rightFoot(String boneName) {
+			return new RenderData(boneName, EquipmentSlot.FEET, model -> model.rightLeg);
+		}
 	}
 
 	/**

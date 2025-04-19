@@ -31,11 +31,18 @@ import java.util.List;
  * If you have different names, you must override {@link #getRelevantBones(GeoRenderState, BakedGeoModel)}
  */
 public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, O, R> {
-    protected final String MAIN_HAND_BONE = "MainHandItem";
-    protected final String OFF_HAND_BONE = "OffHandItem";
+    protected final String mainHandBone;
+    protected final String offHandBone;
 
     public ItemInHandGeoLayer(GeoRenderer<T, O, R> renderer) {
+        this(renderer, "MainHandItem", "OffHandItem");
+    }
+
+    public ItemInHandGeoLayer(GeoRenderer<T, O, R> renderer, String mainHandBoneName, String offHandBoneName) {
         super(renderer);
+
+        this.mainHandBone = mainHandBoneName;
+        this.offHandBone = offHandBoneName;
     }
 
     /**
@@ -48,8 +55,8 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         boolean isLeftHanded = renderState.getGeckolibData(DataTickets.IS_LEFT_HANDED).booleanValue();
 
         return List.of(
-                renderDataForHand(MAIN_HAND_BONE, EquipmentSlot.MAINHAND, isLeftHanded, renderState),
-                renderDataForHand(OFF_HAND_BONE, EquipmentSlot.OFFHAND, isLeftHanded, renderState));
+                renderDataForHand(this.mainHandBone, EquipmentSlot.MAINHAND, isLeftHanded, renderState),
+                renderDataForHand(this.offHandBone, EquipmentSlot.OFFHAND, isLeftHanded, renderState));
     }
 
     /**
