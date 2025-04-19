@@ -163,9 +163,6 @@ public final class GeckoLibResources {
 		if (path.getPath().endsWith(".animation.json"))
 			throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
 
-		if (!path.getPath().endsWith(".geo.json"))
-            GeckoLibConstants.LOGGER.warn("Found file in models folder with improper file name format; GeckoLib model files should end in .geo.json: '{}'", path);
-
 		Model model = KeyFramesAdapter.GEO_GSON.fromJson(json, Model.class);
 		ModelFormatVersion matchedVersion = ModelFormatVersion.match(model.formatVersion());
 
@@ -184,12 +181,8 @@ public final class GeckoLibResources {
 	 */
 	@NotNull
 	private static BakedAnimations bakeAnimations(ResourceLocation path, JsonObject json) {
-		if (path.getPath().endsWith(".geo.json")) {
+		if (path.getPath().endsWith(".geo.json"))
 			throw new RuntimeException("Found model file in animations folder! '" + path + "'");
-		}
-
-		if (!path.getPath().endsWith(".animation.json"))
-			GeckoLibConstants.LOGGER.warn("Found file in animations folder with improper file name format; animation files should end in .animation.json: '{}'", path);
 
 		try {
 			return KeyFramesAdapter.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(json, "animations"), BakedAnimations.class);
