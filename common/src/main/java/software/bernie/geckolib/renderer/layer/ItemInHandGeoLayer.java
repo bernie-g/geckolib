@@ -27,22 +27,22 @@ import java.util.List;
  * <p>
  * Handles all the boilerplate for basic handheld item rendering.
  * <p>
- * Assumes the {@link GeoModel} has bones for both hands called <code>MainHandItem</code> and <code>OffHandItem</code>.
- * If you have different names, you must override {@link #getRelevantBones(GeoRenderState, BakedGeoModel)}
+ * Assumes the {@link GeoModel} has bones for both hands called <code>RightHandItem</code> and <code>LeftHandItem</code>.
+ * If you have different names, use the {@link ItemInHandGeoLayer#ItemInHandGeoLayer(GeoRenderer, String, String)} constructor.
  */
 public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, O, R> {
-    protected final String mainHandBone;
-    protected final String offHandBone;
+    protected final String rightHandBone;
+    protected final String leftHandBone;
 
     public ItemInHandGeoLayer(GeoRenderer<T, O, R> renderer) {
-        this(renderer, "MainHandItem", "OffHandItem");
+        this(renderer, "RightHandItem", "LeftHandItem");
     }
 
-    public ItemInHandGeoLayer(GeoRenderer<T, O, R> renderer, String mainHandBoneName, String offHandBoneName) {
+    public ItemInHandGeoLayer(GeoRenderer<T, O, R> renderer, String rightHandBoneName, String leftHandBoneName) {
         super(renderer);
 
-        this.mainHandBone = mainHandBoneName;
-        this.offHandBone = offHandBoneName;
+        this.rightHandBone = rightHandBoneName;
+        this.leftHandBone = leftHandBoneName;
     }
 
     /**
@@ -55,22 +55,23 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         boolean isLeftHanded = renderState.getGeckolibData(DataTickets.IS_LEFT_HANDED).booleanValue();
 
         return List.of(
-                renderDataForHand(this.mainHandBone, EquipmentSlot.MAINHAND, isLeftHanded, renderState),
-                renderDataForHand(this.offHandBone, EquipmentSlot.OFFHAND, isLeftHanded, renderState));
+                renderDataForHand(this.rightHandBone, HumanoidArm.RIGHT, isLeftHanded, renderState),
+                renderDataForHand(this.leftHandBone, HumanoidArm.LEFT, isLeftHanded, renderState));
     }
 
     /**
      * Helper method for creating {@link RenderData} for a given hand
      */
-    protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, EquipmentSlot slot, R renderState) {
-        return renderDataForHand(boneName, slot, false, renderState);
+    protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, R renderState) {
+        return renderDataForHand(boneName, HumanoidArm.RIGHT, false, renderState);
     }
 
     /**
      * Helper method for creating {@link RenderData} for a given hand
      */
-    protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, EquipmentSlot slot, boolean isLeftHanded, R renderState) {
+    protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, HumanoidArm arm, boolean isLeftHanded, R renderState) {
         HumanoidArm mainHandArm = isLeftHanded ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
+        EquipmentSlot slot = arm == mainHandArm ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
 
         ItemDisplayContext context = switch (slot) {
             case MAINHAND -> mainHandArm == HumanoidArm.RIGHT ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
