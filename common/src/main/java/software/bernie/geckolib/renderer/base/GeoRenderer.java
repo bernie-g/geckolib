@@ -197,6 +197,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		final int renderColor = renderState.getGeckolibData(DataTickets.RENDER_COLOR);
 
 		preRender(renderState, poseStack, model, bufferSource, buffer, false, packedLight, packedOverlay, renderColor);
+		adjustPositionForRender(renderState, poseStack, model, false);
+		scaleModelForRender(renderState, 1, 1, poseStack, model, false);
 
 		if (firePreRenderEvent(renderState, poseStack, model, bufferSource)) {
 			preApplyRenderLayers(renderState, poseStack, model, renderType, bufferSource, buffer, packedLight, packedOverlay, renderColor);
@@ -208,7 +210,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 
 		poseStack.popPose();
 
-		renderFinal(renderState, poseStack, model, bufferSource, buffer);
+		renderFinal(renderState, poseStack, model, bufferSource, buffer, packedLight, packedOverlay, renderColor);
 		doPostRenderCleanup();
 	}
 
@@ -221,6 +223,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 						  int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		preRender(renderState, poseStack, model, bufferSource, buffer, true, packedLight, packedOverlay, renderColor);
+		adjustPositionForRender(renderState, poseStack, model, true);
+		scaleModelForRender(renderState, 1, 1, poseStack, model, true);
 		actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, true, packedLight, packedOverlay, renderColor);
 		postRender(renderState, poseStack, model, bufferSource, buffer, true, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
@@ -289,7 +293,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * <p>
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
-	default void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer) {}
+	default void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
+							 int packedLight, int packedOverlay, int renderColor) {}
 
 	/**
 	 * Called after all render operations are completed and the render pass is considered functionally complete.
@@ -383,6 +388,11 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 					vertex.texV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}
 	}
+
+	/**
+	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 */
+	default void adjustPositionForRender(R renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {}
 
 	/**
 	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call

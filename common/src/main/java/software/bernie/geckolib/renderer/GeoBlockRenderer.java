@@ -126,13 +126,29 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		this.blockRenderTranslations = new Matrix4f(poseStack.last().pose());
+	public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+						  int packedLight, int packedOverlay, int renderColor) {
+		if (!isReRender)
+			this.blockRenderTranslations = new Matrix4f(poseStack.last().pose());
+	}
 
+	/**
+	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 */
+	@Override
+	public void adjustPositionForRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
 		if (!isReRender)
 			poseStack.translate(0.5, 0, 0.5);
+	}
 
-		scaleModelForRender(renderState, this.scaleWidth, this.scaleHeight, poseStack, model, isReRender);
+	/**
+	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 * <p>
+	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+	 */
+	@Override
+	public void scaleModelForRender(GeoRenderState renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
+		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, isReRender);
 	}
 
 	@Override

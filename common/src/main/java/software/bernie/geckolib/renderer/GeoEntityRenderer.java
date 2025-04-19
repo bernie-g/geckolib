@@ -212,7 +212,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
 	 * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
 	 */
-	protected final float calculateYRot(T animatable, float yHeadRot, float partialTick) {
+	protected float calculateYRot(T animatable, float yHeadRot, float partialTick) {
 		if (!(animatable.getVehicle() instanceof LivingEntity vehicle))
 			return animatable.getVisualRotationYInDegrees();
 
@@ -286,9 +286,41 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	@Override
 	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
 						  boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
+		if (!isReRender)
+			this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
+	}
 
-		scaleModelForRender(renderState, this.scaleWidth, this.scaleHeight, poseStack, model, isReRender);
+	/**
+	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 */
+	@Override
+	public void adjustPositionForRender(R renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
+		if (isReRender)
+			return;
+
+		LivingEntityRenderState livingRenderState =  renderState instanceof LivingEntityRenderState state ? state : null;
+
+		if (renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING && livingRenderState != null) {
+			Direction bedDirection = livingRenderState.bedOrientation;
+
+			if (bedDirection != null) {
+				float eyePosOffset = livingRenderState.eyeHeight - 0.1F;
+
+				poseStack.translate(-bedDirection.getStepX() * eyePosOffset, 0, -bedDirection.getStepZ() * eyePosOffset);
+			}
+		}
+	}
+
+	/**
+	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 * <p>
+	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+	 */
+	@Override
+	public void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
+		float nativeScale = renderState instanceof LivingEntityRenderState livingRenderState ? livingRenderState.scale : 1;
+
+		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth * nativeScale, heightScale * this.scaleHeight * nativeScale, poseStack, model, isReRender);
 	}
 
 	@ApiStatus.Internal
@@ -306,21 +338,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	public void actuallyRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType,
 							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
 		if (!isReRender) {
-			LivingEntityRenderState livingRenderState =  renderState instanceof LivingEntityRenderState state ? state : null;
-			float nativeScale = livingRenderState != null ? livingRenderState.scale : 1;
-
-			if (renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING && livingRenderState != null) {
-				Direction bedDirection = livingRenderState.bedOrientation;
-
-				if (bedDirection != null) {
-					float eyePosOffset = livingRenderState.eyeHeight - 0.1F;
-
-					poseStack.translate(-bedDirection.getStepX() * eyePosOffset, 0, -bedDirection.getStepZ() * eyePosOffset);
-				}
-			}
-
-			poseStack.scale(nativeScale, nativeScale, nativeScale);
-			applyRotations(renderState, poseStack, nativeScale);
+			applyRotations(renderState, poseStack, renderState instanceof LivingEntityRenderState state ? state.scale : 1);
 			getGeoModel().handleAnimations(createAnimationState(renderState));
 			poseStack.translate(0, 0.01f, 0);
 		}
@@ -337,8 +355,9 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
 	 */
 	@Override
-	public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer) {
-		super.render(renderState, poseStack, bufferSource, renderState.getGeckolibData(DataTickets.PACKED_LIGHT));
+	public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
+							int packedLight, int packedOverlay, int renderColor) {
+		super.render(renderState, poseStack, bufferSource, packedLight);
 	}
 
 	/**

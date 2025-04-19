@@ -115,12 +115,27 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 */
 	@Override
 	public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		this.objectRenderTranslations = new Matrix4f(poseStack.last().pose());
+		if (!isReRender)
+			this.objectRenderTranslations = new Matrix4f(poseStack.last().pose());
+	}
 
-		scaleModelForRender(renderState, this.scaleWidth, this.scaleHeight, poseStack, model, isReRender);
-
+	/**
+	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 */
+	@Override
+	public void adjustPositionForRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
 		if (!isReRender)
 			poseStack.translate(0.5f, 0.51f, 0.5f);
+	}
+
+	/**
+	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 * <p>
+	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+	 */
+	@Override
+	public void scaleModelForRender(GeoRenderState renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
+		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, isReRender);
 	}
 
 	/**

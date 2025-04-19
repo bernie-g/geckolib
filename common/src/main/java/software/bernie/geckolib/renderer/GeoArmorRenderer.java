@@ -183,16 +183,26 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	@Override
 	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
 						  boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
-		HumanoidModel<?> baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
+		if (!isReRender) {
+			this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
 
-		applyBaseModel(baseModel);
-		grabRelevantBones(model);
-		applyBaseTransformations(baseModel);
-		scaleModelForRender(renderState, this.scaleWidth, this.scaleHeight, poseStack, model, isReRender);
+			applyBaseTransformations(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
+			applyBaseModel(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
+			grabRelevantBones(model);
 
-		if (!renderState.getGeckolibData(DataTickets.IS_GECKOLIB_WEARER))
-			applyBoneVisibilityBySlot(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+			if (!renderState.getGeckolibData(DataTickets.IS_GECKOLIB_WEARER))
+				applyBoneVisibilityBySlot(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+		}
+	}
+
+	/**
+	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+	 * <p>
+	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+	 */
+	@Override
+	public void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
+		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, isReRender);
 	}
 
 	/**
