@@ -22,11 +22,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * The asset path should be the truncated relative path from the base folder
 	 * <p>
 	 * E.G.
-	 * <pre>
-	 *     {@code
-	 *		new ResourceLocation("myMod", "animals/red_fish")
-	 *		}</pre>
-	 * @param assetSubpath
+	 * <pre>{@code new ResourceLocation("myMod", "animals/red_fish")}</pre>
 	 */
 	public DefaultedGeoModel(ResourceLocation assetSubpath) {
 		this.modelPath = buildFormattedModelPath(assetSubpath);
@@ -71,7 +67,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 *
 	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
-	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:geo/entity/animal/goat.geo.json"}</pre>
+	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:entity/animal/goat"}</pre>
 	 */
 	public ResourceLocation buildFormattedModelPath(ResourceLocation basePath) {
 		return basePath.withPrefix(subtype() + "/");
@@ -81,7 +77,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * Constructs a defaulted resource path for a animation.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 *
 	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
-	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.animation.json"}</pre>
+	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:entity/animal/goat"}</pre>
 	 */
 	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
 		return basePath.withPrefix(subtype() + "/");
