@@ -311,13 +311,14 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
 
-		Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
+		if (!isReRender) {
+			Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
 
-		if (boneRenderTask != null)
-			boneRenderTask.left().setValue(poseStack.last().copy());
+			if (boneRenderTask != null)
+				boneRenderTask.left().setValue(poseStack.last().copy());
+		}
 
 		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
-
 		renderChildBones(renderState, bone, poseStack, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
 	}
@@ -460,7 +461,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	/**
 	 * Internal helper method to help with type-resolution of the {@link DataTickets#PER_BONE_TASKS} DataTicket
 	 */
-	private Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> getPerBoneTasks(R renderState) {
+    default Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> getPerBoneTasks(R renderState) {
 		return renderState.getGeckolibData(DataTickets.PER_BONE_TASKS);
 	}
 }

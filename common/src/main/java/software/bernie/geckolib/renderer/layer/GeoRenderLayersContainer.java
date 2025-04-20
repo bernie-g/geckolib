@@ -1,6 +1,7 @@
 package software.bernie.geckolib.renderer.layer;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -12,6 +13,7 @@ import java.util.List;
  * <p>
  * Each renderer should contain an instance of this, for holding its layers and handling events
  */
+@ApiStatus.Internal
 public class GeoRenderLayersContainer<T extends GeoAnimatable, O, R extends GeoRenderState> {
 	private final GeoRenderer<T, O, R> renderer;
 	private final List<GeoRenderLayer<T, O, R>> layers = new ObjectArrayList<>();

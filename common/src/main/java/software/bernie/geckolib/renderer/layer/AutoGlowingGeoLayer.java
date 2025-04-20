@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
-public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends TextureLayerGeoLayer<T, O, R> {
 	private final Map<ResourceLocation, ResourceLocation> emissiveResourceCache = new Object2ObjectOpenHashMap<>();
 	protected static final RenderPipeline RENDER_PIPELINE = RenderPipelines.register(createRenderPipeline());
 	protected static final TriFunction<ResourceLocation, Boolean, Boolean, RenderType> RENDER_TYPE = memoizeRenderType(AutoGlowingGeoLayer::createRenderType);
@@ -42,6 +42,9 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		super(renderer);
 	}
 
+	/**
+	 * Get the texture resource path for the given {@link GeoRenderState}.
+	 */
 	@Override
 	protected ResourceLocation getTextureResource(R renderState) {
 		return this.emissiveResourceCache.computeIfAbsent(super.getTextureResource(renderState), RenderUtil::getEmissiveResource);
@@ -64,6 +67,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * Automatically accounts for entity states like invisibility and glowing
 	 */
 	@Nullable
+	@Override
 	protected RenderType getRenderType(R renderState) {
 		ResourceLocation texture = getTextureResource(renderState);
 		boolean respectLighting = shouldRespectWorldLighting();
@@ -90,14 +94,14 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * This is the method that is actually called by the render for your render layer to function
 	 * <p>
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
+	 * <p>
+	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
+	 * and you may need to factor this in to your design
 	 */
 	@Override
 	public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
 					   int packedLight, int packedOverlay, int renderColor) {
-		renderType = getRenderType(renderState);
-
-		if (renderType != null)
-			getRenderer().reRender(renderState, poseStack, bakedModel, bufferSource, renderType, bufferSource.getBuffer(renderType), LightTexture.FULL_SKY, packedOverlay, renderColor);
+		super.render(renderState, poseStack, bakedModel, renderType, bufferSource, buffer, LightTexture.FULL_SKY, packedOverlay, renderColor);
 	}
 
 	/**

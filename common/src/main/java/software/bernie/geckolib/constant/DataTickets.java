@@ -71,6 +71,8 @@ public final class DataTickets {
 	public static final DataTicket<Boolean> IS_GECKOLIB_WEARER = DataTicket.create("is_geckolib_wearer", Boolean.class);
 	public static final DataTicket<EnumMap> EQUIPMENT_BY_SLOT = DataTicket.create("equipment_by_slot", EnumMap.class);
 	public static final DataTicket<Boolean> IS_LEFT_HANDED = DataTicket.create("is_left_handed", Boolean.class);
+	public static final DataTicket<Boolean> IS_CROUCHING = DataTicket.create("is_crouching", Boolean.class);
+	public static final DataTicket<Vec3> ELYTRA_ROTATION = DataTicket.create("elytra_rotation", Vec3.class);
 
 	@ApiStatus.Internal
 	public static final DataTicket<EnumMap> PER_SLOT_RENDER_DATA = DataTicket.create("per_slot_render_data", EnumMap.class);

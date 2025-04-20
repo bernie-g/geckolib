@@ -26,8 +26,8 @@ import java.util.function.BiConsumer;
 public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderState> {
 	protected final GeoRenderer<T, O, R> renderer;
 
-	public GeoRenderLayer(GeoRenderer<T, O, R> entityRendererIn) {
-		this.renderer = entityRendererIn;
+	public GeoRenderLayer(GeoRenderer<T, O, R> renderer) {
+		this.renderer = renderer;
 	}
 
 	/**

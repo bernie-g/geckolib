@@ -95,7 +95,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      */
     @Override
     public void addRenderData(T animatable, O relatedObject, R renderState) {
-        EnumMap<EquipmentSlot, ItemStack> equipment = new EnumMap<>(EquipmentSlot.class);
+        EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());
         equipment.put(EquipmentSlot.OFFHAND, animatable.getOffhandItem());

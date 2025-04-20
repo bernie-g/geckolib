@@ -19,6 +19,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.util.ClientUtil;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -86,12 +87,18 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
 
         renderObject.ifLeft(stack -> {
             if (!stack.isEmpty())
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor) ->
-                        renderStackForBone(poseStack, bone, stack, renderData.displayContext, renderState, bufferSource, packedLight, packedOverlay));
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource,
+                                       packedLight, packedOverlay, renderColor) -> {
+                    RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
+                    renderStackForBone(poseStack, bone, stack, renderData.displayContext, renderState, bufferSource, packedLight, packedOverlay);
+                });
         }).ifRight(blockState -> {
             if (!blockState.isAir())
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor) ->
-                        renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay));
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource,
+                                       packedLight, packedOverlay, renderColor) -> {
+                    RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
+                    renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay);
+                });
         });
     }
 

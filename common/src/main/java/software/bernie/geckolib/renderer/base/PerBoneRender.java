@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -14,7 +15,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
  */
 @FunctionalInterface
 public interface PerBoneRender<R extends GeoRenderState> {
-    void render(R renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, int packedLight, int packedOverlay, int renderColor);
+    void render(R renderState, PoseStack poseStack, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource, int packedLight, int packedOverlay, int renderColor);
 
     /**
      * Internal API method to run this render task
@@ -22,7 +23,7 @@ public interface PerBoneRender<R extends GeoRenderState> {
      * You should <b><u>NOT</u></b> be overriding this
      */
     @ApiStatus.Internal
-    default void runTask(R renderState, PoseStack poseStack, GeoBone bone, PoseStack.Pose pose, RenderType renderType, MultiBufferSource bufferSource,
+    default void runTask(R renderState, PoseStack poseStack, GeoBone bone, PoseStack.Pose pose, @Nullable RenderType renderType, MultiBufferSource bufferSource,
                          int packedLight, int packedOverlay, int renderColor) {
         poseStack.pushPose();
         poseStack.last().set(pose);

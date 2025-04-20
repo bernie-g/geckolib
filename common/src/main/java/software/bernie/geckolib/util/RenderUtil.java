@@ -1,16 +1,13 @@
 package software.bernie.geckolib.util;
 
 import com.mojang.blaze3d.Blaze3D;
-import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -26,14 +23,13 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 /**
  * Helper class for various methods and functions useful while rendering
@@ -128,43 +124,14 @@ public final class RenderUtil {
 	
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path
-	 * <p>
-	 * Not performance-efficient, and should not be relied upon
 	 *
 	 * @param texture The path of the texture resource to check
-	 * @return The dimensions (width x height) of the texture, or null if unable to find or read the file
+	 * @return The dimensions (width x height) of the texture
 	 */
-	@Nullable
 	public static IntIntPair getTextureDimensions(ResourceLocation texture) {
-		if (texture == null)
-			return null;
+		GpuTexture gpuTexture = Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture();
 
-		AbstractTexture originalTexture = null;
-		Minecraft mc = Minecraft.getInstance();
-
-		try {
-			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(texture)).get();
-		}
-		catch (Exception e) {
-			GeckoLibConstants.LOGGER.warn("Failed to load image for id {}", texture);
-			e.printStackTrace();
-		}
-
-		if (originalTexture == null)
-			return null;
-
-		NativeImage image = null;
-
-		try {
-			image = originalTexture instanceof DynamicTexture dynamicTexture ? dynamicTexture.getPixels()
-					: NativeImage.read(mc.getResourceManager().getResource(texture).get().open());
-		}
-		catch (Exception e) {
-			GeckoLibConstants.LOGGER.error("Failed to read image for id {}", texture);
-			e.printStackTrace();
-		}
-
-		return image == null ? null : IntIntImmutablePair.of(image.getWidth(), image.getHeight());
+		return IntIntPair.of(gpuTexture.getWidth(0), gpuTexture.getHeight(0));
 	}
 
 	public static double getCurrentSystemTick() {

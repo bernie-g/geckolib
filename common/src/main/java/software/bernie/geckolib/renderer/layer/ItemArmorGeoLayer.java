@@ -3,7 +3,9 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelPart.Cube;
@@ -26,6 +28,7 @@ import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -130,13 +133,21 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 */
 	@Override
 	public void addRenderData(T animatable, O relatedObject, R renderState) {
-		EnumMap<EquipmentSlot, ItemStack> equipment = new EnumMap<>(EquipmentSlot.class);
+		EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			equipment.put(slot, animatable.getItemBySlot(slot));
 		}
 
 		renderState.addGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, equipment);
+
+		if (animatable instanceof LivingEntity livingEntity && !equipment.get(EquipmentSlot.CHEST).isEmpty()) {
+			float partialTick = renderState.getGeckolibData(DataTickets.PARTIAL_TICK);
+
+			renderState.addGeckolibData(DataTickets.ELYTRA_ROTATION, new Vec3(livingEntity.elytraAnimationState.getRotX(partialTick),
+																			  livingEntity.elytraAnimationState.getRotY(partialTick),
+																			  livingEntity.elytraAnimationState.getRotZ(partialTick)));
+		}
 	}
 
 	/**
@@ -184,7 +195,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 				poseStack.scale(-1, -1, 1);
 
 				if (model instanceof GeoArmorRenderer<?, ?> geoArmorRenderer) {
-					prepModelPartForRender(poseStack, bone, modelPart);
+					prepHumanoidModelForRender(poseStack, bone, modelPart);
 					geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, model);
 					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 0xFFFFFFFF);
 				}
@@ -193,7 +204,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 
 					if (equippable != null) {
 						equippable.assetId().ifPresent(assetId -> {
-							prepModelPartForRender(poseStack, bone, modelPart);
+							prepHumanoidModelForRender(poseStack, bone, modelPart);
 							renderVanillaArmorPiece(poseStack, renderState, bone, slot, equipmentStack, equippable, assetId, model, modelPart, bufferSource, packedLight, packedOverlay);
 						});
 					}
@@ -231,10 +242,38 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 										   Equippable equippable, ResourceKey<EquipmentAsset> assetId, HumanoidModel<?> model, ModelPart modelPart,
 										   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
 		EquipmentClientInfo.LayerType layerType = getEquipmentLayerType(renderState, bone, slot, armorStack, assetId);
+		Model modelToRender = model;
 
-		setVanillaModelPartVisibility(renderState, armorStack, bone, model, modelPart, slot);
-		this.equipmentRenderer.renderLayers(layerType, assetId, layerType == EquipmentClientInfo.LayerType.WINGS ? GeckoLibClient.GENERIC_ELYTRA_MODEL.get() : model,
+		if (layerType == EquipmentClientInfo.LayerType.WINGS) {
+			if (modelPart != model.body)
+				return;
+
+			modelToRender = checkForElytraModel(layerType, renderState, bone, poseStack);
+		}
+		else {
+			setVanillaModelPartVisibility(renderState, armorStack, bone, model, modelPart, slot);
+		}
+
+		this.equipmentRenderer.renderLayers(layerType, assetId, modelToRender,
 											armorStack, poseStack, bufferSource, packedLight);
+	}
+
+	/**
+	 * Check for the presence of {@link ElytraModel Elytra} wings, and adjust the model as necessary
+	 */
+	protected Model checkForElytraModel(EquipmentClientInfo.LayerType layerType, R renderState, GeoBone bone, PoseStack poseStack) {
+		ElytraModel model = GeckoLibClient.GENERIC_ELYTRA_MODEL.get();
+		HumanoidRenderState humanoidRenderState = new HumanoidRenderState();
+		Vec3 elytraRotation = renderState.getOrDefaultGeckolibData(DataTickets.ELYTRA_ROTATION, Vec3.ZERO);
+		humanoidRenderState.isCrouching = renderState.getGeckolibData(DataTickets.IS_CROUCHING);
+		humanoidRenderState.elytraRotX = (float)elytraRotation.x;
+		humanoidRenderState.elytraRotY = (float)elytraRotation.y;
+		humanoidRenderState.elytraRotZ = (float)elytraRotation.z;
+
+		model.setupAnim(humanoidRenderState);
+		poseStack.translate(0, -1.5f, 0.125f);
+
+		return model;
 	}
 
 	/**
@@ -288,7 +327,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
 	 */
-	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
+	protected void prepHumanoidModelForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.getCubes().getFirst();
 		final Cube armorCube = sourcePart.cubes.getFirst();
 		final double armorBoneSizeX = firstCube.size().x();
