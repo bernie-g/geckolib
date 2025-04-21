@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "5.0-alpha2"
+    geckolib = "5.0"
 
 # Common
     minecraft-range = "[1.21.5,)"
@@ -11,21 +11,21 @@
     jopt-simple = "5.0.4"
 
 # Fabric
-    fabric = "0.16.12"
+    fabric = "0.16.13"
     fabric-range = "0.16"
-    fabric-api = "0.119.9+1.21.5"
+    fabric-api = "0.120.0+1.21.5"
     fabric-api-range = "0.119.5+1.21.5"
 
 # Forge
     forge-fml-range = "[55,)"
     forge-range = "[55.0.0,)"
-    forge = "55.0.3"
-    forge-mc = "1.21.5-55.0.3"
+    forge = "55.0.4"
+    forge-mc = "1.21.5-55.0.4"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
-    neoforge-range = "[21.5.0-beta,)"
-    neoforge = "21.5.26-beta"
+    neoforge-range = "[21.5.34-beta,)"
+    neoforge = "21.5.44-beta"
 
 # Dependencies
     mixin = "0.8.7"
