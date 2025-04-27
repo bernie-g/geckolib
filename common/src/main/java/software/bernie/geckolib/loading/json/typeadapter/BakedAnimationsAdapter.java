@@ -135,7 +135,16 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			JsonElement pre = keyframe.get("pre");
 			addedFrame = true;
 
-			keyframes.add(DoubleObjectPair.of(timestamp == 0 ? timestamp : timestamp - 0.001d, pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector")));
+			JsonArray value = pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector");
+			JsonObject result = null;
+			if (keyframe.has("easing")) {
+				result = new JsonObject();
+				result.add("vector", value);
+				result.add("easing", keyframe.get("easing"));
+				if (keyframe.has("easingArgs")) result.add("easingArgs", keyframe.get("easingArgs"));
+			}
+
+			keyframes.add(DoubleObjectPair.of(timestamp == 0 ? timestamp : timestamp - 0.001d, result != null ? result : value));
 		}
 
 		if (keyframe.has("post")) {
@@ -195,9 +204,14 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 										 JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "easingArgs"), ele -> new Constant(ele.getAsDouble())) :
 										 new ObjectArrayList<>();
 
-			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, easingArgs));
-			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, easingArgs));
-			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, easingArgs));
+			List<MathValue> leftValues = entryObj != null && entryObj.has("left") ? JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "left"), ele -> new Constant(ele.getAsDouble())) : ObjectArrayList.of(new Constant(0), new Constant(0), new Constant(0));
+			List<MathValue> rightValues = entryObj != null && entryObj.has("right") ? JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "right"), ele -> new Constant(ele.getAsDouble())) : ObjectArrayList.of(new Constant(0), new Constant(0), new Constant(0));
+			List<MathValue> leftTimes = entryObj != null && entryObj.has("left_time") ? JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "left_time"), ele -> new Constant(ele.getAsDouble())) : ObjectArrayList.of(new Constant(-0.1), new Constant(-0.1), new Constant(-0.1));
+			List<MathValue> rightTimes = entryObj != null && entryObj.has("right_time") ? JsonUtil.jsonArrayToList(GsonHelper.getAsJsonArray(entryObj, "right_time"), ele -> new Constant(ele.getAsDouble())) : ObjectArrayList.of(new Constant(0.1), new Constant(0.1), new Constant(0.1));
+
+			xFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? xValue : xPrev, xValue, easingType, easingType == EasingType.BEZIER ? ObjectArrayList.of(leftValues.get(0), leftTimes.get(0), rightValues.get(0), rightTimes.get(0)) : easingArgs));
+			yFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? yValue : yPrev, yValue, easingType, easingType == EasingType.BEZIER ? ObjectArrayList.of(leftValues.get(1), leftTimes.get(1), rightValues.get(1), rightTimes.get(1)) : easingArgs));
+			zFrames.add(new Keyframe<>(timeDelta * 20, prevEntry == null ? zValue : zPrev, zValue, easingType, easingType == EasingType.BEZIER ? ObjectArrayList.of(leftValues.get(2), leftTimes.get(2), rightValues.get(2), rightTimes.get(2)) : easingArgs));
 
 			xPrev = xValue;
 			yPrev = yValue;
@@ -205,10 +219,10 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			prevEntry = entry;
 		}
 
-		return new KeyframeStack<>(addSplineArgs(xFrames), addSplineArgs(yFrames), addSplineArgs(zFrames));
+		return new KeyframeStack<>(addArgsForKeyframes(xFrames), addArgsForKeyframes(yFrames), addArgsForKeyframes(zFrames));
 	}
 
-	private List<Keyframe<MathValue>> addSplineArgs(List<Keyframe<MathValue>> frames) {
+	private List<Keyframe<MathValue>> addArgsForKeyframes(List<Keyframe<MathValue>> frames) {
 		if (frames.size() == 1) {
 			Keyframe<MathValue> frame = frames.getFirst();
 
@@ -227,6 +241,20 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 						i == 0 ? frame.startValue() : frames.get(i - 1).endValue(),
 						i + 1 >= frames.size() ? frame.endValue() : frames.get(i + 1).endValue()
 				)));
+			}
+			else if (frame.easingType() == EasingType.BEZIER) {
+				MathValue rightValue = frame.easingArgs().get(2);
+				MathValue rightTime = frame.easingArgs().get(3);
+				frame.easingArgs().remove(2);
+				frame.easingArgs().remove(2);
+				if (frames.size() > i + 1) {
+					Keyframe<MathValue> nextKeyframe = frames.get(i + 1);
+					if (nextKeyframe.easingType() == EasingType.BEZIER) {
+						nextKeyframe.easingArgs().add(rightValue);
+						nextKeyframe.easingArgs().add(rightTime);
+					}
+					else frames.set(i + 1, new Keyframe<>(nextKeyframe.length(), nextKeyframe.startValue(), nextKeyframe.endValue(), EasingType.BEZIER_AFTER, ObjectArrayList.of(rightValue, rightTime)));
+				}
 			}
 		}
 
