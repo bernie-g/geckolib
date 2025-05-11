@@ -47,7 +47,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 */
 	@Override
 	protected ResourceLocation getTextureResource(R renderState) {
-		return this.emissiveResourceCache.computeIfAbsent(super.getTextureResource(renderState), RenderUtil::getEmissiveResource);
+		return this.emissiveResourceCache.computeIfAbsent(this.renderer.getTextureLocation(renderState), RenderUtil::getEmissiveResource);
 	}
 
 	/**
