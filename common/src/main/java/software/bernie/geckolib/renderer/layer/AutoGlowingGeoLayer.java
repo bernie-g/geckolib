@@ -15,6 +15,7 @@ import net.minecraft.util.TriState;
 import org.apache.commons.lang3.function.TriFunction;
 import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
@@ -128,7 +129,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 */
 	private static RenderPipeline createRenderPipeline() {
 		return RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_FOG_SNIPPET)
-				.withLocation("pipeline/eyes")
+				.withLocation(GeckoLibConstants.id("pipeline/emissive"))
 				.withVertexShader("core/entity")
 				.withFragmentShader("core/entity")
 				.withShaderDefine("EMISSIVE")
