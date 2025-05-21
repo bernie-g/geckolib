@@ -5,11 +5,13 @@ import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector2d;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -25,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @FunctionalInterface
 public interface EasingType {
-	final Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
+	Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
 
 	EasingType LINEAR = register("linear", register("none", value -> easeIn(EasingType::linear)));
 	EasingType STEP = register("step", value -> easeIn(step(value)));
@@ -60,6 +62,8 @@ public interface EasingType {
 	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
 	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
 	EasingType CATMULLROM = register("catmullrom", new CatmullRomEasing());
+	EasingType BEZIER = register("bezier", new BezierEasingBefore());
+	EasingType BEZIER_AFTER = register("bezier_after", new BezierEasingAfter());
 
 	Double2DoubleFunction buildTransformer(@Nullable Double value);
 
@@ -421,6 +425,129 @@ public interface EasingType {
 				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
 
 			return getPointOnSpline(lerpValue, easingArgs.get(0).get(animationState), animationPoint.animationStartValue(), animationPoint.animationEndValue(), easingArgs.get(1).get(animationState));
+		}
+	}
+
+	abstract class BezierEasing implements EasingType {
+		@Override
+		public Double2DoubleFunction buildTransformer(@Nullable Double value) {
+			return easeIn(EasingType::linear);
+		}
+
+		abstract boolean isEasingBefore();
+
+		@Override
+		public double apply(AnimationPoint animationPoint, Double easingValue, double lerpValue, AnimationState<?> animationState) {
+			List<? extends MathValue> easingArgs = animationPoint.keyFrame().easingArgs();
+			if (easingArgs.isEmpty())
+				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
+
+			double rightValue = isEasingBefore() ? 0 : easingArgs.getFirst().get(animationState);
+			double rightTime = isEasingBefore() ? 0.1 : easingArgs.get(1).get(animationState);
+			double leftValue = isEasingBefore() ? easingArgs.getFirst().get(animationState) : 0;
+			double leftTime = isEasingBefore() ? easingArgs.get(1).get(animationState) : -0.1;
+
+			if (easingArgs.size() > 3) {
+				rightValue = easingArgs.get(2).get(animationState);
+				rightTime = easingArgs.get(3).get(animationState);
+			}
+
+			leftValue = Math.toRadians(leftValue);
+			rightValue = Math.toRadians(rightValue);
+
+			double gapTime = animationPoint.transitionLength()/20;
+
+			double time_handle_before = Math.clamp(rightTime, 0, gapTime);
+			double time_handle_after  = Math.clamp(leftTime, -gapTime, 0);
+
+			CubicBezierCurve curve = new CubicBezierCurve(
+					new Vector2d(0, animationPoint.animationStartValue()),
+					new Vector2d(time_handle_before, animationPoint.animationStartValue() + rightValue),
+					new Vector2d(time_handle_after + gapTime, animationPoint.animationEndValue() + leftValue),
+					new Vector2d(gapTime, animationPoint.animationEndValue()));
+			double time = gapTime * lerpValue;
+
+			List<Vector2d> points = curve.getPoints(200);
+			Vector2d closest  = new Vector2d();
+			double closest_diff = Double.POSITIVE_INFINITY;
+			for (Vector2d point : points) {
+				double diff = Math.abs(point.x - time);
+				if (diff < closest_diff) {
+					closest_diff = diff;
+					closest.set(point);
+				}
+			}
+			Vector2d second_closest = new Vector2d();
+			closest_diff = Double.POSITIVE_INFINITY;
+			for (Vector2d point : points) {
+				if (point == closest) continue;
+				double diff = Math.abs(point.x - time);
+				if (diff < closest_diff) {
+					closest_diff = diff;
+					second_closest.set(closest);
+					second_closest.set(point);
+				}
+			}
+			return Mth.lerp(Math.clamp(Mth.lerp(time, closest.x, second_closest.x), 0, 1), closest.y, second_closest.y);
+		}
+	}
+
+	class BezierEasingBefore extends BezierEasing {
+		@Override
+		boolean isEasingBefore() {
+			return true;
+		}
+	}
+
+	class BezierEasingAfter extends BezierEasing {
+		@Override
+		boolean isEasingBefore() {
+			return false;
+		}
+	}
+
+	class CubicBezierCurve {
+		private Vector2d v0;
+		private Vector2d v1;
+		private Vector2d v2;
+		private Vector2d v3;
+
+		public CubicBezierCurve(Vector2d v0, Vector2d v1, Vector2d v2, Vector2d v3) {
+			this.v0 = v0;
+			this.v1 = v1;
+			this.v2 = v2;
+			this.v3 = v3;
+		}
+
+		public Vector2d getPoint(float t) {
+			return getPoint(t, new Vector2d());
+		}
+
+		public Vector2d getPoint(float t, Vector2d target) {
+			if (target == null) {
+				target = new Vector2d();
+			}
+
+			float u = 1 - t;
+			float tt = t * t;
+			float uu = u * u;
+			float uuu = uu * u;
+			float ttt = tt * t;
+
+			target.x = uuu * v0.x + 3 * uu * t * v1.x + 3 * u * tt * v2.x + ttt * v3.x;
+			target.y = uuu * v0.y + 3 * uu * t * v1.y + 3 * u * tt * v2.y + ttt * v3.y;
+
+			return target;
+		}
+
+		public List<Vector2d> getPoints(int divisions) {
+			List<Vector2d> points = new ArrayList<>();
+
+			for (int i = 0; i <= divisions; i++) {
+				points.add(getPoint((float) i / divisions));
+			}
+
+			return points;
 		}
 	}
 }
