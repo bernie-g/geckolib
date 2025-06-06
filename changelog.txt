@@ -1,8 +1,4 @@
-v4.7.1.2
+v4.7.1.3
 
 Fabric:
-- Move Redirect mixins to WrapOperations to prevent collisions with other mods
-
-Forge:
-- Rollback the stackability change to itemstacks from 4.7.1 as Forge does not have MixinExtras, and adding it causes
-occasional conflict resolution issues
+- Update MixinItemRenderer to improve third-party mod compatibility
