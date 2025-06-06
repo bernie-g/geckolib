@@ -1,31 +1,31 @@
 [versions]
 # GeckoLib
-    geckolib = "5.0.1"
+    geckolib = "5.0.2"
 
 # Common
     minecraft-range = "[1.21.5,)"
     minecraft = "1.21.5"
-    parchment-minecraft = "1.21.4"
-    parchment = "2025.03.23"
+    parchment-minecraft = "1.21.5"
+    parchment = "2025.06.01"
     neoform = "1.21.5-20250325.162830"
     jopt-simple = "5.0.4"
 
 # Fabric
-    fabric = "0.16.13"
+    fabric = "0.16.14"
     fabric-range = "0.16"
-    fabric-api = "0.120.0+1.21.5"
+    fabric-api = "0.126.0+1.21.5"
     fabric-api-range = "0.119.5+1.21.5"
 
 # Forge
     forge-fml-range = "[55,)"
     forge-range = "[55.0.0,)"
-    forge = "55.0.4"
-    forge-mc = "1.21.5-55.0.4"
+    forge = "55.0.22"
+    forge-mc = "1.21.5-55.0.2"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
-    neoforge-range = "[21.5.34-beta,)"
-    neoforge = "21.5.44-beta"
+    neoforge-range = "[21.5.75,)"
+    neoforge = "21.5.75"
 
 # Dependencies
     mixin = "0.8.7"
@@ -35,7 +35,7 @@
     iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.80"
+    plugin-moddevgradle = "2.0.90"
     plugin-minotaur = "2.8.7"
     plugin-curseforge-gradle = "1.1.26"
     plugin-idea-ext = "1.1.10"
