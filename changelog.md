@@ -1,4 +1,4 @@
-## GeckoLib v5.0.1
+## GeckoLib v5.0.2
 
 ## Bug Fixes
-* Fixed AutoGlowingGeoLayer rendering a black and purple model
+* Fix stopTriggeredSingletonAnim actually starting a triggered anim instead of stopping it
