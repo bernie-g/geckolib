@@ -26,7 +26,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Built-in {@link GeoRenderLayer} for rendering an emissive layer over an existing GeoAnimatable.
+ * Built-in {@link GeoRenderLayer} for rendering an emissive layer over an existing GeoAnimatable
  * <p>
  * By default, it uses a custom RenderType created by GeckoLib to make things easier, but it can be overridden as needed
  *
@@ -41,7 +41,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	}
 
 	/**
-	 * Get the texture resource path for the given {@link GeoRenderState}.
+	 * Get the texture resource path for the given {@link GeoRenderState}
 	 */
 	@Override
 	protected ResourceLocation getTextureResource(R renderState) {
@@ -49,18 +49,20 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	}
 
 	/**
-	 * Override to return true if you want your emissive texture to respect lighting in the world.
+	 * Override to return true if you want your emissive texture to respect lighting in the world
 	 * <p>
-	 * This will lower its overall brightness slightly but allow it to shade properly.
+	 * This will lower its overall brightness slightly but allow it to shade properly
+	 * <p>
+	 * It may also improve compatibility and/or visual aesthetics when rendering an emissive layer on a translucent model
 	 */
 	protected boolean shouldRespectWorldLighting() {
 		return false;
 	}
 
 	/**
-	 * Override to return true to apply a view-space z-offset to the render buffer.
+	 * Override to return true to apply a view-space z-offset to the render buffer
 	 * <p>
-	 * Typically, you'd use this for armour rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks.
+	 * Typically, you'd use this for armour rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
 	 */
 	protected boolean shouldAddZOffset() {
 		return getRenderer() instanceof GeoArmorRenderer;
@@ -148,16 +150,28 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		 * Create GeckoLib's custom {@link RenderType} for emissive rendering since <code>EYES</code> isn't quite right
 		 */
 		private static RenderType buildNewInstance(Entry entry) {
-			return entry.respectLighting ? RenderType.entityTranslucentEmissive(entry.texture, entry.outline) :
-				   RenderType.create("geckolib_emissive",
+			final RenderType.CompositeState.CompositeStateBuilder compositeStateBuilder = RenderType.CompositeState.builder()
+					.setTextureState(new RenderStateShard.TextureStateShard(entry.texture, TriState.FALSE, false))
+					.setLayeringState(entry.zOffset ? RenderType.VIEW_OFFSET_Z_LAYERING : RenderStateShard.NO_LAYERING);
+
+
+			if (entry.respectLighting) {
+				return RenderType.create(GeckoLibConstants.MODID + "_entity_translucent_emissive",
+										 RenderType.TRANSIENT_BUFFER_SIZE,
+										 true,
+										 true,
+										 RenderPipelines.ENTITY_TRANSLUCENT_EMISSIVE,
+										 compositeStateBuilder
+												 .setOverlayState(RenderType.OVERLAY)
+												 .createCompositeState(entry.outline));
+			}
+
+			return RenderType.create(GeckoLibConstants.MODID + "_emissive",
 									 RenderType.TRANSIENT_BUFFER_SIZE,
 									 false,
 									 true,
 									 RENDER_PIPELINE,
-									 RenderType.CompositeState.builder()
-											 .setTextureState(new RenderStateShard.TextureStateShard(entry.texture, TriState.FALSE, false))
-											 .setLayeringState(entry.zOffset ? RenderType.VIEW_OFFSET_Z_LAYERING : RenderStateShard.NO_LAYERING)
-											 .createCompositeState(entry.outline));
+									 compositeStateBuilder.createCompositeState(entry.outline));
 		}
 
 		/**

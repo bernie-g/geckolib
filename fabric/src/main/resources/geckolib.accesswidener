@@ -4,9 +4,11 @@ accessible class net/minecraft/client/renderer/RenderType$CompositeState
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setTextureState (Lnet/minecraft/client/renderer/RenderStateShard$EmptyTextureStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder createCompositeState (Z)Lnet/minecraft/client/renderer/RenderType$CompositeState;
 accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setLayeringState (Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
+accessible method net/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder setOverlayState (Lnet/minecraft/client/renderer/RenderStateShard$OverlayStateShard;)Lnet/minecraft/client/renderer/RenderType$CompositeState$CompositeStateBuilder;
 accessible class net/minecraft/client/renderer/RenderStateShard$TextureStateShard
 accessible field net/minecraft/client/renderer/RenderStateShard VIEW_OFFSET_Z_LAYERING Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;
 accessible field net/minecraft/client/renderer/RenderStateShard NO_LAYERING Lnet/minecraft/client/renderer/RenderStateShard$LayeringStateShard;
+accessible field net/minecraft/client/renderer/RenderStateShard OVERLAY Lnet/minecraft/client/renderer/RenderStateShard$OverlayStateShard;
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_COLOR_FOG_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
 accessible method net/minecraft/client/renderer/RenderType create (Ljava/lang/String;IZZLcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/client/renderer/RenderType$CompositeState;)Lnet/minecraft/client/renderer/RenderType$CompositeRenderType;
