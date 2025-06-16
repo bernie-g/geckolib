@@ -3,11 +3,8 @@ package software.bernie.geckolib.animatable;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -49,21 +46,6 @@ public interface GeoItem extends SingletonGeoAnimatable {
 				.filter(Optional::isPresent)
 				.<Long>map(Optional::get)
 				.orElse(Long.MAX_VALUE);
-	}
-
-	/**
-	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}, and modifies it for armor handling
-	 * <p>
-	 * Currently should only be used internally
-	 */
-	@ApiStatus.Internal
-	static long getArmorId(ItemStack stack, EquipmentSlot slot, Entity equippingEntity) {
-		long stackId = getId(stack);
-
-		if (stackId == Long.MAX_VALUE)
-			return (long)Math.pow(equippingEntity.getId(), 7) * -(slot.ordinal() + 1);
-
-		return -stackId;
 	}
 
 	/**
