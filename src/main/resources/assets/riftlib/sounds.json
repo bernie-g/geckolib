@@ -1,0 +1,11 @@
+{
+  "jack_music": {
+    "category": "record",
+    "sounds": [
+      {
+        "name": "riftlib:jack_music",
+        "stream": true
+      }
+    ]
+  }
+}

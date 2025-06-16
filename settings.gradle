@@ -31,8 +31,3 @@ plugins {
 // Due to an IntelliJ bug, this has to be done
 // rootProject.name = archives_base_name
 rootProject.name = rootProject.projectDir.getName()
-
-
-rootProject.name = 'geckolib-forge1.12'
-include ':geckolib-core'
-project(':geckolib-core').projectDir = new File('./core')

@@ -1,14 +1,14 @@
 [
   {
-    "modid": "geckolib3",
-    "name": "GeckoLib",
-    "description": "Geckolib is an entity animation loader for Java Edition, which lets you export bedrock animations and play them automatically.",
+    "modid": "riftlib",
+    "name": "RiftLibrary",
+    "description": "RiftLibrary is a fork of Geckolib for 1.12.2 that in addition to GeckoLib's already existing features adds more features",
     "version": "${version}",
     "mcversion": "${mcversion}",
-    "url": "http://berniesoftware.com/",
+    "url": "https://discord.gg/qVWaKRMCRc",
     "updateUrl": "",
-    "authorList": ["Gecko, Eliot, AzureDoom, McHorse, DerToaster"],
-    "credits": "",
+    "authorList": ["ANightDazingZoroark"],
+    "credits": "Authors of this project",
     "logoFile": "geckolib.png",
     "screenshots": [],
     "dependencies": []

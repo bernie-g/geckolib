@@ -1,0 +1,7 @@
+{
+  "parent": "riftlib:block/default_box",
+  "textures": {
+    "1": "riftlib:block/botarium_side",
+    "particle": "riftlib:block/botarium_side"
+  }
+}
