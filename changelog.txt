@@ -1,4 +1,3 @@
-v4.7.1.3
+v4.7.2
 
-Fabric:
-- Update MixinItemRenderer to improve third-party mod compatibility
+- Fix GeoArmorRenderer sharing its animations when not registered as a synced animatable (#730)
