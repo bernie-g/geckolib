@@ -132,7 +132,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	@ApiStatus.Internal
 	@Override
 	public long getInstanceId(T animatable, RenderData stackAndSlot) {
-		return -GeoItem.getId(stackAndSlot.itemStack());
+		return GeoItem.getArmorId(stackAndSlot.itemStack(), stackAndSlot.slot(), stackAndSlot.entity());
 	}
 
 	/**
