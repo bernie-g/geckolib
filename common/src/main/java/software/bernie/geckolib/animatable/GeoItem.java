@@ -61,9 +61,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		long stackId = getId(stack);
 
 		if (stackId == Long.MAX_VALUE)
-			return (long)Math.pow(equippingEntity.getId(), 7) * -slot.ordinal();
+			return (long)Math.pow(equippingEntity.getId(), 7) * -(slot.ordinal() + 1);
 
-		return -stackId * equippingEntity.getId();
+		return -stackId;
 	}
 
 	/**
