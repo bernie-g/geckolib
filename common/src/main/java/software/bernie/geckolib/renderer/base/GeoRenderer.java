@@ -140,9 +140,11 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 */
 	@ApiStatus.Internal
 	default R captureDefaultRenderState(T animatable, O relatedObject, R renderState, float partialTick) {
+		long instanceId = getInstanceId(animatable, relatedObject);
+
 		renderState.addGeckolibData(DataTickets.TICK, animatable.getTick(relatedObject));
-		renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, getInstanceId(animatable, relatedObject));
-		renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID)));
+		renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, instanceId);
+		renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(instanceId));
 		renderState.addGeckolibData(DataTickets.PARTIAL_TICK, partialTick);
 		renderState.addGeckolibData(DataTickets.RENDER_COLOR, getRenderColor(animatable, relatedObject, partialTick));
 		renderState.addGeckolibData(DataTickets.PACKED_OVERLAY, getPackedOverlay(animatable, relatedObject, 0, partialTick));

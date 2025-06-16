@@ -130,10 +130,12 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	@ApiStatus.Internal
 	@Override
 	public GeoRenderState captureDefaultRenderState(T animatable, ItemStack itemStack, GeoRenderState renderState, float partialTick) {
+		long instanceId = getInstanceId(animatable, itemStack);
+
 		renderState.addGeckolibData(DataTickets.ITEM, animatable);
 		renderState.addGeckolibData(DataTickets.TICK, animatable.getTick(animatable));
-		renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, getInstanceId(animatable, itemStack));
-		renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID)));
+		renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, instanceId);
+		renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(instanceId));
 		renderState.addGeckolibData(DataTickets.PARTIAL_TICK, partialTick);
 		renderState.addGeckolibData(DataTickets.RENDER_COLOR, getRenderColor(animatable, itemStack, partialTick));
 		renderState.addGeckolibData(DataTickets.IS_MOVING, false);
