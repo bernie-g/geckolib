@@ -55,7 +55,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * <p>
 	 * It may also improve compatibility and/or visual aesthetics when rendering an emissive layer on a translucent model
 	 */
-	protected boolean shouldRespectWorldLighting() {
+	protected boolean shouldRespectWorldLighting(R renderState) {
 		return false;
 	}
 
@@ -64,8 +64,15 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * <p>
 	 * Typically, you'd use this for armour rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
 	 */
-	protected boolean shouldAddZOffset() {
+	protected boolean shouldAddZOffset(R renderState) {
 		return getRenderer() instanceof GeoArmorRenderer;
+	}
+
+	/**
+	 * Override to return a different lighting value if you want to customise the level of emissivity
+	 */
+	protected int getBrightness(R renderState) {
+		return LightTexture.FULL_SKY;
 	}
 
 	/**
@@ -79,8 +86,8 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	@Override
 	protected RenderType getRenderType(R renderState) {
 		ResourceLocation texture = getTextureResource(renderState);
-		boolean respectLighting = shouldRespectWorldLighting();
-		boolean zOffset = shouldAddZOffset();
+		boolean respectLighting = shouldRespectWorldLighting(renderState);
+		boolean zOffset = shouldAddZOffset(renderState);
 
 		if (!(renderState instanceof EntityRenderState entityRenderState))
 			return EmissiveRenderType.getRenderType(texture, false, respectLighting, zOffset);
@@ -111,7 +118,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	@Override
 	public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
 					   int packedLight, int packedOverlay, int renderColor) {
-		super.render(renderState, poseStack, bakedModel, renderType, bufferSource, buffer, LightTexture.FULL_SKY, packedOverlay, renderColor);
+		super.render(renderState, poseStack, bakedModel, renderType, bufferSource, buffer, getBrightness(renderState), packedOverlay, renderColor);
 	}
 
 	/**
