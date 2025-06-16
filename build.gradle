@@ -32,7 +32,9 @@ tasks.withType(JavaCompile).configureEach {
 
 configurations {
     embed
+    contain
     implementation.extendsFrom(embed)
+    implementation.extendsFrom(contain)
 }
 
 minecraft {
@@ -92,6 +94,10 @@ repositories {
         name 'mclib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
+    maven {
+        name 'CurseMaven'
+        url 'https://cursemaven.com'
+    }
     mavenLocal() // Must be last for caching to work
 }
 
@@ -117,12 +123,12 @@ dependencies {
         }
     }
     runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
-    compileOnly 'com.eliotlash.molang:molang:18'
-    compileOnly 'com.eliotlash.mclib:mclib:18'
-    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
-    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.19.0'
-    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.19.0'
-    compileOnly 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
+    contain 'com.eliotlash.molang:molang:19'
+    contain 'com.eliotlash.mclib:mclib:20'
+    contain 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+    contain 'com.fasterxml.jackson.core:jackson-core:2.19.0'
+    contain 'com.fasterxml.jackson.core:jackson-annotations:2.19.0'
+    contain 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
 }
 
 // Adds Access Transformer files to tasks
