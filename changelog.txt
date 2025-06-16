@@ -1,4 +1,5 @@
-v?
+v4.7.6
 
 - Clean up javadoc and param naming for GeckoLibUtil#getSyncedAnimatable
 - Allow for manually changed GeckoLib stack ids (???) to be synced as normal
+- Fix GeoArmorRenderer sharing its animations when not registered as a synced animatable (#730)
