@@ -92,7 +92,7 @@ public class CommonListener {
 	}
 
 	public static <T extends Item> T registerItem(T item, ResourceLocation name) {
-		itemRegistry.register(item.setRegistryName(name).setUnlocalizedName(name.toString().replace(":", ".")));
+		itemRegistry.register(item.setRegistryName(name).setTranslationKey(name.toString().replace(":", ".")));
 		return item;
 	}
 
@@ -101,7 +101,7 @@ public class CommonListener {
 	}
 
 	public static void registerBlock(Block block, ResourceLocation name) {
-		blockRegistry.register(block.setRegistryName(name).setUnlocalizedName(name.toString().replace(":", ".")));
+		blockRegistry.register(block.setRegistryName(name).setTranslationKey(name.toString().replace(":", ".")));
 	}
 
 	@SubscribeEvent

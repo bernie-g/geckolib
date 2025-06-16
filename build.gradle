@@ -1,205 +1,210 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.gradle.ext.Gradle
 
-buildscript {
-    repositories {
-        maven { url = 'https://maven.minecraftforge.net/' }
-		maven { url "https://plugins.gradle.org/m2/" }
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
-        classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
-    }
+plugins {
+    id 'java'
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.1.7'
+    id 'eclipse'
+    id 'com.gtnewhorizons.retrofuturagradle' version '1.3.35'
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
-apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'eclipse'
-apply plugin: 'maven-publish'
-apply plugin: 'com.github.johnrengelman.shadow'
-apply plugin: 'java'
-apply plugin: 'com.matthewprenger.cursegradle'
-
-import groovy.json.JsonSlurper
-import groovy.json.JsonOutput
 
 version = project.mod_version
 group = project.maven_group
 archivesBaseName = project.archives_base_name
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
-
-configurations {
-    shade
+// Set the toolchain version to decouple the Java we run Gradle with from the Java used to compile and run the mod
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+        // Azul covers the most platforms for Java 8 toolchains, crucially including MacOS arm64
+        vendor.set(org.gradle.jvm.toolchain.JvmVendorSpec.AZUL)
+    }
+    // Generate sources and javadocs jars when building and publishing
+    withSourcesJar()
+    // withJavadocJar()
 }
 
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
 
 minecraft {
-    mappings channel: 'snapshot', version: '20171003-1.12'
-    runs {
-        client {
-            workingDirectory project.file('run')
-        }
+    mcVersion = '1.12.2'
 
-        server {
-            workingDirectory project.file('server')
-        }
+    // MCP Mappings
+    mcpMappingChannel = 'stable'
+    mcpMappingVersion = '39'
+
+    // Set username here, the UUID will be looked up automatically
+    username = 'Developer'
+
+    // Add any additional tweaker classes here
+    // extraTweakClasses.add('org.spongepowered.asm.launch.MixinTweaker')
+
+    // Add various JVM arguments here for runtime
+    def args = ["-ea:${project.group}"]
+    if (project.use_coremod.toBoolean()) {
+        args << '-Dfml.coreMods.load=' + coremod_plugin_class_name
     }
+    if (project.use_mixins.toBoolean()) {
+        args << '-Dmixin.hotSwap=true'
+        args << '-Dmixin.checks.interfaces=true'
+        args << '-Dmixin.debug.export=true'
+    }
+    extraRunJvmArguments.addAll(args)
+
+    // Include and use dependencies' Access Transformer files
+    useDependencyAccessTransformers = true
+
+    // Add any properties you want to swap out for a dynamic value at build time here
+    // Any properties here will be added to a class at build time, the name can be configured below
+    // Example:
+    // injectedTags.put('VERSION', project.version)
+    // injectedTags.put('MOD_ID', project.archives_base_name)
+}
+
+// Generate a group.archives_base_name.Tags class
+tasks.injectTags.configure {
+    // Change Tags class' name here:
+    outputClassName.set("${project.group}.${project.archives_base_name}.Tags")
 }
 
 repositories {
-    maven { url 'https://maven.enginehub.org/repo/' }
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
-	maven { url "https://cfa2.cursemaven.com" }
-    jcenter()
-    mavenCentral()
+    maven {
+        name 'CleanroomMC Maven'
+        url 'https://maven.cleanroommc.com'
+    }
+    maven {
+        name 'SpongePowered Maven'
+        url 'https://repo.spongepowered.org/maven'
+    }
+    maven {
+        url 'https://maven.enginehub.org/repo/'
+    }
+    maven {
+        name 'mclib'
+        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+    }
+    mavenLocal() // Must be last for caching to work
 }
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    compile 'com.eliotlash.molang:molang:18'
-    compile 'com.eliotlash.mclib:mclib:18'
-    compile project(':geckolib-core')
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
-    compile 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+    if (project.use_assetmover.toBoolean()) {
+        implementation 'com.cleanroommc:assetmover:2.5'
+    }
+    if (project.use_mixins.toBoolean()) {
+        implementation ('zone.rong:mixinbooter:10.2')
+    }
 
-    shade 'com.eliotlash.molang:molang:18'
-    shade 'com.eliotlash.mclib:mclib:18'
-    shade project(':geckolib-core')
-    shade group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0'
-    shade group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.9.0'
+    if (project.use_mixins.toBoolean()) {
+        // Change your mixin refmap name here:
+        String mixin = modUtils.enableMixins('zone.rong:mixinbooter:9.1', "mixins.${project.archives_base_name}.refmap.json")
+        api (mixin) {
+            transitive = false
+        }
+        annotationProcessor 'org.ow2.asm:asm-debug-all:5.2'
+        annotationProcessor 'com.google.guava:guava:32.1.1-jre'
+        annotationProcessor 'com.google.code.gson:gson:2.8.9'
+        annotationProcessor (mixin) {
+            transitive = false
+        }
+    }
+    runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
+    compileOnly 'com.eliotlash.molang:molang:18'
+    compileOnly 'com.eliotlash.mclib:mclib:18'
+    compileOnly 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
+    compileOnly 'com.fasterxml.jackson.core:jackson-core:2.19.0'
+    compileOnly 'com.fasterxml.jackson.core:jackson-annotations:2.19.0'
+    compileOnly 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.0'
+}
 
-
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.2'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.2'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.2'
-
-    test {
-        useJUnitPlatform()
+// Adds Access Transformer files to tasks
+if (project.use_access_transformer.toBoolean()) {
+    for (File at : sourceSets.getByName("main").resources.files) {
+        if (at.name.toLowerCase().endsWith("_at.cfg")) {
+            tasks.deobfuscateMergedJarToSrg.accessTransformerFiles.from(at)
+            tasks.srgifyBinpatchedJar.accessTransformerFiles.from(at)
+        }
     }
 }
 
-shadowJar {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
-	exclude('META-INF/services/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    classifier ''
-}
+processResources {
+    // This will ensure that this task is redone when the versions change
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
 
+    // Replace various properties in mcmod.info and pack.mcmeta if applicable
+    filesMatching(['mcmod.info', 'pack.mcmeta']) { fcd ->
+        // Replace version and mcversion
+        fcd.expand (
+                'version': project.version,
+                'mcversion': project.minecraft.version
+        )
+    }
 
-reobf {
-    shadowJar {}
+    if (project.use_access_transformer.toBoolean()) {
+        rename '(.+_at.cfg)', 'META-INF/$1' // Make sure Access Transformer files are in META-INF folder
+    }
 }
-tasks.build.dependsOn reobfShadowJar
-publish.dependsOn('reobfJar')
-shadowJar.dependsOn('classes')
-jar.finalizedBy('reobfJar')
 
 jar {
     manifest {
-        attributes([
-                "FMLModType"              : "LIBRARY",
-                "Specification-Title"     : "GeckoLib",
-                "Specification-Vendor"    : "Gecko",
-                "Specification-Version"   : "1", // We are version 1 of ourselves
-                "Implementation-Title"    : project.name,
-                "Implementation-Version"  : "${version}",
-                "Implementation-Vendor"   : "Gecko",
-                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        ])
-    }
-}
-
-task packageSources(type: ShadowJar, dependsOn: 'classes') {
-    configurations = [project.configurations.shade]
-    from sourceSets.main.allSource
-    exclude('META-INF/**')
-    relocate 'com.eliotlash', 'software.bernie.shadowed.eliotlash'
-    relocate 'com.fasterxml', 'software.bernie.shadowed.fasterxml'
-    classifier = 'sources'
-}
-
-
-artifacts {
-    archives shadowJar
-    archives packageSources
-}
-
-afterEvaluate {
-    publish.dependsOn('reobfShadowJar')
-    publish.dependsOn('reobfJar')
-    publish.dependsOn('packageSources')
-    shadowJar.dependsOn(packageSources)
-    shadowJar.dependsOn('classes')
-}
-
-shadowJar.finalizedBy(reobfShadowJar)
-jar.finalizedBy(packageSources)
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifact shadowJar
-            artifact packageSources
-            artifactId = project.archives_base_name
+        def attribute_map = [:]
+        if (project.use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+            if (project.include_mod.toBoolean()) {
+                attribute_map['FMLCorePluginContainsFMLMod'] = true
+                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == "build"
+            }
         }
+        if (project.use_access_transformer.toBoolean()) {
+            attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+        }
+        attributes(attribute_map)
     }
-    repositories {
-        maven {
-            url "file:///${project.projectDir}/mcmodsrepo"
+    // Add all embedded dependencies into the jar
+    from(provider{ configurations.embed.collect {it.isDirectory() ? it : zipTree(it)} })
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+    }
+    project {
+        settings {
+            runConfigurations {
+                "1. Run Client"(Gradle) {
+                    taskNames = ["runClient"]
+                }
+                "2. Run Server"(Gradle) {
+                    taskNames = ["runServer"]
+                }
+                "3. Run Obfuscated Client"(Gradle) {
+                    taskNames = ["runObfClient"]
+                }
+                "4. Run Obfuscated Server"(Gradle) {
+                    taskNames = ["runObfServer"]
+                }
+            }
+            compiler.javac {
+                afterEvaluate {
+                    javacAdditionalOptions = "-encoding utf8"
+                    moduleJavacAdditionalOptions = [
+                            (project.name + ".main"): tasks.compileJava.options.compilerArgs.collect { '"' + it + '"' }.join(' ')
+                    ]
+                }
+            }
         }
     }
 }
-processResources {
-	doLast {
-        def jsonMinifyStart = System.currentTimeMillis()
-        def jsonMinified = 0
-        def jsonBytesSaved = 0
-        fileTree(dir: outputs.files.asPath, include: '**/*.json').each { 
-            File file = it
-            jsonMinified++
-            def oldLength = file.length()
-            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
-            jsonBytesSaved += oldLength - file.length()
-        }
-        println('Minified ' + jsonMinified + ' json files. Saved ' + jsonBytesSaved + ' bytes. Took ' + (System.currentTimeMillis() - jsonMinifyStart) + 'ms.')
-    }
-}
-publishing {
-    repositories {
-        maven {
-	      name = "cloudsmith"
-	      url = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def releasesRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      def snapshotsRepoUrl = "https://maven.cloudsmith.io/geckolib3/geckolib/"
-	      url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-	      credentials {
-                def envUsername = System.getenv("cloudUsername")
-                def envPassword = System.getenv("cloudPassword")
-                username = envUsername == null ? findProperty("cloudUsername") : envUsername
-                password = envPassword == null ? findProperty("cloudPassword") : envPassword
-	      }
-	    }
-    }
-}
 
-if (file('key.properties').exists()) {
-    curseforge {
-        def curseProp = new Properties()
-        File secretPropsFile = file("key.properties")
-        curseProp.load(secretPropsFile.newInputStream())
-
-        project {
-            apiKey = curseProp.getProperty('curseKey')
-            id = "388172"
-            releaseType = "release"
-            changelogType = 'text'
-            changelog = file('changelog.txt')
-            addGameVersion("1.12.2")
-            addGameVersion("Forge")
-            addGameVersion("Java 8")
-        }
-    }
+tasks.named("processIdeaSettings").configure {
+    dependsOn("injectTags")
 }

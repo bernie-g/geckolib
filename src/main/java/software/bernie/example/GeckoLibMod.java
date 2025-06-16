@@ -48,7 +48,7 @@ public class GeckoLibMod {
 		if (geckolibItemGroup == null) {
 			geckolibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "geckolib_examples") {
 				@Override
-				public ItemStack getTabIconItem() {
+				public ItemStack createIcon() {
 					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX);
 				}
 			};
