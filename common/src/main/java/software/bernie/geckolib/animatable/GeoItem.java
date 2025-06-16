@@ -52,7 +52,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}, and modifies it for armour handling
+	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}, and modifies it for armor handling
 	 * <p>
 	 * Currently should only be used internally
 	 */
