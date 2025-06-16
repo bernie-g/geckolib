@@ -54,8 +54,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	/**
 	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}, and modifies it for armour handling
 	 * <p>
-	 * This should be used instead of {@link #getId(ItemStack)} when dealing with worn armour
+	 * Currently should only be used internally
 	 */
+	@ApiStatus.Internal
 	static long getArmorId(ItemStack stack, EquipmentSlot slot, Entity equippingEntity) {
 		long stackId = getId(stack);
 
@@ -63,19 +64,6 @@ public interface GeoItem extends SingletonGeoAnimatable {
 			return (long)Math.pow(equippingEntity.getId(), 7) * -slot.ordinal();
 
 		return -stackId * equippingEntity.getId();
-	}
-
-	/**
-	 * Internal helper method to allow for consistant ID handling
-	 * <p>
-	 * Use {@link #getArmorId(ItemStack, Entity)} instead
-	 */
-	@ApiStatus.Internal
-	static long getArmorId(long stackValue, int entityId) {
-		if (stackValue == Long.MAX_VALUE)
-			return (long)-Math.pow(entityId, 7);
-
-		return stackValue * -entityId;
 	}
 
 	/**
