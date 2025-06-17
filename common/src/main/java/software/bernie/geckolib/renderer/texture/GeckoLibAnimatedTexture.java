@@ -75,7 +75,6 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
     public void apply(TextureContents textureContents) {
         boolean clamp = textureContents.clamp();
         boolean blur = textureContents.blur();
-        this.defaultBlur = blur;
 
         doLoad(this.baseImage, blur, clamp);
     }
@@ -86,7 +85,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
 
         Objects.requireNonNull(textureId);
 
-        this.texture = RenderSystem.getDevice().createTexture(textureId::toString, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1);
+        this.texture = RenderSystem.getDevice().createTexture(textureId.toString(), 5, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1, 1);
 
         setFilter(blur, false);
         setClamp(clamp);
@@ -162,7 +161,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
      * Upload the given {@link NativeImage} to the in-memory texture buffer, with an optional offset for non-interpolated frames
      */
     protected void uploadFrame(NativeImage image, int x, int y, GpuTexture gpuTexture) {
-        RenderSystem.getDevice().createCommandEncoder().writeToTexture(gpuTexture, image, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
+        RenderSystem.getDevice().createCommandEncoder().writeToTexture(gpuTexture, image, 0, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
     }
 
     /**

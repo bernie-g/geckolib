@@ -10,10 +10,13 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
+
+import java.util.Set;
 
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
     @Override
@@ -28,6 +31,9 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
 
         renderData.renderer.render(renderData.renderState, poseStack, bufferSource);
     }
+
+    @Override
+    public void getExtents(Set<Vector3f> set) {}
 
     @Nullable
     @Override

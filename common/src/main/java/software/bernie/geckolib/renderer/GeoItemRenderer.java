@@ -208,7 +208,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		poseStack.pushPose();
 		defaultRender(renderState, poseStack, defaultBufferSource, renderType, buffer);
 		defaultBufferSource.endBatch();
-		Lighting.setupFor3DItems();
+		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 		poseStack.popPose();
 	}
 
@@ -264,10 +264,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 */
 	public void setupLightingForGuiRender() {
 		if (this.useEntityGuiLighting) {
-			Lighting.setupForEntityInInventory();
+			Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
 		}
 		else {
-			Lighting.setupForFlatItems();
+			Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 		}
 	}
 

@@ -10,7 +10,6 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -138,7 +137,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		 * Create GeckoLib's custom {@link RenderPipeline} for emissive rendering since <code>EYES</code> isn't quite right
 		 */
 		private static RenderPipeline createRenderPipeline() {
-			return RenderPipeline.builder(RenderPipelines.MATRICES_COLOR_FOG_SNIPPET)
+			return RenderPipeline.builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
 					.withLocation(GeckoLibConstants.id("pipeline/emissive"))
 					.withVertexShader("core/entity")
 					.withFragmentShader("core/entity")
@@ -158,7 +157,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		 */
 		private static RenderType buildNewInstance(Entry entry) {
 			final RenderType.CompositeState.CompositeStateBuilder compositeStateBuilder = RenderType.CompositeState.builder()
-					.setTextureState(new RenderStateShard.TextureStateShard(entry.texture, TriState.FALSE, false))
+					.setTextureState(new RenderStateShard.TextureStateShard(entry.texture, false))
 					.setLayeringState(entry.zOffset ? RenderType.VIEW_OFFSET_Z_LAYERING : RenderStateShard.NO_LAYERING);
 
 
