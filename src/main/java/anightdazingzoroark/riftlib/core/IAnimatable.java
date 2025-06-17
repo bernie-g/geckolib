@@ -14,4 +14,9 @@ public interface IAnimatable {
 	void registerControllers(AnimationData data);
 
 	AnimationFactory getFactory();
+
+	//this will be pretty important when it comes to hitbox and creature model scaling
+	default float scale() {
+		return 1f;
+	}
 }
