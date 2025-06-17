@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>software.bernie.geckolib</groupId>
-  <artifactId>geckolib</artifactId>
-  <version>3.0.0-alpha.4</version>
-  <packaging>pom</packaging>
-  <dependencies/>
-</project>
