@@ -2,6 +2,7 @@ package software.bernie.geckolib.renderer.texture;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.TextureFormat;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -86,6 +87,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
         Objects.requireNonNull(textureId);
 
         this.texture = RenderSystem.getDevice().createTexture(textureId.toString(), 5, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1, 1);
+        this.texture.setTextureFilter(FilterMode.NEAREST, false);
+        this.textureView = RenderSystem.getDevice().createTextureView(this.texture);
 
         setFilter(blur, false);
         setClamp(clamp);
