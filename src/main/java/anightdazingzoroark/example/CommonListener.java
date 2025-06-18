@@ -1,5 +1,6 @@
 package anightdazingzoroark.example;
 
+import anightdazingzoroark.example.entity.DragonEntity;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -61,6 +62,13 @@ public class CommonListener {
 		event.getRegistry()
 				.register(EntityEntryBuilder.create().entity(GeoExampleEntityLayer.class).name("ExampleLayer")
 						.id(new ResourceLocation(RiftLib.ModID, "examplelayer"), id++).tracker(160, 2, false).build());
+		event.getRegistry().register(EntityEntryBuilder.create()
+				.entity(DragonEntity.class)
+				.name("Dragon")
+				.id(new ResourceLocation(RiftLib.ModID, "dragon"), id++)
+				.tracker(160, 2, false)
+				.build()
+		);
 
 		/* Tile entities */
 		GameRegistry.registerTileEntity(BotariumTileEntity.class, new ResourceLocation(RiftLib.ModID, "botariumtile"));

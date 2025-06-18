@@ -1,0 +1,114 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"animation.dragon.flying": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"body": {
+					"rotation": [-22.5, 0, 0]
+				},
+				"leftWing0": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 0, -60],
+						"0.5": [0, 0, 0],
+						"0.75": [0, 0, 60],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"rightWing0": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 0, 60],
+						"0.5": [0, 0, 0],
+						"0.75": [0, 0, -60],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"tail0": {
+					"rotation": [32.5, 0, 0]
+				},
+				"neck": {
+					"rotation": [-5, 0, 0]
+				},
+				"head": {
+					"rotation": [27.5, 0, 0]
+				},
+				"leftLeg": {
+					"rotation": [-45, 0, 0]
+				},
+				"rightLeg": {
+					"rotation": [-45, 0, 0]
+				}
+			}
+		},
+		"animation.dragon.land_pose": {
+			"loop": true,
+			"bones": {
+				"leftWing0": {
+					"rotation": [0, 0, 60]
+				},
+				"leftWing1": {
+					"rotation": [0, 0, -110]
+				},
+				"rightWing0": {
+					"rotation": [0, 0, -60]
+				},
+				"rightWing1": {
+					"rotation": [0, 0, 110]
+				}
+			}
+		},
+		"animation.dragon.walking": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"leftWing0": {
+					"rotation": [0, 0, 60],
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 0, -1],
+						"0.5": [0, 0, 0],
+						"0.75": [0, 0, 2],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"leftWing1": {
+					"rotation": [0, 0, -110]
+				},
+				"rightWing0": {
+					"rotation": [0, 0, -60],
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.25": [0, 0, 2],
+						"0.5": [0, 0, 0],
+						"0.75": [0, 0, -1],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"rightWing1": {
+					"rotation": [0, 0, 110]
+				},
+				"leftLeg": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [17.5, 0, 0],
+						"0.5": [0, 0, 0],
+						"0.75": [-17.5, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"rightLeg": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.25": [-17.5, 0, 0],
+						"0.5": [0, 0, 0],
+						"0.75": [17.5, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}

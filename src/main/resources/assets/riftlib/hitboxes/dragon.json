@@ -1,0 +1,112 @@
+{
+	"hitboxes": [
+		{
+			"locator": "hitbox_hip",
+			"width": 0.5,
+			"height": 0.75,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_body_0",
+			"width": 0.6,
+			"height": 0.65,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_body_1",
+			"width": 0.6,
+			"height": 0.65,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_neck",
+			"width": 0.3,
+			"height": 0.5,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_head",
+			"width": 0.5,
+			"height": 0.55,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_jaws_0",
+			"width": 0.3,
+			"height": 0.45,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_jaws_1",
+			"width": 0.3,
+			"height": 0.45,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_0",
+			"width": 0.35,
+			"height": 0.45,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_1",
+			"width": 0.3,
+			"height": 0.4,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_2",
+			"width": 0.3,
+			"height": 0.4,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_3",
+			"width": 0.3,
+			"height": 0.4,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_4",
+			"width": 0.25,
+			"height": 0.35,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_5",
+			"width": 0.25,
+			"height": 0.35,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_tail_6",
+			"width": 0.25,
+			"height": 0.35,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_left_leg_0",
+			"width": 0.3,
+			"height": 0.6,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_left_leg_1",
+			"width": 0.2,
+			"height": 0.6,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_left_leg_2",
+			"width": 0.3,
+			"height": 0.6,
+			"affectedByAnim": true
+		},
+		{
+			"locator": "hitbox_left_leg_3",
+			"width": 0.2,
+			"height": 0.6,
+			"affectedByAnim": true
+		}
+	]
+}

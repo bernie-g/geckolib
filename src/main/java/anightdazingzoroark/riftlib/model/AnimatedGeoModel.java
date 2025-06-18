@@ -94,6 +94,7 @@ public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelPr
 				.getAnimation(name);
 	}
 
+	//this must be where the model is attached to the entity
 	@Override
 	public GeoModel getModel(ResourceLocation location) {
 		GeoModel model = super.getModel(location);

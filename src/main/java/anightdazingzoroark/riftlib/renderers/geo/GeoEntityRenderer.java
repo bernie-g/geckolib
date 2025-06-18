@@ -125,6 +125,7 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 		}
 
 		GlStateManager.pushMatrix();
+		GlStateManager.scale(entity.scale(), entity.scale(), entity.scale());
 		GlStateManager.translate(0, 0.01f, 0);
 		Minecraft.getMinecraft().renderEngine.bindTexture(getEntityTexture(entity));
 		Color renderColor = getRenderColor(entity, partialTicks);

@@ -11,6 +11,7 @@ public class GeoBone implements IBone {
 
 	public List<GeoBone> childBones = new ArrayList<>();
 	public List<GeoCube> childCubes = new ArrayList<>();
+	public List<GeoLocator> childLocators = new ArrayList<>();
 
 	public String name;
 	private BoneSnapshot initialSnapshot;

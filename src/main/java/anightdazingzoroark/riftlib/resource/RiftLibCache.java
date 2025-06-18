@@ -91,6 +91,7 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 				}
 			}
 
+			//this must be where the model files are being loaded
 			for (ResourceLocation location : this.getLocations(pack, "geo", fileName -> fileName.endsWith(".json"))) {
 				try {
 					tempModels.put(location, modelLoader.loadModel(resourceManager, location));

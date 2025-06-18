@@ -1,10 +1,13 @@
 package anightdazingzoroark.riftlib.geo.render;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.vecmath.Vector3f;
 
+import anightdazingzoroark.riftlib.geo.raw.pojo.LocatorValue;
+import anightdazingzoroark.riftlib.geo.render.built.GeoLocator;
 import org.apache.commons.lang3.ArrayUtils;
 
 import anightdazingzoroark.riftlib.geo.raw.pojo.Bone;
@@ -65,6 +68,7 @@ public class GeoBuilder implements IGeoBuilder {
 		geoBone.rotationPointY = pivot.getY();
 		geoBone.rotationPointZ = pivot.getZ();
 
+		//add cubes
 		if (!ArrayUtils.isEmpty(rawBone.getCubes())) {
 			for (Cube cube : rawBone.getCubes()) {
 				geoBone.childCubes.add(GeoCube.createFromPojoCube(cube, properties,
@@ -72,6 +76,19 @@ public class GeoBuilder implements IGeoBuilder {
 			}
 		}
 
+		//add locators
+		if (rawBone.getLocators() != null && !rawBone.getLocators().isEmpty()) {
+			for (Map.Entry<String, LocatorValue> entry: rawBone.getLocators().entrySet()) {
+				geoBone.childLocators.add(new GeoLocator(
+						entry.getKey(),
+						(float) entry.getValue().doubleArrayValue[0] / 16f,
+						(float) entry.getValue().doubleArrayValue[1] / 16f,
+						(float) entry.getValue().doubleArrayValue[2] / 16f
+				));
+			}
+		}
+
+		//create bones
 		for (RawBoneGroup child : bone.children.values()) {
 			geoBone.childBones.add(constructBone(child, properties, geoBone));
 		}

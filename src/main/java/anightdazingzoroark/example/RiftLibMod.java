@@ -5,6 +5,8 @@
 
 package anightdazingzoroark.example;
 
+import anightdazingzoroark.example.client.renderer.entity.*;
+import anightdazingzoroark.example.entity.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -22,16 +24,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import anightdazingzoroark.example.block.tile.BotariumTileEntity;
 import anightdazingzoroark.example.block.tile.FertilizerTileEntity;
 import anightdazingzoroark.example.client.renderer.armor.PotatoArmorRenderer;
-import anightdazingzoroark.example.client.renderer.entity.BikeGeoRenderer;
-import anightdazingzoroark.example.client.renderer.entity.ExampleGeoRenderer;
-import anightdazingzoroark.example.client.renderer.entity.LERenderer;
-import anightdazingzoroark.example.client.renderer.entity.ReplacedCreeperRenderer;
 import anightdazingzoroark.example.client.renderer.tile.BotariumTileRenderer;
 import anightdazingzoroark.example.client.renderer.tile.FertilizerTileRenderer;
-import anightdazingzoroark.example.entity.BikeEntity;
-import anightdazingzoroark.example.entity.GeoExampleEntity;
-import anightdazingzoroark.example.entity.GeoExampleEntityLayer;
-import anightdazingzoroark.example.entity.ReplacedCreeperEntity;
 import anightdazingzoroark.example.item.PotatoArmorItem;
 import anightdazingzoroark.example.registry.ItemRegistry;
 import anightdazingzoroark.riftlib.RiftLib;
@@ -72,6 +66,7 @@ public class RiftLibMod {
 					LERenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(DragonEntity.class, DragonRenderer::new);
 
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 
