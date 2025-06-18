@@ -26,12 +26,16 @@ public class EntityHitbox extends MultiPartEntityPart {
     @Override
     public void onUpdate() {
         //define and set offsets
-        double xOffset = this.xOffset * (this.width / (this.initWidth * this.getParentScale()));
-        double yOffset = this.yOffset * (this.height / (this.initHeight * this.getParentScale()));
-        double zOffset = this.zOffset * (this.width / (this.initWidth * this.getParentScale()));
+        double xOffset = this.xOffset * (this.width / this.initWidth);
+        double yOffset = this.yOffset * (this.height / this.initHeight);
+        double zOffset = this.zOffset * (this.width / this.initWidth);
         this.setPositionAndUpdate(this.getParentAsEntity().posX + xOffset, this.getParentAsEntity().posY + yOffset, this.getParentAsEntity().posZ + zOffset);
         if (!this.getParentAsEntity().isEntityAlive()) this.world.removeEntityDangerously(this);
         super.onUpdate();
+    }
+
+    public void resize(float scale) {
+        this.setSize(this.initWidth * scale, this.initHeight * scale);
     }
 
     //recommended instead of using the parent variable

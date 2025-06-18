@@ -3,6 +3,13 @@ package anightdazingzoroark.riftlib.renderers.geo;
 import java.util.Collections;
 import java.util.List;
 
+import anightdazingzoroark.riftlib.file.HitboxDefinitionList;
+import anightdazingzoroark.riftlib.geo.render.built.GeoLocator;
+import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
+import anightdazingzoroark.riftlib.message.RiftLibCreateHitboxes;
+import anightdazingzoroark.riftlib.message.RiftLibMessages;
+import anightdazingzoroark.riftlib.model.AnimatedMultiHitboxGeoModel;
+import anightdazingzoroark.riftlib.util.json.JsonHitboxUtils;
 import com.eliotlash.mclib.utils.Interpolations;
 import com.google.common.collect.Lists;
 
@@ -56,6 +63,40 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
 	@Override
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
+		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
+
+		//hitboxes are first made here, how bad would this be?
+		if (entity instanceof IMultiHitboxUser) {
+			AnimatedMultiHitboxGeoModel multiHitboxGeoModel = (AnimatedMultiHitboxGeoModel) this.modelProvider;
+			if (((IMultiHitboxUser) entity).getParts().length == 0) {
+				HitboxDefinitionList hitboxDefinitionList = multiHitboxGeoModel.getHitboxDefinitionList((IMultiHitboxUser) entity);
+
+				if (hitboxDefinitionList != null) {
+					//add positions to the hitboxes
+					for (GeoLocator locator : model.getAllLocators()) {
+						hitboxDefinitionList.editHitboxDefinitionPosition(
+								JsonHitboxUtils.locatorHitboxToHitbox(locator.name),
+								locator.positionX,
+								locator.positionY,
+								-locator.positionZ
+						);
+					}
+
+					System.out.println("list: "+hitboxDefinitionList.list);
+
+					RiftLibMessages.WRAPPER.sendToAll(new RiftLibCreateHitboxes(
+							(EntityLiving) entity,
+							hitboxDefinitionList
+					));
+					RiftLibMessages.WRAPPER.sendToServer(new RiftLibCreateHitboxes(
+							(EntityLiving) entity,
+							hitboxDefinitionList
+					));
+				}
+			}
+		}
+
+		//rest is good ol rendering code
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);
 		// TODO: entity.isPassenger() looks redundant here
@@ -119,7 +160,6 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 
 		AnimationEvent predicate = new AnimationEvent(entity, limbSwing, limbSwingAmount, partialTicks,
 				!(limbSwingAmount > -0.15F && limbSwingAmount < 0.15F), Collections.singletonList(entityModelData));
-		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		if (modelProvider instanceof IAnimatableModel) {
 			((IAnimatableModel<T>) modelProvider).setLivingAnimations(entity, this.getUniqueID(entity), predicate);
 		}

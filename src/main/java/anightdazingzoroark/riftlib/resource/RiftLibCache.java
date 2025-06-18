@@ -39,21 +39,21 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 	public final MolangParser parser = new MolangParser();
 
 	public HashMap<ResourceLocation, AnimationFile> getAnimations() {
-		if (!RiftLib.hasInitialized) {
+		if (!RiftLib.isInitialized()) {
 			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
 		}
 		return animations;
 	}
 
 	public HashMap<ResourceLocation, GeoModel> getGeoModels() {
-		if (!RiftLib.hasInitialized) {
+		if (!RiftLib.isInitialized()) {
 			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
 		}
 		return geoModels;
 	}
 
 	public HashMap<ResourceLocation, HitboxDefinitionList> getHitboxDefinitions() {
-		if (!RiftLib.hasInitialized) {
+		if (!RiftLib.isInitialized()) {
 			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
 		}
 		return this.hitboxDefinitions;
@@ -94,7 +94,8 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 					fileName -> fileName.endsWith(".json"))) {
 				try {
 					tempAnimations.put(location, animationLoader.loadAllAnimations(parser, location, resourceManager));
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 					RiftLib.LOGGER.error("Error loading animation file \"" + location + "\"!", e);
 				}
@@ -104,14 +105,15 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 			for (ResourceLocation location : this.getLocations(pack, "geo", fileName -> fileName.endsWith(".json"))) {
 				try {
 					tempModels.put(location, modelLoader.loadModel(resourceManager, location));
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 					RiftLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
 				}
 			}
 
 			//load the hitbox files
-			for (ResourceLocation location : this.getLocations(pack, "hitboxDefinitions", filename -> filename.endsWith(".json"))) {
+			for (ResourceLocation location : this.getLocations(pack, "hitboxes", filename -> filename.endsWith(".json"))) {
 				try {
 					tempHitboxes.put(location, hitboxesLoader.loadHitboxes(resourceManager, location));
 				}

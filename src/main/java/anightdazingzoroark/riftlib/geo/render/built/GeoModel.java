@@ -61,4 +61,14 @@ public class GeoModel {
 			collectAll(child, result);
 		}
 	}
+
+	public List<GeoLocator> getAllLocators() {
+		List<GeoLocator> listToReturn = new ArrayList<>();
+		for (GeoBone bone : this.getAllBones()) {
+			for (GeoLocator locator : bone.childLocators) {
+				if (!listToReturn.contains(locator)) listToReturn.add(locator);
+			}
+		}
+		return listToReturn;
+	}
 }

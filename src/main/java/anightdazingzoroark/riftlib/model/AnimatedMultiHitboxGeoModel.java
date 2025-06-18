@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 public abstract class AnimatedMultiHitboxGeoModel<T extends IAnimatable & IMultiHitboxUser> extends AnimatedGeoModel<T> {
     public abstract ResourceLocation getHitboxFileLocation(T entity);
 
-    public HitboxDefinitionList.HitboxDefinition getHitboxDefinition(String name, IAnimatable animatable) {
-        return RiftLibCache.getInstance().getHitboxDefinitions().get(this.getHitboxFileLocation((T) animatable)).getHitboxDefinitionByName(name);
+    public HitboxDefinitionList getHitboxDefinitionList(IMultiHitboxUser animatable) {
+        return RiftLibCache.getInstance().getHitboxDefinitions().get(this.getHitboxFileLocation((T) animatable));
     }
 
     public GeoLocator getAssociatedLocator(HitboxDefinitionList.HitboxDefinition hitbox) {

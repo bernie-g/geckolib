@@ -7,7 +7,6 @@ import anightdazingzoroark.riftlib.core.controller.AnimationController;
 import anightdazingzoroark.riftlib.core.event.predicate.AnimationEvent;
 import anightdazingzoroark.riftlib.core.manager.AnimationData;
 import anightdazingzoroark.riftlib.core.manager.AnimationFactory;
-import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -15,12 +14,18 @@ import net.minecraft.world.World;
 
 public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHitboxUser {
     private AnimationFactory factory = new AnimationFactory(this);
-    private EntityHitbox[] hitboxes = {};
+    private Entity[] hitboxes = {};
 
     public DragonEntity(World worldIn) {
         super(worldIn);
         this.setSize(4f, 4f);
         this.initializeHitboxes(this);
+    }
+
+    @Override
+    public void onLivingUpdate() {
+        super.onLivingUpdate();
+        this.updateParts();
     }
 
     //hitbox stuff starts here
@@ -32,6 +37,11 @@ public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHit
     @Override
     public Entity[] getParts() {
         return this.hitboxes;
+    }
+
+    @Override
+    public void setParts(Entity[] hitboxes) {
+        this.hitboxes = hitboxes;
     }
 
     @Override

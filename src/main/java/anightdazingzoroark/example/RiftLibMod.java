@@ -62,6 +62,7 @@ public class RiftLibMod {
 	@Mod.EventHandler
 	public void registerRenderers(FMLPreInitializationEvent event) {
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
+			RiftLib.initializePre();
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class,
 					LERenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
@@ -79,7 +80,7 @@ public class RiftLibMod {
 	@Mod.EventHandler
 	public void registerReplacedRenderers(FMLInitializationEvent event) {
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
-			RiftLib.initialize();
+			RiftLib.initializeMiddle();
 			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
 			renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
