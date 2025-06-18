@@ -4,15 +4,18 @@ import anightdazingzoroark.riftlib.core.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MultiPartEntityPart;
 
-public class Hitbox extends MultiPartEntityPart {
+public class EntityHitbox extends MultiPartEntityPart {
+    private final float damageMultiplier;
     private final float initWidth;
     private final float initHeight;
     private final float xOffset;
     private final float yOffset;
     private final float zOffset;
+    private boolean isDisabled;
 
-    public Hitbox(IMultiHitboxUser parent, String partName, float width, float height, float xOffset, float yOffset, float zOffset) {
+    public EntityHitbox(IMultiHitboxUser parent, String partName, float damageMultiplier, float width, float height, float xOffset, float yOffset, float zOffset) {
         super(parent, partName, width, height);
+        this.damageMultiplier = damageMultiplier;
         this.initWidth = width;
         this.initHeight = height;
         this.xOffset = xOffset;
@@ -46,5 +49,17 @@ public class Hitbox extends MultiPartEntityPart {
             return ((IAnimatable) this.parent).scale();
         }
         return 1f;
+    }
+
+    public void setDisabled(boolean value) {
+        this.isDisabled = value;
+    }
+
+    public boolean isDisabled() {
+        return this.isDisabled;
+    }
+
+    public float getDamageMultiplier() {
+        return this.damageMultiplier;
     }
 }

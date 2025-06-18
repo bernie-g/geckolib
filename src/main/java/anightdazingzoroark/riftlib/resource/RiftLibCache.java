@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import anightdazingzoroark.riftlib.file.*;
 import com.eliotlash.molang.MolangParser;
 
 import net.minecraft.client.resources.AbstractResourcePack;
@@ -24,9 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.FMLFolderResourcePack;
 import anightdazingzoroark.riftlib.RiftLib;
-import anightdazingzoroark.riftlib.file.AnimationFile;
-import anightdazingzoroark.riftlib.file.AnimationFileLoader;
-import anightdazingzoroark.riftlib.file.GeoModelLoader;
 import anightdazingzoroark.riftlib.geo.render.built.GeoModel;
 import anightdazingzoroark.riftlib.molang.MolangRegistrar;
 
@@ -36,29 +34,32 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 
 	private final AnimationFileLoader animationLoader;
 	private final GeoModelLoader modelLoader;
+	private final HitboxLoader hitboxesLoader;
 
 	public final MolangParser parser = new MolangParser();
 
 	public HashMap<ResourceLocation, AnimationFile> getAnimations() {
 		if (!RiftLib.hasInitialized) {
-			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
+			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
 		}
 		return animations;
 	}
 
 	public HashMap<ResourceLocation, GeoModel> getGeoModels() {
 		if (!RiftLib.hasInitialized) {
-			throw new RuntimeException("GeckoLib was never initialized! Please read the documentation!");
+			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
 		}
 		return geoModels;
 	}
 
 	private HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
 	private HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
+	private HashMap<ResourceLocation, HitboxDefinitionList> hitboxes = new HashMap<>();
 
 	protected RiftLibCache() {
 		this.animationLoader = new AnimationFileLoader();
 		this.modelLoader = new GeoModelLoader();
+		this.hitboxesLoader = new HitboxLoader();
 		MolangRegistrar.registerVars(parser);
 	}
 
@@ -74,6 +75,7 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 	public void onResourceManagerReload(IResourceManager resourceManager) {
 		HashMap<ResourceLocation, AnimationFile> tempAnimations = new HashMap<>();
 		HashMap<ResourceLocation, GeoModel> tempModels = new HashMap<>();
+		HashMap<ResourceLocation, HitboxDefinitionList> tempHitboxes = new HashMap<>();
 		List<IResourcePack> packs = this.getPacks();
 
 		if (packs == null) {
@@ -100,10 +102,22 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 					RiftLib.LOGGER.error("Error loading model file \"" + location + "\"!", e);
 				}
 			}
+
+			//load the hitbox files
+			for (ResourceLocation location : this.getLocations(pack, "hitboxes", filename -> filename.endsWith(".json"))) {
+				try {
+					tempHitboxes.put(location, hitboxesLoader.loadHitboxes(resourceManager, location));
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					RiftLib.LOGGER.error("Error loading hitbox file \""+location+"\"!", e);
+				}
+			}
 		}
 
 		animations = tempAnimations;
 		geoModels = tempModels;
+		hitboxes = tempHitboxes;
 	}
 
 	@SuppressWarnings("unchecked")
