@@ -34,7 +34,7 @@ import anightdazingzoroark.riftlib.util.MolangUtils;
 public abstract class AnimatedGeoModel<T extends IAnimatable> extends GeoModelProvider<T>
 		implements IAnimatableModel<T>, IAnimatableModelProvider<T> {
 	private final AnimationProcessor animationProcessor;
-	private GeoModel currentModel;
+	protected GeoModel currentModel;
 
 	protected AnimatedGeoModel() {
 		this.animationProcessor = new AnimationProcessor(this);

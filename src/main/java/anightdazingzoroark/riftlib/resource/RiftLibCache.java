@@ -52,9 +52,16 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 		return geoModels;
 	}
 
+	public HashMap<ResourceLocation, HitboxDefinitionList> getHitboxDefinitions() {
+		if (!RiftLib.hasInitialized) {
+			throw new RuntimeException("RiftLib was never initialized! Please read the documentation!");
+		}
+		return this.hitboxDefinitions;
+	}
+
 	private HashMap<ResourceLocation, AnimationFile> animations = new HashMap<>();
 	private HashMap<ResourceLocation, GeoModel> geoModels = new HashMap<>();
-	private HashMap<ResourceLocation, HitboxDefinitionList> hitboxes = new HashMap<>();
+	private HashMap<ResourceLocation, HitboxDefinitionList> hitboxDefinitions = new HashMap<>();
 
 	protected RiftLibCache() {
 		this.animationLoader = new AnimationFileLoader();
@@ -104,7 +111,7 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 			}
 
 			//load the hitbox files
-			for (ResourceLocation location : this.getLocations(pack, "hitboxes", filename -> filename.endsWith(".json"))) {
+			for (ResourceLocation location : this.getLocations(pack, "hitboxDefinitions", filename -> filename.endsWith(".json"))) {
 				try {
 					tempHitboxes.put(location, hitboxesLoader.loadHitboxes(resourceManager, location));
 				}
@@ -117,7 +124,7 @@ public class RiftLibCache implements IResourceManagerReloadListener {
 
 		animations = tempAnimations;
 		geoModels = tempModels;
-		hitboxes = tempHitboxes;
+		hitboxDefinitions = tempHitboxes;
 	}
 
 	@SuppressWarnings("unchecked")

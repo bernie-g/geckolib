@@ -1,7 +1,5 @@
 package anightdazingzoroark.riftlib.geo.render.built;
 
-import anightdazingzoroark.riftlib.geo.raw.pojo.LocatorValue;
-
 public class GeoLocator {
     public GeoBone parent;
 

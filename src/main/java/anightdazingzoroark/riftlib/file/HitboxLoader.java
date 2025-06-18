@@ -32,7 +32,6 @@ public class HitboxLoader {
             RiftLib.LOGGER.error(String.format("Error parsing %S", location), e);
             throw (new RuntimeException(e));
         }
-        System.out.println(hitboxList.list);
         return hitboxList;
     }
 

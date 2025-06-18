@@ -35,4 +35,30 @@ public class GeoModel {
 		}
 		return null;
 	}
+
+	public GeoLocator getLocator(String name) {
+		for (GeoBone bone : this.getAllBones()) {
+			if (!bone.childLocators.isEmpty()) {
+				for (GeoLocator locator : bone.childLocators) {
+					if (locator.name.equals(name)) return locator;
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<GeoBone> getAllBones() {
+		List<GeoBone> listToReturn = new ArrayList<>();
+		for (GeoBone bone : this.topLevelBones) {
+			this.collectAll(bone, listToReturn);
+		}
+		return listToReturn;
+	}
+
+	private void collectAll(GeoBone current, List<GeoBone> result) {
+		result.add(current);
+		for (GeoBone child : current.childBones) {
+			collectAll(child, result);
+		}
+	}
 }
