@@ -30,8 +30,9 @@ public class RiftLib {
 	 * invisible
 	 */
 	public static void initializePre() {
-		if (!hasInitializedPre)
+		if (!hasInitializedPre) {
 			RenderingRegistry.registerEntityRenderingHandler(EntityHitbox.class, new EntityHitboxRenderer.Factory());
+		}
 		hasInitializedPre = true;
 	}
 

@@ -7,6 +7,8 @@ package anightdazingzoroark.example;
 
 import anightdazingzoroark.example.client.renderer.entity.*;
 import anightdazingzoroark.example.entity.*;
+import anightdazingzoroark.example.entity.hitboxLinker.DragonHitboxLinker;
+import anightdazingzoroark.riftlib.hitboxLogic.EntityHitboxLinkerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -63,6 +65,8 @@ public class RiftLibMod {
 	public void registerRenderers(FMLPreInitializationEvent event) {
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
 			RiftLib.initializePre();
+			EntityHitboxLinkerRegistry.registerEntityHitboxLinker(DragonEntity.class, new DragonHitboxLinker());
+
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class,
 					LERenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
