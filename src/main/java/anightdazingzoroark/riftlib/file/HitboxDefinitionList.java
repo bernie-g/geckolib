@@ -27,20 +27,22 @@ public class HitboxDefinitionList {
         public final String locator;
         public final float width;
         public final float height;
+        public final float damageMultiplier;
         public final boolean affectedByAnim;
         public Vec3d position = new Vec3d(0f, 0f, 0f);
 
-        public HitboxDefinition(String locator, float width, float height, boolean affectedByAnim) {
+        public HitboxDefinition(String locator, float width, float height, float damageMultiplier, boolean affectedByAnim) {
             this.locator = locator;
             this.width = width;
             this.height = height;
+            this.damageMultiplier = damageMultiplier;
             this.affectedByAnim = affectedByAnim;
         }
 
         //its here just to make debugging easier
         @Override
         public String toString() {
-            return "[locator="+this.locator+", size=("+this.width+", "+this.height+"), position=("+this.position.x+", "+this.position.y+", "+this.position.z+") , affectedByAnim="+this.affectedByAnim+"]";
+            return "[locator="+this.locator+", size=("+this.width+", "+this.height+"), position=("+this.position.x+", "+this.position.y+", "+this.position.z+"), damageMultiplier="+this.damageMultiplier+", affectedByAnim="+this.affectedByAnim+"]";
         }
     }
 }

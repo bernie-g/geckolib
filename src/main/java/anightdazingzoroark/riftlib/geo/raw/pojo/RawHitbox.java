@@ -6,6 +6,7 @@ public class RawHitbox {
     private String locator;
     private float width;
     private float height;
+    private float damageMultiplier;
     private boolean affectedByAnim;
 
     @JsonProperty("locator")
@@ -36,6 +37,16 @@ public class RawHitbox {
     @JsonProperty("height")
     public void  setHeight(float value) {
         this.height = value;
+    }
+
+    @JsonProperty("damageMultiplier")
+    public float getDamageMultiplier() {
+        return this.damageMultiplier;
+    }
+
+    @JsonProperty("damageMultiplier")
+    public void setDamageMultiplier(float value) {
+        this.damageMultiplier = value;
     }
 
     @JsonProperty("affectedByAnim")

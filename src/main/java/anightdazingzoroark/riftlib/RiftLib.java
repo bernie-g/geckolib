@@ -4,10 +4,7 @@ import java.util.concurrent.FutureTask;
 
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitboxRenderer;
-import anightdazingzoroark.riftlib.message.RiftLibMessages;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,7 +45,6 @@ public class RiftLib {
 					doOnlyOnClient();
 				}
 			}, null));
-			RiftLibMessages.registerMessages();
 		}
 		hasInitialized = true;
 	}

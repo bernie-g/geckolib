@@ -22,7 +22,7 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
             EntityHitbox hitbox = new EntityHitbox(
                     entity,
                     hitboxDefinition.locator,
-                    1f,
+                    hitboxDefinition.damageMultiplier,
                     hitboxDefinition.width,
                     hitboxDefinition.height,
                     (float) hitboxDefinition.position.x,

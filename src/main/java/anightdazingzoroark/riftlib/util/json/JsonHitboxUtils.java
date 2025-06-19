@@ -10,6 +10,7 @@ public class JsonHitboxUtils {
             locatorHitboxToHitbox(jsonObject.get("locator").getAsString()),
             jsonObject.get("width").getAsFloat(),
             jsonObject.get("height").getAsFloat(),
+            jsonObject.get("damageMultiplier").getAsFloat(),
             jsonObject.get("affectedByAnim").getAsBoolean()
         );
     }
