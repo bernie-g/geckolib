@@ -8,8 +8,10 @@ import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
+import net.minecraftforge.eventbus.api.bus.EventBus;
+import net.minecraftforge.eventbus.api.event.MutableEvent;
+import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -79,7 +81,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for {@link BlockEntity BlockEntities} being rendered by {@link GeoBlockRenderer}
 	 */
-	abstract class Block<T extends BlockEntity & GeoAnimatable> extends Event implements GeoRenderEvent<T, Void, GeoRenderState> {
+	abstract class Block<T extends BlockEntity & GeoAnimatable> extends MutableEvent implements GeoRenderEvent<T, Void, GeoRenderState> {
 		private final GeoBlockRenderer<T> renderer;
 		private final GeoRenderState renderState;
 
@@ -110,6 +112,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends BlockEntity & GeoAnimatable> extends Block<T> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoBlockRenderer<T> renderer) {
 				super(renderer, null);
 			}
@@ -138,6 +142,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link Block} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends BlockEntity & GeoAnimatable> extends Block<T> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final T animatable;
 
 			public CompileRenderState(GeoBlockRenderer<T> renderer, GeoRenderState renderState, T animatable) {
@@ -176,11 +182,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the block entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends BlockEntity & GeoAnimatable> extends Block<T> {
+		public static class Pre<T extends BlockEntity & GeoAnimatable> extends Block<T> implements Cancellable {
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -212,6 +219,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends BlockEntity & GeoAnimatable> extends Block<T> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -241,7 +250,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for armor pieces being rendered by {@link GeoArmorRenderer}
 	 */
-	abstract class Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
+	abstract class Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends MutableEvent implements GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
 		private final GeoArmorRenderer<T, R> renderer;
 		private final R renderState;
 
@@ -279,6 +288,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoArmorRenderer<T, R> renderer) {
 				super(renderer, null);
 			}
@@ -307,6 +318,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final T animatable;
 			private final GeoArmorRenderer.RenderData renderData;
 
@@ -354,11 +367,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the armor piece will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		public static class Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> implements Cancellable {
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -390,6 +404,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -419,7 +435,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for {@link net.minecraft.world.entity.Entity Entities} being rendered by {@link GeoEntityRenderer}
 	 */
-	abstract class Entity<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent<T, Void, R> {
+	abstract class Entity<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends MutableEvent implements GeoRenderEvent<T, Void, R> {
 		private final GeoEntityRenderer<T, R> renderer;
 		private final R renderState;
 
@@ -450,6 +466,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoEntityRenderer<T, R> renderer) {
 				super(renderer, null);
 			}
@@ -478,6 +496,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link Entity} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final T animatable;
 
 			public CompileRenderState(GeoEntityRenderer<T, R> renderer, R renderState, T animatable) {
@@ -516,11 +536,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+		public static class Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> implements Cancellable {
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -552,6 +573,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -581,7 +604,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for miscellaneous {@link software.bernie.geckolib.animatable.GeoReplacedEntity replaced entities} being rendered by {@link GeoReplacedEntityRenderer}
 	 */
-	abstract class ReplacedEntity<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent<T, E, R> {
+	abstract class ReplacedEntity<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends MutableEvent implements GeoRenderEvent<T, E, R> {
 		private final GeoReplacedEntityRenderer<T, E, R> renderer;
 		private final R renderState;
 
@@ -612,6 +635,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoReplacedEntityRenderer<T, E, R> renderer) {
 				super(renderer, null);
 			}
@@ -640,6 +665,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link ReplacedEntity} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final GeoAnimatable animatable;
 			private final E entity;
 
@@ -687,12 +714,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
-			private final PoseStack poseStack;
+		public static class Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> implements Cancellable {			private final PoseStack poseStack;
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
 
@@ -723,6 +750,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -752,7 +781,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for {@link ItemStack Items} being rendered by {@link GeoItemRenderer}
 	 */
-	abstract class Item<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Event implements GeoRenderEvent<T, ItemStack, GeoRenderState> {
+	abstract class Item<T extends net.minecraft.world.item.Item & GeoAnimatable> extends MutableEvent implements GeoRenderEvent<T, ItemStack, GeoRenderState> {
 		private final GeoItemRenderer<T> renderer;
 		private final GeoRenderState renderState;
 
@@ -783,6 +812,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoItemRenderer<T> renderer) {
 				super(renderer, null);
 			}
@@ -811,6 +842,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final T animatable;
 			private final ItemStack itemStack;
 
@@ -858,11 +891,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the ItemStack will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
+		public static class Pre<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> implements Cancellable {
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -894,6 +928,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -923,7 +959,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for miscellaneous {@link GeoAnimatable animatables} being rendered by {@link GeoObjectRenderer}
 	 */
-	abstract class Object<T extends GeoAnimatable> extends Event implements GeoRenderEvent<T, Void, GeoRenderState> {
+	abstract class Object<T extends GeoAnimatable> extends MutableEvent implements GeoRenderEvent<T, Void, GeoRenderState> {
 		private final GeoObjectRenderer<T> renderer;
 		private final GeoRenderState renderState;
 
@@ -954,6 +990,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add render layers to the renderer as needed
 		 */
 		public static class CompileRenderLayers<T extends GeoAnimatable> extends Object<T> {
+			public static final EventBus<CompileRenderLayers> BUS = EventBus.create(CompileRenderLayers.class);
+
 			public CompileRenderLayers(GeoObjectRenderer<T> renderer) {
 				super(renderer, null);
 			}
@@ -982,6 +1020,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
 		 */
 		public static class CompileRenderState<T extends GeoAnimatable> extends Object<T> {
+			public static final EventBus<CompileRenderState> BUS = EventBus.create(CompileRenderState.class);
+
 			private final T animatable;
 
 			public CompileRenderState(GeoObjectRenderer<T> renderer, GeoRenderState renderState, T animatable) {
@@ -1020,11 +1060,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
-		 * This event is {@link Cancelable}<br>
+		 * This event is {@link Cancellable}<br>
 		 * If the event is cancelled, the object will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		@Cancelable
-		public static class Pre<T extends GeoAnimatable> extends Object<T> {
+		public static class Pre<T extends GeoAnimatable> extends Object<T> implements Cancellable {
+			public static final CancellableEventBus<Pre> BUS = CancellableEventBus.create(Pre.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;
@@ -1056,6 +1097,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
 		public static class Post<T extends GeoAnimatable> extends Object<T> {
+			public static final EventBus<Post> BUS = EventBus.create(Post.class);
+
 			private final PoseStack poseStack;
 			private final BakedGeoModel model;
 			private final MultiBufferSource bufferSource;

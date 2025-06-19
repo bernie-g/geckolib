@@ -17,10 +17,10 @@
     fabric-api-range = "0.127.0+1.21.6"
 
 # Forge
-    forge-fml-range = "[55,)"
-    forge-range = "[55.0.0,)"
-    forge = "55.0.23"
-    forge-mc = "1.21.5-55.0.2"
+    forge-fml-range = "[56,)"
+    forge-range = "[56.0.0,)"
+    forge = "56.0.0"
+    forge-mc = "1.21.6-56.0.0"
 
 # Neoforge
     neoforge-loader-range = "[5,)"

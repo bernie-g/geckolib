@@ -8,7 +8,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.MinecraftForge;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -26,7 +25,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends BlockEntity & GeoAnimatable>
     void fireCompileBlockRenderLayers(GeoBlockRenderer<T> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Block.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.Block.CompileRenderLayers.BUS.post(new GeoRenderEvent.Block.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -35,7 +34,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends BlockEntity & GeoAnimatable, R extends GeoRenderState>
     void fireCompileBlockRenderState(GeoBlockRenderer<T> renderer, R renderState, T animatable) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Block.CompileRenderState<>(renderer, renderState, animatable));
+        GeoRenderEvent.Block.CompileRenderState.BUS.post(new GeoRenderEvent.Block.CompileRenderState<>(renderer, renderState, animatable));
     }
 
     /**
@@ -44,7 +43,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends BlockEntity & GeoAnimatable, R extends GeoRenderState>
     boolean fireBlockPreRender(GeoBlockRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Block.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.Block.Pre.BUS.post(new GeoRenderEvent.Block.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -53,7 +52,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends BlockEntity & GeoAnimatable, R extends GeoRenderState>
     void fireBlockPostRender(GeoBlockRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Block.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.Block.Post.BUS.post(new GeoRenderEvent.Block.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -62,7 +61,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
     void fireCompileArmorRenderLayers(GeoArmorRenderer<T, R> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Armor.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.Armor.CompileRenderLayers.BUS.post(new GeoRenderEvent.Armor.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -71,7 +70,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState & GeoRenderState>
     void fireCompileArmorRenderState(GeoArmorRenderer<T, R> renderer, R renderState, T animatable, O renderData) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Armor.CompileRenderState<>(renderer, renderState, animatable, renderData));
+        GeoRenderEvent.Armor.CompileRenderState.BUS.post(new GeoRenderEvent.Armor.CompileRenderState<>(renderer, renderState, animatable, renderData));
     }
 
     /**
@@ -80,7 +79,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
     boolean fireArmorPreRender(GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Armor.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.Armor.Pre.BUS.post(new GeoRenderEvent.Armor.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -89,7 +88,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
     void fireArmorPostRender(GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Armor.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.Armor.Post.BUS.post(new GeoRenderEvent.Armor.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -97,7 +96,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
      */
     @Override
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> void fireCompileEntityRenderLayers(GeoEntityRenderer<T, R> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Entity.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.Entity.CompileRenderLayers.BUS.post(new GeoRenderEvent.Entity.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -106,7 +105,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
     void fireCompileEntityRenderState(GeoEntityRenderer<T, R> renderer, R renderState, T animatable) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Entity.CompileRenderState<>(renderer, renderState, animatable));
+        GeoRenderEvent.Entity.CompileRenderState.BUS.post(new GeoRenderEvent.Entity.CompileRenderState<>(renderer, renderState, animatable));
     }
 
     /**
@@ -115,7 +114,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
     boolean fireEntityPreRender(GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Entity.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.Entity.Pre.BUS.post(new GeoRenderEvent.Entity.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -124,7 +123,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
     void fireEntityPostRender(GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Entity.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.Entity.Post.BUS.post(new GeoRenderEvent.Entity.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -133,7 +132,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
     void fireCompileReplacedEntityRenderLayers(GeoReplacedEntityRenderer<T, E, R> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.ReplacedEntity.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.ReplacedEntity.CompileRenderLayers.BUS.post(new GeoRenderEvent.ReplacedEntity.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -142,7 +141,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
     void fireCompileReplacedEntityRenderState(GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, T animatable, E entity) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.ReplacedEntity.CompileRenderState<>(renderer, renderState, animatable, entity));
+        GeoRenderEvent.ReplacedEntity.CompileRenderState.BUS.post(new GeoRenderEvent.ReplacedEntity.CompileRenderState<>(renderer, renderState, animatable, entity));
     }
 
     /**
@@ -151,7 +150,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
     boolean fireReplacedEntityPreRender(GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.ReplacedEntity.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.ReplacedEntity.Pre.BUS.post(new GeoRenderEvent.ReplacedEntity.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -160,7 +159,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
     void fireReplacedEntityPostRender(GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.ReplacedEntity.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.ReplacedEntity.Post.BUS.post(new GeoRenderEvent.ReplacedEntity.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -169,7 +168,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoAnimatable>
     void fireCompileItemRenderLayers(GeoItemRenderer<T> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.Item.CompileRenderLayers.BUS.post(new GeoRenderEvent.Item.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -178,7 +177,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoAnimatable, O extends ItemStack, R extends GeoRenderState>
     void fireCompileItemRenderState(GeoItemRenderer<T> renderer, R renderState, T animatable, O itemStack) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.CompileRenderState<>(renderer, renderState, animatable, itemStack));
+        GeoRenderEvent.Item.CompileRenderState.BUS.post(new GeoRenderEvent.Item.CompileRenderState<>(renderer, renderState, animatable, itemStack));
     }
 
     /**
@@ -187,7 +186,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoAnimatable, R extends GeoRenderState>
     boolean fireItemPreRender(GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.Item.Pre.BUS.post(new GeoRenderEvent.Item.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -196,7 +195,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends Item & GeoAnimatable, R extends GeoRenderState>
     void fireItemPostRender(GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Item.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.Item.Post.BUS.post(new GeoRenderEvent.Item.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -205,7 +204,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable>
     void fireCompileObjectRenderLayers(GeoObjectRenderer<T> renderer) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Object.CompileRenderLayers<>(renderer));
+        GeoRenderEvent.Object.CompileRenderLayers.BUS.post(new GeoRenderEvent.Object.CompileRenderLayers<>(renderer));
     }
 
     /**
@@ -214,7 +213,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, R extends GeoRenderState>
     void fireCompileObjectRenderState(GeoObjectRenderer<T> renderer, R renderState, T animatable) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Object.CompileRenderState<>(renderer, renderState, animatable));
+        GeoRenderEvent.Object.CompileRenderState.BUS.post(new GeoRenderEvent.Object.CompileRenderState<>(renderer, renderState, animatable));
     }
 
     /**
@@ -223,7 +222,7 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, R extends GeoRenderState>
     boolean fireObjectPreRender(GeoObjectRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        return !MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Object.Pre<>(renderer, renderState, poseStack, model, bufferSource));
+        return !GeoRenderEvent.Object.Pre.BUS.post(new GeoRenderEvent.Object.Pre<>(renderer, renderState, poseStack, model, bufferSource));
     }
 
     /**
@@ -232,6 +231,6 @@ public class GeckoLibEventsForge implements GeckoLibEvents {
     @Override
     public <T extends GeoAnimatable, R extends GeoRenderState>
     void fireObjectPostRender(GeoObjectRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-        MinecraftForge.EVENT_BUS.post(new GeoRenderEvent.Object.Post<>(renderer, renderState, poseStack, model, bufferSource));
+        GeoRenderEvent.Object.Post.BUS.post(new GeoRenderEvent.Object.Post<>(renderer, renderState, poseStack, model, bufferSource));
     }
 }
