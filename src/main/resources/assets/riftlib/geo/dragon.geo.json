@@ -36,7 +36,10 @@
 					"rotation": [0, 0, -90],
 					"cubes": [
 						{"origin": [2.5, -2, -13], "size": [1, 18, 11], "uv": [0, 50]}
-					]
+					],
+					"locators": {
+						"leftWingLocator": [0, 7.5, -10]
+					}
 				},
 				{
 					"name": "leftWing1",
@@ -54,7 +57,10 @@
 					"rotation": [0, 0, 90],
 					"cubes": [
 						{"origin": [-3.5, -2, -13], "size": [1, 18, 11], "uv": [24, 50]}
-					]
+					],
+					"locators": {
+						"rightWingLocator": [0, 7.5, -10]
+					}
 				},
 				{
 					"name": "rightWing1",

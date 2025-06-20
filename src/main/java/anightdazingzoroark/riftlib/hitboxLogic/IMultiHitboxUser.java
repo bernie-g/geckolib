@@ -3,7 +3,6 @@ package anightdazingzoroark.riftlib.hitboxLogic;
 import anightdazingzoroark.riftlib.core.IAnimatable;
 import anightdazingzoroark.riftlib.file.HitboxDefinitionList;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.IEntityMultiPart;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.util.DamageSource;
@@ -39,12 +38,20 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
     void setParts(Entity[] hitboxes);
 
     default void addPart(EntityHitbox hitbox) {
-        Entity[] newHitbox = new Entity[this.getParts().length + 1];
-        for (int x = 0; x < newHitbox.length; x++) {
-            if (x < newHitbox.length - 1) newHitbox[x] = this.getParts()[x];
-            else newHitbox[x] = hitbox;
+        Entity[] newHitboxArray = new Entity[this.getParts().length + 1];
+        for (int x = 0; x < newHitboxArray.length; x++) {
+            if (x < newHitboxArray.length - 1) newHitboxArray[x] = this.getParts()[x];
+            else newHitboxArray[x] = hitbox;
         }
-        this.setParts(newHitbox);
+        this.setParts(newHitboxArray);
+    }
+
+    default EntityHitbox getHitboxByName(String name) {
+        for (int x = 0; x < this.getParts().length; x++) {
+            EntityHitbox hitbox = (EntityHitbox) this.getParts()[x];
+            if (hitbox.partName.equals(name)) return hitbox;
+        }
+        return null;
     }
 
     //this is to be placed in a method like onUpdate() or onLivingUpdate()
@@ -66,5 +73,14 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
             return this.getMultiHitboxUser().attackEntityFrom(source, newDamage);
         }
         return false;
+    }
+
+    default void upateHitboxPos(String hitboxName, float x, float y, float z) {
+        for (int i = 0; i < this.getParts().length; i++) {
+            if (((EntityHitbox) this.getParts()[i]).partName.equals(hitboxName)) {
+                EntityHitbox hitbox = (EntityHitbox) this.getParts()[i];
+                hitbox.changeOffset(x, y, z);
+            }
+        }
     }
 }

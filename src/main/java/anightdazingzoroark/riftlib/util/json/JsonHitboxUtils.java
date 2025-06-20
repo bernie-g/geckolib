@@ -19,4 +19,8 @@ public class JsonHitboxUtils {
         if (locatorName.length() < 7 || !locatorName.substring(0, 7).equals("hitbox_")) return locatorName;
         return locatorName.substring(7);
     }
+
+    public static boolean locatorCanBeHitbox(String locatorName) {
+        return locatorName.length() >= 7 && locatorName.substring(0, 7).equals("hitbox_");
+    }
 }

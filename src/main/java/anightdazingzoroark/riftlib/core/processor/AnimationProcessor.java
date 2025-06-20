@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import anightdazingzoroark.riftlib.geo.render.built.GeoBone;
+import anightdazingzoroark.riftlib.geo.render.built.GeoLocator;
+import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
+import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
+import anightdazingzoroark.riftlib.message.RiftLibMessage;
+import anightdazingzoroark.riftlib.message.RiftLibUpdateHitboxPos;
+import anightdazingzoroark.riftlib.util.json.JsonHitboxUtils;
+import net.minecraft.entity.Entity;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.eliotlash.molang.MolangParser;
@@ -135,6 +143,34 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 					dirtyTracker.hasScaleChanged = true;
 				}
+
+				//apply via packets the new positions of the hitboxes
+				if (entity instanceof IMultiHitboxUser) {
+					GeoBone geoBone = (GeoBone) bone;
+					for (GeoLocator locator : geoBone.childLocators) {
+						if (JsonHitboxUtils.locatorCanBeHitbox(locator.name)) {
+							String hitboxName = JsonHitboxUtils.locatorHitboxToHitbox(locator.name);
+
+							//get hitbox associated with the locator
+							EntityHitbox hitbox = ((IMultiHitboxUser) entity).getHitboxByName(hitboxName);
+
+							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
+									(Entity) entity,
+									hitboxName,
+									locator.positionX,
+									locator.positionY - (hitbox.initHeight / 2),
+									-locator.positionZ
+							));
+							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
+									(Entity) entity,
+									hitboxName,
+									locator.positionX,
+									locator.positionY - (hitbox.initHeight / 2),
+									-locator.positionZ
+							));
+						}
+					}
+                }
 			}
 		}
 

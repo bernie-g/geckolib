@@ -25,12 +25,15 @@ public abstract class EntityHitboxLinker<T extends IAnimatable & IMultiHitboxUse
         if (toReturn != null) {
             //add positions to the hitboxes
             for (GeoLocator locator : model.getAllLocators()) {
-                toReturn.editHitboxDefinitionPosition(
-                        JsonHitboxUtils.locatorHitboxToHitbox(locator.name),
-                        locator.positionX,
-                        locator.positionY,
-                        -locator.positionZ
-                );
+                if (JsonHitboxUtils.locatorCanBeHitbox(locator.name)) {
+                    String hitboxName = JsonHitboxUtils.locatorHitboxToHitbox(locator.name);
+                    toReturn.editHitboxDefinitionPosition(
+                            hitboxName,
+                            locator.positionX,
+                            locator.positionY - toReturn.getHitboxDefinitionByName(hitboxName).height / 2f,
+                            -locator.positionZ
+                    );
+                }
             }
         }
 

@@ -6,11 +6,11 @@ import net.minecraft.entity.MultiPartEntityPart;
 
 public class EntityHitbox extends MultiPartEntityPart {
     private final float damageMultiplier;
-    private final float initWidth;
-    private final float initHeight;
-    private final float xOffset;
-    private final float yOffset;
-    private final float zOffset;
+    public final float initWidth;
+    public final float initHeight;
+    private float xOffset;
+    private float yOffset;
+    private float zOffset;
     private boolean isDisabled;
 
     public EntityHitbox(IMultiHitboxUser parent, String partName, float damageMultiplier, float width, float height, float xOffset, float yOffset, float zOffset) {
@@ -36,6 +36,24 @@ public class EntityHitbox extends MultiPartEntityPart {
 
     public void resize(float scale) {
         this.setSize(this.initWidth * scale, this.initHeight * scale);
+    }
+
+    public void changeOffset(float xOffset, float yOffset, float zOffset) {
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
+        this.zOffset = zOffset;
+    }
+
+    public float getHitboxXOffset() {
+        return this.xOffset;
+    }
+
+    public float getHitboxYOffset() {
+        return this.yOffset;
+    }
+
+    public float getHitboxZOffset() {
+        return this.zOffset;
     }
 
     //recommended instead of using the parent variable

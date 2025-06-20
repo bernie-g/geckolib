@@ -4,6 +4,7 @@ import java.util.concurrent.FutureTask;
 
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitboxRenderer;
+import anightdazingzoroark.riftlib.message.RiftLibMessage;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,6 +30,7 @@ public class RiftLib {
 	public static void initializePre() {
 		if (!hasInitializedPre) {
 			RenderingRegistry.registerEntityRenderingHandler(EntityHitbox.class, new EntityHitboxRenderer.Factory());
+			RiftLibMessage.registerMessages();
 		}
 		hasInitializedPre = true;
 	}
