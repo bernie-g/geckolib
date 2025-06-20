@@ -59,7 +59,7 @@ public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHit
         data.addAnimationController(new AnimationController(this, "movement", 0, new AnimationController.IAnimationPredicate() {
             @Override
             public PlayState test(AnimationEvent event) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.flying", true));
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.land_pose", true));
                 return PlayState.CONTINUE;
             }
         }));

@@ -5,7 +5,7 @@ A Blockbench plugin is available [here](https://github.com/Rift-Modding-Group/Ri
 
 # To-Do List
 - [x] ~~Make mashed potatoes~~
-- [ ] Dynamic Hitboxes
+- [x] Dynamic Hitboxes
 - [ ] Dynamic Riding Positions
 - [ ] A BlockBench plugin for the above 2 features
 - [ ] Support for custom projectile models

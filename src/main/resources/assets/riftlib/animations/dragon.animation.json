@@ -45,6 +45,7 @@
 		},
 		"animation.dragon.land_pose": {
 			"loop": true,
+			"animation_length": 1,
 			"bones": {
 				"leftWing0": {
 					"rotation": [0, 0, 60]
@@ -57,6 +58,41 @@
 				},
 				"rightWing1": {
 					"rotation": [0, 0, 110]
+				},
+				"tail0": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-5, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"tail1": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-7.5, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"tail2": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-10, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"neck": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [10, 0, 0],
+						"1.0": [0, 0, 0]
+					}
+				},
+				"head": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.5": [-10, 0, 0],
+						"1.0": [0, 0, 0]
+					}
 				}
 			}
 		},
@@ -110,7 +146,7 @@
 				}
 			}
 		},
-		"animation.dragon.wing_flapping": {
+		"animation.dragon.idle": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
