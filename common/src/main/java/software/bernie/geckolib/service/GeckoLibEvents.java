@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -110,8 +109,8 @@ public interface GeckoLibEvents {
     /**
      * Fire the Item.CompileRenderState event
      */
-    <T extends Item & GeoAnimatable, O extends ItemStack, R extends GeoRenderState>
-    void fireCompileItemRenderState(GeoItemRenderer<T> renderer, R renderState, T animatable, O itemStack);
+    <T extends Item & GeoAnimatable, O extends GeoItemRenderer.RenderData, R extends GeoRenderState>
+    void fireCompileItemRenderState(GeoItemRenderer<T> renderer, R renderState, T animatable, O renderData);
     /**
      * Fire the Item.Pre event
      */

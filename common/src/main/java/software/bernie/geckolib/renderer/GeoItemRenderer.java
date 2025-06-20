@@ -6,10 +6,13 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -37,8 +40,8 @@ import java.util.List;
  * <p>
  * All items added to be rendered by GeckoLib should use an instance of this class.
  */
-public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRenderer<T, ItemStack, GeoRenderState> {
-	protected final GeoRenderLayersContainer<T, ItemStack, GeoRenderState> renderLayers = new GeoRenderLayersContainer<>(this);
+public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRenderer<T, GeoItemRenderer.RenderData, GeoRenderState> {
+	protected final GeoRenderLayersContainer<T, RenderData, GeoRenderState> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
 	protected float scaleWidth = 1;
@@ -80,14 +83,14 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
 	 */
 	@Override
-	public List<GeoRenderLayer<T, ItemStack, GeoRenderState>> getRenderLayers() {
+	public List<GeoRenderLayer<T, RenderData, GeoRenderState>> getRenderLayers() {
 		return this.renderLayers.getRenderLayers();
 	}
 
 	/**
 	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
 	 */
-	public GeoItemRenderer<T> addRenderLayer(GeoRenderLayer<T, ItemStack, GeoRenderState> renderLayer) {
+	public GeoItemRenderer<T> addRenderLayer(GeoRenderLayer<T, RenderData, GeoRenderState> renderLayer) {
 		this.renderLayers.addLayer(renderLayer);
 
 		return this;
@@ -116,12 +119,12 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * You generally shouldn't need to override this
 	 *
 	 * @param animatable The Animatable instance being renderer
-	 * @param itemStack The ItemStack about to be rendered
+	 * @param renderData The associated render data for the animatable
 	 */
 	@ApiStatus.Internal
 	@Override
-	public long getInstanceId(T animatable, ItemStack itemStack) {
-		return GeoItem.getId(itemStack);
+	public long getInstanceId(T animatable, RenderData renderData) {
+		return GeoItem.getId(renderData.itemStack);
 	}
 
 	/**
@@ -129,23 +132,25 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 */
 	@ApiStatus.Internal
 	@Override
-	public GeoRenderState captureDefaultRenderState(T animatable, ItemStack itemStack, GeoRenderState renderState, float partialTick) {
-		long instanceId = getInstanceId(animatable, itemStack);
+	public GeoRenderState captureDefaultRenderState(T animatable, RenderData renderData, GeoRenderState renderState, float partialTick) {
+		long instanceId = getInstanceId(animatable, renderData);
+		ItemStack stack = renderData.itemStack;
 
 		renderState.addGeckolibData(DataTickets.ITEM, animatable);
 		renderState.addGeckolibData(DataTickets.TICK, animatable.getTick(animatable));
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, instanceId);
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(instanceId));
 		renderState.addGeckolibData(DataTickets.PARTIAL_TICK, partialTick);
-		renderState.addGeckolibData(DataTickets.RENDER_COLOR, getRenderColor(animatable, itemStack, partialTick));
+		renderState.addGeckolibData(DataTickets.RENDER_COLOR, getRenderColor(animatable, renderData, partialTick));
 		renderState.addGeckolibData(DataTickets.IS_MOVING, false);
 		renderState.addGeckolibData(DataTickets.BONE_RESET_TIME, animatable.getBoneResetTime());
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
-		renderState.addGeckolibData(DataTickets.IS_ENCHANTED, itemStack.isEnchanted());
-		renderState.addGeckolibData(DataTickets.IS_STACKABLE, itemStack.isStackable());
-		renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, itemStack.getUseDuration(ClientUtil.getClientPlayer()));
-		renderState.addGeckolibData(DataTickets.MAX_DURABILITY, itemStack.getMaxDamage());
-		renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, itemStack.isDamageableItem() ? itemStack.getMaxDamage() - itemStack.getDamageValue() : 1);
+		renderState.addGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderData.renderPerspective);
+		renderState.addGeckolibData(DataTickets.IS_ENCHANTED, stack.isEnchanted());
+		renderState.addGeckolibData(DataTickets.IS_STACKABLE, stack.isStackable());
+		renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, stack.getUseDuration(ClientUtil.getClientPlayer()));
+		renderState.addGeckolibData(DataTickets.MAX_DURABILITY, stack.getMaxDamage());
+		renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, stack.isDamageableItem() ? stack.getMaxDamage() - stack.getDamageValue() : 1);
 		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new Reference2ObjectOpenHashMap<>(0));
 
 		return renderState;
@@ -283,8 +288,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, ItemStack itemStack, GeoRenderState renderState) {
-		GeckoLibServices.Client.EVENTS.fireCompileItemRenderState(this, renderState, animatable, itemStack);
+	public void fireCompileRenderStateEvent(T animatable, RenderData renderData, GeoRenderState renderState) {
+		GeckoLibServices.Client.EVENTS.fireCompileItemRenderState(this, renderState, animatable, renderData);
 	}
 
 	/**
@@ -304,4 +309,15 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	public void firePostRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
 		GeckoLibServices.Client.EVENTS.fireItemPostRender(this, renderState, poseStack, model, bufferSource);
 	}
+
+	/**
+	 * Data container for additional render context information for creating the RenderState for this renderer
+	 *
+	 * @param itemStack The ItemStack about to be rendered
+	 * @param vanillaRenderState The vanilla render state for the item stack. Not usually used for dynamic rendering
+	 * @param renderPerspective The {@link ItemDisplayContext} that the item is being rendered in
+	 * @param level The {@link ClientLevel} that the item is being rendered in, if applicable. A world being present doesn't necessarily mean the item physically is in the world itself
+	 * @param entity The associated entity, if applicable.
+	 */
+	public record RenderData(ItemStack itemStack, ItemStackRenderState vanillaRenderState, ItemDisplayContext renderPerspective, @Nullable ClientLevel level, @Nullable LivingEntity entity) {}
 }

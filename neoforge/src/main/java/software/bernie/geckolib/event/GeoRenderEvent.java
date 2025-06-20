@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.bus.api.Event;
@@ -748,7 +749,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for {@link ItemStack Items} being rendered by {@link GeoItemRenderer}
 	 */
-	abstract class Item<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Event implements GeoRenderEvent<T, ItemStack, GeoRenderState> {
+	abstract class Item<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Event implements GeoRenderEvent<T, GeoItemRenderer.RenderData, GeoRenderState> {
 		private final GeoItemRenderer<T> renderer;
 		private final GeoRenderState renderState;
 
@@ -794,7 +795,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * <p>
 			 * Type-safety is not checked here, so ensure that your layer is compatible with this animatable and renderer
 			 */
-			public void addLayer(GeoRenderLayer<T, ItemStack, GeoRenderState> renderLayer) {
+			public void addLayer(GeoRenderLayer<T, GeoItemRenderer.RenderData, GeoRenderState> renderLayer) {
 				getRenderer().addRenderLayer(renderLayer);
 			}
 		}
@@ -808,13 +809,13 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 */
 		public static class CompileRenderState<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
 			private final T animatable;
-			private final ItemStack itemStack;
+			private final GeoItemRenderer.RenderData renderData;
 
-			public CompileRenderState(GeoItemRenderer<T> renderer, GeoRenderState renderState, T animatable, ItemStack itemStack) {
+			public CompileRenderState(GeoItemRenderer<T> renderer, GeoRenderState renderState, T animatable, GeoItemRenderer.RenderData renderData) {
 				super(renderer, renderState);
 
 				this.animatable = animatable;
-				this.itemStack = itemStack;
+				this.renderData = renderData;
 			}
 
 			/**
@@ -825,10 +826,24 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			}
 
 			/**
+			 * Get the associated render data for this render pass
+			 */
+			public GeoItemRenderer.RenderData getRenderData() {
+				return this.renderData;
+			}
+
+			/**
 			 * Get the pre-render ItemStack that {@link GeoItemRenderer} uses to build its {@link GeoRenderState}
 			 */
 			public ItemStack getItemStack() {
-				return this.itemStack;
+				return this.renderData.itemStack();
+			}
+
+			/**
+			 * Get the render perspective for the render pass
+			 */
+			public ItemDisplayContext getRenderPerspective() {
+				return this.renderData.renderPerspective();
 			}
 
 			/**

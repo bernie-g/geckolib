@@ -20,6 +20,7 @@
     "client.HumanoidArmorLayerMixin",
     "client.LivingEntityRendererMixin",
     "client.SpecialModelRenderersMixin",
+    "client.SpecialModelWrapperMixin",
     "client.TextureManagerMixin"
   ]
 }

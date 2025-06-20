@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -175,9 +174,9 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Item.CompileRenderState} event
      */
     @Override
-    public <T extends Item & GeoAnimatable, O extends ItemStack, R extends GeoRenderState>
-    void fireCompileItemRenderState(GeoItemRenderer<T> renderer, R renderState, T animatable, O itemStack) {
-        GeoRenderEvent.Item.CompileRenderState.EVENT.invoker().handle(new GeoRenderEvent.Item.CompileRenderState<>(renderer, renderState, animatable, itemStack));
+    public <T extends Item & GeoAnimatable, O extends GeoItemRenderer.RenderData, R extends GeoRenderState>
+    void fireCompileItemRenderState(GeoItemRenderer<T> renderer, R renderState, T animatable, O renderData) {
+        GeoRenderEvent.Item.CompileRenderState.EVENT.invoker().handle(new GeoRenderEvent.Item.CompileRenderState<>(renderer, renderState, animatable, renderData));
     }
 
     /**
