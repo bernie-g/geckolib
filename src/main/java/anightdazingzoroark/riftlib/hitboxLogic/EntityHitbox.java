@@ -11,9 +11,10 @@ public class EntityHitbox extends MultiPartEntityPart {
     private float xOffset;
     private float yOffset;
     private float zOffset;
+    public final boolean affectedByAnim;
     private boolean isDisabled;
 
-    public EntityHitbox(IMultiHitboxUser parent, String partName, float damageMultiplier, float width, float height, float xOffset, float yOffset, float zOffset) {
+    public EntityHitbox(IMultiHitboxUser parent, String partName, float damageMultiplier, float width, float height, float xOffset, float yOffset, float zOffset, boolean affectedByAnim) {
         super(parent, partName, width, height);
         this.damageMultiplier = damageMultiplier;
         this.initWidth = width;
@@ -21,6 +22,7 @@ public class EntityHitbox extends MultiPartEntityPart {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.zOffset = zOffset;
+        this.affectedByAnim = affectedByAnim;
     }
 
     @Override

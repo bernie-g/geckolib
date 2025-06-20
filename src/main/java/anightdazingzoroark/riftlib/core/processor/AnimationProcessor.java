@@ -154,6 +154,9 @@ public class AnimationProcessor<T extends IAnimatable> {
 							//get hitbox associated with the locator
 							EntityHitbox hitbox = ((IMultiHitboxUser) entity).getHitboxByName(hitboxName);
 
+							//skip when hitbox is set to not be affected by animation
+							if (!hitbox.affectedByAnim) continue;
+
 							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,

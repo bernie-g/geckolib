@@ -26,7 +26,8 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
                     hitboxDefinition.height,
                     (float) hitboxDefinition.position.x,
                     (float) hitboxDefinition.position.y,
-                    (float) hitboxDefinition.position.z
+                    (float) hitboxDefinition.position.z,
+                    hitboxDefinition.affectedByAnim
             );
             this.addPart(hitbox);
         }

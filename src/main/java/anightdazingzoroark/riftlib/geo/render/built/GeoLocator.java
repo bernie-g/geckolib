@@ -44,8 +44,8 @@ public class GeoLocator {
             //create offsets from y rotation, which affects x and z offsets
             double cosY = Math.cos(boneToTest.getRotationY());
             double sinY = Math.sin(boneToTest.getRotationY());
-            double rx = relX * cosY + relZ * sinY;
-            rz = -relX * sinY + relZ * cosY;
+            double rx = relX * cosY - relZ * sinY;
+            rz = relX * sinY + relZ * cosY;
             relX = rx;
             relZ = rz;
 

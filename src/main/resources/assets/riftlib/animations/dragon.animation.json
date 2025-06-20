@@ -169,6 +169,18 @@
 					}
 				}
 			}
+		},
+		"animation.dragon.speen": {
+			"loop": true,
+			"animation_length": 1,
+			"bones": {
+				"main": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"1.0": [0, 360, 0]
+					}
+				}
+			}
 		}
 	}
 }
