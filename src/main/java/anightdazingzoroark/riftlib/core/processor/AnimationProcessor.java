@@ -157,16 +157,16 @@ public class AnimationProcessor<T extends IAnimatable> {
 							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
-									locator.positionX,
-									locator.positionY - (hitbox.initHeight / 2),
-									-locator.positionZ
+									locator.positionX + (float) locator.getOffsetFromRotations().x,
+									locator.positionY + (float) locator.getOffsetFromRotations().y - (hitbox.initHeight / 2),
+									-locator.positionZ - (float) locator.getOffsetFromRotations().z
 							));
 							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
-									locator.positionX,
-									locator.positionY - (hitbox.initHeight / 2),
-									-locator.positionZ
+									locator.positionX + (float) locator.getOffsetFromRotations().x,
+									locator.positionY + (float) locator.getOffsetFromRotations().y - (hitbox.initHeight / 2),
+									-locator.positionZ - (float) locator.getOffsetFromRotations().z
 							));
 						}
 					}

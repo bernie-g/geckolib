@@ -115,66 +115,17 @@ public class GeoBone implements IBone {
 
 	@Override
 	public void setRotationX(float value) {
-		/*
-		if (this.name.equals("neck")) {
-			System.out.println(this.name+" x rot deg: "+Math.toDegrees(this.rotateX));
-			for (GeoLocator locator : this.childLocators) {
-				System.out.println("locator "+locator.name+" x rot deg: "+Math.toDegrees(locator.getXRotationFromPivot()));
-				float hypotenuse = (float) Math.sqrt(Math.pow(locator.positionZ - (this.getPivotZ() / 16), 2) + Math.pow(locator.positionY - (this.getPivotY() / 16), 2));
-				float yDisplacement = (float) (hypotenuse * Math.cos(this.rotateX + locator.getXRotationFromPivot()));
-				float zDisplacement = (float) (hypotenuse * Math.sin(this.rotateX + locator.getXRotationFromPivot()));
-				//locator.positionY = yDisplacement;
-				//locator.positionZ = zDisplacement;
-				//System.out.println("y pos: "+locator.positionY);
-				//System.out.println("z pos: "+locator.positionZ);
-			}
-		}
-		 */
-
 		this.rotateX = value;
-
-		/*
-		//setting x rotation of a cube sets the y and z positions of the locators from the pivot point
-		for (GeoLocator locator : this.childLocators) {
-			float hypotenuse = (float) Math.sqrt(Math.pow(locator.positionZ - this.getPivotZ(), 2) + Math.pow(locator.positionY - this.getPivotY(), 2));
-			float yDisplacement = (float) (hypotenuse * Math.cos(value + locator.getXRotationFromPivot()));
-			float zDisplacement = (float) (hypotenuse * Math.sin(value + locator.getXRotationFromPivot()));
-			locator.positionY = yDisplacement / 16f;
-			locator.positionZ = zDisplacement / 16f;
-		}
-		 */
 	}
 
 	@Override
 	public void setRotationY(float value) {
 		this.rotateY = value;
-
-		/*
-		//setting y rotation of a cube sets the x and z positions of the locators from the pivot point
-		for (GeoLocator locator : this.childLocators) {
-			float hypotenuse = (float) Math.sqrt(Math.pow(locator.positionZ - this.getPivotZ(), 2) + Math.pow(locator.positionX - this.getPivotX(), 2));
-			float zDisplacement = -(float) (hypotenuse * Math.cos(value));
-			float xDisplacement = (float) (hypotenuse * Math.sin(value));
-			locator.positionX = xDisplacement / 16f;
-			locator.positionZ = zDisplacement / 16f;
-		}
-		 */
 	}
 
 	@Override
 	public void setRotationZ(float value) {
 		this.rotateZ = value;
-
-		/*
-		//setting z rotation of a cube sets the x and y positions of the locators from the pivot point
-		for (GeoLocator locator : this.childLocators) {
-			float hypotenuse = (float) Math.sqrt(Math.pow(locator.positionX - this.getPivotX(), 2) + Math.pow(locator.positionY - this.getPivotY(), 2));
-			float yDisplacement = (float) (hypotenuse * Math.sin(value));
-			float xDisplacement = (float) (hypotenuse * Math.cos(value));
-			locator.positionY = yDisplacement / 16f;
-			locator.positionX = xDisplacement / 16f;
-		}
-		 */
 	}
 
 	@Override
