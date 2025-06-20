@@ -1,13 +1,10 @@
-## GeckoLib v5.1.0
+## GeckoLib v5.2.0
+
+### BREAKING CHANGE - SORRY!
 
 ## Additions
-* Added `AutoGlowingGeoLayer#shouldAddZOffset` - A toggle to add better compatibility for specific render types or special circumstances
-* Added `AutoGlowingGeoLayer#getBrightness` - A configurable value to adjust the brightness of the emissive layer
-
-## Changes
-* Added the RenderState to the method parameters of `AutoGlowingGeoLayer#shouldRespectWorldLighting`
-* Minor code cleanup
+* GeoItemRenderer has had its render object switched from ItemStack to GeoItemRenderer$RenderData.
+  * This means that GeoItemRenderer now has access to a few extra context objects, including the player holding the item.
 
 ## Bug Fixes
-* Fix GeoArmorRenderer not supporting Glowmasks. Required a small rewrite. Is slightly breaking. Sorry.
-* Fixed GeoArmorRenderer sharing animations between worn instances when not registered as a syncable GeoAnimatable (#730)
+* Fixed GeoItems not having the `ItemRenderContext` available during `AnimationTest` stage (#735)
