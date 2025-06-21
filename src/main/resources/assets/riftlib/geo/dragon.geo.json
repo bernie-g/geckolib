@@ -30,7 +30,8 @@
 					"locators": {
 						"hitbox_hip": [0, 13.5, 5],
 						"hitbox_body_0": [0, 14, -3],
-						"hitbox_body_1": [0, 14, -10.5]
+						"hitbox_body_1": [0, 14, -10.5],
+						"rider_pos_0": [0, 19, -7.5]
 					}
 				},
 				{

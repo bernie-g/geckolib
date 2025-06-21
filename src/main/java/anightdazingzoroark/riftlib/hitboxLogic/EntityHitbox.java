@@ -2,6 +2,7 @@ package anightdazingzoroark.riftlib.hitboxLogic;
 
 import anightdazingzoroark.riftlib.core.IAnimatable;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MultiPartEntityPart;
 
 public class EntityHitbox extends MultiPartEntityPart {
@@ -27,12 +28,32 @@ public class EntityHitbox extends MultiPartEntityPart {
 
     @Override
     public void onUpdate() {
-        //define and set offsets
+        // Step 1: Scale initial offsets
         double xOffset = this.xOffset * (this.width / this.initWidth);
         double yOffset = this.yOffset * (this.height / this.initHeight);
         double zOffset = this.zOffset * (this.width / this.initWidth);
-        this.setPositionAndUpdate(this.getParentAsEntity().posX + xOffset, this.getParentAsEntity().posY + yOffset, this.getParentAsEntity().posZ + zOffset);
-        if (!this.getParentAsEntity().isEntityAlive()) this.world.removeEntityDangerously(this);
+
+        // Step 2: Get parent rotation in radians
+        float yawDegrees = this.getParentAsEntityLiving().renderYawOffset;
+        double yawRadians = Math.toRadians(-yawDegrees); // Negative because Minecraft's yaw is clockwise
+
+        // Step 3: Rotate offsets around Y axis
+        double cosYaw = Math.cos(yawRadians);
+        double sinYaw = Math.sin(yawRadians);
+        double rotatedX = -(xOffset * cosYaw - zOffset * sinYaw);
+        double rotatedZ = (xOffset * sinYaw + zOffset * cosYaw);
+
+        // Step 4: Apply rotated offsets to parent position
+        this.setPositionAndUpdate(
+                this.getParentAsEntityLiving().posX + rotatedX,
+                this.getParentAsEntityLiving().posY + yOffset,
+                this.getParentAsEntityLiving().posZ + rotatedZ
+        );
+
+        // Step 5: Clean up if parent is gone
+        if (!this.getParentAsEntityLiving().isEntityAlive()) {
+            this.world.removeEntityDangerously(this);
+        }
         super.onUpdate();
     }
 
@@ -63,8 +84,8 @@ public class EntityHitbox extends MultiPartEntityPart {
         return (IMultiHitboxUser) this.parent;
     }
 
-    private Entity getParentAsEntity() {
-        return (Entity) this.parent;
+    private EntityLiving getParentAsEntityLiving() {
+        return (EntityLiving) this.parent;
     }
 
     //get the scale of the parent as an IAnimatable

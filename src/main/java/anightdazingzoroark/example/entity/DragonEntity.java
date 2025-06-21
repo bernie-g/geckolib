@@ -9,10 +9,13 @@ import anightdazingzoroark.riftlib.core.manager.AnimationData;
 import anightdazingzoroark.riftlib.core.manager.AnimationFactory;
 import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.*;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHitboxUser {
+public class DragonEntity extends EntityCreature implements IAnimatable, IMultiHitboxUser {
     private AnimationFactory factory = new AnimationFactory(this);
     private Entity[] hitboxes = {};
 
@@ -26,6 +29,19 @@ public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHit
     public void onLivingUpdate() {
         super.onLivingUpdate();
         this.updateParts();
+    }
+
+    protected void initEntityAI() {
+        this.tasks.addTask(1, new EntityAIWanderAvoidWater(this, 1.0D));
+        this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(3, new EntityAILookIdle(this));
+    }
+
+    protected void applyEntityAttributes() {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
+        this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40D);
+        //this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
     }
 
     //hitbox stuff starts here
@@ -59,7 +75,7 @@ public class DragonEntity extends EntityLiving implements IAnimatable, IMultiHit
         data.addAnimationController(new AnimationController(this, "movement", 0, new AnimationController.IAnimationPredicate() {
             @Override
             public PlayState test(AnimationEvent event) {
-                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.speen", true));
+                event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.flying", true));
                 return PlayState.CONTINUE;
             }
         }));

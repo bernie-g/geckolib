@@ -57,6 +57,9 @@ public abstract class GeoEntityRenderer<T extends EntityLivingBase & IAnimatable
 	@Override
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
+
+		//adding ride positions happens here
+
 		//rest is good ol rendering code
 		GlStateManager.pushMatrix();
 		GlStateManager.translate(x, y, z);

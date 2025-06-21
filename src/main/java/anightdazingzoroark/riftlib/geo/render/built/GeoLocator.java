@@ -19,7 +19,17 @@ public class GeoLocator {
         this.positionZ = z;
     }
 
-    //setting x rotation of a cube sets the y and z positions of the locators from the pivot point
+    public Vec3d getOffsetFromDisplacements() {
+        Vec3d toReturn = Vec3d.ZERO;
+        GeoBone boneToTest = this.parent;
+
+        while (boneToTest != null) {
+            toReturn = toReturn.add(boneToTest.getPositionX() / 16f, boneToTest.getPositionY() / 16f, boneToTest.getPositionZ() / 16f);
+            boneToTest = boneToTest.parent;
+        }
+        return toReturn;
+    }
+
     public Vec3d getOffsetFromRotations() {
         Vec3d toReturn = new Vec3d(this.positionX, this.positionY, this.positionZ);
         GeoBone boneToTest = this.parent;
