@@ -44,7 +44,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     public GeckolibItemSpecialRenderer.RenderData<T> extractArgument(ItemStack itemStack, ItemStackRenderState renderState, ItemDisplayContext context,
                                                                      @Nullable ClientLevel level, @Nullable LivingEntity entity) {
         var item = makeCovariantItem(itemStack.getItem());
-        GeoItemRenderer<T> renderer = (GeoItemRenderer)GeoRenderProvider.of(item).getGeoItemRenderer();
+        GeoItemRenderer<T> renderer = (GeoItemRenderer)GeoRenderProvider.of(item).getGeoItemRenderer(itemStack);
 
         if (renderer == null)
             return null;

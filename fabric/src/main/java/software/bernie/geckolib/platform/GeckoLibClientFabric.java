@@ -38,7 +38,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForItem(ItemStack item) {
-        if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoItemRenderer)
+        if (GeoRenderProvider.of(item).getGeoItemRenderer(item) instanceof GeoRenderer<?, ?, ?> geoItemRenderer)
             return geoItemRenderer.getGeoModel();
 
         return null;

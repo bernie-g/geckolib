@@ -46,7 +46,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
     @Nullable
     @Override
     public GeoModel<?> getGeoModelForItem(ItemStack item) {
-        if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoRenderer)
+        if (GeoRenderProvider.of(item).getGeoItemRenderer(item) instanceof GeoRenderer<?, ?, ?> geoRenderer)
             return geoRenderer.getGeoModel();
 
         return null;

@@ -55,7 +55,7 @@ public interface GeoRenderProvider {
      * @return The cached BEWLR instance for this provider, or null if not applicable
      */
     @Nullable
-    default GeoItemRenderer<?> getGeoItemRenderer() {
+    default GeoItemRenderer<?> getGeoItemRenderer(ItemStack stack) {
         return null;
     }
 
