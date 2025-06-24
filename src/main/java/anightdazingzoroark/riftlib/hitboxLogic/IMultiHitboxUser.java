@@ -1,5 +1,6 @@
 package anightdazingzoroark.riftlib.hitboxLogic;
 
+import anightdazingzoroark.riftlib.RiftLibLinkerRegistry;
 import anightdazingzoroark.riftlib.core.IAnimatable;
 import anightdazingzoroark.riftlib.file.HitboxDefinitionList;
 import net.minecraft.entity.Entity;
@@ -16,7 +17,7 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
     //this must be placed in the constructor of the entity
     //and must be the entity itself being entered
     default <T extends Entity & IAnimatable & IMultiHitboxUser> void initializeHitboxes(T entity) {
-        EntityHitboxLinker hitboxLinker = EntityHitboxLinkerRegistry.INSTANCE.hitboxLinkerMap.get(entity.getClass());
+        EntityHitboxLinker hitboxLinker = RiftLibLinkerRegistry.INSTANCE.hitboxLinkerMap.get(entity.getClass());
         for (HitboxDefinitionList.HitboxDefinition hitboxDefinition : hitboxLinker.getHitboxDefinitionList(entity).list) {
             EntityHitbox hitbox = new EntityHitbox(
                     entity,

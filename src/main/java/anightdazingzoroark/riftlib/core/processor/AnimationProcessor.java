@@ -7,14 +7,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import anightdazingzoroark.riftlib.file.RidePosDefinitionList;
 import anightdazingzoroark.riftlib.geo.render.built.GeoBone;
 import anightdazingzoroark.riftlib.geo.render.built.GeoLocator;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
 import anightdazingzoroark.riftlib.message.RiftLibMessage;
 import anightdazingzoroark.riftlib.message.RiftLibUpdateHitboxPos;
+import anightdazingzoroark.riftlib.message.RiftLibUpdateRiderPos;
+import anightdazingzoroark.riftlib.ridePositionLogic.DynamicRidePosUtils;
+import anightdazingzoroark.riftlib.ridePositionLogic.IDynamicRideUser;
 import anightdazingzoroark.riftlib.util.json.JsonHitboxUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.eliotlash.molang.MolangParser;
@@ -162,18 +167,54 @@ public class AnimationProcessor<T extends IAnimatable> {
 									hitboxName,
 									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
 									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2),
-									-locator.positionZ - (float) locator.getOffsetFromRotations().z + (float) locator.getOffsetFromDisplacements().z
+									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
 							));
 							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
 									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
 									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2),
-									-locator.positionZ - (float) locator.getOffsetFromRotations().z + (float) locator.getOffsetFromDisplacements().z
+									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
 							));
 						}
 					}
                 }
+
+				//apply via packets the new positions of the ride positions
+				if (entity instanceof IDynamicRideUser) {
+					GeoBone geoBone = (GeoBone) bone;
+					for (GeoLocator locator : geoBone.childLocators) {
+						//make a definition list and put in it the new positions based on the new locators positions
+						RidePosDefinitionList definitionList = new RidePosDefinitionList();
+						if (DynamicRidePosUtils.locatorCanBeRidePos(locator.name)) {
+							int ridePosIndex = DynamicRidePosUtils.locatorRideIndex(locator.name);
+							definitionList.map.put(
+									ridePosIndex,
+									new Vec3d(
+											locator.positionX + (float) (locator.getOffsetFromRotations().x + locator.getOffsetFromDisplacements().x) * entity.scale(),
+											locator.positionY + (float) (locator.getOffsetFromRotations().y + locator.getOffsetFromDisplacements().y) * entity.scale(),
+											-locator.positionZ - (float) (locator.getOffsetFromRotations().z + locator.getOffsetFromDisplacements().z) * entity.scale()
+									)
+							);
+						}
+
+						//now update them
+						if (!definitionList.map.isEmpty()) {
+							for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
+								RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
+										(Entity) entity,
+										x,
+										definitionList.finalOrderedRiderPositions().get(x)
+								));
+								RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
+										(Entity) entity,
+										x,
+										definitionList.finalOrderedRiderPositions().get(x)
+								));
+							}
+						}
+					}
+				}
 			}
 		}
 

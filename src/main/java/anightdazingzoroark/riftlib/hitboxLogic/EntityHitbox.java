@@ -4,6 +4,8 @@ import anightdazingzoroark.riftlib.core.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MultiPartEntityPart;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 
 public class EntityHitbox extends MultiPartEntityPart {
     private final float damageMultiplier;
@@ -33,28 +35,29 @@ public class EntityHitbox extends MultiPartEntityPart {
         double yOffset = this.yOffset * (this.height / this.initHeight);
         double zOffset = this.zOffset * (this.width / this.initWidth);
 
-        // Step 2: Get parent rotation in radians
-        float yawDegrees = this.getParentAsEntityLiving().renderYawOffset;
-        double yawRadians = Math.toRadians(-yawDegrees); // Negative because Minecraft's yaw is clockwise
+        double yawRadians = Math.toRadians(this.getParentAsEntityLiving().renderYawOffset);
 
-        // Step 3: Rotate offsets around Y axis
         double cosYaw = Math.cos(yawRadians);
         double sinYaw = Math.sin(yawRadians);
-        double rotatedX = -(xOffset * cosYaw - zOffset * sinYaw);
-        double rotatedZ = (xOffset * sinYaw + zOffset * cosYaw);
 
-        // Step 4: Apply rotated offsets to parent position
+        double rotatedX = xOffset * cosYaw - zOffset * sinYaw;
+        double rotatedZ = xOffset * sinYaw + zOffset * cosYaw;
+
         this.setPositionAndUpdate(
                 this.getParentAsEntityLiving().posX + rotatedX,
                 this.getParentAsEntityLiving().posY + yOffset,
                 this.getParentAsEntityLiving().posZ + rotatedZ
         );
 
-        // Step 5: Clean up if parent is gone
         if (!this.getParentAsEntityLiving().isEntityAlive()) {
             this.world.removeEntityDangerously(this);
         }
         super.onUpdate();
+    }
+
+    @Override
+    public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
+        return this.getParentAsEntityLiving().processInitialInteract(player, hand);
     }
 
     public void resize(float scale) {

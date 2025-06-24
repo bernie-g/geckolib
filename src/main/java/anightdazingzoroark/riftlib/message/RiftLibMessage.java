@@ -14,5 +14,7 @@ public class RiftLibMessage {
         int id = 0;
         WRAPPER.registerMessage(RiftLibUpdateHitboxPos.Handler.class, RiftLibUpdateHitboxPos.class, id++, Side.SERVER);
         WRAPPER.registerMessage(RiftLibUpdateHitboxPos.Handler.class, RiftLibUpdateHitboxPos.class, id++, Side.CLIENT);
+        WRAPPER.registerMessage(RiftLibUpdateRiderPos.Handler.class, RiftLibUpdateRiderPos.class, id++, Side.SERVER);
+        WRAPPER.registerMessage(RiftLibUpdateRiderPos.Handler.class, RiftLibUpdateRiderPos.class, id++, Side.CLIENT);
     }
 }

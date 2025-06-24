@@ -1,10 +1,17 @@
 package anightdazingzoroark.riftlib;
 
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitboxRenderer;
 import anightdazingzoroark.riftlib.message.RiftLibMessage;
+import anightdazingzoroark.riftlib.model.AnimatedGeoModel;
+import anightdazingzoroark.riftlib.renderers.geo.GeoEntityRenderer;
+import anightdazingzoroark.riftlib.ridePositionLogic.IDynamicRideUser;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
