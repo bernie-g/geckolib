@@ -30,13 +30,11 @@ public class EntityHitbox extends MultiPartEntityPart {
 
     @Override
     public void onUpdate() {
-        // Step 1: Scale initial offsets
         double xOffset = this.xOffset * (this.width / this.initWidth);
         double yOffset = this.yOffset * (this.height / this.initHeight);
         double zOffset = this.zOffset * (this.width / this.initWidth);
 
         double yawRadians = Math.toRadians(this.getParentAsEntityLiving().renderYawOffset);
-
         double cosYaw = Math.cos(yawRadians);
         double sinYaw = Math.sin(yawRadians);
 

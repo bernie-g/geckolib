@@ -5,6 +5,7 @@ import anightdazingzoroark.riftlib.core.IAnimatable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
@@ -30,14 +31,18 @@ public interface IDynamicRideUser {
     void setRidePosition(int index, Vec3d value);
 
     default Vec3d rotateOffset(Vec3d offset) {
+        double xOffset = offset.x * ((IAnimatable) this.getDynamicRideUser()).scale();
+        double yOffset = offset.y * ((IAnimatable) this.getDynamicRideUser()).scale();
+        double zOffset = offset.z * ((IAnimatable) this.getDynamicRideUser()).scale();
+
         double radians = Math.toRadians(this.getDynamicRideUser().rotationYaw);
         double cos = Math.cos(radians);
         double sin = Math.sin(radians);
 
-        double x = offset.x * cos - offset.z * sin;
-        double z = offset.x * sin + offset.z * cos;
+        double rotatedX = xOffset * cos - zOffset * sin;
+        double rotatedZ = xOffset * sin + zOffset * cos;
 
-        return new Vec3d(x, offset.y, z);
+        return new Vec3d(rotatedX, yOffset, rotatedZ);
     }
 
     default void updatePassenger(Entity passenger) {
@@ -55,7 +60,7 @@ public interface IDynamicRideUser {
 
             passenger.setPosition(
                     this.getDynamicRideUser().posX + this.rotateOffset(firstPos).x,
-                    this.getDynamicRideUser().posY + firstPos.y + passenger.height,
+                    this.getDynamicRideUser().posY + this.rotateOffset(firstPos).y + this.playerRideOffset(passenger),
                     this.getDynamicRideUser().posZ + this.rotateOffset(firstPos).z
             );
 
@@ -69,12 +74,17 @@ public interface IDynamicRideUser {
         if (!otherPositions.isEmpty() && !passenger.equals(this.getDynamicRideUser().getControllingPassenger())) {
             for (Vec3d otherPos : otherPositions)
                 passenger.setPosition(
-                        this.getDynamicRideUser().posX + this.rotateOffset(firstPos).x,
-                        this.getDynamicRideUser().posY + otherPos.y + passenger.height,
-                        this.getDynamicRideUser().posZ + this.rotateOffset(firstPos).z
+                        this.getDynamicRideUser().posX + this.rotateOffset(otherPos).x,
+                        this.getDynamicRideUser().posY + this.rotateOffset(otherPos).y + this.playerRideOffset(passenger),
+                        this.getDynamicRideUser().posZ + this.rotateOffset(otherPos).z
                 );
         }
 
         if (this.getDynamicRideUser().isDead) passenger.dismountRidingEntity();
+    }
+
+    default float playerRideOffset(Entity entity) {
+        if (entity instanceof EntityPlayer) return -0.6f;
+        return 0f;
     }
 }

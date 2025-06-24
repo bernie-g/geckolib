@@ -191,9 +191,9 @@ public class AnimationProcessor<T extends IAnimatable> {
 							definitionList.map.put(
 									ridePosIndex,
 									new Vec3d(
-											locator.positionX + (float) (locator.getOffsetFromRotations().x + locator.getOffsetFromDisplacements().x) * entity.scale(),
-											locator.positionY + (float) (locator.getOffsetFromRotations().y + locator.getOffsetFromDisplacements().y) * entity.scale(),
-											-locator.positionZ - (float) (locator.getOffsetFromRotations().z + locator.getOffsetFromDisplacements().z) * entity.scale()
+											locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
+											locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y,
+											-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
 									)
 							);
 						}
