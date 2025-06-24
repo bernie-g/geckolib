@@ -1,5 +1,6 @@
 package anightdazingzoroark.example.entity;
 
+import anightdazingzoroark.example.entity.ai.DragonAttackAI;
 import anightdazingzoroark.riftlib.core.IAnimatable;
 import anightdazingzoroark.riftlib.core.PlayState;
 import anightdazingzoroark.riftlib.core.builder.AnimationBuilder;
@@ -11,17 +12,21 @@ import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
 import anightdazingzoroark.riftlib.ridePositionLogic.IDynamicRideUser;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.*;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DragonEntity extends EntityCreature implements IAnimatable, IMultiHitboxUser, IDynamicRideUser {
+    private static final DataParameter<Boolean> ATTACKING = EntityDataManager.createKey(DragonEntity.class, DataSerializers.BOOLEAN);
     private AnimationFactory factory = new AnimationFactory(this);
     private Entity[] hitboxes = {};
     private List<Vec3d> ridePositions;
@@ -34,22 +39,32 @@ public class DragonEntity extends EntityCreature implements IAnimatable, IMultiH
     }
 
     @Override
+    protected void entityInit() {
+        super.entityInit();
+        this.dataManager.register(ATTACKING, false);
+    }
+
+    @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
         this.updateParts();
     }
 
     protected void initEntityAI() {
-        this.tasks.addTask(1, new EntityAIWanderAvoidWater(this, 1.0D));
-        this.tasks.addTask(2, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
-        this.tasks.addTask(3, new EntityAILookIdle(this));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityCow.class, true));
+
+        this.tasks.addTask(1, new DragonAttackAI(this, 1.0D, 0.75f, 0.375f));
+        this.tasks.addTask(2, new EntityAIWanderAvoidWater(this, 1.0D));
+        this.tasks.addTask(3, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        this.tasks.addTask(4, new EntityAILookIdle(this));
     }
 
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40D);
-        //this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
+        this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
 
     @Override
@@ -154,14 +169,48 @@ public class DragonEntity extends EntityCreature implements IAnimatable, IMultiH
         return 3f;
     }
 
+    public boolean isAttacking() {
+        return this.dataManager.get(ATTACKING);
+    }
+
+    public void setAttacking(boolean value) {
+        this.dataManager.set(ATTACKING, value);
+    }
+
+    public float attackWidth() {
+        return 5f;
+    }
+
+    @Override
+    public boolean attackEntityAsMob(Entity entityIn) {
+        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), (float)((int)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
+        if (flag) {
+            this.applyEnchantments(this, entityIn);
+        }
+        this.setLastAttackedEntity(entityIn);
+        return flag;
+    }
+
     @Override
     public void registerControllers(AnimationData data) {
         data.addAnimationController(new AnimationController(this, "movement", 0, new AnimationController.IAnimationPredicate() {
             @Override
             public PlayState test(AnimationEvent event) {
-                //event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.flying_and_shifting", true));
                 event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.flying", true));
                 return PlayState.CONTINUE;
+            }
+        }));
+        data.addAnimationController(new AnimationController(this, "attack", 0, new AnimationController.IAnimationPredicate() {
+            @Override
+            public PlayState test(AnimationEvent event) {
+                if (isAttacking()) {
+                    event.getController().setAnimation(new AnimationBuilder().addAnimation("animation.dragon.attack_while_flying", true));
+                    return PlayState.CONTINUE;
+                }
+                else {
+                    event.getController().clearAnimationCache();
+                    return PlayState.STOP;
+                }
             }
         }));
     }
