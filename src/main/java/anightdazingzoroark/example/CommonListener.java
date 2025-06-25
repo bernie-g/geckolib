@@ -26,8 +26,6 @@ import anightdazingzoroark.example.block.BotariumBlock;
 import anightdazingzoroark.example.block.FertilizerBlock;
 import anightdazingzoroark.example.block.tile.BotariumTileEntity;
 import anightdazingzoroark.example.block.tile.FertilizerTileEntity;
-import anightdazingzoroark.example.client.renderer.item.JackInTheBoxRenderer;
-import anightdazingzoroark.example.item.JackInTheBoxItem;
 import anightdazingzoroark.example.item.PotatoArmorItem;
 import anightdazingzoroark.example.registry.BlockRegistry;
 import anightdazingzoroark.example.registry.ItemRegistry;
@@ -93,8 +91,6 @@ public class CommonListener {
 		itemRegistry = event.getRegistry();
 		ItemRegistry.BOMB = registerItem(new BombItem(), "bomb");
 
-		ItemRegistry.JACK_IN_THE_BOX = registerItem(new JackInTheBoxItem(), "jackintheboxitem");
-
 		ItemRegistry.POTATO_HEAD = registerItem(
 				new PotatoArmorItem(ItemArmor.ArmorMaterial.DIAMOND, 0, EntityEquipmentSlot.HEAD), "potato_head");
 		ItemRegistry.POTATO_CHEST = registerItem(
@@ -143,8 +139,6 @@ public class CommonListener {
 				0,
 				new ModelResourceLocation(RiftLib.ModID+":bomb", "inventory")
 		);
-		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0,
-				new ModelResourceLocation(RiftLib.ModID + ":jackintheboxitem", "inventory"));
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.BOTARIUM, 0,
 				new ModelResourceLocation(RiftLib.ModID + ":botarium", "inventory"));
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.FERTILIZER, 0,
@@ -159,6 +153,5 @@ public class CommonListener {
 				new ModelResourceLocation(RiftLib.ModID + ":potato_boots", "inventory"));
 
 		ItemRegistry.BOMB.setTileEntityItemStackRenderer(new BombRenderer());
-		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}
 }

@@ -48,7 +48,7 @@ public class RiftLibMod {
 			riftlibItemGroup = new CreativeTabs(CreativeTabs.getNextID(), "riftlib_examples") {
 				@Override
 				public ItemStack createIcon() {
-					return new ItemStack(ItemRegistry.JACK_IN_THE_BOX);
+					return new ItemStack(ItemRegistry.BOMB);
 				}
 			};
 		}
