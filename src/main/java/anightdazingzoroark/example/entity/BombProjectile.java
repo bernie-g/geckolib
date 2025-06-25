@@ -30,6 +30,11 @@ public class BombProjectile extends RiftLibProjectile {
     }
 
     @Override
+    public double getDamage() {
+        return 0f;
+    }
+
+    @Override
     public void registerControllers(AnimationData data) {
 
     }

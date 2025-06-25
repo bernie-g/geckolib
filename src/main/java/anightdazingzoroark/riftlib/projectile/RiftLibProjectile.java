@@ -19,7 +19,6 @@ import net.minecraft.world.World;
 
 public abstract class RiftLibProjectile extends EntityArrow implements IAnimatable {
     private final AnimationFactory factory = new AnimationFactory(this);
-    private boolean destroyUponHit = true;
 
     public RiftLibProjectile(World worldIn) {
         super(worldIn);
@@ -62,7 +61,7 @@ public abstract class RiftLibProjectile extends EntityArrow implements IAnimatab
 
                 if (entity.attackEntityFrom(damagesource, (float) i)) {
                     this.playSound(this.getOnProjectileHitSound(), 1.0F, 1.2F / (this.rand.nextFloat() * 0.2F + 0.9F));
-                    if (this.destroyUponHit) this.setDead();
+                    if (this.canSelfDestroyUponHit()) this.setDead();
                 }
                 else {
                     this.motionX *= -0.10000000149011612D;
@@ -70,7 +69,7 @@ public abstract class RiftLibProjectile extends EntityArrow implements IAnimatab
                     this.motionZ *= -0.10000000149011612D;
                     this.rotationYaw += 180.0F;
                     this.prevRotationYaw += 180.0F;
-                    if (this.destroyUponHit) this.setDead();
+                    if (this.canSelfDestroyUponHit()) this.setDead();
                 }
             }
             else if (blockPos != null) {
@@ -93,7 +92,7 @@ public abstract class RiftLibProjectile extends EntityArrow implements IAnimatab
 
                 if (iblockstate.getMaterial() != Material.AIR) this.inTile.onEntityCollision(this.world, blockPos, iblockstate, this);
                 this.projectileEntityEffects(null);
-                if (this.destroyUponHit) this.setDead();
+                if (this.canSelfDestroyUponHit()) this.setDead();
             }
         }
         else super.onHit(raytraceResultIn);
@@ -101,9 +100,11 @@ public abstract class RiftLibProjectile extends EntityArrow implements IAnimatab
 
     public abstract void projectileEntityEffects(EntityLivingBase entityLivingBase);
 
-    public void setDestroyUponHit(boolean value) {
-        this.destroyUponHit = value;
+    public boolean canSelfDestroyUponHit() {
+        return true;
     }
+
+    public abstract double getDamage();
 
     @Override
     public AnimationFactory getFactory() {
