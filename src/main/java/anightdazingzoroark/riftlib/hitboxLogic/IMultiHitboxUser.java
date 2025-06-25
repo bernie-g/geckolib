@@ -77,11 +77,20 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
         return false;
     }
 
-    default void upateHitboxPos(String hitboxName, float x, float y, float z) {
+    default void updateHitboxPos(String hitboxName, float x, float y, float z) {
         for (int i = 0; i < this.getParts().length; i++) {
             if (((EntityHitbox) this.getParts()[i]).partName.equals(hitboxName)) {
                 EntityHitbox hitbox = (EntityHitbox) this.getParts()[i];
                 hitbox.changeOffset(x, y, z);
+            }
+        }
+    }
+
+    default void updateHitboxScaleFromAnim(String hitboxName, float width, float height) {
+        for (int i = 0; i < this.getParts().length; i++) {
+            if (((EntityHitbox) this.getParts()[i]).partName.equals(hitboxName)) {
+                EntityHitbox hitbox = (EntityHitbox) this.getParts()[i];
+                hitbox.resizeByAnim(width, height);
             }
         }
     }

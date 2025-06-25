@@ -1,6 +1,6 @@
 package anightdazingzoroark.example;
 
-import anightdazingzoroark.example.entity.DragonEntity;
+import anightdazingzoroark.example.entity.*;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -15,6 +15,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,9 +25,6 @@ import anightdazingzoroark.example.block.FertilizerBlock;
 import anightdazingzoroark.example.block.tile.BotariumTileEntity;
 import anightdazingzoroark.example.block.tile.FertilizerTileEntity;
 import anightdazingzoroark.example.client.renderer.item.JackInTheBoxRenderer;
-import anightdazingzoroark.example.entity.BikeEntity;
-import anightdazingzoroark.example.entity.GeoExampleEntity;
-import anightdazingzoroark.example.entity.GeoExampleEntityLayer;
 import anightdazingzoroark.example.item.JackInTheBoxItem;
 import anightdazingzoroark.example.item.PotatoArmorItem;
 import anightdazingzoroark.example.registry.BlockRegistry;
@@ -55,22 +53,27 @@ public class CommonListener {
 	public void onRegisterEntities(RegistryEvent.Register<EntityEntry> event) {
 		int id = 0;
 
-		event.getRegistry().register(EntityEntryBuilder.create().entity(BikeEntity.class).name("Bike")
-				.id(new ResourceLocation(RiftLib.ModID, "bike"), id++).tracker(160, 2, false).build());
-		event.getRegistry().register(EntityEntryBuilder.create().entity(GeoExampleEntity.class).name("Example")
-				.id(new ResourceLocation(RiftLib.ModID, "example"), id++).tracker(160, 2, false).build());
-		event.getRegistry()
-				.register(EntityEntryBuilder.create().entity(GeoExampleEntityLayer.class).name("ExampleLayer")
-						.id(new ResourceLocation(RiftLib.ModID, "examplelayer"), id++).tracker(160, 2, false).build());
+		//entity register
 		event.getRegistry().register(EntityEntryBuilder.create()
 				.entity(DragonEntity.class)
-				.name("Dragon")
+				.name("dragon")
 				.id(new ResourceLocation(RiftLib.ModID, "dragon"), id++)
 				.tracker(160, 2, false)
 				.build()
 		);
+		event.getRegistry().register(EntityEntryBuilder.create()
+				.entity(FlyingPufferfishEntity.class)
+				.name("flying_pufferfish")
+				.id(new ResourceLocation(RiftLib.ModID, "flying_pufferfish"), id++)
+				.tracker(160, 2, false)
+				.build()
+		);
 
-		/* Tile entities */
+		//egg registry
+		EntityRegistry.registerEgg(new ResourceLocation(RiftLib.ModID, "dragon"), 0x980d0d, 0xca7824);
+		EntityRegistry.registerEgg(new ResourceLocation(RiftLib.ModID, "flying_pufferfish"), 0xffae00, 0xbfc700);
+
+		//tile entity registry
 		GameRegistry.registerTileEntity(BotariumTileEntity.class, new ResourceLocation(RiftLib.ModID, "botariumtile"));
 		GameRegistry.registerTileEntity(FertilizerTileEntity.class,
 				new ResourceLocation(RiftLib.ModID, "fertilizertile"));

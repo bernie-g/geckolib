@@ -11,19 +11,18 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class RiftLibUpdateHitboxPos implements IMessage {
+public class RiftLibUpdateHitboxSize implements IMessage {
     private int entityId;
     private String hitboxName;
-    private float x, y, z;
+    private float width, height;
 
-    public RiftLibUpdateHitboxPos() {}
+    public RiftLibUpdateHitboxSize() {}
 
-    public RiftLibUpdateHitboxPos(Entity entity, String hitboxName, float x, float y, float z) {
+    public RiftLibUpdateHitboxSize(Entity entity, String hitboxName, float width, float height) {
         this.entityId = entity.getEntityId();
         this.hitboxName = hitboxName;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.width = width;
+        this.height = height;
     }
 
     @Override
@@ -35,9 +34,8 @@ public class RiftLibUpdateHitboxPos implements IMessage {
         buf.readBytes(stringBytes);
         this.hitboxName = new String(stringBytes);
 
-        this.x = buf.readFloat();
-        this.y = buf.readFloat();
-        this.z = buf.readFloat();
+        this.width = buf.readFloat();
+        this.height = buf.readFloat();
     }
 
     @Override
@@ -48,26 +46,25 @@ public class RiftLibUpdateHitboxPos implements IMessage {
         buf.writeInt(stringBytes.length);
         buf.writeBytes(stringBytes);
 
-        buf.writeFloat(this.x);
-        buf.writeFloat(this.y);
-        buf.writeFloat(this.z);
+        buf.writeFloat(this.width);
+        buf.writeFloat(this.height);
     }
 
-    public static class Handler implements IMessageHandler<RiftLibUpdateHitboxPos, IMessage> {
+    public static class Handler implements IMessageHandler<RiftLibUpdateHitboxSize, IMessage> {
         @Override
-        public IMessage onMessage(RiftLibUpdateHitboxPos message, MessageContext ctx) {
+        public IMessage onMessage(RiftLibUpdateHitboxSize message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message, ctx));
             return null;
         }
 
-        private void handle(RiftLibUpdateHitboxPos message, MessageContext ctx) {
+        private void handle(RiftLibUpdateHitboxSize message, MessageContext ctx) {
             if (ctx.side == Side.SERVER) {
                 EntityPlayer messagePlayer = ctx.getServerHandler().player;
                 Entity entity = messagePlayer.world.getEntityByID(message.entityId);
 
                 if (entity instanceof IMultiHitboxUser) {
                     IMultiHitboxUser hitboxUser = (IMultiHitboxUser) entity;
-                    hitboxUser.updateHitboxPos(message.hitboxName, message.x, message.y, message.z);
+                    hitboxUser.updateHitboxScaleFromAnim(message.hitboxName, message.width, message.height);
                 }
             }
             if (ctx.side == Side.CLIENT) {
@@ -76,7 +73,7 @@ public class RiftLibUpdateHitboxPos implements IMessage {
 
                 if (entity instanceof IMultiHitboxUser) {
                     IMultiHitboxUser hitboxUser = (IMultiHitboxUser) entity;
-                    hitboxUser.updateHitboxPos(message.hitboxName, message.x, message.y, message.z);
+                    hitboxUser.updateHitboxScaleFromAnim(message.hitboxName, message.width, message.height);
                 }
             }
         }

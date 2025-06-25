@@ -8,6 +8,7 @@ package anightdazingzoroark.example;
 import anightdazingzoroark.example.client.renderer.entity.*;
 import anightdazingzoroark.example.entity.*;
 import anightdazingzoroark.example.entity.hitboxLinker.DragonHitboxLinker;
+import anightdazingzoroark.example.entity.hitboxLinker.FlyingPufferfishHitboxLinker;
 import anightdazingzoroark.example.entity.ridePosLinker.DragonRidePosLinker;
 import anightdazingzoroark.riftlib.RiftLibLinkerRegistry;
 import net.minecraft.client.Minecraft;
@@ -63,17 +64,17 @@ public class RiftLibMod {
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
-	public void registerRenderers(FMLPreInitializationEvent event) {
+	public void preInit(FMLPreInitializationEvent event) {
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
 			RiftLib.initializePre();
+			//linkers
 			RiftLibLinkerRegistry.registerEntityHitboxLinker(DragonEntity.class, new DragonHitboxLinker());
 			RiftLibLinkerRegistry.registerDynamicRidePosLinker(DragonEntity.class, new DragonRidePosLinker());
+			RiftLibLinkerRegistry.registerEntityHitboxLinker(FlyingPufferfishEntity.class, new FlyingPufferfishHitboxLinker());
 
-			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntityLayer.class,
-					LERenderer::new);
-			RenderingRegistry.registerEntityRenderingHandler(GeoExampleEntity.class, ExampleGeoRenderer::new);
-			RenderingRegistry.registerEntityRenderingHandler(BikeEntity.class, BikeGeoRenderer::new);
+			//entity renderers
 			RenderingRegistry.registerEntityRenderingHandler(DragonEntity.class, DragonRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(FlyingPufferfishEntity.class, FlyingPufferfishRenderer::new);
 
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 
@@ -84,7 +85,7 @@ public class RiftLibMod {
 
 	@SideOnly(Side.CLIENT)
 	@Mod.EventHandler
-	public void registerReplacedRenderers(FMLInitializationEvent event) {
+	public void init(FMLInitializationEvent event) {
 		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
 			RiftLib.initializeMiddle();
 			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();

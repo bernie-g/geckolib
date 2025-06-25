@@ -14,6 +14,7 @@ import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.IMultiHitboxUser;
 import anightdazingzoroark.riftlib.message.RiftLibMessage;
 import anightdazingzoroark.riftlib.message.RiftLibUpdateHitboxPos;
+import anightdazingzoroark.riftlib.message.RiftLibUpdateHitboxSize;
 import anightdazingzoroark.riftlib.message.RiftLibUpdateRiderPos;
 import anightdazingzoroark.riftlib.ridePositionLogic.DynamicRidePosUtils;
 import anightdazingzoroark.riftlib.ridePositionLogic.IDynamicRideUser;
@@ -149,7 +150,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 					dirtyTracker.hasScaleChanged = true;
 				}
 
-				//apply via packets the new positions of the hitboxes
+				//apply via packets the new positions and sizes of the hitboxes
 				if (entity instanceof IMultiHitboxUser) {
 					GeoBone geoBone = (GeoBone) bone;
 					for (GeoLocator locator : geoBone.childLocators) {
@@ -162,19 +163,34 @@ public class AnimationProcessor<T extends IAnimatable> {
 							//skip when hitbox is set to not be affected by animation
 							if (!hitbox.affectedByAnim) continue;
 
+							//update positions
 							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
 									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2),
+									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
 									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
 							));
 							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
 									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2),
+									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
 									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
+							));
+
+							//update sizes
+							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
+									(Entity) entity,
+									hitboxName,
+									Math.max(bone.getScaleX(), bone.getScaleZ()),
+									bone.getScaleY()
+							));
+							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxSize(
+									(Entity) entity,
+									hitboxName,
+									Math.max(bone.getScaleX(), bone.getScaleZ()),
+									bone.getScaleY()
 							));
 						}
 					}

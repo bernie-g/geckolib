@@ -1,7 +1,6 @@
 package anightdazingzoroark.riftlib.hitboxLogic;
 
 import anightdazingzoroark.riftlib.core.IAnimatable;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,6 +10,8 @@ public class EntityHitbox extends MultiPartEntityPart {
     private final float damageMultiplier;
     public final float initWidth;
     public final float initHeight;
+    private float widthScaleFromAnim = 1f;
+    private float heightScaleFromAnim = 1f;
     private float xOffset;
     private float yOffset;
     private float zOffset;
@@ -30,9 +31,9 @@ public class EntityHitbox extends MultiPartEntityPart {
 
     @Override
     public void onUpdate() {
-        double xOffset = this.xOffset * (this.width / this.initWidth);
-        double yOffset = this.yOffset * (this.height / this.initHeight);
-        double zOffset = this.zOffset * (this.width / this.initWidth);
+        double xOffset = this.xOffset * this.width / this.initWidth;
+        double yOffset = this.yOffset * this.height / this.initHeight;
+        double zOffset = this.zOffset * this.width / this.initWidth;
 
         double yawRadians = Math.toRadians(this.getParentAsEntityLiving().renderYawOffset);
         double cosYaw = Math.cos(yawRadians);
@@ -59,7 +60,12 @@ public class EntityHitbox extends MultiPartEntityPart {
     }
 
     public void resize(float scale) {
-        this.setSize(this.initWidth * scale, this.initHeight * scale);
+        this.setSize(this.initWidth * this.widthScaleFromAnim * scale, this.initHeight * this.heightScaleFromAnim * scale);
+    }
+
+    public void resizeByAnim(float newWidth, float newHeight) {
+        this.widthScaleFromAnim = newWidth;
+        this.heightScaleFromAnim = newHeight;
     }
 
     public void changeOffset(float xOffset, float yOffset, float zOffset) {

@@ -7,3 +7,6 @@ item.riftlib.potato_boots.name=Potato Armor Boots
 item.riftlib.jackintheboxitem.name=Jack In The Box
 tile.riftlib.botariumblock.name=Botarium
 tile.riftlib.fertilizerblock.name=Fertilizer
+
+entity.dragon.name=Red Dragon
+entity.dragon.name=Flying Pufferfish
