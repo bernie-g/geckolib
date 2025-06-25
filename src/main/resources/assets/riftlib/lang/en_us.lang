@@ -3,10 +3,11 @@ item.riftlib.potato_head.name=Potato Armor Helmet
 item.riftlib.potato_chest.name=Potato Armor Chestplate
 item.riftlib.potato_leggings.name=Potato Armor Leggings
 item.riftlib.potato_boots.name=Potato Armor Boots
+item.riftlib.bomb.name=Bomb
 
 item.riftlib.jackintheboxitem.name=Jack In The Box
 tile.riftlib.botariumblock.name=Botarium
 tile.riftlib.fertilizerblock.name=Fertilizer
 
 entity.dragon.name=Red Dragon
-entity.dragon.name=Flying Pufferfish
+entity.flying_pufferfish.name=Flying Pufferfish

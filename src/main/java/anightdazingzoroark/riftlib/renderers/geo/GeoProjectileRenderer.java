@@ -2,11 +2,11 @@ package anightdazingzoroark.riftlib.renderers.geo;
 
 import java.util.Collections;
 
+import anightdazingzoroark.riftlib.projectile.RiftLibProjectile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import anightdazingzoroark.riftlib.core.IAnimatable;
 import anightdazingzoroark.riftlib.core.IAnimatableModel;
@@ -20,12 +20,12 @@ import anightdazingzoroark.riftlib.model.provider.data.EntityModelData;
 import anightdazingzoroark.riftlib.util.AnimationUtils;
 
 @SuppressWarnings("unchecked")
-public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Render<T> implements IGeoRenderer<T> {
+public class GeoProjectileRenderer<T extends RiftLibProjectile & IAnimatable> extends Render<T> implements IGeoRenderer<T> {
 
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
-			if (object instanceof Entity) {
-				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((Entity) object);
+			if (object instanceof RiftLibProjectile) {
+				return (IAnimatableModel<Object>) AnimationUtils.getGeoModelForEntity((RiftLibProjectile) object);
 			}
 			return null;
 		});
@@ -33,7 +33,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 
 	private final AnimatedGeoModel<T> modelProvider;
 
-	public GeoProjectilesRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider) {
+	public GeoProjectileRenderer(RenderManager renderManager, AnimatedGeoModel<T> modelProvider) {
 		super(renderManager);
 		this.modelProvider = modelProvider;
 	}
@@ -41,7 +41,9 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 	@Override
 	public void doRender(T entity, double x, double y, double z, float entityYaw, float partialTicks) {
 		GlStateManager.pushMatrix();
+		GlStateManager.pushMatrix();
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
+		GlStateManager.translate(x, y, z);
 		GlStateManager.rotate(
 				entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
 				1.0F, 0.0F);
@@ -65,6 +67,7 @@ public class GeoProjectilesRenderer<T extends Entity & IAnimatable> extends Rend
 			render(model, entity, partialTicks, (float) renderColor.getRed() / 255f,
 					(float) renderColor.getBlue() / 255f, (float) renderColor.getGreen() / 255f,
 					(float) renderColor.getAlpha() / 255);
+		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
 		GlStateManager.popMatrix();
 	}

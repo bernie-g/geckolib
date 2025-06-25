@@ -11,6 +11,7 @@ import anightdazingzoroark.example.entity.hitboxLinker.DragonHitboxLinker;
 import anightdazingzoroark.example.entity.hitboxLinker.FlyingPufferfishHitboxLinker;
 import anightdazingzoroark.example.entity.ridePosLinker.DragonRidePosLinker;
 import anightdazingzoroark.riftlib.RiftLibLinkerRegistry;
+import anightdazingzoroark.riftlib.projectile.RiftLibProjectile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.creativetab.CreativeTabs;
@@ -75,6 +76,7 @@ public class RiftLibMod {
 			//entity renderers
 			RenderingRegistry.registerEntityRenderingHandler(DragonEntity.class, DragonRenderer::new);
 			RenderingRegistry.registerEntityRenderingHandler(FlyingPufferfishEntity.class, FlyingPufferfishRenderer::new);
+			RenderingRegistry.registerEntityRenderingHandler(BombProjectile.class, BombProjectileRenderer::new);
 
 			GeoArmorRenderer.registerArmorRenderer(PotatoArmorItem.class, new PotatoArmorRenderer());
 

@@ -1,6 +1,8 @@
 package anightdazingzoroark.example;
 
+import anightdazingzoroark.example.client.renderer.item.BombRenderer;
 import anightdazingzoroark.example.entity.*;
+import anightdazingzoroark.example.item.BombItem;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -68,6 +70,13 @@ public class CommonListener {
 				.tracker(160, 2, false)
 				.build()
 		);
+		event.getRegistry().register(EntityEntryBuilder.create()
+				.entity(BombProjectile.class)
+				.name("bomb_projectile")
+				.id(new ResourceLocation(RiftLib.ModID, "bomb_projectile"), id++)
+				.tracker(160, 2, false)
+				.build()
+		);
 
 		//egg registry
 		EntityRegistry.registerEgg(new ResourceLocation(RiftLib.ModID, "dragon"), 0x980d0d, 0xca7824);
@@ -82,6 +91,8 @@ public class CommonListener {
 	@SubscribeEvent
 	public void onRegisterItems(RegistryEvent.Register<Item> event) {
 		itemRegistry = event.getRegistry();
+		ItemRegistry.BOMB = registerItem(new BombItem(), "bomb");
+
 		ItemRegistry.JACK_IN_THE_BOX = registerItem(new JackInTheBoxItem(), "jackintheboxitem");
 
 		ItemRegistry.POTATO_HEAD = registerItem(
@@ -127,6 +138,11 @@ public class CommonListener {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onModelRegistry(ModelRegistryEvent event) {
+		ModelLoader.setCustomModelResourceLocation(
+				ItemRegistry.BOMB,
+				0,
+				new ModelResourceLocation(RiftLib.ModID+":bomb", "inventory")
+		);
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.JACK_IN_THE_BOX, 0,
 				new ModelResourceLocation(RiftLib.ModID + ":jackintheboxitem", "inventory"));
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.BOTARIUM, 0,
@@ -142,6 +158,7 @@ public class CommonListener {
 		ModelLoader.setCustomModelResourceLocation(ItemRegistry.POTATO_BOOTS, 0,
 				new ModelResourceLocation(RiftLib.ModID + ":potato_boots", "inventory"));
 
+		ItemRegistry.BOMB.setTileEntityItemStackRenderer(new BombRenderer());
 		ItemRegistry.JACK_IN_THE_BOX.setTileEntityItemStackRenderer(new JackInTheBoxRenderer());
 	}
 }
