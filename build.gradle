@@ -165,6 +165,8 @@ processResources {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     manifest {
         def attribute_map = [:]
         if (project.use_coremod.toBoolean()) {
@@ -180,7 +182,11 @@ jar {
         attributes(attribute_map)
     }
     // Add all embedded dependencies into the jar
-    from(provider{ configurations.embed.collect {it.isDirectory() ? it : zipTree(it)} })
+    from(provider {
+        (configurations.embed + configurations.contain).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    })
 }
 
 idea {
