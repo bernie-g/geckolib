@@ -4,7 +4,10 @@ import anightdazingzoroark.riftlib.core.IAnimatable;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.MultiPartEntityPart;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
+
+import java.util.Objects;
 
 public class EntityHitbox extends MultiPartEntityPart {
     private final float damageMultiplier;
@@ -57,6 +60,16 @@ public class EntityHitbox extends MultiPartEntityPart {
     @Override
     public boolean processInitialInteract(EntityPlayer player, EnumHand hand) {
         return this.getParentAsEntityLiving().processInitialInteract(player, hand);
+    }
+
+    public boolean attackEntityFrom(DamageSource source, float amount) {
+        if (this.getParentAsEntityLiving() != null &&
+                (this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getImmediateSource()))
+                || this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getTrueSource())))
+        ) {
+            return false;
+        }
+        return super.attackEntityFrom(source, amount);
     }
 
     public void resize(float scale) {

@@ -35,6 +35,11 @@ public class BombProjectile extends RiftLibProjectile {
     }
 
     @Override
+    public boolean canRotateToAimDirection() {
+        return false;
+    }
+
+    @Override
     public void registerControllers(AnimationData data) {
 
     }

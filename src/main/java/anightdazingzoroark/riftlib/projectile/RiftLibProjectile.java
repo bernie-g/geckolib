@@ -104,6 +104,10 @@ public abstract class RiftLibProjectile extends EntityArrow implements IAnimatab
         return true;
     }
 
+    public boolean canRotateToAimDirection() {
+        return true;
+    }
+
     public abstract double getDamage();
 
     @Override

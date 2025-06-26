@@ -21,7 +21,6 @@ import anightdazingzoroark.riftlib.util.AnimationUtils;
 
 @SuppressWarnings("unchecked")
 public class GeoProjectileRenderer<T extends RiftLibProjectile & IAnimatable> extends Render<T> implements IGeoRenderer<T> {
-
 	static {
 		AnimationController.addModelFetcher((IAnimatable object) -> {
 			if (object instanceof RiftLibProjectile) {
@@ -44,12 +43,14 @@ public class GeoProjectileRenderer<T extends RiftLibProjectile & IAnimatable> ex
 		GlStateManager.pushMatrix();
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		GlStateManager.translate(x, y, z);
-		GlStateManager.rotate(
-				entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
-				1.0F, 0.0F);
-		GlStateManager.rotate(
-				entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
-				1.0F);
+		if (entity.canRotateToAimDirection()) {
+			GlStateManager.rotate(
+					entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
+					1.0F, 0.0F);
+			GlStateManager.rotate(
+					entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
+					1.0F);
+		}
 
 		float lastLimbDistance = 0.0F;
 		float limbSwing = 0.0F;
