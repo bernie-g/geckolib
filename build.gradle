@@ -91,6 +91,10 @@ repositories {
         url 'https://maven.enginehub.org/repo/'
     }
     maven {
+        name 'Modrinth'
+        url 'https://api.modrinth.com/maven'
+    }
+    maven {
         name 'mclib'
         url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
@@ -122,6 +126,8 @@ dependencies {
             transitive = false
         }
     }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
     contain 'com.eliotlash.molang:molang:19'
     contain 'com.eliotlash.mclib:mclib:20'
