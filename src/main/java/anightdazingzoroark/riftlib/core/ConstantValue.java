@@ -1,6 +1,6 @@
 package anightdazingzoroark.riftlib.core;
 
-import com.eliotlash.mclib.math.IValue;
+import anightdazingzoroark.riftlib.molang.math.IValue;
 
 public class ConstantValue implements IValue {
 	private final double value;

@@ -3,7 +3,7 @@ package anightdazingzoroark.riftlib.renderers.geo;
 import java.util.Collections;
 import java.util.List;
 
-import com.eliotlash.mclib.utils.Interpolations;
+import anightdazingzoroark.riftlib.molang.utils.Interpolations;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;

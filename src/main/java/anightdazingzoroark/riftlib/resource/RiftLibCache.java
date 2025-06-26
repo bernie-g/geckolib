@@ -12,7 +12,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import anightdazingzoroark.riftlib.file.*;
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.MolangParser;
 
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FileResourcePack;

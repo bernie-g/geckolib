@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.math.IValue;
+import anightdazingzoroark.riftlib.molang.MolangParser;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;

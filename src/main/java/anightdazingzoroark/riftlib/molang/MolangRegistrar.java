@@ -1,7 +1,6 @@
 package anightdazingzoroark.riftlib.molang;
 
-import com.eliotlash.mclib.math.Variable;
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.math.Variable;
 
 public class MolangRegistrar {
 	public static void registerVars(MolangParser parser) {

@@ -129,8 +129,6 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'com.cleanroommc:strip-latest-forge-requirements:1.0'
-    contain 'com.eliotlash.molang:molang:19'
-    contain 'com.eliotlash.mclib:mclib:20'
     contain 'com.fasterxml.jackson.core:jackson-databind:2.19.0'
     contain 'com.fasterxml.jackson.core:jackson-core:2.19.0'
     contain 'com.fasterxml.jackson.core:jackson-annotations:2.19.0'

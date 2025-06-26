@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.MolangParser;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

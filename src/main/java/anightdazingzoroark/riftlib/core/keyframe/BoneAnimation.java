@@ -5,7 +5,7 @@
 
 package anightdazingzoroark.riftlib.core.keyframe;
 
-import com.eliotlash.mclib.math.IValue;
+import anightdazingzoroark.riftlib.molang.math.IValue;
 
 public class BoneAnimation {
 	public String boneName;

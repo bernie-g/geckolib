@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 import anightdazingzoroark.riftlib.core.easing.EasingManager;
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.math.IValue;
+import anightdazingzoroark.riftlib.molang.MolangParser;
 
 import anightdazingzoroark.riftlib.core.AnimationState;
 import anightdazingzoroark.riftlib.core.ConstantValue;

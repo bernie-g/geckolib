@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import com.eliotlash.mclib.math.IValue;
-import com.eliotlash.molang.MolangException;
-import com.eliotlash.molang.MolangParser;
+import anightdazingzoroark.riftlib.molang.math.IValue;
+import anightdazingzoroark.riftlib.molang.MolangException;
+import anightdazingzoroark.riftlib.molang.MolangParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

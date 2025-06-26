@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nullable;
 
-import com.eliotlash.mclib.utils.Interpolations;
+import anightdazingzoroark.riftlib.molang.utils.Interpolations;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.Minecraft;
