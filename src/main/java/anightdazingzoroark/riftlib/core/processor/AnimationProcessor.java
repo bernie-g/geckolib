@@ -70,25 +70,23 @@ public class AnimationProcessor<T extends IAnimatable> {
 
 		HashMap<String, Pair<IBone, BoneSnapshot>> boneSnapshots = manager.getBoneSnapshotCollection();
 
+		//create anim values list to store the changes in
+		BoneAnimationValuesList boneAnimationValues = new BoneAnimationValuesList();
+
+		//get changes from all anim controllers
 		for (AnimationController<T> controller : manager.getAnimationControllers().values()) {
-			if (reloadAnimations) {
+			if (this.reloadAnimations) {
 				controller.markNeedsReload();
 				controller.getBoneAnimationQueues().clear();
 			}
 
 			controller.isJustStarting = manager.isFirstTick;
-
-			// Set current controller to animation test event
 			event.setController(controller);
 
-			// Process animations and add new values to the point queues
 			controller.process(seekTime, event, modelRendererList, boneSnapshots, parser, crashWhenCantFindBone);
 
-			// Loop through every single bone and lerp each property
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				IBone bone = boneAnimation.bone;
-				BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
-				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 
 				AnimationPoint rXPoint = boneAnimation.rotationXQueue.poll();
 				AnimationPoint rYPoint = boneAnimation.rotationYQueue.poll();
@@ -102,141 +100,83 @@ public class AnimationProcessor<T extends IAnimatable> {
 				AnimationPoint sYPoint = boneAnimation.scaleYQueue.poll();
 				AnimationPoint sZPoint = boneAnimation.scaleZQueue.poll();
 
-				// If there's any rotation points for this bone
-				DirtyTracker dirtyTracker = modelTracker.get(bone.getName());
-				if (dirtyTracker == null) {
-					continue;
-				}
 				if (rXPoint != null && rYPoint != null && rZPoint != null) {
-					bone.setRotationX(MathUtil.lerpValues(rXPoint, controller.easingType, controller.customEasingMethod)
-							+ initialSnapshot.rotationValueX);
-					bone.setRotationY(MathUtil.lerpValues(rYPoint, controller.easingType, controller.customEasingMethod)
-							+ initialSnapshot.rotationValueY);
-					bone.setRotationZ(MathUtil.lerpValues(rZPoint, controller.easingType, controller.customEasingMethod)
-							+ initialSnapshot.rotationValueZ);
-					snapshot.rotationValueX = bone.getRotationX();
-					snapshot.rotationValueY = bone.getRotationY();
-					snapshot.rotationValueZ = bone.getRotationZ();
-					snapshot.isCurrentlyRunningRotationAnimation = true;
-					dirtyTracker.hasRotationChanged = true;
+					boneAnimationValues.addRotations(
+							bone.getName(),
+							MathUtil.lerpValues(rXPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(rYPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(rZPoint, controller.easingType, controller.customEasingMethod)
+					);
 				}
 
-				// If there's any position points for this bone
 				if (pXPoint != null && pYPoint != null && pZPoint != null) {
-					bone.setPositionX(
-							MathUtil.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod));
-					bone.setPositionY(
-							MathUtil.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod));
-					bone.setPositionZ(
-							MathUtil.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod));
-					snapshot.positionOffsetX = bone.getPositionX();
-					snapshot.positionOffsetY = bone.getPositionY();
-					snapshot.positionOffsetZ = bone.getPositionZ();
-					snapshot.isCurrentlyRunningPositionAnimation = true;
-
-					dirtyTracker.hasPositionChanged = true;
+					boneAnimationValues.addPositions(
+							bone.getName(),
+							MathUtil.lerpValues(pXPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(pYPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(pZPoint, controller.easingType, controller.customEasingMethod)
+					);
 				}
 
-				// If there's any scale points for this bone
 				if (sXPoint != null && sYPoint != null && sZPoint != null) {
-					bone.setScaleX(MathUtil.lerpValues(sXPoint, controller.easingType, controller.customEasingMethod));
-					bone.setScaleY(MathUtil.lerpValues(sYPoint, controller.easingType, controller.customEasingMethod));
-					bone.setScaleZ(MathUtil.lerpValues(sZPoint, controller.easingType, controller.customEasingMethod));
-					snapshot.scaleValueX = bone.getScaleX();
-					snapshot.scaleValueY = bone.getScaleY();
-					snapshot.scaleValueZ = bone.getScaleZ();
-					snapshot.isCurrentlyRunningScaleAnimation = true;
-
-					dirtyTracker.hasScaleChanged = true;
-				}
-
-				//apply via packets the new positions and sizes of the hitboxes
-				if (entity instanceof IMultiHitboxUser) {
-					GeoBone geoBone = (GeoBone) bone;
-					for (GeoLocator locator : geoBone.childLocators) {
-						if (JsonHitboxUtils.locatorCanBeHitbox(locator.name)) {
-							String hitboxName = JsonHitboxUtils.locatorHitboxToHitbox(locator.name);
-
-							//get hitbox associated with the locator
-							EntityHitbox hitbox = ((IMultiHitboxUser) entity).getHitboxByName(hitboxName);
-
-							//skip when hitbox is set to not be affected by animation
-							if (!hitbox.affectedByAnim) continue;
-
-							//update positions
-							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
-									(Entity) entity,
-									hitboxName,
-									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
-									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
-							));
-							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
-									(Entity) entity,
-									hitboxName,
-									locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-									locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
-									-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
-							));
-
-							//update sizes
-							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
-									(Entity) entity,
-									hitboxName,
-									Math.max(bone.getScaleX(), bone.getScaleZ()),
-									bone.getScaleY()
-							));
-							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxSize(
-									(Entity) entity,
-									hitboxName,
-									Math.max(bone.getScaleX(), bone.getScaleZ()),
-									bone.getScaleY()
-							));
-						}
-					}
-                }
-
-				//apply via packets the new positions of the ride positions
-				if (entity instanceof IDynamicRideUser) {
-					GeoBone geoBone = (GeoBone) bone;
-					for (GeoLocator locator : geoBone.childLocators) {
-						//make a definition list and put in it the new positions based on the new locators positions
-						RidePosDefinitionList definitionList = new RidePosDefinitionList();
-						if (DynamicRidePosUtils.locatorCanBeRidePos(locator.name)) {
-							int ridePosIndex = DynamicRidePosUtils.locatorRideIndex(locator.name);
-							definitionList.map.put(
-									ridePosIndex,
-									new Vec3d(
-											locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-											locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y,
-											-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
-									)
-							);
-						}
-
-						//now update them
-						if (!definitionList.map.isEmpty()) {
-							for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
-								RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
-										(Entity) entity,
-										x,
-										definitionList.finalOrderedRiderPositions().get(x)
-								));
-								RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
-										(Entity) entity,
-										x,
-										definitionList.finalOrderedRiderPositions().get(x)
-								));
-							}
-						}
-					}
+					boneAnimationValues.addScales(
+							bone.getName(),
+							MathUtil.lerpValues(sXPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(sYPoint, controller.easingType, controller.customEasingMethod),
+							MathUtil.lerpValues(sZPoint, controller.easingType, controller.customEasingMethod)
+					);
 				}
 			}
 		}
 
+		//apply them to the bones
+		for (IBone bone : this.modelRendererList) {
+			BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+			BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
+
+			DirtyTracker dirtyTracker = modelTracker.get(bone.getName());
+			if (dirtyTracker == null) continue;
+
+			float[] rot = boneAnimationValues.getRotations(bone.getName());
+			float[] pos = boneAnimationValues.getPositions(bone.getName());
+			float[] scale = boneAnimationValues.getScales(bone.getName());
+
+			bone.setRotationX(rot[0] + initialSnapshot.rotationValueX);
+			bone.setRotationY(rot[1] + initialSnapshot.rotationValueY);
+			bone.setRotationZ(rot[2] + initialSnapshot.rotationValueZ);
+
+			bone.setPositionX(pos[0] + initialSnapshot.positionOffsetX);
+			bone.setPositionY(pos[1] + initialSnapshot.positionOffsetY);
+			bone.setPositionZ(pos[2] + initialSnapshot.positionOffsetZ);
+
+			bone.setScaleX(scale[0] * initialSnapshot.scaleValueX);
+			bone.setScaleY(scale[1] * initialSnapshot.scaleValueY);
+			bone.setScaleZ(scale[2] * initialSnapshot.scaleValueZ);
+
+			snapshot.rotationValueX = bone.getRotationX();
+			snapshot.rotationValueY = bone.getRotationY();
+			snapshot.rotationValueZ = bone.getRotationZ();
+			snapshot.positionOffsetX = bone.getPositionX();
+			snapshot.positionOffsetY = bone.getPositionY();
+			snapshot.positionOffsetZ = bone.getPositionZ();
+			snapshot.scaleValueX = bone.getScaleX();
+			snapshot.scaleValueY = bone.getScaleY();
+			snapshot.scaleValueZ = bone.getScaleZ();
+
+			snapshot.isCurrentlyRunningRotationAnimation = true;
+			snapshot.isCurrentlyRunningPositionAnimation = true;
+			snapshot.isCurrentlyRunningScaleAnimation = true;
+
+			dirtyTracker.hasRotationChanged = true;
+			dirtyTracker.hasPositionChanged = true;
+			dirtyTracker.hasScaleChanged = true;
+		}
+
+
 		this.reloadAnimations = false;
 
 		double resetTickLength = manager.getResetSpeed();
+		BoneAnimationValuesList dBoneAnimationValues = new BoneAnimationValuesList();
 		for (Map.Entry<String, DirtyTracker> tracker : modelTracker.entrySet()) {
 			IBone model = tracker.getValue().model;
 			BoneSnapshot initialSnapshot = model.getInitialSnapshot();
@@ -260,12 +200,18 @@ public class AnimationProcessor<T extends IAnimatable> {
 				double percentageReset = Math
 						.min((seekTime - saveSnapshot.mostRecentResetRotationTick) / resetTickLength, 1);
 
-				model.setRotationX(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX,
-						initialSnapshot.rotationValueX));
-				model.setRotationY(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY,
-						initialSnapshot.rotationValueY));
-				model.setRotationZ(MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ,
-						initialSnapshot.rotationValueZ));
+				dBoneAnimationValues.addRotations(
+						model.getName(),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueX, initialSnapshot.rotationValueX),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY, initialSnapshot.rotationValueY),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ)
+				);
+				if (model.getName().equals("tail0")) {
+					System.out.println(dBoneAnimationValues.getRotationsAsString(model.getName()));
+				}
+				model.setRotationX(dBoneAnimationValues.getRotations(model.getName())[0]);
+				model.setRotationY(dBoneAnimationValues.getRotations(model.getName())[1]);
+				model.setRotationZ(dBoneAnimationValues.getRotations(model.getName())[2]);
 
 				if (percentageReset >= 1) {
 					saveSnapshot.rotationValueX = model.getRotationX();
@@ -282,12 +228,15 @@ public class AnimationProcessor<T extends IAnimatable> {
 				double percentageReset = Math
 						.min((seekTime - saveSnapshot.mostRecentResetPositionTick) / resetTickLength, 1);
 
-				model.setPositionX(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetX,
-						initialSnapshot.positionOffsetX));
-				model.setPositionY(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetY,
-						initialSnapshot.positionOffsetY));
-				model.setPositionZ(MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetZ,
-						initialSnapshot.positionOffsetZ));
+				dBoneAnimationValues.addPositions(
+						model.getName(),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetX, initialSnapshot.positionOffsetX),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetY, initialSnapshot.positionOffsetY),
+						MathUtil.lerpValues(percentageReset, saveSnapshot.positionOffsetZ, initialSnapshot.positionOffsetZ)
+				);
+				model.setPositionX(dBoneAnimationValues.getPositions(model.getName())[0]);
+				model.setPositionY(dBoneAnimationValues.getPositions(model.getName())[1]);
+				model.setPositionZ(dBoneAnimationValues.getPositions(model.getName())[2]);
 
 				if (percentageReset >= 1) {
 					saveSnapshot.positionOffsetX = model.getPositionX();
