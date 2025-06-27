@@ -43,10 +43,10 @@ public class GeoProjectileRenderer<T extends RiftLibProjectile & IAnimatable> ex
 		GlStateManager.pushMatrix();
 		GeoModel model = modelProvider.getModel(modelProvider.getModelLocation(entity));
 		GlStateManager.translate(x, y, z);
-		if (entity.canRotateToAimDirection()) {
-			GlStateManager.rotate(
-					entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
-					1.0F, 0.0F);
+		GlStateManager.rotate(
+				entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks - 90.0F, 0.0F,
+				1.0F, 0.0F);
+		if (entity.canRotateVertically()) {
 			GlStateManager.rotate(
 					entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, 0.0F, 0.0F,
 					1.0F);

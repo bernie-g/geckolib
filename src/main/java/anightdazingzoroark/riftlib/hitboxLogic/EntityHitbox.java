@@ -64,8 +64,8 @@ public class EntityHitbox extends MultiPartEntityPart {
 
     public boolean attackEntityFrom(DamageSource source, float amount) {
         if (this.getParentAsEntityLiving() != null &&
-                (this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getImmediateSource()))
-                || this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getTrueSource())))
+                (this.getParentAsEntityLiving().isBeingRidden() && (this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getImmediateSource()))
+                || this.getParentAsEntityLiving().isPassenger(Objects.requireNonNull(source.getTrueSource()))))
         ) {
             return false;
         }

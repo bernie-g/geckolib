@@ -35,7 +35,7 @@ public class BombProjectile extends RiftLibProjectile {
     }
 
     @Override
-    public boolean canRotateToAimDirection() {
+    public boolean canRotateVertically() {
         return false;
     }
 

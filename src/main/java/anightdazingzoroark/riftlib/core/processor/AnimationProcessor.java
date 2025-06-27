@@ -126,6 +126,8 @@ public class AnimationProcessor<T extends IAnimatable> {
 							MathUtil.lerpValues(sZPoint, controller.easingType, controller.customEasingMethod)
 					);
 				}
+
+
 			}
 		}
 
@@ -170,6 +172,88 @@ public class AnimationProcessor<T extends IAnimatable> {
 			dirtyTracker.hasRotationChanged = true;
 			dirtyTracker.hasPositionChanged = true;
 			dirtyTracker.hasScaleChanged = true;
+
+			//apply via packets the new positions and sizes of the hitboxes
+			if (entity instanceof IMultiHitboxUser) {
+				GeoBone geoBone = (GeoBone) bone;
+				for (GeoLocator locator : geoBone.childLocators) {
+					if (JsonHitboxUtils.locatorCanBeHitbox(locator.name)) {
+						String hitboxName = JsonHitboxUtils.locatorHitboxToHitbox(locator.name);
+
+						//get hitbox associated with the locator
+						EntityHitbox hitbox = ((IMultiHitboxUser) entity).getHitboxByName(hitboxName);
+
+						//skip when hitbox is set to not be affected by animation
+						if (!hitbox.affectedByAnim) continue;
+
+						//update positions
+						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
+								(Entity) entity,
+								hitboxName,
+								locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
+								locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
+								-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
+						));
+						RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
+								(Entity) entity,
+								hitboxName,
+								locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
+								locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
+								-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
+						));
+
+						//update sizes
+						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
+								(Entity) entity,
+								hitboxName,
+								Math.max(bone.getScaleX(), bone.getScaleZ()),
+								bone.getScaleY()
+						));
+						RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxSize(
+								(Entity) entity,
+								hitboxName,
+								Math.max(bone.getScaleX(), bone.getScaleZ()),
+								bone.getScaleY()
+						));
+					}
+				}
+			}
+
+			//apply via packets the new positions of the ride positions
+			if (entity instanceof IDynamicRideUser) {
+				GeoBone geoBone = (GeoBone) bone;
+				for (GeoLocator locator : geoBone.childLocators) {
+					//make a definition list and put in it the new positions based on the new locators positions
+					RidePosDefinitionList definitionList = new RidePosDefinitionList();
+					if (DynamicRidePosUtils.locatorCanBeRidePos(locator.name)) {
+						int ridePosIndex = DynamicRidePosUtils.locatorRideIndex(locator.name);
+						definitionList.map.put(
+								ridePosIndex,
+								new Vec3d(
+										locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
+										locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y,
+										-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
+								)
+						);
+					}
+
+					//now update them
+					if (!definitionList.map.isEmpty()) {
+						for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
+							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
+									(Entity) entity,
+									x,
+									definitionList.finalOrderedRiderPositions().get(x)
+							));
+							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
+									(Entity) entity,
+									x,
+									definitionList.finalOrderedRiderPositions().get(x)
+							));
+						}
+					}
+				}
+			}
 		}
 
 
