@@ -29,20 +29,41 @@ public class HitboxDefinitionList {
         public final float height;
         public final float damageMultiplier;
         public final boolean affectedByAnim;
+        public final List<HitboxDamageDefinition> damageDefinitionList;
         public Vec3d position = new Vec3d(0f, 0f, 0f);
 
-        public HitboxDefinition(String locator, float width, float height, float damageMultiplier, boolean affectedByAnim) {
+        public HitboxDefinition(String locator, float width, float height, float damageMultiplier, boolean affectedByAnim, List<HitboxDamageDefinition> damageDefinitionList) {
             this.locator = locator;
             this.width = width;
             this.height = height;
             this.damageMultiplier = damageMultiplier;
             this.affectedByAnim = affectedByAnim;
+            this.damageDefinitionList = damageDefinitionList;
         }
 
         //its here just to make debugging easier
         @Override
         public String toString() {
             return "[locator="+this.locator+", size=("+this.width+", "+this.height+"), position=("+this.position.x+", "+this.position.y+", "+this.position.z+"), damageMultiplier="+this.damageMultiplier+", affectedByAnim="+this.affectedByAnim+"]";
+        }
+    }
+
+    public static class HitboxDamageDefinition {
+        public final String damageSource;
+        public final String damageType;
+        public final float damageMultiplier;
+
+        public HitboxDamageDefinition(String damageSource, String damageType, float damageMultiplier) {
+            //either one of damageSource or damageType must be null
+            this.damageSource = damageSource;
+            this.damageType = damageType;
+            this.damageMultiplier = damageMultiplier;
+        }
+
+        //its here just to make debugging easier
+        @Override
+        public String toString() {
+            return "[source="+this.damageSource+", type="+this.damageType+", multiplier="+this.damageMultiplier+"]";
         }
     }
 }

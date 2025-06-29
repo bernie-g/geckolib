@@ -8,7 +8,10 @@ public class RawHitbox {
     private float height;
     private float damageMultiplier;
     private boolean affectedByAnim;
+    private RawHitboxDamageDefinitions[] rawHitboxDamageDefinitions;
+    private RawHitboxAnimations[] rawHitboxAnimations;
 
+    //this is the locator on the model the hitbox will be associated with
     @JsonProperty("locator")
     public String getLocator() {
         return this.locator;
@@ -19,6 +22,7 @@ public class RawHitbox {
         this.locator = value;
     }
 
+    //hitbox width
     @JsonProperty("width")
     public float getWidth() {
         return this.width;
@@ -29,6 +33,7 @@ public class RawHitbox {
         this.width = value;
      }
 
+     //hitbox height
     @JsonProperty("height")
     public float getHeight() {
         return this.height;
@@ -39,6 +44,7 @@ public class RawHitbox {
         this.height = value;
     }
 
+    //when the entity is hurt in this hitbox, the damage it takes is multiplied by this amount
     @JsonProperty("damageMultiplier")
     public float getDamageMultiplier() {
         return this.damageMultiplier;
@@ -49,6 +55,7 @@ public class RawHitbox {
         this.damageMultiplier = value;
     }
 
+    //whether or not the hitbox can move with an animation
     @JsonProperty("affectedByAnim")
     public boolean getAffectedByAnim() {
         return this.affectedByAnim;
@@ -57,5 +64,27 @@ public class RawHitbox {
     @JsonProperty("affectedByAnim")
     public void setAffectedByAnim(boolean value) {
         this.affectedByAnim = value;
+    }
+
+    @JsonProperty("damageDefinitions")
+    public RawHitboxDamageDefinitions[] getRawHitboxDamageDefinitions() {
+        return this.rawHitboxDamageDefinitions;
+    }
+
+    @JsonProperty("damageDefinitions")
+    public void setRawHitboxDamageDefinitions(RawHitboxDamageDefinitions[] value) {
+        this.rawHitboxDamageDefinitions = value;
+    }
+
+    //hitbox properties can also be affected by animations
+    //this is where they're put in
+    @JsonProperty("animations")
+    public RawHitboxAnimations[] getRawHitboxAnimations() {
+        return this.rawHitboxAnimations;
+    }
+
+    @JsonProperty("animations")
+    public void setRawHitboxAnimations(RawHitboxAnimations[] value) {
+        this.rawHitboxAnimations = value;
     }
 }

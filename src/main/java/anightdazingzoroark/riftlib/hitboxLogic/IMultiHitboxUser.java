@@ -19,6 +19,7 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
     default <T extends Entity & IAnimatable & IMultiHitboxUser> void initializeHitboxes(T entity) {
         EntityHitboxLinker hitboxLinker = RiftLibLinkerRegistry.INSTANCE.hitboxLinkerMap.get(entity.getClass());
         for (HitboxDefinitionList.HitboxDefinition hitboxDefinition : hitboxLinker.getHitboxDefinitionList(entity).list) {
+            //create the hitbox
             EntityHitbox hitbox = new EntityHitbox(
                     entity,
                     hitboxDefinition.locator,
@@ -30,6 +31,15 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
                     (float) hitboxDefinition.position.z,
                     hitboxDefinition.affectedByAnim
             );
+            //add the damage definitions
+            for (HitboxDefinitionList.HitboxDamageDefinition damageDefinition : hitboxDefinition.damageDefinitionList) {
+                hitbox.damageDefinitions.add(new EntityHitbox.EntityHitboxDamageDefinition(
+                        damageDefinition.damageSource,
+                        damageDefinition.damageType,
+                        damageDefinition.damageMultiplier
+                ));
+            }
+
             this.addPart(hitbox);
         }
     }
@@ -70,9 +80,14 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
     //this is for dealing with damage multipliers from attacking at different parts
     default boolean attackEntityFromPart(MultiPartEntityPart part, DamageSource source, float damage) {
         EntityHitbox hitbox = (EntityHitbox) part;
-        if (damage > 0.0f && !hitbox.isDisabled()) {
-            float newDamage = hitbox.getDamageMultiplier() * damage;
-            return this.getMultiHitboxUser().attackEntityFrom(source, newDamage);
+        if (!hitbox.isDisabled()) {
+            //get the individual damage definitions of the hitbox and multiply em with newDamage
+            //if those dont exist, use the default damageMultiplier
+            if (hitbox.damageSourceWithinDamageDefinitions(source)) damage *= hitbox.getDamageMultiplierForSource(source);
+            else damage *= hitbox.getDamageMultiplier();
+
+            //as long as there is damage dealt, it will be applied
+            if (damage > 0f) return this.getMultiHitboxUser().attackEntityFrom(source, damage);
         }
         return false;
     }

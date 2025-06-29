@@ -12,14 +12,26 @@
 			"width": 0.6,
 			"height": 0.65,
 			"damageMultiplier": 1,
-			"affectedByAnim": true
+			"affectedByAnim": true,
+			"damageDefinitions": [
+				{
+					"damageSource": "arrow",
+					"damageMultiplier": 0.25
+				}
+			]
 		},
 		{
 			"locator": "hitbox_body_1",
 			"width": 0.6,
 			"height": 0.65,
 			"damageMultiplier": 1,
-			"affectedByAnim": true
+			"affectedByAnim": true,
+			"damageDefinitions": [
+				{
+					"damageSource": "arrow",
+					"damageMultiplier": 0.25
+				}
+			]
 		},
 		{
 			"locator": "hitbox_neck",
@@ -33,7 +45,13 @@
 			"width": 0.5,
 			"height": 0.55,
 			"damageMultiplier": 8,
-			"affectedByAnim": true
+			"affectedByAnim": true,
+			"damageDefinitions": [
+				{
+					"damageType": "projectile",
+					"damageMultiplier": 0
+				}
+			]
 		},
 		{
 			"locator": "hitbox_jaws_0",
