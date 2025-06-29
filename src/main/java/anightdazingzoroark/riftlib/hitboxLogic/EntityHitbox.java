@@ -113,7 +113,7 @@ public class EntityHitbox extends MultiPartEntityPart {
         return (IMultiHitboxUser) this.parent;
     }
 
-    private EntityLiving getParentAsEntityLiving() {
+    public EntityLiving getParentAsEntityLiving() {
         return (EntityLiving) this.parent;
     }
 

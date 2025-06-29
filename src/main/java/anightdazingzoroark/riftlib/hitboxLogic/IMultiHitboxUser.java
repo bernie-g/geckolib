@@ -109,4 +109,11 @@ public interface IMultiHitboxUser extends IEntityMultiPart {
             }
         }
     }
+
+    //this makes it so that when HWYLA is installed
+    //the info box directly shows info about the parent
+    //this can be left false if you want to replace it with something else you want
+    default boolean hitboxUseHWYLA() {
+        return true;
+    }
 }
