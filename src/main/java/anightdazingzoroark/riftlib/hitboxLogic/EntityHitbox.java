@@ -66,7 +66,9 @@ public class EntityHitbox extends MultiPartEntityPart {
     }
 
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (this.damageSourceIsRider(source)) return false;
+        if (this.damageSourceIsRider(source)) {
+            return false;
+        }
         return super.attackEntityFrom(source, amount);
     }
 
@@ -74,10 +76,13 @@ public class EntityHitbox extends MultiPartEntityPart {
         if (this.getParentAsEntityLiving() == null || source == null) return false;
 
         if (this.getParentAsEntityLiving().isBeingRidden()) {
-            if (source.getImmediateSource() != null && this.getParentAsEntityLiving().isPassenger(source.getImmediateSource())) return true;
-            if (source.getTrueSource() != null && this.getParentAsEntityLiving().isPassenger(source.getTrueSource())) return true;
+            if (source.getTrueSource() != null && this.getParentAsEntityLiving().isPassenger(source.getTrueSource())) {
+                return true;
+            }
+            if (source.getImmediateSource() != null && this.getParentAsEntityLiving().isPassenger(source.getImmediateSource())) {
+                return true;
+            }
         }
-
         return false;
     }
 
