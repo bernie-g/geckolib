@@ -36,7 +36,9 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     }
 
     @Override
-    public void getExtents(Set<Vector3f> set) {}
+    public void getExtents(Set<Vector3f> set) {
+        set.add(new Vector3f(0, 0, 0));
+    }
 
     /**
      * Wrap the {@link #extractArgument(ItemStack)} call to provide all the context available, rather than just what Mojang provides
