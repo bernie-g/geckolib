@@ -1,10 +1,6 @@
-## GeckoLib v5.2.0
+## GeckoLib v5.2.1
 
-### BREAKING CHANGE - SORRY!
-
-## Additions
-* GeoItemRenderer has had its render object switched from ItemStack to GeoItemRenderer$RenderData.
-  * This means that GeoItemRenderer now has access to a few extra context objects, including the player holding the item.
+### Port to 1.21.7
 
 ## Bug Fixes
-* Fixed GeoItems not having the `ItemRenderContext` available during `AnimationTest` stage (#735)
+* Bandaid-fix ItemEntity rendering being invisible. May or may not need a breaking change to properly rectify, will find out soon
