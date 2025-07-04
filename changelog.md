@@ -1,6 +1,5 @@
-## GeckoLib v5.2.1
-
-### Port to 1.21.7
+## GeckoLib v?
 
 ## Bug Fixes
-* Bandaid-fix ItemEntity rendering being invisible. May or may not need a breaking change to properly rectify, will find out soon
+* Fixed a typo in an error message in AnimationProcessor
+* Fixed an incorrect handling of fallback locations in GeoModel
