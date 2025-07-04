@@ -160,7 +160,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		ResourceLocation location = getAnimationResource(animatable);
 		ResourceLocation[] fallbackLocations = getAnimationResourceFallbacks(animatable);
 		Map<ResourceLocation, BakedAnimations> animations = GeckoLibResources.getBakedAnimations();
-		int fallbackIndex = -1;
+		int fallbackIndex = 0;
 		BakedAnimations bakedAnimations;
 
 		do {
@@ -184,9 +184,12 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 					return animation;
 			}
 
-			location = fallbackLocations[++fallbackIndex];
+			if (fallbackIndex >= fallbackLocations.length)
+				break;
+
+			location = fallbackLocations[fallbackIndex++];
 		}
-		while (fallbackIndex < fallbackLocations.length - 2);
+		while (true);
 
 		if (bakedAnimations == null)
 			throw new IllegalArgumentException("Unable to find animation file '" + location + "' for animatable '" + animatable.getClass().getName() + "'");
