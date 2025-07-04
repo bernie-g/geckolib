@@ -131,7 +131,10 @@ public class AnimationProcessor<T extends IAnimatable> {
 			}
 		}
 
-		//apply them to the bones
+		//make a rideposdef list for changine ride positions
+		RidePosDefinitionList definitionList = new RidePosDefinitionList();
+
+		//apply changes from anims to bones, hitboxes, and rideposdeflist
 		for (IBone bone : this.modelRendererList) {
 			BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
 			BoneSnapshot snapshot = boneSnapshots.get(bone.getName()).getRight();
@@ -222,9 +225,8 @@ public class AnimationProcessor<T extends IAnimatable> {
 			//apply via packets the new positions of the ride positions
 			if (entity instanceof IDynamicRideUser) {
 				GeoBone geoBone = (GeoBone) bone;
+				//make a definition list and put in it the new positions based on the new locators positions
 				for (GeoLocator locator : geoBone.childLocators) {
-					//make a definition list and put in it the new positions based on the new locators positions
-					RidePosDefinitionList definitionList = new RidePosDefinitionList();
 					if (DynamicRidePosUtils.locatorCanBeRidePos(locator.name)) {
 						int ridePosIndex = DynamicRidePosUtils.locatorRideIndex(locator.name);
 						definitionList.map.put(
@@ -236,26 +238,27 @@ public class AnimationProcessor<T extends IAnimatable> {
 								)
 						);
 					}
-
-					//now update them
-					if (!definitionList.map.isEmpty()) {
-						for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
-							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
-									(Entity) entity,
-									x,
-									definitionList.finalOrderedRiderPositions().get(x)
-							));
-							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
-									(Entity) entity,
-									x,
-									definitionList.finalOrderedRiderPositions().get(x)
-							));
-						}
-					}
 				}
 			}
 		}
 
+		//apply changes to ride positions
+		if (entity instanceof IDynamicRideUser) {
+			if (!definitionList.map.isEmpty()) {
+				for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
+					RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
+							(Entity) entity,
+							x,
+							definitionList.finalOrderedRiderPositions().get(x)
+					));
+					RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
+							(Entity) entity,
+							x,
+							definitionList.finalOrderedRiderPositions().get(x)
+					));
+				}
+			}
+		}
 
 		this.reloadAnimations = false;
 
@@ -290,9 +293,6 @@ public class AnimationProcessor<T extends IAnimatable> {
 						MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueY, initialSnapshot.rotationValueY),
 						MathUtil.lerpValues(percentageReset, saveSnapshot.rotationValueZ, initialSnapshot.rotationValueZ)
 				);
-				if (model.getName().equals("tail0")) {
-					System.out.println(dBoneAnimationValues.getRotationsAsString(model.getName()));
-				}
 				model.setRotationX(dBoneAnimationValues.getRotations(model.getName())[0]);
 				model.setRotationY(dBoneAnimationValues.getRotations(model.getName())[1]);
 				model.setRotationZ(dBoneAnimationValues.getRotations(model.getName())[2]);

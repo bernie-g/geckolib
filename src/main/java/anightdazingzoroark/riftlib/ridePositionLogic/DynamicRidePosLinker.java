@@ -29,7 +29,6 @@ public abstract class DynamicRidePosLinker<T extends IAnimatable & IDynamicRideU
                 );
             }
         }
-
         return toReturn;
     }
 }

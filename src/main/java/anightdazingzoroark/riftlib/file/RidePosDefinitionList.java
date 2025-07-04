@@ -32,7 +32,6 @@ public class RidePosDefinitionList {
 
     public List<Vec3d> finalOrderedRiderPositions() {
         List<Vec3d> toReturn = new ArrayList<>();
-
         for (int x = 0; x < this.getOrderedIndexes().length; x++) {
             toReturn.add(map.get(this.getOrderedIndexes()[x]));
         }

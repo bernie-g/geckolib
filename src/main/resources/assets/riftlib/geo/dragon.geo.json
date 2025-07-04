@@ -31,7 +31,8 @@
 						"hitbox_hip": [0, 13.5, 5],
 						"hitbox_body_0": [0, 14, -3],
 						"hitbox_body_1": [0, 14, -10.5],
-						"rider_pos_0": [0, 19, -7.5]
+						"rider_pos_0": [0, 19, -7.5],
+						"rider_pos_1": [0, 19, 4.5]
 					}
 				},
 				{
@@ -138,7 +139,8 @@
 					"locators": {
 						"hitbox_head": [0, 16, -23.5],
 						"hitbox_jaws_0": [0, 16, -30.25],
-						"hitbox_jaws_1": [0, 16, -34.75]
+						"hitbox_jaws_1": [0, 16, -34.75],
+						"rider_pos_2": [0, 20, -24]
 					}
 				},
 				{

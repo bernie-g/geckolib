@@ -50,13 +50,17 @@ public interface IDynamicRideUser {
 
         //start with the main seat first, which is always the first item in ridePositions
         Vec3d firstPos = this.ridePositions().get(0);
+        System.out.println(this.ridePositions());
+        System.out.println("firstPos: "+firstPos);
 
         if (this.getDynamicRideUser().getControllingPassenger() != null && this.getDynamicRideUser().getControllingPassenger().equals(passenger)) {
-            this.getDynamicRideUser().rotationYaw = passenger.rotationYaw;
-            this.getDynamicRideUser().prevRotationYaw = this.getDynamicRideUser().rotationYaw;
-            this.getDynamicRideUser().rotationPitch = passenger.rotationPitch * 0.5f;
-            this.getDynamicRideUser().setRotation(this.getDynamicRideUser().rotationYaw, this.getDynamicRideUser().rotationPitch);
-            this.getDynamicRideUser().renderYawOffset = this.getDynamicRideUser().rotationYaw;
+            if (this.canRotateMounted()) {
+                this.getDynamicRideUser().rotationYaw = passenger.rotationYaw;
+                this.getDynamicRideUser().prevRotationYaw = this.getDynamicRideUser().rotationYaw;
+                this.getDynamicRideUser().rotationPitch = passenger.rotationPitch * 0.5f;
+                this.getDynamicRideUser().setRotation(this.getDynamicRideUser().rotationYaw, this.getDynamicRideUser().rotationPitch);
+                this.getDynamicRideUser().renderYawOffset = this.getDynamicRideUser().rotationYaw;
+            }
 
             passenger.setPosition(
                     this.getDynamicRideUser().posX + this.rotateOffset(firstPos).x,
@@ -86,5 +90,9 @@ public interface IDynamicRideUser {
     default float playerRideOffset(Entity entity) {
         if (entity instanceof EntityPlayer) return -0.6f;
         return 0f;
+    }
+
+    default boolean canRotateMounted() {
+        return true;
     }
 }
