@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import anightdazingzoroark.riftlib.RiftLibConfig;
 import anightdazingzoroark.riftlib.file.RidePosDefinitionList;
 import anightdazingzoroark.riftlib.geo.render.built.GeoBone;
 import anightdazingzoroark.riftlib.geo.render.built.GeoLocator;
@@ -198,10 +199,10 @@ public class AnimationProcessor<T extends IAnimatable> {
 						float newHitboxZ = -locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z;
 
 						//get magnitude of displacement
-						double dPosTotal = Math.sqrt(Math.pow(newHitboxX - hitbox.posX, 2) + Math.pow(newHitboxY - hitbox.posY, 2) + Math.pow(newHitboxZ - hitbox.posZ, 2));
+						double dPosTotal = Math.sqrt(Math.pow(newHitboxX - hitbox.getHitboxXOffset(), 2) + Math.pow(newHitboxY - hitbox.getHitboxYOffset(), 2) + Math.pow(newHitboxZ - hitbox.getHitboxZOffset(), 2));
 
 						//update positions
-						if (dPosTotal > 0.1) {
+						if (dPosTotal > RiftLibConfig.HITBOX_DISPLACEMENT_TOLERANCE) {
 							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
 									(Entity) entity,
 									hitboxName,
@@ -226,7 +227,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 						double dSizeTotal = Math.sqrt(Math.pow(newHitboxWidth - hitbox.width, 2) + Math.pow(newHitboxHeight - hitbox.height, 2));
 
 						//update sizes
-						if (dSizeTotal > 0.1) {
+						if (dSizeTotal > RiftLibConfig.HITBOX_RESIZING_TOLERANCE) {
 							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
 									(Entity) entity,
 									hitboxName,
@@ -279,7 +280,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 					double rDispTotal = Math.sqrt(rXDisp * rXDisp + rYDisp * rYDisp + rZDisp * rZDisp);
 
 					//update ride positions
-					if (rDispTotal > 0.05) {
+					if (rDispTotal > RiftLibConfig.RIDE_POS_DISPLACEMENT_TOLERANCE) {
 						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
 								(Entity) entity,
 								x,
