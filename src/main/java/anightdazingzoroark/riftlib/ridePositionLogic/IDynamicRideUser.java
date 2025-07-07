@@ -50,8 +50,6 @@ public interface IDynamicRideUser {
 
         //start with the main seat first, which is always the first item in ridePositions
         Vec3d firstPos = this.ridePositions().get(0);
-        System.out.println(this.ridePositions());
-        System.out.println("firstPos: "+firstPos);
 
         if (this.getDynamicRideUser().getControllingPassenger() != null && this.getDynamicRideUser().getControllingPassenger().equals(passenger)) {
             if (this.canRotateMounted()) {
