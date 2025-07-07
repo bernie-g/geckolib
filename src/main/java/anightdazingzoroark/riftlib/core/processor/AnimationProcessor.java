@@ -50,13 +50,14 @@ public class AnimationProcessor<T extends IAnimatable> {
 	public void tickAnimation(IAnimatable entity, Integer uniqueID, double seekTime, AnimationEvent event,
 			MolangParser parser, boolean crashWhenCantFindBone) {
 		if (seekTime != lastTickValue) {
-			animatedEntities.clear();
-		} else if (animatedEntities.contains(uniqueID)) { // Entity already animated on this tick
+			this.animatedEntities.clear();
+		}
+		else if (this.animatedEntities.contains(uniqueID)) { // Entity already animated on this tick
 			return;
 		}
 
-		lastTickValue = seekTime;
-		animatedEntities.add(uniqueID);
+		this.lastTickValue = seekTime;
+		this.animatedEntities.add(uniqueID);
 
 		// Each animation has it's own collection of animations (called the
 		// EntityAnimationManager), which allows for multiple independent animations
@@ -83,7 +84,7 @@ public class AnimationProcessor<T extends IAnimatable> {
 			controller.isJustStarting = manager.isFirstTick;
 			event.setController(controller);
 
-			controller.process(seekTime, event, modelRendererList, boneSnapshots, parser, crashWhenCantFindBone);
+			controller.process(seekTime, event, this.modelRendererList, boneSnapshots, parser, crashWhenCantFindBone);
 
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				IBone bone = boneAnimation.bone;
@@ -189,35 +190,56 @@ public class AnimationProcessor<T extends IAnimatable> {
 						//skip when hitbox is set to not be affected by animation
 						if (!hitbox.affectedByAnim) continue;
 
+						//packets for hitbox updates will not be sent if their total change
+						//is too miniscule
+						//get positions
+						float newHitboxX = locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x;
+						float newHitboxY = locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3;
+						float newHitboxZ = -locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z;
+
+						//get magnitude of displacement
+						double dPosTotal = Math.sqrt(Math.pow(newHitboxX - hitbox.posX, 2) + Math.pow(newHitboxY - hitbox.posY, 2) + Math.pow(newHitboxZ - hitbox.posZ, 2));
+
 						//update positions
-						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
-								(Entity) entity,
-								hitboxName,
-								locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-								locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
-								-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
-						));
-						RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
-								(Entity) entity,
-								hitboxName,
-								locator.positionX + (float) locator.getOffsetFromRotations().x + (float) locator.getOffsetFromDisplacements().x,
-								locator.positionY + (float) locator.getOffsetFromRotations().y + (float) locator.getOffsetFromDisplacements().y - (hitbox.initHeight / 2f) - (bone.getScaleY() - 1) / 3,
-								-locator.positionZ - (float) locator.getOffsetFromRotations().z - (float) locator.getOffsetFromDisplacements().z
-						));
+						if (dPosTotal > 0.1) {
+							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxPos(
+									(Entity) entity,
+									hitboxName,
+									newHitboxX,
+									newHitboxY,
+									newHitboxZ
+							));
+							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxPos(
+									(Entity) entity,
+									hitboxName,
+									newHitboxX,
+									newHitboxY,
+									newHitboxZ
+							));
+						}
+
+						//get sizes
+						float newHitboxWidth = Math.max(bone.getScaleX(), bone.getScaleZ());
+						float newHitboxHeight = bone.getScaleY();
+
+						//get magnitude of resizing
+						double dSizeTotal = Math.sqrt(Math.pow(newHitboxWidth - hitbox.width, 2) + Math.pow(newHitboxHeight - hitbox.height, 2));
 
 						//update sizes
-						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
-								(Entity) entity,
-								hitboxName,
-								Math.max(bone.getScaleX(), bone.getScaleZ()),
-								bone.getScaleY()
-						));
-						RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxSize(
-								(Entity) entity,
-								hitboxName,
-								Math.max(bone.getScaleX(), bone.getScaleZ()),
-								bone.getScaleY()
-						));
+						if (dSizeTotal > 0.1) {
+							RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateHitboxSize(
+									(Entity) entity,
+									hitboxName,
+									Math.max(bone.getScaleX(), bone.getScaleZ()),
+									bone.getScaleY()
+							));
+							RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateHitboxSize(
+									(Entity) entity,
+									hitboxName,
+									Math.max(bone.getScaleX(), bone.getScaleZ()),
+									bone.getScaleY()
+							));
+						}
 					}
 				}
 			}
@@ -246,16 +268,29 @@ public class AnimationProcessor<T extends IAnimatable> {
 		if (entity instanceof IDynamicRideUser) {
 			if (!definitionList.map.isEmpty()) {
 				for (int x = 0; x < definitionList.finalOrderedRiderPositions().size(); x++) {
-					RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
-							(Entity) entity,
-							x,
-							definitionList.finalOrderedRiderPositions().get(x)
-					));
-					RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
-							(Entity) entity,
-							x,
-							definitionList.finalOrderedRiderPositions().get(x)
-					));
+					//packets for ride position updates will not be sent if
+					//their total change is too miniscule
+					//get displacements
+					double rXDisp = definitionList.finalOrderedRiderPositions().get(x).x - ((IDynamicRideUser) entity).ridePositions().get(x).x;
+					double rYDisp = definitionList.finalOrderedRiderPositions().get(x).y - ((IDynamicRideUser) entity).ridePositions().get(x).y;
+					double rZDisp = definitionList.finalOrderedRiderPositions().get(x).z - ((IDynamicRideUser) entity).ridePositions().get(x).z;
+
+					//get magnitude of displacement
+					double rDispTotal = Math.sqrt(rXDisp * rXDisp + rYDisp * rYDisp + rZDisp * rZDisp);
+
+					//update ride positions
+					if (rDispTotal > 0.05) {
+						RiftLibMessage.WRAPPER.sendToAll(new RiftLibUpdateRiderPos(
+								(Entity) entity,
+								x,
+								definitionList.finalOrderedRiderPositions().get(x)
+						));
+						RiftLibMessage.WRAPPER.sendToServer(new RiftLibUpdateRiderPos(
+								(Entity) entity,
+								x,
+								definitionList.finalOrderedRiderPositions().get(x)
+						));
+					}
 				}
 			}
 		}

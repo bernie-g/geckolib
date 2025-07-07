@@ -1,5 +1,8 @@
 package anightdazingzoroark.riftlib;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
@@ -9,7 +12,10 @@ import anightdazingzoroark.riftlib.projectile.RiftLibProjectile;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSourceIndirect;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +32,16 @@ public class RiftLib {
 	private static boolean hasInitializedPre;
 	private static boolean hasInitialized;
 	public static final String VERSION = "1.0.0";
+	public static Configuration configMain;
 
+	/*
+	@Mod.EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		File directory = event.getModConfigurationDirectory();
+		configMain = new Configuration(new File(directory.getPath(), "riftlib.cfg"));
+		RiftLibConfig.readConfig();
+	}
+	 */
 
 	/**
 	 * This method MUST be called in your mod's constructor or during
