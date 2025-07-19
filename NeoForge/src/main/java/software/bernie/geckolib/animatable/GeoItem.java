@@ -43,26 +43,27 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	static long getId(ItemStack stack) {
 		CompoundTag tag = stack.getTag();
 
-		if (tag == null)
+		if (tag == null || !tag.contains(ID_NBT_KEY, Tag.TAG_ANY_NUMERIC))
 			return Long.MAX_VALUE;
 
 		return tag.getLong(ID_NBT_KEY);
 	}
 
 	/**
-	 * Gets the unique identifying number from this ItemStack's {@link net.minecraft.nbt.Tag NBT}.<br>
+	 * Gets the unique identifying number from this ItemStack's {@link net.minecraft.nbt.Tag NBT}.
+	 * <p>
 	 * If no ID has been reserved for this stack yet, it will reserve a new id and assign it
 	 */
 	static long getOrAssignId(ItemStack stack, ServerLevel level) {
 		CompoundTag tag = stack.getOrCreateTag();
-		long id = tag.getLong(ID_NBT_KEY);
+		long id;
 
-		if (tag.contains(ID_NBT_KEY, Tag.TAG_ANY_NUMERIC))
-			return id;
-
-		id = AnimatableIdCache.getFreeId(level);
-
-		tag.putLong(ID_NBT_KEY, id);
+		if (!tag.contains(ID_NBT_KEY, Tag.TAG_ANY_NUMERIC)) {
+			tag.putLong(ID_NBT_KEY, id = AnimatableIdCache.getFreeId(level));
+		}
+		else {
+			id = tag.getLong(ID_NBT_KEY);
+		}
 
 		return id;
 	}
