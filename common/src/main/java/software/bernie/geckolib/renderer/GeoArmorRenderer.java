@@ -134,8 +134,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	public long getInstanceId(T animatable, RenderData stackAndSlot) {
 		long stackId = GeoItem.getId(stackAndSlot.itemStack());
 
-		if (stackId == Long.MAX_VALUE)
-			return (long)Math.pow(stackAndSlot.entity().getId(), 7) * -(stackAndSlot.slot().ordinal() + 1);
+		if (stackId == Long.MAX_VALUE) {
+			int id = stackAndSlot.entity().getId() * 13;
+
+			return (long)id * id * id * -(stackAndSlot.slot().ordinal() + 1);
+		}
 
 		return -stackId;
 	}
