@@ -1,3 +1,5 @@
-v4.7.2
+v4.7.3
 
-- Fix GeoArmorRenderer sharing its animations when not registered as a synced animatable (#730)
+- Adjusted the dummy ID lookup for GeoArmorRenderer to improve microperformance
+- Removed an unnecessary exception wrapper to improve microperformance for GeoItems
+- Actually fixed armour syncing animations between some instances[#741]
