@@ -18,5 +18,6 @@ public class RiftLibMessage {
         WRAPPER.registerMessage(RiftLibUpdateRiderPos.Handler.class, RiftLibUpdateRiderPos.class, id++, Side.CLIENT);
         WRAPPER.registerMessage(RiftLibUpdateHitboxSize.Handler.class, RiftLibUpdateHitboxSize.class, id++, Side.SERVER);
         WRAPPER.registerMessage(RiftLibUpdateHitboxSize.Handler.class, RiftLibUpdateHitboxSize.class, id++, Side.CLIENT);
+        WRAPPER.registerMessage(RiftLibOpenUI.Handler.class, RiftLibOpenUI.class, id++, Side.CLIENT);
     }
 }

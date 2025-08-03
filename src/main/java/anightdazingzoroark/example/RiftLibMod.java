@@ -11,6 +11,7 @@ import anightdazingzoroark.example.entity.hitboxLinker.DragonHitboxLinker;
 import anightdazingzoroark.example.entity.hitboxLinker.FlyingPufferfishHitboxLinker;
 import anightdazingzoroark.example.entity.ridePosLinker.DragonRidePosLinker;
 import anightdazingzoroark.riftlib.RiftLibConfig;
+import anightdazingzoroark.riftlib.RiftLibEvent;
 import anightdazingzoroark.riftlib.RiftLibLinkerRegistry;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitbox;
 import anightdazingzoroark.riftlib.hitboxLogic.EntityHitboxRenderer;
@@ -88,6 +89,15 @@ public class RiftLibMod {
 		}
 	}
 
+	@Mod.EventHandler
+	public void init(FMLInitializationEvent event) {
+		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
+			RiftLib.initialize();
+			this.registerExampleInit(event);
+			MinecraftForge.EVENT_BUS.register(new RiftLibEvent());
+		}
+	}
+
 	@SideOnly(Side.CLIENT)
 	private void registerExamplePreInit() {
 		//linkers
@@ -107,15 +117,12 @@ public class RiftLibMod {
 	}
 
 	@SideOnly(Side.CLIENT)
-	@Mod.EventHandler
-	public void init(FMLInitializationEvent event) {
-		if (deobfuscatedEnvironment && !DISABLE_IN_DEV) {
-			RiftLib.initialize();
-			RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
-			ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
-			renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
-			GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
-		}
+	public void registerExampleInit(FMLInitializationEvent event) {
+		RiftLib.initialize();
+		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+		ReplacedCreeperRenderer creeperRenderer = new ReplacedCreeperRenderer(renderManager);
+		renderManager.entityRenderMap.put(EntityCreeper.class, creeperRenderer);
+		GeoReplacedEntityRenderer.registerReplacedEntity(ReplacedCreeperEntity.class, creeperRenderer);
 	}
 
 	@Mod.EventHandler
