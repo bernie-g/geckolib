@@ -62,8 +62,8 @@ public abstract class RiftLibUISection {
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
-        //GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        //GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), this.width * scaleFactor, this.height * scaleFactor);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), this.width * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -84,7 +84,7 @@ public abstract class RiftLibUISection {
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
 
-        //GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //draw scrollbar
         if (this.contentHeight > this.height) {
@@ -120,15 +120,14 @@ public abstract class RiftLibUISection {
                 );
             }
             else {
-                //todo: make a custom method that aligns each line in a split string to left, center, or middle
                 List<String> stringList = this.fontRenderer.listFormattedStringToWidth(textElement.getText(), (int) (sectionWidth * scale));
-                int stringWidth = (int) (Math.min(sectionWidth, this.fontRenderer.getStringWidth(stringList.get(0))) * scale);
-                int totalTextX = textElement.xOffsetFromAlignment(sectionWidth, stringWidth, x);
-                this.fontRenderer.drawSplitString(
-                        textElement.getText(),
-                        (int) (totalTextX / scale),
-                        (int) (y / scale),
-                        (int) (sectionWidth * scale),
+                this.drawImprovedSplitString(
+                        textElement,
+                        x,
+                        y,
+                        sectionWidth,
+                        sectionWidth,
+                        scale,
                         textElement.getTextColor()
                 );
                 lines = stringList.size();
@@ -150,7 +149,11 @@ public abstract class RiftLibUISection {
             GlStateManager.pushMatrix();
             if (scale != 1f) GlStateManager.scale(scale, scale, scale);
             this.minecraft.getTextureManager().bindTexture(imageElement.getImage());
-            GlStateManager.translate(totalImgX, y, 0);
+            GlStateManager.translate(
+                    totalImgX / scale,
+                    y / scale,
+                    0
+            );
             drawModalRectWithCustomSizedTexture(
                     0,
                     0,
@@ -166,6 +169,22 @@ public abstract class RiftLibUISection {
             return scaledImageHeight;
         }
         return 0;
+    }
+
+    private void drawImprovedSplitString(RiftLibUIElement.TextElement textElement, int x, int y, int wrapWidth, int sectionWidth, float scale, int color) {
+        String string = textElement.getText();
+        List<String> stringList = this.fontRenderer.listFormattedStringToWidth(string, wrapWidth);
+        for (int i = 0; i < stringList.size(); i++) {
+            String stringToRender = stringList.get(i);
+            int stringWidth = (int) (Math.min(sectionWidth, this.fontRenderer.getStringWidth(stringToRender)) * scale);
+            int totalTextX = textElement.xOffsetFromAlignment(sectionWidth, stringWidth, x);
+            this.fontRenderer.drawString(
+                    stringToRender,
+                    (int) (totalTextX / scale),
+                    (int)((y + this.fontRenderer.FONT_HEIGHT * i) / scale),
+                    color
+            );
+        }
     }
 
     //scroll management starts here

@@ -3,10 +3,15 @@ package anightdazingzoroark.riftlib.ui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RiftLibUI extends GuiScreen {
+    private List<RiftLibUISection> uiSections = new ArrayList<>();
+
     //position
     public final int x;
     public final int y;
@@ -36,6 +41,7 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        this.uiSections = this.uiSections();
     }
 
     @Override
@@ -46,8 +52,8 @@ public abstract class RiftLibUI extends GuiScreen {
         //background
         this.drawGuiContainerBackgroundLayer();
 
-        //draw all the sections in createSections
-        for (RiftLibUISection section : this.uiSections()) section.drawSectionContents(mouseX, mouseY, partialTicks);
+        //draw all the sections in uiSections
+        for (RiftLibUISection section : this.uiSections) section.drawSectionContents(mouseX, mouseY, partialTicks);
     }
 
     private void drawGuiContainerBackgroundLayer() {
@@ -63,5 +69,37 @@ public abstract class RiftLibUI extends GuiScreen {
                 this.backgroundTextureSize()[0],
                 this.backgroundTextureSize()[1]
         );
+    }
+
+    @Override
+    public void handleMouseInput() throws IOException {
+        super.handleMouseInput();
+        int delta = Mouse.getEventDWheel();
+        if (delta != 0) {
+            int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+            int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+            //handle scrolling with scrollbar on sections
+            for (RiftLibUISection section : this.uiSections) section.handleScrollWithScrollbar(mouseX, mouseY, delta);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+
+        //manually move scroll bar on sections
+        for (RiftLibUISection section : this.uiSections) section.handleClickOnScrollSection(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    protected void mouseReleased(int mouseX, int mouseY, int state) {
+        super.mouseReleased(mouseX, mouseY, state);
+        for (RiftLibUISection section : this.uiSections) section.handleReleaseClickOnScrollbar(mouseX, mouseY, state);
+    }
+
+    @Override
+    protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        for (RiftLibUISection section : this.uiSections) section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 }
