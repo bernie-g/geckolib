@@ -1,6 +1,7 @@
 package anightdazingzoroark.riftlib.ui.uiElement;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -198,7 +199,17 @@ public class RiftLibUIElement {
     }
 
     //for in-game items
-    public static class ItemElement extends Element {}
+    public static class ItemElement extends Element {
+        private ItemStack itemStack;
+
+        public void setItemStack(ItemStack itemStack) {
+            this.itemStack = itemStack;
+        }
+
+        public ItemStack getItemStack() {
+            return this.itemStack;
+        }
+    }
 
     //for representation of a tool
     public static class ToolElement extends Element {}

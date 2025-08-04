@@ -1,13 +1,18 @@
 package anightdazingzoroark.riftlib.ui;
 
+import anightdazingzoroark.riftlib.RiftLibJEI;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.minecraft.client.gui.Gui.drawModalRectWithCustomSizedTexture;
@@ -40,6 +45,9 @@ public abstract class RiftLibUISection {
     protected final Minecraft minecraft;
     protected final FontRenderer fontRenderer;
 
+    //for being able hover over items and see their jei recipes
+    private final List<ItemClickRegion> itemClickRegions = new ArrayList<>();
+
     public RiftLibUISection(int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
         this.guiWidth = guiWidth;
         this.guiHeight = guiHeight;
@@ -56,14 +64,17 @@ public abstract class RiftLibUISection {
 
     //draw contents as defined in defineSectionContents()
     public void drawSectionContents(int mouseX, int mouseY, float partialTicks) {
-        int sectionX = (this.guiWidth - this.width) / 2 + this.xPos;
+        //preemptively clear lists
+        this.itemClickRegions.clear();
+
+        int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
 
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), this.width * scaleFactor, this.height * scaleFactor);
+        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -74,7 +85,7 @@ public abstract class RiftLibUISection {
             RiftLibUIElement.Element element = this.defineSectionContents().get(i);
 
             //draw the elements and add up their height
-            totalHeight += this.drawElement(element, this.width, sectionX, drawY + totalHeight, mouseX, mouseY, partialTicks);
+            totalHeight += this.drawElement(element, this.width - this.scrollbarWidth, sectionX, drawY + totalHeight, mouseX, mouseY, partialTicks);
 
             //extra bottom height for certain elements
             if (i < this.defineSectionContents().size() - 1) totalHeight += element.getBottomSpace();
@@ -100,6 +111,11 @@ public abstract class RiftLibUISection {
 
     //return value is the total height created by these elements
     private int drawElement(RiftLibUIElement.Element element, int sectionWidth, int x, int y, int mouseX, int mouseY, float partialTicks) {
+        //for items that have select, hover, or click functionalities
+        //this is to ensure that items out of bounds dont get interacted with ever
+        int sectionTop = (this.guiHeight - this.height) / 2 + this.yPos;
+        int sectionBottom = sectionTop + this.height;
+
         if (element instanceof RiftLibUIElement.TextElement) {
             RiftLibUIElement.TextElement textElement = (RiftLibUIElement.TextElement) element;
             float scale = textElement.getScale();
@@ -168,6 +184,33 @@ public abstract class RiftLibUISection {
 
             return scaledImageHeight;
         }
+        else if (element instanceof RiftLibUIElement.ItemElement) {
+            RiftLibUIElement.ItemElement itemElement = (RiftLibUIElement.ItemElement) element;
+            float scale = itemElement.getScale();
+
+            ItemStack itemStack = itemElement.getItemStack();
+
+            int scaledItemSize = (int) (16 * scale);
+            int totalItemX = itemElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
+
+            int scaledItemX = (int) (totalItemX / scale);
+            int scaledItemY = (int) (y / scale);
+
+            if (scale != 1f) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(scale, scale, scale);
+            }
+            this.renderItem(
+                    itemStack,
+                    scaledItemX,
+                    scaledItemY
+            );
+            if (scale != 1f) GlStateManager.popMatrix();
+
+            //for being able hover over items and see their jei recipes
+            this.itemClickRegions.add(new ItemClickRegion(itemStack, totalItemX, y, scaledItemSize, sectionTop, sectionBottom));
+            return scaledItemSize;
+        }
         return 0;
     }
 
@@ -185,6 +228,19 @@ public abstract class RiftLibUISection {
                     color
             );
         }
+    }
+
+    private void drawRectOutline(int x, int y, int w, int h, int color) {
+        drawRect(x, y, x + w, y + 1, color);             // top
+        drawRect(x, y + h - 1, x + w, y + h, color);     // bottom
+        drawRect(x, y, x + 1, y + h, color);             // left
+        drawRect(x + w - 1, y, x + w, y + h, color);     // right
+    }
+
+    private void renderItem(ItemStack stack, int x, int y) {
+        RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
+        renderItem.renderItemAndEffectIntoGUI(stack, x, y);
+        renderItem.renderItemOverlayIntoGUI(this.fontRenderer, stack, x, y, null);
     }
 
     //scroll management starts here
@@ -255,4 +311,47 @@ public abstract class RiftLibUISection {
         this.scrollOffset = value;
     }
     //scroll management stops here
+
+    //item element related stuff starts here
+    private static class ItemClickRegion {
+        private final ItemStack stack;
+        private final int x, y, size;
+        private final int sectionTop, sectionBottom;
+
+        private ItemClickRegion(ItemStack stack, int x, int y, int size, int sectionTop, int sectionBottom) {
+            this.stack = stack;
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.sectionTop = sectionTop;
+            this.sectionBottom = sectionBottom;
+        }
+
+        private boolean isHovered(int mouseX, int mouseY) {
+            return mouseX >= this.x && mouseX < this.x + this.size && mouseY >= this.y && mouseY < this.y + this.size
+                    && mouseY > this.sectionTop && mouseY < this.sectionBottom;
+        }
+    }
+
+    public void itemElementClicked(int mouseX, int mouseY, int button) {
+        //for item clicking
+        for (ItemClickRegion region : this.itemClickRegions) {
+            if (region.isHovered(mouseX, mouseY)) {
+                if (Loader.isModLoaded(RiftLibJEI.JEI_MOD_ID)) {
+                    RiftLibJEI.showRecipesForItemStack(region.stack, false);
+                }
+                break;
+            }
+        }
+    }
+
+    public ItemStack getHoveredItemStack(int mouseX, int mouseY) {
+        for (ItemClickRegion region : this.itemClickRegions) {
+            if (region.isHovered(mouseX, mouseY)) {
+                return region.stack;
+            }
+        }
+        return null;
+    }
+    //item element related stuff ends here
 }

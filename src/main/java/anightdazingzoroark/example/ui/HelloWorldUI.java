@@ -4,6 +4,8 @@ import anightdazingzoroark.riftlib.RiftLib;
 import anightdazingzoroark.riftlib.ui.RiftLibUI;
 import anightdazingzoroark.riftlib.ui.RiftLibUISection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.ArrayList;
@@ -72,8 +74,16 @@ public class HelloWorldUI extends RiftLibUI {
                         0
                 );
                 imageElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
-                //imageElement.setScale(2f);
                 elementsToReturn.add(imageElement);
+
+                //item test
+                RiftLibUIElement.ItemElement itemElement = new RiftLibUIElement.ItemElement();
+                itemElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                Item stickItem = Item.getByNameOrId("minecraft:stick");
+                if (stickItem != null) {
+                    itemElement.setItemStack(new ItemStack(stickItem));
+                    elementsToReturn.add(itemElement);
+                }
 
                 return elementsToReturn;
             }

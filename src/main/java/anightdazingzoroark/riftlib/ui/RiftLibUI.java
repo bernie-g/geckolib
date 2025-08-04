@@ -1,8 +1,12 @@
 package anightdazingzoroark.riftlib.ui;
 
+import anightdazingzoroark.riftlib.RiftLibJEI;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -41,7 +45,7 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        this.uiSections = this.uiSections();
+        if (this.uiSections.isEmpty() && !this.uiSections().isEmpty()) this.uiSections = this.uiSections();
     }
 
     @Override
@@ -52,8 +56,26 @@ public abstract class RiftLibUI extends GuiScreen {
         //background
         this.drawGuiContainerBackgroundLayer();
 
-        //draw all the sections in uiSections
-        for (RiftLibUISection section : this.uiSections) section.drawSectionContents(mouseX, mouseY, partialTicks);
+        //hovered item will be defined when iterating over the sections
+        ItemStack hoveredItem = null;
+
+        //iterate over all ui sections
+        for (RiftLibUISection section : this.uiSections) {
+            //draw all the sections in uiSections
+            section.drawSectionContents(mouseX, mouseY, partialTicks);
+
+            //assign hovered item as long as its originally null
+            if (hoveredItem == null) hoveredItem = section.getHoveredItemStack(mouseX, mouseY);
+        }
+
+        //show overlay info regarding hovered item
+        if (hoveredItem != null) {
+            List<String> tooltip = new ArrayList<>();
+
+            tooltip.add(hoveredItem.getDisplayName());
+            if (Loader.isModLoaded(RiftLibJEI.JEI_MOD_ID)) tooltip.add(I18n.format("ui.open_in_jei"));
+            this.drawHoveringText(tooltip, mouseX, mouseY);
+        }
     }
 
     private void drawGuiContainerBackgroundLayer() {
@@ -87,8 +109,13 @@ public abstract class RiftLibUI extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
-        //manually move scroll bar on sections
-        for (RiftLibUISection section : this.uiSections) section.handleClickOnScrollSection(mouseX, mouseY, mouseButton);
+        for (RiftLibUISection section : this.uiSections) {
+            //skip to clicked position scroll bar on sections
+            section.handleClickOnScrollSection(mouseX, mouseY, mouseButton);
+
+            //open jei for items
+            section.itemElementClicked(mouseX, mouseY, mouseButton);
+        }
     }
 
     @Override

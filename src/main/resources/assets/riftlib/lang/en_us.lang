@@ -11,3 +11,5 @@ tile.riftlib.fertilizerblock.name=Fertilizer
 
 entity.dragon.name=Red Dragon
 entity.flying_pufferfish.name=Flying Pufferfish
+
+ui.open_in_jei=Click to open in JEI
