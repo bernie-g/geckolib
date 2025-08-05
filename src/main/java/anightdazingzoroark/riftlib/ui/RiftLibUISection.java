@@ -1,6 +1,7 @@
 package anightdazingzoroark.riftlib.ui;
 
 import anightdazingzoroark.riftlib.RiftLibJEI;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -53,6 +54,12 @@ public abstract class RiftLibUISection {
     //for being able to hover over tools and see hover text
     private final List<ToolHoverRegion> toolHoverRegions = new ArrayList<>();
 
+    //for dealing with active buttons
+    private final List<RiftLibButtonElement> activeButtons = new ArrayList<>();
+
+    //logic involved in disabling buttons
+    private final List<String> disabledButtonIds = new ArrayList<>();
+
     public RiftLibUISection(int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
         this.guiWidth = guiWidth;
         this.guiHeight = guiHeight;
@@ -72,6 +79,7 @@ public abstract class RiftLibUISection {
         //preemptively clear lists
         this.itemClickRegions.clear();
         this.toolHoverRegions.clear();
+        this.activeButtons.clear();
 
         int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -79,8 +87,8 @@ public abstract class RiftLibUISection {
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
-        //GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        //GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -101,7 +109,7 @@ public abstract class RiftLibUISection {
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
 
-        //GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //draw scrollbar
         if (this.contentHeight > this.height) {
@@ -273,6 +281,26 @@ public abstract class RiftLibUISection {
                 ));
             }
             return scaledItemSize + (int) (4 * scale);
+        }
+        else if (element instanceof RiftLibUIElement.ButtonElement) {
+            RiftLibUIElement.ButtonElement buttonElement = (RiftLibUIElement.ButtonElement) element;
+
+            int buttonW = buttonElement.getSize()[0];
+            int buttonH = buttonElement.getSize()[1];
+            int buttonX = buttonElement.xOffsetFromAlignment(sectionWidth, buttonW, x);
+
+            RiftLibButtonElement button = new RiftLibButtonElement(buttonElement.getID(), buttonX, y, buttonW, buttonH, buttonElement.getName());
+            button.scrollTop = sectionTop;
+            button.scrollBottom = sectionBottom;
+            if (this.disabledButtonIds.contains(buttonElement.getID())) button.enabled = false;
+
+            //only render and register button if its within visible bounds
+            if ((y + buttonH) > sectionTop && y < sectionBottom) {
+                button.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+            }
+            this.activeButtons.add(button);
+
+            return buttonH;
         }
         return 0;
     }
@@ -457,4 +485,15 @@ public abstract class RiftLibUISection {
         return "";
     }
     //tool element related stuff ends here
+
+    //button related stuff starts here
+    public List<RiftLibButtonElement> getActiveButtons() {
+        return this.activeButtons;
+    }
+
+    public void setButtonEnabled(String id, boolean value) {
+        if (value) this.disabledButtonIds.remove(id);
+        else this.disabledButtonIds.add(id);
+    }
+    //button related stuff ends here
 }

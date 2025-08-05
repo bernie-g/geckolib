@@ -240,19 +240,39 @@ public class RiftLibUIElement {
         public int getMiningLevel() {
             return this.miningLevel;
         }
+    }
 
-        public int miningLevelXOffset(int sectionWidth, int elementWidth, int x) {
-            if (this.getAlignment() == ALIGN_LEFT) return x + 9;
-            else if (this.getAlignment() == ALIGN_CENTER) return x + (sectionWidth - elementWidth) / 2 + 9;
-            else if (this.getAlignment() == ALIGN_RIGHT) return x + sectionWidth - elementWidth + 9;
-            return 0;
+    public static class ButtonElement extends Element {
+        private String buttonText;
+        private int[] size = {60, 20};
+
+        public void setText(String name) {
+            this.buttonText = name;
+        }
+
+        public String getName() {
+            return this.buttonText;
+        }
+
+        public void setSize(int width, int height) {
+            this.size = new int[]{width, height};
+        }
+
+        public int[] getSize() {
+            return this.size;
         }
     }
 
-    public static class ButtonElement extends Element {}
-
     //a clickable section is a button element but with a custom texture
-    public static class ClickableSectionElement extends Element {}
+    public static class ClickableSectionElement extends Element {
+
+    }
+
+    //for special boxes where you enter text
+    public static class TextBoxElement extends Element {}
+
+    //for progress bars that fill up based on a certain percentage
+    public static class ProgressBarElement extends Element {}
 
     //render an entity
     public static class RenderedEntityElement extends Element {

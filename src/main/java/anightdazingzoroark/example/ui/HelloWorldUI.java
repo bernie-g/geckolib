@@ -3,6 +3,7 @@ package anightdazingzoroark.example.ui;
 import anightdazingzoroark.riftlib.RiftLib;
 import anightdazingzoroark.riftlib.ui.RiftLibUI;
 import anightdazingzoroark.riftlib.ui.RiftLibUISection;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -85,7 +86,7 @@ public class HelloWorldUI extends RiftLibUI {
                     elementsToReturn.add(itemElement);
                 }
 
-                //tool 1 test
+                //tool  test
                 RiftLibUIElement.ToolElement toolElement = new RiftLibUIElement.ToolElement();
                 toolElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
                 toolElement.setToolType("pickaxe");
@@ -93,6 +94,22 @@ public class HelloWorldUI extends RiftLibUI {
                 toolElement.setOverlayText("ui.hovered_tool");
                 toolElement.setScale(1f);
                 elementsToReturn.add(toolElement);
+
+                //button test
+                RiftLibUIElement.ButtonElement buttonElement = new RiftLibUIElement.ButtonElement();
+                buttonElement.setText("My Button");
+                buttonElement.setID("myButton");
+                buttonElement.setSize(80, 20);
+                buttonElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                elementsToReturn.add(buttonElement);
+
+                //deactivatable button test
+                RiftLibUIElement.ButtonElement deactivatableButton = new RiftLibUIElement.ButtonElement();
+                deactivatableButton.setText("Deactivatable Button");
+                deactivatableButton.setID("deactivatable");
+                deactivatableButton.setSize(100, 20);
+                deactivatableButton.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                elementsToReturn.add(deactivatableButton);
 
                 return elementsToReturn;
             }
@@ -119,5 +136,17 @@ public class HelloWorldUI extends RiftLibUI {
     @Override
     public int[] backgroundSize() {
         return new int[]{176, 166};
+    }
+
+    @Override
+    public void onButtonClicked(RiftLibButtonElement button) {
+        if (button.buttonId.equals("myButton")) {
+            //get deactivatable button
+            RiftLibButtonElement deactivatableButton = this.getButtonByID("deactivatable");
+
+            if (deactivatableButton != null) {
+                this.setButtonUsabilityByID("deactivatable", !deactivatableButton.enabled);
+            }
+        }
     }
 }

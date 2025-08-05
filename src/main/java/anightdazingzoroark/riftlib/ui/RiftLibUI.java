@@ -1,6 +1,7 @@
 package anightdazingzoroark.riftlib.ui;
 
 import anightdazingzoroark.riftlib.RiftLibJEI;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -97,6 +98,8 @@ public abstract class RiftLibUI extends GuiScreen {
         );
     }
 
+    public abstract void onButtonClicked(RiftLibButtonElement button);
+
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
@@ -119,6 +122,20 @@ public abstract class RiftLibUI extends GuiScreen {
 
             //open jei for items
             section.itemElementClicked(mouseX, mouseY, mouseButton);
+
+            //button clicking
+            //all the additional logic here is for ensuring clicking out of bounds results in nothing
+            int sectionTop = (section.guiHeight - section.height) / 2 + section.yPos;
+            int sectionBottom = sectionTop + section.height;
+            for (RiftLibButtonElement button : section.getActiveButtons()) {
+                int buttonTop = button.y;
+                int buttonBottom = button.y + button.height;
+                boolean clickWithinVisiblePart = mouseY >= Math.max(buttonTop, sectionTop) && mouseY <= Math.min(buttonBottom, sectionBottom);
+                if (clickWithinVisiblePart && button.mousePressed(this.mc, mouseX, mouseY)) {
+                    button.playPressSound(this.mc.getSoundHandler());
+                    this.onButtonClicked(button);
+                }
+            }
         }
     }
 
@@ -132,5 +149,22 @@ public abstract class RiftLibUI extends GuiScreen {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         for (RiftLibUISection section : this.uiSections) section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+    }
+
+    protected RiftLibButtonElement getButtonByID(String id) {
+        for (RiftLibUISection section : this.uiSections) {
+            for (RiftLibButtonElement button : section.getActiveButtons()) {
+                if (button.buttonId.equals(id)) return button;
+            }
+        }
+        return null;
+    }
+
+    protected void setButtonUsabilityByID(String id, boolean value) {
+        for (RiftLibUISection section : this.uiSections) {
+            for (RiftLibButtonElement button : section.getActiveButtons()) {
+                if (button.buttonId.equals(id)) section.setButtonEnabled(id, value);
+            }
+        }
     }
 }
