@@ -3,7 +3,8 @@ package anightdazingzoroark.example.ui;
 import anightdazingzoroark.riftlib.RiftLib;
 import anightdazingzoroark.riftlib.ui.RiftLibUI;
 import anightdazingzoroark.riftlib.ui.RiftLibUISection;
-import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -111,6 +112,29 @@ public class HelloWorldUI extends RiftLibUI {
                 deactivatableButton.setAlignment(RiftLibUIElement.ALIGN_CENTER);
                 elementsToReturn.add(deactivatableButton);
 
+                //clickable section test
+                RiftLibUIElement.ClickableSectionElement clickableSection = new RiftLibUIElement.ClickableSectionElement();
+                clickableSection.setSize(60, 20);
+                clickableSection.setID("selectableSection");
+                clickableSection.setTextContent("Click Me!");
+                clickableSection.setTextOffsets(0, 1);
+                clickableSection.setTextScale(0.75f);
+                clickableSection.setImage(
+                        new ResourceLocation(RiftLib.ModID, "textures/ui/example_clickable_section.png"),
+                        60,
+                        60,
+                        60,
+                        20,
+                        0,
+                        0,
+                        0,
+                        20
+                );
+                clickableSection.setImageSelectedUV(0, 40);
+                clickableSection.setImageScale(0.5f);
+                clickableSection.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
+                elementsToReturn.add(clickableSection);
+
                 return elementsToReturn;
             }
         });
@@ -139,13 +163,24 @@ public class HelloWorldUI extends RiftLibUI {
     }
 
     @Override
-    public void onButtonClicked(RiftLibButtonElement button) {
+    public void onButtonClicked(RiftLibButton button) {
         if (button.buttonId.equals("myButton")) {
             //get deactivatable button
-            RiftLibButtonElement deactivatableButton = this.getButtonByID("deactivatable");
+            RiftLibButton deactivatableButton = this.getButtonByID("deactivatable");
 
             if (deactivatableButton != null) {
                 this.setButtonUsabilityByID("deactivatable", !deactivatableButton.enabled);
+            }
+        }
+    }
+
+    @Override
+    public void onClickableSectionClicked(RiftLibClickableSection clickableSection) {
+        if (clickableSection.getStringID().equals("selectableSection")) {
+            RiftLibClickableSection sectionToSelect = this.getClickableSectionByID("selectableSection");
+
+            if (sectionToSelect != null) {
+                this.setSelectClickableSectionByID("selectableSection", !sectionToSelect.isSelected());
             }
         }
     }

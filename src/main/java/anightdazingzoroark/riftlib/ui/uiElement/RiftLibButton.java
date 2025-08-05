@@ -5,12 +5,12 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class RiftLibButtonElement extends GuiButton {
+public class RiftLibButton extends GuiButton {
     public final String buttonId;
     public int scrollTop = Integer.MIN_VALUE;
     public int scrollBottom = Integer.MAX_VALUE;
 
-    public RiftLibButtonElement(String buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
+    public RiftLibButton(String buttonId, int x, int y, int widthIn, int heightIn, String buttonText) {
         super(0, x, y, widthIn, heightIn, buttonText);
         this.buttonId = buttonId;
     }

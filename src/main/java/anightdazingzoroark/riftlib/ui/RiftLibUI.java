@@ -1,7 +1,8 @@
 package anightdazingzoroark.riftlib.ui;
 
 import anightdazingzoroark.riftlib.RiftLibJEI;
-import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -101,7 +102,9 @@ public abstract class RiftLibUI extends GuiScreen {
         );
     }
 
-    public abstract void onButtonClicked(RiftLibButtonElement button);
+    public abstract void onButtonClicked(RiftLibButton button);
+
+    public abstract void onClickableSectionClicked(RiftLibClickableSection clickableSection);
 
     @Override
     public void handleMouseInput() throws IOException {
@@ -126,17 +129,29 @@ public abstract class RiftLibUI extends GuiScreen {
             //open jei for items
             section.itemElementClicked(mouseX, mouseY, mouseButton);
 
-            //button clicking
-            //all the additional logic here is for ensuring clicking out of bounds results in nothing
+            //all the additional logic here is for ensuring clicking smth out of bounds results in nothing
             int sectionTop = (section.guiHeight - section.height) / 2 + section.yPos;
             int sectionBottom = sectionTop + section.height;
-            for (RiftLibButtonElement button : section.getActiveButtons()) {
+
+            //button clicking
+            for (RiftLibButton button : section.getActiveButtons()) {
                 int buttonTop = button.y;
                 int buttonBottom = button.y + button.height;
                 boolean clickWithinVisiblePart = mouseY >= Math.max(buttonTop, sectionTop) && mouseY <= Math.min(buttonBottom, sectionBottom);
                 if (clickWithinVisiblePart && button.mousePressed(this.mc, mouseX, mouseY)) {
                     button.playPressSound(this.mc.getSoundHandler());
                     this.onButtonClicked(button);
+                }
+            }
+
+            //clickable section clicking
+            for (RiftLibClickableSection clickableSection : section.getClickableSections()) {
+                int clickableSectionTop = clickableSection.minClickableArea()[1];
+                int clickableSectionBottom = clickableSection.maxClickableArea()[1];
+                boolean clickWithinVisiblePart = mouseY >= Math.max(clickableSectionTop, sectionTop) && mouseY <= Math.min(clickableSectionBottom, sectionBottom);
+                if (clickWithinVisiblePart && clickableSection.isHovered(mouseX, mouseY)) {
+                    clickableSection.playPressSound(this.mc.getSoundHandler());
+                    this.onClickableSectionClicked(clickableSection);
                 }
             }
         }
@@ -154,9 +169,9 @@ public abstract class RiftLibUI extends GuiScreen {
         for (RiftLibUISection section : this.uiSections) section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
     }
 
-    protected RiftLibButtonElement getButtonByID(String id) {
+    protected RiftLibButton getButtonByID(String id) {
         for (RiftLibUISection section : this.uiSections) {
-            for (RiftLibButtonElement button : section.getActiveButtons()) {
+            for (RiftLibButton button : section.getActiveButtons()) {
                 if (button.buttonId.equals(id)) return button;
             }
         }
@@ -165,16 +180,26 @@ public abstract class RiftLibUI extends GuiScreen {
 
     protected void setButtonUsabilityByID(String id, boolean value) {
         for (RiftLibUISection section : this.uiSections) {
-            for (RiftLibButtonElement button : section.getActiveButtons()) {
+            for (RiftLibButton button : section.getActiveButtons()) {
                 if (button.buttonId.equals(id)) section.setButtonEnabled(id, value);
             }
         }
     }
 
-    protected void setSectionVisibilityByID(String id, boolean value) {
+    protected RiftLibClickableSection getClickableSectionByID(String id) {
         for (RiftLibUISection section : this.uiSections) {
-            if (value) this.hiddenUISections.remove(id);
-            else this.hiddenUISections.add(id);
+            for (RiftLibClickableSection clickableSection : section.getClickableSections()) {
+                if (clickableSection.getStringID().equals(id)) return clickableSection;
+            }
+        }
+        return null;
+    }
+
+    protected void setSelectClickableSectionByID(String id, boolean value) {
+        for (RiftLibUISection section : this.uiSections) {
+            for (RiftLibClickableSection clickableSection : section.getClickableSections()) {
+                if (clickableSection.getStringID().equals(id)) section.setClickableSectionSelected(id, value);
+            }
         }
     }
 }

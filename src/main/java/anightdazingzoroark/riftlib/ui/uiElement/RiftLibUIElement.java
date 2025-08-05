@@ -265,7 +265,122 @@ public class RiftLibUIElement {
 
     //a clickable section is a button element but with a custom texture
     public static class ClickableSectionElement extends Element {
+        private int[] size; //size of clickable element
 
+        private String textContent = "";
+        private int textColor = 0x000000;
+        private int textHoveredColor = 0xFFFFFF;
+        private int textSelectedColor = 0xFFFF00;
+        private float textScale = 1f;
+        private int[] textOffsets = {0, 0};
+
+        private ResourceLocation imageContent;
+        private int[] textureSize; //size of the entire texture
+        private int[] imageUV; //uv start pos of texture
+        private int[] imageHoveredUV; //uv start pos of texture when hovered
+        private int[] imageSelectedUV;
+        private int[] uvSize; //size of the portion of the texture to be used
+        private float imageScale = 1f;
+
+        public void setSize(int width, int height) {
+            this.size = new int[]{width, height};
+        }
+
+        public int[] getSize() {
+            return this.size;
+        }
+
+        public void setTextContent(String value) {
+            this.textContent = value;
+        }
+
+        public String getTextContent() {
+            return this.textContent;
+        }
+
+        public void setTextColor(int value) {
+            this.textColor = value;
+        }
+
+        public int getTextColor() {
+            return this.textColor;
+        }
+
+        public void setTextHoveredColor(int value) {
+            this.textHoveredColor = value;
+        }
+
+        public int getTextHoveredColor() {
+            return this.textHoveredColor;
+        }
+
+        public void setTextSelectedColor(int value) {
+            this.textSelectedColor = value;
+        }
+
+        public int getTextSelectedColor() {
+            return this.textSelectedColor;
+        }
+
+        public void setTextScale(float value) {
+            this.textScale = value;
+        }
+
+        public float getTextScale() {
+            return this.textScale;
+        }
+
+        public void setTextOffsets(int xOffset, int yOffset) {
+            this.textOffsets = new int[]{xOffset, yOffset};
+        }
+
+        public int[] getTextOffsets() {
+            return this.textOffsets;
+        }
+
+        public void setImage(ResourceLocation location, int textureWidth, int textureHeight, int uvWidth, int uvHeight, int uvX, int uvY, int uvHoveredX, int uvHoveredY) {
+            this.imageContent = location;
+            this.textureSize = new int[]{textureWidth, textureHeight};
+            this.imageUV = new int[]{uvX, uvY};
+            this.imageHoveredUV = new int[]{uvHoveredX, uvHoveredY};
+            this.uvSize = new int[]{uvWidth, uvHeight};
+        }
+
+        public ResourceLocation getImage() {
+            return this.imageContent;
+        }
+
+        public int[] getImageSize() {
+            return this.textureSize;
+        }
+
+        public int[] getImageUV() {
+            return this.imageUV;
+        }
+
+        public int[] getImageHoveredUV() {
+            return this.imageHoveredUV;
+        }
+
+        public int[] getUVSize() {
+            return this.uvSize;
+        }
+
+        public void setImageSelectedUV(int uvX, int uvY) {
+            this.imageSelectedUV = new int[]{uvX, uvY};
+        }
+
+        public int[] getImageSelectedUV() {
+            return this.imageSelectedUV;
+        }
+
+        public void setImageScale(float value) {
+            this.imageScale = value;
+        }
+
+        public float getImageScale() {
+            return this.imageScale;
+        }
     }
 
     //for special boxes where you enter text

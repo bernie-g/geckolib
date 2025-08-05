@@ -1,7 +1,8 @@
 package anightdazingzoroark.riftlib.ui;
 
 import anightdazingzoroark.riftlib.RiftLibJEI;
-import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButtonElement;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -57,7 +58,11 @@ public abstract class RiftLibUISection {
     private final List<ToolHoverRegion> toolHoverRegions = new ArrayList<>();
 
     //for dealing with active buttons
-    private final List<RiftLibButtonElement> activeButtons = new ArrayList<>();
+    private final List<RiftLibButton> activeButtons = new ArrayList<>();
+
+    //for dealing with clickable sections
+    private final List<RiftLibClickableSection> clickableSections = new ArrayList<>();
+    private final List<String> selectedClickableSections = new ArrayList<>();
 
     //logic involved in disabling buttons
     private final List<String> disabledButtonIds = new ArrayList<>();
@@ -83,6 +88,7 @@ public abstract class RiftLibUISection {
         this.itemClickRegions.clear();
         this.toolHoverRegions.clear();
         this.activeButtons.clear();
+        this.clickableSections.clear();
 
         int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -292,7 +298,7 @@ public abstract class RiftLibUISection {
             int buttonH = buttonElement.getSize()[1];
             int buttonX = buttonElement.xOffsetFromAlignment(sectionWidth, buttonW, x);
 
-            RiftLibButtonElement button = new RiftLibButtonElement(buttonElement.getID(), buttonX, y, buttonW, buttonH, buttonElement.getName());
+            RiftLibButton button = new RiftLibButton(buttonElement.getID(), buttonX, y, buttonW, buttonH, buttonElement.getName());
             button.scrollTop = sectionTop;
             button.scrollBottom = sectionBottom;
             if (this.disabledButtonIds.contains(buttonElement.getID())) button.enabled = false;
@@ -304,6 +310,69 @@ public abstract class RiftLibUISection {
             this.activeButtons.add(button);
 
             return buttonH;
+        }
+        else if (element instanceof RiftLibUIElement.ClickableSectionElement) {
+            RiftLibUIElement.ClickableSectionElement clickableSectionElement = (RiftLibUIElement.ClickableSectionElement) element;
+
+            int sectionW = clickableSectionElement.getSize()[0];
+            int sectionH = clickableSectionElement.getSize()[1];
+            int sectionX = clickableSectionElement.xOffsetFromAlignment(sectionWidth, sectionW, x);
+
+            //make section
+            RiftLibClickableSection clickableSection = new RiftLibClickableSection(
+                    sectionW,
+                    sectionH,
+                    sectionW,
+                    sectionH,
+                    sectionX,
+                    y,
+                    this.fontRenderer,
+                    this.minecraft
+            );
+            clickableSection.setID(clickableSectionElement.getID());
+            clickableSection.scrollTop = sectionTop;
+            clickableSection.scrollBottom = sectionBottom;
+
+            //text rendering
+            if (!clickableSectionElement.getTextContent().isEmpty()) {
+                clickableSection.addString(
+                        clickableSectionElement.getTextContent(),
+                        false,
+                        clickableSectionElement.getTextColor(),
+                        clickableSectionElement.getTextOffsets()[0],
+                        clickableSectionElement.getTextOffsets()[1],
+                        clickableSectionElement.getTextScale()
+                );
+                clickableSection.setStringHoveredColor(clickableSectionElement.getTextHoveredColor());
+                clickableSection.setStringSelectedColor(clickableSectionElement.getTextSelectedColor());
+            }
+
+            //image rendering
+            if (clickableSectionElement.getImage() != null) {
+                clickableSection.addImage(
+                        clickableSectionElement.getImage(),
+                        clickableSectionElement.getUVSize()[0],
+                        clickableSectionElement.getUVSize()[1],
+                        clickableSectionElement.getImageSize()[0],
+                        clickableSectionElement.getImageSize()[1],
+                        clickableSectionElement.getImageUV()[0],
+                        clickableSectionElement.getImageUV()[1],
+                        clickableSectionElement.getImageHoveredUV()[0],
+                        clickableSectionElement.getImageHoveredUV()[1]
+                );
+                clickableSection.setScale(clickableSectionElement.getImageScale());
+                if (clickableSectionElement.getImageSelectedUV() != null) clickableSection.setSelectedUV(clickableSectionElement.getImageSelectedUV()[0], clickableSectionElement.getImageSelectedUV()[1]);
+            }
+
+            if (this.selectedClickableSections.contains(clickableSectionElement.getID())) clickableSection.setSelected(true);
+
+            //only render and register section if its within visible bounds
+            if ((y + sectionH) > sectionTop && y < sectionBottom) {
+                clickableSection.drawSection(mouseX, mouseY);
+            }
+            this.clickableSections.add(clickableSection);
+
+            return sectionH;
         }
         return 0;
     }
@@ -490,7 +559,7 @@ public abstract class RiftLibUISection {
     //tool element related stuff ends here
 
     //button related stuff starts here
-    public List<RiftLibButtonElement> getActiveButtons() {
+    public List<RiftLibButton> getActiveButtons() {
         return this.activeButtons;
     }
 
@@ -499,4 +568,15 @@ public abstract class RiftLibUISection {
         else this.disabledButtonIds.add(id);
     }
     //button related stuff ends here
+
+    //clickable section stuff starts here
+    public List<RiftLibClickableSection> getClickableSections() {
+        return this.clickableSections;
+    }
+
+    public void setClickableSectionSelected(String id, boolean value) {
+        if (value) this.selectedClickableSections.add(id);
+        else this.selectedClickableSections.remove(id);
+    }
+    //clickable section stuff ends here
 }
