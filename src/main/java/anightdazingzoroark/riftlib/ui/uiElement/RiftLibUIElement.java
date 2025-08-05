@@ -212,7 +212,42 @@ public class RiftLibUIElement {
     }
 
     //for representation of a tool
-    public static class ToolElement extends Element {}
+    public static class ToolElement extends Element {
+        private String overlayText = "";
+        private String toolType;
+        private int miningLevel = -1;
+
+        public void setOverlayText(String value) {
+            this.overlayText = value;
+        }
+
+        public String getOverlayText() {
+            return this.overlayText;
+        }
+
+        public void setToolType(String value) {
+            this.toolType = value;
+        }
+
+        public String getToolType() {
+            return this.toolType;
+        }
+
+        public void setMiningLevel(int value) {
+            this.miningLevel = value;
+        }
+
+        public int getMiningLevel() {
+            return this.miningLevel;
+        }
+
+        public int miningLevelXOffset(int sectionWidth, int elementWidth, int x) {
+            if (this.getAlignment() == ALIGN_LEFT) return x + 9;
+            else if (this.getAlignment() == ALIGN_CENTER) return x + (sectionWidth - elementWidth) / 2 + 9;
+            else if (this.getAlignment() == ALIGN_RIGHT) return x + sectionWidth - elementWidth + 9;
+            return 0;
+        }
+    }
 
     public static class ButtonElement extends Element {}
 

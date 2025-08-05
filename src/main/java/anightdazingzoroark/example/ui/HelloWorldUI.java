@@ -85,6 +85,15 @@ public class HelloWorldUI extends RiftLibUI {
                     elementsToReturn.add(itemElement);
                 }
 
+                //tool 1 test
+                RiftLibUIElement.ToolElement toolElement = new RiftLibUIElement.ToolElement();
+                toolElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                toolElement.setToolType("pickaxe");
+                toolElement.setMiningLevel(2);
+                toolElement.setOverlayText("ui.hovered_tool");
+                toolElement.setScale(1f);
+                elementsToReturn.add(toolElement);
+
                 return elementsToReturn;
             }
         });

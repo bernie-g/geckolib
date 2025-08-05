@@ -7,6 +7,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.Loader;
@@ -48,6 +50,9 @@ public abstract class RiftLibUISection {
     //for being able hover over items and see their jei recipes
     private final List<ItemClickRegion> itemClickRegions = new ArrayList<>();
 
+    //for being able to hover over tools and see hover text
+    private final List<ToolHoverRegion> toolHoverRegions = new ArrayList<>();
+
     public RiftLibUISection(int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
         this.guiWidth = guiWidth;
         this.guiHeight = guiHeight;
@@ -66,6 +71,7 @@ public abstract class RiftLibUISection {
     public void drawSectionContents(int mouseX, int mouseY, float partialTicks) {
         //preemptively clear lists
         this.itemClickRegions.clear();
+        this.toolHoverRegions.clear();
 
         int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -73,8 +79,8 @@ public abstract class RiftLibUISection {
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
+        //GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        //GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -95,7 +101,7 @@ public abstract class RiftLibUISection {
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
 
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        //GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //draw scrollbar
         if (this.contentHeight > this.height) {
@@ -209,7 +215,64 @@ public abstract class RiftLibUISection {
 
             //for being able hover over items and see their jei recipes
             this.itemClickRegions.add(new ItemClickRegion(itemStack, totalItemX, y, scaledItemSize, sectionTop, sectionBottom));
+
             return scaledItemSize;
+        }
+        else if (element instanceof RiftLibUIElement.ToolElement) {
+            RiftLibUIElement.ToolElement toolElement = (RiftLibUIElement.ToolElement) element;
+            float scale = toolElement.getScale();
+
+            int scaledItemSize = (int) (16 * scale);
+            int totalItemX = toolElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
+
+            int scaledItemX = (int) (totalItemX / scale);
+            int scaledItemY = (int) (y / scale);
+
+            //now visualize the mining levels using wooden tools and a number
+            //why wooden tools? well theres mods that let u modify mining levels of tools and am not wanna deal with
+            //that shit, so representing them all with just 1 tool type would make it easier
+            //anyways, tool first
+            Item toolItem = Item.getByNameOrId("minecraft:wooden_"+toolElement.getToolType());
+            if (toolItem != null) {
+                ItemStack itemStack = new ItemStack(toolItem);
+                if (scale != 1f) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.scale(scale, scale, scale);
+                }
+                this.renderItem(
+                        itemStack,
+                        scaledItemX,
+                        scaledItemY
+                );
+                if (scale != 1f) GlStateManager.popMatrix();
+            }
+
+            //render mining level
+            String level = String.valueOf(toolElement.getMiningLevel());
+            int levelWidth = this.fontRenderer.getStringWidth(level);
+            int totalLevelX = totalItemX + (int) (9 * scale);
+            int totalLevelY = y + (int) (12 * scale);
+            if (scale != 1f) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(scale, scale, scale);
+            }
+            this.fontRenderer.drawString(level, totalLevelX / scale, totalLevelY / scale, 0, false);
+            if (scale != 1f) GlStateManager.popMatrix();
+
+            //it tool has hover text, add it
+            if (toolElement.getOverlayText() != null && !toolElement.getOverlayText().isEmpty()) {
+                this.toolHoverRegions.add(new ToolHoverRegion(
+                        toolElement.getOverlayText(),
+                        toolElement.getToolType(),
+                        toolElement.getMiningLevel(),
+                        totalItemX,
+                        y,
+                        scaledItemSize,
+                        sectionTop,
+                        sectionBottom
+                ));
+            }
+            return scaledItemSize + (int) (4 * scale);
         }
         return 0;
     }
@@ -354,4 +417,44 @@ public abstract class RiftLibUISection {
         return null;
     }
     //item element related stuff ends here
+
+    //tool element related stuff starts here
+    private static class ToolHoverRegion {
+        private final String stringOverlay;
+        private final String toolType;
+        private final int miningLevel;
+        private final int x, y, size;
+        private final int sectionTop, sectionBottom;
+
+        private ToolHoverRegion(String stringOverlay, String toolType, int miningLevel, int x, int y, int size, int sectionTop, int sectionBottom) {
+            this.stringOverlay = stringOverlay;
+            this.toolType = toolType;
+            this.miningLevel = miningLevel;
+
+            this.x = x;
+            this.y = y;
+            this.size = size;
+            this.sectionTop = sectionTop;
+            this.sectionBottom = sectionBottom;
+        }
+
+        public String renderStringOverlay() {
+            return I18n.format(this.stringOverlay, this.toolType, this.miningLevel);
+        }
+
+        private boolean isHovered(int mouseX, int mouseY) {
+            return mouseX >= this.x && mouseX < this.x + this.size && mouseY >= this.y && mouseY < this.y + this.size
+                    && mouseY > this.sectionTop && mouseY < this.sectionBottom;
+        }
+    }
+
+    public String getStringToHoverFromTool(int mouseX, int mouseY) {
+        for (ToolHoverRegion region : this.toolHoverRegions) {
+            if (region.isHovered(mouseX, mouseY)) {
+                return region.renderStringOverlay();
+            }
+        }
+        return "";
+    }
+    //tool element related stuff ends here
 }
