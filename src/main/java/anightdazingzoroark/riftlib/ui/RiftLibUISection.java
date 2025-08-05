@@ -30,6 +30,9 @@ public abstract class RiftLibUISection {
     public final int xPos;
     public final int yPos;
 
+    //section management stuff
+    public final String id;
+
     //scrolling related stuff
     private boolean scrollable;
     protected int contentHeight;
@@ -40,7 +43,6 @@ public abstract class RiftLibUISection {
     private boolean draggingScrollbar = false;
     private int dragOffsetY = 0;
     protected int scrollbarXOffset;
-    protected int scrollbarYOffset;
 
     //other stuff required for section to work properly
     public final int guiWidth;
@@ -60,7 +62,8 @@ public abstract class RiftLibUISection {
     //logic involved in disabling buttons
     private final List<String> disabledButtonIds = new ArrayList<>();
 
-    public RiftLibUISection(int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
+    public RiftLibUISection(String id, int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
+        this.id = id;
         this.guiWidth = guiWidth;
         this.guiHeight = guiHeight;
         this.width = width;

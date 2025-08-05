@@ -17,6 +17,9 @@ import java.util.List;
 public abstract class RiftLibUI extends GuiScreen {
     private List<RiftLibUISection> uiSections = new ArrayList<>();
 
+    //for managing sections
+    private final List<String> hiddenUISections = new ArrayList<>();
+
     //position
     public final int x;
     public final int y;
@@ -46,7 +49,7 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        if (this.uiSections.isEmpty() && !this.uiSections().isEmpty()) this.uiSections = this.uiSections();
+        this.uiSections = this.uiSections();
     }
 
     @Override
@@ -62,8 +65,8 @@ public abstract class RiftLibUI extends GuiScreen {
 
         //iterate over all ui sections
         for (RiftLibUISection section : this.uiSections) {
-            //draw all the sections in uiSections
-            section.drawSectionContents(mouseX, mouseY, partialTicks);
+            //draw all the sections in uiSections as long as its id is not hidden
+            if (!this.hiddenUISections.contains(section.id)) section.drawSectionContents(mouseX, mouseY, partialTicks);
 
             //assign hovered item as long as its originally null
             if (hoveredItem == null) hoveredItem = section.getHoveredItemStack(mouseX, mouseY);
@@ -165,6 +168,13 @@ public abstract class RiftLibUI extends GuiScreen {
             for (RiftLibButtonElement button : section.getActiveButtons()) {
                 if (button.buttonId.equals(id)) section.setButtonEnabled(id, value);
             }
+        }
+    }
+
+    protected void setSectionVisibilityByID(String id, boolean value) {
+        for (RiftLibUISection section : this.uiSections) {
+            if (value) this.hiddenUISections.remove(id);
+            else this.hiddenUISections.add(id);
         }
     }
 }
