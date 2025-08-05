@@ -53,6 +53,7 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        //todo: make it so content can be restored when resizing screen
         this.uiSections = this.uiSections();
     }
 
@@ -116,8 +117,13 @@ public abstract class RiftLibUI extends GuiScreen {
         if (delta != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
             int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-            //handle scrolling with scrollbar on sections
-            for (RiftLibUISection section : this.uiSections) section.handleScrollWithScrollbar(mouseX, mouseY, delta);
+            for (RiftLibUISection section : this.uiSections) {
+                //skip if this section is hidden
+                if (this.hiddenUISections.contains(section.id)) continue;
+
+                //handle scrolling with scrollbar on sections
+                section.handleScrollWithScrollbar(mouseX, mouseY, delta);
+            }
         }
     }
 
@@ -126,6 +132,9 @@ public abstract class RiftLibUI extends GuiScreen {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         for (RiftLibUISection section : this.uiSections) {
+            //skip if this section is hidden
+            if (this.hiddenUISections.contains(section.id)) continue;
+
             //skip to clicked position scroll bar on sections
             section.handleClickOnScrollSection(mouseX, mouseY, mouseButton);
 
@@ -163,13 +172,23 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
-        for (RiftLibUISection section : this.uiSections) section.handleReleaseClickOnScrollbar(mouseX, mouseY, state);
+        for (RiftLibUISection section : this.uiSections) {
+            //skip if this section is hidden
+            if (this.hiddenUISections.contains(section.id)) continue;
+
+            section.handleReleaseClickOnScrollbar(mouseX, mouseY, state);
+        }
     }
 
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        for (RiftLibUISection section : this.uiSections) section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        for (RiftLibUISection section : this.uiSections) {
+            //skip if this section is hidden
+            if (this.hiddenUISections.contains(section.id)) continue;
+
+            section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        }
     }
 
     @Override
@@ -179,6 +198,9 @@ public abstract class RiftLibUI extends GuiScreen {
 
         //deal with input for text boxes in each section
         for (RiftLibUISection section : this.uiSections) {
+            //skip if this section is hidden
+            if (this.hiddenUISections.contains(section.id)) continue;
+
             for (RiftLibTextField textField : section.getTextFields()) {
                 //get contents
                 Map<String, String> contents = section.getTextFieldContents();
@@ -198,6 +220,9 @@ public abstract class RiftLibUI extends GuiScreen {
     public void updateScreen() {
         //update text boxes in each section
         for (RiftLibUISection section : this.uiSections) {
+            //skip if this section is hidden
+            if (this.hiddenUISections.contains(section.id)) continue;
+
             for (RiftLibTextField textField : section.getTextFields()) {
                 textField.updateCursorCounter();
             }
@@ -236,5 +261,10 @@ public abstract class RiftLibUI extends GuiScreen {
                 if (clickableSection.getStringID().equals(id)) section.setClickableSectionSelected(id, value);
             }
         }
+    }
+
+    protected void setUISectionVisibility(String sectionID, boolean value) {
+        if (value) this.hiddenUISections.remove(sectionID);
+        else this.hiddenUISections.add(sectionID);
     }
 }
