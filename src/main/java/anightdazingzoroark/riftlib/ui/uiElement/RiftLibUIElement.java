@@ -384,7 +384,26 @@ public class RiftLibUIElement {
     }
 
     //for special boxes where you enter text
-    public static class TextBoxElement extends Element {}
+    public static class TextBoxElement extends Element {
+        private int width = 0;
+        private String defaultText = "";
+
+        public void setWidth(int value) {
+            this.width = value;
+        }
+
+        public int getWidth() {
+            return this.width;
+        }
+
+        public void setDefaultText(String value) {
+            this.defaultText = value;
+        }
+
+        public String getDefaultText() {
+            return this.defaultText;
+        }
+    }
 
     //for progress bars that fill up based on a certain percentage
     public static class ProgressBarElement extends Element {}

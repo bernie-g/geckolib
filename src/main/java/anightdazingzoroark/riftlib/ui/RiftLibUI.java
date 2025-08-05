@@ -3,7 +3,9 @@ package anightdazingzoroark.riftlib.ui;
 import anightdazingzoroark.riftlib.RiftLibJEI;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibTextField;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -14,6 +16,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class RiftLibUI extends GuiScreen {
     private List<RiftLibUISection> uiSections = new ArrayList<>();
@@ -167,6 +170,38 @@ public abstract class RiftLibUI extends GuiScreen {
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         for (RiftLibUISection section : this.uiSections) section.handleScrollWithClick(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        //for exiting
+        super.keyTyped(typedChar, keyCode);
+
+        //deal with input for text boxes in each section
+        for (RiftLibUISection section : this.uiSections) {
+            for (RiftLibTextField textField : section.getTextFields()) {
+                //get contents
+                Map<String, String> contents = section.getTextFieldContents();
+
+                //add to contents map if it exists
+                if (contents.containsKey(textField.id)) {
+                    textField.textboxKeyTyped(typedChar, keyCode);
+                    contents.replace(textField.id, textField.getText());
+                }
+                //just put it inside otherwise
+                else contents.put(textField.id, String.valueOf(typedChar));
+            }
+        }
+    }
+
+    @Override
+    public void updateScreen() {
+        //update text boxes in each section
+        for (RiftLibUISection section : this.uiSections) {
+            for (RiftLibTextField textField : section.getTextFields()) {
+                textField.updateCursorCounter();
+            }
+        }
     }
 
     protected RiftLibButton getButtonByID(String id) {

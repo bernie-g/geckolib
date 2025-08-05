@@ -135,6 +135,14 @@ public class HelloWorldUI extends RiftLibUI {
                 clickableSection.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
                 elementsToReturn.add(clickableSection);
 
+                //text box test
+                RiftLibUIElement.TextBoxElement textBoxSection = new RiftLibUIElement.TextBoxElement();
+                textBoxSection.setWidth(80);
+                textBoxSection.setID("myTextBox");
+                textBoxSection.setDefaultText("Hello");
+                textBoxSection.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                elementsToReturn.add(textBoxSection);
+
                 return elementsToReturn;
             }
         });

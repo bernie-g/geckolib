@@ -3,9 +3,11 @@ package anightdazingzoroark.riftlib.ui;
 import anightdazingzoroark.riftlib.RiftLibJEI;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibTextField;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderItem;
@@ -17,7 +19,9 @@ import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static net.minecraft.client.gui.Gui.drawModalRectWithCustomSizedTexture;
 import static net.minecraft.client.gui.Gui.drawRect;
@@ -67,6 +71,10 @@ public abstract class RiftLibUISection {
     //logic involved in disabling buttons
     private final List<String> disabledButtonIds = new ArrayList<>();
 
+    //text box stuff
+    private final List<RiftLibTextField> textFields = new ArrayList<>();
+    private final Map<String, String> textFieldContents = new HashMap<>();
+
     public RiftLibUISection(String id, int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
         this.id = id;
         this.guiWidth = guiWidth;
@@ -89,6 +97,7 @@ public abstract class RiftLibUISection {
         this.toolHoverRegions.clear();
         this.activeButtons.clear();
         this.clickableSections.clear();
+        this.textFields.clear();
 
         int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -374,6 +383,40 @@ public abstract class RiftLibUISection {
 
             return sectionH;
         }
+        else if (element instanceof RiftLibUIElement.TextBoxElement) {
+            RiftLibUIElement.TextBoxElement textBoxElement = (RiftLibUIElement.TextBoxElement) element;
+            float scale = textBoxElement.getScale();
+
+            int textBoxWidth = (int) (textBoxElement.getWidth() * scale);
+            int textBoxHeight = (int) (20 * scale);
+            int textBoxX = textBoxElement.xOffsetFromAlignment(sectionWidth, textBoxWidth, x);
+
+            int scaledTextBoxX = (int) (textBoxX / scale);
+            int scaledTextBoxY = (int) (y / scale);
+
+            //create text field
+            RiftLibTextField textField = new RiftLibTextField(
+                    textBoxElement.getID(),
+                    this.fontRenderer,
+                    scaledTextBoxX,
+                    scaledTextBoxY,
+                    textBoxWidth,
+                    textBoxHeight
+            );
+            textField.setFocused(true);
+            textField.setText(textBoxElement.getDefaultText());
+            //if theres already text in the textFieldContents map, set the text of textField to its stored text
+            if (!this.textFieldContents.isEmpty() && this.textFieldContents.containsKey(textBoxElement.getID())) {
+                textField.setText(this.textFieldContents.get(textBoxElement.getID()));
+            }
+            //otherwise, put it inside
+            else this.textFieldContents.put(textBoxElement.getID(), textField.getText());
+
+            textField.drawTextBox();
+            this.textFields.add(textField);
+
+            return textBoxHeight;
+        }
         return 0;
     }
 
@@ -579,4 +622,31 @@ public abstract class RiftLibUISection {
         else this.selectedClickableSections.remove(id);
     }
     //clickable section stuff ends here
+
+    //text box stuff starts here
+    public List<RiftLibTextField> getTextFields() {
+        return this.textFields;
+    }
+
+    public Map<String, String> getTextFieldContents() {
+        return this.textFieldContents;
+    }
+
+    public String getTextBoxContentsByID(String id) {
+        for (RiftLibTextField textField : this.textFields) {
+            if (textField.id.equals(id)) return textField.getText();
+        }
+        return "";
+    }
+
+    public void setTextBoxContentsByID(String id, String contents) {
+        for (RiftLibTextField textField : this.textFields) {
+            if (textField.id.equals(id)) {
+                textField.setText(contents);
+                if (this.textFieldContents.containsKey(id)) this.textFieldContents.replace(id, contents);
+                else this.textFieldContents.put(id, contents);
+            }
+        }
+    }
+    //text box stuff ends here
 }
