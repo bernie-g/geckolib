@@ -106,8 +106,8 @@ public abstract class RiftLibUISection {
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
-        //GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        //GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -128,7 +128,7 @@ public abstract class RiftLibUISection {
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
 
-        //GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //draw scrollbar
         if (this.contentHeight > this.height) {
@@ -441,6 +441,35 @@ public abstract class RiftLibUISection {
                 this.drawRectOutline(progressBarContentX, progressBarContentY, (int) (progressBarContentWidth * progressBarElement.getPercentage()), progressBarContentHeight, (0xFF000000 | progressBarElement.getOverlayColor()));
 
             return progressBarHeight;
+        }
+        else if (element instanceof RiftLibUIElement.RenderedEntityElement) {
+            RiftLibUIElement.RenderedEntityElement renderedEntityElement = (RiftLibUIElement.RenderedEntityElement) element;
+            float scale = renderedEntityElement.getScale();
+
+            int renderWidth = (int) Math.ceil(renderedEntityElement.getEntity().width) + renderedEntityElement.getAdditionalSize()[0];
+            int renderHeight = (int) Math.ceil(renderedEntityElement.getEntity().height) + renderedEntityElement.getAdditionalSize()[1];
+            int scaledRenderWidth = (int) (scale * (renderWidth - renderedEntityElement.getAdditionalSize()[0])) + renderedEntityElement.getAdditionalSize()[0];
+            int scaledRenderHeight = (int) (scale * (renderHeight - renderedEntityElement.getAdditionalSize()[1])) + renderedEntityElement.getAdditionalSize()[1];
+
+            int renderedEntityX = renderedEntityElement.xOffsetFromAlignment(sectionWidth, scaledRenderWidth, scale, x);
+
+            //entity rendering
+            if ((y + scaledRenderHeight) > sectionTop && y < sectionBottom) {
+                GlStateManager.color(1f, 1f, 1f, 1f);
+                GlStateManager.pushMatrix();
+                GlStateManager.pushMatrix();
+                GlStateManager.enableDepth();
+                GlStateManager.translate(renderedEntityX, y + scaledRenderHeight, 210f);
+                GlStateManager.rotate(180, 1f, 0f, 0f);
+                GlStateManager.rotate(renderedEntityElement.getRotationAngle(), 0f, 1f, 0f);
+                GlStateManager.scale(scale, scale, scale);
+                this.minecraft.getRenderManager().renderEntity(renderedEntityElement.getEntity(), 0.0D, 0.0D, 0.0D, 0.0F, 0F, false);
+                GlStateManager.disableDepth();
+                GlStateManager.popMatrix();
+                GlStateManager.popMatrix();
+            }
+
+            return scaledRenderHeight;
         }
         return 0;
     }

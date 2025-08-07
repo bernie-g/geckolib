@@ -6,6 +6,8 @@ import anightdazingzoroark.riftlib.ui.RiftLibUISection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
+import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -143,30 +145,21 @@ public class HelloWorldUI extends RiftLibUI {
                 textBoxSection.setAlignment(RiftLibUIElement.ALIGN_CENTER);
                 elementsToReturn.add(textBoxSection);
 
-                //progress bar test
-                RiftLibUIElement.ProgressBarElement progressBarOne = new RiftLibUIElement.ProgressBarElement();
-                progressBarOne.setPercentage(0.75f);
-                progressBarOne.setColors(0xff0000, 0x868686);
-                //progressBarOne.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
-                //progressBarElement.setScale(0.75f);
-                progressBarOne.setWidth(80);
-                elementsToReturn.add(progressBarOne);
-
-                RiftLibUIElement.ProgressBarElement progressBarTwo = new RiftLibUIElement.ProgressBarElement();
-                progressBarTwo.setPercentage(0.75f);
-                progressBarTwo.setColors(0xff0000, 0x868686);
-                progressBarTwo.setAlignment(RiftLibUIElement.ALIGN_CENTER);
-                progressBarTwo.setScale(2f);
-                progressBarTwo.setWidth(80);
-                elementsToReturn.add(progressBarTwo);
-
+                //progress bar
                 RiftLibUIElement.ProgressBarElement progressBarElement = new RiftLibUIElement.ProgressBarElement();
                 progressBarElement.setPercentage(0.75f);
                 progressBarElement.setColors(0xff0000, 0x868686);
-                progressBarElement.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
-                //progressBarElement.setScale(0.75f);
+                progressBarElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                progressBarElement.setScale(1f);
                 progressBarElement.setWidth(80);
                 elementsToReturn.add(progressBarElement);
+
+                //entity
+                RiftLibUIElement.RenderedEntityElement renderedEntityElement = new RiftLibUIElement.RenderedEntityElement();
+                renderedEntityElement.setScale(40f);
+                renderedEntityElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                renderedEntityElement.setEntity(new EntityChicken(this.minecraft.world));
+                elementsToReturn.add(renderedEntityElement);
 
                 return elementsToReturn;
             }

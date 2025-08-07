@@ -481,6 +481,8 @@ public class RiftLibUIElement {
     //render an entity
     public static class RenderedEntityElement extends Element {
         private Entity entity;
+        private int[] additionalSize = {0, 0};
+        private int rotationAngle = 150;
 
         public void setEntity(Entity value) {
             this.entity = value;
@@ -488,6 +490,26 @@ public class RiftLibUIElement {
 
         public Entity getEntity() {
             return this.entity;
+        }
+
+        public void setAdditionalSize(int width, int height) {
+            this.additionalSize = new int[]{width, height};
+        }
+
+        public int[] getAdditionalSize() {
+            return this.additionalSize;
+        }
+
+        public void setRotationAngle(int value) {
+            this.rotationAngle = value;
+        }
+
+        public int getRotationAngle() {
+            return this.rotationAngle;
+        }
+
+        public int xOffsetFromAlignment(int sectionWidth, int elementWidth, float scale, int x) {
+            return super.xOffsetFromAlignment(sectionWidth, elementWidth, x) + (int) Math.ceil(scale / 2f);
         }
     }
     //normal elements end here
