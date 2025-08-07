@@ -7,6 +7,7 @@ import anightdazingzoroark.riftlib.ui.uiElement.RiftLibTextField;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -105,8 +106,8 @@ public abstract class RiftLibUISection {
         //scissor setup
         ScaledResolution res = new ScaledResolution(this.minecraft);
         int scaleFactor = res.getScaleFactor();
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
+        //GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        //GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), (this.width - this.scrollbarWidth) * scaleFactor, this.height * scaleFactor);
 
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
@@ -127,7 +128,7 @@ public abstract class RiftLibUISection {
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
 
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        //GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         //draw scrollbar
         if (this.contentHeight > this.height) {
@@ -275,7 +276,6 @@ public abstract class RiftLibUISection {
 
             //render mining level
             String level = String.valueOf(toolElement.getMiningLevel());
-            int levelWidth = this.fontRenderer.getStringWidth(level);
             int totalLevelX = totalItemX + (int) (9 * scale);
             int totalLevelY = y + (int) (12 * scale);
             if (scale != 1f) {
@@ -416,6 +416,31 @@ public abstract class RiftLibUISection {
             this.textFields.add(textField);
 
             return textBoxHeight;
+        }
+        else if (element instanceof RiftLibUIElement.ProgressBarElement) {
+            RiftLibUIElement.ProgressBarElement progressBarElement = (RiftLibUIElement.ProgressBarElement) element;
+            float scale = progressBarElement.getScale();
+
+            int progressBarWidth = (int) Math.ceil(progressBarElement.getWidth() * scale);
+            int progressBarHeight = (int) Math.ceil(3 * scale);
+            int progressBarX = progressBarElement.xOffsetFromAlignment(sectionWidth, progressBarWidth, x);
+
+            int progressBarContentWidth = progressBarWidth - (int) Math.ceil(2 * scale);
+            int progressBarContentHeight = progressBarHeight - (int) Math.ceil(2 * scale);
+            int progressBarContentX = progressBarElement.contentXOffsetFromAlignment(sectionWidth, progressBarContentWidth, x, scale);
+            int progressBarContentY = (int) Math.ceil(y + scale);
+
+            //draw frame
+            Gui.drawRect(progressBarX, y, progressBarX + progressBarWidth, y + progressBarHeight, 0xFF000000);
+
+            //draw background of progress bar
+            this.drawRectOutline(progressBarContentX, progressBarContentY, progressBarContentWidth, progressBarContentHeight, (0xFF000000 | progressBarElement.getBackgroundColor()));
+
+            //draw progress of progress bar
+            if (progressBarElement.getPercentage() > 0)
+                this.drawRectOutline(progressBarContentX, progressBarContentY, (int) (progressBarContentWidth * progressBarElement.getPercentage()), progressBarContentHeight, (0xFF000000 | progressBarElement.getOverlayColor()));
+
+            return progressBarHeight;
         }
         return 0;
     }

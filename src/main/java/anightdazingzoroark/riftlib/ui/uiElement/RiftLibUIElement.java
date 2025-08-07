@@ -3,6 +3,7 @@ package anightdazingzoroark.riftlib.ui.uiElement;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.MathHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +56,7 @@ public class RiftLibUIElement {
 
         public int xOffsetFromAlignment(int sectionWidth, int elementWidth, int x) {
             if (this.getAlignment() == ALIGN_LEFT) return x;
-            else if (this.getAlignment() == ALIGN_CENTER) return x + (sectionWidth - elementWidth) / 2;
+            else if (this.getAlignment() == ALIGN_CENTER) return x + (int) Math.ceil((sectionWidth - elementWidth) / 2f);
             else if (this.getAlignment() == ALIGN_RIGHT) return x + sectionWidth - elementWidth;
             return 0;
         }
@@ -406,7 +407,76 @@ public class RiftLibUIElement {
     }
 
     //for progress bars that fill up based on a certain percentage
-    public static class ProgressBarElement extends Element {}
+    public static class ProgressBarElement extends Element {
+        private int width;
+        private int overlayColor;
+        private float percentage = 1f;
+        private int backgroundColor;
+        private int headerTextColor = 0x000000;
+        private float headerScale = 1f;
+        private float factor = 0; //change in progress bar
+
+        public void setColors(int overlayColor, int backgroundColor) {
+            this.overlayColor = overlayColor;
+            this.backgroundColor = backgroundColor;
+        }
+
+        public int getOverlayColor() {
+            return this.overlayColor;
+        }
+
+        public int getBackgroundColor() {
+            return this.backgroundColor;
+        }
+
+        public void setWidth(int value) {
+            this.width = value;
+        }
+
+        public int getWidth() {
+            return this.width;
+        }
+
+        public void setPercentage(float value) {
+            this.percentage = MathHelper.clamp(value, 0, 1f);
+        }
+
+        public float getPercentage() {
+            return this.percentage;
+        }
+
+        public void setHeaderColor(int value) {
+            this.headerTextColor = value;
+        }
+
+        public int getHeaderTextColor() {
+            return this.headerTextColor;
+        }
+
+        public void setHeaderScale(float value) {
+            this.headerScale = value;
+        }
+
+        public float getHeaderScale() {
+            return this.headerScale;
+        }
+
+        public void setFactor(float value) {
+            this.factor = value;
+        }
+
+        public float getFactor() {
+            return this.factor;
+        }
+
+        public int contentXOffsetFromAlignment(int sectionWidth, int elementWidth, int x, float scale) {
+            int contentXOffset = 0;
+            if (this.getAlignment() == ALIGN_LEFT) contentXOffset = (int) Math.ceil(scale);
+            else if (this.getAlignment() == ALIGN_CENTER) contentXOffset = 0;
+            else if (this.getAlignment() == ALIGN_RIGHT) contentXOffset = - (int) Math.ceil(scale);
+            return this.xOffsetFromAlignment(sectionWidth, elementWidth, x) + contentXOffset;
+        }
+    }
 
     //render an entity
     public static class RenderedEntityElement extends Element {

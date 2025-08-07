@@ -143,6 +143,31 @@ public class HelloWorldUI extends RiftLibUI {
                 textBoxSection.setAlignment(RiftLibUIElement.ALIGN_CENTER);
                 elementsToReturn.add(textBoxSection);
 
+                //progress bar test
+                RiftLibUIElement.ProgressBarElement progressBarOne = new RiftLibUIElement.ProgressBarElement();
+                progressBarOne.setPercentage(0.75f);
+                progressBarOne.setColors(0xff0000, 0x868686);
+                //progressBarOne.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
+                //progressBarElement.setScale(0.75f);
+                progressBarOne.setWidth(80);
+                elementsToReturn.add(progressBarOne);
+
+                RiftLibUIElement.ProgressBarElement progressBarTwo = new RiftLibUIElement.ProgressBarElement();
+                progressBarTwo.setPercentage(0.75f);
+                progressBarTwo.setColors(0xff0000, 0x868686);
+                progressBarTwo.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                progressBarTwo.setScale(2f);
+                progressBarTwo.setWidth(80);
+                elementsToReturn.add(progressBarTwo);
+
+                RiftLibUIElement.ProgressBarElement progressBarElement = new RiftLibUIElement.ProgressBarElement();
+                progressBarElement.setPercentage(0.75f);
+                progressBarElement.setColors(0xff0000, 0x868686);
+                progressBarElement.setAlignment(RiftLibUIElement.ALIGN_RIGHT);
+                //progressBarElement.setScale(0.75f);
+                progressBarElement.setWidth(80);
+                elementsToReturn.add(progressBarElement);
+
                 return elementsToReturn;
             }
         });
