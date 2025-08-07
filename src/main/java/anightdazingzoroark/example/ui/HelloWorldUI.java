@@ -180,6 +180,32 @@ public class HelloWorldUI extends RiftLibUI {
 
                 elementsToReturn.add(tableContainerElement);
 
+                //tab contents
+                RiftLibUIElement.TabElement tabElement = new RiftLibUIElement.TabElement();
+                tabElement.setWidth(150);
+
+                //tab one
+                List<RiftLibUIElement.Element> tabOne = new ArrayList<>();
+                RiftLibUIElement.TextElement tabOneTextLineOne = new RiftLibUIElement.TextElement();
+                tabOneTextLineOne.setText("This is the first tab!");
+                RiftLibUIElement.TextElement tabOneTextLineTwo = new RiftLibUIElement.TextElement();
+                tabOneTextLineTwo.setText("There are many more tabs like this one!");
+                tabOne.add(tabOneTextLineOne);
+                tabOne.add(tabOneTextLineTwo);
+                tabElement.addTab("tabOne", "One", tabOne);
+
+                //tab two
+                List<RiftLibUIElement.Element> tabTwo = new ArrayList<>();
+                RiftLibUIElement.TextElement tabTwoTextLineOne = new RiftLibUIElement.TextElement();
+                tabTwoTextLineOne.setText("This is the second tab!");
+                RiftLibUIElement.TextElement tabTwoTextLineTwo = new RiftLibUIElement.TextElement();
+                tabTwoTextLineTwo.setText("This is another tab that you can select!");
+                tabTwo.add(tabTwoTextLineOne);
+                tabTwo.add(tabTwoTextLineTwo);
+                tabElement.addTab("tabTwo", "Two", tabTwo);
+
+                elementsToReturn.add(tabElement);
+
                 return elementsToReturn;
             }
         });

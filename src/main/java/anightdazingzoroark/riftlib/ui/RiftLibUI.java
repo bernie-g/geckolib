@@ -4,10 +4,11 @@ import anightdazingzoroark.riftlib.RiftLibJEI;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibTextField;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
@@ -151,7 +152,7 @@ public abstract class RiftLibUI extends GuiScreen {
                 int buttonBottom = button.y + button.height;
                 boolean clickWithinVisiblePart = mouseY >= Math.max(buttonTop, sectionTop) && mouseY <= Math.min(buttonBottom, sectionBottom);
                 if (clickWithinVisiblePart && button.mousePressed(this.mc, mouseX, mouseY)) {
-                    button.playPressSound(this.mc.getSoundHandler());
+                    this.playPressSound();
                     this.onButtonClicked(button);
                 }
             }
@@ -162,8 +163,16 @@ public abstract class RiftLibUI extends GuiScreen {
                 int clickableSectionBottom = clickableSection.maxClickableArea()[1];
                 boolean clickWithinVisiblePart = mouseY >= Math.max(clickableSectionTop, sectionTop) && mouseY <= Math.min(clickableSectionBottom, sectionBottom);
                 if (clickWithinVisiblePart && clickableSection.isHovered(mouseX, mouseY)) {
-                    clickableSection.playPressSound(this.mc.getSoundHandler());
+                    this.playPressSound();
                     this.onClickableSectionClicked(clickableSection);
+                }
+            }
+
+            //tab selector clicking
+            for (RiftLibUISection.TabSelectorClickRegion tabSelectorClickRegion : section.getTabSelectorClickRegions()) {
+                if (tabSelectorClickRegion.isHovered(mouseX, mouseY)) {
+                    this.playPressSound();
+                    section.getOpenedTabs().replace(tabSelectorClickRegion.tabID, tabSelectorClickRegion.tabContentsID);
                 }
             }
         }
@@ -266,5 +275,9 @@ public abstract class RiftLibUI extends GuiScreen {
     protected void setUISectionVisibility(String sectionID, boolean value) {
         if (value) this.hiddenUISections.remove(sectionID);
         else this.hiddenUISections.add(sectionID);
+    }
+
+    protected void playPressSound() {
+        this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 }

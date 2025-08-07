@@ -106,8 +106,10 @@ public class RiftLibUIElement {
     //a special type of container element that has tabs, each tab opens a different type of element list
     public static class TabElement extends Element {
         private int width; //no width means that it will inherit the width of the section
-        private final Map<String, List<Element>> tabContents = new HashMap<>();
-        private final List<String> tabOrder = new ArrayList<>();
+        private final List<TabContents> tabContents = new ArrayList<>();
+        private int tabSelectorTextColor = 0xFFFFFF;
+        private int tabSelectorHoverColor = 0xFFFF00;
+        private int tabSelectorSelectedColor = 0x5A3B1A;
 
         public void setWidth(int value) {
             this.width = value;
@@ -117,17 +119,59 @@ public class RiftLibUIElement {
             return this.width;
         }
 
-        public void addTab(String name, List<Element> contents) {
-            this.tabContents.put(name, contents);
-            this.tabOrder.add(name);
+        public void addTab(String id, String name, List<Element> contents) {
+            this.tabContents.add(new TabContents(id, name, contents));
         }
 
-        public Map<String, List<Element>> getTabContents() {
+        public List<TabContents> getTabContents() {
             return this.tabContents;
         }
 
-        public List<String> getTabOrder() {
-            return this.tabOrder;
+        public TabContents getTabContentsByID(String idToSearch) {
+            for (TabContents contents : this.tabContents) {
+                if (contents.tabContentID.equals(idToSearch)) return contents;
+            }
+            return null;
+        }
+
+        public void setTabSelectorTextColor(int value) {
+            this.tabSelectorTextColor = value;
+        }
+
+        public int getTabSelectorTextColor() {
+            return this.tabSelectorTextColor;
+        }
+
+        public void setTabSelectorHoverColor(int value) {
+            this.tabSelectorHoverColor = value;
+        }
+
+        public int getTabSelectorHoverColor() {
+            return this.tabSelectorHoverColor;
+        }
+
+        public void setTabSelectorSelectedColor(int value) {
+            this.tabSelectorSelectedColor = value;
+        }
+
+        public int getTabSelectorSelectedColor() {
+            return this.tabSelectorSelectedColor;
+        }
+    }
+
+    public static class TabContents {
+        public final String tabContentID;
+        public final String tabName;
+        private final List<Element> tabContents;
+
+        public TabContents(String id, String name, List<Element> tabContents) {
+            this.tabContentID = id;
+            this.tabName = name;
+            this.tabContents = tabContents;
+        }
+
+        public List<Element> getTabContents() {
+            return this.tabContents;
         }
     }
     //container elements end here

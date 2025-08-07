@@ -76,6 +76,10 @@ public abstract class RiftLibUISection {
     private final List<RiftLibTextField> textFields = new ArrayList<>();
     private final Map<String, String> textFieldContents = new HashMap<>();
 
+    //tab stuff
+    private final Map<String, String> openedTabs = new HashMap<>();
+    private final List<TabSelectorClickRegion> tabSelectorClickRegions = new ArrayList<>();
+
     public RiftLibUISection(String id, int guiWidth, int guiHeight, int width, int height, int xPos, int yPos, FontRenderer fontRenderer, Minecraft minecraft) {
         this.id = id;
         this.guiWidth = guiWidth;
@@ -99,6 +103,7 @@ public abstract class RiftLibUISection {
         this.activeButtons.clear();
         this.clickableSections.clear();
         this.textFields.clear();
+        this.tabSelectorClickRegions.clear();
 
         int sectionX = (this.guiWidth - (this.width - this.scrollbarWidth)) / 2 + this.xPos;
         int sectionY = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -502,7 +507,83 @@ public abstract class RiftLibUISection {
 
             return totalTableHeight;
         }
+        else if (element instanceof RiftLibUIElement.TabElement) {
+            RiftLibUIElement.TabElement tabElement = (RiftLibUIElement.TabElement) element;
+
+            //draw tab selectors
+            int tabSelectorX = x;
+            int tabSelectorY = y;
+            int tabSelectorHeight = 18;
+            int tabSelectorPadding = 6;
+            for (RiftLibUIElement.TabContents tabContents : tabElement.getTabContents()) {
+                String tabName = tabContents.tabName;
+                int tabWidth = this.fontRenderer.getStringWidth(tabName) + tabSelectorPadding * 2;
+
+                //save region for hover and click
+                TabSelectorClickRegion region = new TabSelectorClickRegion(tabSelectorX, tabSelectorY, tabWidth, tabSelectorHeight, tabElement.getID(), tabContents.tabContentID);
+                this.tabSelectorClickRegions.add(region);
+                if (!this.openedTabs.containsKey(tabElement.getID())) this.openedTabs.put(tabElement.getID(), "");
+
+                //detect hover
+                boolean isHovered = region.isHovered(mouseX, mouseY);
+                boolean isActive = region.isActive();
+
+                //text color logic
+                int textColor = tabElement.getTabSelectorTextColor();
+                if (isActive) textColor = tabElement.getTabSelectorSelectedColor();
+                else if (isHovered) textColor = tabElement.getTabSelectorHoverColor();
+
+                //draw outline
+                this.drawRectOutline(tabSelectorX, tabSelectorY, tabWidth, tabSelectorHeight, 0xFF000000);
+
+                //draw text
+                this.fontRenderer.drawStringWithShadow(tabName, tabSelectorX + tabSelectorPadding, tabSelectorY + 5, textColor);
+
+                tabSelectorX += tabWidth + 4;
+            }
+
+            //draw tab contents
+            int contentBoxY = tabSelectorY + tabSelectorHeight + 4;
+            int contentPadding = 4;
+            String idOfActiveTab = this.openedTabs.get(tabElement.getID());
+            if (idOfActiveTab.isEmpty()) {
+                this.openedTabs.replace(tabElement.getID(), tabElement.getTabContents().get(0).tabContentID);
+                idOfActiveTab = tabElement.getTabContents().get(0).tabContentID;
+            }
+            List<RiftLibUIElement.Element> tabContentElements = tabElement.getTabContentsByID(idOfActiveTab).getTabContents();
+            int contentInnerHeight = 0;
+            if (tabContentElements != null && !tabContentElements.isEmpty()) {
+                int contentInnerX = x + contentPadding;
+                int contentInnerY = contentBoxY + contentPadding;
+
+                for (int i = 0; i < tabContentElements.size(); i++) {
+                    RiftLibUIElement.Element elementInTab = tabContentElements.get(i);
+
+                    //draw all the elements in the tab
+                    int usedHeight = this.drawElement(elementInTab, this.getTabContentWidth(tabElement), contentInnerX, contentInnerY, mouseX, mouseY, partialTicks);
+                    contentInnerY += usedHeight;
+                    contentInnerHeight += usedHeight;
+
+                    //extra bottom height for certain elements
+                    if (i < this.defineSectionContents().size() - 1) {
+                        int bottomSpace = element.getBottomSpace();
+                        contentInnerY += bottomSpace;
+                        contentInnerHeight += bottomSpace;
+                    }
+                }
+
+                //draw content outline box after measuring
+                this.drawRectOutline(x, contentBoxY, this.getTabContentWidth(tabElement) + contentPadding * 2, contentInnerHeight + contentPadding * 2, 0xFF000000);
+            }
+
+            return tabSelectorHeight + 4 + contentInnerHeight + contentPadding * 2;
+        }
         return 0;
+    }
+
+    private int getTabContentWidth(RiftLibUIElement.TabElement tabElement) {
+        if (tabElement.getWidth() > 0) return tabElement.getWidth();
+        return this.width;
     }
 
     private void drawImprovedSplitString(RiftLibUIElement.TextElement textElement, int x, int y, int wrapWidth, int sectionWidth, float scale, int color) {
@@ -734,4 +815,36 @@ public abstract class RiftLibUISection {
         }
     }
     //text box stuff ends here
+
+    //tab related stuff starts here
+    public class TabSelectorClickRegion {
+        private final int x, y, w, h;
+        public final String tabID, tabContentsID;
+
+        public TabSelectorClickRegion(int x, int y, int w, int h, String tabID, String tabContentsID) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+            this.tabID = tabID;
+            this.tabContentsID = tabContentsID;
+        }
+
+        public boolean isHovered(int mouseX, int mouseY) {
+            return mouseX >= this.x && mouseX < this.x + this.w && mouseY >= y && mouseY < this.y + this.h;
+        }
+
+        public boolean isActive() {
+            return openedTabs.containsKey(this.tabID) && openedTabs.get(this.tabID).equals(this.tabContentsID);
+        }
+    }
+
+    public List<TabSelectorClickRegion> getTabSelectorClickRegions() {
+        return this.tabSelectorClickRegions;
+    }
+
+    public Map<String, String> getOpenedTabs() {
+        return this.openedTabs;
+    }
+    //tab related stuff ends here
 }
