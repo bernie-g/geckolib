@@ -149,6 +149,7 @@ public abstract class RiftLibUISection {
         int sectionTop = (this.guiHeight - this.height) / 2 + this.yPos;
         int sectionBottom = sectionTop + this.height;
 
+        //regular elements
         if (element instanceof RiftLibUIElement.TextElement) {
             RiftLibUIElement.TextElement textElement = (RiftLibUIElement.TextElement) element;
             float scale = textElement.getScale();
@@ -470,6 +471,36 @@ public abstract class RiftLibUISection {
             }
 
             return scaledRenderHeight;
+        }
+        //container elements
+        else if (element instanceof RiftLibUIElement.TableContainerElement) {
+            RiftLibUIElement.TableContainerElement tableContainerElement = (RiftLibUIElement.TableContainerElement) element;
+
+            int rowCount = (int) Math.ceil(tableContainerElement.getElements().size() / (double) tableContainerElement.getRowCount());
+
+            int cellWidth = tableContainerElement.getCellSize()[0];
+            int cellHeight = tableContainerElement.getCellSize()[1];
+
+            int totalTableWidth = cellWidth * tableContainerElement.getRowCount();
+            int totalTableHeight = cellHeight * rowCount;
+
+            int tableX = tableContainerElement.xOffsetFromAlignment(sectionWidth, totalTableWidth, x);
+
+            for (int i = 0; i < tableContainerElement.getElements().size(); i++) {
+                RiftLibUIElement.Element elementForCell = tableContainerElement.getElements().get(i);
+
+                int column = i % tableContainerElement.getRowCount();
+                int row = i / tableContainerElement.getRowCount();
+
+                int xCellPos = tableX + column * cellWidth;
+                int yCellPos = y + row * cellHeight;
+
+                //all elements in each cell must be centered
+                elementForCell.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                this.drawElement(elementForCell, cellWidth, xCellPos, yCellPos, mouseX, mouseY, partialTicks);
+            }
+
+            return totalTableHeight;
         }
         return 0;
     }

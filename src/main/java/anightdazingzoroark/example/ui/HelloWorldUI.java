@@ -161,6 +161,25 @@ public class HelloWorldUI extends RiftLibUI {
                 renderedEntityElement.setEntity(new EntityChicken(this.minecraft.world));
                 elementsToReturn.add(renderedEntityElement);
 
+                //table
+                RiftLibUIElement.TableContainerElement tableContainerElement = new RiftLibUIElement.TableContainerElement();
+                tableContainerElement.setRowCount(2);
+                tableContainerElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                tableContainerElement.setCellSize(70, 30);
+
+                //table contents
+                RiftLibUIElement.ButtonElement buttonOneElement = new RiftLibUIElement.ButtonElement();
+                buttonOneElement.setSize(60, 20);
+                tableContainerElement.addElement(buttonOneElement);
+                RiftLibUIElement.ButtonElement buttonTwoElement = new RiftLibUIElement.ButtonElement();
+                buttonTwoElement.setSize(60, 20);
+                tableContainerElement.addElement(buttonTwoElement);
+                RiftLibUIElement.ButtonElement buttonThreeElement = new RiftLibUIElement.ButtonElement();
+                buttonThreeElement.setSize(60, 20);
+                tableContainerElement.addElement(buttonThreeElement);
+
+                elementsToReturn.add(tableContainerElement);
+
                 return elementsToReturn;
             }
         });

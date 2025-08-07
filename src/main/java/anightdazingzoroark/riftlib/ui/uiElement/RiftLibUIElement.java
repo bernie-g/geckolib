@@ -63,8 +63,12 @@ public class RiftLibUIElement {
     }
 
     //container elements start here
-    public static class ContainerElement extends Element {
+    //elements sorted into a table
+    public static class TableContainerElement extends Element {
         private final List<Element> elements = new ArrayList<>();
+        private int rowCount;
+        private boolean hasBorders;
+        private int[] cellSize = new int[]{0, 0};
 
         public void addElement(Element element) {
             this.elements.add(element);
@@ -72,24 +76,6 @@ public class RiftLibUIElement {
 
         public List<Element> getElements() {
             return this.elements;
-        }
-    }
-
-    //elements sorted horizontally
-    public static class HorizontalContainerElement extends ContainerElement {}
-
-    //elements sorted into a table
-    public static class TableContainerElement extends ContainerElement {
-        private TextElement textLabel;
-        private int rowCount;
-        private boolean hasBorders;
-
-        public void addTextLabel(TextElement textLabel) {
-            this.textLabel = textLabel;
-        }
-
-        public TextElement getTextLabel() {
-            return this.textLabel;
         }
 
         public void setRowCount(int value) {
@@ -107,10 +93,18 @@ public class RiftLibUIElement {
         public boolean getHasBorders() {
             return this.hasBorders;
         }
+
+        public void setCellSize(int width, int height) {
+            this.cellSize = new int[]{width, height};
+        }
+
+        public int[] getCellSize() {
+            return this.cellSize;
+        }
     }
 
     //a special type of container element that has tabs, each tab opens a different type of element list
-    public static class TabElement extends ContainerElement {
+    public static class TabElement extends Element {
         private int width; //no width means that it will inherit the width of the section
         private final Map<String, List<Element>> tabContents = new HashMap<>();
         private final List<String> tabOrder = new ArrayList<>();
@@ -412,8 +406,6 @@ public class RiftLibUIElement {
         private int overlayColor;
         private float percentage = 1f;
         private int backgroundColor;
-        private int headerTextColor = 0x000000;
-        private float headerScale = 1f;
         private float factor = 0; //change in progress bar
 
         public void setColors(int overlayColor, int backgroundColor) {
@@ -443,22 +435,6 @@ public class RiftLibUIElement {
 
         public float getPercentage() {
             return this.percentage;
-        }
-
-        public void setHeaderColor(int value) {
-            this.headerTextColor = value;
-        }
-
-        public int getHeaderTextColor() {
-            return this.headerTextColor;
-        }
-
-        public void setHeaderScale(float value) {
-            this.headerScale = value;
-        }
-
-        public float getHeaderScale() {
-            return this.headerScale;
         }
 
         public void setFactor(float value) {
