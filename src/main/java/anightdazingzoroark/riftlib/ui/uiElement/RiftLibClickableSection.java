@@ -57,6 +57,9 @@ public class RiftLibClickableSection {
     public int scrollTop = Integer.MIN_VALUE;
     public int scrollBottom = Integer.MAX_VALUE;
 
+    //hover effects
+    public boolean doHoverEffects;
+
     public RiftLibClickableSection(int width, int height, int guiWidth, int guiHeight, int xOffset, int yOffset, FontRenderer fontRenderer, Minecraft minecraft) {
         this.width = width;
         this.height = height;
@@ -185,6 +188,7 @@ public class RiftLibClickableSection {
     }
 
     public boolean isHovered(int mouseX, int mouseY) {
+        if (!this.doHoverEffects) return false;
         return mouseX >= this.minClickableArea()[0] && mouseX <= this.maxClickableArea()[0]
                 && mouseY >= this.minClickableArea()[1] && mouseY <= this.maxClickableArea()[1]
                 && mouseY >= this.scrollTop && mouseY <= this.scrollBottom;

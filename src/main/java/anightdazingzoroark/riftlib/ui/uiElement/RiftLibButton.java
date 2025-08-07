@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.GlStateManager;
 
 public class RiftLibButton extends GuiButton {
     public final String buttonId;
+    public boolean doHoverEffects = true;
     public int scrollTop = Integer.MIN_VALUE;
     public int scrollBottom = Integer.MAX_VALUE;
 
@@ -25,7 +26,7 @@ public class RiftLibButton extends GuiButton {
             //replace default hover detection with scroll-aware version
             boolean hoveredNormally = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             boolean withinVisibleBounds = mouseY >= Math.max(this.y, scrollTop) && mouseY < Math.min(this.y + this.height, scrollBottom);
-            this.hovered = hoveredNormally && withinVisibleBounds;
+            this.hovered = hoveredNormally && withinVisibleBounds && this.doHoverEffects;
 
             int i = this.getHoverState(this.hovered);
             GlStateManager.enableBlend();

@@ -1,13 +1,13 @@
 package anightdazingzoroark.example.ui;
 
 import anightdazingzoroark.riftlib.RiftLib;
+import anightdazingzoroark.riftlib.ui.RiftLibPopupUI;
 import anightdazingzoroark.riftlib.ui.RiftLibUI;
 import anightdazingzoroark.riftlib.ui.RiftLibUISection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -170,12 +170,15 @@ public class HelloWorldUI extends RiftLibUI {
                 //table contents
                 RiftLibUIElement.ButtonElement buttonOneElement = new RiftLibUIElement.ButtonElement();
                 buttonOneElement.setSize(60, 20);
+                buttonOneElement.setID("popupOpener");
                 tableContainerElement.addElement(buttonOneElement);
                 RiftLibUIElement.ButtonElement buttonTwoElement = new RiftLibUIElement.ButtonElement();
                 buttonTwoElement.setSize(60, 20);
+                buttonTwoElement.setID("popupOpener");
                 tableContainerElement.addElement(buttonTwoElement);
                 RiftLibUIElement.ButtonElement buttonThreeElement = new RiftLibUIElement.ButtonElement();
                 buttonThreeElement.setSize(60, 20);
+                buttonThreeElement.setID("popupOpener");
                 tableContainerElement.addElement(buttonThreeElement);
 
                 elementsToReturn.add(tableContainerElement);
@@ -242,6 +245,16 @@ public class HelloWorldUI extends RiftLibUI {
             if (deactivatableButton != null) {
                 this.setButtonUsabilityByID("deactivatable", !deactivatableButton.enabled);
             }
+        }
+        else if (button.buttonId.equals("popupOpener")) {
+            List<RiftLibUIElement.Element> popupElements = new ArrayList<>();
+
+            RiftLibUIElement.TextElement popupTextElement = new RiftLibUIElement.TextElement();
+            popupTextElement.setText("This text is from a popup!");
+            popupTextElement.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+            popupElements.add(popupTextElement);
+
+            this.createPopup(popupElements);
         }
     }
 

@@ -1,18 +1,24 @@
 package anightdazingzoroark.riftlib.ui;
 
+import anightdazingzoroark.riftlib.RiftLib;
 import anightdazingzoroark.riftlib.RiftLibJEI;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibButton;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibClickableSection;
 import anightdazingzoroark.riftlib.ui.uiElement.RiftLibTextField;
+import anightdazingzoroark.riftlib.ui.uiElement.RiftLibUIElement;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,7 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class RiftLibUI extends GuiScreen {
+    private final ResourceLocation popupBackground = new ResourceLocation(RiftLib.ModID, "textures/ui/popup.png");
     private List<RiftLibUISection> uiSections = new ArrayList<>();
+    private RiftLibPopupUI popup;
 
     //for managing sections
     private final List<String> hiddenUISections = new ArrayList<>();
@@ -54,8 +62,19 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
-        //todo: make it so content can be restored when resizing screen
-        this.uiSections = this.uiSections();
+        //set contents of sections when opening screen
+        if (this.uiSections.isEmpty()) this.uiSections = this.uiSections();
+        //when screen resizes, make sure that the section and all changes to it are preserved
+        //only thing that changes is what it believes to be the ui size
+        else {
+            for (RiftLibUISection section : this.uiSections) {
+                section.resizeGUISizes(this.width, this.height);
+            }
+        }
+
+        //if popup exists, make sure that the section and all changes to it are preserved
+        //when resizing the screen
+        if (this.popup != null) this.popup.resizeGUISizes(this.width, this.height);
     }
 
     @Override
@@ -72,7 +91,15 @@ public abstract class RiftLibUI extends GuiScreen {
         //iterate over all ui sections
         for (RiftLibUISection section : this.uiSections) {
             //draw all the sections in uiSections as long as its id is not hidden
-            if (!this.hiddenUISections.contains(section.id)) section.drawSectionContents(mouseX, mouseY, partialTicks);
+            if (!this.hiddenUISections.contains(section.id)) {
+                //when there's a popup, make sure that hover related effects cannot happen
+                section.setCanDoHoverEffects(this.popup == null);
+
+                section.drawSectionContents(mouseX, mouseY, partialTicks);
+            }
+
+            //if theres a popup, skip the hoverlay related stuff
+            if (this.popup != null) continue;
 
             //assign hovered item as long as its originally null
             if (hoveredItem == null) hoveredItem = section.getHoveredItemStack(mouseX, mouseY);
@@ -89,6 +116,21 @@ public abstract class RiftLibUI extends GuiScreen {
             tooltip.add(hoveredItem.getDisplayName());
             if (Loader.isModLoaded(RiftLibJEI.JEI_MOD_ID)) tooltip.add(I18n.format("ui.open_in_jei"));
             this.drawHoveringText(tooltip, mouseX, mouseY);
+        }
+
+        //create popup and a black gradient over the ui for when a popup has been opened
+        if (this.popup != null) {
+            this.drawVerticalBlackGradientOverlay(
+                    (this.width - this.backgroundSize()[0]) / 2,
+                    (this.height - this.backgroundSize()[1]) / 2,
+                    this.backgroundSize()[0],
+                    this.backgroundSize()[1],
+                    128
+            );
+            this.drawPopupBackgroundLayer();
+
+            //draw popup elements
+            this.popup.getSection().drawSectionContents(mouseX, mouseY, partialTicks);
         }
     }
 
@@ -107,13 +149,38 @@ public abstract class RiftLibUI extends GuiScreen {
         );
     }
 
+    private void drawPopupBackgroundLayer() {
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(this.popupBackground);
+        int k = (this.width - 176) / 2;
+        int l = (this.height - 96) / 2;
+        drawModalRectWithCustomSizedTexture(k, l,
+                0,
+                0,
+                176,
+                96,
+                176,
+                96
+        );
+    }
+
     public abstract void onButtonClicked(RiftLibButton button);
 
     public abstract void onClickableSectionClicked(RiftLibClickableSection clickableSection);
 
+    protected void createPopup(List<RiftLibUIElement.Element> elements) {
+        this.popup = new RiftLibPopupUI(elements, this.width, this.height, this.fontRenderer, this.mc);
+    }
+
+    protected void clearPopup() {
+        this.popup = null;
+    }
+
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
+        //if theres a popup, don't do anything
+        if (this.popup != null) return;
         int delta = Mouse.getEventDWheel();
         if (delta != 0) {
             int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -132,6 +199,9 @@ public abstract class RiftLibUI extends GuiScreen {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
+        //if theres a popup, don't do anything
+        if (this.popup != null) return;
+
         for (RiftLibUISection section : this.uiSections) {
             //skip if this section is hidden
             if (this.hiddenUISections.contains(section.id)) continue;
@@ -143,7 +213,7 @@ public abstract class RiftLibUI extends GuiScreen {
             section.itemElementClicked(mouseX, mouseY, mouseButton);
 
             //all the additional logic here is for ensuring clicking smth out of bounds results in nothing
-            int sectionTop = (section.guiHeight - section.height) / 2 + section.yPos;
+            int sectionTop = (this.height - section.height) / 2 + section.yPos;
             int sectionBottom = sectionTop + section.height;
 
             //button clicking
@@ -181,6 +251,10 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     protected void mouseReleased(int mouseX, int mouseY, int state) {
         super.mouseReleased(mouseX, mouseY, state);
+
+        //if theres a popup, don't do anything
+        if (this.popup != null) return;
+
         for (RiftLibUISection section : this.uiSections) {
             //skip if this section is hidden
             if (this.hiddenUISections.contains(section.id)) continue;
@@ -192,6 +266,10 @@ public abstract class RiftLibUI extends GuiScreen {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+
+        //if theres a popup, don't do anything
+        if (this.popup != null) return;
+
         for (RiftLibUISection section : this.uiSections) {
             //skip if this section is hidden
             if (this.hiddenUISections.contains(section.id)) continue;
@@ -202,31 +280,40 @@ public abstract class RiftLibUI extends GuiScreen {
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        //for exiting
-        super.keyTyped(typedChar, keyCode);
+        //make sure that pressing escape when theres a popup removes the popup
+        if (this.popup != null) {
+            if (keyCode == 1) this.clearPopup();
+        }
+        //for exiting gui in general when pressing escape, as well as other functions involving keyboard
+        else {
+            super.keyTyped(typedChar, keyCode);
 
-        //deal with input for text boxes in each section
-        for (RiftLibUISection section : this.uiSections) {
-            //skip if this section is hidden
-            if (this.hiddenUISections.contains(section.id)) continue;
+            //deal with input for text boxes in each section
+            for (RiftLibUISection section : this.uiSections) {
+                //skip if this section is hidden
+                if (this.hiddenUISections.contains(section.id)) continue;
 
-            for (RiftLibTextField textField : section.getTextFields()) {
-                //get contents
-                Map<String, String> contents = section.getTextFieldContents();
+                for (RiftLibTextField textField : section.getTextFields()) {
+                    //get contents
+                    Map<String, String> contents = section.getTextFieldContents();
 
-                //add to contents map if it exists
-                if (contents.containsKey(textField.id)) {
-                    textField.textboxKeyTyped(typedChar, keyCode);
-                    contents.replace(textField.id, textField.getText());
+                    //add to contents map if it exists
+                    if (contents.containsKey(textField.id)) {
+                        textField.textboxKeyTyped(typedChar, keyCode);
+                        contents.replace(textField.id, textField.getText());
+                    }
+                    //just put it inside otherwise
+                    else contents.put(textField.id, String.valueOf(typedChar));
                 }
-                //just put it inside otherwise
-                else contents.put(textField.id, String.valueOf(typedChar));
             }
         }
     }
 
     @Override
     public void updateScreen() {
+        //if theres a popup, don't do anything
+        if (this.popup != null) return;
+
         //update text boxes in each section
         for (RiftLibUISection section : this.uiSections) {
             //skip if this section is hidden
@@ -279,5 +366,31 @@ public abstract class RiftLibUI extends GuiScreen {
 
     protected void playPressSound() {
         this.mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
+    }
+
+    private void drawVerticalBlackGradientOverlay(int x, int y, int width, int height, int alpha) {
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        BufferBuilder buffer = tessellator.getBuffer();
+
+        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+
+        // Top (more transparent)
+        buffer.pos(x, y + height, 0).color(0f, 0f, 0f, alpha / 255f).endVertex();
+        buffer.pos(x + width, y + height, 0).color(0f, 0f, 0f, alpha / 255f).endVertex();
+
+        // Bottom (more opaque)
+        buffer.pos(x + width, y, 0).color(0f, 0f, 0f, alpha / 255f).endVertex();
+        buffer.pos(x, y, 0).color(0f, 0f, 0f, alpha / 255f).endVertex();
+
+        tessellator.draw();
+
+        GlStateManager.enableAlpha();
+        GlStateManager.disableBlend();
+        GlStateManager.enableTexture2D();
     }
 }
