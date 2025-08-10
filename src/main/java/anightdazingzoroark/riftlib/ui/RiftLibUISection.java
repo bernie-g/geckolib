@@ -29,12 +29,12 @@ import static net.minecraft.client.gui.Gui.drawRect;
 
 public abstract class RiftLibUISection {
     //section size related stuff
-    public final int width;
-    public final int height;
+    private final int width;
+    private final int height;
 
     //section position related stuff
-    public final int xPos;
-    public final int yPos;
+    private int xPos;
+    private int yPos;
 
     //section management stuff
     public final String id;
@@ -100,6 +100,19 @@ public abstract class RiftLibUISection {
         this.guiHeight = guiHeight;
     }
 
+    public void repositionSection(int xPos, int yPos) {
+        this.xPos = xPos;
+        this.yPos = yPos;
+    }
+
+    public int[] sectionPos() {
+        return new int[]{this.xPos, this.yPos};
+    }
+
+    public int[] sectionSize() {
+        return new int[]{this.width, this.height};
+    }
+
     public void setCanDoHoverEffects(boolean value) {
         this.doHoverEffects = value;
     }
@@ -125,7 +138,7 @@ public abstract class RiftLibUISection {
         int scaleFactor = res.getScaleFactor();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GL11.glScissor(sectionX * scaleFactor, (this.minecraft.displayHeight - (sectionY + this.height) * scaleFactor), this.getWidthMinusScrollbar() * scaleFactor, this.height * scaleFactor);
-
+        /*
         int drawY = sectionY - this.scrollOffset;
         int totalHeight = 0;
         this.contentHeight = 0;
@@ -135,7 +148,7 @@ public abstract class RiftLibUISection {
             RiftLibUIElement.Element element = this.defineSectionContents().get(i);
 
             //draw the elements and add up their height
-            totalHeight += this.drawElement(element, this.getWidthMinusScrollbar(), sectionX, drawY + totalHeight, mouseX, mouseY, partialTicks);
+            totalHeight += this.drawElement(element, true, this.getWidthMinusScrollbar(), sectionX, drawY + totalHeight, mouseX, mouseY, partialTicks);
 
             //extra bottom height for certain elements
             if (i < this.defineSectionContents().size() - 1) totalHeight += element.getBottomSpace();
@@ -144,6 +157,51 @@ public abstract class RiftLibUISection {
         //scroll management is dealt with here
         this.contentHeight = totalHeight;
         this.maxScroll = Math.max(0, this.contentHeight - this.height);
+         */
+
+        //measure total height
+        int totalHeight = 0;
+        for (int i = 0; i < this.defineSectionContents().size(); i++) {
+            RiftLibUIElement.Element element = this.defineSectionContents().get(i);
+            int elementHeight = this.drawElement(element, false, this.getWidthMinusScrollbar(), sectionX, 0, mouseX, mouseY, partialTicks);
+            totalHeight += elementHeight;
+
+            if (i < this.defineSectionContents().size() - 1) {
+                totalHeight += element.getBottomSpace();
+            }
+        }
+
+        //store height and compute scroll values
+        this.contentHeight = totalHeight;
+        this.maxScroll = Math.max(0, this.contentHeight - this.height);
+
+        //adjust drawY based on scroll and vertical centering
+        int drawY = sectionY - this.scrollOffset;
+        if (this.elementsCenteredVertically() && this.contentHeight < this.height) {
+            int verticalOffset = (this.height - this.contentHeight) / 2;
+            drawY += verticalOffset;
+        }
+
+        //draw the elements
+        int accumulatedHeight = 0;
+        for (int i = 0; i < this.defineSectionContents().size(); i++) {
+            RiftLibUIElement.Element element = this.defineSectionContents().get(i);
+
+            accumulatedHeight += this.drawElement(
+                    element,
+                    true,
+                    this.getWidthMinusScrollbar(),
+                    sectionX,
+                    drawY + accumulatedHeight,
+                    mouseX,
+                    mouseY,
+                    partialTicks
+            );
+
+            if (i < this.defineSectionContents().size() - 1) {
+                accumulatedHeight += element.getBottomSpace();
+            }
+        }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
@@ -160,7 +218,7 @@ public abstract class RiftLibUISection {
     }
 
     //return value is the total height created by these elements
-    private int drawElement(RiftLibUIElement.Element element, int sectionWidth, int x, int y, int mouseX, int mouseY, float partialTicks) {
+    private int drawElement(RiftLibUIElement.Element element, boolean draw, int sectionWidth, int x, int y, int mouseX, int mouseY, float partialTicks) {
         //for items that have select, hover, or click functionalities
         //this is to ensure that items out of bounds dont get interacted with ever
         int sectionTop = (this.guiHeight - this.height) / 2 + this.yPos;
@@ -172,34 +230,42 @@ public abstract class RiftLibUISection {
             float scale = textElement.getScale();
             int lines = 1;
 
-            if (scale != 1f) {
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(scale, scale, scale);
-            }
-            if (textElement.getSingleLine()) {
-                int stringWidth = (int) (this.fontRenderer.getStringWidth(textElement.getText()) * scale);
-                int totalTextX = textElement.xOffsetFromAlignment(sectionWidth, stringWidth, x);
-                this.fontRenderer.drawString(
-                        textElement.getText(),
-                        (int) (totalTextX / scale),
-                        (int) (y / scale),
-                        textElement.getTextColor()
-                );
+            if (draw) {
+                if (scale != 1f) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.scale(scale, scale, scale);
+                }
+                if (textElement.getSingleLine()) {
+                    int stringWidth = (int) (this.fontRenderer.getStringWidth(textElement.getText()) * scale);
+                    int totalTextX = textElement.xOffsetFromAlignment(sectionWidth, stringWidth, x);
+                    this.fontRenderer.drawString(
+                            textElement.getText(),
+                            (int) (totalTextX / scale),
+                            (int) (y / scale),
+                            textElement.getTextColor()
+                    );
+                }
+                else {
+                    List<String> stringList = this.fontRenderer.listFormattedStringToWidth(textElement.getText(), (int) (sectionWidth * scale));
+                    this.drawImprovedSplitString(
+                            textElement,
+                            x,
+                            y,
+                            sectionWidth,
+                            sectionWidth,
+                            scale,
+                            textElement.getTextColor()
+                    );
+                    lines = stringList.size();
+                }
+                if (scale != 1f) GlStateManager.popMatrix();
             }
             else {
-                List<String> stringList = this.fontRenderer.listFormattedStringToWidth(textElement.getText(), (int) (sectionWidth * scale));
-                this.drawImprovedSplitString(
-                        textElement,
-                        x,
-                        y,
-                        sectionWidth,
-                        sectionWidth,
-                        scale,
-                        textElement.getTextColor()
-                );
-                lines = stringList.size();
+                if (!textElement.getSingleLine()) {
+                    List<String> stringList = this.fontRenderer.listFormattedStringToWidth(textElement.getText(), (int) (sectionWidth * scale));
+                    lines = stringList.size();
+                }
             }
-            if (scale != 1f) GlStateManager.popMatrix();
 
             return lines * this.fontRenderer.FONT_HEIGHT;
         }
@@ -212,26 +278,28 @@ public abstract class RiftLibUISection {
 
             int totalImgX = imageElement.xOffsetFromAlignment(sectionWidth, scaledImageWidth, x);
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.pushMatrix();
-            if (scale != 1f) GlStateManager.scale(scale, scale, scale);
-            this.minecraft.getTextureManager().bindTexture(imageElement.getImage());
-            GlStateManager.translate(
-                    totalImgX / scale,
-                    y / scale,
-                    0
-            );
-            drawModalRectWithCustomSizedTexture(
-                    0,
-                    0,
-                    imageElement.getImageUV()[0],
-                    imageElement.getImageUV()[1],
-                    imageElement.getImageUVSize()[0],
-                    imageElement.getImageUVSize()[1],
-                    imageElement.getTextureSize()[0],
-                    imageElement.getTextureSize()[1]
-            );
-            GlStateManager.popMatrix();
+            if (draw) {
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.pushMatrix();
+                if (scale != 1f) GlStateManager.scale(scale, scale, scale);
+                this.minecraft.getTextureManager().bindTexture(imageElement.getImage());
+                GlStateManager.translate(
+                        totalImgX / scale,
+                        y / scale,
+                        0
+                );
+                drawModalRectWithCustomSizedTexture(
+                        0,
+                        0,
+                        imageElement.getImageUV()[0],
+                        imageElement.getImageUV()[1],
+                        imageElement.getImageUVSize()[0],
+                        imageElement.getImageUVSize()[1],
+                        imageElement.getTextureSize()[0],
+                        imageElement.getTextureSize()[1]
+                );
+                GlStateManager.popMatrix();
+            }
 
             return scaledImageHeight;
         }
@@ -239,47 +307,15 @@ public abstract class RiftLibUISection {
             RiftLibUIElement.ItemElement itemElement = (RiftLibUIElement.ItemElement) element;
             float scale = itemElement.getScale();
 
-            ItemStack itemStack = itemElement.getItemStack();
-
             int scaledItemSize = (int) (16 * scale);
-            int totalItemX = itemElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
 
-            int scaledItemX = (int) (totalItemX / scale);
-            int scaledItemY = (int) (y / scale);
+            if (draw) {
+                ItemStack itemStack = itemElement.getItemStack();
+                int totalItemX = itemElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
 
-            if (scale != 1f) {
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(scale, scale, scale);
-            }
-            this.renderItem(
-                    itemStack,
-                    scaledItemX,
-                    scaledItemY
-            );
-            if (scale != 1f) GlStateManager.popMatrix();
+                int scaledItemX = (int) (totalItemX / scale);
+                int scaledItemY = (int) (y / scale);
 
-            //for being able hover over items and see their jei recipes
-            this.itemClickRegions.add(new ItemClickRegion(itemStack, totalItemX, y, scaledItemSize, sectionTop, sectionBottom));
-
-            return scaledItemSize;
-        }
-        else if (element instanceof RiftLibUIElement.ToolElement) {
-            RiftLibUIElement.ToolElement toolElement = (RiftLibUIElement.ToolElement) element;
-            float scale = toolElement.getScale();
-
-            int scaledItemSize = (int) (16 * scale);
-            int totalItemX = toolElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
-
-            int scaledItemX = (int) (totalItemX / scale);
-            int scaledItemY = (int) (y / scale);
-
-            //now visualize the mining levels using wooden tools and a number
-            //why wooden tools? well theres mods that let u modify mining levels of tools and am not wanna deal with
-            //that shit, so representing them all with just 1 tool type would make it easier
-            //anyways, tool first
-            Item toolItem = Item.getByNameOrId("minecraft:wooden_"+toolElement.getToolType());
-            if (toolItem != null) {
-                ItemStack itemStack = new ItemStack(toolItem);
                 if (scale != 1f) {
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(scale, scale, scale);
@@ -290,31 +326,68 @@ public abstract class RiftLibUISection {
                         scaledItemY
                 );
                 if (scale != 1f) GlStateManager.popMatrix();
+
+                //for being able hover over items and see their jei recipes
+                this.itemClickRegions.add(new ItemClickRegion(itemStack, totalItemX, y, scaledItemSize, sectionTop, sectionBottom));
             }
 
-            //render mining level
-            String level = String.valueOf(toolElement.getMiningLevel());
-            int totalLevelX = totalItemX + (int) (9 * scale);
-            int totalLevelY = y + (int) (12 * scale);
-            if (scale != 1f) {
-                GlStateManager.pushMatrix();
-                GlStateManager.scale(scale, scale, scale);
-            }
-            this.fontRenderer.drawString(level, totalLevelX / scale, totalLevelY / scale, 0, false);
-            if (scale != 1f) GlStateManager.popMatrix();
+            return scaledItemSize;
+        }
+        else if (element instanceof RiftLibUIElement.ToolElement) {
+            RiftLibUIElement.ToolElement toolElement = (RiftLibUIElement.ToolElement) element;
+            float scale = toolElement.getScale();
 
-            //it tool has hover text, add it
-            if (toolElement.getOverlayText() != null && !toolElement.getOverlayText().isEmpty()) {
-                this.toolHoverRegions.add(new ToolHoverRegion(
-                        toolElement.getOverlayText(),
-                        toolElement.getToolType(),
-                        toolElement.getMiningLevel(),
-                        totalItemX,
-                        y,
-                        scaledItemSize,
-                        sectionTop,
-                        sectionBottom
-                ));
+            int scaledItemSize = (int) (16 * scale);
+
+            if (draw) {
+                int totalItemX = toolElement.xOffsetFromAlignment(sectionWidth, scaledItemSize, x);
+
+                int scaledItemX = (int) (totalItemX / scale);
+                int scaledItemY = (int) (y / scale);
+
+                //now visualize the mining levels using wooden tools and a number
+                //why wooden tools? well theres mods that let u modify mining levels of tools and am not wanna deal with
+                //that shit, so representing them all with just 1 tool type would make it easier
+                //anyways, tool first
+                Item toolItem = Item.getByNameOrId("minecraft:wooden_"+toolElement.getToolType());
+                if (toolItem != null) {
+                    ItemStack itemStack = new ItemStack(toolItem);
+                    if (scale != 1f) {
+                        GlStateManager.pushMatrix();
+                        GlStateManager.scale(scale, scale, scale);
+                    }
+                    this.renderItem(
+                            itemStack,
+                            scaledItemX,
+                            scaledItemY
+                    );
+                    if (scale != 1f) GlStateManager.popMatrix();
+                }
+
+                //render mining level
+                String level = String.valueOf(toolElement.getMiningLevel());
+                int totalLevelX = totalItemX + (int) (9 * scale);
+                int totalLevelY = y + (int) (12 * scale);
+                if (scale != 1f) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.scale(scale, scale, scale);
+                }
+                this.fontRenderer.drawString(level, totalLevelX / scale, totalLevelY / scale, 0, false);
+                if (scale != 1f) GlStateManager.popMatrix();
+
+                //it tool has hover text, add it
+                if (toolElement.getOverlayText() != null && !toolElement.getOverlayText().isEmpty()) {
+                    this.toolHoverRegions.add(new ToolHoverRegion(
+                            toolElement.getOverlayText(),
+                            toolElement.getToolType(),
+                            toolElement.getMiningLevel(),
+                            totalItemX,
+                            y,
+                            scaledItemSize,
+                            sectionTop,
+                            sectionBottom
+                    ));
+                }
             }
             return scaledItemSize + (int) (4 * scale);
         }
@@ -323,19 +396,22 @@ public abstract class RiftLibUISection {
 
             int buttonW = buttonElement.getSize()[0];
             int buttonH = buttonElement.getSize()[1];
-            int buttonX = buttonElement.xOffsetFromAlignment(sectionWidth, buttonW, x);
 
-            RiftLibButton button = new RiftLibButton(buttonElement.getID(), buttonX, y, buttonW, buttonH, buttonElement.getName());
-            button.doHoverEffects = this.doHoverEffects;
-            button.scrollTop = sectionTop;
-            button.scrollBottom = sectionBottom;
-            if (this.disabledButtonIds.contains(buttonElement.getID())) button.enabled = false;
+            if (draw) {
+                int buttonX = buttonElement.xOffsetFromAlignment(sectionWidth, buttonW, x);
 
-            //only render and register button if its within visible bounds
-            if ((y + buttonH) > sectionTop && y < sectionBottom) {
-                button.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+                RiftLibButton button = new RiftLibButton(buttonElement.getID(), buttonX, y, buttonW, buttonH, buttonElement.getName());
+                button.doHoverEffects = this.doHoverEffects;
+                button.scrollTop = sectionTop;
+                button.scrollBottom = sectionBottom;
+                if (this.disabledButtonIds.contains(buttonElement.getID())) button.enabled = false;
+
+                //only render and register button if its within visible bounds
+                if ((y + buttonH) > sectionTop && y < sectionBottom) {
+                    button.drawButton(this.minecraft, mouseX, mouseY, partialTicks);
+                }
+                this.activeButtons.add(button);
             }
-            this.activeButtons.add(button);
 
             return buttonH;
         }
@@ -344,62 +420,65 @@ public abstract class RiftLibUISection {
 
             int sectionW = clickableSectionElement.getSize()[0];
             int sectionH = clickableSectionElement.getSize()[1];
-            int sectionX = clickableSectionElement.xOffsetFromAlignment(sectionWidth, sectionW, x);
 
-            //make section
-            RiftLibClickableSection clickableSection = new RiftLibClickableSection(
-                    sectionW,
-                    sectionH,
-                    sectionW,
-                    sectionH,
-                    sectionX,
-                    y,
-                    this.fontRenderer,
-                    this.minecraft
-            );
-            clickableSection.setID(clickableSectionElement.getID());
-            clickableSection.scrollTop = sectionTop;
-            clickableSection.scrollBottom = sectionBottom;
-            clickableSection.doHoverEffects = this.doHoverEffects;
+            if (draw) {
+                int sectionX = clickableSectionElement.xOffsetFromAlignment(sectionWidth, sectionW, x);
 
-            //text rendering
-            if (!clickableSectionElement.getTextContent().isEmpty()) {
-                clickableSection.addString(
-                        clickableSectionElement.getTextContent(),
-                        false,
-                        clickableSectionElement.getTextColor(),
-                        clickableSectionElement.getTextOffsets()[0],
-                        clickableSectionElement.getTextOffsets()[1],
-                        clickableSectionElement.getTextScale()
+                //make section
+                RiftLibClickableSection clickableSection = new RiftLibClickableSection(
+                        sectionW,
+                        sectionH,
+                        sectionW,
+                        sectionH,
+                        sectionX,
+                        y,
+                        this.fontRenderer,
+                        this.minecraft
                 );
-                clickableSection.setStringHoveredColor(clickableSectionElement.getTextHoveredColor());
-                clickableSection.setStringSelectedColor(clickableSectionElement.getTextSelectedColor());
-            }
+                clickableSection.setID(clickableSectionElement.getID());
+                clickableSection.scrollTop = sectionTop;
+                clickableSection.scrollBottom = sectionBottom;
+                clickableSection.doHoverEffects = this.doHoverEffects;
 
-            //image rendering
-            if (clickableSectionElement.getImage() != null) {
-                clickableSection.addImage(
-                        clickableSectionElement.getImage(),
-                        clickableSectionElement.getUVSize()[0],
-                        clickableSectionElement.getUVSize()[1],
-                        clickableSectionElement.getImageSize()[0],
-                        clickableSectionElement.getImageSize()[1],
-                        clickableSectionElement.getImageUV()[0],
-                        clickableSectionElement.getImageUV()[1],
-                        clickableSectionElement.getImageHoveredUV()[0],
-                        clickableSectionElement.getImageHoveredUV()[1]
-                );
-                clickableSection.setScale(clickableSectionElement.getImageScale());
-                if (clickableSectionElement.getImageSelectedUV() != null) clickableSection.setSelectedUV(clickableSectionElement.getImageSelectedUV()[0], clickableSectionElement.getImageSelectedUV()[1]);
-            }
+                //text rendering
+                if (!clickableSectionElement.getTextContent().isEmpty()) {
+                    clickableSection.addString(
+                            clickableSectionElement.getTextContent(),
+                            false,
+                            clickableSectionElement.getTextColor(),
+                            clickableSectionElement.getTextOffsets()[0],
+                            clickableSectionElement.getTextOffsets()[1],
+                            clickableSectionElement.getTextScale()
+                    );
+                    clickableSection.setStringHoveredColor(clickableSectionElement.getTextHoveredColor());
+                    clickableSection.setStringSelectedColor(clickableSectionElement.getTextSelectedColor());
+                }
 
-            if (this.selectedClickableSections.contains(clickableSectionElement.getID())) clickableSection.setSelected(true);
+                //image rendering
+                if (clickableSectionElement.getImage() != null) {
+                    clickableSection.addImage(
+                            clickableSectionElement.getImage(),
+                            clickableSectionElement.getUVSize()[0],
+                            clickableSectionElement.getUVSize()[1],
+                            clickableSectionElement.getImageSize()[0],
+                            clickableSectionElement.getImageSize()[1],
+                            clickableSectionElement.getImageUV()[0],
+                            clickableSectionElement.getImageUV()[1],
+                            clickableSectionElement.getImageHoveredUV()[0],
+                            clickableSectionElement.getImageHoveredUV()[1]
+                    );
+                    clickableSection.setScale(clickableSectionElement.getImageScale());
+                    if (clickableSectionElement.getImageSelectedUV() != null) clickableSection.setSelectedUV(clickableSectionElement.getImageSelectedUV()[0], clickableSectionElement.getImageSelectedUV()[1]);
+                }
 
-            //only render and register section if its within visible bounds
-            if ((y + sectionH) > sectionTop && y < sectionBottom) {
-                clickableSection.drawSection(mouseX, mouseY);
+                if (this.selectedClickableSections.contains(clickableSectionElement.getID())) clickableSection.setSelected(true);
+
+                //only render and register section if its within visible bounds
+                if ((y + sectionH) > sectionTop && y < sectionBottom) {
+                    clickableSection.drawSection(mouseX, mouseY);
+                }
+                this.clickableSections.add(clickableSection);
             }
-            this.clickableSections.add(clickableSection);
 
             return sectionH;
         }
@@ -409,31 +488,34 @@ public abstract class RiftLibUISection {
 
             int textBoxWidth = (int) (textBoxElement.getWidth() * scale);
             int textBoxHeight = (int) (20 * scale);
-            int textBoxX = textBoxElement.xOffsetFromAlignment(sectionWidth, textBoxWidth, x);
 
-            int scaledTextBoxX = (int) (textBoxX / scale);
-            int scaledTextBoxY = (int) (y / scale);
+            if (draw) {
+                int textBoxX = textBoxElement.xOffsetFromAlignment(sectionWidth, textBoxWidth, x);
 
-            //create text field
-            RiftLibTextField textField = new RiftLibTextField(
-                    textBoxElement.getID(),
-                    this.fontRenderer,
-                    scaledTextBoxX,
-                    scaledTextBoxY,
-                    textBoxWidth,
-                    textBoxHeight
-            );
-            textField.setFocused(true);
-            textField.setText(textBoxElement.getDefaultText());
-            //if theres already text in the textFieldContents map, set the text of textField to its stored text
-            if (!this.textFieldContents.isEmpty() && this.textFieldContents.containsKey(textBoxElement.getID())) {
-                textField.setText(this.textFieldContents.get(textBoxElement.getID()));
+                int scaledTextBoxX = (int) (textBoxX / scale);
+                int scaledTextBoxY = (int) (y / scale);
+
+                //create text field
+                RiftLibTextField textField = new RiftLibTextField(
+                        textBoxElement.getID(),
+                        this.fontRenderer,
+                        scaledTextBoxX,
+                        scaledTextBoxY,
+                        textBoxWidth,
+                        textBoxHeight
+                );
+                textField.setFocused(true);
+                textField.setText(textBoxElement.getDefaultText());
+                //if theres already text in the textFieldContents map, set the text of textField to its stored text
+                if (!this.textFieldContents.isEmpty() && this.textFieldContents.containsKey(textBoxElement.getID())) {
+                    textField.setText(this.textFieldContents.get(textBoxElement.getID()));
+                }
+                //otherwise, put it inside
+                else this.textFieldContents.put(textBoxElement.getID(), textField.getText());
+
+                textField.drawTextBox();
+                this.textFields.add(textField);
             }
-            //otherwise, put it inside
-            else this.textFieldContents.put(textBoxElement.getID(), textField.getText());
-
-            textField.drawTextBox();
-            this.textFields.add(textField);
 
             return textBoxHeight;
         }
@@ -443,22 +525,25 @@ public abstract class RiftLibUISection {
 
             int progressBarWidth = (int) Math.ceil(progressBarElement.getWidth() * scale);
             int progressBarHeight = (int) Math.ceil(3 * scale);
-            int progressBarX = progressBarElement.xOffsetFromAlignment(sectionWidth, progressBarWidth, x);
 
-            int progressBarContentWidth = progressBarWidth - (int) Math.ceil(2 * scale);
-            int progressBarContentHeight = progressBarHeight - (int) Math.ceil(2 * scale);
-            int progressBarContentX = progressBarElement.contentXOffsetFromAlignment(sectionWidth, progressBarContentWidth, x, scale);
-            int progressBarContentY = (int) Math.ceil(y + scale);
+            if (draw) {
+                int progressBarX = progressBarElement.xOffsetFromAlignment(sectionWidth, progressBarWidth, x);
 
-            //draw frame
-            Gui.drawRect(progressBarX, y, progressBarX + progressBarWidth, y + progressBarHeight, 0xFF000000);
+                int progressBarContentWidth = progressBarWidth - (int) Math.ceil(2 * scale);
+                int progressBarContentHeight = progressBarHeight - (int) Math.ceil(2 * scale);
+                int progressBarContentX = progressBarElement.contentXOffsetFromAlignment(sectionWidth, progressBarContentWidth, x, scale);
+                int progressBarContentY = (int) Math.ceil(y + scale);
 
-            //draw background of progress bar
-            this.drawRectOutline(progressBarContentX, progressBarContentY, progressBarContentWidth, progressBarContentHeight, (0xFF000000 | progressBarElement.getBackgroundColor()));
+                //draw frame
+                Gui.drawRect(progressBarX, y, progressBarX + progressBarWidth, y + progressBarHeight, 0xFF000000);
 
-            //draw progress of progress bar
-            if (progressBarElement.getPercentage() > 0)
-                this.drawRectOutline(progressBarContentX, progressBarContentY, (int) (progressBarContentWidth * progressBarElement.getPercentage()), progressBarContentHeight, (0xFF000000 | progressBarElement.getOverlayColor()));
+                //draw background of progress bar
+                this.drawRectOutline(progressBarContentX, progressBarContentY, progressBarContentWidth, progressBarContentHeight, (0xFF000000 | progressBarElement.getBackgroundColor()));
+
+                //draw progress of progress bar
+                if (progressBarElement.getPercentage() > 0)
+                    this.drawRectOutline(progressBarContentX, progressBarContentY, (int) (progressBarContentWidth * progressBarElement.getPercentage()), progressBarContentHeight, (0xFF000000 | progressBarElement.getOverlayColor()));
+            }
 
             return progressBarHeight;
         }
@@ -471,22 +556,24 @@ public abstract class RiftLibUISection {
             int scaledRenderWidth = (int) (scale * (renderWidth - renderedEntityElement.getAdditionalSize()[0])) + renderedEntityElement.getAdditionalSize()[0];
             int scaledRenderHeight = (int) (scale * (renderHeight - renderedEntityElement.getAdditionalSize()[1])) + renderedEntityElement.getAdditionalSize()[1];
 
-            int renderedEntityX = renderedEntityElement.xOffsetFromAlignment(sectionWidth, scaledRenderWidth, scale, x);
+            if (draw) {
+                int renderedEntityX = renderedEntityElement.xOffsetFromAlignment(sectionWidth, scaledRenderWidth, scale, x);
 
-            //entity rendering
-            if ((y + scaledRenderHeight) > sectionTop && y < sectionBottom) {
-                GlStateManager.color(1f, 1f, 1f, 1f);
-                GlStateManager.pushMatrix();
-                GlStateManager.pushMatrix();
-                GlStateManager.enableDepth();
-                GlStateManager.translate(renderedEntityX, y + scaledRenderHeight, 210f);
-                GlStateManager.rotate(180, 1f, 0f, 0f);
-                GlStateManager.rotate(renderedEntityElement.getRotationAngle(), 0f, 1f, 0f);
-                GlStateManager.scale(scale, scale, scale);
-                this.minecraft.getRenderManager().renderEntity(renderedEntityElement.getEntity(), 0.0D, 0.0D, 0.0D, 0.0F, 0F, false);
-                GlStateManager.disableDepth();
-                GlStateManager.popMatrix();
-                GlStateManager.popMatrix();
+                //entity rendering
+                if ((y + scaledRenderHeight) > sectionTop && y < sectionBottom) {
+                    GlStateManager.color(1f, 1f, 1f, 1f);
+                    GlStateManager.pushMatrix();
+                    GlStateManager.pushMatrix();
+                    GlStateManager.enableDepth();
+                    GlStateManager.translate(renderedEntityX, y + scaledRenderHeight, 210f);
+                    GlStateManager.rotate(180, 1f, 0f, 0f);
+                    GlStateManager.rotate(renderedEntityElement.getRotationAngle(), 0f, 1f, 0f);
+                    GlStateManager.scale(scale, scale, scale);
+                    this.minecraft.getRenderManager().renderEntity(renderedEntityElement.getEntity(), 0.0D, 0.0D, 0.0D, 0.0F, 0F, false);
+                    GlStateManager.disableDepth();
+                    GlStateManager.popMatrix();
+                    GlStateManager.popMatrix();
+                }
             }
 
             return scaledRenderHeight;
@@ -503,20 +590,22 @@ public abstract class RiftLibUISection {
             int totalTableWidth = cellWidth * tableContainerElement.getRowCount();
             int totalTableHeight = cellHeight * rowCount;
 
-            int tableX = tableContainerElement.xOffsetFromAlignment(sectionWidth, totalTableWidth, x);
+            if (draw) {
+                int tableX = tableContainerElement.xOffsetFromAlignment(sectionWidth, totalTableWidth, x);
 
-            for (int i = 0; i < tableContainerElement.getElements().size(); i++) {
-                RiftLibUIElement.Element elementForCell = tableContainerElement.getElements().get(i);
+                for (int i = 0; i < tableContainerElement.getElements().size(); i++) {
+                    RiftLibUIElement.Element elementForCell = tableContainerElement.getElements().get(i);
 
-                int column = i % tableContainerElement.getRowCount();
-                int row = i / tableContainerElement.getRowCount();
+                    int column = i % tableContainerElement.getRowCount();
+                    int row = i / tableContainerElement.getRowCount();
 
-                int xCellPos = tableX + column * cellWidth;
-                int yCellPos = y + row * cellHeight;
+                    int xCellPos = tableX + column * cellWidth;
+                    int yCellPos = y + row * cellHeight;
 
-                //all elements in each cell must be centered
-                elementForCell.setAlignment(RiftLibUIElement.ALIGN_CENTER);
-                this.drawElement(elementForCell, cellWidth, xCellPos, yCellPos, mouseX, mouseY, partialTicks);
+                    //all elements in each cell must be centered
+                    elementForCell.setAlignment(RiftLibUIElement.ALIGN_CENTER);
+                    this.drawElement(elementForCell, true, cellWidth, xCellPos, yCellPos, mouseX, mouseY, partialTicks);
+                }
             }
 
             return totalTableHeight;
@@ -535,7 +624,7 @@ public abstract class RiftLibUISection {
 
                 //save region for hover and click
                 TabSelectorClickRegion region = new TabSelectorClickRegion(tabSelectorX, tabSelectorY, tabWidth, tabSelectorHeight, tabElement.getID(), tabContents.tabContentID);
-                this.tabSelectorClickRegions.add(region);
+                if (!this.tabSelectorClickRegions.contains(region)) this.tabSelectorClickRegions.add(region);
                 if (!this.openedTabs.containsKey(tabElement.getID())) this.openedTabs.put(tabElement.getID(), "");
 
                 //detect hover
@@ -548,24 +637,24 @@ public abstract class RiftLibUISection {
                 else if (isHovered) textColor = tabElement.getTabSelectorHoverColor();
 
                 //draw outline
-                this.drawRectOutline(tabSelectorX, tabSelectorY, tabWidth, tabSelectorHeight, 0xFF000000);
+                if (draw) this.drawRectOutline(tabSelectorX, tabSelectorY, tabWidth, tabSelectorHeight, 0xFF000000);
 
                 //draw text
-                this.fontRenderer.drawStringWithShadow(tabName, tabSelectorX + tabSelectorPadding, tabSelectorY + 5, textColor);
+                if (draw) this.fontRenderer.drawStringWithShadow(tabName, tabSelectorX + tabSelectorPadding, tabSelectorY + 5, textColor);
 
                 tabSelectorX += tabWidth + 4;
             }
 
             //draw tab contents
-            int contentBoxY = tabSelectorY + tabSelectorHeight + 4;
+            int contentInnerHeight = 0;
             int contentPadding = 4;
+            int contentBoxY = tabSelectorY + tabSelectorHeight + contentPadding;
             String idOfActiveTab = this.openedTabs.get(tabElement.getID());
             if (idOfActiveTab.isEmpty()) {
                 this.openedTabs.replace(tabElement.getID(), tabElement.getTabContents().get(0).tabContentID);
                 idOfActiveTab = tabElement.getTabContents().get(0).tabContentID;
             }
             List<RiftLibUIElement.Element> tabContentElements = tabElement.getTabContentsByID(idOfActiveTab).getTabContents();
-            int contentInnerHeight = 0;
             if (tabContentElements != null && !tabContentElements.isEmpty()) {
                 int contentInnerX = x + contentPadding;
                 int contentInnerY = contentBoxY + contentPadding;
@@ -574,7 +663,7 @@ public abstract class RiftLibUISection {
                     RiftLibUIElement.Element elementInTab = tabContentElements.get(i);
 
                     //draw all the elements in the tab
-                    int usedHeight = this.drawElement(elementInTab, this.getTabContentWidth(tabElement), contentInnerX, contentInnerY, mouseX, mouseY, partialTicks);
+                    int usedHeight = this.drawElement(elementInTab, draw, this.getTabContentWidth(tabElement), contentInnerX, contentInnerY, mouseX, mouseY, partialTicks);
                     contentInnerY += usedHeight;
                     contentInnerHeight += usedHeight;
 
@@ -587,7 +676,7 @@ public abstract class RiftLibUISection {
                 }
 
                 //draw content outline box after measuring
-                this.drawRectOutline(x, contentBoxY, this.getTabContentWidth(tabElement) + contentPadding * 2, contentInnerHeight + contentPadding * 2, 0xFF000000);
+                if (draw) this.drawRectOutline(x, contentBoxY, this.getTabContentWidth(tabElement) + contentPadding * 2, contentInnerHeight + contentPadding * 2, 0xFF000000);
             }
 
             return tabSelectorHeight + 4 + contentInnerHeight + contentPadding * 2;
