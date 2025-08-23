@@ -2,10 +2,11 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.constant.DataTickets;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.data.EntityModelData;
 
 /**
@@ -16,7 +17,10 @@ import software.bernie.geckolib.model.data.EntityModelData;
  * Additionally it can automatically handle head-turning if the entity has a "head" bone
  */
 public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
-	protected final boolean turnsHead;
+	@Nullable
+	protected String headBone;
+	@Deprecated(forRemoval = true)
+	protected boolean turnsHead; // Use headbone's non-null state instead
 
 	/**
 	 * Create a new instance of this model class
@@ -33,9 +37,17 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 	}
 
 	public DefaultedEntityGeoModel(ResourceLocation assetSubpath, boolean turnsHead) {
+		this(assetSubpath, turnsHead ? "head" : null);
+	}
+
+	/**
+	 * Create a new instance of this model class, optionally providing the name of the head bone to auto-handle rotating
+	 */
+	public DefaultedEntityGeoModel(ResourceLocation assetSubpath, @Nullable String headBone) {
 		super(assetSubpath);
 
-		this.turnsHead = turnsHead;
+		this.turnsHead = headBone != null;
+		this.headBone = headBone;
 	}
 
 	/**
@@ -50,10 +62,10 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 
 	@Override
 	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
-		if (!this.turnsHead)
+		if (this.headBone == null || !this.turnsHead)
 			return;
 
-		GeoBone head = getAnimationProcessor().getBone("head");
+		GeoBone head = getAnimationProcessor().getBone(this.headBone);
 
 		if (head != null) {
 			EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
