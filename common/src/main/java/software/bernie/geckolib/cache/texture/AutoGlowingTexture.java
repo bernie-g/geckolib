@@ -119,7 +119,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 				glowImage = NativeImage.read(glowLayerResource.get().open());
 				glowLayerMeta = GeoGlowingTextureMeta.fromExistingImage(glowImage);
 
-				if (glowImage.getWidth() != baseImage.getWidth() || glowImage.getHeight() != baseImage.getHeight())
+				if (baseImage != null && (glowImage.getWidth() != baseImage.getWidth() || glowImage.getHeight() != baseImage.getHeight()))
 					throw new IllegalStateException(String.format("Glowmask texture dimensions do not match base texture dimensions! Mask: %s, Base: %s", this.glowLayer, this.textureBase));
 			}
 			else {
