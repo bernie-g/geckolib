@@ -1,5 +1,5 @@
-v4.7.6
+v4.7.7
 
-- Clean up javadoc and param naming for GeckoLibUtil#getSyncedAnimatable
-- Allow for manually changed GeckoLib stack ids (???) to be synced as normal
-- Fix GeoArmorRenderer sharing its animations when not registered as a synced animatable (#730)
+- Properly handle exception when attempting to glowmask an animated texture (Pull #758)
+- Changed DefaultedEntityGeoModel to use a nullable bone name input for its head turning instead of a flat boolean (#753)
+- Fixed some specific bedrock-format animations failing to parse if exported on newer versions of Blockbench
