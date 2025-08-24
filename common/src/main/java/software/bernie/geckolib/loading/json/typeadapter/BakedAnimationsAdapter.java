@@ -128,19 +128,36 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		throw new JsonParseException("Invalid object type provided to getTripletObj, got: " + element);
 	}
 
+	// Blockbench is just getting silly now
+	private static JsonArray extractBedrockKeyframe(JsonElement keyframe) {
+		if (keyframe.isJsonArray())
+			return keyframe.getAsJsonArray();
+
+		if (!keyframe.isJsonObject())
+			throw new JsonParseException("Invalid keyframe data - expected array or object, found " + keyframe);
+
+		JsonObject keyframeObj = keyframe.getAsJsonObject();
+
+		if (keyframeObj.has("vector"))
+			return keyframeObj.get("vector").getAsJsonArray();
+
+		if (keyframeObj.has("pre"))
+			return keyframeObj.get("pre").getAsJsonArray();
+
+		return keyframeObj.get("post").getAsJsonArray();
+	}
+
 	private static void addBedrockKeyframes(double timestamp, JsonObject keyframe, List<DoubleObjectPair<JsonElement>> keyframes) {
 		boolean addedFrame = false;
 
 		if (keyframe.has("pre")) {
-			JsonElement pre = keyframe.get("pre");
 			addedFrame = true;
 
-			keyframes.add(DoubleObjectPair.of(timestamp == 0 ? timestamp : timestamp - 0.001d, pre.isJsonArray() ? pre.getAsJsonArray() : GsonHelper.getAsJsonArray(pre.getAsJsonObject(), "vector")));
+			keyframes.add(DoubleObjectPair.of(timestamp == 0 ? timestamp : timestamp - 0.001d, extractBedrockKeyframe(keyframe.get("pre"))));
 		}
 
 		if (keyframe.has("post")) {
-			JsonElement post = keyframe.get("post");
-			JsonArray values = post.isJsonArray() ? post.getAsJsonArray() : GsonHelper.getAsJsonArray(post.getAsJsonObject(), "vector");
+			JsonArray values = extractBedrockKeyframe(keyframe.get("post"));
 
 			if (keyframe.has("lerp_mode")) {
 				JsonObject keyframeObj = new JsonObject();
