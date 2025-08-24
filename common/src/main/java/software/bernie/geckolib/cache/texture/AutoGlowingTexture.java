@@ -118,6 +118,9 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 			if (glowLayerResource.isPresent()) {
 				glowImage = NativeImage.read(glowLayerResource.get().open());
 				glowLayerMeta = GeoGlowingTextureMeta.fromExistingImage(glowImage);
+
+				if (glowImage.getWidth() != baseImage.getWidth() || glowImage.getHeight() != baseImage.getHeight())
+					throw new IllegalStateException(String.format("Glowmask texture dimensions do not match base texture dimensions! Mask: %s, Base: %s", this.glowLayer, this.textureBase));
 			}
 			else {
 				Optional<GeoGlowingTextureMeta> meta = textureBaseResource.metadata().getSection(GeoGlowingTextureMeta.DESERIALIZER);
@@ -145,16 +148,6 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 
 		if (mask == null)
 			return null;
-
-		//throw an exception if the image dimensions dont add up
-		if (mask.getWidth() != baseImage.getWidth() || mask.getHeight() != baseImage.getHeight()) {
-			//if its a glowImage
-			if (resourceManager.getResource(this.glowLayer).isPresent()) {
-				String formatText = String.format("Glow image for texture %s has diferent dimensions than base image: %s",
-						this.glowLayer, this.textureBase);
-				throw new IOException(formatText);
-			}
-		}
 
 		boolean animated = originalTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
 
