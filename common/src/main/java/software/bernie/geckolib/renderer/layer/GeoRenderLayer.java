@@ -72,9 +72,10 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * @param relatedObject An object related to the render pass or null if not applicable.
 	 *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
 	@ApiStatus.OverrideOnly
-	public void addRenderData(T animatable, O relatedObject, R renderState) {}
+	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
 
 	/**
 	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called

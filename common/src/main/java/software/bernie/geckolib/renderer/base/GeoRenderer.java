@@ -131,9 +131,10 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * @param relatedObject An object related to the render pass or null if not applicable.
 	 *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
 	@ApiStatus.OverrideOnly
-	default void addRenderData(T animatable, O relatedObject, R renderState) {}
+	default void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
 
 	/**
 	 * Internal method for capturing the common RenderState data for all animatable objects
@@ -160,19 +161,19 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * Create the {@link GeoRenderState} for the upcoming render pass
 	 * <p>
 	 * This is an internal method only; you should <b><u>NOT</u></b> be overriding this<br>
-	 * Override {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
+	 * Override {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
 	 */
 	@ApiStatus.Internal
 	default R fillRenderState(T animatable, O relatedObject, R renderState, float partialTick) {
 		captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
-		addRenderData(animatable, relatedObject, renderState);
+		addRenderData(animatable, relatedObject, renderState, partialTick);
 
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
-			renderLayer.addRenderData(animatable, relatedObject, renderState);
+			renderLayer.addRenderData(animatable, relatedObject, renderState, partialTick);
 		}
 
-		fireCompileRenderStateEvent(animatable, relatedObject, renderState);
-		getGeoModel().prepareForRenderPass(animatable, renderState);
+		fireCompileRenderStateEvent(animatable, relatedObject, renderState, partialTick);
+		getGeoModel().prepareForRenderPass(animatable, renderState, partialTick);
 
 		return renderState;
 	}
@@ -446,7 +447,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	/**
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
-	void fireCompileRenderStateEvent(T animatable, O relatedObject, R renderState);
+	void fireCompileRenderStateEvent(T animatable, O relatedObject, R renderState, float partialTick);
 
 	/**
 	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer

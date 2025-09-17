@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -37,6 +38,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -65,6 +67,13 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 
 	protected Matrix4f entityRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
+
+    /**
+     * Creates a new defaulted renderer instance, using the entity's registered id as the file name for its assets
+     */
+    public GeoEntityRenderer(EntityRendererProvider.Context context, EntityType<? extends T> entityType) {
+        this(context, new DefaultedEntityGeoModel<>(BuiltInRegistries.ENTITY_TYPE.getKey(entityType)));
+    }
 
 	public GeoEntityRenderer(EntityRendererProvider.Context context, GeoModel<T> model) {
 		super(context);
@@ -213,7 +222,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * Calculate the yaw of the given animatable.
 	 * <p>
 	 * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
-	 * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
+	 * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
 	 */
 	protected float calculateYRot(T animatable, float yHeadRot, float partialTick) {
 		if (!(animatable.getVehicle() instanceof LivingEntity vehicle))
@@ -501,7 +510,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * Fill the EntityRenderState for the current render pass.
 	 * <p>
 	 * You should only be overriding this if you have extended the {@link R renderState} type.<br>
-	 * If you're just adding GeckoLib rendering data, you should be using {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
+	 * If you're just adding GeckoLib rendering data, you should be using {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
 	 */
 	@ApiStatus.OverrideOnly
 	@Override
@@ -599,7 +608,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, R renderState) {
+	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, R renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileEntityRenderState(this, renderState, animatable);
 	}
 

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,6 +34,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -71,6 +73,18 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	protected GeoBone leftLegBone = null;
 	protected GeoBone rightBootBone = null;
 	protected GeoBone leftBootBone = null;
+
+    /**
+     * Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
+     */
+	public <I extends T> GeoArmorRenderer(I armorItem) {
+		this(new DefaultedGeoModel<>(BuiltInRegistries.ITEM.getKey(armorItem)) {
+            @Override
+            protected String subtype() {
+                return "armor";
+            }
+        });
+	}
 
 	public GeoArmorRenderer(GeoModel<T> model) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));
@@ -432,7 +446,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, RenderData relatedObject, R renderState) {
+	public void fireCompileRenderStateEvent(T animatable, RenderData relatedObject, R renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
 	}
 

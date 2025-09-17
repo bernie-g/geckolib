@@ -132,7 +132,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
 	 */
 	@Override
-	public void addRenderData(T animatable, O relatedObject, R renderState) {
+	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
 		EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -142,8 +142,6 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		renderState.addGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, equipment);
 
 		if (animatable instanceof LivingEntity livingEntity && !equipment.get(EquipmentSlot.CHEST).isEmpty()) {
-			float partialTick = renderState.getGeckolibData(DataTickets.PARTIAL_TICK);
-
 			renderState.addGeckolibData(DataTickets.ELYTRA_ROTATION, new Vec3(livingEntity.elytraAnimationState.getRotX(partialTick),
 																			  livingEntity.elytraAnimationState.getRotY(partialTick),
 																			  livingEntity.elytraAnimationState.getRotZ(partialTick)));
@@ -216,7 +214,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	/**
-	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link #addRenderData(T, O, R)}
+	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link #addRenderData(T, O, R, float)}
 	 */
 	protected ItemStack getEquipmentStack(GeoBone bone, EquipmentSlot slot, R renderState) {
 		return (ItemStack)renderState.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).getOrDefault(slot, ItemStack.EMPTY);

@@ -221,7 +221,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * Calculate the yaw of the given animatable.
 	 * <p>
 	 * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
-	 * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
+	 * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
 	 */
 	protected final float calculateYRot(E entity, float yHeadRot, float partialTick) {
 		if (!(entity.getVehicle() instanceof LivingEntity vehicle))
@@ -507,7 +507,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * Fill the EntityRenderState for the current render pass.
 	 * <p>
 	 * You should only be overriding this if you have extended the {@link R renderState} type.<br>
-	 * If you're just adding GeckoLib rendering data, you should be using {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} instead
+	 * If you're just adding GeckoLib rendering data, you should be using {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
 	 */
 	@ApiStatus.Internal
 	@Override
@@ -605,7 +605,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, E entity, R renderState) {
+	public void fireCompileRenderStateEvent(T animatable, E entity, R renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
 	}
 

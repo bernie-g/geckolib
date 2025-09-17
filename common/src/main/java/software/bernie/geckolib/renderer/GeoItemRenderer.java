@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -25,6 +26,7 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -50,6 +52,13 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 
 	protected Matrix4f itemRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
+
+    /**
+     * Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
+     */
+    public <I extends T> GeoItemRenderer(I item) {
+        this(new DefaultedItemGeoModel<>(BuiltInRegistries.ITEM.getKey(item)));
+    }
 
 	public GeoItemRenderer(GeoModel<T> model) {
 		this(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels(),
@@ -288,7 +297,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, RenderData renderData, GeoRenderState renderState) {
+	public void fireCompileRenderStateEvent(T animatable, RenderData renderData, GeoRenderState renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileItemRenderState(this, renderState, animatable, renderData);
 	}
 

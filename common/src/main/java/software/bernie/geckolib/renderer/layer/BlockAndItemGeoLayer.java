@@ -51,9 +51,10 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param relatedObject An object related to the render pass or null if not applicable.
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public abstract void addRenderData(T animatable, O relatedObject, R renderState);
+    public abstract void addRenderData(T animatable, O relatedObject, R renderState, float partialTick);
 
     /**
      * Container for data needed to render an item or block for a bone.
@@ -61,7 +62,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param boneName The name of the bone to render the armor piece for
      * @param displayContext The {@link ItemDisplayContext} to use when rendering the item
      * @param retrievalFunction The function to retrieve the {@link ItemStack} or {@link BlockState} to render. You probably need to override
-     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} as well
+     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} as well
      */
     public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<@NotNull ItemStack, @NotNull BlockState>> retrievalFunction) {}
 

@@ -160,7 +160,6 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 					.setTextureState(new RenderStateShard.TextureStateShard(entry.texture, false))
 					.setLayeringState(entry.zOffset ? RenderType.VIEW_OFFSET_Z_LAYERING : RenderStateShard.NO_LAYERING);
 
-
 			if (entry.respectLighting) {
 				return RenderType.create(GeckoLibConstants.MODID + "_entity_translucent_emissive",
 										 RenderType.TRANSIENT_BUFFER_SIZE,

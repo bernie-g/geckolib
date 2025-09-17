@@ -8,9 +8,11 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.DirectionalBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
@@ -22,6 +24,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -45,6 +48,13 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 
 	protected Matrix4f blockRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
+
+    /**
+     * Creates a new defaulted renderer instance, using the blockentity's registered id as the file name for its assets
+     */
+    public GeoBlockRenderer(BlockEntityType<? extends T> blockEntityType) {
+        this(new DefaultedBlockGeoModel<>(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType)));
+    }
 
 	public GeoBlockRenderer(GeoModel<T> model) {
 		this.model = model;
@@ -250,7 +260,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, GeoRenderState renderState) {
+	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, GeoRenderState renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileBlockRenderState(this, renderState, animatable);
 	}
 

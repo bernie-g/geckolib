@@ -92,9 +92,10 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      * @param relatedObject An object related to the render pass or null if not applicable.
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public void addRenderData(T animatable, O relatedObject, R renderState) {
+    public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
         EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());

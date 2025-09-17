@@ -197,7 +197,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
 	 */
 	@Override
-	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, GeoRenderState renderState) {
+	public void fireCompileRenderStateEvent(T animatable, Void relatedObject, GeoRenderState renderState, float partialTick) {
 		GeckoLibServices.Client.EVENTS.fireCompileObjectRenderState(this, renderState, animatable);
 	}
 
