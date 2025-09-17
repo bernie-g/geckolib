@@ -56,6 +56,8 @@ public final class DefaultAnimations {
 
     /**
      * An AnimationController that does nothing, to be used for handling triggered animations that don't need to be on any other controller
+     * <p>
+     * This should <b><u>only</u></b> be used where you need a controller for some triggered animations, but don't want them to interfere with any other animations
      */
     public static <T extends GeoAnimatable> AnimationController<T> triggerOnlyController() {
         return new AnimationController<>("Actions", state -> PlayState.STOP);
