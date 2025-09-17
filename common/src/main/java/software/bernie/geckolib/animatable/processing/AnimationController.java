@@ -243,8 +243,6 @@ public class AnimationController<T extends GeoAnimatable> {
 
 	/**
 	 * Gets the controller's name
-	 *
-	 * @return The name
 	 */
 	public String getName() {
 		return this.name;
@@ -274,6 +272,13 @@ public class AnimationController<T extends GeoAnimatable> {
 	public State getAnimationState() {
 		return this.animationState;
 	}
+
+    /**
+     * Get the state handler for this controller
+     */
+    public AnimationStateHandler<T> getStateHandler() {
+        return this.stateHandler;
+    }
 
 	/**
 	 * Gets the currently loaded animation's {@link BoneAnimationQueue BoneAnimationQueues}.
@@ -465,14 +470,14 @@ public class AnimationController<T extends GeoAnimatable> {
 
 			setAnimation(this.triggeredAnimation);
 
-			if (!hasAnimationFinished() && (!this.handlingTriggeredAnimations || this.stateHandler.handle(animationTest) == PlayState.CONTINUE))
+			if (!hasAnimationFinished() && (!this.handlingTriggeredAnimations || getStateHandler().handle(animationTest) == PlayState.CONTINUE))
 				return PlayState.CONTINUE;
 
 			this.triggeredAnimation = null;
 			this.needsAnimationReload = true;
 		}
 
-		return this.stateHandler.handle(animationTest);
+		return getStateHandler().handle(animationTest);
 	}
 
 	/**
