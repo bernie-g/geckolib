@@ -203,7 +203,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * Perform the necessary preparations for the upcoming render pass
 	 */
 	@ApiStatus.Internal
-	public void prepareForRenderPass(T animatable, GeoRenderState renderState) {
+	public void prepareForRenderPass(T animatable, GeoRenderState renderState, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		long instanceId = renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID);
 		AnimatableManager<T> animatableManager = renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER);
