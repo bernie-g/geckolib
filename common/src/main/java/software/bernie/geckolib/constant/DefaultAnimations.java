@@ -42,6 +42,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation ATTACK_CAST = RawAnimation.begin().thenPlay("attack.cast");
 	public static final RawAnimation ATTACK_SWING = RawAnimation.begin().thenPlay("attack.swing");
 	public static final RawAnimation ATTACK_THROW = RawAnimation.begin().thenPlay("attack.throw");
+	public static final RawAnimation ATTACK_PUNCH = RawAnimation.begin().thenPlay("attack.punch");
 	public static final RawAnimation ATTACK_BITE = RawAnimation.begin().thenPlay("attack.bite");
 	public static final RawAnimation ATTACK_SLAM = RawAnimation.begin().thenPlay("attack.slam");
 	public static final RawAnimation ATTACK_STOMP = RawAnimation.begin().thenPlay("attack.stomp");
