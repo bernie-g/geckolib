@@ -102,6 +102,23 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 			return PLAY_ONCE;
 		}
 
+        /**
+         * Get the registered name for this LoopType
+         *
+         * @throws IllegalStateException if this LoopType has not been registered
+         */
+        default String getId() throws IllegalStateException {
+            for (String loopType : LOOP_TYPES.keySet()) {
+                if (LOOP_TYPES.get(loopType) == this)
+                    return loopType;
+            }
+
+            throw new IllegalStateException("LoopType has not been registered before being used!");
+        }
+
+        /**
+         * Get a registered LoopType by name, or {@link LoopType#PLAY_ONCE} if none match
+         */
 		static LoopType fromString(String name) {
 			return LOOP_TYPES.getOrDefault(name, PLAY_ONCE);
 		}
