@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Helper class for segregating client-side code
@@ -46,6 +47,7 @@ public final class ClientUtil {
 		return Minecraft.getInstance().options.getCameraType().isFirstPerson();
 	}
 
+    @ApiStatus.Internal
 	public static int getVisibleEntityCount() {
 		return Minecraft.getInstance().levelRenderer.visibleEntityCount;
 	}
