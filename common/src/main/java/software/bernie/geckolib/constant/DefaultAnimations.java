@@ -2,6 +2,7 @@ package software.bernie.geckolib.constant;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.processing.AnimationController;
@@ -22,6 +23,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation ITEM_ON_USE = RawAnimation.begin().thenPlay("item.use");
 
 	public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("misc.idle");
+	public static final RawAnimation IDLE_FLYING = RawAnimation.begin().thenLoop("misc.idle.flying");
 	public static final RawAnimation LIVING = RawAnimation.begin().thenLoop("misc.living");
 	public static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("misc.spawn");
 	public static final RawAnimation DIE = RawAnimation.begin().thenPlay("misc.die");
@@ -30,7 +32,8 @@ public final class DefaultAnimations {
 	public static final RawAnimation REST = RawAnimation.begin().thenPlay("misc.rest");
 	public static final RawAnimation SIT = RawAnimation.begin().thenPlayAndHold("misc.sit");
 
-	public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
+    public static final RawAnimation DIVE = RawAnimation.begin().thenPlayAndHold("move.dive");
+    public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
 	public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("move.swim");
 	public static final RawAnimation RUN = RawAnimation.begin().thenLoop("move.run");
 	public static final RawAnimation DRIVE = RawAnimation.begin().thenLoop("move.drive");
@@ -60,7 +63,7 @@ public final class DefaultAnimations {
      * This should <b><u>only</u></b> be used where you need a controller for some triggered animations, but don't want them to interfere with any other animations
      */
     public static <T extends GeoAnimatable> AnimationController<T> triggerOnlyController() {
-        return new AnimationController<>("Actions", state -> PlayState.STOP);
+        return new AnimationController<>("Actions", test -> PlayState.STOP);
     }
 
 	/**
@@ -69,10 +72,10 @@ public final class DefaultAnimations {
 	 * Return a RawAnimation based on the input {@link AnimationTest}, or null to stop the controller entirely
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> basicPredicateController(Function<AnimationTest<T>, @Nullable RawAnimation> predicate) {
-		return new AnimationController<>("Generic", state -> {
-			RawAnimation result = predicate.apply(state);
+		return new AnimationController<>("Generic", test -> {
+			RawAnimation result = predicate.apply(test);
 
-			return result == null ? PlayState.STOP : state.setAndContinue(result);
+			return result == null ? PlayState.STOP : test.setAndContinue(result);
 		});
 	}
 
@@ -112,11 +115,11 @@ public final class DefaultAnimations {
 	 * </p>
 	 * Recommended:
 	 * <ul>
-	 *     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: state -> animatable</li>
-	 *     <li>{@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}: state -> animatable</li>
-	 *     <li>{@link software.bernie.geckolib.animatable.GeoReplacedEntity GeoReplacedEntity}: state -> state.getData(DataTickets.ENTITY)</li>
-	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: state -> state.getData(DataTickets.ITEMSTACK)</li>
-	 *     <li>{@code GeoArmor}: state -> state.getData(DataTickets.ENTITY)</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoEntity GeoEntity}: test -> animatable</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}: test -> animatable</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoReplacedEntity GeoReplacedEntity}: test -> test.getData(DataTickets.ENTITY)</li>
+	 *     <li>{@link software.bernie.geckolib.animatable.GeoItem GeoItem}: test -> test.getData(DataTickets.ITEMSTACK)</li>
+	 *     <li>{@code GeoArmor}: test -> test.getData(DataTickets.ENTITY)</li>
 	 * </ul>
 	 *
 	 * @param spawnTicks The number of ticks the animation should run for. After this value is surpassed, the animation will no longer play
@@ -199,6 +202,20 @@ public final class DefaultAnimations {
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyIdleController() {
 		return new AnimationController<>("Fly/Idle", test -> test.setAndContinue(test.isMoving() ? FLY : IDLE));
+	}
+
+	/**
+	 * Generic {@link DefaultAnimations#FLY fly} + {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#IDLE idle}  + {@link DefaultAnimations#IDLE_FLYING fly-idle} controller
+	 * <p>
+	 * Will play a walk or flying animation if moving, or an equivalent idle animation if not, depending on if the entity is on the ground or not
+	 */
+	public static <T extends GeoAnimatable> AnimationController<T> genericWalkFlyIdleController(Mob entity) {
+        return new AnimationController<>("Walk/Fly/Idle", 0, state -> {
+            if (entity.onGround() || (!entity.isNoAi() && entity.getBlockPosBelowThatAffectsMyMovement().getY() + 1 == entity.getY()))
+                return state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE);
+
+            return state.setAndContinue(state.isMoving() ? DefaultAnimations.FLY : DefaultAnimations.IDLE_FLYING);
+        });
 	}
 
 	/**
