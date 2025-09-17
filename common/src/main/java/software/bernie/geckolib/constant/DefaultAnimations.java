@@ -54,6 +54,13 @@ public final class DefaultAnimations {
 	public static final RawAnimation ATTACK_CHARGE_END = RawAnimation.begin().thenPlay("attack.charge_end");
 	public static final RawAnimation ATTACK_POWERUP = RawAnimation.begin().thenPlay("attack.powerup");
 
+    /**
+     * An AnimationController that does nothing, to be used for handling triggered animations that don't need to be on any other controller
+     */
+    public static <T extends GeoAnimatable> AnimationController<T> triggerOnlyController() {
+        return new AnimationController<>("Actions", state -> PlayState.STOP);
+    }
+
 	/**
 	 * A basic predicate-based {@link AnimationController} implementation
 	 * <p>
