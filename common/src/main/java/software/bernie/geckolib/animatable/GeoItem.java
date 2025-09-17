@@ -79,7 +79,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * Whether this item animatable is perspective aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
+	 * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
 	 */
 	default boolean isPerspectiveAware() {
 		return false;
@@ -98,7 +98,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective based animations
+	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective-based animations
 	 * <p>
 	 * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
 	 * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
