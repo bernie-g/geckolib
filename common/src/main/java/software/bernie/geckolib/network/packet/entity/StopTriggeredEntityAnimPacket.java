@@ -1,4 +1,4 @@
-package software.bernie.geckolib.network.packet;
+package software.bernie.geckolib.network.packet.entity;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
+import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
 

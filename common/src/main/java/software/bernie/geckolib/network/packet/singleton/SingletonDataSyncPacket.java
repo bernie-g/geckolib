@@ -1,4 +1,4 @@
-package software.bernie.geckolib.network.packet;
+package software.bernie.geckolib.network.packet.singleton;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -10,6 +10,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.cache.SyncedSingletonAnimatableCache;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
+import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.function.Consumer;

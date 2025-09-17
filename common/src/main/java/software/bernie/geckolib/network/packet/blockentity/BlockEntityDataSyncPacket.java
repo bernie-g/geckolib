@@ -1,4 +1,4 @@
-package software.bernie.geckolib.network.packet;
+package software.bernie.geckolib.network.packet.blockentity;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
+import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.function.Consumer;
