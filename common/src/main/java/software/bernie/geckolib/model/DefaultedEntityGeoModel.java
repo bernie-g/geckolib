@@ -2,6 +2,7 @@ package software.bernie.geckolib.model;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -15,7 +16,8 @@ import software.bernie.geckolib.constant.DataTickets;
  * Additionally it can automatically handle head-turning if the entity has a "head" bone
  */
 public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
-	protected final boolean turnsHead;
+    @Nullable
+    protected String headBone;
 
 	/**
 	 * Create a new instance of this model class
@@ -28,13 +30,23 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 	 * }</pre>
 	 */
 	public DefaultedEntityGeoModel(ResourceLocation assetSubpath) {
-		this(assetSubpath, false);
+		this(assetSubpath, null);
 	}
 
-	public DefaultedEntityGeoModel(ResourceLocation assetSubpath, boolean turnsHead) {
+    /**
+     * Create a new instance of this model class, preconfigured to automatically handle head-turning for bone matching the provided name
+     * <p>
+     * The asset path should be the truncated relative path from the base folder
+     * <p>
+     * E.G.
+     * <pre>{@code
+     * 	new ResourceLocation("myMod", "animals/red_fish")
+     * }</pre>
+     */
+	public DefaultedEntityGeoModel(ResourceLocation assetSubpath, @Nullable String headBone) {
 		super(assetSubpath);
 
-		this.turnsHead = turnsHead;
+        this.headBone = headBone;
 	}
 
 	/**
@@ -49,10 +61,10 @@ public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedG
 
 	@Override
 	public void setCustomAnimations(AnimationState<T> animationState) {
-		if (!this.turnsHead)
+		if (this.headBone == null)
 			return;
 
-		GeoBone head = getAnimationProcessor().getBone("head");
+		GeoBone head = getAnimationProcessor().getBone(this.headBone);
 
 		if (head != null) {
 			float pitch = animationState.getData(DataTickets.ENTITY_PITCH);
