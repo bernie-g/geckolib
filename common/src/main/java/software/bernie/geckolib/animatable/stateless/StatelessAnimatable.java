@@ -46,6 +46,13 @@ public sealed interface StatelessAnimatable permits StatelessGeoEntity, Stateles
     }
 
     /**
+     * Stop an already-playing animation
+     */
+    default void stopAnimation(RawAnimation animation) {
+        stopAnimation(animation.getStageCount() == 1 ? animation.getAnimationStages().getFirst().animationName() : animation.toString());
+    }
+
+    /**
      * Start or continue a pre-defined animation
      */
     void playAnimation(RawAnimation animation);
@@ -66,7 +73,7 @@ public sealed interface StatelessAnimatable permits StatelessGeoEntity, Stateles
         AnimationController<?> controller = animatableManager.getAnimationControllers().computeIfAbsent(animKey, StatelessAnimationController::new);
 
         if (controller instanceof StatelessAnimationController statelessController)
-            statelessController.setAnimation(animation);
+            statelessController.setCurrentAnimation(animation);
     }
 
     @ApiStatus.Internal

@@ -10,7 +10,7 @@ import software.bernie.geckolib.network.packet.entity.StatelessEntityStopAnimPac
 /**
  * Extension of {@link StatelessAnimatable} for {@link GeoReplacedEntity} animatables
  */
-public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimatable {
+public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimatable, GeoReplacedEntity {
     /**
      * Start or continue an animation, letting its pre-defined loop type determine whether it should loop or not
      */
@@ -33,6 +33,13 @@ public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimata
     }
 
     /**
+     * Stop an already-playing animation
+     */
+    default void stopAnimation(RawAnimation animation, Entity relatedEntity) {
+        stopAnimation(animation, relatedEntity, relatedEntity.getId());
+    }
+
+    /**
      * Start or continue a pre-defined animation
      */
     default void playAnimation(RawAnimation animation, Entity relatedEntity) {
@@ -48,11 +55,8 @@ public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimata
 
     @Override
     default void playAnimation(RawAnimation animation, Entity relatedEntity, long instanceId) {
-        if (!(this instanceof GeoReplacedEntity animatable))
-            throw new ClassCastException("Cannot use StatelessGeoReplacedEntity on a non-GeoReplacedEntity animatable!");
-
         if (relatedEntity.level().isClientSide) {
-            handleClientAnimationPlay(animatable, instanceId, animation);
+            handleClientAnimationPlay(this, instanceId, animation);
         }
         else {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessEntityPlayAnimPacket((int)instanceId, true, animation), relatedEntity);
@@ -61,11 +65,8 @@ public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimata
 
     @Override
     default void stopAnimation(String animation, Entity relatedEntity, long instanceId) {
-        if (!(this instanceof GeoReplacedEntity animatable))
-            throw new ClassCastException("Cannot use StatelessGeoReplacedEntity on a non-GeoReplacedEntity animatable!");
-
         if (relatedEntity.level().isClientSide) {
-            handleClientAnimationStop(animatable, instanceId, animation);
+            handleClientAnimationStop(this, instanceId, animation);
         }
         else {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessEntityStopAnimPacket((int)instanceId, true, animation), relatedEntity);

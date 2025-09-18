@@ -10,17 +10,17 @@ import software.bernie.geckolib.network.packet.entity.StatelessEntityStopAnimPac
 /**
  * Extension of {@link StatelessAnimatable} for {@link GeoEntity} animatables
  */
-public non-sealed interface StatelessGeoEntity extends StatelessAnimatable {
+public non-sealed interface StatelessGeoEntity extends StatelessAnimatable, GeoEntity {
     /**
      * Start or continue a pre-defined animation
      */
     @Override
     default void playAnimation(RawAnimation animation) {
-        if (!(this instanceof Entity self) || !(this instanceof GeoEntity animatable))
+        if (!(this instanceof Entity self))
             throw new ClassCastException("Cannot use StatelessGeoEntity on a non-entity animatable!");
 
         if (self.level().isClientSide) {
-            handleClientAnimationPlay(animatable, self.getId(), animation);
+            handleClientAnimationPlay(this, self.getId(), animation);
         }
         else {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessEntityPlayAnimPacket(self.getId(), false, animation), self);
@@ -32,11 +32,11 @@ public non-sealed interface StatelessGeoEntity extends StatelessAnimatable {
      */
     @Override
     default void stopAnimation(String animation) {
-        if (!(this instanceof Entity self) || !(this instanceof GeoEntity animatable))
+        if (!(this instanceof Entity self))
             throw new ClassCastException("Cannot use StatelessGeoEntity on a non-entity animatable!");
 
         if (self.level().isClientSide) {
-            handleClientAnimationStop(animatable, self.getId(), animation);
+            handleClientAnimationStop(this, self.getId(), animation);
         }
         else {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessEntityStopAnimPacket(self.getId(), false, animation), self);

@@ -13,7 +13,7 @@ import software.bernie.geckolib.network.packet.singleton.StatelessSingletonStopA
  * <p>
  * Animatables <b><u>MUST</u></b> be registered with {@link SingletonGeoAnimatable#registerSyncedAnimatable} to use this interface
  */
-public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAnimatable {
+public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAnimatable, SingletonGeoAnimatable {
     /**
      * Start or continue an animation, letting its pre-defined loop type determine whether it should loop or not
      */
@@ -36,17 +36,21 @@ public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAni
     }
 
     /**
+     * Stop an already-playing animation
+     */
+    default void stopAnimation(RawAnimation animation, Entity relatedEntity, long instanceId) {
+        stopAnimation(animation.getStageCount() == 1 ? animation.getAnimationStages().getFirst().animationName() : animation.toString(), relatedEntity, instanceId);
+    }
+
+    /**
      * Start or continue a pre-defined animation
      */
     default void playAnimation(RawAnimation animation, Entity relatedEntity, long instanceId) {
-        if (!(this instanceof SingletonGeoAnimatable animatable))
-            throw new ClassCastException("Cannot use StatelessGeoEntity on a non-SingletonGeoAnimatable!");
-
         if (relatedEntity.level().isClientSide) {
-            handleClientAnimationPlay(animatable, instanceId, animation);
+            handleClientAnimationPlay(this, instanceId, animation);
         }
         else {
-            GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessSingletonPlayAnimPacket(SyncedSingletonAnimatableCache.getOrCreateId(animatable), instanceId, animation), relatedEntity);
+            GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessSingletonPlayAnimPacket(SyncedSingletonAnimatableCache.getOrCreateId(this), instanceId, animation), relatedEntity);
         }
     }
 
@@ -54,14 +58,11 @@ public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAni
      * Stop an already-playing animation
      */
     default void stopAnimation(String animation, Entity relatedEntity, long instanceId) {
-        if (!(this instanceof SingletonGeoAnimatable animatable))
-            throw new ClassCastException("Cannot use StatelessGeoEntity on a non-SingletonGeoAnimatable!");
-
         if (relatedEntity.level().isClientSide) {
-            handleClientAnimationStop(animatable, instanceId, animation);
+            handleClientAnimationStop(this, instanceId, animation);
         }
         else {
-            GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessSingletonStopAnimPacket(SyncedSingletonAnimatableCache.getOrCreateId(animatable), instanceId, animation), relatedEntity);
+            GeckoLibServices.NETWORK.sendToAllPlayersTrackingEntity(new StatelessSingletonStopAnimPacket(SyncedSingletonAnimatableCache.getOrCreateId(this), instanceId, animation), relatedEntity);
         }
     }
 
@@ -88,6 +89,14 @@ public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAni
      */
     @Deprecated
     default void playAndHoldAnimation(String animation) {
+        throw new IllegalStateException("Cannot use non-level method handlers on StatelessSingletonGeoAnimatable");
+    }
+
+    /**
+     * @deprecated Use {@link #stopAnimation(RawAnimation, Entity, long)} instead.
+     */
+    @Deprecated
+    default void stopAnimation(RawAnimation animation) {
         throw new IllegalStateException("Cannot use non-level method handlers on StatelessSingletonGeoAnimatable");
     }
 

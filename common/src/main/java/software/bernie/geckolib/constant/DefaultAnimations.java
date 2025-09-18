@@ -32,7 +32,6 @@ public final class DefaultAnimations {
 	public static final RawAnimation REST = RawAnimation.begin().thenPlay("misc.rest");
 	public static final RawAnimation SIT = RawAnimation.begin().thenPlayAndHold("misc.sit");
 
-    public static final RawAnimation DIVE = RawAnimation.begin().thenPlayAndHold("move.dive");
     public static final RawAnimation WALK = RawAnimation.begin().thenLoop("move.walk");
 	public static final RawAnimation SWIM = RawAnimation.begin().thenLoop("move.swim");
 	public static final RawAnimation RUN = RawAnimation.begin().thenLoop("move.run");
@@ -41,6 +40,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("move.crawl");
 	public static final RawAnimation JUMP = RawAnimation.begin().thenPlay("move.jump");
 	public static final RawAnimation SNEAK = RawAnimation.begin().thenLoop("move.sneak");
+    public static final RawAnimation DIVE = RawAnimation.begin().thenPlayAndHold("move.dive");
 
 	public static final RawAnimation ATTACK_CAST = RawAnimation.begin().thenPlay("attack.cast");
 	public static final RawAnimation ATTACK_SWING = RawAnimation.begin().thenPlay("attack.swing");

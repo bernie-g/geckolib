@@ -11,20 +11,20 @@ import software.bernie.geckolib.network.packet.blockentity.StatelessBlockEntityS
 /**
  * Extension of {@link StatelessAnimatable} for {@link GeoBlockEntity} animatables
  */
-public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable {
+public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable, GeoBlockEntity {
     /**
      * Start or continue a pre-defined animation
      */
     @Override
     default void playAnimation(RawAnimation animation) {
-        if (!(this instanceof BlockEntity self) || !(this instanceof GeoBlockEntity animatable))
+        if (!(this instanceof BlockEntity self))
             throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-blockentity animatable!");
 
         if (self.getLevel() instanceof ServerLevel level) {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingBlock(new StatelessBlockEntityPlayAnimPacket(self.getBlockPos(), animation), level, self.getBlockPos());
         }
         else {
-            handleClientAnimationPlay(animatable, 0, animation);
+            handleClientAnimationPlay(this, 0, animation);
         }
     }
 
@@ -33,14 +33,14 @@ public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable 
      */
     @Override
     default void stopAnimation(String animation) {
-        if (!(this instanceof BlockEntity self) || !(this instanceof GeoBlockEntity animatable))
+        if (!(this instanceof BlockEntity self))
             throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-blockentity animatable!");
 
         if (self.getLevel() instanceof ServerLevel level) {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingBlock(new StatelessBlockEntityStopAnimPacket(self.getBlockPos(), animation), level, self.getBlockPos());
         }
         else {
-            handleClientAnimationStop(animatable, 0, animation);
+            handleClientAnimationStop(this, 0, animation);
         }
     }
 }
