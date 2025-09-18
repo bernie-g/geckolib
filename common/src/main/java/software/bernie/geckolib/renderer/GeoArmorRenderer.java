@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
@@ -28,6 +29,7 @@ import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
@@ -74,6 +76,18 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	protected float limbSwingAmount;
 	protected float netHeadYaw;
 	protected float headPitch;
+
+    /**
+     * Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
+     */
+    public <I extends T> GeoArmorRenderer(I armorItem) {
+        this(new DefaultedGeoModel<>(BuiltInRegistries.ITEM.getKey(armorItem)) {
+            @Override
+            protected String subtype() {
+                return "armor";
+            }
+        });
+    }
 
 	public GeoArmorRenderer(GeoModel<T> model) {
 		super(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_INNER_ARMOR));

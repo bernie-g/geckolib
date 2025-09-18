@@ -1,5 +1,22 @@
-v4.7.7
+v4.8
 
-- Properly handle exception when attempting to glowmask an animated texture (Pull #758)
-- Changed DefaultedEntityGeoModel to use a nullable bone name input for its head turning instead of a flat boolean (#753)
-- Fixed some specific bedrock-format animations failing to parse if exported on newer versions of Blockbench
+- Added "Stateless" animatables. These are an alternate way of handling animations for GeckoLib animatables.
+  - See: https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib4)
+  - Added:
+    - `StatelessGeoBlockEntity`
+    - `StatelessGeoEntity`
+    - `StatelessGeoObject`
+    - `StatelessGeoReplacedEntity`
+    - `StatelessGeoSingletonAnimatable`
+    - `StatelessAnimationController`
+- Added `attack.punch` DefaultAnimation constant
+- Added `misc.idle.flying` DefaultAnimation constant
+- Added `move.dive` DefaultAnimation constant
+- Added `DefaultAnimations#triggerOnlyController` for creating a controller specifically for arbitrary triggered animations
+- Added a StreamCodec implementation for `Animation.Stage`
+- Added a StreamCodec implementation for `RawAnimation`
+- Added `RawAnimation#getStageCount`
+- Added `AnimationController#getStateHandler`
+- Added `DefaultAnimations#genericWalkFlyIdleController`
+- Added a constructor overload for various GeckoLib renderers that takes the item directly and creates a defaulted instance using the object's registered ID for quick and easy handling
+    - E.G. `new GeoEntityRenderer(ModEntities.MY_ENTITY);`

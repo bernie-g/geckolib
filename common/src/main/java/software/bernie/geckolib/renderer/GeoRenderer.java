@@ -383,7 +383,6 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 *
 	 * This will be removed in a future breaking update, but will require an adjustment to the underlying GeckoLib API.
 	 */
-	@Deprecated(forRemoval = true)
 	@ApiStatus.Internal
 	default VertexConsumer checkAndRefreshBuffer(boolean isReRender, VertexConsumer buffer, MultiBufferSource bufferSource, RenderType renderType) {
 		if (isReRender)

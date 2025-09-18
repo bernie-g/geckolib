@@ -78,9 +78,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		return RenderUtil.getCurrentTick();
 	}
 
-	/**
-	 * Whether this item animatable is perspective aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
-	 */
+    /**
+     * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
+     */
 	default boolean isPerspectiveAware() {
 		return false;
 	}

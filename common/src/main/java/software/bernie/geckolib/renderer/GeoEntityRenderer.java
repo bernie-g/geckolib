@@ -13,12 +13,10 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.scores.Team;
@@ -32,6 +30,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.texture.AnimatableTexture;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
@@ -59,6 +58,13 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 
 	protected Matrix4f entityRenderTranslations = new Matrix4f();
 	protected Matrix4f modelRenderTranslations = new Matrix4f();
+
+    /**
+     * Creates a new defaulted renderer instance, using the entity's registered id as the file name for its assets
+     */
+    public GeoEntityRenderer(EntityRendererProvider.Context context, EntityType<? extends T> entityType) {
+        this(context, new DefaultedEntityGeoModel<>(BuiltInRegistries.ENTITY_TYPE.getKey(entityType)));
+    }
 
 	public GeoEntityRenderer(EntityRendererProvider.Context renderManager, GeoModel<T> model) {
 		super(renderManager);
