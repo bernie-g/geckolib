@@ -26,7 +26,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
 
     public static void init(IEventBus modBus) {
         modBus.addListener((Consumer<RegisterPayloadHandlersEvent>) event -> {
-            registrar = event.registrar(GeckoLibConstants.MODID);
+            registrar = event.registrar(GeckoLibConstants.MODID).optional();
             GeckoLibNetworking.init();
             registrar = null;
         });
