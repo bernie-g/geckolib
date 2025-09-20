@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer.specialty;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -41,7 +40,7 @@ public abstract class DynamicGeoBlockRenderer<T extends BlockEntity & GeoAnimata
 	 * For each bone rendered, this method is called
 	 * <p>
 	 * If a ResourceLocation is returned, the renderer will render the bone using that texture instead of the default
-	 * This can be useful for custom rendering  on a per-bone basis
+	 * This can be useful for custom rendering on a per-bone basis
 	 * <p>
 	 * There is a somewhat significant performance cost involved in this however, so only use as needed
 	 *
