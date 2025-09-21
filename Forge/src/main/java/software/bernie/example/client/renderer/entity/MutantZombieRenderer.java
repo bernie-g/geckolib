@@ -45,7 +45,7 @@ public class MutantZombieRenderer extends DynamicGeoEntityRenderer<DynamicExampl
 	private static final String LEFT_SLEEVE = "armorBipedLeftArm";
 	private static final String HELMET = "armorBipedHead";
 
-	protected final ResourceLocation CAPE_TEXTURE = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/dynamic_entity_cape.png");
+	protected final ResourceLocation CAPE_TEXTURE = ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "textures/entity/dynamic_entity_cape.png");
 
 	protected ItemStack mainHandItem;
 	protected ItemStack offhandItem;

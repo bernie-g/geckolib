@@ -14,7 +14,7 @@ import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
  */
 public final class GeckoArmorRenderer extends GeoArmorRenderer<GeckoArmorItem> {
 	public GeckoArmorRenderer() {
-		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "armor/gecko_armor")));
+		super(new DefaultedItemGeoModel<>(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "armor/gecko_armor")));
 
 		addRenderLayer(new AutoGlowingGeoLayer<>(this));
 	}

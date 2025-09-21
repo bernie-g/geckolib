@@ -19,7 +19,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * E.G.
 	 * <pre>
 	 *     {@code
-	 *		new ResourceLocation("myMod", "animals/red_fish")
+	 *		ResourceLocation.fromNamespaceAndPath("myMod", "animals/red_fish")
 	 *		}</pre>
 	 * @param assetSubpath
 	 */
@@ -61,29 +61,29 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 
 	/**
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code ResourceLocation.fromNamespaceAndPath(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:geo/entity/animal/goat.geo.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedModelPath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "geo/" + subtype() + "/" + basePath.getPath() + ".geo.json");
+		return ResourceLocation.fromNamespaceAndPath(basePath.getNamespace(), "geo/" + subtype() + "/" + basePath.getPath() + ".geo.json");
 	}
 
 	/**
 	 * Constructs a defaulted resource path for a animation.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code ResourceLocation.fromNamespaceAndPath(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:animations/entity/animal/goat.animation.json"}</pre>
 	 */
 	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
+		return ResourceLocation.fromNamespaceAndPath(basePath.getNamespace(), "animations/" + subtype() + "/" + basePath.getPath() + ".animation.json");
 	}
 
 	/**
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code ResourceLocation.fromNamespaceAndPath(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted texture resource path based on recommended defaults. E.G. <pre>{@code "mymod:texture/entity/animal/goat.png"}</pre>
 	 */
 	public ResourceLocation buildFormattedTexturePath(ResourceLocation basePath) {
-		return new ResourceLocation(basePath.getNamespace(), "textures/" + subtype() + "/" + basePath.getPath() + ".png");
+		return ResourceLocation.fromNamespaceAndPath(basePath.getNamespace(), "textures/" + subtype() + "/" + basePath.getPath() + ".png");
 	}
 
 	/**

@@ -18,7 +18,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
  * @see software.bernie.example.client.renderer.entity.CoolKidRenderer
  */
 public class CoolKidGlassesLayer extends GeoRenderLayer<CoolKidEntity> {
-    private static final ResourceLocation TEXTURE = new ResourceLocation(GeckoLib.MOD_ID, "textures/entity/cool_kid_glasses.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "textures/entity/cool_kid_glasses.png");
 
 	public CoolKidGlassesLayer(GeoRenderer<CoolKidEntity> entityRenderer) {
         super(entityRenderer);

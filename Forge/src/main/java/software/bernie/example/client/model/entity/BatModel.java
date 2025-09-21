@@ -14,6 +14,6 @@ import software.bernie.geckolib.model.GeoModel;
 public class BatModel extends DefaultedEntityGeoModel<BatEntity> {
 	// We use the alternate super-constructor here to tell the model it should handle head-turning for us
 	public BatModel() {
-		super(new ResourceLocation(GeckoLib.MOD_ID, "bat"), true);
+		super(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "bat"), true);
 	}
 }

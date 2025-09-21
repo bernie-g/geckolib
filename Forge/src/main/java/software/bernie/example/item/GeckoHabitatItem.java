@@ -31,7 +31,7 @@ public class GeckoHabitatItem extends BlockItem implements GeoItem {
 			@Override
 			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
 				if (this.renderer == null)
-					this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "gecko_habitat")));
+					this.renderer = new GeoItemRenderer<>(new DefaultedBlockGeoModel<>(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "gecko_habitat")));
 
 				return this.renderer;
 			}
