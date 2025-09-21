@@ -99,7 +99,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * Whether this item animatable is perspective aware, handling animations differently depending on the {@link net.minecraft.world.item.ItemDisplayContext render perspective}
+	 * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link net.minecraft.world.item.ItemDisplayContext render perspective}
 	 */
 	default boolean isPerspectiveAware() {
 		return false;
