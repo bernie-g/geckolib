@@ -37,6 +37,13 @@ public final class GeckoLibNetwork {
 		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimDataSyncPacket.class, BlockEntityAnimDataSyncPacket::encode, BlockEntityAnimDataSyncPacket::decode, BlockEntityAnimDataSyncPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::encode, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket);
 		PACKET_CHANNEL.registerMessage(id++, StopTriggeredBlockEntityAnimPacket.class, StopTriggeredBlockEntityAnimPacket::encode, StopTriggeredBlockEntityAnimPacket::decode, StopTriggeredBlockEntityAnimPacket::receivePacket);
+
+        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonPlayAnimPacket.class, StatelessSingletonPlayAnimPacket::encode, StatelessSingletonPlayAnimPacket::decode, StatelessSingletonPlayAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonStopAnimPacket.class, StatelessSingletonStopAnimPacket::encode, StatelessSingletonStopAnimPacket::decode, StatelessSingletonStopAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessEntityPlayAnimPacket.class, StatelessEntityPlayAnimPacket::encode, StatelessEntityPlayAnimPacket::decode, StatelessEntityPlayAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessEntityStopAnimPacket.class, StatelessEntityStopAnimPacket::encode, StatelessEntityStopAnimPacket::decode, StatelessEntityStopAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityPlayAnimPacket.class, StatelessBlockEntityPlayAnimPacket::encode, StatelessBlockEntityPlayAnimPacket::decode, StatelessBlockEntityPlayAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityStopAnimPacket.class, StatelessBlockEntityStopAnimPacket::encode, StatelessBlockEntityStopAnimPacket::decode, StatelessBlockEntityStopAnimPacket::receivePacket);
 	}
 
 	/**
