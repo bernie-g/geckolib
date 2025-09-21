@@ -44,9 +44,9 @@ public class StatelessSingletonPlayAnimPacket extends AbstractPacket {
 	}
 
 	public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		String syncableId = buf.readUtf();
-		long instanceID = buf.readVarLong();
-		RawAnimation animation = NetworkUtil.readRawAnimationFromBuffer(buf);
+		final String syncableId = buf.readUtf();
+		final long instanceID = buf.readVarLong();
+		final RawAnimation animation = NetworkUtil.readRawAnimationFromBuffer(buf);
 
         client.execute(() -> runOnThread(syncableId, instanceID, animation));
     }

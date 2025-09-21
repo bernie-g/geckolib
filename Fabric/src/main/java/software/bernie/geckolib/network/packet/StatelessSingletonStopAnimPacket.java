@@ -42,9 +42,9 @@ public class StatelessSingletonStopAnimPacket extends AbstractPacket {
 	}
 
 	public static void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buf, PacketSender responseSender) {
-		String syncableId = buf.readUtf();
-		long instanceID = buf.readVarLong();
-		String animation = buf.readUtf();
+		final String syncableId = buf.readUtf();
+		final long instanceID = buf.readVarLong();
+		final String animation = buf.readUtf();
 
         client.execute(() -> runOnThread(syncableId, instanceID, animation));
     }
