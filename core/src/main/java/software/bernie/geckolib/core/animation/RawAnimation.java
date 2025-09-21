@@ -21,10 +21,19 @@ import java.util.Objects;
  * <pre>{@code RawAnimation.begin().thenPlay("action.open_box").thenLoop("state.stay_open")}</pre>
  */
 public final class RawAnimation {
-	private final List<Stage> animationList = new ObjectArrayList<>();
+	private final List<Stage> animationList;
 
-	// Private constructor to force usage of factory for logical operations
-	private RawAnimation() {}
+    // Private constructor to force usage of factory for logical operations
+    private RawAnimation() {
+        this(new ObjectArrayList<>());
+    }
+
+    /**
+     * For Internal use only
+     */
+    public RawAnimation(List<Stage> animationList) {
+        this.animationList = animationList;
+    }
 
 	/**
 	 * Start a new RawAnimation instance. This is the start point for creating an animation chain.
@@ -113,6 +122,13 @@ public final class RawAnimation {
 
 		return newInstance;
 	}
+
+    /**
+     * Get the number of animation stages this RawAnimation contains
+     */
+    public int getStageCount() {
+        return this.animationList.size();
+    }
 
 	@Override
 	public boolean equals(Object obj) {

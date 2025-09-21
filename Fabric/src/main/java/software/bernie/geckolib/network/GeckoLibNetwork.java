@@ -27,14 +27,20 @@ public final class GeckoLibNetwork {
     public static final ResourceLocation ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_data_sync");
     public static final ResourceLocation ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "anim_trigger_sync");
     public static final ResourceLocation STOP_TRIGGERED_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_anim");
+    public static final ResourceLocation STATELESS_PLAY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_singleton_play_anim");
+    public static final ResourceLocation STATELESS_STOP_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_singleton_stop_anim");
 
     public static final ResourceLocation ENTITY_ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_data_sync");
     public static final ResourceLocation ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "entity_anim_trigger_sync");
     public static final ResourceLocation STOP_TRIGGERED_ENTITY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_entity_anim");
+    public static final ResourceLocation STATELESS_ENTITY_PLAY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_entity_play_anim");
+    public static final ResourceLocation STATELESS_ENTITY_STOP_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_entity_stop_anim");
 
     public static final ResourceLocation BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_data_sync");
     public static final ResourceLocation BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "block_entity_anim_trigger_sync");
     public static final ResourceLocation STOP_TRIGGERED_BLOCK_ENTITY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stop_triggered_block_entity_anim");
+    public static final ResourceLocation STATELESS_BLOCK_ENTITY_PLAY_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_block_entity_play_anim");
+    public static final ResourceLocation STATELESS_BLOCK_ENTITY_STOP_ANIM_PACKET_ID = new ResourceLocation(GeckoLib.MOD_ID, "stateless_block_entity_stop_anim");
 
     private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
     public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
@@ -46,14 +52,20 @@ public final class GeckoLibNetwork {
         ClientPlayNetworking.registerGlobalReceiver(ANIM_DATA_SYNC_PACKET_ID, AnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(ANIM_TRIGGER_SYNC_PACKET_ID, AnimTriggerPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_ANIM_PACKET_ID, StopTriggeredSingletonAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_PLAY_ANIM_PACKET_ID, StatelessSingletonPlayAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_STOP_ANIM_PACKET_ID, StatelessSingletonStopAnimPacket::receive);
 
         ClientPlayNetworking.registerGlobalReceiver(ENTITY_ANIM_DATA_SYNC_PACKET_ID, EntityAnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, EntityAnimTriggerPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_ENTITY_ANIM_PACKET_ID, StopTriggeredEntityAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_ENTITY_PLAY_ANIM_PACKET_ID, StatelessEntityPlayAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_ENTITY_STOP_ANIM_PACKET_ID, StatelessEntityStopAnimPacket::receive);
 
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_DATA_SYNC_PACKET_ID, BlockEntityAnimDataSyncPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(BLOCK_ENTITY_ANIM_TRIGGER_SYNC_PACKET_ID, BlockEntityAnimTriggerPacket::receive);
         ClientPlayNetworking.registerGlobalReceiver(STOP_TRIGGERED_BLOCK_ENTITY_ANIM_PACKET_ID, StopTriggeredBlockEntityAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_BLOCK_ENTITY_PLAY_ANIM_PACKET_ID, StatelessBlockEntityPlayAnimPacket::receive);
+        ClientPlayNetworking.registerGlobalReceiver(STATELESS_BLOCK_ENTITY_STOP_ANIM_PACKET_ID, StatelessBlockEntityStopAnimPacket::receive);
     }
 
     /**
