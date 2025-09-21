@@ -2,6 +2,7 @@ package software.bernie.geckolib.constant;
 
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -20,6 +21,7 @@ public final class DefaultAnimations {
 	public static final RawAnimation ITEM_ON_USE = RawAnimation.begin().thenPlay("item.use");
 
 	public static final RawAnimation IDLE = RawAnimation.begin().thenLoop("misc.idle");
+    public static final RawAnimation IDLE_FLYING = RawAnimation.begin().thenLoop("misc.idle.flying");
 	public static final RawAnimation LIVING = RawAnimation.begin().thenLoop("misc.living");
 	public static final RawAnimation SPAWN = RawAnimation.begin().thenPlay("misc.spawn");
 	public static final RawAnimation DIE = RawAnimation.begin().thenPlay("misc.die");
@@ -36,10 +38,12 @@ public final class DefaultAnimations {
 	public static final RawAnimation CRAWL = RawAnimation.begin().thenLoop("move.crawl");
 	public static final RawAnimation JUMP = RawAnimation.begin().thenPlay("move.jump");
 	public static final RawAnimation SNEAK = RawAnimation.begin().thenLoop("move.sneak");
+    public static final RawAnimation DIVE = RawAnimation.begin().thenPlayAndHold("move.dive");
 
 	public static final RawAnimation ATTACK_CAST = RawAnimation.begin().thenPlay("attack.cast");
 	public static final RawAnimation ATTACK_SWING = RawAnimation.begin().thenPlay("attack.swing");
 	public static final RawAnimation ATTACK_THROW = RawAnimation.begin().thenPlay("attack.throw");
+    public static final RawAnimation ATTACK_PUNCH = RawAnimation.begin().thenPlay("attack.punch");
 	public static final RawAnimation ATTACK_BITE = RawAnimation.begin().thenPlay("attack.bite");
 	public static final RawAnimation ATTACK_SLAM = RawAnimation.begin().thenPlay("attack.slam");
 	public static final RawAnimation ATTACK_STOMP = RawAnimation.begin().thenPlay("attack.stomp");
@@ -50,6 +54,15 @@ public final class DefaultAnimations {
 	public static final RawAnimation ATTACK_CHARGE = RawAnimation.begin().thenPlay("attack.charge");
 	public static final RawAnimation ATTACK_CHARGE_END = RawAnimation.begin().thenPlay("attack.charge_end");
 	public static final RawAnimation ATTACK_POWERUP = RawAnimation.begin().thenPlay("attack.powerup");
+
+    /**
+     * An AnimationController that does nothing, to be used for handling triggered animations that don't need to be on any other controller
+     * <p>
+     * This should <b><u>only</u></b> be used where you need a controller for some triggered animations, but don't want them to interfere with any other animations
+     */
+    public static <T extends GeoAnimatable> AnimationController<T> triggerOnlyController(T animatable) {
+        return new AnimationController<>(animatable, "Actions", 0, state -> PlayState.STOP);
+    }
 
 	/**
 	 * A basic predicate-based {@link AnimationController} implementation.<br>
@@ -196,6 +209,20 @@ public final class DefaultAnimations {
 	public static <T extends GeoAnimatable> AnimationController<T> genericFlyIdleController(T animatable) {
 		return new AnimationController<T>(animatable, "Fly/Idle", 0, state -> state.setAndContinue(state.isMoving() ? FLY : IDLE));
 	}
+
+    /**
+     * Generic {@link DefaultAnimations#FLY fly} + {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#IDLE idle}  + {@link DefaultAnimations#IDLE_FLYING fly-idle} controller
+     * <p>
+     * Will play a walk or flying animation if moving, or an equivalent idle animation if not, depending on if the entity is on the ground or not
+     */
+    public static <T extends Mob & GeoAnimatable> AnimationController<T> genericWalkFlyIdleController(T entity) {
+        return new AnimationController<>(entity, "Walk/Fly/Idle", 0, state -> {
+            if (entity.onGround() || (!entity.isNoAi() && entity.getBlockPosBelowThatAffectsMyMovement().getY() + 1 == entity.getY()))
+                return state.setAndContinue(state.isMoving() ? DefaultAnimations.WALK : DefaultAnimations.IDLE);
+
+            return state.setAndContinue(state.isMoving() ? DefaultAnimations.FLY : DefaultAnimations.IDLE_FLYING);
+        });
+    }
 
 	/**
 	 * Generic {@link DefaultAnimations#WALK walk} + {@link DefaultAnimations#RUN run} + {@link DefaultAnimations#IDLE idle} controller.<br>
