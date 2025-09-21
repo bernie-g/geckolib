@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibException;
+import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -193,7 +194,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
 
-		double currentFrameTime = animatable instanceof Entity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
 		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)

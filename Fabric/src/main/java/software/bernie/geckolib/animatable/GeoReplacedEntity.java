@@ -23,8 +23,7 @@ import java.util.function.Supplier;
  */
 public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	/**
-	 * Returns the {@link EntityType} this entity is intending to replace.<br>
-	 * This is used for rendering an animation purposes.
+	 * Returns the {@link EntityType} this entity is intending to replace
 	 */
 	EntityType<?> getReplacingEntityType();
 
