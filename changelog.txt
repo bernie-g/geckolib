@@ -2,3 +2,4 @@ v4.?
 
 - Fix a double-space in DynamicGeoBlockRenderer's javadocs
 - Fix an incorrect link in StatelessAnimatable
+- Clean up an ugly javadoc entry in GeoReplacedEntity
