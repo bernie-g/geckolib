@@ -1,3 +1,4 @@
-v4.8.1
+v4.?
 
-- Make NeoForge's network registration optional, allowing for client-only GeckoLib usage
+- Fix a double-space in DynamicGeoBlockRenderer's javadocs
+- Fix an incorrect link in StatelessAnimatable

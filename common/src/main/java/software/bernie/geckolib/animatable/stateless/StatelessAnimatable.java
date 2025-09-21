@@ -17,7 +17,7 @@ import software.bernie.geckolib.animation.RawAnimation;
  * <p>
  * Additionally, all methods can be called on both server and client side unless otherwise noted, for ease-of-use.
  *
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib5)">Stateless Animatables - GeckoLib Wiki</a>
+ * @see <a href="https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib4)">Stateless Animatables - GeckoLib Wiki</a>
  * @see StatelessGeoEntity
  * @see StatelessGeoBlockEntity
  * @see StatelessGeoSingletonAnimatable
