@@ -70,8 +70,9 @@ public class AnimationController<T extends GeoAnimatable> {
 	protected Function<AnimationState<T>, EasingType> overrideEasingTypeFunction = animationState -> null;
 	private final Set<KeyFrameData> executedKeyFrames = new ObjectOpenHashSet<>();
 
+    protected T currentAnimatable;
+
 	protected GeoModel<T> currentModel;
-	protected T currentAnimatable;
 	protected double currentAnimationSeconds;
 	protected PlayState nextPlaystate;
 
@@ -506,6 +507,8 @@ public class AnimationController<T extends GeoAnimatable> {
 			if (!usedVariables.isEmpty())
 				MolangQueries.buildActorVariables(actor, usedVariables, variables);
 		}
+
+        this.currentAnimatable = null;
 	}
 
 	/**
