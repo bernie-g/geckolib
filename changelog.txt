@@ -1,5 +1,10 @@
-v4.?
+v4.8.2
 
 - Fix a double-space in DynamicGeoBlockRenderer's javadocs
 - Fix an incorrect link in StatelessAnimatable
 - Clean up an ugly javadoc entry in GeoReplacedEntity
+- Clean up some javadocs in GeoModel
+- Clean up some javadocs in GeoAnimatable
+- Clean up some javadocs in ContextAwareAnimatableManager
+- Clean up some javadocs in AnimatableManager
+- Fixed Singleton Geo animatables not showing a triggered anim when newly created for other players in multiplayer
