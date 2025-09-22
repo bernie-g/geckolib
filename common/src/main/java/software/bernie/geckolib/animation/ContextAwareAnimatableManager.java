@@ -19,8 +19,6 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 
 	/**
 	 * Instantiates a new AnimatableManager for the given animatable, calling {@link GeoAnimatable#registerControllers} to define its controllers
-	 *
-	 * @param animatable
 	 */
 	public ContextAwareAnimatableManager(GeoAnimatable animatable) {
 		super(animatable);
@@ -32,13 +30,11 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	 * Build the context-manager map for this manager
 	 * <p>
 	 * The resulting map <u>MUST</u> contain all possible contexts.
-	 *
-	 * @param animatable
 	 */
 	protected abstract Map<C, AnimatableManager<T>> buildContextOptions(GeoAnimatable animatable);
 
 	/**
-	 * Get the current context for the manager, to determine which sub-manager to retrieve
+	 * Get the current context for the manager to determine which submanager to retrieve
 	 */
 	public abstract C getCurrentContext();
 
@@ -52,7 +48,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	/**
 	 * Add an {@link AnimationController} to this animatable's manager
 	 * <p>
-	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
+	 * Generally speaking, you probably should have added it during {@link GeoAnimatable#registerControllers}
 	 */
 	public void addController(AnimationController controller) {
 		getManagerForContext(getCurrentContext()).addController(controller);
