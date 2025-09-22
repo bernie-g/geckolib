@@ -38,6 +38,11 @@ neoForge {
             client()
         }
 
+        create("client2") {
+            client()
+            programArguments.addAll("--username", "Player")
+        }
+
         create("server") {
             server()
             programArgument("--nogui")
