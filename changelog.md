@@ -2,7 +2,7 @@
 
 ## Additions
 * Added "Stateless" animatables. These are an alternate way of handling animations for GeckoLib animatables.
-  * See: https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib4)
+  * See: https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib5)
   * Added:
     * `StatelessGeoBlockEntity`
     * `StatelessGeoEntity`
@@ -14,8 +14,6 @@
 * Added `misc.idle.flying` DefaultAnimation constant
 * Added `move.dive` DefaultAnimation constant
 * Added `DefaultAnimations#triggerOnlyController` for creating a controller specifically for arbitrary triggered animations
-* Added a StreamCodec implementation for `Animation.Stage`
-* Added a StreamCodec implementation for `RawAnimation`
 * Added `RawAnimation#getStageCount`
 * Added `AnimationController#getStateHandler`
 * Directly pass the partialTick to `GeoRenderer#addRenderData`, `GeoRenderLayer#addRenderData`, `GeoModel#prepareForRenderPass`, and the various `CompileRenderState` events/hooks (#762)
@@ -29,6 +27,9 @@
 
 ## Bug Fixes
 * Add double-depth bedrock keyframe parsing because I have no idea why Blockbench is exporting that
+* Fixed triggered animations not visually working on brand-new stacks in multiplayer for other players
 
 ## Internal Changes
 * Reorganised GeckoLib's packets into folders
+* Added a StreamCodec implementation for `Animation.Stage`
+* Added a StreamCodec implementation for `RawAnimation`

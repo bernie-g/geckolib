@@ -12,6 +12,7 @@
     "common.AbstractContainerMenuMixin",
     "common.HashedStackMixin",
     "common.ItemStackMixin",
+    "common.LivingEntityMixin",
     "common.SynchronizedRemoteSlotMixin"
   ],
   "client": [
