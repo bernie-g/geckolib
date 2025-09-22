@@ -28,6 +28,7 @@
 ## Bug Fixes
 * Add double-depth bedrock keyframe parsing because I have no idea why Blockbench is exporting that
 * Fixed triggered animations not visually working on brand-new stacks in multiplayer for other players
+* Fixed some incorrect javadocs in AnimationController
 
 ## Internal Changes
 * Reorganised GeckoLib's packets into folders

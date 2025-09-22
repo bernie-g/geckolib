@@ -861,15 +861,13 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * <p>
 	 * Example Usage:
 	 * <pre>{@code
-	 * AnimationFrameHandler myIdleWalkHandler = state -> {
-	 *	if (state.isMoving()) {
-	 *		state.getController().setAnimation(myWalkAnimation);
+	 * AnimationStateHandler myIdleWalkHandler = test -> {
+	 *	if (test.isMoving()) {
+	 *		return test.setAndContinue(myWalkAnimation);
 	 *	}
 	 *	else {
-	 *		state.getController().setAnimation(myIdleAnimation);
+	 *		return test.setAndContinue(myIdleAnimation);
 	 *	}
-	 *
-	 *	return PlayState.CONTINUE;
 	 *};}</pre>
 	 */
 	@FunctionalInterface
