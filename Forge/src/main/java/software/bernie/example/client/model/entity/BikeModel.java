@@ -14,7 +14,7 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class BikeModel extends DefaultedEntityGeoModel<BikeEntity> {
 	public BikeModel() {
-		super(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "bike"));
+		super(new ResourceLocation(GeckoLib.MOD_ID, "bike"));
 	}
 
 	// We want this entity to have a translucent render

@@ -101,7 +101,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 	@Override
 	public final BakedGeoModel getBakedGeoModel(String location) {
-		return getBakedModel(ResourceLocation.parse(location));
+		return getBakedModel(new ResourceLocation(location));
 	}
 
 	/**

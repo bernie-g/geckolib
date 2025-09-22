@@ -233,7 +233,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		String texture = String.format("%s:textures/models/armor/%s_layer_%d%s.png", domain, path, (slot == EquipmentSlot.LEGS ? 2 : 1), type);
 		texture = ForgeHooksClient.getArmorTexture(entity, stack, texture, slot, type);
 
-		return ARMOR_PATH_CACHE.computeIfAbsent(texture, ResourceLocation::parse);
+		return ARMOR_PATH_CACHE.computeIfAbsent(texture, ResourceLocation::new);
 	}
 
 	/**

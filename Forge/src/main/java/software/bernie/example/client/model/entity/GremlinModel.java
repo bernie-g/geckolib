@@ -12,6 +12,6 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class GremlinModel extends DefaultedEntityGeoModel<DynamicExampleEntity> {
 	public GremlinModel() {
-		super(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "gremlin"));
+		super(new ResourceLocation(GeckoLib.MOD_ID, "gremlin"));
 	}
 }

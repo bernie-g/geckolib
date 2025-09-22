@@ -14,10 +14,10 @@ import software.bernie.geckolib.model.GeoModel;
  */
 public class FakeGlassModel extends DefaultedEntityGeoModel<FakeGlassEntity> {
 	private static final ResourceLocation REDSTONE_BLOCK_TEXTURE =
-			ResourceLocation.fromNamespaceAndPath("minecraft", "textures/block/redstone_block.png");
+			new ResourceLocation("minecraft", "textures/block/redstone_block.png");
 
 	public FakeGlassModel() {
-		super(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "fake_glass"));
+		super(new ResourceLocation(GeckoLib.MOD_ID, "fake_glass"));
 	}
 
 	// We just want our texture to be the Redstone Block texture

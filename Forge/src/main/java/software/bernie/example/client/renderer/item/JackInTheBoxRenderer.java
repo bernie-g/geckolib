@@ -11,6 +11,6 @@ import software.bernie.geckolib.renderer.GeoItemRenderer;
  */
 public class JackInTheBoxRenderer extends GeoItemRenderer<JackInTheBoxItem> {
 	public JackInTheBoxRenderer() {
-		super(new DefaultedItemGeoModel<>(ResourceLocation.fromNamespaceAndPath(GeckoLib.MOD_ID, "jack_in_the_box")));
+		super(new DefaultedItemGeoModel<>(new ResourceLocation(GeckoLib.MOD_ID, "jack_in_the_box")));
 	}
 }
