@@ -29,6 +29,8 @@ public class ItemStackMixin {
 
     /**
      * Consider ItemStacks equal if the only difference is their GeckoLib stack ID
+     * <p>
+     * We do this so that the game doesn't prevent combining stacks due solely to GeckoLib sync IDs.
      */
     @WrapOperation(method = "isSameItemSameComponents", at = @At(value = "INVOKE", target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"))
     private static boolean geckolib$skipGeckolibIdOnCompare(Object a, Object b, Operation<Boolean> original) {
