@@ -9,7 +9,8 @@
   },
   "mixins": [
     "common.AbstractContainerMenuMixin",
-    "common.ItemStackMixin"
+    "common.ItemStackMixin",
+    "common.LivingEntityMixin"
   ],
   "client": [
     "client.BlockEntityWithoutLevelRendererMixin",
