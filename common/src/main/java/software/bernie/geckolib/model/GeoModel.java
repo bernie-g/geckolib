@@ -29,7 +29,7 @@ import java.util.function.DoubleSupplier;
 /**
  * Base class for all code-based model objects
  * <p>
- * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
+ * All models registered to a {@link GeoRenderer} must be an instance of this or one of its subclasses
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
@@ -68,7 +68,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public abstract ResourceLocation getTextureResource(T animatable);
 
 	/**
-	 * Returns the resourcepath for the {@link BakedAnimations} (animation json file) to use for animations based on the provided animatable
+	 * Returns the resource path for the {@link BakedAnimations} (animation json file) to use for animations based on the provided animatable
 	 */
 	public abstract ResourceLocation getAnimationResource(T animatable);
 
@@ -184,7 +184,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public void addAdditionalStateData(T animatable, long instanceId, BiConsumer<DataTicket<T>, T> dataConsumer) {}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * This method is called once per render-frame for each {@link GeoAnimatable} being rendered
 	 * <p>
 	 * It is an internal method for automated animation parsing. Use {@link GeoModel#setCustomAnimations(GeoAnimatable, long, AnimationState)} for custom animation work
 	 */
@@ -227,7 +227,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * This method is called once per render-frame for each {@link GeoAnimatable} being rendered
 	 * <p>
 	 * Override to set custom animations (such as head rotation, etc)
 	 *
@@ -238,7 +238,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	public void setCustomAnimations(T animatable, long instanceId, AnimationState<T> animationState) {}
 
 	/**
-	 * This method is called once per render frame for each {@link GeoAnimatable} being rendered
+	 * This method is called once per render-frame for each {@link GeoAnimatable} being rendered
 	 * <p>
 	 * Use this method to set custom {@link software.bernie.geckolib.loading.math.value.Variable Variable} values via
 	 * {@link software.bernie.geckolib.loading.math.MathParser#setVariable(String, DoubleSupplier) MathParser.setVariable}
