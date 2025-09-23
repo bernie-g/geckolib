@@ -1,3 +1,3 @@
-v4.8.1
+v4.8.2
 
-- Revert Forge parity change - players aren't as up to date on Forge 1.20.1 as I expected
+- Fix triggered animations not applying on Singleton animatables when first used in multiplayer for other players (on Fabric)
