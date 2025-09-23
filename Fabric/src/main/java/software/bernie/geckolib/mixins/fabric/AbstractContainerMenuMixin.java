@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +46,7 @@ public class AbstractContainerMenuMixin {
     }
 
     @Unique
-    private static boolean geckolib$xnorGeckolibStackIds(CompoundTag tag1, CompoundTag tag2) {
+    private static boolean geckolib$xnorGeckolibStackIds(@Nullable CompoundTag tag1, @Nullable CompoundTag tag2) {
         return (tag1 == null ? -1 : tag1.getInt(GeoItem.ID_NBT_KEY)) == (tag2 == null ? -1 : tag2.getInt(GeoItem.ID_NBT_KEY));
     }
 }
