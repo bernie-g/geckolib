@@ -2,11 +2,11 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -68,14 +68,14 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
      * and you may need to factor this in to your design
      */
     @Override
-    public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-                       int packedLight, int packedOverlay, int renderColor) {
-        if (buffer == null)
+    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
+        if (!didRenderModel)
             return;
 
-        renderType = getRenderType(renderState);
+        RenderType renderType = getRenderType(renderState);
 
         if (renderType != null)
-            this.renderer.reRender(renderState, poseStack, bakedModel, bufferSource, renderType, bufferSource.getBuffer(renderType), packedLight, packedOverlay, renderColor);
+            this.renderer.buildRenderTask(renderState, poseStack, bakedModel, renderTasks.order(1), cameraState, renderType, packedLight, packedOverlay, renderColor);
     }
 }

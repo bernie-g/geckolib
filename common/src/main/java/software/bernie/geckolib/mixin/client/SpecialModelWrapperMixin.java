@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.item.SpecialModelWrapper;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -17,12 +17,15 @@ import software.bernie.geckolib.renderer.base.GeckolibItemSpecialRenderer;
 
 @Mixin(SpecialModelWrapper.class)
 public class SpecialModelWrapperMixin {
+    /**
+     * Expand the data points available for GeckoLib item rendering, since vanilla ignores most of it
+     */
     @WrapOperation(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/special/SpecialModelRenderer;extractArgument(Lnet/minecraft/world/item/ItemStack;)Ljava/lang/Object;"))
     public <T> T geckolib$extractAllArguments(SpecialModelRenderer<T> instance, ItemStack itemStack, Operation<T> original,
                                               ItemStackRenderState renderState, ItemStack itemStack2, ItemModelResolver modelResolver,
-                                              ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable LivingEntity entity) {
+                                              ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable ItemOwner itemOwner, int layerIndex) {
         return instance instanceof GeckolibItemSpecialRenderer geckolibRenderer ?
-               (T)geckolibRenderer.extractArgument(itemStack, renderState, displayContext, level, entity) :
+               (T)geckolibRenderer.extractArgument(itemStack, renderState, displayContext, level, itemOwner) :
                original.call(instance, itemStack);
     }
 }

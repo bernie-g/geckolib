@@ -16,8 +16,13 @@ import software.bernie.geckolib.renderer.base.GeckolibItemSpecialRenderer;
 
 @Mixin(SpecialModelRenderers.class)
 public class SpecialModelRenderersMixin {
-    @Shadow @Final private static ExtraCodecs.LateBoundIdMapper<ResourceLocation, MapCodec<? extends SpecialModelRenderer.Unbaked>> ID_MAPPER;
+    @Shadow
+    @Final
+    private static ExtraCodecs.LateBoundIdMapper<ResourceLocation, MapCodec<? extends SpecialModelRenderer.Unbaked>> ID_MAPPER;
 
+    /**
+     * Inject GeckoLib's custom item model renderer into the vanilla map of special renderers
+     */
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private static void geckolib$addSpecialRenderer(CallbackInfo ci) {
         ID_MAPPER.put(GeckoLibConstants.id("geckolib"), GeckolibItemSpecialRenderer.Unbaked.MAP_CODEC);

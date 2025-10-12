@@ -3,12 +3,11 @@ package software.bernie.geckolib.renderer.base;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -23,8 +22,8 @@ import java.util.Set;
 
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
     @Override
-    public void render(@Nullable GeckolibItemSpecialRenderer.RenderData<T> renderData, ItemDisplayContext itemDisplayContext, PoseStack poseStack, MultiBufferSource bufferSource,
-                       int packedLight, int packedOverlay, boolean hasGlint) {
+    public void submit(@Nullable GeckolibItemSpecialRenderer.RenderData<T> renderData, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector renderTasks,
+                       int packedLight, int packedOverlay, boolean hasGlint, int outlineColor) {
         if (renderData == null)
             return;
 
@@ -32,7 +31,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
         renderData.renderState.addGeckolibData(DataTickets.PACKED_OVERLAY, packedOverlay);
         renderData.renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
 
-        renderData.renderer.render(renderData.renderState, poseStack, bufferSource);
+        renderData.renderer.submit(renderData.renderState, poseStack, renderTasks, outlineColor);
     }
 
     @Override
@@ -44,14 +43,14 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
      * Wrap the {@link #extractArgument(ItemStack)} call to provide all the context available, rather than just what Mojang provides
      */
     public GeckolibItemSpecialRenderer.RenderData<T> extractArgument(ItemStack itemStack, ItemStackRenderState renderState, ItemDisplayContext context,
-                                                                     @Nullable ClientLevel level, @Nullable LivingEntity entity) {
+                                                                     @Nullable ClientLevel level, @Nullable ItemOwner itemOwner) {
         var item = makeCovariantItem(itemStack.getItem());
         GeoItemRenderer<T> renderer = (GeoItemRenderer)GeoRenderProvider.of(item).getGeoItemRenderer();
 
         if (renderer == null)
             return null;
 
-        return new RenderData<>(item, buildRenderState(item, itemStack, renderer, renderState, context, level, entity), renderer);
+        return new RenderData<>(item, buildRenderState(item, itemStack, renderer, renderState, context, level, itemOwner), renderer);
     }
 
     /**
@@ -69,9 +68,11 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     }
 
     private GeoRenderState buildRenderState(T animatable, ItemStack itemStack, GeoItemRenderer<T> renderer, ItemStackRenderState renderState, ItemDisplayContext context,
-                                            @Nullable ClientLevel level, @Nullable LivingEntity entity) {
-        return renderer.fillRenderState(animatable, new GeoItemRenderer.RenderData(itemStack, renderState, context, level, entity),
-                                        new GeoRenderState.Impl(), Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+                                            @Nullable ClientLevel level, @Nullable ItemOwner itemOwner) {
+        final GeoItemRenderer.RenderData renderData = new GeoItemRenderer.RenderData(itemStack, renderState, context, level, itemOwner);
+
+        return renderer.fillRenderState(animatable, renderData, renderer.createRenderState(animatable, renderData),
+                                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
     }
 
     public static class Unbaked implements SpecialModelRenderer.Unbaked {
@@ -79,7 +80,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
 
         @Nullable
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet entityModelSet) {
+        public SpecialModelRenderer<?> bake(BakingContext context) {
             return new GeckolibItemSpecialRenderer<>();
         }
 

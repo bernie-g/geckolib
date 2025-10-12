@@ -1,8 +1,5 @@
 package software.bernie.geckolib.animatable.client;
 
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,9 +47,9 @@ public interface GeoRenderProvider {
     /**
      * Get the cached {@link GeoItemRenderer} instance for this provider.
      * <p>
-     * Normally this would be an instance of {@link GeoItemRenderer}
+     * Normally this would be an instance of <code>GeoItemRenderer</code>
      *
-     * @return The cached BEWLR instance for this provider, or null if not applicable
+     * @return The cached <code>GeoItemRenderer</code> instance for this provider, or null if not applicable
      */
     @Nullable
     default GeoItemRenderer<?> getGeoItemRenderer() {
@@ -62,15 +59,12 @@ public interface GeoRenderProvider {
     /**
      * Get the cached {@link GeoArmorRenderer} instance for this provider.
      *
-     * @param renderState The {@link HumanoidRenderState} for the current render pass, or null if one isn't available
      * @param itemStack The ItemStack for this provider
      * @param equipmentSlot The slot the ItemStack would be rendered in
-     * @param type The equipment model type to retrieve
-     * @param original The base HumanoidModel (usually the default vanilla armor model), or null if one isn't available
      * @return The cached GeoArmorRenderer instance for this provider, or null if no armor renderer applies
      */
     @Nullable
-    default <S extends HumanoidRenderState> GeoArmorRenderer<?, ?> getGeoArmorRenderer(@Nullable S renderState, ItemStack itemStack, EquipmentSlot equipmentSlot, EquipmentClientInfo.LayerType type, @Nullable HumanoidModel<S> original) {
+    default GeoArmorRenderer<?, ?> getGeoArmorRenderer(ItemStack itemStack, EquipmentSlot equipmentSlot) {
         return null;
     }
 }

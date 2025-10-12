@@ -28,7 +28,7 @@ import java.util.function.ToDoubleFunction;
 /**
  * Base class for all code-based model objects
  * <p>
- * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
+ * All models registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */

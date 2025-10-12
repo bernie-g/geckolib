@@ -11,9 +11,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import software.bernie.geckolib.renderer.texture.GeckoLibAnimatedTexture;
 
 /**
- * Injection into TextureManager's access point for runtime-derived textures to allow GeckoLib to swap them out with {@code AnimatableTexture} for animated texture purposes
+ * Injection into TextureManager's access point for runtime-derived textures to allow GeckoLib to swap them out with {@code GeckoLibAnimatedTexture}
+ * for animated texture purposes
  * <p>
- * Because AnimatedTexture extends {@link net.minecraft.client.renderer.texture.SimpleTexture SimpleTexture}, the replacement should be seamless
+ * Because GeckoLibAnimatedTexture extends {@link net.minecraft.client.renderer.texture.SimpleTexture SimpleTexture}, the replacement should be seamless
  */
 @Mixin(value = TextureManager.class, priority = 2000)
 public abstract class TextureManagerMixin {
@@ -21,6 +22,9 @@ public abstract class TextureManagerMixin {
 
 	@Shadow public abstract void register(ResourceLocation path, AbstractTexture texture);
 
+    /**
+     * Swap out the vanilla SimpleTexture for a GeckoLibAnimatedTexture if the texture is animated
+     */
 	@WrapOperation(method = "getTexture(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
 			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
 			require = 0)
@@ -41,6 +45,9 @@ public abstract class TextureManagerMixin {
 		return original.call(location);
 	}
 
+    /**
+     * Force-cancel texture registration if texture is GeckolibAnimatedTexture, since we already did it in <code>geckolib$replaceAnimatableTexture</code>
+     */
 	@WrapWithCondition(method = "getTexture(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),
 			require = 0)

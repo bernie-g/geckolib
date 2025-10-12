@@ -55,7 +55,7 @@ public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimata
 
     @Override
     default void playAnimation(RawAnimation animation, Entity relatedEntity, long instanceId) {
-        if (relatedEntity.level().isClientSide) {
+        if (relatedEntity.level().isClientSide()) {
             handleClientAnimationPlay(this, instanceId, animation);
         }
         else {
@@ -65,7 +65,7 @@ public interface StatelessGeoReplacedEntity extends StatelessGeoSingletonAnimata
 
     @Override
     default void stopAnimation(String animation, Entity relatedEntity, long instanceId) {
-        if (relatedEntity.level().isClientSide) {
+        if (relatedEntity.level().isClientSide()) {
             handleClientAnimationStop(this, instanceId, animation);
         }
         else {

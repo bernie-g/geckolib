@@ -10,7 +10,7 @@ import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
-import software.bernie.geckolib.util.RenderUtil;
+import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link BlockEntity BlockEntities}
@@ -137,6 +137,6 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 */
 	@Override
 	default double getTick(Object blockEntity) {
-		return RenderUtil.getCurrentTick();
+		return ClientUtil.getCurrentTick();
 	}
 }

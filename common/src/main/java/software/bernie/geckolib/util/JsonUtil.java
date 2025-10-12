@@ -4,6 +4,7 @@ import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Array;
@@ -128,5 +129,12 @@ public final class JsonUtil {
     @Nullable
     public static Integer getOptionalInteger(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsInt(obj, elementName) : null;
+    }
+
+    /**
+     * Converts a given double array to its {@link Vec3} equivalent
+     */
+    public static Vec3 arrayToVec(double[] array) {
+        return new Vec3(array[0], array[1], array[2]);
     }
 }

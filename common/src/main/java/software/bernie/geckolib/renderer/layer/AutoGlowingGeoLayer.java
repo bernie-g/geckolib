@@ -9,6 +9,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -96,7 +97,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		if (invisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
 			return RenderType.itemEntityTranslucentCull(texture);
 
-		if (renderState.getOrDefaultGeckolibData(DataTickets.IS_GLOWING, false)) {
+		if (entityRenderState.appearsGlowing()) {
 			if (invisible)
 				return RenderType.outline(texture);
 
@@ -106,7 +107,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		return invisible ? null : EmissiveRenderType.getRenderType(texture, false, respectLighting, zOffset);
 	}
 
-	/**
+    /**
 	 * This is the method that is actually called by the render for your render layer to function
 	 * <p>
 	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
@@ -114,10 +115,11 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
 	 * and you may need to factor this in to your design
 	 */
+
 	@Override
-	public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-					   int packedLight, int packedOverlay, int renderColor) {
-		super.render(renderState, poseStack, bakedModel, renderType, bufferSource, buffer, getBrightness(renderState), packedOverlay, renderColor);
+    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
+		super.submitRenderTask(renderState, poseStack, bakedModel, renderTasks, cameraState, getBrightness(renderState), packedOverlay, renderColor, didRenderModel);
 	}
 
 	/**

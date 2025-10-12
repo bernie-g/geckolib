@@ -1,5 +1,6 @@
 package software.bernie.geckolib.animation.keyframe.event.handler;
 
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -31,7 +32,8 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
         String[] segments = event.keyframeData().getSound().split("\\|");
 
         BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.read(segments[0]).getOrThrow()).ifPresent(sound -> {
-            Vec3 position = event.animationState().getDataOrDefault(DataTickets.POSITION, null);
+            Vec3 position = event.animationState().getDataOrDefault(DataTickets.POSITION, event.animationState().renderState() instanceof EntityRenderState entityState ?
+                                                                                          new Vec3(entityState.x, entityState.y, entityState.z) : null);
             Class<?> animatableClass = event.animationState().getDataOrDefault(DataTickets.ANIMATABLE_CLASS, Object.class);
 
             if (position != null) {

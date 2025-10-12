@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -39,7 +40,7 @@ public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable,
      * Applies rotation transformations to the renderer prior to render time to account for various entity states
      */
     @Override
-    protected void applyRotations(R renderState, PoseStack poseStack, float nativeScale) {
+    protected void applyRotations(R renderState, PoseStack poseStack, float nativeScale, CameraRenderState cameraState) {
         poseStack.mulPose(Axis.YP.rotationDegrees(renderState.getGeckolibData(DataTickets.ENTITY_YAW)));
         poseStack.mulPose(Axis.XP.rotationDegrees(renderState.getGeckolibData(DataTickets.ENTITY_PITCH)));
     }

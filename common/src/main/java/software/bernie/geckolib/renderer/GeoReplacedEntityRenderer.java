@@ -5,8 +5,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -14,9 +14,11 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
@@ -46,6 +48,7 @@ import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * An alternate to {@link GeoEntityRenderer}, used specifically for replacing existing non-geckolib
@@ -59,9 +62,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
-
-	protected Matrix4f entityRenderTranslations = new Matrix4f();
-	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
 	public GeoReplacedEntityRenderer(EntityRendererProvider.Context context, GeoModel<T> model, T animatable) {
 		super(context);
@@ -97,14 +97,21 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 		return this.renderLayers.getRenderLayers();
 	}
 
-	/**
-	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-	 */
-	public GeoReplacedEntityRenderer<T, E, R> addRenderLayer(GeoRenderLayer<T, E, R> renderLayer) {
-		this.renderLayers.addLayer(renderLayer);
+    /**
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoReplacedEntityRenderer<T, E, R> withRenderLayer(Function<? super GeoReplacedEntityRenderer<T, E, R>, GeoRenderLayer<T, E, R>> renderLayer) {
+        return withRenderLayer(renderLayer.apply(this));
+    }
 
-		return this;
-	}
+    /**
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoReplacedEntityRenderer<T, E, R> withRenderLayer(GeoRenderLayer<T, E, R> renderLayer) {
+        this.renderLayers.addLayer(renderLayer);
+
+        return this;
+    }
 
 	/**
 	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
@@ -256,7 +263,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 		if (!renderState.isInvisible)
 			return GeoRenderer.super.getRenderType(renderState, texture);
 
-		return renderState.getGeckolibData(DataTickets.IS_GLOWING) ? RenderType.outline(texture) : null;
+		return renderState.appearsGlowing() ? RenderType.outline(texture) : null;
 	}
 
 	/**
@@ -270,7 +277,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 		LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
 
 		renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : replacedEntity.isInvisible() && replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer()));
-		renderState.addGeckolibData(DataTickets.IS_GLOWING, livingRenderState != null ? livingRenderState.appearsGlowing : Minecraft.getInstance().shouldEntityAppearGlowing(replacedEntity));
 		renderState.addGeckolibData(DataTickets.IS_SHAKING, livingRenderState != null ? livingRenderState.isFullyFrozen : replacedEntity.isFullyFrozen());
 		renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : replacedEntity.getPose());
 		renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : replacedEntity.getXRot(partialTick));
@@ -278,7 +284,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 		renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, livingRenderState != null ? livingRenderState.bodyRot : renderState.getGeckolibData(DataTickets.ENTITY_YAW));
 		renderState.addGeckolibData(DataTickets.VELOCITY, replacedEntity.getDeltaMovement());
 		renderState.addGeckolibData(DataTickets.BLOCKPOS, replacedEntity.blockPosition());
-		renderState.addGeckolibData(DataTickets.POSITION, replacedEntity.position());
 		renderState.addGeckolibData(DataTickets.SPRINTING, replacedEntity.isSprinting());
 		renderState.addGeckolibData(DataTickets.IS_MOVING, (replacedEntity instanceof LivingEntity livingEntity ? livingEntity.walkAnimation.speed() : replacedEntity.getDeltaMovement().lengthSqr())  >= getMotionAnimThreshold(this.animatable));
 
@@ -296,22 +301,31 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
 	@Override
-	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		if (!isReRender)
-			this.entityRenderTranslations = new Matrix4f(poseStack.last().pose());
+    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                          int packedLight, int packedOverlay, int renderColor) {
+        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
 	}
+
+    /**
+     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+     * <p>
+     * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
+     */
+    @Override
+    public void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+        float nativeScale = renderState instanceof LivingEntityRenderState livingRenderState ? livingRenderState.scale : 1;
+
+        GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth * nativeScale, heightScale * this.scaleHeight * nativeScale, poseStack, model, cameraState);
+    }
 
 	/**
 	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
 	 */
 	@Override
-	public void adjustPositionForRender(R renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
-		if (isReRender)
-			return;
+    public void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+		LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
 
-		LivingEntityRenderState livingRenderState =  renderState instanceof LivingEntityRenderState state ? state : null;
-
-		if (renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING && livingRenderState != null) {
+		if (livingRenderState != null && renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING) {
 			Direction bedDirection = livingRenderState.bedOrientation;
 
 			if (bedDirection != null) {
@@ -320,73 +334,38 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 				poseStack.translate(-bedDirection.getStepX() * eyePosOffset, 0, -bedDirection.getStepZ() * eyePosOffset);
 			}
 		}
+
+        applyRotations(renderState, poseStack, renderState instanceof LivingEntityRenderState state ? state.scale : 1);
+        poseStack.translate(0, 0.01f, 0);
+        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
 	}
 
-	/**
-	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-	 * <p>
-	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
-	 */
-	@Override
-	public void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
-		float nativeScale = renderState instanceof LivingEntityRenderState livingRenderState ? livingRenderState.scale : 1;
+    /**
+     * Vanilla entrypoint for rendering.
+     * <p>
+     * You generally shouldn't need to override or use this method.
+     */
+    @ApiStatus.Internal
+    @Override
+    public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+        submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+    }
 
-		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth * nativeScale, heightScale * this.scaleHeight * nativeScale, poseStack, model, isReRender);
-	}
-
-	@ApiStatus.Internal
-	@Override
-	public void render(EntityRenderState entityRenderState, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
-		defaultRender((R)entityRenderState, poseStack, bufferSource, null, null);
-	}
-
-	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
-	 * <p>
-	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
-	 */
-	@Override
-	public void actuallyRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType,
-							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		if (!isReRender) {
-			applyRotations(renderState, poseStack, renderState instanceof LivingEntityRenderState state ? state.scale : 1);
-			getGeoModel().handleAnimations(createAnimationState(renderState));
-			poseStack.translate(0, 0.01f, 0);
-		}
-
-		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
-
-		if (buffer != null)
-			GeoRenderer.super.actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
-	}
-
-	/**
-	 * Call after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
-	 * <p>
-	 * This method is <u>not</u> called in {@link GeoRenderer#reRender re-render}
-	 */
-	@Override
-	public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-							int packedLight, int packedOverlay, int renderColor) {
-		super.render(renderState, poseStack, bufferSource, packedLight);
-	}
-
-	/**
-	 * Called after all render operations are completed, and the render pass is considered functionally complete.
-	 * <p>
-	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
-	 */
-	@Override
-	public void doPostRenderCleanup() {
-		this.entityRenderTranslations = null;
-		this.modelRenderTranslations = null;
-	}
+    /**
+     * Called after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
+     */
+    @Override
+    public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                            int packedLight, int packedOverlay, int renderColor) {
+        super.submit(renderState, poseStack, renderTasks, cameraState);
+    }
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(R renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
+    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+                           int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
 		RenderUtil.translateToPivotPoint(poseStack, bone);
@@ -395,25 +374,24 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
+			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.OBJECT_RENDER_POSE));
 
-			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
+			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
 			bone.setLocalSpaceMatrix(RenderUtil.translateMatrix(localMatrix, getRenderOffset(renderState).toVector3f()));
 			bone.setWorldSpaceMatrix(RenderUtil.translateMatrix(new Matrix4f(localMatrix), new Vector3f((float)renderState.x, (float)renderState.y, (float)renderState.z)));
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 
-		if (!isReRender) {
+		if (!skipBoneTasks) {
 			Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
 
 			if (boneRenderTask != null)
 				boneRenderTask.left().setValue(poseStack.last().copy());
 		}
 
-		renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
-		renderChildBones(renderState, bone, poseStack, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
-
+        renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
+        renderChildBones(renderState, bone, poseStack, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
 	}
 
@@ -464,16 +442,18 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 		return 90f;
 	}
 
-	/**
-	 * GeckoLib defers creation of this to allow for dynamic handling in {@link #extractRenderState(Entity, EntityRenderState, float)}
-	 */
-	@Deprecated
-	@ApiStatus.Internal
-	@Nullable
-	@Override
-	public R createRenderState() {
-		return null;
-	}
+    /**
+     * Create the base (blank) {@link R renderState} instance for this renderer.
+     * <p>
+     * By default, it is an {@link EntityRenderState}, or a {@link LivingEntityRenderState} if the entity is an instance of {@link LivingEntity}<br>
+     * All EntityRenderStates of any kind are automatically {@link GeoRenderState}s
+     * <p>
+     * Override this if you want to utilise a different subclass of EntityRenderState
+     */
+    @Override
+    public R createRenderState(T animatable, E relatedObject) {
+        return (R)(relatedObject instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState());
+    }
 
 	/**
 	 * Create the contextually relevant EntityRenderState for the current render pass
@@ -485,22 +465,12 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	@ApiStatus.Internal
 	@Override
 	public final R createRenderState(E entity, float partialTick) {
-		if (this.reusedState == null)
-			this.reusedState = createBaseRenderState(entity);
+        R renderState = createRenderState(this.animatable, entity);
 
-		return super.createRenderState(entity, partialTick);
-	}
+        extractRenderState(entity, renderState, partialTick);
+        finalizeRenderState(entity, renderState);
 
-	/**
-	 * Create the base (blank) {@link R renderState} instance for this renderer.
-	 * <p>
-	 * By default, it is an {@link EntityRenderState}, or a {@link LivingEntityRenderState} if the entity is an instance of {@link LivingEntity}<br>
-	 * All EntityRenderStates of any kind are automatically {@link GeoRenderState}s
-	 * <p>
-	 * Override this if you want to utilise a different subclass of EntityRenderState
-	 */
-	protected R createBaseRenderState(E entity) {
-		return (R)(entity instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState());
+        return renderState;
 	}
 
 	/**
@@ -526,15 +496,14 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * This is only called if the entity for this renderer is a {@link LivingEntity}
 	 */
 	protected void extractLivingEntityRenderState(LivingEntity entity, LivingEntityRenderState renderState, float partialTick, ItemModelResolver itemModelResolver) {
-		final Minecraft minecraft = Minecraft.getInstance();
-		final float yHeadRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
+		final float lerpHeadYRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
+        final Component customName = entity.getCustomName();
 		final ItemStack helmetStack = entity.getItemBySlot(EquipmentSlot.HEAD);
 
-		renderState.bodyRot = LivingEntityRenderer.solveBodyRot(entity, yHeadRot, partialTick);
-		renderState.yRot = Mth.wrapDegrees(yHeadRot - renderState.bodyRot);
+		renderState.bodyRot = LivingEntityRenderer.solveBodyRot(entity, lerpHeadYRot, partialTick);
+		renderState.yRot = Mth.wrapDegrees(lerpHeadYRot - renderState.bodyRot);
 		renderState.xRot = entity.getXRot(partialTick);
-		renderState.customName = entity.getCustomName();
-		renderState.isUpsideDown = LivingEntityRenderer.isEntityUpsideDown(entity);
+        renderState.isUpsideDown = customName != null && LivingEntityRenderer.isUpsideDownName(customName.getString());
 
 		if (renderState.isUpsideDown) {
 			renderState.xRot *= -1;
@@ -581,7 +550,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 			renderState.wornHeadProfile = null;
 
 			if (!HumanoidArmorLayer.shouldRender(helmetStack, EquipmentSlot.HEAD)) {
-				itemModelResolver.updateForLiving(renderState.headItem, helmetStack, ItemDisplayContext.HEAD, entity);
+                this.itemModelResolver.updateForLiving(renderState.headItem, helmetStack, ItemDisplayContext.HEAD, entity);
 			}
 			else {
 				renderState.headItem.clear();
@@ -590,7 +559,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
 		renderState.deathTime = entity.deathTime > 0 ? (float)entity.deathTime + partialTick : 0;
 		renderState.isInvisibleToPlayer = renderState.isInvisible && entity.isInvisibleTo(ClientUtil.getClientPlayer());
-		renderState.appearsGlowing = minecraft.shouldEntityAppearGlowing(entity);
 	}
 
 	/**
@@ -615,16 +583,16 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override
-	public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-		return GeckoLibServices.Client.EVENTS.fireReplacedEntityPreRender(this, renderState, poseStack, model, bufferSource);
+	public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+		return GeckoLibServices.Client.EVENTS.fireReplacedEntityPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**
 	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
 	 */
 	@Override
-	public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-		GeckoLibServices.Client.EVENTS.fireReplacedEntityPostRender(this, renderState, poseStack, model, bufferSource);
+	public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+		GeckoLibServices.Client.EVENTS.fireReplacedEntityPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**
@@ -640,4 +608,15 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	protected <S extends LivingEntityRenderState & GeoRenderState> S makeLivingCovariantRenderState(GeoRenderState renderState) {
 		return (S)renderState;
 	}
+
+    /**
+     * @deprecated GeckoLib defers creation of this to allow for dynamic handling in {@link #extractRenderState(Entity, EntityRenderState, float)}
+     */
+    @Deprecated
+    @ApiStatus.Internal
+    @Nullable
+    @Override
+    public R createRenderState() {
+        return null;
+    }
 }

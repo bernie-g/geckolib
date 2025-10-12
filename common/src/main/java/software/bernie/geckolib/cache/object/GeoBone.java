@@ -302,6 +302,7 @@ public class GeoBone {
 		return this.cubes;
 	}
 
+    // TODO this might need to be rethought in the future to preserve cross-thread safety
 	public boolean isTrackingMatrices() {
 		return trackingMatrices;
 	}

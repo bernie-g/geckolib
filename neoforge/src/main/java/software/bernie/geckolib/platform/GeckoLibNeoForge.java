@@ -20,7 +20,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
      */
     @Override
     public boolean isDevelopmentEnvironment() {
-        return !FMLEnvironment.production;
+        return !FMLEnvironment.isProduction();
     }
 
     /**
@@ -36,7 +36,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
      */
     @Override
     public boolean isPhysicalClient() {
-        return FMLEnvironment.dist.isClient();
+        return FMLEnvironment.getDist().isClient();
     }
 
     /**

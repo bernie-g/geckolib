@@ -19,7 +19,7 @@ public non-sealed interface StatelessGeoEntity extends StatelessAnimatable, GeoE
         if (!(this instanceof Entity self))
             throw new ClassCastException("Cannot use StatelessGeoEntity on a non-entity animatable!");
 
-        if (self.level().isClientSide) {
+        if (self.level().isClientSide()) {
             handleClientAnimationPlay(this, self.getId(), animation);
         }
         else {
@@ -35,7 +35,7 @@ public non-sealed interface StatelessGeoEntity extends StatelessAnimatable, GeoE
         if (!(this instanceof Entity self))
             throw new ClassCastException("Cannot use StatelessGeoEntity on a non-entity animatable!");
 
-        if (self.level().isClientSide) {
+        if (self.level().isClientSide()) {
             handleClientAnimationStop(this, self.getId(), animation);
         }
         else {

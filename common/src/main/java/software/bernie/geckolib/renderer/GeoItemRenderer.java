@@ -7,13 +7,14 @@ import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ItemOwner;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -36,6 +37,7 @@ import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically
@@ -49,9 +51,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 	protected boolean useEntityGuiLighting = false;
-
-	protected Matrix4f itemRenderTranslations = new Matrix4f();
-	protected Matrix4f modelRenderTranslations = new Matrix4f();
 
     /**
      * Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
@@ -96,14 +95,21 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		return this.renderLayers.getRenderLayers();
 	}
 
-	/**
-	 * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-	 */
-	public GeoItemRenderer<T> addRenderLayer(GeoRenderLayer<T, RenderData, GeoRenderState> renderLayer) {
-		this.renderLayers.addLayer(renderLayer);
+    /**
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoItemRenderer<T> withRenderLayer(Function<? super GeoItemRenderer<T>, GeoRenderLayer<T, RenderData, GeoRenderState>> renderLayer) {
+        return withRenderLayer(renderLayer.apply(this));
+    }
 
-		return this;
-	}
+    /**
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoItemRenderer<T> withRenderLayer(GeoRenderLayer<T, RenderData, GeoRenderState> renderLayer) {
+        this.renderLayers.addLayer(renderLayer);
+
+        return this;
+    }
 
 	/**
 	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
@@ -165,24 +171,27 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		return renderState;
 	}
 
-	/**
+    /**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
 	 * <p>
 	 * {@link PoseStack} translations made here are kept until the end of the render process
 	 */
+
 	@Override
-	public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		if (!isReRender)
-			this.itemRenderTranslations = new Matrix4f(poseStack.last().pose());
+    public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                          int packedLight, int packedOverlay, int renderColor) {
+        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
+
+        ((T)renderState.getGeckolibData(DataTickets.ITEM)).getAnimatableInstanceCache().getManagerForId(renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID))
+                .setAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderState.getGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE));
 	}
 
 	/**
 	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
 	 */
 	@Override
-	public void adjustPositionForRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
-		if (!isReRender)
-			poseStack.translate(0.5f, 0.51f, 0.5f);
+    public void adjustRenderPose(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+        poseStack.translate(0.5f, 0.51f, 0.5f);
 	}
 
 	/**
@@ -191,27 +200,40 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
 	 */
 	@Override
-	public void scaleModelForRender(GeoRenderState renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, boolean isReRender) {
-		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, isReRender);
+    public void scaleModelForRender(GeoRenderState renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, cameraState);
 	}
 
-	public void render(GeoRenderState renderState, PoseStack poseStack, MultiBufferSource bufferSource) {
-		if (renderState.getGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE) == ItemDisplayContext.GUI) {
-			renderInGui(renderState, poseStack, bufferSource);
-		}
-		else {
-			RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
-			VertexConsumer buffer = renderType == null ? null : ItemRenderer.getFoilBuffer(bufferSource, renderType, false, renderState.getGeckolibData(DataTickets.HAS_GLINT));
+    /**
+     * The entry render point for this renderer
+     *
+     * @param renderState The GeoRenderState for this render pass. This must be already compiled
+     * @param poseStack The PoseStack to render under
+     * @param renderTasks The render task collector for the render pass
+     * @param outlineColor The rendering outline colour this render should apply (as if glowing)
+     */
+    public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
+        renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);
+        submitRenderTasks(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState);
 
-			defaultRender(renderState, poseStack, bufferSource, renderType, buffer);
-		}
-	}
 
-	/**
+
+        /*if (renderState.getGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE) == ItemDisplayContext.GUI) {
+            renderInGui(renderState, poseStack, bufferSource);
+        }
+        else {
+            RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
+            VertexConsumer buffer = renderType == null ? null : ItemRenderer.getFoilBuffer(bufferSource, renderType, false, renderState.getGeckolibData(DataTickets.HAS_GLINT));
+
+            submitRenderTasks(renderState, poseStack, bufferSource, renderType, buffer);
+        }*/
+    }
+
+/*	*//**
 	 * Wrapper method to handle rendering the item in a GUI context (defined by {@link ItemDisplayContext#GUI} normally)
 	 * <p>
 	 * Just includes some additional required transformations and settings
-	 */
+	 *//*
 	protected void renderInGui(GeoRenderState renderState, PoseStack poseStack, MultiBufferSource bufferSource) {
 		setupLightingForGuiRender();
 
@@ -220,11 +242,11 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		VertexConsumer buffer = ItemRenderer.getFoilBuffer(bufferSource, renderType, true, renderState.getGeckolibData(DataTickets.HAS_GLINT));
 
 		poseStack.pushPose();
-		defaultRender(renderState, poseStack, defaultBufferSource, renderType, buffer);
+		submitRenderTasks(renderState, poseStack, defaultBufferSource, renderType, buffer);
 		defaultBufferSource.endBatch();
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 		poseStack.popPose();
-	}
+	}*/
 
 	/**
 	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
@@ -232,46 +254,41 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
-	public void actuallyRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, @Nullable RenderType renderType,
-							   MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-		if (!isReRender) {
-			((T)renderState.getGeckolibData(DataTickets.ITEM)).getAnimatableInstanceCache().getManagerForId(renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID)).setAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderState.getGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE));
-			getGeoModel().handleAnimations(createAnimationState(renderState));
-		}
+    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor) {
+        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
 
-		this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
+        if (renderType == null)
+            return;
 
-		if (buffer != null)
-			GeoRenderer.super.actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
-	}
-
-	/**
-	 * Called after all render operations are completed and the render pass is considered functionally complete.
-	 * <p>
-	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
-	 */
-	@Override
-	public void doPostRenderCleanup() {
-		this.itemRenderTranslations = null;
-		this.modelRenderTranslations = null;
+        GeoRenderer.super.buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
 	}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderRecursively(GeoRenderState renderState, PoseStack poseStack, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
+    public void renderBone(GeoRenderState renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+                           int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 
-			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			bone.setLocalSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.itemRenderTranslations));
+            bone.setLocalSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.OBJECT_RENDER_POSE)));
+            bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
 		}
 
-		GeoRenderer.super.renderRecursively(renderState, poseStack, bone, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
 	}
 
-	/**
+    /**
+     * Called to create the {@link GeoRenderState} for this render pass
+     */
+    @Override
+    public GeoRenderState createRenderState(T animatable, RenderData relatedObject) {
+        return new GeoRenderState.Impl();
+    }
+
+    /**
 	 * Set the current lighting normals for the current render pass
 	 * <p>
 	 * Only used for {@link ItemDisplayContext#GUI} rendering
@@ -307,16 +324,16 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	@Override
-	public boolean firePreRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-		return GeckoLibServices.Client.EVENTS.fireItemPreRender(this, renderState, poseStack, model, bufferSource);
+	public boolean firePreRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+		return GeckoLibServices.Client.EVENTS.fireItemPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**
 	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
 	 */
 	@Override
-	public void firePostRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, MultiBufferSource bufferSource) {
-		GeckoLibServices.Client.EVENTS.fireItemPostRender(this, renderState, poseStack, model, bufferSource);
+    public void firePostRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+		GeckoLibServices.Client.EVENTS.fireItemPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**
@@ -326,7 +343,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * @param vanillaRenderState The vanilla render state for the item stack. Not usually used for dynamic rendering
 	 * @param renderPerspective The {@link ItemDisplayContext} that the item is being rendered in
 	 * @param level The {@link ClientLevel} that the item is being rendered in, if applicable. A world being present doesn't necessarily mean the item physically is in the world itself
-	 * @param entity The associated entity, if applicable.
+	 * @param itemOwner The associated entity, if applicable.
 	 */
-	public record RenderData(ItemStack itemStack, ItemStackRenderState vanillaRenderState, ItemDisplayContext renderPerspective, @Nullable ClientLevel level, @Nullable LivingEntity entity) {}
+	public record RenderData(ItemStack itemStack, ItemStackRenderState vanillaRenderState, ItemDisplayContext renderPerspective, @Nullable ClientLevel level, @Nullable ItemOwner itemOwner) {}
 }

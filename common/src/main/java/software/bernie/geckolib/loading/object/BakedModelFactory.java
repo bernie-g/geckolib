@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.util.RenderUtil;
+import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -144,8 +144,8 @@ public interface BakedModelFactory {
 		public GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, GeoBone parent) {
 			Bone bone = boneStructure.self();
 			GeoBone newBone = new GeoBone(parent, bone.name(), bone.mirror(), bone.inflate(), bone.neverRender(), bone.reset());
-			Vec3 rotation = RenderUtil.arrayToVec(bone.rotation());
-			Vec3 pivot = RenderUtil.arrayToVec(bone.pivot());
+			Vec3 rotation = JsonUtil.arrayToVec(bone.rotation());
+			Vec3 pivot = JsonUtil.arrayToVec(bone.pivot());
 
 			newBone.updateRotation((float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y), (float)Math.toRadians(rotation.z));
 			newBone.updatePivot((float)-pivot.x, (float)pivot.y, (float)pivot.z);
@@ -165,10 +165,10 @@ public interface BakedModelFactory {
 		public GeoCube constructCube(Cube cube, ModelProperties properties, GeoBone bone) {
 			boolean mirror = cube.mirror() == Boolean.TRUE;
 			double inflate = cube.inflate() != null ? cube.inflate() / 16f : (bone.getInflate() == null ? 0 : bone.getInflate() / 16f);
-			Vec3 size = RenderUtil.arrayToVec(cube.size());
-			Vec3 origin = RenderUtil.arrayToVec(cube.origin());
-			Vec3 rotation = RenderUtil.arrayToVec(cube.rotation());
-			Vec3 pivot = RenderUtil.arrayToVec(cube.pivot());
+			Vec3 size = JsonUtil.arrayToVec(cube.size());
+			Vec3 origin = JsonUtil.arrayToVec(cube.origin());
+			Vec3 rotation = JsonUtil.arrayToVec(cube.rotation());
+			Vec3 pivot = JsonUtil.arrayToVec(cube.pivot());
 			origin = new Vec3(-(origin.x + size.x) / 16d, origin.y / 16d, origin.z / 16d);
 			Vec3 vertexSize = size.multiply(1 / 16d, 1 / 16d, 1 / 16d);
 

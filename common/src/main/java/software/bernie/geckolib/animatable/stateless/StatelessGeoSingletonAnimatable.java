@@ -46,7 +46,7 @@ public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAni
      * Start or continue a pre-defined animation
      */
     default void playAnimation(RawAnimation animation, Entity relatedEntity, long instanceId) {
-        if (relatedEntity.level().isClientSide) {
+        if (relatedEntity.level().isClientSide()) {
             handleClientAnimationPlay(this, instanceId, animation);
         }
         else {
@@ -58,7 +58,7 @@ public non-sealed interface StatelessGeoSingletonAnimatable extends StatelessAni
      * Stop an already-playing animation
      */
     default void stopAnimation(String animation, Entity relatedEntity, long instanceId) {
-        if (relatedEntity.level().isClientSide) {
+        if (relatedEntity.level().isClientSide()) {
             handleClientAnimationStop(this, instanceId, animation);
         }
         else {

@@ -3,11 +3,11 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -62,35 +62,38 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
      * @param consumer The registrar to accept the per-bone render tasks
      */
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        model.getBone(this.boneName).ifPresent(bone -> consumer.accept(bone, this::renderBone));
+    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+        if (didRenderModel)
+            model.getBone(this.boneName).ifPresent(bone -> consumer.accept(bone, this::renderBone));
     }
 
     /**
      * Render the bone with the replacement texture
      */
-    protected void renderBone(R renderState, PoseStack poseStack, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource,
+    protected void renderBone(R renderState, PoseStack poseStack, GeoBone bone, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                               int packedLight, int packedOverlay, int renderColor) {
-        if (renderType == null)
-            return;
-
         ResourceLocation boneTexture = getTextureResource(renderState);
         ResourceLocation baseTexture = this.renderer.getTextureLocation(renderState);
         IntIntPair boneTextureSize = RenderUtil.getTextureDimensions(boneTexture);
         IntIntPair baseTextureSize = RenderUtil.getTextureDimensions(baseTexture);
         float widthRatio = baseTextureSize.firstInt() / (float)boneTextureSize.firstInt();
         float heightRatio = baseTextureSize.secondInt() / (float)boneTextureSize.secondInt();
-        VertexConsumer buffer = bufferSource.getBuffer(getRenderType(renderState, boneTexture));
-        bone.setHidden(false);
-        bone.setChildrenHidden(true);
 
-        for (GeoCube cube : bone.getCubes()) {
-            poseStack.pushPose();
-            renderCube(renderState, cube, poseStack, buffer, widthRatio, heightRatio, packedLight, packedOverlay, renderColor);
-            poseStack.popPose();
-        }
+        renderTasks.submitCustomGeometry(poseStack, getRenderType(renderState, boneTexture), (pose, buffer) -> {
+            PoseStack poseStack2 = new PoseStack();
 
-        bone.setHidden(false);
+            poseStack2.last().set(pose);
+            bone.setHidden(false);
+            bone.setChildrenHidden(true);
+
+            for (GeoCube cube : bone.getCubes()) {
+                poseStack2.pushPose();
+                renderCube(renderState, cube, poseStack2, buffer, widthRatio, heightRatio, packedLight, packedOverlay, renderColor);
+                poseStack2.popPose();
+            }
+
+            bone.setHidden(false);
+        });
     }
 
     /**
@@ -145,14 +148,13 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
      */
     @ApiStatus.Internal
     @Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-                          int packedLight, int packedOverlay, int renderColor) {
-        if (buffer == null)
-            return;
-
-        bakedModel.getBone(this.boneName).ifPresent(bone -> {
-            bone.setHidden(true);
-            bone.setChildrenHidden(false);
-        });
+    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                          int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
+        if (didRenderModel) {
+            bakedModel.getBone(this.boneName).ifPresent(bone -> {
+                bone.setHidden(true);
+                bone.setChildrenHidden(false);
+            });
+        }
     }
 }

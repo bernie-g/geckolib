@@ -3,11 +3,11 @@ package software.bernie.geckolib.renderer.specialty;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -56,20 +56,20 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
     }
 
     @Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender,
+    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
-        super.preRender(renderState, poseStack, model, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
 
-        if (!isReRender)
-            checkBoneDyeCache(renderState, model, packedLight, packedOverlay, renderColor);
+        checkBoneDyeCache(renderState, model, packedLight, packedOverlay, renderColor);
     }
 
     @Override
-    public void renderCubesOfBone(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, int packedLight, int packedOverlay, int renderColor) {
+    public void renderCubesOfBone(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState,
+                                  int packedLight, int packedOverlay, int renderColor) {
         if (this.dyeableBones.contains(bone))
             renderColor = ARGB.multiply(renderColor, getColorForBone(renderState, bone, packedLight, packedOverlay, renderState.getGeckolibData(DataTickets.RENDER_COLOR)));
 
-        super.renderCubesOfBone(renderState, bone, poseStack, buffer, packedLight, packedOverlay, renderColor);
+        super.renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
     }
 
     /**
@@ -79,8 +79,9 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      */
     protected void checkBoneDyeCache(GeoRenderState renderState, BakedGeoModel model, int packedLight, int packedOverlay, int renderColor) {
         if (model != this.lastModel) {
-            this.dyeableBones.clear();
             this.lastModel = model;
+
+            this.dyeableBones.clear();
             collectDyeableBones(model.topLevelBones());
         }
     }
