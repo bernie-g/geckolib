@@ -34,7 +34,7 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
         }
         else {
             PayloadTypeRegistry.playC2S().register(payloadType, (StreamCodec<FriendlyByteBuf, P>)codec);
-            ServerPlayNetworking.registerGlobalReceiver(payloadType, (packet, context) -> packet.receiveMessage(context.player(), context.player().getServer()::execute));
+            ServerPlayNetworking.registerGlobalReceiver(payloadType, (packet, context) -> packet.receiveMessage(context.player(), context.player().level().getServer()::execute));
         }
     }
 

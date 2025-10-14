@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -69,16 +70,16 @@ public final class GeckoLibResources {
 	}
 
 	@ApiStatus.Internal
-	public static CompletableFuture<Void> reload(PreparationBarrier stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor) {
-		CompletableFuture<Map<ResourceLocation, BakedAnimations>> animations = loadAnimations(backgroundExecutor, resourceManager);
-		CompletableFuture<Map<ResourceLocation, BakedGeoModel>> models = loadModels(backgroundExecutor, resourceManager);
+	public static CompletableFuture<Void> reload(PreparableReloadListener.SharedState sharedState, Executor prepExecutor, PreparationBarrier preparationBarrier, Executor applicationExecutor) {
+		CompletableFuture<Map<ResourceLocation, BakedAnimations>> animations = loadAnimations(prepExecutor, sharedState.resourceManager());
+		CompletableFuture<Map<ResourceLocation, BakedGeoModel>> models = loadModels(prepExecutor, sharedState.resourceManager());
 
-		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), backgroundExecutor)
-				.thenCompose(ignored -> CompletableFuture.allOf(animations, models).thenCompose(stage::wait).thenRunAsync(() -> {
+		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), prepExecutor)
+				.thenCompose(ignored -> CompletableFuture.allOf(animations, models).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
 					GeckoLibResources.ANIMATIONS = animations.join();
 					GeckoLibResources.MODELS = models.join();
 					BakedAnimationsAdapter.COMPRESSION_CACHE = null;
-				}, gameExecutor));
+				}, applicationExecutor));
 	}
 
 	/**

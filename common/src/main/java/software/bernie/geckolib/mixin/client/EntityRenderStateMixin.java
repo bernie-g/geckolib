@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
@@ -17,6 +18,8 @@ import java.util.Map;
  */
 @Mixin(EntityRenderState.class)
 public class EntityRenderStateMixin implements GeoRenderState {
+    @Shadow
+    public int lightCoords;
     @Unique
     private final Map<DataTicket<?>, Object> geckolib$data = new Reference2ObjectOpenHashMap<>();
 
@@ -30,6 +33,12 @@ public class EntityRenderStateMixin implements GeoRenderState {
     @Override
     public boolean hasGeckolibData(DataTicket<?> dataTicket) {
         return this.geckolib$data.containsKey(dataTicket);
+    }
+
+    @Unique
+    @Override
+    public int getPackedLight() {
+        return this.lightCoords;
     }
 
     @Unique

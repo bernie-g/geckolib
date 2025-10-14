@@ -1,6 +1,9 @@
 package software.bernie.geckolib.animation;
 
+import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.processing.AnimationController;
 
@@ -20,10 +23,20 @@ import java.util.stream.Collectors;
  * <pre>{@code RawAnimation.begin().thenPlay("action.open_box").thenLoop("state.stay_open")}</pre>
  */
 public final class RawAnimation {
-	private final List<Stage> animationList = new ObjectArrayList<>();
+    public static final StreamCodec<ByteBuf, RawAnimation> STREAM_CODEC = StreamCodec.composite(
+            Stage.STREAM_CODEC.apply(ByteBufCodecs.list()), instance -> instance.animationList,
+            RawAnimation::new);
+	private final List<Stage> animationList;
 
 	// Private constructor to force usage of factory for logical operations
-	private RawAnimation() {}
+	private RawAnimation() {
+        this(new ObjectArrayList<>());
+    }
+
+    // Private constructor to force usage of factory for logical operations
+    private RawAnimation(List<Stage> animationList) {
+        this.animationList = animationList;
+    }
 
 	/**
 	 * Start a new RawAnimation instance. This is the start point for creating an animation chain
@@ -123,6 +136,13 @@ public final class RawAnimation {
 		return newInstance;
 	}
 
+    /**
+     * Get the number of animation stages this RawAnimation contains
+     */
+    public int getStageCount() {
+        return this.animationList.size();
+    }
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -150,6 +170,12 @@ public final class RawAnimation {
 	 * This is an entry object representing a single animation stage of the final compiled animation.
 	 */
 	public record Stage(String animationName, Animation.LoopType loopType, int additionalTicks) {
+        public static final StreamCodec<ByteBuf, Stage> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, Stage::animationName,
+                ByteBufCodecs.STRING_UTF8.map(Animation.LoopType::fromString, Animation.LoopType::getId), Stage::loopType,
+                ByteBufCodecs.VAR_INT, Stage::additionalTicks,
+                Stage::new);
+
 		@ApiStatus.Internal
 		public static final String WAIT = "internal.wait";
 

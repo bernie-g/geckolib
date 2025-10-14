@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
@@ -41,7 +42,7 @@ public final class DataTickets {
 	public static final DataTicket<Boolean> INVISIBLE_TO_PLAYER = DataTicket.create("invisible_to_player", Boolean.class);
 	public static final DataTicket<Integer> PACKED_OVERLAY = DataTicket.create("packed_overlay", Integer.class);
 	public static final DataTicket<Integer> PACKED_LIGHT = DataTicket.create("packed_light", Integer.class);
-	public static final DataTicket<Boolean> IS_GLOWING = DataTicket.create("is_glowing", Boolean.class);
+	public static final DataTicket<Integer> GLOW_COLOUR = DataTicket.create("glow_colour", Integer.class);
 	public static final DataTicket<Boolean> IS_SHAKING = DataTicket.create("is_shaking", Boolean.class);
 	public static final DataTicket<Pose> ENTITY_POSE = DataTicket.create("entity_pose", Pose.class);
 	public static final DataTicket<Float> ENTITY_PITCH = DataTicket.create("entity_pitch", Float.class);
@@ -80,6 +81,10 @@ public final class DataTickets {
 	public static final DataTicket<Reference2DoubleMap> QUERY_VALUES = DataTicket.create("query_values", Reference2DoubleMap.class);
 	@ApiStatus.Internal
 	public static final DataTicket<Reference2ObjectMap> PER_BONE_TASKS = DataTicket.create("per_bone_render_tasks", Reference2ObjectMap.class);
+    @ApiStatus.Internal
+	public static final DataTicket<Matrix4f> OBJECT_RENDER_POSE = DataTicket.create("object_render_pose", Matrix4f.class);
+    @ApiStatus.Internal
+	public static final DataTicket<Matrix4f> MODEL_RENDER_POSE = DataTicket.create("object_render_pose", Matrix4f.class);
 
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples and for ease of use

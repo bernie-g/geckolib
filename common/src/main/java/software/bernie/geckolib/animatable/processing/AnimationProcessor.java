@@ -83,7 +83,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					animation = this.model.getAnimation(animatable, stage.animationName());
 				}
 				catch (RuntimeException ex) {
-					GeckoLibConstants.LOGGER.error("Error while retrieve animation for animatable '{}'", animatable.getClass().getName(), ex);
+					GeckoLibConstants.LOGGER.error("Error while retrieving animation for animatable '{}'", animatable.getClass().getName(), ex);
 
 					error = true;
 				}

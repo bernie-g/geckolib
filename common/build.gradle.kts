@@ -12,7 +12,6 @@ base {
 
 neoForge {
     neoFormVersion = libs.versions.neoform.get()
-    validateAccessTransformers = true
     accessTransformers.files.setFrom("src/main/resources/META-INF/accesstransformer-nf.cfg")
 
     parchment.minecraftVersion.set(libs.versions.parchment.minecraft.get())

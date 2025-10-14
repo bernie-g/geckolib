@@ -3,11 +3,9 @@ package software.bernie.geckolib.platform;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
@@ -15,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.service.GeckoLibClient;
@@ -31,14 +28,8 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      */
     @NotNull
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> HumanoidModel<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
-        Item item = stack.getItem();
-        Model model = IClientItemExtensions.of(item).getHumanoidArmorModel(entityRenderState, stack, slot, defaultModel);
-
-        if (model == defaultModel && GeoRenderProvider.of(item).getGeoArmorRenderer(entityRenderState, stack, slot, type, defaultModel) instanceof GeoArmorRenderer<?, ?> geoArmorRenderer)
-            return geoArmorRenderer;
-
-        return model instanceof HumanoidModel<?> humanoidModel ? humanoidModel : defaultModel;
+    public <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+        return IClientItemExtensions.of(stack).getGenericArmorModel(entityRenderState, stack, slot, defaultModel);
     }
 
     /**
@@ -51,25 +42,6 @@ public final class GeckoLibClientForge implements GeckoLibClient {
     public GeoModel<?> getGeoModelForItem(ItemStack item) {
         if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoRenderer)
             return geoRenderer.getGeoModel();
-
-        return null;
-    }
-
-    /**
-     * Helper method for retrieving an (ideally) cached instance of the GeoModel for the given item's armor renderer
-     *
-     * @return The GeoModel for the item, or null if not applicable
-     */
-    @Nullable
-    @Override
-    public GeoModel<?> getGeoModelForArmor(ItemStack armour, EquipmentSlot slot, EquipmentClientInfo.LayerType type) {
-        final HumanoidModel<?> defaultModel = slot == EquipmentSlot.LEGS ? GENERIC_INNER_ARMOR_MODEL.get() : GENERIC_OUTER_ARMOR_MODEL.get();
-
-        if (IClientItemExtensions.of(armour).getHumanoidArmorModel(new LivingEntityRenderState(), armour, slot, defaultModel) instanceof GeoArmorRenderer<?, ?> armorRenderer)
-            return armorRenderer.getGeoModel();
-
-        if (GeoRenderProvider.of(armour).getGeoArmorRenderer(null, armour, slot, type, defaultModel) instanceof GeoArmorRenderer<?, ?> armorRenderer)
-            return armorRenderer.getGeoModel();
 
         return null;
     }

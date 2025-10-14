@@ -3,7 +3,8 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -92,9 +93,10 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      * @param relatedObject An object related to the render pass or null if not applicable.
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public void addRenderData(T animatable, O relatedObject, R renderState) {
+    public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
         EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());
@@ -104,12 +106,14 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         renderState.addGeckolibData(DataTickets.IS_LEFT_HANDED, animatable.getMainArm() == HumanoidArm.LEFT);
     }
 
-
     /**
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
     @Override
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
+                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+        poseStack.pushPose();
+
         if (displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
             poseStack.mulPose(Axis.XN.rotationDegrees(90f));
             poseStack.translate(0, 0.125f, -0.0625f);
@@ -127,6 +131,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
             }
         }
 
-        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, bufferSource, packedLight, packedOverlay);
+        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+        poseStack.popPose();
     }
 }

@@ -1,38 +1,77 @@
-## GeckoLib v5.0
+## GeckoLib v5.3-alpha-1
 
-## New Things
-* Added `ItemInHandGeoLayer`
-* Added `PerBoneRender`
-* Added `DataTickets#IS_LEFT_HANDED`
-* Added `DataTickets#IS_CROUCHING`
-* Added `GeoRender#adjustPositionForRender`
-* Added `DirectionalProjectileRenderer`
-* Added `TextureLayerGeoLayer`
-* Added `CustomBoneTextureGeoLayer`
+## Changes
+* Port to 1.21.10
+  * NOTE: This is an ALPHA build, and may be subject to breaking changes until the alpha tag is removed.
+  * The PACKED_LIGHT DataTicket is no longer filled for most GeoRenderers, as the base RenderState classes contain `lightCoords` now by default
+  * Added `GeoRenderState#getPackedLight`
+  * `GeoRenderer#defaultRender` has been renamed to `#submitRenderTasks` to better represent its function now that we're not actually rendering at the time of that call
+  * `GeoRenderer#actuallyRender` has been renamed to `#buildRenderTask` to better represent its function
+  * `GeoLayer#render` has been renamed to `#buildRenderTask` to better represent its function
+  * `GeoRenderer#reRender` has been removed. Instead, render layers or renderers should submit another render task via `GeoRenderer#buildRenderTask`. Consequently, you no longer need to check for `isReRender` in renderer methods
+  * `preRender`, `scaleModelForRender`, and `adjustPositionForRender` have all been moved to _after_ the preRender event check
+  * Added `GeoRenderer#createRenderState`
+  * Removed `GeoEntityRenderer#createBaseRenderState` - Use `#createRenderState` instead 
+  * Removed various DataTickets from the default setup, where they're just a blatant clone of existing vanilla properties, to eliminate multiple sources of truth and improve performance
+  * The various Matrix4f variables in GeckoLib renderers has been moved to DataTickets
+  * Removed `GeoRenderer#doPostRenderCleanup`
+  * Added the associated HumanoidModel to `GeoArmorLayer.RenderData`
+* Rewrote `GeoArmorRenderer` - it should now be significantly easier to use and understand
+* Change DefaultedEntityGeoModel to take a customisable bone name instead of a flat boolean
+* Added `#withRenderLayer` to the various `GeoRenderer`s to allow for a functional instantiation
+* `GeoObjectRenderer` now uses a generic for its `GeoRenderState`, allowing for generic extensibility
+* Directly pass the partialTick to `GeoRenderer#addRenderData`, `GeoRenderLayer#addRenderData`, `GeoModel#prepareForRenderPass`, and the various `CompileRenderState` events/hooks (#762)
+* Renamed `GeoRenderer#adjustPositionForRender` to `#adjustRenderPose` to better reflect its intended usage
+* `ItemArmorGeoLayer.RenderData` now uses `GeoArmorRenderer.ArmorSegment`s instead of manual slots and part getters
+* Made `GeoRenderEvent` and its various sub-events multiloader compatible
+* All platform-specific GeckoLib events are now split into their own individual classes to make it easier to find and manage them. E.G. `CompileBlockRenderLayersEvent`
 
-## Internal Changes
-* Removed some unnecessary warnings when loading animation or model files without their suffixes
-* Fixed the javadocs in `DefaultedGeoModel` using the old format
-* Moved the scale attribute handling into `scaleModelForRender` for `GeoEntityRenderer`, and moved sleeping pose translation to better account for scaling
-* Moved `scaleModelForRender` out of `preRender` and into its own call
-* Optimised `RenderUtil#getTextureDimensions` and allowed it to account for post-loading modifications
-* Optimised `BakedGeoModel#getBone`
-
-## API Changes
-* Removed `GeoRenderer#applyRenderLayersForBone`. Per-bone renders are now added in `#preApplyRenderLayers`
-* Added `GeoRenderLayer#addPerBoneRender`
-* Changed how `ItemArmorGeoLayer` works to be more efficient, and support Elytras (although they're not 100% correct yet)
-* Changed how `BlockAndItemGeoLayer` works to be more efficient and cleaner
-* Changed `ItemArmorGeoLayer#prepModelPartForRender` to `prepHumanoidModelForRender`
-* Changed `GeckoLibClient#getArmorModelForItem` to return a `HumanoidModel` instead of a base `Model`, since non-humanoid models never get used
-* Added the `packedLight`, `packedOverlay`, and `renderColor` to `GeoRenderer#renderFinal`
-* Removed `final` from `GeoEntityRenderer#calculateYRot`
-* Removed `BoneFilterGeoLayer` and `FastBoneFilterGeoLayer`
+## Additions
+* Added "Stateless" animatables. These are an alternate way of handling animations for GeckoLib animatables.
+  * See: https://github.com/bernie-g/geckolib/wiki/Stateless-Animatable-Handling-(Geckolib5)
+  * Added:
+    * `StatelessGeoBlockEntity`
+    * `StatelessGeoEntity`
+    * `StatelessGeoObject`
+    * `StatelessGeoReplacedEntity`
+    * `StatelessGeoSingletonAnimatable`
+    * `StatelessAnimationController`
+* Added `attack.punch` DefaultAnimation constant
+* Added `misc.idle.flying` DefaultAnimation constant
+* Added `move.dive` DefaultAnimation constant
+* Added `DefaultAnimations#triggerOnlyController` for creating a controller specifically for arbitrary triggered animations
+* Added `RawAnimation#getStageCount`
+* Added `AnimationController#getStateHandler`
+* Added `DefaultAnimations#genericWalkFlyIdleController`
+* Added a constructor overload for various GeckoLib renderers that takes the item directly and creates a defaulted instance using the object's registered ID for quick and easy handling
+    * E.G. `new GeoEntityRenderer(ModEntities.MY_ENTITY);`
+* Added `GeoRenderEvent#hasData`
+* Added `RenderUtil#getReplacedEntityRenderer`
+* Added `RenderUtil#getGeckoLibItemRenderer`
+* Added `RenderUtil#getGeckoLibEntityRenderer`
+* Added `RenderUtil#getGeckoLibBlockRenderer`
+* Added `RenderUtil#getGeckoLibArmorRenderer`
 
 ## Bug Fixes
-* Fixed `GeckoLibAnimatedTexture` crashing when failing to load a texture
-* Fixed Per-bone render tasks messing with query values
-* Fixed PoseStack manipulations in render layers messing with bone-position getters
-* Fixed `GeoItemRenderer` and `GeoObjectRenderer` positioning incorrectly when scaled
-* Fixed `GeoReplacedEntityRenderer` not propagating PoseStack manipulations
-* Fixed `ItemArmorGeoLayer` colliding with other layers that use the same DataTicket
+* Add double-depth bedrock keyframe parsing because I have no idea why Blockbench is exporting that
+* Fixed triggered animations not visually working on brand-new stacks in multiplayer for other players
+* Fixed some incorrect javadocs in AnimationController
+* Ensure the `EntityRenderState` is properly extracted before passing to `GeoArmorRenderer` for extraction
+
+## Internal Changes
+* Reorganised GeckoLib's packets into folders
+* Added a StreamCodec implementation for `Animation.Stage`
+* Added a StreamCodec implementation for `RawAnimation`
+* Added javadocs to more internal methods and all of the mixins, for clarity
+* Improved the Javadoc on `GeoRenderEvent#getRenderData`
+* Removed `RenderUtil#getCurrentSystemTick`
+* Removed `RenderUtil#booleanToFloat`
+* Removed `RenderUtil#getGeoModelForEntityType`
+* Removed `RenderUtil#getGeoModelForEntity`
+* Removed `RenderUtil#getGeoModelForItem`
+* Removed `RenderUtil#getGeoModelForBlock`
+* Removed `RenderUtil#getGeoModelForArmor`
+* Moved `RenderUtil#getCurrentTick` to `ClientUtil`
+* Moved `RenderUtil#arrayToVec` to `JsonUtil`
+* Removed some superfluous parameters from `GeoRenderProvider#getGeoArmorRenderer`
+* Renamed `ItemArmorGeoLayer#prepHumanoidModelForRender` to `#positionModelPartFromBone`

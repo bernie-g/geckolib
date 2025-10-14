@@ -13,7 +13,7 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.manager.ContextAwareAnimatableManager;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.util.RenderUtil;
+import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -75,11 +75,11 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	 */
 	@Override
 	default double getTick(Object itemStack) {
-		return RenderUtil.getCurrentTick();
+		return ClientUtil.getCurrentTick();
 	}
 
 	/**
-	 * Whether this item animatable is perspective aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
+	 * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
 	 */
 	default boolean isPerspectiveAware() {
 		return false;
@@ -98,7 +98,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/**
-	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective based animations
+	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective-based animations
 	 * <p>
 	 * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
 	 * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead

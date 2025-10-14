@@ -1,10 +1,9 @@
 package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -15,7 +14,8 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
  */
 @FunctionalInterface
 public interface PerBoneRender<R extends GeoRenderState> {
-    void render(R renderState, PoseStack poseStack, GeoBone bone, @Nullable RenderType renderType, MultiBufferSource bufferSource, int packedLight, int packedOverlay, int renderColor);
+    void submitRenderTask(R renderState, PoseStack poseStack, GeoBone bone, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                          int packedLight, int packedOverlay, int renderColor);
 
     /**
      * Internal API method to run this render task
@@ -23,11 +23,11 @@ public interface PerBoneRender<R extends GeoRenderState> {
      * You should <b><u>NOT</u></b> be overriding this
      */
     @ApiStatus.Internal
-    default void runTask(R renderState, PoseStack poseStack, GeoBone bone, PoseStack.Pose pose, @Nullable RenderType renderType, MultiBufferSource bufferSource,
+    default void runTask(R renderState, PoseStack poseStack, GeoBone bone, PoseStack.Pose pose, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                          int packedLight, int packedOverlay, int renderColor) {
         poseStack.pushPose();
         poseStack.last().set(pose);
-        render(renderState, poseStack, bone, renderType, bufferSource, packedLight, packedOverlay, renderColor);
+        submitRenderTask(renderState, poseStack, bone, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
         poseStack.popPose();
     }
 }

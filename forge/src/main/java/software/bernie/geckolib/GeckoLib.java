@@ -12,7 +12,7 @@ public final class GeckoLib {
     public static final DeferredRegister<DataComponentType<?>> DATA_COMPONENTS_REGISTER = DeferredRegister.create(BuiltInRegistries.DATA_COMPONENT_TYPE.key(), GeckoLibConstants.MODID);
 
     public GeckoLib(FMLJavaModLoadingContext context) {
-        DATA_COMPONENTS_REGISTER.register(context.getModEventBus());
+        DATA_COMPONENTS_REGISTER.register(context.getModBusGroup());
         GeckoLibNetworkingForge.init();
     }
 }

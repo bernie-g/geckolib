@@ -2,20 +2,21 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.SkullModelBase;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.ModelPart.Cube;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.PlayerSkinRenderCache;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.core.component.DataComponents;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ResolvableProfile;
 import net.minecraft.world.item.equipment.EquipmentAsset;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.AbstractSkullBlock;
@@ -63,13 +65,15 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	protected final EquipmentLayerRenderer equipmentRenderer;
 	protected final EquipmentAssetManager equipmentAssets;
 	protected final Function<SkullBlock.Type, SkullModelBase> skullModels;
+    protected final PlayerSkinRenderCache skinCache;
 
 	public ItemArmorGeoLayer(GeoRenderer<T, O, R> geoRenderer, EntityRendererProvider.Context context) {
 		super(geoRenderer);
 
 		this.equipmentRenderer = context.getEquipmentRenderer();
 		this.equipmentAssets = context.getEquipmentAssets();
-		this.skullModels = Util.memoize(type -> SkullBlockRenderer.createModel(Minecraft.getInstance().getEntityModels(), type));
+		this.skullModels = Util.memoize(type -> SkullBlockRenderer.createModel(context.getModelSet(), type));
+        this.skinCache = context.getPlayerSkinRenderCache();
 	}
 
 	/**
@@ -83,40 +87,39 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * Container for data needed to render an armor piece for a bone.
 	 *
 	 * @param boneName The name of the bone to render the armor piece for
-	 * @param slot The slot the armor piece is in
-	 * @param modelPartFactory A function that returns a {@link ModelPart} for the armor piece, used to position and scale it
+	 * @param armorSegment The armor segment to render
 	 */
-	public record RenderData(String boneName, EquipmentSlot slot, Function<HumanoidModel<?>, ModelPart> modelPartFactory) {
+	public record RenderData(String boneName, GeoArmorRenderer.ArmorSegment armorSegment) {
 		public static RenderData head(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.HEAD, model -> model.head);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.HEAD);
 		}
 
 		public static RenderData body(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.CHEST, model -> model.body);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.CHEST);
 		}
 
 		public static RenderData leftArm(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.CHEST, model -> model.leftArm);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.LEFT_ARM);
 		}
 
 		public static RenderData rightArm(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.CHEST, model -> model.rightArm);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.RIGHT_ARM);
 		}
 
 		public static RenderData leftLeg(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.LEGS, model -> model.leftLeg);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.LEFT_LEG);
 		}
 
 		public static RenderData rightLeg(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.LEGS, model -> model.rightLeg);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.RIGHT_LEG);
 		}
 
 		public static RenderData leftFoot(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.FEET, model -> model.leftLeg);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.LEFT_FOOT);
 		}
 
 		public static RenderData rightFoot(String boneName) {
-			return new RenderData(boneName, EquipmentSlot.FEET, model -> model.rightLeg);
+			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.RIGHT_FOOT);
 		}
 	}
 
@@ -132,7 +135,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
 	 */
 	@Override
-	public void addRenderData(T animatable, O relatedObject, R renderState) {
+	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
 		EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -142,8 +145,6 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		renderState.addGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, equipment);
 
 		if (animatable instanceof LivingEntity livingEntity && !equipment.get(EquipmentSlot.CHEST).isEmpty()) {
-			float partialTick = renderState.getGeckolibData(DataTickets.PARTIAL_TICK);
-
 			renderState.addGeckolibData(DataTickets.ELYTRA_ROTATION, new Vec3(livingEntity.elytraAnimationState.getRotX(partialTick),
 																			  livingEntity.elytraAnimationState.getRotY(partialTick),
 																			  livingEntity.elytraAnimationState.getRotZ(partialTick)));
@@ -159,7 +160,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param consumer The registrar to accept the per-bone render tasks
 	 */
 	@Override
-	public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
 		for (RenderData renderData : getRelevantBones(renderState, model)) {
 			model.getBone(renderData.boneName).ifPresentOrElse(bone -> createPerBoneRender(bone, renderData, consumer, renderState), () ->
 					GeckoLibConstants.LOGGER.error("Unable to find bone for ItemArmorGeoLayer: {}, skipping", renderData.boneName));
@@ -167,48 +168,51 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	private void createPerBoneRender(GeoBone bone, RenderData renderData, BiConsumer<GeoBone, PerBoneRender<R>> consumer, R renderState) {
-		ItemStack stack = getEquipmentStack(bone, renderData.slot, renderState);
+        GeoArmorRenderer.ArmorSegment armorSegment = renderData.armorSegment;
+		ItemStack stack = getEquipmentStack(bone, armorSegment.equipmentSlot, renderState);
 
 		if (!stack.isEmpty()) {
-			consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor) ->
-					renderForBone(renderState2, renderData.slot, renderData.modelPartFactory, stack, poseStack, bone2, renderType, bufferSource, packedLight, packedOverlay, renderColor));
+			consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState, packedLight, packedOverlay, renderColor) ->
+					buildRenderTask(renderState2, armorSegment.equipmentSlot, armorSegment.modelPartGetter, stack, poseStack, bone2, renderTasks, cameraState, packedLight, packedOverlay, renderColor));
 		}
 	}
 
 	/**
 	 * Perform the actual rendering operation for the given bone and equipment
 	 */
-	protected void renderForBone(R renderState, EquipmentSlot slot, Function<HumanoidModel<?>, ModelPart> modelPartFactory, ItemStack equipmentStack, PoseStack poseStack, GeoBone bone,
-								 RenderType renderType, MultiBufferSource bufferSource, int packedLight, int packedOverlay, int renderColor) {
+	protected void buildRenderTask(R renderState, EquipmentSlot slot, Function<HumanoidModel<?>, ModelPart> modelPartFactory, ItemStack equipmentStack, PoseStack poseStack, GeoBone bone,
+                                   SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
 		if (equipmentStack.isEmpty())
 			return;
 
 		if (equipmentStack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() instanceof AbstractSkullBlock skullBlock) {
-			renderSkullAsArmor(poseStack, bone, equipmentStack, skullBlock, bufferSource, packedLight);
+			renderSkullAsArmor(poseStack, bone, equipmentStack, renderState, skullBlock, renderTasks, cameraState, packedLight);
 		}
+        else if (RenderUtil.getGeckoLibArmorRenderer(equipmentStack, slot) instanceof GeoArmorRenderer geoArmorRenderer) {
+            poseStack.pushPose();
+            poseStack.scale(-1, -1, 1);
+            // TODO
+            //positionModelPartFromBone(poseStack, bone, modelPart);
+            //geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, vanillaModel);
+            geoArmorRenderer.submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+            poseStack.popPose();
+        }
 		else {
-			HumanoidModel<?> model = getHumanoidModelForRender(bone, slot, equipmentStack, renderState);
-			ModelPart modelPart = modelPartFactory.apply(model);
+			Model<?> vanillaModel = getArmorModelForRender(bone, slot, equipmentStack, renderState);
+			ModelPart modelPart = vanillaModel instanceof HumanoidModel<?> humanoidModel ? modelPartFactory.apply(humanoidModel) : vanillaModel.root();
 
 			if (!modelPart.cubes.isEmpty()) {
 				poseStack.pushPose();
 				poseStack.scale(-1, -1, 1);
 
-				if (model instanceof GeoArmorRenderer<?, ?> geoArmorRenderer) {
-					prepHumanoidModelForRender(poseStack, bone, modelPart);
-					geoArmorRenderer.applyBoneVisibilityByPart(slot, modelPart, model);
-					geoArmorRenderer.renderToBuffer(poseStack, null, packedLight, packedOverlay, 0xFFFFFFFF);
-				}
-				else {
-					Equippable equippable = equipmentStack.get(DataComponents.EQUIPPABLE);
+                Equippable equippable = equipmentStack.get(DataComponents.EQUIPPABLE);
 
-					if (equippable != null) {
-						equippable.assetId().ifPresent(assetId -> {
-							prepHumanoidModelForRender(poseStack, bone, modelPart);
-							renderVanillaArmorPiece(poseStack, renderState, bone, slot, equipmentStack, equippable, assetId, model, modelPart, bufferSource, packedLight, packedOverlay);
-						});
-					}
-				}
+                if (equippable != null) {
+                    equippable.assetId().ifPresent(assetId -> {
+                        positionModelPartFromBone(poseStack, bone, modelPart);
+                        renderVanillaArmorPiece(poseStack, renderState, bone, slot, equipmentStack, equippable, assetId, vanillaModel, modelPart, renderTasks, cameraState, packedLight, packedOverlay);
+                    });
+                }
 
 				poseStack.popPose();
 			}
@@ -216,7 +220,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	/**
-	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link #addRenderData(T, O, R)}
+	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link #addRenderData(T, O, R, float)}
 	 */
 	protected ItemStack getEquipmentStack(GeoBone bone, EquipmentSlot slot, R renderState) {
 		return (ItemStack)renderState.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).getOrDefault(slot, ItemStack.EMPTY);
@@ -239,23 +243,19 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * Renders an individual armor piece base on the given {@link GeoBone} and {@link ItemStack}
 	 */
 	protected void renderVanillaArmorPiece(PoseStack poseStack, R renderState, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
-										   Equippable equippable, ResourceKey<EquipmentAsset> assetId, HumanoidModel<?> model, ModelPart modelPart,
-										   MultiBufferSource bufferSource, int packedLight, int packedOverlay) {
+										   Equippable equippable, ResourceKey<EquipmentAsset> assetId, Model<?> model, ModelPart modelPart,
+										   SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int packedOverlay) {
 		EquipmentClientInfo.LayerType layerType = getEquipmentLayerType(renderState, bone, slot, armorStack, assetId);
 		Model modelToRender = model;
 
 		if (layerType == EquipmentClientInfo.LayerType.WINGS) {
-			if (modelPart != model.body)
+			if (model instanceof HumanoidModel humanoidModel && modelPart != humanoidModel.body)
 				return;
 
 			modelToRender = checkForElytraModel(layerType, renderState, bone, poseStack);
 		}
-		else {
-			setVanillaModelPartVisibility(renderState, armorStack, bone, model, modelPart, slot);
-		}
 
-		this.equipmentRenderer.renderLayers(layerType, assetId, modelToRender,
-											armorStack, poseStack, bufferSource, packedLight);
+		this.equipmentRenderer.renderLayers(layerType, assetId, modelToRender, renderState, armorStack, poseStack, renderTasks, packedLight, renderState.outlineColor);
 	}
 
 	/**
@@ -277,43 +277,33 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	/**
-	 * Spiritual replica of {@code HumanoidArmorLayer#setPartVisibility}.
-	 * <p>
-	 * Hide all non-relevant parts for the armor-player model, so it only renders the correct one.
-	 * <p>
-	 * Because GeckoLib models rely on per-bone rendering for armour part alignment, for the most part we just hide all model parts except the one we've specifically called to render
-	 */
-	protected void setVanillaModelPartVisibility(R renderState, ItemStack armorStack, GeoBone bone, HumanoidModel<?> baseModel, ModelPart modelPart, EquipmentSlot slot) {
-		baseModel.setAllVisible(false);
-		modelPart.visible = true;
-	}
-
-	/**
 	 * Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided {@link ItemStack}
 	 */
 	@NotNull
 	@ApiStatus.Internal
-	protected <S extends HumanoidRenderState & GeoRenderState> HumanoidModel<?> getHumanoidModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
-		S humanoidRenderState = renderState instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
-		EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
-		HumanoidModel defaultModel = slot == EquipmentSlot.LEGS ? GeckoLibClient.GENERIC_INNER_ARMOR_MODEL.get() : GeckoLibClient.GENERIC_OUTER_ARMOR_MODEL.get();
+	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
+		final S humanoidRenderState = renderState instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
+		final EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
+		final HumanoidModel defaultModel = GeckoLibClient.PLAYER_ARMOR.get().get(slot);
 
-		return GeckoLibServices.Client.ITEM_RENDERING.<S>getArmorModelForItem(humanoidRenderState, stack, slot, layerType, defaultModel);
+		return GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(humanoidRenderState, stack, slot, layerType, defaultModel);
 	}
 
 	/**
 	 * Render a given {@link AbstractSkullBlock} as a worn armor piece in relation to a given {@link GeoBone}
 	 */
-	protected void renderSkullAsArmor(PoseStack poseStack, GeoBone bone, ItemStack stack, AbstractSkullBlock skullBlock, MultiBufferSource bufferSource, int packedLight) {
+	protected void renderSkullAsArmor(PoseStack poseStack, GeoBone bone, ItemStack stack, R renderState, AbstractSkullBlock skullBlock, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight) {
 		SkullBlock.Type type = skullBlock.getType();
 		SkullModelBase model = this.skullModels.apply(type);
-		RenderType renderType = SkullBlockRenderer.getRenderType(type, stack.get(DataComponents.PROFILE));
+        ResolvableProfile profile = stack.get(DataComponents.PROFILE);
+		RenderType renderType = profile == null ? PlayerSkinRenderCache.DEFAULT_PLAYER_SKIN_RENDER_TYPE : this.skinCache.getOrDefault(profile).renderType();
 
 		poseStack.pushPose();
 		RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 		poseStack.scale(1.1875f, 1.1875f, 1.1875f);
 		poseStack.translate(-0.5f, 0, -0.5f);
-		SkullBlockRenderer.renderSkull(null, 0, 0, poseStack, bufferSource, packedLight, model, renderType);
+
+        SkullBlockRenderer.submitSkull(null, 0, 0, poseStack, renderTasks, packedLight, model, renderType, renderState.outlineColor, null);
 		poseStack.popPose();
 	}
 
@@ -327,7 +317,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
 	 */
-	protected void prepHumanoidModelForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
+	protected void positionModelPartFromBone(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.getCubes().getFirst();
 		final Cube armorCube = sourcePart.cubes.getFirst();
 		final double armorBoneSizeX = firstCube.size().x();

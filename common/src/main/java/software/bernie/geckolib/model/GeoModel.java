@@ -28,7 +28,7 @@ import java.util.function.ToDoubleFunction;
 /**
  * Base class for all code-based model objects
  * <p>
- * All models to registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
+ * All models registered to a {@link GeoRenderer} should be an instance of this or one of its subclasses
  *
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Models">GeckoLib Wiki - Models</a>
  */
@@ -160,7 +160,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		ResourceLocation location = getAnimationResource(animatable);
 		ResourceLocation[] fallbackLocations = getAnimationResourceFallbacks(animatable);
 		Map<ResourceLocation, BakedAnimations> animations = GeckoLibResources.getBakedAnimations();
-		int fallbackIndex = -1;
+		int fallbackIndex = 0;
 		BakedAnimations bakedAnimations;
 
 		do {
@@ -184,9 +184,12 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 					return animation;
 			}
 
-			location = fallbackLocations[++fallbackIndex];
+			if (fallbackIndex >= fallbackLocations.length)
+				break;
+
+			location = fallbackLocations[fallbackIndex++];
 		}
-		while (fallbackIndex < fallbackLocations.length - 2);
+		while (true);
 
 		if (bakedAnimations == null)
 			throw new IllegalArgumentException("Unable to find animation file '" + location + "' for animatable '" + animatable.getClass().getName() + "'");
@@ -200,7 +203,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * Perform the necessary preparations for the upcoming render pass
 	 */
 	@ApiStatus.Internal
-	public void prepareForRenderPass(T animatable, GeoRenderState renderState) {
+	public void prepareForRenderPass(T animatable, GeoRenderState renderState, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		long instanceId = renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID);
 		AnimatableManager<T> animatableManager = renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER);

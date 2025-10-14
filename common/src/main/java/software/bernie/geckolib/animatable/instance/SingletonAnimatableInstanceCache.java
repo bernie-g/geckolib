@@ -25,9 +25,6 @@ public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	 */
 	@Override
 	public AnimatableManager<?> getManagerForId(long uniqueId) {
-		if (!this.managers.containsKey(uniqueId))
-			this.managers.put(uniqueId, new AnimatableManager<>(this.animatable));
-
-		return this.managers.get(uniqueId);
+		return this.managers.computeIfAbsent(uniqueId, key -> new AnimatableManager<>(this.animatable));
 	}
 }

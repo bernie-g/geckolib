@@ -3,7 +3,10 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -18,8 +21,6 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
-import software.bernie.geckolib.util.ClientUtil;
-import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -51,9 +52,10 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param relatedObject An object related to the render pass or null if not applicable.
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public abstract void addRenderData(T animatable, O relatedObject, R renderState);
+    public abstract void addRenderData(T animatable, O relatedObject, R renderState, float partialTick);
 
     /**
      * Container for data needed to render an item or block for a bone.
@@ -61,7 +63,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param boneName The name of the bone to render the armor piece for
      * @param displayContext The {@link ItemDisplayContext} to use when rendering the item
      * @param retrievalFunction The function to retrieve the {@link ItemStack} or {@link BlockState} to render. You probably need to override
-     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState)} as well
+     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} as well
      */
     public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<@NotNull ItemStack, @NotNull BlockState>> retrievalFunction) {}
 
@@ -75,7 +77,10 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param consumer The registrar to accept the per-bone render tasks
      */
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+        if (!didRenderModel)
+            return;
+
         for (RenderData<R> renderData : getRelevantBones(renderState, model)) {
             model.getBone(renderData.boneName).ifPresentOrElse(bone -> createPerBoneRender(bone, renderData, consumer, renderState), () ->
                     GeckoLibConstants.LOGGER.error("Unable to find bone for ItemArmorGeoLayer: {}, skipping", renderData.boneName));
@@ -86,40 +91,45 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
         Either<ItemStack, BlockState> renderObject = renderData.retrievalFunction().apply(bone, renderState);
 
         renderObject.ifLeft(stack -> {
-            if (!stack.isEmpty())
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource,
+            if (!stack.isEmpty()) {
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
                                        packedLight, packedOverlay, renderColor) -> {
-                    RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    renderStackForBone(poseStack, bone, stack, renderData.displayContext, renderState, bufferSource, packedLight, packedOverlay);
+                    //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
+                    renderStackForBone(poseStack, bone2, stack, renderData.displayContext, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
                 });
+            }
         }).ifRight(blockState -> {
-            if (!blockState.isAir())
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderType, bufferSource,
+            if (!blockState.isAir()) {
+                consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
                                        packedLight, packedOverlay, renderColor) -> {
-                    RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    renderBlockForBone(poseStack, bone, blockState, renderState, bufferSource, packedLight, packedOverlay);
+                    //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
+                    renderBlockForBone(poseStack, bone2, blockState, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
                 });
+            }
         });
     }
 
     /**
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, MultiBufferSource bufferSource,
-                                      int packedLight, int packedOverlay) {
-        Minecraft.getInstance().getItemRenderer().renderStatic(stack, displayContext, packedLight, packedOverlay, poseStack, bufferSource, ClientUtil.getLevel(),
-                                                               renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
+    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
+                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+        final ItemStackRenderState stackRenderState = new ItemStackRenderState();
+        final Minecraft mc = Minecraft.getInstance();
+
+        mc.getItemModelResolver().updateForTopItem(stackRenderState, stack, displayContext, mc.level, null, (int)(long)renderState.getOrDefaultGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, 0L) + displayContext.ordinal());
+        stackRenderState.submit(poseStack, renderTasks, packedLight, OverlayTexture.NO_OVERLAY, 0);
     }
 
     /**
      * Render the given {@link BlockState} for the provided {@link GeoBone}.
      */
-    protected void renderBlockForBone(PoseStack poseStack, GeoBone bone, BlockState state, R renderState, MultiBufferSource bufferSource,
-                                      int packedLight, int packedOverlay) {
+    protected void renderBlockForBone(PoseStack poseStack, GeoBone bone, BlockState state, R renderState, SubmitNodeCollector renderTasks,
+                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
         poseStack.pushPose();
         poseStack.translate(-0.25f, -0.25f, -0.25f);
         poseStack.scale(0.5f, 0.5f, 0.5f);
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(state, poseStack, bufferSource, packedLight, OverlayTexture.NO_OVERLAY);
+        renderTasks.submitBlock(poseStack, state, packedLight, OverlayTexture.NO_OVERLAY, renderState instanceof EntityRenderState entityState ? entityState.outlineColor : 0);
         poseStack.popPose();
     }
 }

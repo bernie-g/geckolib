@@ -9,7 +9,7 @@ import software.bernie.geckolib.cache.GeckoLibResources;
 /**
  * Main GeckoLib client entrypoint
  */
-@EventBusSubscriber(value = Dist.CLIENT, modid = GeckoLibConstants.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = GeckoLibConstants.MODID)
 public final class GeckoLibClient {
     @SubscribeEvent
     public static void registerReloadListeners(final AddClientReloadListenersEvent ev) {

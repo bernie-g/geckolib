@@ -1,10 +1,13 @@
 package software.bernie.geckolib.renderer.base;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -55,6 +58,26 @@ public interface GeoRenderState {
         D data = getGeckolibData(dataTicket);
 
         return data != null || hasGeckolibData(dataTicket) ? data : defaultValue;
+    }
+
+    /**
+     * Helper method for returning the 'packed' light coordinates value for this render pass
+     * <p>
+     * Some RenderState implementations contain this as a field, so this method allows for capturing that
+     *
+     * @return The packed int light coordinates
+     */
+    default int getPackedLight() {
+        return getOrDefaultGeckolibData(DataTickets.PACKED_LIGHT, LightTexture.FULL_BRIGHT);
+    }
+
+    /**
+     * Helper method for returning the fraction of a tick that has passed since the last tick, as of this render pass.
+     *
+     * @return The partialTick value
+     */
+    default float getPartialTick() {
+        return getOrDefaultGeckolibData(DataTickets.PARTIAL_TICK, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
     }
 
     /**

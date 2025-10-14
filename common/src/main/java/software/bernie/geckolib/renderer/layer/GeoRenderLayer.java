@@ -2,11 +2,10 @@ package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -72,9 +71,10 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * @param relatedObject An object related to the render pass or null if not applicable.
 	 *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
 	@ApiStatus.OverrideOnly
-	public void addRenderData(T animatable, O relatedObject, R renderState) {}
+	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
 
 	/**
 	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called
@@ -85,8 +85,8 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
 	 * and you may need to factor this in to your design
 	 */
-	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-						  int packedLight, int packedOverlay, int renderColor) {}
+	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+						  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {}
 
 	/**
 	 * This is the method that is actually called by the render for your render layer to function
@@ -96,8 +96,8 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
 	 * and you may need to factor this in to your design
 	 */
-	public void render(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer,
-					   int packedLight, int packedOverlay, int renderColor) {}
+	public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {}
 
 	/**
 	 * Register per-bone render operations, to be rendered after the main model is done.
@@ -105,7 +105,10 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
 	 * is currently rendering.
 	 *
+     * @param renderState The {@link GeoRenderState} for this render pass
+     * @param model The baked GeckoLib model for this render pass
+     * @param didRenderModel Whether the main model rendered or not. Only false if {@link GeoRenderer#getRenderType} returned null on the renderer
 	 * @param consumer The registrar to accept the per-bone render tasks
 	 */
-	public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
+	public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
 }
