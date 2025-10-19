@@ -2,6 +2,7 @@ package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -429,7 +430,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	@ApiStatus.Internal
 	public static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> void captureRenderStates(
             R baseRenderState, LivingEntity entity, float partialTick, HumanoidArmorLayer<R, M, A> armorRenderLayer, Function<EquipmentSlot, R> renderStateSupplier) {
-		final StackForRender[] relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, armorRenderLayer);
+		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, armorRenderLayer);
 
 		if (relevantSlots == null)
 			return;
@@ -452,9 +453,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
 	@Nullable
 	@ApiStatus.Internal
-	private static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> StackForRender[] getRelevantSlotsForRendering(
+	private static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
             LivingEntity entity, R entityRenderState, HumanoidArmorLayer<R, M, A> armorRenderLayer) {
-		StackForRender[] relevantSlots = null;
+		List<StackForRender> relevantSlots = null;
 
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
             final EquipmentSlot slot = ARMOR_SLOTS[i];
@@ -464,9 +465,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
                 continue;
 
             if (relevantSlots == null)
-                relevantSlots = new StackForRender[ARMOR_SLOTS.length];
+                relevantSlots = new ObjectArrayList<>(ARMOR_SLOTS.length - i);
 
-            relevantSlots[i] = stackForRender;
+            relevantSlots.add(stackForRender);
         }
 
 		return relevantSlots;
