@@ -259,7 +259,12 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	default void applyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 								   int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
 		for (Reference2ObjectMap.Entry<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> perBoneTask : getPerBoneTasks(renderState).reference2ObjectEntrySet()) {
-			perBoneTask.getValue().right().runTask(renderState, poseStack, perBoneTask.getKey(), perBoneTask.getValue().left().getValue(), renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+            final PoseStack.Pose pose = perBoneTask.getValue().left().getValue();
+
+            if (pose == null)
+                throw new IllegalStateException("Renderer '" + getClass().getSimpleName() + "' is attempting to run a render layer task, before the renderer has run!");
+
+			perBoneTask.getValue().right().runTask(renderState, poseStack, perBoneTask.getKey(), pose, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
 		}
 
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
