@@ -39,7 +39,8 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
         if (renderState instanceof HumanoidRenderState && (Object)this instanceof LivingEntityRenderer livingRenderer) {
             for (Object layer : livingRenderer.layers) {
                 if (layer instanceof HumanoidArmorLayer armorLayer) {
-                    GeoArmorRenderer.captureRenderStates(geckolib$castRenderState(renderState), (LivingEntity)entity, partialTick, armorLayer,
+                    GeoArmorRenderer.captureRenderStates(geckolib$castRenderState(renderState), (LivingEntity)entity, partialTick,
+                                                         (renderState2, slot) -> armorLayer.getArmorModel(renderState2, slot),
                                                          slot -> geckolib$castRenderState(slot == EquipmentSlot.HEAD ? renderState : original.call(entity, partialTick)));
 
                     break;

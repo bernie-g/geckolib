@@ -110,8 +110,8 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
     @Override
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
-                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+    protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
+                                         CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
         poseStack.pushPose();
 
         if (displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
@@ -131,7 +131,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
             }
         }
 
-        super.renderStackForBone(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+        super.submitItemStackRender(poseStack, bone, stack, displayContext, renderState, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
         poseStack.popPose();
     }
 }

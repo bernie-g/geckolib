@@ -144,7 +144,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	@Override
 	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 						  int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
         poseStack.translate(0.5, 0, 0.5);
 	}
 
@@ -167,7 +166,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     @Override
     public void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
         rotateBlock(renderState.getGeckolibData(DataTickets.BLOCK_FACING), poseStack);
-        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
     }
 
     @ApiStatus.Internal
@@ -180,7 +178,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-	public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+	public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
@@ -193,7 +191,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 
-		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
 	}
 
 	/**

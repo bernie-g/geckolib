@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
@@ -24,7 +24,7 @@ import java.util.Set;
  * <p>
  * This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms
  */
-public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoArmorRenderer<T, R> {
+public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends GeoArmorRenderer<T, R> {
     protected final Set<GeoBone> dyeableBones = new ReferenceOpenHashSet<>();
     protected BakedGeoModel lastModel = null;
 

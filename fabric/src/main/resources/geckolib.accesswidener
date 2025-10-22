@@ -28,6 +28,15 @@ extendable method net/minecraft/client/renderer/entity/EntityRenderer createRend
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer solveBodyRot (Lnet/minecraft/world/entity/LivingEntity;FF)F
 accessible method net/minecraft/client/renderer/entity/HumanoidMobRenderer getEquipmentIfRenderable (Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;
 accessible method net/minecraft/client/renderer/entity/LivingEntityRenderer isUpsideDownName (Ljava/lang/String;)Z
+accessible field net/minecraft/client/renderer/entity/state/LivingEntityRenderState headItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+accessible field net/minecraft/client/renderer/entity/state/ArmedEntityRenderState rightHandItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+accessible field net/minecraft/client/renderer/entity/state/ArmedEntityRenderState leftHandItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+accessible field net/minecraft/client/renderer/entity/state/AvatarRenderState heldOnHead Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+mutable field net/minecraft/client/renderer/entity/state/LivingEntityRenderState headItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+mutable field net/minecraft/client/renderer/entity/state/ArmedEntityRenderState rightHandItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+mutable field net/minecraft/client/renderer/entity/state/ArmedEntityRenderState leftHandItem Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+mutable field net/minecraft/client/renderer/entity/state/AvatarRenderState heldOnHead Lnet/minecraft/client/renderer/item/ItemStackRenderState;
+
 
 # Block Rendering
 accessible field net/minecraft/client/renderer/blockentity/BlockEntityRenderDispatcher renderers Ljava/util/Map;

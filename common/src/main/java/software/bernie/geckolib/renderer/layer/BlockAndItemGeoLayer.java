@@ -95,7 +95,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
                 consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
                                        packedLight, packedOverlay, renderColor) -> {
                     //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    renderStackForBone(poseStack, bone2, stack, renderData.displayContext, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+                    submitItemStackRender(poseStack, bone2, stack, renderData.displayContext, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
                 });
             }
         }).ifRight(blockState -> {
@@ -103,7 +103,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
                 consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
                                        packedLight, packedOverlay, renderColor) -> {
                     //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    renderBlockForBone(poseStack, bone2, blockState, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+                    submitBlockRender(poseStack, bone2, blockState, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
                 });
             }
         });
@@ -112,8 +112,8 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
     /**
      * Render the given {@link ItemStack} for the provided {@link GeoBone}.
      */
-    protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
-                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+    protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
+                                         CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
         final ItemStackRenderState stackRenderState = new ItemStackRenderState();
         final Minecraft mc = Minecraft.getInstance();
 
@@ -124,8 +124,8 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
     /**
      * Render the given {@link BlockState} for the provided {@link GeoBone}.
      */
-    protected void renderBlockForBone(PoseStack poseStack, GeoBone bone, BlockState state, R renderState, SubmitNodeCollector renderTasks,
-                                      CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+    protected void submitBlockRender(PoseStack poseStack, GeoBone bone, BlockState state, R renderState, SubmitNodeCollector renderTasks,
+                                     CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
         poseStack.pushPose();
         poseStack.translate(-0.25f, -0.25f, -0.25f);
         poseStack.scale(0.5f, 0.5f, 0.5f);

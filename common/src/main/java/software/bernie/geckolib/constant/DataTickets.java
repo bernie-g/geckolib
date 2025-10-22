@@ -1,7 +1,6 @@
 package software.bernie.geckolib.constant;
 
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,6 +17,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
+import software.bernie.geckolib.renderer.base.PerBoneRenderTasks;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -80,7 +80,7 @@ public final class DataTickets {
 	@ApiStatus.Internal
 	public static final DataTicket<Reference2DoubleMap> QUERY_VALUES = DataTicket.create("query_values", Reference2DoubleMap.class);
 	@ApiStatus.Internal
-	public static final DataTicket<Reference2ObjectMap> PER_BONE_TASKS = DataTicket.create("per_bone_render_tasks", Reference2ObjectMap.class);
+	public static final DataTicket<PerBoneRenderTasks> PER_BONE_TASKS = DataTicket.create("per_bone_render_tasks", PerBoneRenderTasks.class);
     @ApiStatus.Internal
 	public static final DataTicket<Matrix4f> OBJECT_RENDER_POSE = DataTicket.create("object_render_pose", Matrix4f.class);
     @ApiStatus.Internal

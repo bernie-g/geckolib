@@ -1,12 +1,16 @@
 package software.bernie.geckolib.cache.object;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3d;
 import org.joml.Vector4f;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 import java.util.Objects;
@@ -384,6 +388,27 @@ public class GeoBone {
 		
 		updatePosition(-vec.x() * 16f, vec.y() * 16f, vec.z() * 16f);
 	}
+
+    /**
+     * Transform a PoseStack to match a bone's render position.
+     * <p>
+     * Can only be used while the model is rendering, after {@link GeoModel#handleAnimations(AnimationState)} has run
+     */
+    public void transformToBone(PoseStack poseStack) {
+        final List<GeoBone> boneQueue = new ObjectArrayList<>();
+        GeoBone parent = this;
+
+        boneQueue.add(this);
+
+        while (parent.getParent() != null) {
+            parent = parent.getParent();
+            boneQueue.add(parent);
+        }
+
+        for (GeoBone bone : boneQueue) {
+            RenderUtil.prepMatrixForBone(poseStack, bone);
+        }
+    }
 
 	public Matrix4f getModelRotationMatrix() {
 		Matrix4f matrix = new Matrix4f(getModelSpaceMatrix());

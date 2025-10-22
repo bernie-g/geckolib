@@ -3,7 +3,6 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -31,6 +30,7 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.base.PerBoneRenderTasks;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -166,7 +166,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, stack.getUseDuration(ClientUtil.getClientPlayer()));
 		renderState.addGeckolibData(DataTickets.MAX_DURABILITY, stack.getMaxDamage());
 		renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, stack.isDamageableItem() ? stack.getMaxDamage() - stack.getDamageValue() : 1);
-		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new Reference2ObjectOpenHashMap<>(0));
+		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, PerBoneRenderTasks.create());
 
 		return renderState;
 	}
@@ -180,8 +180,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	@Override
     public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-
         ((T)renderState.getGeckolibData(DataTickets.ITEM)).getAnimatableInstanceCache().getManagerForId(renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID))
                 .setAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderState.getGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE));
 	}
@@ -256,8 +254,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	@Override
     public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
                                 @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-
         if (renderType == null)
             return;
 
@@ -268,7 +264,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-    public void renderBone(GeoRenderState renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+    public void renderBone(GeoRenderState renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
@@ -277,7 +273,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
             bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
 		}
 
-		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
 	}
 
     /**

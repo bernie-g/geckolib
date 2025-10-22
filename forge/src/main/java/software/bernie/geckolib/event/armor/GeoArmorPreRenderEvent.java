@@ -2,7 +2,7 @@ package software.bernie.geckolib.event.armor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.bus.CancellableEventBus;
@@ -29,7 +29,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see GeoRenderEvent
  * @see Pre
  */
-public record GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+public record GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState>
         (GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState)
         implements GeoRenderEvent.Armor.Pre<T, R>, RecordEvent, Cancellable {
     public static final CancellableEventBus<GeoArmorPreRenderEvent> BUS = CancellableEventBus.create(GeoArmorPreRenderEvent.class);

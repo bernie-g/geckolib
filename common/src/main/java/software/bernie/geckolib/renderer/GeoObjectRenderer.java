@@ -90,17 +90,6 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
 	}
 
     /**
-     * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-     * <p>
-     * {@link PoseStack} translations made here are kept until the end of the render process
-     */
-    @Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                          int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE,  new Matrix4f(poseStack.last().pose()));
-    }
-
-    /**
      * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
      * <p>
      * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
@@ -116,7 +105,6 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
     @Override
     public void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
         poseStack.translate(0.5f, 0.51f, 0.5f);
-        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
     }
 
     /**
@@ -143,7 +131,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
@@ -152,7 +140,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
             bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
 		}
 
-		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
 	}
 
     /**

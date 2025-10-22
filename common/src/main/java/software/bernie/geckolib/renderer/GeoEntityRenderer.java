@@ -3,7 +3,6 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -29,7 +28,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.scores.Team;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -43,7 +41,6 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -306,17 +303,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 		return renderState;
 	}
 
-	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-	 * <p>
-	 * {@link PoseStack} translations made here are kept until the end of the render process
-	 */
-	@Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                          int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-	}
-
     /**
      * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
      * <p>
@@ -351,7 +337,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 
         applyRotations(renderState, poseStack, livingRenderState != null ? livingRenderState.scale : 1, cameraState);
         poseStack.translate(0, 0.01f, 0);
-        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
 	}
 
     /**
@@ -378,7 +363,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.translateMatrixToBone(poseStack, bone);
@@ -396,16 +381,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
-
-        if (!skipBoneTasks) {
-            Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
-
-            if (boneRenderTask != null)
-                boneRenderTask.left().setValue(poseStack.last().copy());
-        }
-
 		renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
-		renderChildBones(renderState, bone, poseStack, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		renderChildBones(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
 
 		poseStack.popPose();
 	}

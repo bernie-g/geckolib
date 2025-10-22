@@ -1,5 +1,6 @@
 package software.bernie.geckolib.event.armor;
 
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.Event;
@@ -19,7 +20,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * @see GeoRenderEvent
  * @see CompileRenderLayers
  */
-public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
+public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
     private final GeoArmorRenderer<T, R> renderer;
 
     public CompileArmorRenderLayersEvent(GeoArmorRenderer<T, R> renderer) {

@@ -2,7 +2,7 @@ package software.bernie.geckolib.event.armor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.Event;
@@ -28,7 +28,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see GeoRenderEvent
  * @see Pre
  */
-public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.Pre<T, R>, ICancellableEvent {
+public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.Pre<T, R>, ICancellableEvent {
     private final GeoArmorRenderer<T, R> renderer;
     private final R renderState;
     private final PoseStack poseStack;

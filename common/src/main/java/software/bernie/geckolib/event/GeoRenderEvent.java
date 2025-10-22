@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -222,7 +222,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/**
 	 * Renderer events for armor pieces being rendered by {@link GeoArmorRenderer}
 	 */
-	interface Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
+	interface Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
         /**
          * Returns the renderer for this event
          */
@@ -234,7 +234,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 */
-		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Armor<T, R> {
 			@ApiStatus.Internal
 			@Override
 			default R getRenderState() {
@@ -267,7 +267,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
 		 */
-		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Armor<T, R> {
 			/**
 			 * Get the GeoAnimatable instance relevant to the {@link GeoRenderState} being compiled
 			 */
@@ -297,7 +297,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
          * This event is cancellable.<br>
          * If the event is cancelled, the armor piece will not be rendered and the corresponding {@link Post} event will not be fired.
 		 */
-		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Armor<T, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -325,7 +325,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called after {@link GeoRenderer#postRender}
 		 */
-		interface Post<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface Post<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Armor<T, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.

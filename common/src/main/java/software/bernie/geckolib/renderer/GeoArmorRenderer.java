@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.component.DataComponents;
@@ -42,6 +42,7 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -52,7 +53,7 @@ import java.util.function.UnaryOperator;
  *
  * @see GeoItem
  */
-public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
+public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
     protected static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	protected final GeoRenderLayersContainer<T, GeoArmorRenderer.RenderData, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -199,17 +200,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	}
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-	 * <p>
-	 * {@link PoseStack} translations made here are kept until the end of the render process
-	 */
-	@Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                          int packedLight, int packedOverlay, int renderColor) {
-        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-	}
-
-	/**
 	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
 	 * <p>
 	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
@@ -229,7 +219,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     public void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
         poseStack.translate(0, 24 / 16f, 0);
         poseStack.scale(-1, -1, 1);
-        renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
     }
 
     /**
@@ -245,7 +234,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         renderTasks.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
             final EquipmentSlot slot = renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT);
             final PoseStack poseStack2 = new PoseStack();
-            final boolean skipBoneTasks = getPerBoneTasks(renderState).isEmpty();
             final HumanoidModel baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
 
             poseStack2.last().set(pose);
@@ -259,7 +247,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
                     RenderUtil.matchModelPartRot(modelPart, bone);
                     bone.updatePosition(bonePos.x, bonePos.y, bonePos.z);
 
-                    renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+                    renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, packedLight, packedOverlay, renderColor);
                 });
             }
         });
@@ -269,7 +257,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	 * Renders the provided {@link GeoBone} and its associated child bones
 	 */
 	@Override
-    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
@@ -278,7 +266,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
             bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
 		}
 
-		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
 	}
 
 	/**
@@ -379,15 +367,15 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     @ApiStatus.Internal
     private record StackForRender(ItemStack stack, EquipmentSlot slot, GeoArmorRenderer renderer, HumanoidModel<?> baseModel) {
         @Nullable
-        private static <S extends HumanoidRenderState, M extends HumanoidModel<S>, A extends HumanoidModel<S>> StackForRender find(
-                ItemStack stack, EquipmentSlot slot, S entityRenderState, HumanoidArmorLayer<S, M, A> armorRenderLayer) {
+        private static <S extends AvatarRenderState, A extends HumanoidModel<S>> StackForRender find(
+                ItemStack stack, EquipmentSlot slot, S entityRenderState, BiFunction<S, EquipmentSlot, A> modelFunction) {
             final Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
             GeoRenderProvider geckolibRenderers;
 
             if (equippable == null || !HumanoidArmorLayer.shouldRender(equippable, slot) || (geckolibRenderers = GeoRenderProvider.of(stack)) == GeoRenderProvider.DEFAULT)
                 return null;
 
-            final A baseModel = armorRenderLayer.getArmorModel(entityRenderState, slot);
+            final A baseModel = modelFunction.apply(entityRenderState, slot);
             final GeoArmorRenderer armorRenderer = geckolibRenderers.getGeoArmorRenderer(stack, slot);
 
             if (armorRenderer == null)
@@ -405,9 +393,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * @return true if the armor piece was a GeckoLib armor piece and was rendered
      */
     @ApiStatus.Internal
-    public static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
-            HumanoidArmorLayer<R, M, A> layer, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
-        final StackForRender stackForRender = StackForRender.find(stack, slot, entityRenderState, layer);
+    public static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
+            BiFunction<R, EquipmentSlot, A> modelFunction, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
+        final StackForRender stackForRender = StackForRender.find(stack, slot, entityRenderState, modelFunction);
         EnumMap<EquipmentSlot, R> perSlotData;
 
         if (stackForRender == null || !(entityRenderState instanceof GeoRenderState geoRenderState))
@@ -428,9 +416,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * Called internally by a mixin
 	 */
 	@ApiStatus.Internal
-	public static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> void captureRenderStates(
-            R baseRenderState, LivingEntity entity, float partialTick, HumanoidArmorLayer<R, M, A> armorRenderLayer, Function<EquipmentSlot, R> renderStateSupplier) {
-		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, armorRenderLayer);
+	public static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
+            R baseRenderState, LivingEntity entity, float partialTick, BiFunction<R, EquipmentSlot, A> modelFunction, Function<EquipmentSlot, R> renderStateSupplier) {
+		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, modelFunction);
 
 		if (relevantSlots == null)
 			return;
@@ -453,13 +441,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
 	@Nullable
 	@ApiStatus.Internal
-	private static <R extends HumanoidRenderState & GeoRenderState, M extends HumanoidModel<R>, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
-            LivingEntity entity, R entityRenderState, HumanoidArmorLayer<R, M, A> armorRenderLayer) {
+	private static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
+            LivingEntity entity, R entityRenderState, BiFunction<R, EquipmentSlot, A> modelFunction) {
 		List<StackForRender> relevantSlots = null;
 
         for (int i = 0; i < ARMOR_SLOTS.length; i++) {
             final EquipmentSlot slot = ARMOR_SLOTS[i];
-            final StackForRender stackForRender = StackForRender.find(entity.getItemBySlot(slot), slot, entityRenderState, armorRenderLayer);
+            final StackForRender stackForRender = StackForRender.find(entity.getItemBySlot(slot), slot, entityRenderState, modelFunction);
 
             if (stackForRender == null)
                 continue;
@@ -474,12 +462,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	}
 
     /**
-     * Disabled because we use the {@link HumanoidRenderState} that vanilla compiles for the entity
+     * Disabled because we use the {@link AvatarRenderState} that vanilla compiles for the entity
      */
     @ApiStatus.Internal
     @Deprecated
     @Override
     public R createRenderState(T animatable, RenderData relatedObject) {
-        return (R)new HumanoidRenderState();
+        return (R)new AvatarRenderState();
     }
 }

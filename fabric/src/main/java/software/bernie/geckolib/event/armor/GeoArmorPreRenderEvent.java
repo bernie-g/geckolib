@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
@@ -28,7 +28,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see GeoRenderEvent
  * @see Pre
  */
-public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Pre<T, R> {
+public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Pre<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             if (!listener.handle(event))
@@ -90,7 +90,7 @@ public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends Humanoid
      * Return false to cancel the render pass
      */
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> {
         boolean handle(GeoArmorPreRenderEvent<T, R> event);
     }
 }

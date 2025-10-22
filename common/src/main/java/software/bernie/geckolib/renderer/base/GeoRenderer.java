@@ -2,9 +2,6 @@ package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -12,7 +9,6 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.WalkAnimationState;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
@@ -30,6 +26,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base interface for all GeckoLib renderers.<br>
@@ -154,7 +151,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		renderState.addGeckolibData(DataTickets.IS_MOVING, false);
 		renderState.addGeckolibData(DataTickets.BONE_RESET_TIME, animatable.getBoneResetTime());
 		renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
-		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, new Reference2ObjectOpenHashMap<>(0));
+		renderState.addGeckolibData(DataTickets.PER_BONE_TASKS, PerBoneRenderTasks.create());
 
 		return renderState;
 	}
@@ -201,12 +198,15 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		final int renderColor = renderState.getGeckolibData(DataTickets.RENDER_COLOR);
         final RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
 
+        renderState.addGeckolibData(DataTickets.OBJECT_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
+
 		if (firePreRenderEvent(renderState, poseStack, model, renderTasks, cameraState)) {
             preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
             scaleModelForRender(renderState, 1, 1, poseStack, model, cameraState);
             adjustRenderPose(renderState, poseStack, model, cameraState);
             geoModel.handleAnimations(createAnimationState(renderState));
 			preApplyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
+            renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
 			buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
 			applyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
 			postRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
@@ -235,7 +235,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
             poseStack2.last().set(pose);
 
             for (GeoBone bone : model.topLevelBones()) {
-                renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+                renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, packedLight, packedOverlay, renderColor);
             }
         });
 	}
@@ -245,11 +245,11 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 */
 	default void preApplyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 									  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-		Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> perBoneTasks = getPerBoneTasks(renderState);
+		final PerBoneRenderTasks.ForRenderer<R> perBoneTasks = getPerBoneTasks(renderState);
 
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
 			renderLayer.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
-			renderLayer.addPerBoneRender(renderState, model, didRenderModel, (boneName, renderOp) -> perBoneTasks.put(boneName, Pair.of(new MutableObject<>(), renderOp)));
+			renderLayer.addPerBoneRender(renderState, model, didRenderModel, perBoneTasks::addTask);
 		}
 	}
 
@@ -258,19 +258,41 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 */
 	default void applyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 								   int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-		for (Reference2ObjectMap.Entry<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> perBoneTask : getPerBoneTasks(renderState).reference2ObjectEntrySet()) {
-            final PoseStack.Pose pose = perBoneTask.getValue().left().getValue();
+        final PerBoneRenderTasks.ForRenderer<R> perBoneTasks = getPerBoneTasks(renderState);
 
-            if (pose == null)
-                throw new IllegalStateException("Renderer '" + getClass().getSimpleName() + "' is attempting to run a render layer task, before the renderer has run!");
-
-			perBoneTask.getValue().right().runTask(renderState, poseStack, perBoneTask.getKey(), pose, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
-		}
+        if (!perBoneTasks.isEmpty())
+            submitPerBoneRenderTasks(renderState, poseStack, perBoneTasks, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
 
 		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
 			renderLayer.submitRenderTask(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
 		}
 	}
+
+    /**
+     * Submit the registered {@link PerBoneRender} tasks that have been submitted for this render pass
+     */
+    default void submitPerBoneRenderTasks(R renderState, PoseStack poseStack, PerBoneRenderTasks.ForRenderer<R> perBoneTasks,
+                                          SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
+        final Matrix4f pose = renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE);
+
+        poseStack.pushPose();
+        poseStack.last().pose().set(pose);
+
+        for (Map.Entry<GeoBone, List<PerBoneRender<R>>> boneTasks : perBoneTasks) {
+            poseStack.pushPose();
+            boneTasks.getKey().transformToBone(poseStack);
+
+            for (PerBoneRender<R> renderOp : boneTasks.getValue()) {
+                poseStack.pushPose();
+                renderOp.submitRenderTask(renderState, poseStack, boneTasks.getKey(), renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+                poseStack.popPose();
+            }
+
+            poseStack.popPose();
+        }
+
+        poseStack.popPose();
+    }
 
 	/**
 	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
@@ -300,20 +322,12 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
      * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
      * No modifications to the renderer can be made here, this is purely for rendering.
 	 */
-	default void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+	default void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                             int packedLight, int packedOverlay, int renderColor) {
 		poseStack.pushPose();
 		RenderUtil.prepMatrixForBone(poseStack, bone);
-
-		if (!skipBoneTasks) {
-			Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>> boneRenderTask = getPerBoneTasks(renderState).get(bone);
-
-			if (boneRenderTask != null)
-				boneRenderTask.left().setValue(poseStack.last().copy());
-		}
-
 		renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
-		renderChildBones(renderState, bone, poseStack, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+		renderChildBones(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
 		poseStack.popPose();
 	}
 
@@ -342,13 +356,13 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
      * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
      * No modifications to the renderer can be made here, this is purely for rendering.
 	 */
-	default void renderChildBones(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+	default void renderChildBones(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState,
                                   int packedLight, int packedColor, int renderColor) {
 		if (bone.isHidingChildren())
 			return;
 
 		for (GeoBone childBone : bone.getChildBones()) {
-			renderBone(renderState, poseStack, childBone, buffer, cameraState, skipBoneTasks, packedLight, packedColor, renderColor);
+			renderBone(renderState, poseStack, childBone, buffer, cameraState, packedLight, packedColor, renderColor);
 		}
 	}
 
@@ -470,7 +484,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	/**
 	 * Internal helper method to help with type-resolution of the {@link DataTickets#PER_BONE_TASKS} DataTicket
 	 */
-    default Reference2ObjectMap<GeoBone, Pair<MutableObject<PoseStack.Pose>, PerBoneRender<R>>> getPerBoneTasks(R renderState) {
-		return renderState.getGeckolibData(DataTickets.PER_BONE_TASKS);
+    default PerBoneRenderTasks.ForRenderer<R> getPerBoneTasks(R renderState) {
+		return PerBoneRenderTasks.get(renderState, this);
 	}
 }

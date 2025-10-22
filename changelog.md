@@ -1,4 +1,17 @@
-## GeckoLib v5.3-alpha-1
+## GeckoLib v5.3-alpha-2
+
+## Alpha 2 Notes:
+* Fix Forge crashing on load on newer Forge versions (#773)
+* Fix GeoArmorRenderer crashing when not rendering a full set (#771)
+* `BlockAndItemGeoLayer#renderStackForBone` and `#renderBlockForBone` renamed to `#submitItemStackRender` and `#submitBlockRender` respectively
+* Moved the `OBJECT_RENDER_POSE` and `MODEL_RENDER_POSE` DataTickets to the base `GeoRenderer`, so that subclasses do not need to handle them in overrides
+* Fixed only handling 1 `PerBoneRenderTask` per `GeoBone`
+* Added `GeoBone#transformToBone`
+* Split `PerBoneRender` tasks out into `GeoRenderer#submitPerBoneRenderTasks`
+* Removed the `skipPerBoneTasks` in several `GeoRenderer` method calls as it is no longer needed
+* Created `PerBoneRenderTasks` for neatly handling per-bone render tasks given their added complexity
+* Restricted `GeoArmorLayer`'s generic type to require an `AvatarRenderState`, as that is the actual type required by the models used
+* Added `RenderStateUtil`
 
 ## Changes
 * Port to 1.21.10
