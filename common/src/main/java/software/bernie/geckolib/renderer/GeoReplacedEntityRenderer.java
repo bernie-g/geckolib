@@ -333,7 +333,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+        submitRenderTasks(renderState, poseStack, renderTasks, cameraState, null);
     }
 
     /**

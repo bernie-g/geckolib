@@ -1,4 +1,9 @@
-## GeckoLib v5.3-alpha-2
+## GeckoLib v5.3-alpha-3
+
+## Alpha 3 Notes:
+- Fixed a crash on world load (#776)
+- More internal changes around armour rendering and ItemArmorGeoLayer
+- Sorry to say, there's more API changes coming in the next version :(
 
 ## Alpha 2 Notes:
 * Fix Forge crashing on load on newer Forge versions (#773)
@@ -29,6 +34,7 @@
   * The various Matrix4f variables in GeckoLib renderers has been moved to DataTickets
   * Removed `GeoRenderer#doPostRenderCleanup`
   * Added the associated HumanoidModel to `GeoArmorLayer.RenderData`
+  * Added `RenderModelPositioner`
 * Rewrote `GeoArmorRenderer` - it should now be significantly easier to use and understand
 * Change DefaultedEntityGeoModel to take a customisable bone name instead of a flat boolean
 * Added `#withRenderLayer` to the various `GeoRenderer`s to allow for a functional instantiation

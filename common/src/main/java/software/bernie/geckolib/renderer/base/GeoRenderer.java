@@ -188,7 +188,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * <p>
 	 * All GeckoLib renderers should immediately defer their respective default {@code submit} calls to this, for consistent handling
 	 */
-	default void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+	default void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
 		poseStack.pushPose();
 
 		final GeoModel<T> geoModel = getGeoModel();
@@ -204,10 +204,9 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
             preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
             scaleModelForRender(renderState, 1, 1, poseStack, model, cameraState);
             adjustRenderPose(renderState, poseStack, model, cameraState);
-            geoModel.handleAnimations(createAnimationState(renderState));
 			preApplyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
             renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-			buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
+			buildRenderTask(renderState, poseStack, model, geoModel, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
 			applyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
 			postRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
 			firePostRenderEvent(renderState, poseStack, model, renderTasks, cameraState);
@@ -223,18 +222,20 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * <p>
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
-	default void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType,
-                                 int packedLight, int packedOverlay, int renderColor) {
+	default void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType,
+                                 int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<R> modelPositioner) {
         if (renderType == null)
             return;
 
+        RenderModelPositioner<R> callback = RenderModelPositioner.add(modelPositioner, (renderState2, model2) -> model.handleAnimations(createAnimationState(renderState2)));
+
         renderTasks.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack2 = new PoseStack();
-            final boolean skipBoneTasks = getPerBoneTasks(renderState).isEmpty();
 
             poseStack2.last().set(pose);
+            callback.run(renderState, bakedModel);
 
-            for (GeoBone bone : model.topLevelBones()) {
+            for (GeoBone bone : bakedModel.topLevelBones()) {
                 renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, packedLight, packedOverlay, renderColor);
             }
         });

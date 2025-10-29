@@ -31,6 +31,7 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRenderTasks;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -212,7 +213,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
         renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);
-        submitRenderTasks(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState);
+        submitRenderTasks(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState, null);
 
 
 
@@ -252,12 +253,12 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
 	 */
 	@Override
-    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor) {
+    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<GeoRenderState> modelPositioner) {
         if (renderType == null)
             return;
 
-        GeoRenderer.super.buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
+        GeoRenderer.super.buildRenderTask(renderState, poseStack, bakedModel, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
 	}
 
 	/**

@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
-import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
@@ -23,8 +22,7 @@ import java.util.function.Supplier;
  * Loader-agnostic service interface for clientside functionalities
  */
 public interface GeckoLibClient {
-    Supplier<ArmorModelSet<PlayerModel>> PLAYER_ARMOR = Suppliers.memoize(() -> ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, Minecraft.getInstance().getEntityModels(), root -> new PlayerModel(root, false)));
-    Supplier<ArmorModelSet<PlayerModel>> PLAYER_SLIM_ARMOR = Suppliers.memoize(() -> ArmorModelSet.bake(ModelLayers.PLAYER_SLIM_ARMOR, Minecraft.getInstance().getEntityModels(), root -> new PlayerModel(root, true)));
+    Supplier<ArmorModelSet<HumanoidModel<?>>> HUMANOID_ARMOR_MODEL = Suppliers.memoize(() -> ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, Minecraft.getInstance().getEntityModels(), HumanoidModel::new));
     Supplier<ElytraModel> GENERIC_ELYTRA_MODEL = Suppliers.memoize(() -> new ElytraModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ELYTRA)));
 
     /**

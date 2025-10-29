@@ -1,6 +1,6 @@
 package software.bernie.geckolib.event.armor;
 
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.Event;
 import org.jetbrains.annotations.ApiStatus;
@@ -21,7 +21,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
-public class CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.CompileRenderState<T, R> {
+public class CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.CompileRenderState<T, R> {
     private final GeoArmorRenderer<T, R> renderer;
     private final R renderState;
     private final T animatable;

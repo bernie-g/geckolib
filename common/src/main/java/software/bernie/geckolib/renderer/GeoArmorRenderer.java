@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.component.DataComponents;
@@ -36,6 +36,7 @@ import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtil;
@@ -53,7 +54,7 @@ import java.util.function.UnaryOperator;
  *
  * @see GeoItem
  */
-public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
+public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
     protected static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	protected final GeoRenderLayersContainer<T, GeoArmorRenderer.RenderData, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -227,9 +228,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
      * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
      */
     @Override
-    public void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor) {
+    public void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<R> modelPositioner) {
         if (renderType == null)
             return;
+
+        RenderModelPositioner<R> callback = RenderModelPositioner.add(modelPositioner, (renderState2, model2) -> model.handleAnimations(createAnimationState(renderState2)));
 
         renderTasks.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
             final EquipmentSlot slot = renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT);
@@ -237,9 +241,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
             final HumanoidModel baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
 
             poseStack2.last().set(pose);
+            callback.run(renderState, bakedModel);
 
             for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
-                model.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
+                bakedModel.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
                     ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
                     Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
 
@@ -367,7 +372,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
     @ApiStatus.Internal
     private record StackForRender(ItemStack stack, EquipmentSlot slot, GeoArmorRenderer renderer, HumanoidModel<?> baseModel) {
         @Nullable
-        private static <S extends AvatarRenderState, A extends HumanoidModel<S>> StackForRender find(
+        private static <S extends HumanoidRenderState, A extends HumanoidModel<S>> StackForRender find(
                 ItemStack stack, EquipmentSlot slot, S entityRenderState, BiFunction<S, EquipmentSlot, A> modelFunction) {
             final Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
             GeoRenderProvider geckolibRenderers;
@@ -393,7 +398,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
      * @return true if the armor piece was a GeckoLib armor piece and was rendered
      */
     @ApiStatus.Internal
-    public static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
+    public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
             BiFunction<R, EquipmentSlot, A> modelFunction, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
         final StackForRender stackForRender = StackForRender.find(stack, slot, entityRenderState, modelFunction);
         EnumMap<EquipmentSlot, R> perSlotData;
@@ -405,7 +410,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
             return false;
 
         R perSlotRenderState = perSlotData.get(slot);
-        stackForRender.renderer.submitRenderTasks(perSlotRenderState, poseStack, renderTasks, Minecraft.getInstance().levelRenderer.levelRenderState.cameraRenderState);
+        stackForRender.renderer.submitRenderTasks(perSlotRenderState, poseStack, renderTasks, Minecraft.getInstance().levelRenderer.levelRenderState.cameraRenderState, null);
 
         return true;
     }
@@ -416,7 +421,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
      * Called internally by a mixin
 	 */
 	@ApiStatus.Internal
-	public static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
+	public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
             R baseRenderState, LivingEntity entity, float partialTick, BiFunction<R, EquipmentSlot, A> modelFunction, Function<EquipmentSlot, R> renderStateSupplier) {
 		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, modelFunction);
 
@@ -441,7 +446,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
      */
 	@Nullable
 	@ApiStatus.Internal
-	private static <R extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
+	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
             LivingEntity entity, R entityRenderState, BiFunction<R, EquipmentSlot, A> modelFunction) {
 		List<StackForRender> relevantSlots = null;
 
@@ -462,12 +467,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends AvatarRenderSt
 	}
 
     /**
-     * Disabled because we use the {@link AvatarRenderState} that vanilla compiles for the entity
+     * Disabled because we use the {@link HumanoidRenderState} that vanilla compiles for the entity
      */
     @ApiStatus.Internal
     @Deprecated
     @Override
     public R createRenderState(T animatable, RenderData relatedObject) {
-        return (R)new AvatarRenderState();
+        return (R)new HumanoidRenderState();
     }
 }

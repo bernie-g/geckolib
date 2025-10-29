@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
@@ -28,7 +28,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see GeoRenderEvent
  * @see Post
  */
-public class GeoArmorPostRenderEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Post<T, R> {
+public class GeoArmorPostRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Post<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             listener.handle(event);
@@ -85,7 +85,7 @@ public class GeoArmorPostRenderEvent<T extends Item & GeoItem, R extends AvatarR
      * Event listener interface for the {@link Armor.Post} GeoRenderEvent
      */
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
         void handle(GeoArmorPostRenderEvent<T, R> event);
     }
 }

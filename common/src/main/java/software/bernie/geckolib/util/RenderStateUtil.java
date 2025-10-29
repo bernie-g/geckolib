@@ -195,15 +195,15 @@ public final class RenderStateUtil {
     }
 
     /**
-     * Create a partial-clone of an existing unknown RenderState into a new {@link AvatarRenderState} for the purpose of
-     * armor rendering, which explicitly requires an <code>AvatarRenderState</code>
+     * Create a partial-clone of an existing unknown RenderState into a new {@link HumanoidRenderState} for the purpose of
+     * armor rendering, which explicitly requires an <code>HumanoidRenderState</code>
      * <p>
      * Because this is only being used for armor rendering, we don't need an exhaustive copy of the renderstate, and instead focus
      * solely on the data points we know are needed.
      * <p>
      * If you are doing custom modelling and a data point here is missing and causing you issues, let me know in Discord and I'll add it
      */
-    public static AvatarRenderState makeMinimalArmorRenderingClone(final AvatarRenderState newRenderState, final EntityRenderState oldRenderState) {
+    public static HumanoidRenderState makeMinimalArmorRenderingClone(final HumanoidRenderState newRenderState, final EntityRenderState oldRenderState) {
         ((GeoRenderState)newRenderState).getDataMap().putAll(((GeoRenderState)oldRenderState).getDataMap());
 
         newRenderState.entityType = oldRenderState.entityType; // Optional
@@ -263,21 +263,6 @@ public final class RenderStateUtil {
                     newRenderState.chestEquipment = humanoidState.chestEquipment; // Optional
                     newRenderState.legsEquipment = humanoidState.legsEquipment; // Optional
                     newRenderState.feetEquipment = humanoidState.feetEquipment; // Optional
-
-                    if (humanoidState instanceof AvatarRenderState avatarState) {
-                        newRenderState.skin = avatarState.skin; // Optional
-                        newRenderState.capeFlap = avatarState.capeFlap; // Optional
-                        newRenderState.capeLean = avatarState.capeLean; // Optional
-                        newRenderState.capeLean2 = avatarState.capeLean2; // Optional
-                        newRenderState.isSpectator = avatarState.isSpectator;
-                        newRenderState.showHat = avatarState.showHat;
-                        newRenderState.showJacket = avatarState.showJacket;
-                        newRenderState.showLeftPants = avatarState.showLeftPants;
-                        newRenderState.showRightPants = avatarState.showRightPants;
-                        newRenderState.showLeftSleeve = avatarState.showLeftSleeve;
-                        newRenderState.showRightSleeve = avatarState.showRightSleeve;
-                        newRenderState.showCape = avatarState.showCape; // Optional
-                    }
                 }
             }
         }

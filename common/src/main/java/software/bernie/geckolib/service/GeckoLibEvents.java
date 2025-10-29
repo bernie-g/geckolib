@@ -3,7 +3,7 @@ package software.bernie.geckolib.service;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.Entity;
@@ -45,22 +45,22 @@ public interface GeckoLibEvents {
     /**
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderLayers} event
      */
-    <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> void fireCompileArmorRenderLayers(
+    <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireCompileArmorRenderLayers(
             GeoArmorRenderer<T, R> renderer);
     /**
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderState} event
      */
-    <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends AvatarRenderState & GeoRenderState> void fireCompileArmorRenderState(
+    <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState & GeoRenderState> void fireCompileArmorRenderState(
             GeoArmorRenderer<T, R> renderer, R renderState, T animatable, O renderData);
     /**
      * Fire the {@link GeoRenderEvent.Armor.Pre} event, returning true if the event was not cancelled
      */
-    <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> boolean fireArmorPreRender(
+    <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> boolean fireArmorPreRender(
             GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
     /**
      * Fire the {@link GeoRenderEvent.Armor.Post} event
      */
-    <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> void fireArmorPostRender(
+    <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireArmorPostRender(
             GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**

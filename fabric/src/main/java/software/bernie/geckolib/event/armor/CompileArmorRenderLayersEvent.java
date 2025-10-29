@@ -2,7 +2,7 @@ package software.bernie.geckolib.event.armor;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.item.Item;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.event.GeoRenderEvent;
@@ -20,7 +20,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * @see GeoRenderEvent
  * @see CompileRenderLayers
  */
-public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
+public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             listener.handle(event);
@@ -42,7 +42,7 @@ public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends A
      * Event listener interface for the {@link Armor.CompileRenderLayers} GeoRenderEvent
      */
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends AvatarRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
         void handle(CompileArmorRenderLayersEvent<T, R> event);
     }
 }

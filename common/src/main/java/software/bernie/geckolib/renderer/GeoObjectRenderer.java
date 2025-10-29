@@ -15,6 +15,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtil;
@@ -118,13 +119,15 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
 	 * @param renderTasks The render task collector for the render pass
      * @param cameraState The current camera rendering state, usually provided by the gui or {@link LevelRenderState}
 	 * @param packedLight The light level at the given render position for rendering
+     * @param modelPositioner The model positioner for rendering
 	 */
-	public void submit(PoseStack poseStack, T animatable, E relatedObject, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, float partialTick) {
+	public void submit(PoseStack poseStack, T animatable, E relatedObject, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                       int packedLight, float partialTick, @Nullable RenderModelPositioner<R> modelPositioner) {
 		R renderState = fillRenderState(animatable, relatedObject, createRenderState(animatable, null), partialTick);
 
 		renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
 
-		submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+		submitRenderTasks(renderState, poseStack, renderTasks, cameraState, modelPositioner);
 	}
 
 	/**

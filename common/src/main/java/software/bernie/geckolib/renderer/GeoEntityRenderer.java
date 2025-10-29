@@ -347,7 +347,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+        submitRenderTasks(renderState, poseStack, renderTasks, cameraState, null);
     }
 
     /**

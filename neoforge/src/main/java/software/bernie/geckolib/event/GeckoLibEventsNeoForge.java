@@ -3,7 +3,7 @@ package software.bernie.geckolib.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.Entity;
@@ -86,7 +86,7 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderLayers} event
      */
     @Override
-    public <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> void fireCompileArmorRenderLayers(
+    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireCompileArmorRenderLayers(
             GeoArmorRenderer<T, R> renderer) {
         NeoForge.EVENT_BUS.post(new CompileArmorRenderLayersEvent<>(renderer));
     }
@@ -95,7 +95,7 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Armor.Pre} event, returning true if the event was not cancelled
      */
     @Override
-    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends AvatarRenderState & GeoRenderState> void fireCompileArmorRenderState(
+    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState & GeoRenderState> void fireCompileArmorRenderState(
             GeoArmorRenderer<T, R> renderer, R renderState, T animatable, O renderData) {
         NeoForge.EVENT_BUS.post(new CompileArmorRenderStateEvent<>(renderer, renderState, animatable, renderData));
     }
@@ -104,7 +104,7 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Armor.Pre} event, returning true if the event was not cancelled
      */
     @Override
-    public <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> boolean fireArmorPreRender(
+    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> boolean fireArmorPreRender(
             GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         return !NeoForge.EVENT_BUS.post(new GeoArmorPreRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState)).isCanceled();
     }
@@ -113,7 +113,7 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Armor.Post} event
      */
     @Override
-    public <T extends Item & GeoItem, R extends AvatarRenderState & GeoRenderState> void fireArmorPostRender(
+    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireArmorPostRender(
             GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         NeoForge.EVENT_BUS.post(new GeoArmorPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
     }

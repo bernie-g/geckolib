@@ -171,7 +171,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {
-        submitRenderTasks(renderState, poseStack, renderTasks, cameraRenderState);
+        submitRenderTasks(renderState, poseStack, renderTasks, cameraRenderState, null);
     }
 
 	/**

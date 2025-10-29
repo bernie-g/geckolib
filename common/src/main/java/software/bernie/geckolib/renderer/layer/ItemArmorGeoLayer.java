@@ -14,9 +14,8 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.SkullBlockRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.layers.EquipmentLayerRenderer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
@@ -47,6 +46,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 import software.bernie.geckolib.service.GeckoLibClient;
 import software.bernie.geckolib.util.RenderStateUtil;
 import software.bernie.geckolib.util.RenderUtil;
@@ -149,23 +149,23 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		}
 	}
 
-    protected <S extends AvatarRenderState & GeoRenderState, A extends HumanoidModel<S>> void collectArmorData(
+    protected <S extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<S>> void collectArmorData(
             R baseRenderState, T animatable, float partialTick, EnumMap<EquipmentSlot, ItemStack> equipment) {
-        S avatarRenderState = getOrCreateAvatarRenderState(baseRenderState, false);
+        S headRenderState = getOrCreateHumanoidRenderState(baseRenderState, false);
 
-        equipment.put(EquipmentSlot.HEAD, avatarRenderState.headEquipment = animatable.getItemBySlot(EquipmentSlot.HEAD));
-        equipment.put(EquipmentSlot.CHEST, avatarRenderState.chestEquipment = animatable.getItemBySlot(EquipmentSlot.CHEST));
-        equipment.put(EquipmentSlot.LEGS, avatarRenderState.legsEquipment = animatable.getItemBySlot(EquipmentSlot.LEGS));
-        equipment.put(EquipmentSlot.FEET, avatarRenderState.feetEquipment = animatable.getItemBySlot(EquipmentSlot.FEET));
+        equipment.put(EquipmentSlot.HEAD, headRenderState.headEquipment = animatable.getItemBySlot(EquipmentSlot.HEAD));
+        equipment.put(EquipmentSlot.CHEST, headRenderState.chestEquipment = animatable.getItemBySlot(EquipmentSlot.CHEST));
+        equipment.put(EquipmentSlot.LEGS, headRenderState.legsEquipment = animatable.getItemBySlot(EquipmentSlot.LEGS));
+        equipment.put(EquipmentSlot.FEET, headRenderState.feetEquipment = animatable.getItemBySlot(EquipmentSlot.FEET));
 
-        GeoArmorRenderer.captureRenderStates(avatarRenderState, animatable, partialTick,
-                                             (renderState, slot) -> (A)(HumanoidModel)GeckoLibClient.PLAYER_ARMOR.get().get(slot),
-                                             slot -> slot == EquipmentSlot.HEAD ? avatarRenderState : getOrCreateAvatarRenderState(baseRenderState, true));
+        GeoArmorRenderer.captureRenderStates(headRenderState, animatable, partialTick,
+                                             (renderState, slot) -> (A)GeckoLibClient.HUMANOID_ARMOR_MODEL.get().get(slot),
+                                             slot -> slot == EquipmentSlot.HEAD ? headRenderState : getOrCreateHumanoidRenderState(baseRenderState, true));
 
         baseRenderState.addGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, equipment);
 
-        if (avatarRenderState != baseRenderState)
-            baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, avatarRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA));
+        if (headRenderState != baseRenderState && headRenderState.hasGeckolibData(DataTickets.PER_SLOT_RENDER_DATA))
+            baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, headRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA));
     }
 
 	/**
@@ -215,10 +215,10 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
                     poseStack.pushPose();
                     poseStack.scale(-1, -1, 1);
 
-                    GeoRenderState avatarRenderState = getOrCreateAvatarRenderState(slotRenderState, false);
+                    GeoRenderState humanoidRenderState = getOrCreateHumanoidRenderState(slotRenderState, false);
+                    RenderModelPositioner<R> modelPositioner = positionModelPartFromBone(poseStack, bone, modelPartFactory.apply(slotRenderState.getGeckolibData(DataTickets.HUMANOID_MODEL)));
 
-                    //positionModelPartFromBone(poseStack, bone, modelPart);
-                    geoArmorRenderer.submitRenderTasks(avatarRenderState, poseStack, renderTasks, cameraState);
+                    geoArmorRenderer.submitRenderTasks(humanoidRenderState, poseStack, renderTasks, cameraState, modelPositioner);
                     poseStack.popPose();
                 }
             }
@@ -310,7 +310,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
 		final S humanoidRenderState = renderState instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
 		final EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
-		final HumanoidModel defaultModel = GeckoLibClient.PLAYER_ARMOR.get().get(slot);
+		final HumanoidModel defaultModel = GeckoLibClient.HUMANOID_ARMOR_MODEL.get().get(slot);
 
 		return GeckoLibServices.Client.ITEM_RENDERING.getArmorModelForItem(humanoidRenderState, stack, slot, layerType, defaultModel);
 	}
@@ -343,7 +343,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param bone The GeoBone to base the translations on
 	 * @param sourcePart The ModelPart to translate
 	 */
-	protected void positionModelPartFromBone(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
+	protected RenderModelPositioner<R> positionModelPartFromBone(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.getCubes().getFirst();
 		final Cube armorCube = sourcePart.cubes.getFirst();
 		final double armorBoneSizeX = firstCube.size().x();
@@ -355,27 +355,30 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
 		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
 		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
+        final RenderModelPositioner<R> modelPositioner = RenderModelPositioner.add(null, ((renderState, model) -> {
+            sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
+                              -(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
+                              (bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
-		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
-				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
-				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
-
-		sourcePart.xRot = -bone.getRotX();
-		sourcePart.yRot = -bone.getRotY();
-		sourcePart.zRot = bone.getRotZ();
+            sourcePart.xRot = -bone.getRotX();
+            sourcePart.yRot = -bone.getRotY();
+            sourcePart.zRot = bone.getRotZ();
+        }));
 
 		poseStack.scale(scaleX, scaleY, scaleZ);
+
+        return modelPositioner;
 	}
 
     /**
      * Convert an existing RenderState to a HumanoidRenderState, either by casting or creating a new one, for the purposes of RenderState filling
      */
-    protected <S extends AvatarRenderState & GeoRenderState> S getOrCreateAvatarRenderState(R renderState, boolean forceNew) {
-        S avatarRenderState = (S)(!forceNew && renderState instanceof AvatarRenderState state ? state : new AvatarRenderState());
+    protected <S extends HumanoidRenderState & GeoRenderState> S getOrCreateHumanoidRenderState(R renderState, boolean forceNew) {
+        S newState = (S)(!forceNew && renderState instanceof HumanoidRenderState state ? state : new HumanoidRenderState());
 
-        if (avatarRenderState != renderState)
-            RenderStateUtil.makeMinimalArmorRenderingClone(avatarRenderState, renderState);
+        if (newState != renderState)
+            RenderStateUtil.makeMinimalArmorRenderingClone(newState, renderState);
 
-        return avatarRenderState;
+        return newState;
     }
 }

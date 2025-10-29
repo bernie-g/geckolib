@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -31,8 +30,9 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
             at = @At(
                     value = "INVOKE",
                     target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderArmorPiece(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/entity/EquipmentSlot;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;)V"))
-    public <R extends HumanoidRenderState & GeoRenderState> boolean geckolib$wrapArmorPieceRender(HumanoidArmorLayer<S, M, A> layer, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, S entityRenderState) {
-        return entityRenderState instanceof AvatarRenderState avatarRenderState && !GeoArmorRenderer.tryRenderGeoArmorPiece(
-                (renderState, equipmentSlot) -> (HumanoidModel)layer.getArmorModel((S)renderState, equipmentSlot), poseStack, renderTasks, stack, slot, packedLight, (AvatarRenderState & GeoRenderState)entityRenderState);
+    public boolean geckolib$wrapArmorPieceRender(HumanoidArmorLayer<S, M, A> layer, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, S entityRenderState) {
+        return entityRenderState instanceof HumanoidRenderState && !GeoArmorRenderer.tryRenderGeoArmorPiece(
+                (renderState, equipmentSlot) -> (HumanoidModel)layer.getArmorModel((S)renderState, equipmentSlot),
+                poseStack, renderTasks, stack, slot, packedLight, (HumanoidRenderState & GeoRenderState)entityRenderState);
     }
 }
