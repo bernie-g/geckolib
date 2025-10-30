@@ -162,7 +162,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
 		 * <p>
 		 * This event is cancellable.<br>
-		 * If the event is cancelled, the block entity will not be rendered and the corresponding {@link Post} event will not be fired.
+		 * If the event is cancelled, the block entity will not be rendered.
 		 */
 		interface Pre<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
             /**
@@ -185,37 +185,6 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
              * @return The camera render state for this render pass
              */
 			CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for block entities being rendered by {@link GeoBlockRenderer}
-		 * <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-         * <p>
-         * Because of the batching Minecraft uses for rendering, nothing has actually been rendered at this stage, and further rendering operations should be
-         * submitted to the {@link SubmitNodeCollector} returned by {@link #getRenderTasks()}.
-		 */
-		interface Post<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
 		}
 	}
 
@@ -295,37 +264,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the armor piece will not be rendered and the corresponding {@link Post} event will not be fired.
+         * If the event is cancelled, the armor piece will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for armor pieces being rendered by {@link GeoArmorRenderer}
-		 * <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-		 */
-		interface Post<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -420,37 +361,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
+         * If the event is cancelled, the entity will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for entities being rendered by {@link GeoEntityRenderer}
-		 * <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-		 */
-		interface Post<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -550,37 +463,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
+         * If the event is cancelled, the entity will not be rendered.
 		 */
 		interface Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer}
-		 * <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-		 */
-		interface Post<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -694,37 +579,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the item will not be rendered and the corresponding {@link Post} event will not be fired.
+         * If the event is cancelled, the item will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for items being rendered by {@link GeoItemRenderer}
-		 * <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-		 */
-		interface Post<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -825,37 +682,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the object will not be rendered and the corresponding {@link Post} event will not be fired.
+         * If the event is cancelled, the object will not be rendered.
 		 */
 		interface Pre<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
-            /**
-             * Get the PoseStack for the current render pass.<br>
-             * The renderer has not yet scaled or positioned the PoseStack as this stage.
-             */
-            PoseStack getPoseStack();
-
-            /**
-             * @return The baked model for this render pass
-             */
-            BakedGeoModel getModel();
-
-            /**
-             * @return The render submission collector for this render pass
-             */
-            SubmitNodeCollector getRenderTasks();
-
-            /**
-             * @return The camera render state for this render pass
-             */
-            CameraRenderState getCameraState();
-		}
-
-		/**
-		 * Post-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
-		 <p>
-		 * This event is called after {@link GeoRenderer#postRender}
-		 */
-		interface Post<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.

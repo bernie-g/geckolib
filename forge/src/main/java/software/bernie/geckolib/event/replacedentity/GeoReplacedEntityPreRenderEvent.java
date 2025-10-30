@@ -22,7 +22,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * This event is called before rendering, but after {@link GeoRenderer#preRender}
  * <p>
  * This event is {@link Cancellable cancellable}.<br>
- * If the event is cancelled, the entity will not be rendered and the corresponding {@link Post} event will not be fired.
+ * If the event is cancelled, the entity will not be rendered.
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
