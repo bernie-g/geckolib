@@ -1,8 +1,9 @@
-package software.bernie.geckolib.renderer.base;
+package software.bernie.geckolib.renderer.internal;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.List;
 

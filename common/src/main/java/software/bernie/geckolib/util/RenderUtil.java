@@ -26,6 +26,7 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.cache.object.GeoCube;
+import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 
@@ -119,6 +120,28 @@ public final class RenderUtil {
 	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
 		return matrix.add(new Matrix4f().m30(vector.x).m31(vector.y).m32(vector.z));
 	}
+
+    /**
+     * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
+     */
+    public static <T extends GeoAnimatable> void setBonesVisible(GeoModel<T> model, boolean visible, String... boneNames) {
+        for (String boneName : boneNames) {
+            model.getBone(boneName).ifPresent(bone -> bone.setHidden(!visible));
+        }
+    }
+
+    /**
+     * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
+     */
+    public static void setBonesVisible(boolean visible, @Nullable GeoBone... bones) {
+        if (bones == null)
+            return;
+
+        for (GeoBone bone : bones) {
+            if (bone != null)
+                bone.setHidden(!visible);
+        }
+    }
 	
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path

@@ -337,7 +337,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     }
 
     /**
-     * Called after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
+     * Called after all other render pass work has taken place, including reverting the {@link PoseStack}'s state
+     * <p>
+     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #submitRenderTasks submission}
      */
     @Override
     public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
@@ -562,14 +564,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	@Override
 	public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
 		return GeckoLibServices.Client.EVENTS.fireReplacedEntityPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	@Override
-	public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		GeckoLibServices.Client.EVENTS.fireReplacedEntityPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**

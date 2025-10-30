@@ -46,7 +46,7 @@ import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
+import software.bernie.geckolib.renderer.internal.RenderModelPositioner;
 import software.bernie.geckolib.service.GeckoLibClient;
 import software.bernie.geckolib.util.RenderStateUtil;
 import software.bernie.geckolib.util.RenderUtil;

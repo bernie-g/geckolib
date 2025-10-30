@@ -6,8 +6,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
@@ -30,8 +28,7 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.PerBoneRenderTasks;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
+import software.bernie.geckolib.renderer.internal.PerBoneRenderTasks;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -173,11 +170,12 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	}
 
     /**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-	 * <p>
-	 * {@link PoseStack} translations made here are kept until the end of the render process
-	 */
-
+     * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
+     * <p>
+     * Use this method to handle any preparation or pre-work required for the render submission.
+     * <p>
+     * Manipulation of the model's bones is not permitted here
+     */
 	@Override
     public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
@@ -209,7 +207,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      * @param renderState The GeoRenderState for this render pass. This must be already compiled
      * @param poseStack The PoseStack to render under
      * @param renderTasks The render task collector for the render pass
-     * @param outlineColor The rendering outline colour this render should apply (as if glowing)
+     * @param outlineColor The rendering outline colour this render pass should apply (as if glowing)
      */
     public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
         renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);
@@ -246,20 +244,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 		Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
 		poseStack.popPose();
 	}*/
-
-	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
-	 * <p>
-	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
-	 */
-	@Override
-    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<GeoRenderState> modelPositioner) {
-        if (renderType == null)
-            return;
-
-        GeoRenderer.super.buildRenderTask(renderState, poseStack, bakedModel, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
-	}
 
 	/**
 	 * Renders the provided {@link GeoBone} and its associated child bones
@@ -323,14 +307,6 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 	@Override
 	public boolean firePreRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
 		return GeckoLibServices.Client.EVENTS.fireItemPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	@Override
-    public void firePostRenderEvent(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		GeckoLibServices.Client.EVENTS.fireItemPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
 	/**

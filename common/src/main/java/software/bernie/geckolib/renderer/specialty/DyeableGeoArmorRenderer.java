@@ -55,6 +55,13 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         return 0xFFFFFFFF;
     }
 
+    /**
+     * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
+     * <p>
+     * Use this method to handle any preparation or pre-work required for the render submission.
+     * <p>
+     * Manipulation of the model's bones is not permitted here
+     */
     @Override
     public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {

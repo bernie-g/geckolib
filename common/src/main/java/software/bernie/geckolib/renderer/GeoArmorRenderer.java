@@ -36,7 +36,7 @@ import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
+import software.bernie.geckolib.renderer.internal.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtil;
@@ -223,13 +223,16 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     }
 
     /**
-     * The actual render method that subtype renderers should override to handle their specific rendering tasks
+     * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
      * <p>
-     * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
+     * Once the render task has been submitted here, no further manipulations of the render pass should be made.
+     * <p>
+     * If the provided {@link RenderType} is null, no submission will be made
      */
     @Override
-    public void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                @Nullable RenderType renderType, int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<R> modelPositioner) {
+    public void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
+                                CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
+                                @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
         if (renderType == null)
             return;
 
@@ -297,14 +300,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	@Override
     public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
 		return GeckoLibServices.Client.EVENTS.fireArmorPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	@Override
-    public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		GeckoLibServices.Client.EVENTS.fireArmorPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
     /**

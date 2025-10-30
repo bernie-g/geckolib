@@ -1,7 +1,6 @@
 package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -11,19 +10,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.WalkAnimationState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.cache.object.*;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.internal.PerBoneRenderTasks;
+import software.bernie.geckolib.renderer.internal.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -33,8 +31,9 @@ import java.util.Map;
  *
  * @param <T> The type of animatable this renderer is for
  * @param <O> The associated object this renderer takes when extracting data, or void if not applicable
+ * @param <R> The type of render state this renderer uses
  */
-public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderState> {
+public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoModelRenderer<R> {
 	/**
 	 * Gets the model instance for this renderer
 	 */
@@ -188,7 +187,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * <p>
 	 * All GeckoLib renderers should immediately defer their respective default {@code submit} calls to this, for consistent handling
 	 */
-	default void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
+	default void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                   @Nullable RenderModelPositioner<R> modelPositioner) {
 		poseStack.pushPose();
 
 		final GeoModel<T> geoModel = getGeoModel();
@@ -206,10 +206,8 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
             adjustRenderPose(renderState, poseStack, model, cameraState);
 			preApplyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
             renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-			buildRenderTask(renderState, poseStack, model, geoModel, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
+			buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, geoModel, renderType, modelPositioner, packedLight, packedOverlay, renderColor);
 			applyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
-			postRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
-			firePostRenderEvent(renderState, poseStack, model, renderTasks, cameraState);
 		}
 
 		poseStack.popPose();
@@ -218,16 +216,72 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	}
 
 	/**
-	 * The actual render method that subtype renderers should override to handle their specific rendering tasks
+	 * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
 	 * <p>
-	 * {@link GeoRenderer#preRender} has already been called by this stage, and {@link GeoRenderer#postRender} will be called directly after
+	 * Use this method to handle any preparation or pre-work required for the render submission.
+     * <p>
+     * Manipulation of the model's bones is not permitted here
 	 */
-	default void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<T> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType,
-                                 int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<R> modelPositioner) {
+	default void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+						   int packedLight, int packedOverlay, int renderColor) {}
+
+    /**
+     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+     * <p>
+     * Override and call <code>super</code> with modified scale values as needed to further modify the scale of the model
+     */
+    default void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+        if (widthScale != 1 || heightScale != 1)
+            poseStack.scale(widthScale, heightScale, widthScale);
+    }
+
+    /**
+     * Transform the {@link PoseStack} in preparation for rendering the model.
+     * <p>
+     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
+     * If you need to do pre-scale translations, use {@link #preRender}
+     * <p>
+     * {@link PoseStack} translations made here are kept until the end of the render process
+     */
+    default void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {}
+
+    /**
+     * Perform any necessary adjustments of the model here, such as positioning/scaling/rotating bones.
+     * <p>
+     * No manipulation of the RenderState is permitted here
+     */
+    default void positionModelForRender(R renderState, BakedGeoModel model, CameraRenderState cameraState) {}
+
+    /**
+     * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#preRender pre-render} actions.
+     */
+    default void preApplyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                      int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
+        final PerBoneRenderTasks.ForRenderer<R> perBoneTasks = getPerBoneTasks(renderState);
+
+        for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
+            renderLayer.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
+            renderLayer.addPerBoneRender(renderState, model, didRenderModel, perBoneTasks::addTask);
+        }
+    }
+
+    /**
+     * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
+     * <p>
+     * Once the render task has been submitted here, no further manipulations of the render pass should be made.
+     * <p>
+     * If the provided {@link RenderType} is null, no submission will be made
+     */
+    default void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
+                                 CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
+                                 @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
         if (renderType == null)
             return;
 
-        RenderModelPositioner<R> callback = RenderModelPositioner.add(modelPositioner, (renderState2, model2) -> model.handleAnimations(createAnimationState(renderState2)));
+        RenderModelPositioner<R> callback = RenderModelPositioner.add(modelPositioner, (renderState2, model2) -> {
+            positionModelForRender(renderState2, model2, cameraState);
+            model.handleAnimations(createAnimationState(renderState2));
+        });
 
         renderTasks.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack2 = new PoseStack();
@@ -239,35 +293,30 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
                 renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, packedLight, packedOverlay, renderColor);
             }
         });
-	}
+    }
 
-	/**
-	 * Calls back to the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer for their {@link GeoRenderLayer#preRender pre-render} actions.
-	 */
-	default void preApplyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-									  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-		final PerBoneRenderTasks.ForRenderer<R> perBoneTasks = getPerBoneTasks(renderState);
-
-		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
-			renderLayer.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
-			renderLayer.addPerBoneRender(renderState, model, didRenderModel, perBoneTasks::addTask);
-		}
-	}
-
-	/**
-	 * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
-	 */
-	default void applyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-								   int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
+    /**
+     * Render the various {@link GeoRenderLayer RenderLayers} that have been registered to this renderer
+     */
+    default void applyRenderLayers(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+                                   int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
         final PerBoneRenderTasks.ForRenderer<R> perBoneTasks = getPerBoneTasks(renderState);
 
         if (!perBoneTasks.isEmpty())
             submitPerBoneRenderTasks(renderState, poseStack, perBoneTasks, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
 
-		for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
-			renderLayer.submitRenderTask(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
-		}
-	}
+        for (GeoRenderLayer<T, O, R> renderLayer : getRenderLayers()) {
+            renderLayer.submitRenderTask(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, didRenderModel);
+        }
+    }
+
+	/**
+	 * Called after all other render pass work has taken place, including reverting the {@link PoseStack}'s state
+     * <p>
+     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #submitRenderTasks submission}
+	 */
+	default void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+							 int packedLight, int packedOverlay, int renderColor) {}
 
     /**
      * Submit the registered {@link PerBoneRender} tasks that have been submitted for this render pass
@@ -296,168 +345,10 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
     }
 
 	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-	 * <p>
-	 * {@link PoseStack} translations made here are kept until the end of the render process
-	 */
-	default void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-						   int packedLight, int packedOverlay, int renderColor) {}
-
-	/**
-	 * Called after rendering the model to buffer. Post-render modifications should be performed here
-	 * <p>
-	 * {@link PoseStack} transformations will be unused and lost once this method ends
-	 */
-	default void postRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-							int packedLight, int packedOverlay, int renderColor) {}
-
-	/**
-	 * Called after all other rendering work has taken place, including reverting the {@link PoseStack}'s state
-	 */
-	default void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-							 int packedLight, int packedOverlay, int renderColor) {}
-
-	/**
-	 * Renders the provided {@link GeoBone} and its associated child bones
-     * <p>
-     * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
-     * No modifications to the renderer can be made here, this is purely for rendering.
-	 */
-	default void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
-                            int packedLight, int packedOverlay, int renderColor) {
-		poseStack.pushPose();
-		RenderUtil.prepMatrixForBone(poseStack, bone);
-		renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
-		renderChildBones(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
-		poseStack.popPose();
-	}
-
-	/**
-	 * Renders the {@link GeoCube GeoCubes} associated with a given {@link GeoBone}
-     * <p>
-     * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
-     * No modifications to the renderer can be made here, this is purely for rendering.
-	 */
-	default void renderCubesOfBone(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
-		if (bone.isHidden())
-			return;
-
-		for (GeoCube cube : bone.getCubes()) {
-			poseStack.pushPose();
-			renderCube(renderState, cube, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
-			poseStack.popPose();
-		}
-	}
-
-	/**
-	 * Render the child bones of a given {@link GeoBone}
-	 * <p>
-	 * Note that this does not render the bone itself. That should be done through {@link GeoRenderer#renderCubesOfBone} separately
-     * <p>
-     * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
-     * No modifications to the renderer can be made here, this is purely for rendering.
-	 */
-	default void renderChildBones(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState,
-                                  int packedLight, int packedColor, int renderColor) {
-		if (bone.isHidingChildren())
-			return;
-
-		for (GeoBone childBone : bone.getChildBones()) {
-			renderBone(renderState, poseStack, childBone, buffer, cameraState, packedLight, packedColor, renderColor);
-		}
-	}
-
-	/**
-	 * Renders an individual {@link GeoCube}
-	 * <p>
-	 * This tends to be called recursively from something like {@link GeoRenderer#renderCubesOfBone}
-     * <p>
-     * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
-     * No modifications to the renderer can be made here, this is purely for rendering.
-	 */
-	default void renderCube(R renderState, GeoCube cube, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {
-		RenderUtil.translateToPivotPoint(poseStack, cube);
-		RenderUtil.rotateMatrixAroundCube(poseStack, cube);
-		RenderUtil.translateAwayFromPivotPoint(poseStack, cube);
-
-		Matrix3f normalisedPoseState = poseStack.last().normal();
-		Matrix4f poseState = new Matrix4f(poseStack.last().pose());
-
-		for (GeoQuad quad : cube.quads()) {
-			if (quad == null)
-				continue;
-
-			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
-			
-			RenderUtil.fixInvertedFlatCube(cube, normal);
-			createVerticesOfQuad(renderState, quad, poseState, normal, buffer, packedOverlay, packedLight, renderColor);
-		}
-	}
-
-	/**
-	 * Applies the {@link GeoQuad Quad's} {@link GeoVertex vertices} to the given {@link VertexConsumer buffer} for rendering
-     * <p>
-     * <b><u>NOTE:</u></b> Like all render operations, this is called exclusively in the render pipeline process.<br>
-     * No modifications to the renderer can be made here, this is purely for rendering.
-	 */
-	default void createVerticesOfQuad(R renderState, GeoQuad quad, Matrix4f poseState, Vector3f normal, VertexConsumer buffer,
-									  int packedOverlay, int packedLight, int renderColor) {
-		for (GeoVertex vertex : quad.vertices()) {
-			Vector3f position = vertex.position();			
-			Vector4f vector4f = poseState.transform(new Vector4f(position.x(), position.y(), position.z(), 1.0f));
-
-			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), renderColor, vertex.texU(),
-					vertex.texV(), packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
-		}
-	}
-
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * Override and call <code>super</code> with modified scale values as needed to further modify the scale of the model
-     */
-    default void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
-        if (widthScale != 1 || heightScale != 1)
-            poseStack.scale(widthScale, heightScale, widthScale);
-    }
-
-	/**
-	 * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
-     * If you need to do pre-scale translations, use {@link #preRender}
-	 */
-	default void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {}
-
-	/**
 	 * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling
 	 */
 	default AnimationState<T> createAnimationState(R renderState) {
 		return new AnimationState<>(renderState);
-	}
-
-	/**
-	 * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
-	 */
-	default void setBonesVisible(boolean visible, String... boneNames) {
-		GeoModel<T> model = getGeoModel();
-
-		for (String boneName : boneNames) {
-			model.getBone(boneName).ifPresent(bone -> bone.setHidden(!visible));
-		}
-	}
-
-	/**
-	 * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
-	 */
-	default void setBonesVisible(boolean visible, @Nullable GeoBone... bones) {
-		if (bones == null)
-			return;
-
-		for (GeoBone bone : bones) {
-			if (bone != null)
-				bone.setHidden(!visible);
-		}
 	}
 
 	/**
@@ -476,11 +367,6 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	 * @return Whether the renderer should proceed based on the cancellation state of the event
 	 */
 	boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
 	/**
 	 * Internal helper method to help with type-resolution of the {@link DataTickets#PER_BONE_TASKS} DataTicket

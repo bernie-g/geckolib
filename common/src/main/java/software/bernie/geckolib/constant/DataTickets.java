@@ -17,7 +17,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
-import software.bernie.geckolib.renderer.base.PerBoneRenderTasks;
+import software.bernie.geckolib.renderer.internal.PerBoneRenderTasks;
 
 import java.util.EnumMap;
 import java.util.Map;

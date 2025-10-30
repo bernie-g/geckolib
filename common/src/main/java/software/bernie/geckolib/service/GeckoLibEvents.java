@@ -36,11 +36,6 @@ public interface GeckoLibEvents {
      */
     <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> boolean fireBlockPreRender(
             GeoBlockRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.Block.Post} event
-     */
-    <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> void fireBlockPostRender(
-            GeoBlockRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderLayers} event
@@ -56,11 +51,6 @@ public interface GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Armor.Pre} event, returning true if the event was not cancelled
      */
     <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> boolean fireArmorPreRender(
-            GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.Armor.Post} event
-     */
-    <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireArmorPostRender(
             GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**
@@ -78,11 +68,6 @@ public interface GeckoLibEvents {
      */
     <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> boolean fireEntityPreRender(
             GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.Entity.Post} event
-     */
-    <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> void fireEntityPostRender(
-            GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**
      * Fire the {@link GeoRenderEvent.ReplacedEntity.CompileRenderLayers} event
@@ -98,11 +83,6 @@ public interface GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.ReplacedEntity.Pre} event, returning true if the event was not cancelled
      */
     <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> boolean fireReplacedEntityPreRender(
-            GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.ReplacedEntity.Post} event
-     */
-    <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> void fireReplacedEntityPostRender(
             GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**
@@ -120,11 +100,6 @@ public interface GeckoLibEvents {
      */
     <T extends Item & GeoAnimatable, R extends GeoRenderState> boolean fireItemPreRender(
             GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.Item.Post} event
-     */
-    <T extends Item & GeoAnimatable, R extends GeoRenderState> void fireItemPostRender(
-            GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 
     /**
      * Fire the {@link GeoRenderEvent.Object.CompileRenderLayers} event
@@ -140,10 +115,5 @@ public interface GeckoLibEvents {
      * Fire the {@link GeoRenderEvent.Object.Pre} event, returning true if the event was not cancelled
      */
     <T extends GeoAnimatable, E, R extends GeoRenderState> boolean fireObjectPreRender(
-            GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
-    /**
-     * Fire the {@link GeoRenderEvent.Object.Post} event
-     */
-    <T extends GeoAnimatable, E, R extends GeoRenderState> void fireObjectPostRender(
             GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState);
 }

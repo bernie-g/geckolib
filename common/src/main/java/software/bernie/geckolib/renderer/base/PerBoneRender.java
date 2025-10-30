@@ -7,7 +7,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 /**
- * A functional interface for performing a render operation at the {@link PoseStack.Pose pose} of a bone.
+ * A functional interface for submitting a render operation at the {@link PoseStack.Pose pose} of a bone.
  * <p>
  * Typically you would submit an instance of this to {@link GeoRenderLayer#addPerBoneRender}
  */

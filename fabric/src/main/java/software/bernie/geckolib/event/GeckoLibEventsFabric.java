@@ -15,27 +15,21 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.event.armor.CompileArmorRenderLayersEvent;
 import software.bernie.geckolib.event.armor.CompileArmorRenderStateEvent;
-import software.bernie.geckolib.event.armor.GeoArmorPostRenderEvent;
 import software.bernie.geckolib.event.armor.GeoArmorPreRenderEvent;
 import software.bernie.geckolib.event.block.CompileBlockRenderLayersEvent;
 import software.bernie.geckolib.event.block.CompileBlockRenderStateEvent;
-import software.bernie.geckolib.event.block.GeoBlockPostRenderEvent;
 import software.bernie.geckolib.event.block.GeoBlockPreRenderEvent;
 import software.bernie.geckolib.event.entity.CompileEntityRenderLayersEvent;
 import software.bernie.geckolib.event.entity.CompileEntityRenderStateEvent;
-import software.bernie.geckolib.event.entity.GeoEntityPostRenderEvent;
 import software.bernie.geckolib.event.entity.GeoEntityPreRenderEvent;
 import software.bernie.geckolib.event.item.CompileItemRenderLayersEvent;
 import software.bernie.geckolib.event.item.CompileItemRenderStateEvent;
-import software.bernie.geckolib.event.item.GeoItemPostRenderEvent;
 import software.bernie.geckolib.event.item.GeoItemPreRenderEvent;
 import software.bernie.geckolib.event.object.CompileObjectRenderLayersEvent;
 import software.bernie.geckolib.event.object.CompileObjectRenderStateEvent;
-import software.bernie.geckolib.event.object.GeoObjectPostRenderEvent;
 import software.bernie.geckolib.event.object.GeoObjectPreRenderEvent;
 import software.bernie.geckolib.event.replacedentity.CompileReplacedEntityRenderLayersEvent;
 import software.bernie.geckolib.event.replacedentity.CompileReplacedEntityRenderStateEvent;
-import software.bernie.geckolib.event.replacedentity.GeoReplacedEntityPostRenderEvent;
 import software.bernie.geckolib.event.replacedentity.GeoReplacedEntityPreRenderEvent;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -73,15 +67,6 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Block.Post} event
-     */
-    @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> void fireBlockPostRender(
-            GeoBlockRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoBlockPostRenderEvent.EVENT.invoker().handle(new GeoBlockPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderLayers} event
      */
     @Override
@@ -109,15 +94,6 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Armor.Post} event
-     */
-    @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireArmorPostRender(
-            GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoArmorPostRenderEvent.EVENT.invoker().handle(new GeoArmorPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Entity.CompileRenderLayers} event
      */
     @Override
@@ -141,15 +117,6 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> boolean fireEntityPreRender(
             GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         return GeoEntityPreRenderEvent.EVENT.invoker().handle(new GeoEntityPreRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
-     * Fire the {@link GeoRenderEvent.Entity.Post} event
-     */
-    @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> void fireEntityPostRender(
-            GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoEntityPostRenderEvent.EVENT.invoker().handle(new GeoEntityPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
     }
 
     /**
@@ -180,15 +147,6 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.ReplacedEntity.Post} event
-     */
-    @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> void fireReplacedEntityPostRender(
-            GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoReplacedEntityPostRenderEvent.EVENT.invoker().handle(new GeoReplacedEntityPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Item.CompileRenderLayers} event
      */
     @Override
@@ -216,15 +174,6 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Item.Post} event
-     */
-    @Override
-    public <T extends Item & GeoAnimatable, R extends GeoRenderState> void fireItemPostRender(
-            GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoItemPostRenderEvent.EVENT.invoker().handle(new GeoItemPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Object.CompileRenderLayers} event
      */
     @Override
@@ -249,14 +198,5 @@ public class GeckoLibEventsFabric implements GeckoLibEvents {
     public <T extends GeoAnimatable, E, R extends GeoRenderState> boolean fireObjectPreRender(
             GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         return GeoObjectPreRenderEvent.EVENT.invoker().handle(new GeoObjectPreRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
-     * Fire the {@link GeoRenderEvent.Object.Post} event
-     */
-    @Override
-    public <T extends GeoAnimatable, E, R extends GeoRenderState> void fireObjectPostRender(
-            GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        GeoObjectPostRenderEvent.EVENT.invoker().handle(new GeoObjectPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
     }
 }

@@ -3,8 +3,8 @@ package software.bernie.geckolib.event;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
@@ -16,27 +16,21 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.event.armor.CompileArmorRenderLayersEvent;
 import software.bernie.geckolib.event.armor.CompileArmorRenderStateEvent;
-import software.bernie.geckolib.event.armor.GeoArmorPostRenderEvent;
 import software.bernie.geckolib.event.armor.GeoArmorPreRenderEvent;
 import software.bernie.geckolib.event.block.CompileBlockRenderLayersEvent;
 import software.bernie.geckolib.event.block.CompileBlockRenderStateEvent;
-import software.bernie.geckolib.event.block.GeoBlockPostRenderEvent;
 import software.bernie.geckolib.event.block.GeoBlockPreRenderEvent;
 import software.bernie.geckolib.event.entity.CompileEntityRenderLayersEvent;
 import software.bernie.geckolib.event.entity.CompileEntityRenderStateEvent;
-import software.bernie.geckolib.event.entity.GeoEntityPostRenderEvent;
 import software.bernie.geckolib.event.entity.GeoEntityPreRenderEvent;
 import software.bernie.geckolib.event.item.CompileItemRenderLayersEvent;
 import software.bernie.geckolib.event.item.CompileItemRenderStateEvent;
-import software.bernie.geckolib.event.item.GeoItemPostRenderEvent;
 import software.bernie.geckolib.event.item.GeoItemPreRenderEvent;
 import software.bernie.geckolib.event.object.CompileObjectRenderLayersEvent;
 import software.bernie.geckolib.event.object.CompileObjectRenderStateEvent;
-import software.bernie.geckolib.event.object.GeoObjectPostRenderEvent;
 import software.bernie.geckolib.event.object.GeoObjectPreRenderEvent;
 import software.bernie.geckolib.event.replacedentity.CompileReplacedEntityRenderLayersEvent;
 import software.bernie.geckolib.event.replacedentity.CompileReplacedEntityRenderStateEvent;
-import software.bernie.geckolib.event.replacedentity.GeoReplacedEntityPostRenderEvent;
 import software.bernie.geckolib.event.replacedentity.GeoReplacedEntityPreRenderEvent;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -74,15 +68,6 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Block.Post} event
-     */
-    @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> void fireBlockPostRender(
-            GeoBlockRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoBlockPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Armor.CompileRenderLayers} event
      */
     @Override
@@ -110,15 +95,6 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Armor.Post} event
-     */
-    @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> void fireArmorPostRender(
-            GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoArmorPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Entity.CompileRenderLayers} event
      */
     @Override
@@ -142,15 +118,6 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> boolean fireEntityPreRender(
             GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         return !NeoForge.EVENT_BUS.post(new GeoEntityPreRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState)).isCanceled();
-    }
-
-    /**
-     * Fire the {@link GeoRenderEvent.Entity.Post} event
-     */
-    @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> void fireEntityPostRender(
-            GeoEntityRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoEntityPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
     }
 
     /**
@@ -181,15 +148,6 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.ReplacedEntity.Post} event
-     */
-    @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> void fireReplacedEntityPostRender(
-            GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoReplacedEntityPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Item.CompileRenderLayers} event
      */
     @Override
@@ -217,15 +175,6 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     }
 
     /**
-     * Fire the {@link GeoRenderEvent.Item.Post} event
-     */
-    @Override
-    public <T extends Item & GeoAnimatable, R extends GeoRenderState> void fireItemPostRender(
-            GeoItemRenderer<T> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoItemPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
-    }
-
-    /**
      * Fire the {@link GeoRenderEvent.Object.CompileRenderLayers} event
      */
     @Override
@@ -250,14 +199,5 @@ public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     public <T extends GeoAnimatable, E, R extends GeoRenderState> boolean fireObjectPreRender(
             GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         return !NeoForge.EVENT_BUS.post(new GeoObjectPreRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState)).isCanceled();
-    }
-
-    /**
-     * Fire the {@link GeoRenderEvent.Object.Post} event
-     */
-    @Override
-    public <T extends GeoAnimatable, E, R extends GeoRenderState> void fireObjectPostRender(
-            GeoObjectRenderer<T, E, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        NeoForge.EVENT_BUS.post(new GeoObjectPostRenderEvent<>(renderer, renderState, poseStack, model, renderTasks, cameraState));
     }
 }

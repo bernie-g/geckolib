@@ -136,11 +136,13 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 		return renderState;
 	}
 
-	/**
-	 * Called before rendering the model to buffer. Allows for render modifications and preparatory work such as scaling and translating
-	 * <p>
-	 * {@link PoseStack} translations made here are kept until the end of the render process
-	 */
+    /**
+     * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
+     * <p>
+     * Use this method to handle any preparation or pre-work required for the render submission.
+     * <p>
+     * Manipulation of the model's bones is not permitted here
+     */
 	@Override
 	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 						  int packedLight, int packedOverlay, int renderColor) {
@@ -267,14 +269,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	@Override
 	public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
 		return GeckoLibServices.Client.EVENTS.fireBlockPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	@Override
-	public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		GeckoLibServices.Client.EVENTS.fireBlockPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 
     /**

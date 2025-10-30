@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.base;
+package software.bernie.geckolib.renderer.internal;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
@@ -7,6 +7,9 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.Iterator;
@@ -22,8 +25,8 @@ import java.util.Map;
  * This container separates render task lists by renderer, then groups them by bone for more efficient handling,
  * and offers convenience methods for ease of use.
  */
+@ApiStatus.Internal
 public record PerBoneRenderTasks(Map<GeoRenderer<?, ?, ?>, ForRenderer<?>> map) {
-    @ApiStatus.Internal
     public static PerBoneRenderTasks create() {
         return new PerBoneRenderTasks(new Reference2ObjectOpenHashMap<>(0));
     }

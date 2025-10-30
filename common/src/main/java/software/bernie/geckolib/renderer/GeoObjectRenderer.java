@@ -15,7 +15,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
+import software.bernie.geckolib.renderer.internal.RenderModelPositioner;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.RenderUtil;
@@ -178,13 +178,5 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
 	@Override
 	public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
 		return GeckoLibServices.Client.EVENTS.fireObjectPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
-
-	/**
-	 * Create and fire the relevant {@code Post-Render} event hook for this renderer
-	 */
-	@Override
-	public void firePostRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		GeckoLibServices.Client.EVENTS.fireObjectPostRender(this, renderState, poseStack, model, renderTasks, cameraState);
 	}
 }
