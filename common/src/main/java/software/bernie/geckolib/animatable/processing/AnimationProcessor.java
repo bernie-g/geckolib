@@ -39,7 +39,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	}
 
 	/**
-	 * Perform the necessary prepations for the upcoming render pass
+	 * Perform the necessary preparations for the upcoming render pass
 	 *
 	 * @param animatable The animatable relevant to the upcoming render pass
 	 * @param animatableManager The manager instance for the animatable for the upcoming render pass
