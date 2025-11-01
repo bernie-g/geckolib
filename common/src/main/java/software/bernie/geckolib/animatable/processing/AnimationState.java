@@ -21,7 +21,7 @@ public record AnimationState<T extends GeoAnimatable>(GeoRenderState renderState
 	public AnimationState(GeoRenderState renderState) {
 		this(renderState,
 			 renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER),
-			 renderState.getGeckolibData(DataTickets.PARTIAL_TICK),
+			 renderState.getPartialTick(),
 			 renderState.getOrDefaultGeckolibData(DataTickets.QUERY_VALUES, new Reference2DoubleOpenHashMap<>(0)),
 			 null);
 	}

@@ -48,7 +48,7 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 	 * @param model The GeoModel tasked for the upcoming render pass
 	 */
 	public void prepareForRenderPass(T animatable, AnimatableManager<T> animatableManager, GeoRenderState renderState, double lerpedAnimationTick, GeoModel<T> model) {
-		MolangQueries.Actor<T> actor = new MolangQueries.Actor<>(animatable, renderState, new MutableObject<>(), lerpedAnimationTick, renderState.getGeckolibData(DataTickets.PARTIAL_TICK), ClientUtil.getLevel(), ClientUtil.getClientPlayer(), ClientUtil.getCameraPos());
+		MolangQueries.Actor<T> actor = new MolangQueries.Actor<>(animatable, renderState, new MutableObject<>(), lerpedAnimationTick, renderState.getPartialTick(), ClientUtil.getLevel(), ClientUtil.getClientPlayer(), ClientUtil.getCameraPos());
 		Reference2DoubleMap<Variable> variables = new Reference2DoubleOpenHashMap<>();
 
 		renderState.addGeckolibData(DataTickets.QUERY_VALUES, variables);
