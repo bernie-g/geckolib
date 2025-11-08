@@ -347,13 +347,13 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        submitRenderTasks(renderState, poseStack, renderTasks, cameraState, null);
+        performRenderPass(renderState, poseStack, renderTasks, cameraState, null);
     }
 
     /**
      * Called after all other render pass work has taken place, including reverting the {@link PoseStack}'s state
      * <p>
-     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #submitRenderTasks submission}
+     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #performRenderPass submission}
      */
     @Override
     public void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,

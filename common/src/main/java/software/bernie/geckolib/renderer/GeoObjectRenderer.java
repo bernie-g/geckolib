@@ -127,7 +127,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
 
 		renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
 
-		submitRenderTasks(renderState, poseStack, renderTasks, cameraState, modelPositioner);
+		performRenderPass(renderState, poseStack, renderTasks, cameraState, modelPositioner);
 	}
 
 	/**

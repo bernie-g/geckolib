@@ -230,9 +230,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * If the provided {@link RenderType} is null, no submission will be made
      */
     @Override
-    public void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
-                                CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
-                                @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
+    public void submitRenderTasks(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
+                                  CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
+                                  @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
         if (renderType == null)
             return;
 
@@ -405,7 +405,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
             return false;
 
         R perSlotRenderState = perSlotData.get(slot);
-        stackForRender.renderer.submitRenderTasks(perSlotRenderState, poseStack, renderTasks, Minecraft.getInstance().levelRenderer.levelRenderState.cameraRenderState, null);
+        stackForRender.renderer.performRenderPass(perSlotRenderState, poseStack, renderTasks, Minecraft.getInstance().levelRenderer.levelRenderState.cameraRenderState, null);
 
         return true;
     }

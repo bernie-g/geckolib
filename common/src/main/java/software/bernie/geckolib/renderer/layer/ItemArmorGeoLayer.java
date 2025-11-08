@@ -218,7 +218,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
                     GeoRenderState humanoidRenderState = getOrCreateHumanoidRenderState(slotRenderState, false);
                     RenderModelPositioner<R> modelPositioner = positionModelPartFromBone(poseStack, bone, modelPartFactory.apply(slotRenderState.getGeckolibData(DataTickets.HUMANOID_MODEL)));
 
-                    geoArmorRenderer.submitRenderTasks(humanoidRenderState, poseStack, renderTasks, cameraState, modelPositioner);
+                    geoArmorRenderer.performRenderPass(humanoidRenderState, poseStack, renderTasks, cameraState, modelPositioner);
                     poseStack.popPose();
                 }
             }

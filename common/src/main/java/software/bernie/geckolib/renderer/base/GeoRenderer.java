@@ -160,6 +160,13 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
      */
     R createRenderState(T animatable, O relatedObject);
 
+    /**
+     * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling
+     */
+    default AnimationState<T> createAnimationState(R renderState) {
+        return new AnimationState<>(renderState);
+    }
+
 	/**
 	 * Create the {@link GeoRenderState} for the upcoming render pass
 	 * <p>
@@ -181,13 +188,24 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 		return renderState;
 	}
 
+    /**
+     * Initial access point for performing a single render pass; it all begins here.<br>
+     * The {@link GeoRenderState} should have already been filled by this stage.
+     * <p>
+     * All GeckoLib renderers should immediately defer their respective default {@code submit} calls to this, for consistent handling
+     * @see #performRenderPass(R, PoseStack, SubmitNodeCollector, CameraRenderState, RenderModelPositioner)
+     */
+    default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
+        performRenderPass(renderState, poseStack, renderTasks, cameraState, null);
+    }
+
 	/**
-	 * Initial access point for submitting render tasks; it all begins here.<br>
+	 * Initial access point for performing a single render pass; it all begins here.<br>
 	 * The {@link GeoRenderState} should have already been filled by this stage.
 	 * <p>
 	 * All GeckoLib renderers should immediately defer their respective default {@code submit} calls to this, for consistent handling
 	 */
-	default void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
+	default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                                    @Nullable RenderModelPositioner<R> modelPositioner) {
 		poseStack.pushPose();
 
@@ -206,7 +224,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
             adjustRenderPose(renderState, poseStack, model, cameraState);
 			preApplyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
             renderState.addGeckolibData(DataTickets.MODEL_RENDER_POSE, new Matrix4f(poseStack.last().pose()));
-			buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, geoModel, renderType, modelPositioner, packedLight, packedOverlay, renderColor);
+			submitRenderTasks(renderState, poseStack, model, renderTasks, cameraState, geoModel, renderType, modelPositioner, packedLight, packedOverlay, renderColor);
 			applyRenderLayers(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor, renderType != null);
 		}
 
@@ -272,9 +290,9 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
      * <p>
      * If the provided {@link RenderType} is null, no submission will be made
      */
-    default void buildRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
-                                 CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
-                                 @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
+    default void submitRenderTasks(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
+                                   CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
+                                   @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
         if (renderType == null)
             return;
 
@@ -313,7 +331,7 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 	/**
 	 * Called after all other render pass work has taken place, including reverting the {@link PoseStack}'s state
      * <p>
-     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #submitRenderTasks submission}
+     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #performRenderPass submission}
 	 */
 	default void renderFinal(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
 							 int packedLight, int packedOverlay, int renderColor) {}
@@ -343,13 +361,6 @@ public interface GeoRenderer<T extends GeoAnimatable, O, R extends GeoRenderStat
 
         poseStack.popPose();
     }
-
-	/**
-	 * Construct the {@link AnimationState} for the given render pass, ready to pass onto the {@link GeoModel} for handling
-	 */
-	default AnimationState<T> createAnimationState(R renderState) {
-		return new AnimationState<>(renderState);
-	}
 
 	/**
 	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer

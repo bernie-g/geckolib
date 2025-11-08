@@ -211,7 +211,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
         renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);
-        submitRenderTasks(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState, null);
+        performRenderPass(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState, null);
 
 
 

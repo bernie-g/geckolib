@@ -76,6 +76,6 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
         RenderType renderType = getRenderType(renderState);
 
         if (renderType != null)
-            this.renderer.buildRenderTask(renderState, poseStack, bakedModel, renderTasks.order(1), cameraState, this.renderer.getGeoModel(), renderType, null, packedLight, packedOverlay, renderColor);
+            this.renderer.submitRenderTasks(renderState, poseStack, bakedModel, renderTasks.order(1), cameraState, this.renderer.getGeoModel(), renderType, null, packedLight, packedOverlay, renderColor);
     }
 }
