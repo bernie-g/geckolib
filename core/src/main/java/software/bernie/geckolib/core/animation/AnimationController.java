@@ -9,6 +9,7 @@ import com.eliotlash.mclib.math.Constant;
 import com.eliotlash.mclib.math.IValue;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.core.animatable.model.CoreGeoModel;
@@ -622,7 +623,8 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (SoundKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().sounds()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.soundKeyframeHandler == null) {
-					System.out.println("Sound Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLib.LOGGER.error("Particle Keyframe found for {} -> {}, but no keyframe handler registered", this.animatable.getClass().getSimpleName(), getName());
+					
 
 					break;
 				}
@@ -634,8 +636,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (ParticleKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().particles()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.particleKeyframeHandler == null) {
-					System.out.println("Particle Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
-
+					GeckoLib.LOGGER.error("Particle Keyframe found for {} -> {}, but no keyframe handler registered", this.animatable.getClass().getSimpleName(), getName());
 					break;
 				}
 
@@ -646,7 +647,7 @@ public class AnimationController<T extends GeoAnimatable> {
 		for (CustomInstructionKeyframeData keyframeData : this.currentAnimation.animation().keyFrames().customInstructions()) {
 			if (adjustedTick >= keyframeData.getStartTick() && this.executedKeyFrames.add(keyframeData)) {
 				if (this.customKeyframeHandler == null) {
-					System.out.println("Custom Instruction Keyframe found for " + this.animatable.getClass().getSimpleName() + " -> " + getName() + ", but no keyframe handler registered");
+					GeckoLib.LOGGER.error("Particle Keyframe found for {} -> {}, but no keyframe handler registered", this.animatable.getClass().getSimpleName(), getName());
 
 					break;
 				}
