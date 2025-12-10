@@ -24,6 +24,7 @@ neoForge {
     version = neoforgeVersion
 
     accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
+    validateAccessTransformers = true
     parchment.minecraftVersion.set(parchmentMcVersion)
     parchment.mappingsVersion.set(parchmentVersion)
 
