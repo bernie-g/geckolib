@@ -1,7 +1,7 @@
 ## GeckoLib v5.3-alpha-4
 
 ## Alpha 4 Notes:
-* Removed `GeoRenderer#postRender` - it no longer has a use
+
 
 ## Additions
 * Added "Stateless" animatables. These are an alternate way of handling animations for GeckoLib animatables.
