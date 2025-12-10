@@ -83,6 +83,10 @@ tasks.withType<JavaCompile>().configureEach {
     source(project(":common").sourceSets.getByName("main").allSource)
 }
 
+tasks.withType<Test>().configureEach {
+    failOnNoDiscoveredTests = false
+}
+
 tasks.named<Jar>("sourcesJar").configure {
     from(project(":common").sourceSets.getByName("main").allSource)
 }
