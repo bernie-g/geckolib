@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -28,8 +28,8 @@ public final class SinFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return Math.sin(this.value.get(animationState) * Mth.DEG_TO_RAD);
+    public double compute(ControllerState controllerState) {
+        return Math.sin(this.value.get(controllerState) * Mth.DEG_TO_RAD);
     }
 
     @Override

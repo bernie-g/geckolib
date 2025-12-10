@@ -1,6 +1,5 @@
 package software.bernie.geckolib.constant;
 
-import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -11,13 +10,12 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
-import software.bernie.geckolib.renderer.internal.PerBoneRenderTasks;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -34,7 +32,6 @@ public final class DataTickets {
 	// Builtin tickets
 	// These tickets are used by GeckoLib by default, usually added in by the GeoRenderer for use in animations
 	public static final DataTicket<Double> TICK = DataTicket.create("tick", Double.class);
-	public static final DataTicket<Double> ANIMATION_TICKS = DataTicket.create("animation_ticks", Double.class);
 	public static final DataTicket<Class> ANIMATABLE_CLASS = DataTicket.create("animatable_class", Class.class);
 	public static final DataTicket<Float> PARTIAL_TICK = DataTicket.create("partial_tick", Float.class);
 	public static final DataTicket<Integer> RENDER_COLOR = DataTicket.create("render_color", Integer.class);
@@ -58,7 +55,6 @@ public final class DataTickets {
 	public static final DataTicket<Boolean> HAS_GLINT = DataTicket.create("has_glint", Boolean.class);
 	public static final DataTicket<Item> ITEM = DataTicket.create("item", Item.class);
 	public static final DataTicket<AnimatableManager> ANIMATABLE_MANAGER = DataTicket.create("animatable_manager", AnimatableManager.class);
-	public static final DataTicket<Double> BONE_RESET_TIME = DataTicket.create("bone_reset_time", Double.class);
 	public static final DataTicket<Boolean> SWINGING_ARM = DataTicket.create("swinging_arm", Boolean.class);
 	public static final DataTicket<Boolean> SPRINTING = DataTicket.create("sprinting", Boolean.class);
 	public static final DataTicket<Boolean> IS_DEAD_OR_DYING = DataTicket.create("is_dead_or_dying", Boolean.class);
@@ -78,13 +74,7 @@ public final class DataTickets {
 	@ApiStatus.Internal
 	public static final DataTicket<EnumMap> PER_SLOT_RENDER_DATA = DataTicket.create("per_slot_render_data", EnumMap.class);
 	@ApiStatus.Internal
-	public static final DataTicket<Reference2DoubleMap> QUERY_VALUES = DataTicket.create("query_values", Reference2DoubleMap.class);
-	@ApiStatus.Internal
-	public static final DataTicket<PerBoneRenderTasks> PER_BONE_TASKS = DataTicket.create("per_bone_render_tasks", PerBoneRenderTasks.class);
-    @ApiStatus.Internal
-	public static final DataTicket<Matrix4f> OBJECT_RENDER_POSE = DataTicket.create("object_render_pose", Matrix4f.class);
-    @ApiStatus.Internal
-	public static final DataTicket<Matrix4f> MODEL_RENDER_POSE = DataTicket.create("object_render_pose", Matrix4f.class);
+	public static final DataTicket<ControllerState[]> ANIMATION_CONTROLLER_STATES = DataTicket.create("animation_controller_states", ControllerState[].class);
 
 	// Builtin serializable tickets
 	// These are not used anywhere by default, but are provided as examples and for ease of use
@@ -96,8 +86,7 @@ public final class DataTickets {
 	public static final SerializableDataTicket<Boolean> CLOSED = SerializableDataTicket.ofBoolean(GeckoLibConstants.id("closed"));
 	public static final SerializableDataTicket<Direction> DIRECTION = SerializableDataTicket.ofEnum(GeckoLibConstants.id("direction"), Direction.class);
 
-	@Nullable
-	public static SerializableDataTicket<?> byName(String id) {
+	public static @Nullable SerializableDataTicket<?> byName(String id) {
 		return SERIALIZABLE_TICKETS.getOrDefault(id, null);
 	}
 

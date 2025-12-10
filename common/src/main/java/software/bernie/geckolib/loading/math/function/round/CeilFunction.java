@@ -1,8 +1,8 @@
 package software.bernie.geckolib.loading.math.function.round;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
-import software.bernie.geckolib.loading.math.function.MathFunction;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.loading.math.function.MathFunction;
 
 /**
  * {@link MathFunction} value supplier
@@ -27,8 +27,8 @@ public final class CeilFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return Math.ceil(this.value.get(animationState));
+    public double compute(ControllerState controllerState) {
+        return Math.ceil(this.value.get(controllerState));
     }
 
     @Override

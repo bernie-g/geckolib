@@ -10,16 +10,17 @@ import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 /**
  * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}
  * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRender}
+ * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
  * <p>
  * This event is {@link Cancellable cancellable}.<br>
  * If the event is cancelled, the armor piece will not be rendered.
@@ -30,29 +31,34 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see Pre
  */
 public record GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
-        (GeoArmorRenderer<T, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState)
+        (RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks)
         implements GeoRenderEvent.Armor.Pre<T, R>, RecordEvent, Cancellable {
     public static final CancellableEventBus<GeoArmorPreRenderEvent> BUS = CancellableEventBus.create(GeoArmorPreRenderEvent.class);
 
     @Override
+    public RenderPassInfo<R> getRenderPassInfo() {
+        return this.renderPassInfo;
+    }
+
+    @Override
     public GeoArmorRenderer<T, R> getRenderer() {
-        return this.renderer;
+        return (GeoArmorRenderer)this.renderPassInfo.renderer();
     }
 
     @ApiStatus.Internal
     @Override
     public R getRenderState() {
-        return this.renderState;
+        return this.renderPassInfo.renderState();
     }
 
     @Override
     public PoseStack getPoseStack() {
-        return this.poseStack;
+        return this.renderPassInfo.poseStack();
     }
 
     @Override
     public BakedGeoModel getModel() {
-        return this.model;
+        return this.renderPassInfo.model();
     }
 
     @Override
@@ -62,6 +68,6 @@ public record GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends Humanoi
 
     @Override
     public CameraRenderState getCameraState() {
-        return this.cameraState;
+        return this.renderPassInfo.cameraState();
     }
 }

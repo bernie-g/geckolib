@@ -14,13 +14,14 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * SpecialModelRenderer instance to faciliate rendering GeckoLib items using the vanilla special renderer system
@@ -41,8 +42,8 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     }
 
     @Override
-    public void getExtents(Set<Vector3f> set) {
-        set.add(new Vector3f(0, 0, 0));
+    public void getExtents(Consumer<Vector3fc> consumer) {
+        consumer.accept(new Vector3f(0, 0, 0));
     }
 
     /**

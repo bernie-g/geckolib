@@ -4,6 +4,7 @@ import com.mojang.blaze3d.Blaze3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -36,7 +37,7 @@ public final class ClientUtil {
 	 * Get the current camera position
 	 */
 	public static Vec3 getCameraPos() {
-		return Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+		return Minecraft.getInstance().gameRenderer.getMainCamera().position();
 	}
 
 	/**
@@ -48,13 +49,23 @@ public final class ClientUtil {
 		return Minecraft.getInstance().options.getCameraType().isFirstPerson();
 	}
 
+	/**
+	 * Get the current phase of the moon on the client world
+	 */
+	public static MoonPhase getClientMoonPhase() {
+		return Minecraft.getInstance().levelRenderer.levelRenderState.skyRenderState.moonPhase;
+	}
+
     /**
-     * Returns the current time (in ticks) that the {@link org.lwjgl.glfw.GLFW GLFW} instance has been running
-     * <p>
-     * This is effectively a permanent timer that counts up since the game was launched.
+     * Get the game time for the client world, or a global game time if no world is loaded<br>
+     * Returned value is in ticks
      */
     public static double getCurrentTick() {
-        return Blaze3D.getTime() * 20d;
+        final Minecraft mc = Minecraft.getInstance();
+
+        return mc.level != null ?
+               mc.level.getGameTime() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) :
+               Blaze3D.getTime() * 20d;
     }
 
     @ApiStatus.Internal
@@ -66,4 +77,6 @@ public final class ClientUtil {
 
         return mc.levelRenderer.levelRenderState.entityRenderStates.size();
 	}
+
+    private ClientUtil() {}
 }

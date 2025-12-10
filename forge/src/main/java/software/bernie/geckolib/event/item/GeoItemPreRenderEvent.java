@@ -9,16 +9,17 @@ import net.minecraftforge.eventbus.api.event.RecordEvent;
 import net.minecraftforge.eventbus.api.event.characteristic.Cancellable;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 /**
  * Pre-render event for items being rendered by {@link GeoItemRenderer}
  * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRender}
+ * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
  * <p>
  * This event is {@link Cancellable cancellable}.<br>
  * If the event is cancelled, the entity will not be rendered.
@@ -29,29 +30,34 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see Pre
  */
 public record GeoItemPreRenderEvent<T extends Item & GeoAnimatable>
-        (GeoItemRenderer<T> renderer, GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState)
+        (RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector renderTasks)
         implements GeoRenderEvent.Item.Pre<T>, RecordEvent, Cancellable {
     public static final CancellableEventBus<GeoItemPreRenderEvent> BUS = CancellableEventBus.create(GeoItemPreRenderEvent.class);
 
     @Override
+    public RenderPassInfo<GeoRenderState> getRenderPassInfo() {
+        return this.renderPassInfo;
+    }
+
+    @Override
     public GeoItemRenderer<T> getRenderer() {
-        return this.renderer;
+        return (GeoItemRenderer)this.renderPassInfo.renderer();
     }
 
     @ApiStatus.Internal
     @Override
     public GeoRenderState getRenderState() {
-        return this.renderState;
+        return this.renderPassInfo.renderState();
     }
 
     @Override
     public PoseStack getPoseStack() {
-        return this.poseStack;
+        return this.renderPassInfo.poseStack();
     }
 
     @Override
     public BakedGeoModel getModel() {
-        return this.model;
+        return this.renderPassInfo.model();
     }
 
     @Override
@@ -61,6 +67,6 @@ public record GeoItemPreRenderEvent<T extends Item & GeoAnimatable>
 
     @Override
     public CameraRenderState getCameraState() {
-        return this.cameraState;
+        return this.renderPassInfo.cameraState();
     }
 }

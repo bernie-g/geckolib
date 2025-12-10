@@ -14,22 +14,18 @@ import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceC
  * Generally only used for {@link net.minecraft.world.item.Item Items}, but any {@link SingletonAnimatableInstanceCache singleton} will likely use this.
  */
 public final class AnimatableIdCache extends SavedData {
-	public static final SavedDataType<AnimatableIdCache> TYPE = new SavedDataType<>(GeckoLibConstants.MODID + "_id_cache", AnimatableIdCache::new, AnimatableIdCache::codec, null);
-
-	private static Codec<AnimatableIdCache> codec(SavedData.Context context) {
-		return RecordCodecBuilder.create(builder -> builder.group(
-				RecordCodecBuilder.point(context.levelOrThrow()),
-				Codec.LONG.fieldOf("last_id").forGetter(cache -> cache.lastId)
-		).apply(builder, AnimatableIdCache::new));
-	}
+	private static final Codec<AnimatableIdCache> CODEC = RecordCodecBuilder.create(builder -> builder.group(
+			Codec.LONG.fieldOf("last_id").forGetter(cache -> cache.lastId)
+	).apply(builder, AnimatableIdCache::new));
+	public static final SavedDataType<AnimatableIdCache> TYPE = new SavedDataType<>(GeckoLibConstants.MODID + "_id_cache", AnimatableIdCache::new, CODEC, null);
 
 	private long lastId;
 
-	private AnimatableIdCache(SavedData.Context context) {
-		this(context.levelOrThrow(), 0);
+	private AnimatableIdCache() {
+		this(0);
 	}
 
-	private AnimatableIdCache(ServerLevel level, long lastId) {
+	private AnimatableIdCache(long lastId) {
 		this.lastId = lastId;
 	}
 

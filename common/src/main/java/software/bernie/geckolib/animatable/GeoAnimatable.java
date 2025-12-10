@@ -1,11 +1,9 @@
 package software.bernie.geckolib.animatable;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationProcessor;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.animation.AnimationController;
 
 /**
  * This is the root interface for all animatable objects in Geckolib
@@ -45,37 +43,11 @@ public interface GeoAnimatable {
 	AnimatableInstanceCache getAnimatableInstanceCache();
 
 	/**
-	 * Defines the speed in which the {@link AnimationProcessor}
-	 * should return {@link GeoBone GeoBones} that currently have no animations to their default position
-	 */
-	default double getBoneResetTime() {
-		return 5;
-	}
-
-	/**
-	 * Defines whether the animations for this animatable should continue playing in the background when the game is paused
-	 * <p>
-	 * By default, animation progress will be stalled while the game is paused.
-	 */
-	default boolean shouldPlayAnimsWhileGamePaused() {
-		return false;
-	}
-
-	/**
-	 * Returns the current age/tick of the animatable instance
-	 * <p>
-	 * By default, this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
-	 *
-	 * @param object An object related to this animatable relevant to tick calculation. Different subclasses will use this differently
-	 * @return The current tick/age of the animatable, for animation purposes
-	 */
-	double getTick(@Nullable Object object);
-
-	/**
 	 * Override the default handling for instantiating an AnimatableInstanceCache for this animatable
 	 * <p>
 	 * Don't override this unless you know what you're doing.
 	 */
+    @ApiStatus.OverrideOnly
 	default AnimatableInstanceCache animatableCacheOverride() {
 		return null;
 	}

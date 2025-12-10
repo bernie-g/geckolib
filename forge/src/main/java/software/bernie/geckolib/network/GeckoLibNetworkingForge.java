@@ -5,7 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -22,7 +22,7 @@ import software.bernie.geckolib.util.ClientUtil;
  * Forge service implementation for GeckoLib's networking functionalities
  */
 public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
-    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(GeckoLibConstants.MODID, "main")).networkProtocolVersion(1).optional().payloadChannel().play();
+    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, "main")).networkProtocolVersion(1).optional().payloadChannel().play();
     public static Channel<CustomPacketPayload> CHANNEL;
 
     public static void init() {

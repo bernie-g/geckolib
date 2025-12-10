@@ -2,10 +2,10 @@ package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
-import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 /**
@@ -30,12 +30,11 @@ public interface GeoEntity extends GeoAnimatable {
 	 * @return The synced data, or null if no data of that type has been synced
 	 */
 	@ApiStatus.NonExtendable
-	@Nullable
-	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
+	default <D> @Nullable D getAnimData(SerializableDataTicket<D> dataTicket) {
 		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getAnimatableData(dataTicket);
 	}
 
-	/**
+    /**
 	 * Saves an arbitrary syncable piece of data to this animatable's {@link AnimatableManager}
 	 * <p>
 	 * <b><u>DO NOT OVERRIDE</u></b>
@@ -98,7 +97,7 @@ public interface GeoEntity extends GeoAnimatable {
 	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
 	 */
 	@ApiStatus.NonExtendable
-	default void stopTriggeredAnim( @Nullable String controllerName, @Nullable String animName) {
+	default void stopTriggeredAnim(@Nullable String controllerName, @Nullable String animName) {
 		Entity entity = (Entity)this;
 
 		if (entity.level().isClientSide()) {
@@ -117,18 +116,5 @@ public interface GeoEntity extends GeoAnimatable {
 		else {
 			GeckoLibServices.NETWORK.stopTriggeredEntityAnim(entity, false, controllerName, animName);
 		}
-	}
-	
-	/**
-	 * Returns the current age/tick of the animatable instance
-	 * <p>
-	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
-	 *
-	 * @param entity The Entity representing this animatable
-	 * @return The current tick/age of the animatable, for animation purposes
-	 */
-	@Override
-	default double getTick(@Nullable Object entity) {
-		return ((Entity)this).tickCount;
 	}
 }

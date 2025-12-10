@@ -2,10 +2,10 @@ package software.bernie.geckolib.service;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayers;
+import net.minecraft.client.model.object.equipment.ElytraModel;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;

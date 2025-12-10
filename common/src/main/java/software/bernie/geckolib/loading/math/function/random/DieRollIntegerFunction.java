@@ -2,7 +2,7 @@ package software.bernie.geckolib.loading.math.function.random;
 
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -46,16 +46,16 @@ public final class DieRollIntegerFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        final int rolls = (int)(Math.floor(this.rolls.get(animationState)));
-        final int min = Mth.floor(this.min.get(animationState));
-        final int max = Mth.ceil(this.max.get(animationState));
+    public double compute(ControllerState controllerState) {
+        final int rolls = (int)(Math.floor(this.rolls.get(controllerState)));
+        final int min = Mth.floor(this.min.get(controllerState));
+        final int max = Mth.ceil(this.max.get(controllerState));
         int sum = 0;
         Random random;
 
         if (this.random != null) {
             random = this.random;
-            random.setSeed((long)this.seed.get(animationState));
+            random.setSeed((long)this.seed.get(controllerState));
         }
         else {
             random = ThreadLocalRandom.current();

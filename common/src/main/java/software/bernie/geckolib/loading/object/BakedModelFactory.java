@@ -5,7 +5,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.Direction;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.cache.object.*;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoQuad;
+import software.bernie.geckolib.cache.model.GeoVertex;
+import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
+import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.JsonUtil;
@@ -41,9 +46,9 @@ public interface BakedModelFactory {
 	 *
 	 * @param cube The raw {@code Cube} comprising the structure and properties of the cube
 	 * @param properties The loaded properties for the model
-	 * @param bone The bone this cube belongs to
+	 * @param boneInflation The inflation value assigned to the bone this cube belongs to
 	 */
-	GeoCube constructCube(Cube cube, ModelProperties properties, GeoBone bone);
+	GeoCube constructCube(Cube cube, ModelProperties properties, float boneInflation);
 
 	/**
 	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier
@@ -137,34 +142,36 @@ public interface BakedModelFactory {
 				bones.add(constructBone(boneStructure, geometryTree.properties(), null));
 			}
 
-			return new BakedGeoModel(bones, geometryTree.properties());
+			return new BakedGeoModel(bones.toArray(new GeoBone[0]), geometryTree.properties());
 		}
 
 		@Override
 		public GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, GeoBone parent) {
 			Bone bone = boneStructure.self();
-			GeoBone newBone = new GeoBone(parent, bone.name(), bone.mirror(), bone.inflate(), bone.neverRender(), bone.reset());
-			Vec3 rotation = JsonUtil.arrayToVec(bone.rotation());
-			Vec3 pivot = JsonUtil.arrayToVec(bone.pivot());
+            Vec3 pivot = JsonUtil.arrayToVec(bone.pivot());
+            Vec3 rotation = JsonUtil.arrayToVec(bone.rotation());
+            GeoBone[] childBones = new GeoBone[boneStructure.children().values().size()];
+            GeoCube[] cubes = new GeoCube[bone.cubes().length];
+            GeoBone newBone = new CuboidGeoBone(parent, bone.name(), childBones, cubes, (float)-pivot.x, (float)pivot.y, (float)pivot.z,
+                                                (float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y), (float)Math.toRadians(rotation.z));
 
-			newBone.updateRotation((float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y), (float)Math.toRadians(rotation.z));
-			newBone.updatePivot((float)-pivot.x, (float)pivot.y, (float)pivot.z);
+            for (int i = 0; i < bone.cubes().length; i++) {
+                cubes[i] = constructCube(bone.cubes()[i], properties, bone.inflate() == null ? 0f : bone.inflate().floatValue());
+            }
 
-			for (Cube cube : bone.cubes()) {
-				newBone.getCubes().add(constructCube(cube, properties, newBone));
-			}
+            int i = 0;
 
-			for (BoneStructure child : boneStructure.children().values()) {
-				newBone.getChildBones().add(constructBone(child, properties, newBone));
-			}
+            for (BoneStructure child : boneStructure.children().values()) {
+                childBones[i++] = constructBone(child, properties, newBone);
+            }
 
 			return newBone;
 		}
 
 		@Override
-		public GeoCube constructCube(Cube cube, ModelProperties properties, GeoBone bone) {
+		public GeoCube constructCube(Cube cube, ModelProperties properties, float boneInflation) {
 			boolean mirror = cube.mirror() == Boolean.TRUE;
-			double inflate = cube.inflate() != null ? cube.inflate() / 16f : (bone.getInflate() == null ? 0 : bone.getInflate() / 16f);
+			double inflate = cube.inflate() != null ? cube.inflate() / 16f : boneInflation / 16f;
 			Vec3 size = JsonUtil.arrayToVec(cube.size());
 			Vec3 origin = JsonUtil.arrayToVec(cube.origin());
 			Vec3 rotation = JsonUtil.arrayToVec(cube.rotation());
@@ -176,7 +183,7 @@ public interface BakedModelFactory {
 			rotation = new Vec3(Math.toRadians(-rotation.x), Math.toRadians(-rotation.y), Math.toRadians(rotation.z));
 			GeoQuad[] quads = buildQuads(cube.uv(), new VertexSet(origin, vertexSize, inflate), cube, (float)properties.textureWidth(), (float)properties.textureHeight(), mirror);
 
-			return new GeoCube(quads, pivot, rotation, size, inflate, mirror);
+			return new GeoCube(quads, pivot, rotation, size);
 		}
 	}
 
@@ -184,7 +191,7 @@ public interface BakedModelFactory {
 	 * Holder class to make it easier to store and refer to vertices for a given cube
 	 */
 	record VertexSet(GeoVertex bottomLeftBack, GeoVertex bottomRightBack, GeoVertex topLeftBack, GeoVertex topRightBack,
-							GeoVertex topLeftFront, GeoVertex topRightFront, GeoVertex bottomLeftFront, GeoVertex bottomRightFront) {
+                     GeoVertex topLeftFront, GeoVertex topRightFront, GeoVertex bottomLeftFront, GeoVertex bottomRightFront) {
 		public VertexSet(Vec3 origin, Vec3 vertexSize, double inflation) {
 			this(
 					new GeoVertex(origin.x - inflation, origin.y - inflation, origin.z - inflation),

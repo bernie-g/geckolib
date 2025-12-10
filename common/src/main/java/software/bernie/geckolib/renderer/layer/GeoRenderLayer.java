@@ -3,17 +3,17 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.internal.PerBoneRender;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 import java.util.function.BiConsumer;
 
@@ -57,7 +57,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <p>
 	 * By default, falls back to {@link GeoModel#getTextureResource(GeoRenderState)}
 	 */
-	protected ResourceLocation getTextureResource(R renderState) {
+	protected Identifier getTextureResource(R renderState) {
 		return this.renderer.getTextureLocation(renderState);
 	}
 
@@ -77,7 +77,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
 
 	/**
-	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRender} has been called
+	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRenderPass} has been called
 	 * <p>
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
 	 * <p>
@@ -85,8 +85,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
 	 * and you may need to factor this in to your design
 	 */
-	public void preRender(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-						  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {}
+	public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 
 	/**
 	 * This is the method that is actually called by the render for your render layer to function
@@ -96,8 +95,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
 	 * and you may need to factor this in to your design
 	 */
-	public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {}
+	public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 
 	/**
 	 * Register per-bone render operations, to be rendered after the main model is done.
@@ -105,10 +103,8 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
 	 * is currently rendering.
 	 *
-     * @param renderState The {@link GeoRenderState} for this render pass
-     * @param model The baked GeckoLib model for this render pass
-     * @param didRenderModel Whether the main model rendered or not. Only false if {@link GeoRenderer#getRenderType} returned null on the renderer
+     * @param renderPassInfo The collated render-related data for this render pass
 	 * @param consumer The registrar to accept the per-bone render tasks
 	 */
-	public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
+	public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
 }

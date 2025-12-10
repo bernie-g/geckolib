@@ -12,11 +12,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.mutable.MutableObject;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -185,7 +185,7 @@ public final class MolangQueries {
 		Variable variable = getVariableFor(name);
 
 		ACTOR_VARIABLES.put(variable, (ToDoubleFunction)valueFunction);
-		getVariableFor(name).set(state -> state.getActorVariableValue(variable));
+        variable.set(state -> state.getQueryValue(variable));
 	}
 
 	/**
@@ -195,7 +195,7 @@ public final class MolangQueries {
 	 *
 	 * @param valueFunction The value function to set the variable to
 	 */
-	public static <T extends GeoAnimatable> void setVariableFunction(String name, ToDoubleFunction<AnimationState<T>> valueFunction) {
+	public static <T extends GeoAnimatable> void setVariableFunction(String name, ToDoubleFunction<ControllerState> valueFunction) {
 		Variable variable = getVariableFor(name);
 
 		if (ACTOR_VARIABLES.containsKey(variable))
@@ -230,8 +230,10 @@ public final class MolangQueries {
 	 */
 	public static <T extends GeoAnimatable> void buildActorVariables(Actor<T> actor, Set<Variable> variables, Reference2DoubleMap<Variable> valueMap) {
 		for (Variable variable : variables) {
-			if (ACTOR_VARIABLES.containsKey(variable))
-				valueMap.computeIfAbsent(variable, v -> ACTOR_VARIABLES.get(v).applyAsDouble(actor));
+            ToDoubleFunction<Actor<? extends GeoAnimatable>> function = ACTOR_VARIABLES.get(variable);
+
+            if (function != null && !valueMap.containsKey(variable))
+                valueMap.put(variable, function.applyAsDouble(actor));
 		}
 	}
 
@@ -242,29 +244,29 @@ public final class MolangQueries {
 	 * @param animatable The animatable instance being prepared for render
 	 * @param renderState The {@link GeoRenderState} being built for the render pass
 	 * @param controller The {@link AnimationController} relevant to the actor at the time this actor is being used
-	 * @param animationTicks The amount of time (in ticks) this animatable has existed since the first time it rendered
+	 * @param renderTime The amount of time (in ticks) this animatable has existed since the first time it rendered
 	 * @param partialTick The fraction of a tick that has passed as of the upcoming render frame
 	 * @param level The client's level
 	 * @param clientPlayer The client player
 	 * @param cameraPos The position of the client player's camera
 	 */
-	public record Actor<T>(T animatable, GeoRenderState renderState, MutableObject<AnimationController<?>> controller, double animationTicks, float partialTick, Level level, Player clientPlayer, Vec3 cameraPos) {}
+	public record Actor<T>(T animatable, GeoRenderState renderState, AnimationController<?> controller, double renderTime, float partialTick, Level level, Player clientPlayer, Vec3 cameraPos) {}
 
 	private static void setDefaultQueryValues() {
 		setVariableValue("PI", Math.PI);
 		setVariableValue("E", Math.E);
 
 		setActorVariable(ACTOR_COUNT, actor -> ClientUtil.getVisibleEntityCount());
-		setActorVariable(ANIM_TIME, actor -> actor.controller().getValue().getCurrentAnimationSeconds());
-		setActorVariable(CONTROLLER_SPEED, actor -> actor.controller.getValue().getAnimationSpeed());
+		setActorVariable(ANIM_TIME, actor -> actor.controller.getCurrentAnimationTime());
+		setActorVariable(CONTROLLER_SPEED, actor -> actor.controller.getAnimationSpeed());
 		setActorVariable(CARDINAL_PLAYER_FACING, actor -> actor.clientPlayer.getDirection().ordinal());
 		setActorVariable(DAY, actor -> actor.level.getGameTime() / 24000d);
 		setActorVariable(FRAME_ALPHA, actor -> actor.partialTick);
 		setActorVariable(HAS_CAPE, actor -> ClientUtil.clientPlayerHasCape() ? 1 : 0);
 		setActorVariable(IS_FIRST_PERSON, actor -> ClientUtil.isFirstPerson() ? 1 : 0);
-		setActorVariable(LIFE_TIME, actor -> actor.animationTicks / 20d);
-		setActorVariable(MOON_BRIGHTNESS, actor -> actor.level.getMoonBrightness());
-		setActorVariable(MOON_PHASE, actor -> actor.level.getMoonPhase());
+		setActorVariable(LIFE_TIME, actor -> actor.renderTime / 20d);
+		setActorVariable(MOON_BRIGHTNESS, actor -> DimensionType.MOON_BRIGHTNESS_PER_PHASE[ClientUtil.getClientMoonPhase().index()]);
+		setActorVariable(MOON_PHASE, actor -> ClientUtil.getClientMoonPhase().index());
 		setActorVariable(PLAYER_LEVEL, actor -> actor.clientPlayer.experienceLevel);
 		setActorVariable(TIME_OF_DAY, actor -> actor.level.getDayTime() / 24000d);
 		setActorVariable(TIME_STAMP, actor -> actor.level.getGameTime());
@@ -330,8 +332,8 @@ public final class MolangQueries {
 		MolangQueries.<LivingEntity>setActorVariable(DEATH_TICKS, actor -> actor.animatable.deathTime == 0 ? 0 : actor.animatable.deathTime + actor.partialTick);
 		MolangQueries.<LivingEntity>setActorVariable(GROUND_SPEED, actor -> actor.animatable.getDeltaMovement().horizontalDistance());
 		MolangQueries.<LivingEntity>setActorVariable(HAS_HEAD_GEAR, actor -> !actor.animatable.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 1 : 0);
-		MolangQueries.<LivingEntity>setActorVariable(HEAD_X_ROTATION, actor -> actor.animatable.getViewXRot(actor.partialTick));
-		MolangQueries.<LivingEntity>setActorVariable(HEAD_Y_ROTATION, actor -> actor.animatable.getViewYRot(actor.partialTick));
+		MolangQueries.<LivingEntity>setActorVariable(HEAD_X_ROTATION, actor -> actor.renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_PITCH, actor.animatable.getViewXRot(actor.partialTick)));
+		MolangQueries.<LivingEntity>setActorVariable(HEAD_Y_ROTATION, actor -> actor.renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, actor.animatable.getViewYRot(actor.partialTick)));
 		MolangQueries.<LivingEntity>setActorVariable(HEALTH, actor -> actor.animatable.getHealth());
 		MolangQueries.<LivingEntity>setActorVariable(HURT_TIME, actor -> actor.animatable.hurtTime == 0 ? 0 : actor.animatable.hurtTime - actor.partialTick);
 		MolangQueries.<LivingEntity>setActorVariable(INVULNERABLE_TICKS, actor -> actor.animatable.invulnerableTime == 0 ? 0 : actor.animatable.invulnerableTime - actor.partialTick);

@@ -1,6 +1,6 @@
 package software.bernie.geckolib.model;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 
 /**
@@ -16,10 +16,10 @@ public class DefaultedBlockGeoModel<T extends GeoAnimatable> extends DefaultedGe
 	 * <p>
 	 * E.G.
 	 * <pre>{@code
-	 * 	new ResourceLocation("myMod", "workbench/sawmill")
+	 * 	new Identifier("myMod", "workbench/sawmill")
 	 * }</pre>
 	 */
-	public DefaultedBlockGeoModel(ResourceLocation assetSubpath) {
+	public DefaultedBlockGeoModel(Identifier assetSubpath) {
 		super(assetSubpath);
 	}
 
@@ -39,7 +39,7 @@ public class DefaultedBlockGeoModel<T extends GeoAnimatable> extends DefaultedGe
 	 * This is useful if your animatable shares a model path with another animatable that differs in path to the texture and animations for this model
 	 */
 	@Override
-	public DefaultedBlockGeoModel<T> withAltModel(ResourceLocation altPath) {
+	public DefaultedBlockGeoModel<T> withAltModel(Identifier altPath) {
 		return (DefaultedBlockGeoModel<T>)super.withAltModel(altPath);
 	}
 
@@ -49,7 +49,7 @@ public class DefaultedBlockGeoModel<T extends GeoAnimatable> extends DefaultedGe
 	 * This is useful if your animatable shares an animations path with another animatable that differs in path to the model and texture for this model
 	 */
 	@Override
-	public DefaultedBlockGeoModel<T> withAltAnimations(ResourceLocation altPath) {
+	public DefaultedBlockGeoModel<T> withAltAnimations(Identifier altPath) {
 		return (DefaultedBlockGeoModel<T>)super.withAltAnimations(altPath);
 	}
 
@@ -59,7 +59,7 @@ public class DefaultedBlockGeoModel<T extends GeoAnimatable> extends DefaultedGe
 	 * This is useful if your animatable shares a texture path with another animatable that differs in path to the model and animations for this model
 	 */
 	@Override
-	public DefaultedBlockGeoModel<T> withAltTexture(ResourceLocation altPath) {
+	public DefaultedBlockGeoModel<T> withAltTexture(Identifier altPath) {
 		return (DefaultedBlockGeoModel<T>)super.withAltTexture(altPath);
 	}
 }

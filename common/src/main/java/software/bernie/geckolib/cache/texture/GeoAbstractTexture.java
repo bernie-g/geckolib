@@ -7,7 +7,7 @@ import com.mojang.blaze3d.platform.TextureUtil;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import software.bernie.geckolib.GeckoLibServices;
 
@@ -23,7 +23,7 @@ import java.util.function.Consumer;
  *//*
 
 public abstract class GeoAbstractTexture extends ReloadableTexture {
-	public GeoAbstractTexture(ResourceLocation resourceId) {
+	public GeoAbstractTexture(Identifier resourceId) {
 		super(resourceId);
 	}
 
@@ -32,7 +32,7 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 	 * Generates the texture instance for the given path with the given appendix if it hasn't already been generated
 	 *//*
 
-	protected static void generateTexture(ResourceLocation texturePath, Consumer<TextureManager> textureManagerConsumer) {
+	protected static void generateTexture(Identifier texturePath, Consumer<TextureManager> textureManagerConsumer) {
 		if (!RenderSystem.isOnRenderThreadOrInit())
 			throw new IllegalThreadStateException("Texture loading called outside of the render thread! This should DEFINITELY not be happening.");
 
@@ -52,7 +52,7 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 	 * Debugging function to write out the generated glowmap image to disk
 	 *//*
 
-	protected void printDebugImageToDisk(ResourceLocation id, NativeImage newImage) {
+	protected void printDebugImageToDisk(Identifier id, NativeImage newImage) {
 		try {
 			File file = new File(GeckoLibServices.PLATFORM.getGameDir().toFile(), "GeoTexture Debug Printouts");
 
@@ -131,22 +131,22 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 
 	*/
 /**
-	 * Append a suffix to a given ResourceLocation's path
+	 * Append a suffix to a given Identifier's path
 	 * <p>
 	 * E.G.
 	 * <code>("minecraft:test_path", "_extended") -> "minecraft:test_path_extended"</code>
 	 *
-	 * @param location The base ResourceLocation
+	 * @param location The base Identifier
 	 * @param suffix The suffix to append literally to the base location's path
 	 *
-	 * @return The newly created ResourceLocation
+	 * @return The newly created Identifier
 	 *//*
 
-	public static ResourceLocation appendToPath(ResourceLocation location, String suffix) {
+	public static Identifier appendToPath(Identifier location, String suffix) {
 		String path = location.getPath();
 		int i = path.lastIndexOf('.');
 
-		return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), path.substring(0, i) + suffix + path.substring(i));
+		return Identifier.fromNamespaceAndPath(location.getNamespace(), path.substring(0, i) + suffix + path.substring(i));
 	}
 }
 */

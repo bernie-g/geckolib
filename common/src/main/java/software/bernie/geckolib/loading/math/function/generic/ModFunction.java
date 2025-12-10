@@ -1,6 +1,6 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -29,8 +29,8 @@ public final class ModFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return this.value.get(animationState) % this.modulus.get(animationState);
+    public double compute(ControllerState controllerState) {
+        return this.value.get(controllerState) % this.modulus.get(controllerState);
     }
 
     @Override

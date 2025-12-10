@@ -5,18 +5,18 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.internal.BoneSnapshots;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
-import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -46,10 +46,16 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      * <p>
      * Only bones that were marked as 'dyeable' in {@link #isBoneDyeable(GeoBone)} are provided here
      */
-    protected int getColorForBone(R renderState, GeoBone bone, int packedLight, int packedOverlay, int baseColour) {
+    protected int getColorForBone(R renderState, GeoBone bone, int baseColour) {
         return baseColour;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
+    /**
+     * Gets a tint-applying color to render the given animatable with
+     * <p>
+     * Returns opaque white by default, multiplied by any inherent vanilla item dye color
+     */
     @Override
     public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
         return 0xFFFFFFFF;
@@ -63,20 +69,43 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      * Manipulation of the model's bones is not permitted here
      */
     @Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                          int packedLight, int packedOverlay, int renderColor) {
-        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+    public void preRenderPass(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
+        super.preRenderPass(renderPassInfo, renderTasks);
 
-        checkBoneDyeCache(renderState, model, packedLight, packedOverlay, renderColor);
+        checkBoneDyeCache(renderPassInfo);
+
+        for (GeoBone bone : this.dyeableBones) {
+            renderPassInfo.addPerBoneRender(bone, (renderPassInfo1, bone1, renderTasks1) -> {
+                final R renderState = renderPassInfo1.renderState();
+                final int renderColor = renderPassInfo1.renderColor();
+
+                renderTasks1.submitCustomGeometry(renderPassInfo1.poseStack(), getRenderType(renderState, getTextureLocation(renderState)), (pose, vertexConsumer) ->
+                        renderDyedBone(renderState, pose, bone1, renderPassInfo1, vertexConsumer, renderColor));
+            });
+        }
     }
 
-    @Override
-    public void renderCubesOfBone(R renderState, GeoBone bone, PoseStack poseStack, VertexConsumer buffer, CameraRenderState cameraState,
-                                  int packedLight, int packedOverlay, int renderColor) {
-        if (this.dyeableBones.contains(bone))
-            renderColor = ARGB.multiply(renderColor, getColorForBone(renderState, bone, packedLight, packedOverlay, renderState.getGeckolibData(DataTickets.RENDER_COLOR)));
+    /**
+     * Render a specific {@link GeoBone} with the given dye tint
+     */
+    protected void renderDyedBone(R renderState, PoseStack.Pose pose, GeoBone bone1, RenderPassInfo<R> renderPassInfo1, VertexConsumer vertexConsumer, int renderColor) {
+        final PoseStack poseStack = new PoseStack();
 
-        super.renderCubesOfBone(renderState, bone, poseStack, buffer, cameraState, packedLight, packedOverlay, renderColor);
+        poseStack.last().set(pose);
+        bone1.render(renderPassInfo1, new PoseStack(), vertexConsumer, renderPassInfo1.packedLight(), renderPassInfo1.packedOverlay(),
+                     ARGB.multiply(renderColor, getColorForBone(renderState, bone1, renderState.getGeckolibData(DataTickets.RENDER_COLOR))));
+    }
+
+    /**
+     * Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
+     * <p>
+     * No manipulation of the RenderState is permitted here
+     */
+    @Override
+    public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
+        for (GeoBone bone : this.dyeableBones) {
+            snapshots.get(bone).skipRender(true);
+        }
     }
 
     /**
@@ -84,7 +113,9 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      * <p>
      * The less this forces re-computation, the better for performance
      */
-    protected void checkBoneDyeCache(GeoRenderState renderState, BakedGeoModel model, int packedLight, int packedOverlay, int renderColor) {
+    protected void checkBoneDyeCache(RenderPassInfo<R> renderPassInfo) {
+        final BakedGeoModel model = renderPassInfo.model();
+
         if (model != this.lastModel) {
             this.lastModel = model;
 
@@ -96,12 +127,13 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
     /**
      * Recursively parse through the given bones collection, collecting and caching dyeable bones as applicable
      */
-    protected void collectDyeableBones(Collection<GeoBone> bones) {
+    protected void collectDyeableBones(GeoBone[] bones) {
         for (GeoBone bone : bones) {
             if (isBoneDyeable(bone))
                 this.dyeableBones.add(bone);
 
-            collectDyeableBones(bone.getChildBones());
+            collectDyeableBones(bone.children());
         }
     }
+    //</editor-fold>
 }

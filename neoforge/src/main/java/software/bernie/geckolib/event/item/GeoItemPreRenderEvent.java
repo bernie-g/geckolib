@@ -8,16 +8,17 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 /**
  * Pre-render event for items being rendered by {@link GeoItemRenderer}
  * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRender}
+ * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
  * <p>
  * This event is {@link ICancellableEvent cancellable}.<br>
  * If the event is cancelled, the entity will not be rendered.
@@ -28,41 +29,38 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
  * @see Pre
  */
 public class GeoItemPreRenderEvent<T extends Item & GeoAnimatable> extends Event implements GeoRenderEvent.Item.Pre<T>, ICancellableEvent {
-    private final GeoItemRenderer<T> renderer;
-    private final GeoRenderState renderState;
-    private final PoseStack poseStack;
-    private final BakedGeoModel model;
+    private final RenderPassInfo<GeoRenderState> renderPassInfo;
     private final SubmitNodeCollector renderTasks;
-    private final CameraRenderState cameraState;
 
-    public GeoItemPreRenderEvent(GeoItemRenderer<T> renderer, GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-        this.renderer = renderer;
-        this.renderState = renderState;
-        this.poseStack = poseStack;
-        this.model = model;
+    public GeoItemPreRenderEvent(RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
+        this.renderPassInfo = renderPassInfo;
         this.renderTasks = renderTasks;
-        this.cameraState = cameraState;
+    }
+
+    @Override
+    public RenderPassInfo<GeoRenderState> getRenderPassInfo() {
+        return this.renderPassInfo;
     }
 
     @Override
     public GeoItemRenderer<T> getRenderer() {
-        return this.renderer;
+        return (GeoItemRenderer)this.renderPassInfo.renderer();
     }
 
     @ApiStatus.Internal
     @Override
     public GeoRenderState getRenderState() {
-        return this.renderState;
+        return this.renderPassInfo.renderState();
     }
 
     @Override
     public PoseStack getPoseStack() {
-        return this.poseStack;
+        return this.renderPassInfo.poseStack();
     }
 
     @Override
     public BakedGeoModel getModel() {
-        return this.model;
+        return this.renderPassInfo.model();
     }
 
     @Override
@@ -72,6 +70,6 @@ public class GeoItemPreRenderEvent<T extends Item & GeoAnimatable> extends Event
 
     @Override
     public CameraRenderState getCameraState() {
-        return this.cameraState;
+        return this.renderPassInfo.cameraState();
     }
 }

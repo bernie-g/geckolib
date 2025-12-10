@@ -4,13 +4,12 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
-import software.bernie.geckolib.util.ClientUtil;
 
 /**
  * The {@link GeoAnimatable} interface specific to {@link BlockEntity BlockEntities}
@@ -29,8 +28,7 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 * @return The synced data, or null if no data of that type has been synced
 	 */
 	@ApiStatus.NonExtendable
-	@Nullable
-	default <D> D getAnimData(SerializableDataTicket<D> dataTicket) {
+	default <D> @Nullable D getAnimData(SerializableDataTicket<D> dataTicket) {
 		return getAnimatableInstanceCache().getManagerForId(0).getAnimatableData(dataTicket);
 	}
 
@@ -125,18 +123,5 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		else {
 			GeckoLibServices.NETWORK.stopTriggeredBlockEntityAnim(blockEntity.getBlockPos(), (ServerLevel)level, controllerName, animName);
 		}
-	}
-
-	/**
-	 * Returns the current age/tick of the animatable instance
-	 * <p>
-	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
-	 *
-	 * @param blockEntity The BlockEntity representing this animatable
-	 * @return The current tick/age of the animatable, for animation purposes
-	 */
-	@Override
-	default double getTick(Object blockEntity) {
-		return ClientUtil.getCurrentTick();
 	}
 }

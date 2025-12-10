@@ -1,6 +1,6 @@
 package software.bernie.geckolib.loading.math.function.round;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -27,8 +27,8 @@ public final class TruncateFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return (long)this.value.get(animationState);
+    public double compute(ControllerState controllerState) {
+        return (long)this.value.get(controllerState);
     }
 
     @Override

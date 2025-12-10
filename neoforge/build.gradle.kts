@@ -23,7 +23,7 @@ base {
 neoForge {
     version = neoforgeVersion
 
-    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer-nf.cfg"))
+    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
     parchment.minecraftVersion.set(parchmentMcVersion)
     parchment.mappingsVersion.set(parchmentVersion)
 
@@ -34,16 +34,16 @@ neoForge {
 
         mods.create(modId).sourceSet(project.sourceSets.getByName("main"))
 
-        create("client") {
+        register("client") {
             client()
         }
 
-        create("client2") {
+        register("client2") {
             client()
             programArguments.addAll("--username", "Player")
         }
 
-        create("server") {
+        register("server") {
             server()
             programArgument("--nogui")
         }

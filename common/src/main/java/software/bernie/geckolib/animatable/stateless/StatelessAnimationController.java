@@ -1,12 +1,12 @@
 package software.bernie.geckolib.animatable.stateless;
 
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.object.PlayState;
+import software.bernie.geckolib.animation.state.AnimationTest;
 
 /**
  * Stateless wrapper for {@link AnimationController}
@@ -14,11 +14,10 @@ import software.bernie.geckolib.animation.RawAnimation;
  * @see StatelessAnimatable
  */
 public class StatelessAnimationController extends AnimationController<GeoAnimatable> {
-    @Nullable
-    protected RawAnimation currentAnim = null;
+    protected @Nullable RawAnimation currentAnim = null;
 
     public StatelessAnimationController(String name) {
-        super(name, test -> PlayState.STOP);
+        super(name, StatelessAnimationController::overrideStateHandler);
     }
 
     /**
@@ -30,21 +29,11 @@ public class StatelessAnimationController extends AnimationController<GeoAnimata
         this.currentAnim = animation;
     }
 
-    /**
-     * Get the current animation state for this controller
-     */
-    @Nullable
-    public RawAnimation getCurrentAnim() {
-        return this.currentAnim;
-    }
-
-    @Override
-    public AnimationStateHandler<GeoAnimatable> getStateHandler() {
-        return this::overrideStateHandler;
-    }
-
     @ApiStatus.Internal
-    protected PlayState overrideStateHandler(AnimationTest<GeoAnimatable> test) {
-        return getCurrentAnim() == null ? PlayState.STOP : test.setAndContinue(getCurrentAnim());
+    protected static PlayState overrideStateHandler(AnimationTest<GeoAnimatable> test) {
+        if (test.controller() instanceof StatelessAnimationController controller && controller.currentAnim != null)
+            return test.setAndContinue(controller.currentAnim);
+
+        return PlayState.STOP;
     }
 }

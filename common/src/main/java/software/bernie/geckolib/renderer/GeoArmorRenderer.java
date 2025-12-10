@@ -1,21 +1,20 @@
 package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -23,23 +22,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderModelPositioner;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
-import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -78,78 +74,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 		this.model = model;
 	}
 
-	/**
-	 * Gets the model instance for this renderer
-	 */
-	@Override
-	public GeoModel<T> getGeoModel() {
-		return this.model;
-	}
-
-	/**
-	 * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
-	 */
-	@Override
-	public List<GeoRenderLayer<T, RenderData, R>> getRenderLayers() {
-		return this.renderLayers.getRenderLayers();
-	}
-
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
-    public GeoArmorRenderer<T, R> withRenderLayer(Function<? super GeoArmorRenderer<T, R>, GeoRenderLayer<T, GeoArmorRenderer.RenderData, R>> renderLayer) {
-        return withRenderLayer(renderLayer.apply(this));
-    }
-
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
-    public GeoArmorRenderer<T, R> withRenderLayer(GeoRenderLayer<T, GeoArmorRenderer.RenderData, R> renderLayer) {
-        this.renderLayers.addLayer(renderLayer);
-
-        return this;
-    }
-
-	/**
-	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-	 */
-	public GeoArmorRenderer<T, R> withScale(float scale) {
-		return withScale(scale, scale);
-	}
-
-	/**
-	 * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-	 */
-	public GeoArmorRenderer<T, R> withScale(float scaleWidth, float scaleHeight) {
-		this.scaleWidth = scaleWidth;
-		this.scaleHeight = scaleHeight;
-
-		return this;
-	}
-
-	/**
-	 * Gets a tint-applying color to render the given animatable with
-	 * <p>
-	 * Returns white (no tint) by default
-	 */
-	@Override
-	public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
-		return GeckoLibServices.Client.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
-	}
-
-	/**
-	 * Gets the {@link RenderType} to render the given animatable with
-	 * <p>
-	 * Uses the {@link RenderType#armorCutoutNoCull} {@code RenderType} by default
-	 * <p>
-	 * Override this to change the way a model will render (such as translucent models, etc)
-	 */
-	@Nullable
-	@Override
-	public RenderType getRenderType(R renderState, ResourceLocation texture) {
-		return RenderType.armorCutoutNoCull(texture);
-	}
-
     /**
      * Return the list of {@link ArmorSegment}s that should be rendered for the given {@link EquipmentSlot} for this render pass.
      * <p>
@@ -184,134 +108,98 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     }
 
 	/**
-	 * Internal method for capturing the common RenderState data for all animatable objects
+	 * Data container for additional render context information for creating the RenderState for this renderer
+	 *
+	 * @param itemStack The ItemStack about to be rendered
+	 * @param slot The EquipmentSlot the ItemStack is in
+	 * @param entity The entity wearing the item
+     * @param baseModel The base vanilla model for the armor piece being rendered
 	 */
-	@ApiStatus.Internal
-	@Override
-	public R captureDefaultRenderState(T animatable, RenderData renderData, R renderState, float partialTick) {
-		GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
+	public record RenderData(ItemStack itemStack, EquipmentSlot slot, LivingEntity entity, HumanoidModel<?> baseModel) {}
 
-		renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
-		renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
-		renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
-		renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState instanceof LivingEntityRenderState livingRenderState && livingRenderState.isInvisibleToPlayer);
-        renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
-
-		return renderState;
-	}
-
-	/**
-	 * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-	 * <p>
-	 * Override and call super with modified scale values as needed to further modify the scale of the model (E.G. child entities)
-	 */
-	@Override
-    public void scaleModelForRender(R renderState, float widthScale, float heightScale, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
-		GeoRenderer.super.scaleModelForRender(renderState, widthScale * this.scaleWidth, heightScale * this.scaleHeight, poseStack, model, cameraState);
-	}
-
+    //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
     /**
-     * Transform the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
-     * If you need to do pre-scale translations, use {@link #preRender}
+     * Gets the model instance for this renderer
      */
     @Override
-    public void adjustRenderPose(R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
-        poseStack.translate(0, 24 / 16f, 0);
-        poseStack.scale(-1, -1, 1);
+    public GeoModel<T> getGeoModel() {
+        return this.model;
     }
 
     /**
-     * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
-     * <p>
-     * Once the render task has been submitted here, no further manipulations of the render pass should be made.
-     * <p>
-     * If the provided {@link RenderType} is null, no submission will be made
+     * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
      */
     @Override
-    public void submitRenderTasks(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, OrderedSubmitNodeCollector renderTasks,
-                                  CameraRenderState cameraState, GeoModel<T> model, @Nullable RenderType renderType,
-                                  @Nullable RenderModelPositioner<R> modelPositioner, int packedLight, int packedOverlay, int renderColor) {
-        if (renderType == null)
-            return;
-
-        RenderModelPositioner<R> callback = RenderModelPositioner.add(modelPositioner, (renderState2, model2) -> model.handleAnimations(createAnimationState(renderState2)));
-
-        renderTasks.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
-            final EquipmentSlot slot = renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT);
-            final PoseStack poseStack2 = new PoseStack();
-            final HumanoidModel baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
-
-            poseStack2.last().set(pose);
-            callback.run(renderState, bakedModel);
-
-            for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
-                bakedModel.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
-                    ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
-                    Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
-
-                    baseModel.setupAnim(renderState);
-                    RenderUtil.matchModelPartRot(modelPart, bone);
-                    bone.updatePosition(bonePos.x, bonePos.y, bonePos.z);
-
-                    renderBone(renderState, poseStack2, bone, vertexConsumer, cameraState, packedLight, packedOverlay, renderColor);
-                });
-            }
-        });
+    public List<GeoRenderLayer<T, RenderData, R>> getRenderLayers() {
+        return this.renderLayers.getRenderLayers();
     }
 
     /**
-	 * Renders the provided {@link GeoBone} and its associated child bones
-	 */
-	@Override
-    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
-                           int packedLight, int packedOverlay, int renderColor) {
-		if (bone.isTrackingMatrices()) {
-			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoArmorRenderer<T, R> withRenderLayer(Function<? super GeoArmorRenderer<T, R>, GeoRenderLayer<T, GeoArmorRenderer.RenderData, R>> renderLayer) {
+        return withRenderLayer(renderLayer.apply(this));
+    }
 
-            bone.setLocalSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.OBJECT_RENDER_POSE)));
-            bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, renderState.getGeckolibData(DataTickets.MODEL_RENDER_POSE)));
-		}
+    /**
+     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
+     */
+    public GeoArmorRenderer<T, R> withRenderLayer(GeoRenderLayer<T, GeoArmorRenderer.RenderData, R> renderLayer) {
+        this.renderLayers.addLayer(renderLayer);
 
-		GeoRenderer.super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
-	}
+        return this;
+    }
 
-	/**
-	 * Create and fire the relevant {@code CompileLayers} event hook for this renderer
-	 */
-	@Override
-	public void fireCompileRenderLayersEvent() {
-		GeckoLibServices.Client.EVENTS.fireCompileArmorRenderLayers(this);
-	}
+    /**
+     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+     */
+    public GeoArmorRenderer<T, R> withScale(float scale) {
+        return withScale(scale, scale);
+    }
 
-	/**
-	 * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
-	 */
-	@Override
-	public void fireCompileRenderStateEvent(T animatable, RenderData relatedObject, R renderState, float partialTick) {
-		GeckoLibServices.Client.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
-	}
+    /**
+     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
+     */
+    public GeoArmorRenderer<T, R> withScale(float scaleWidth, float scaleHeight) {
+        this.scaleWidth = scaleWidth;
+        this.scaleHeight = scaleHeight;
 
-	/**
-	 * Create and fire the relevant {@code Pre-Render} event hook for this renderer.<br>
-	 * @return Whether the renderer should proceed based on the cancellation state of the event
-	 */
-	@Override
-    public boolean firePreRenderEvent(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
-		return GeckoLibServices.Client.EVENTS.fireArmorPreRender(this, renderState, poseStack, model, renderTasks, cameraState);
-	}
+        return this;
+    }
+
+    /**
+     * Gets a tint-applying color to render the given animatable with
+     * <p>
+     * Returns opaque white by default, multiplied by any inherent vanilla item dye color
+     */
+    @Override
+    public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
+        return GeckoLibServices.Client.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
+    }
+
+    /**
+     * Gets the {@link RenderType} to render the current render pass with
+     * <p>
+     * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
+     * <p>
+     * Override this to change the way a model will render (such as translucent models, etc)
+     *
+     * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
+     */
+    @Nullable
+    @Override
+    public RenderType getRenderType(R renderState, Identifier texture) {
+        return RenderTypes.armorCutoutNoCull(texture);
+    }
 
     /**
      * Gets the id that represents the current animatable's instance for animation purposes.
-     * <p>
-     * You generally shouldn't need to override this
      *
      * @param animatable The Animatable instance being renderer
      * @param stackAndSlot An object related to the render pass or null if not applicable.
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      */
-    @ApiStatus.Internal
+    @ApiStatus.OverrideOnly
     @Override
     public long getInstanceId(T animatable, RenderData stackAndSlot) {
         long stackId = GeoItem.getId(stackAndSlot.itemStack());
@@ -325,15 +213,132 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         return -stackId;
     }
 
-	/**
-	 * Data container for additional render context information for creating the RenderState for this renderer
-	 *
-	 * @param itemStack The ItemStack about to be rendered
-	 * @param slot The EquipmentSlot the ItemStack is in
-	 * @param entity The entity wearing the item
-     * @param baseModel The base vanilla model for the armor piece being rendered
-	 */
-	public record RenderData(ItemStack itemStack, EquipmentSlot slot, LivingEntity entity, HumanoidModel<?> baseModel) {}
+    /**
+     * Internal method for capturing the common RenderState data for all animatable objects
+     */
+    @ApiStatus.Internal
+    @Override
+    public void captureDefaultRenderState(T animatable, RenderData renderData, R renderState, float partialTick) {
+        GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
+
+        renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
+        renderState.addGeckolibData(DataTickets.POSITION, renderData.entity().position());
+        renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
+        renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
+        renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
+        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState instanceof LivingEntityRenderState livingRenderState && livingRenderState.isInvisibleToPlayer);
+        renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
+    }
+
+    /**
+     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
+     * <p>
+     * Override and call <code>super</code> with modified scale values as needed to further modify the scale of the model
+     */
+    @Override
+    public void scaleModelForRender(RenderPassInfo<R> renderPassInfo, float widthScale, float heightScale) {
+        GeoRenderer.super.scaleModelForRender(renderPassInfo, this.scaleWidth * widthScale, this.scaleHeight * heightScale);
+    }
+
+    /**
+     * Transform the {@link PoseStack} in preparation for rendering the model.
+     * <p>
+     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
+     * If you need to do pre-scale translations, use {@link #preRenderPass}
+     * <p>
+     * PoseStack translations made here are kept until the end of the render process
+     */
+    @Override
+    public void adjustRenderPose(RenderPassInfo<R> renderPassInfo) {
+        renderPassInfo.poseStack().translate(0, 24 / 16f, 0);
+        renderPassInfo.poseStack().scale(-1, -1, 1);
+    }
+
+    /**
+     * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
+     * <p>
+     * Once the render task has been submitted here, no further manipulations of the render pass should be made.
+     * <p>
+     * If the provided {@link RenderType} is null, no submission will be made
+     */
+    @Override
+    public void submitRenderTasks(RenderPassInfo<R> renderPassInfo, OrderedSubmitNodeCollector renderTasks, @Nullable RenderType renderType) {
+        if (renderType == null)
+            return;
+
+        final int packedLight = renderPassInfo.packedLight();
+        final int packedOverlay = renderPassInfo.packedOverlay();
+        final int renderColor = renderPassInfo.renderColor();
+
+        renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, vertexConsumer) -> {
+            final PoseStack poseStack = renderPassInfo.poseStack();
+            final R renderState = renderPassInfo.renderState();
+            final EquipmentSlot slot = renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT);
+            final HumanoidModel baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
+            final BakedGeoModel bakedModel = renderPassInfo.model();
+
+            renderPassInfo.addBoneUpdater((renderPassInfo1, snapshots) -> {
+                final List<ArmorSegment> segments = getSegmentsForSlot(renderState, slot);
+
+                if (!segments.isEmpty()) {
+                    baseModel.setupAnim(renderState);
+
+                    for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
+                        snapshots.get(getBoneNameForSegment(renderState, segment)).ifPresent(snapshot -> {
+                            final ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
+                            final Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
+
+                            snapshot.setRotX(-modelPart.xRot)
+                                    .setRotY(-modelPart.yRot)
+                                    .setRotZ(modelPart.zRot)
+                                    .setTranslateX(bonePos.x)
+                                    .setTranslateY(bonePos.y)
+                                    .setTranslateZ(bonePos.z);
+                        });
+                    }
+                }
+            });
+
+            poseStack.pushPose();
+            poseStack.last().set(pose);
+            renderPassInfo.renderPosed(() -> {
+                for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
+                    bakedModel.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
+                        bone.render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
+                    });
+                }
+
+                renderPassInfo.model().render(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
+            });
+            poseStack.popPose();
+        });
+    }
+
+    /**
+     * Create and fire the relevant {@code CompileLayers} event hook for this renderer
+     */
+    @Override
+    public void fireCompileRenderLayersEvent() {
+        GeckoLibServices.Client.EVENTS.fireCompileArmorRenderLayers(this);
+    }
+
+    /**
+     * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
+     */
+    @Override
+    public void fireCompileRenderStateEvent(T animatable, RenderData relatedObject, R renderState, float partialTick) {
+        GeckoLibServices.Client.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
+    }
+
+    /**
+     * Create and fire the relevant {@code Pre-Render} event hook for this renderer
+     *
+     * @return Whether the renderer should proceed based on the cancellation state of the event
+     */
+    @Override
+    public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
+        return GeckoLibServices.Client.EVENTS.fireArmorPreRender(renderPassInfo, renderTasks);
+    }
 
     /**
      * Enum representing the different parts of a humanoid armor GeckoLib handles for rendering.
@@ -358,8 +363,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
             this.modelPartMatcher = modelPartMatcher;
         }
     }
-
-    // Internal methods only below
 
     /**
      * Helper class to consolidate the retrieval and validation of an individual slot for rendering
@@ -470,4 +473,6 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     public R createRenderState(T animatable, RenderData relatedObject) {
         return (R)new HumanoidRenderState();
     }
+
+    //</editor-fold>
 }

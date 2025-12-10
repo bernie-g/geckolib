@@ -91,3 +91,11 @@ Cloudsmith is the only fully hosted, cloud-native, universal package management 
 enables your organization to create, store and share packages in any format, to any place, with total
 confidence.
 </p>
+<br>
+<br>
+<h3 align="center">
+Powered by
+</h3>
+<p align="center">
+<a href="https://jb.gg/OpenSource"><img src="https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains.svg" alt="JetBrains logo."/></a>
+</p>

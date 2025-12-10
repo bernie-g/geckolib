@@ -1,6 +1,6 @@
 package software.bernie.geckolib.model;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 
 /**
@@ -16,10 +16,10 @@ public class DefaultedItemGeoModel<T extends GeoAnimatable> extends DefaultedGeo
 	 * <p>
 	 * E.G.
 	 * <pre>{@code
-	 * 	new ResourceLocation("myMod", "armor/obsidian")
+	 * 	new Identifier("myMod", "armor/obsidian")
 	 * }</pre>
 	 */
-	public DefaultedItemGeoModel(ResourceLocation assetSubpath) {
+	public DefaultedItemGeoModel(Identifier assetSubpath) {
 		super(assetSubpath);
 	}
 
@@ -39,7 +39,7 @@ public class DefaultedItemGeoModel<T extends GeoAnimatable> extends DefaultedGeo
 	 * This is useful if your animatable shares a model path with another animatable that differs in path to the texture and animations for this model
 	 */
 	@Override
-	public DefaultedItemGeoModel<T> withAltModel(ResourceLocation altPath) {
+	public DefaultedItemGeoModel<T> withAltModel(Identifier altPath) {
 		return (DefaultedItemGeoModel<T>)super.withAltModel(altPath);
 	}
 
@@ -49,7 +49,7 @@ public class DefaultedItemGeoModel<T extends GeoAnimatable> extends DefaultedGeo
 	 * This is useful if your animatable shares an animations path with another animatable that differs in path to the model and texture for this model
 	 */
 	@Override
-	public DefaultedItemGeoModel<T> withAltAnimations(ResourceLocation altPath) {
+	public DefaultedItemGeoModel<T> withAltAnimations(Identifier altPath) {
 		return (DefaultedItemGeoModel<T>)super.withAltAnimations(altPath);
 	}
 
@@ -59,7 +59,7 @@ public class DefaultedItemGeoModel<T extends GeoAnimatable> extends DefaultedGeo
 	 * This is useful if your animatable shares a texture path with another animatable that differs in path to the model and animations for this model
 	 */
 	@Override
-	public DefaultedItemGeoModel<T> withAltTexture(ResourceLocation altPath) {
+	public DefaultedItemGeoModel<T> withAltTexture(Identifier altPath) {
 		return (DefaultedItemGeoModel<T>)super.withAltTexture(altPath);
 	}
 }

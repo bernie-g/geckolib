@@ -1,22 +1,21 @@
 package software.bernie.geckolib.renderer.texture;
 
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.TextureFormat;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureContents;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.texture.Tickable;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.resources.metadata.animation.AnimationFrame;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
@@ -39,13 +38,13 @@ import java.util.stream.IntStream;
  * <b><u>NOTE:</u></b> Initially, GeckoLib wraps all texture retrievals in this, to check for animation meta. If it {@link #isAnimated() exists}, this instance is kept,
  * otherwise, a new instance of {@link SimpleTexture} is returned to preserve expected runtime operation for things like Iris.
  */
-public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
+public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTexture {
     protected AnimationInfo animatedTexture;
     protected int frameWidth;
     protected int frameHeight;
     protected NativeImage baseImage;
 
-    public GeckoLibAnimatedTexture(ResourceLocation location) {
+    public GeckoLibAnimatedTexture(Identifier location) {
         super(location);
     }
 
@@ -74,25 +73,24 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
 
     @Override
     public void apply(TextureContents textureContents) {
-        boolean clamp = textureContents.clamp();
-        boolean blur = textureContents.blur();
+        AddressMode address = textureContents.clamp() ? AddressMode.CLAMP_TO_EDGE : AddressMode.REPEAT;
+        FilterMode filter = textureContents.blur() ? FilterMode.LINEAR : FilterMode.NEAREST;
+        this.sampler = RenderSystem.getSamplerCache().getSampler(address, address, filter, filter, false);
 
-        doLoad(this.baseImage, blur, clamp);
+        doLoad(this.baseImage);
     }
 
     @Override
-    public void doLoad(NativeImage image, boolean blur, boolean clamp) {
-        ResourceLocation textureId = resourceId();
+    public void doLoad(NativeImage image) {
+        GpuDevice gpuDevice = RenderSystem.getDevice();
+        Identifier textureId = resourceId();
 
         Objects.requireNonNull(textureId);
 
-        this.texture = RenderSystem.getDevice().createTexture(textureId.toString(), 5, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1, 1);
-        this.texture.setTextureFilter(FilterMode.NEAREST, false);
-        this.textureView = RenderSystem.getDevice().createTextureView(this.texture);
+        this.texture = gpuDevice.createTexture(textureId::toString, 5, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1, 1);
+        this.textureView = gpuDevice.createTextureView(this.texture);
 
-        setFilter(blur, false);
-        setClamp(clamp);
-        uploadFrame(image, 0, 0, this.texture);
+        uploadFrame(gpuDevice, image, 0, 0, this.texture);
     }
 
     /**
@@ -163,8 +161,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
     /**
      * Upload the given {@link NativeImage} to the in-memory texture buffer, with an optional offset for non-interpolated frames
      */
-    protected void uploadFrame(NativeImage image, int x, int y, GpuTexture gpuTexture) {
-        RenderSystem.getDevice().createCommandEncoder().writeToTexture(gpuTexture, image, 0, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
+    protected void uploadFrame(GpuDevice gpuDevice, NativeImage image, int x, int y, GpuTexture gpuTexture) {
+        gpuDevice.createCommandEncoder().writeToTexture(gpuTexture, image, 0, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
     }
 
     /**
@@ -190,6 +188,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
 
     /**
      * Container class for the animation information for this texture instance
+     * <p>
+     * Functionally somewhat of a clone of {@link SpriteContents.AnimationState}, but extrapolated to be extensible and manageable
      */
     protected class AnimationInfo implements AutoCloseable {
         protected final List<FrameInfo> frames;
@@ -234,7 +234,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
 
                     instance.baseImage.copyRect(this.currentFrameBuffer, frameX, frameY, 0, 0, instance.frameWidth, instance.frameHeight, false, false);
 
-                    uploadFrame(this.currentFrameBuffer, 0, 0, getTexture());
+                    uploadFrame(RenderSystem.getDevice(), this.currentFrameBuffer, 0, 0, getTexture());
                 }
             }
             else if (this.interpolationData != null) {
@@ -277,11 +277,11 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements Tickable {
                             int framePixel = getPixel(instance, currentFrameInfo.index, pixelX, pixelY);
                             int nextFramePixel = getPixel(instance, nextFrameIndex, pixelX, pixelY);
 
-                            this.buffer.setPixel(pixelX, pixelY, ARGB.lerp(partialFrame, framePixel, nextFramePixel));
+                            this.buffer.setPixel(pixelX, pixelY, ARGB.linearLerp(partialFrame, framePixel, nextFramePixel));
                         }
                     }
 
-                    GeckoLibAnimatedTexture.this.uploadFrame(this.buffer, 0, 0, gpuTexture);
+                    GeckoLibAnimatedTexture.this.uploadFrame(RenderSystem.getDevice(), this.buffer, 0, 0, gpuTexture);
                 }
             }
 

@@ -1,6 +1,6 @@
 package software.bernie.geckolib.loading.math.function;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.value.Variable;
 
@@ -33,12 +33,12 @@ public abstract class MathFunction implements MathValue {
     public abstract String getName();
 
     @Override
-    public final double get(AnimationState<?> animationState) {
+    public final double get(ControllerState controllerState) {
         if (this.isMutable)
-            return compute(animationState);
+            return compute(controllerState);
 
         if (this.cachedValue == Double.MIN_VALUE)
-            this.cachedValue = compute(animationState);
+            this.cachedValue = compute(controllerState);
 
         return this.cachedValue;
     }
@@ -46,7 +46,7 @@ public abstract class MathFunction implements MathValue {
     /**
      * Compute the result of this function from its stored arguments
      */
-    public abstract double compute(AnimationState<?> animationState);
+    public abstract double compute(ControllerState controllerState);
 
     /**
      * @return Whether this function should be considered mutable; the value could change

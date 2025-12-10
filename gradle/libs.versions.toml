@@ -1,54 +1,52 @@
 [versions]
 # GeckoLib
-    geckolib = "5.3-alpha-4"
+    geckolib = "5.4-alpha-1.18"
 
 # Common
-    minecraft-range = "[1.21.10,)"
-    minecraft = "1.21.10"
-    parchment-minecraft = "1.21.9"
-    parchment = "2025.10.05"
-    neoform = "1.21.10-20251007.142004"
+    minecraft-range = "[1.21.11,)"
+    minecraft = "1.21.11"
+    parchment-minecraft = "1.21.10"
+    parchment = "2025.10.12"
+    neoform = "1.21.11-20251209.172050"
     jopt-simple = "5.0.4"
 
 # Fabric
-    fabric = "0.17.3"
-    fabric-range = "0.17"
-    fabric-api = "0.134.1+1.21.10"
-    fabric-api-range = "0.134.1+1.21.10"
+    fabric = "0.18.2"
+    fabric-range = "0.18"
+    fabric-api = "0.139.4+1.21.11"
+    fabric-api-range = "0.139.4+1.21.11"
 
 # Forge
-    forge-fml-range = "[60,)"
-    forge-range = "[60.0.0,)"
-    forge = "60.0.3"
-    forge-mc = "1.21.10-60.0.3"
+    forge-fml-range = "[61,)"
+    forge-range = "[61.0.0,)"
+    forge = "61.0.0"
+    forge-mc = "1.21.11-61.0.0"
+    forge-eventbusvalidator = "7.0-beta.10"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
-    neoforge-range = "[21.10.10-beta,)"
-    neoforge = "21.10.10-beta"
+    neoforge-range = "[21.11.0-beta,)"
+    neoforge = "21.11.0-beta"
 
 # Dependencies
     mixin = "0.8.7"
     mixinextras = "0.5.0"
     mixinextras-range = "[0.5.0,)"
     examplemod = "1.0.0"
-    iris = "kuOV4Ece"
 
 # Plugins
-    plugin-moddevgradle = "2.0.115"
+    plugin-moddevgradle = "2.0.123"
     plugin-minotaur = "2.8.10"
-    plugin-curseforge-gradle = "1.1.26"
+    plugin-curseforge-gradle = "1.1.28"
     plugin-idea-ext = "1.3"
-    plugin-forge-gradle = "[6.0.44,6.2)"
-    plugin-mixin = "0.7.+"
-    plugin-parchment-forge-gradle = "1.+"
-    plugin-loom = "1.11-SNAPSHOT"
+    plugin-forge-gradle = "[7.0.0-alpha.46,)"
+    plugin-forge-at = "[5.0.1,)"
+    plugin-loom = "1.14-SNAPSHOT"
 
 [libraries]
 # Mixin
     mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
     mixinextras-common = { group = "io.github.llamalad7", name = "mixinextras-common", version.ref = "mixinextras" }
-    mixinextras-forge = { group = "io.github.llamalad7", name = "mixinextras-forge", version.ref = "mixinextras" }
 
 # Platform
     neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
@@ -65,7 +63,7 @@
 
 # Other
     jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version.ref = "jopt-simple" } # Forge's temporary hacky solution
-    iris = { group = "maven.modrinth", name = "iris", version.ref = "iris" }
+    forge-eventbusvalidator = { group = "net.minecraftforge", name = "eventbus-validator", version.ref = "forge-eventbusvalidator" }
 
 [plugins]
 # Publishing
@@ -76,8 +74,7 @@
     moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
     forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
     loom = { id = "fabric-loom", version.ref = "plugin-loom" }
-    parchmentforgegradle = { id = "org.parchmentmc.librarian.forgegradle", version.ref = "plugin-parchment-forge-gradle" }
 
 # Misc
     ideaext = { id = "org.jetbrains.gradle.plugin.idea-ext", version.ref = "plugin-idea-ext" }
-    mixin = { id = "org.spongepowered.mixin", version.ref = "plugin-mixin" }
+    forge-at = { id = "net.minecraftforge.accesstransformers", version.ref = "plugin-forge-at" }

@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.math.function.limit;
 
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -32,8 +32,8 @@ public final class ClampFunction extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return Mth.clamp(this.value.get(animationState), this.min.get(animationState), this.max.get(animationState));
+    public double compute(ControllerState controllerState) {
+        return Mth.clamp(this.value.get(controllerState), this.min.get(controllerState), this.max.get(controllerState));
     }
 
     @Override

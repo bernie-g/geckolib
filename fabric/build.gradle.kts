@@ -1,5 +1,5 @@
-import net.fabricmc.loom.task.RemapJarTask
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
+import net.fabricmc.loom.task.RemapJarTask
 
 plugins {
     id("geckolib-convention")
@@ -57,7 +57,7 @@ dependencies {
 loom {
 	accessWidenerPath = file("src/main/resources/geckolib.accesswidener")
 
-    mixin.defaultRefmapName.set("${modId}.refmap.json")
+    //mixin.defaultRefmapName.set("${modId}.refmap.json")
 
     runs {
         named("client") {
@@ -93,7 +93,7 @@ tasks.withType<Javadoc>().configureEach {
 
 tasks.withType<ProcessResources>().configureEach {
    from(project(":common").sourceSets.getByName("main").resources)
-    exclude("**/accesstransformer-nf.cfg")
+    exclude("**/accesstransformer.cfg")
 }
 
 modrinth {

@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.ApiStatus;
-import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animation.object.LoopType;
 
 import java.util.List;
 import java.util.Objects;
@@ -54,7 +54,7 @@ public final class RawAnimation {
 	 * @param animationName The name of the animation to play once
 	 */
 	public RawAnimation thenPlay(String animationName) {
-		return then(animationName, Animation.LoopType.DEFAULT);
+		return then(animationName, LoopType.DEFAULT);
 	}
 
 	/**
@@ -63,7 +63,7 @@ public final class RawAnimation {
 	 * @param animationName The name of the animation to play on a loop
 	 */
 	public RawAnimation thenLoop(String animationName) {
-		return then(animationName, Animation.LoopType.LOOP);
+		return then(animationName, LoopType.LOOP);
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class RawAnimation {
 	 * @param ticks The number of ticks to 'wait' for
 	 */
 	public RawAnimation thenWait(int ticks) {
-		this.animationList.add(new Stage(Stage.WAIT, Animation.LoopType.PLAY_ONCE, ticks));
+		this.animationList.add(new Stage(Stage.WAIT, LoopType.PLAY_ONCE, ticks));
 
 		return this;
 	}
@@ -86,7 +86,7 @@ public final class RawAnimation {
 	 * @param animation The name of the animation to play and hold
 	 */
 	public RawAnimation thenPlayAndHold(String animation) {
-		return then(animation, Animation.LoopType.HOLD_ON_LAST_FRAME);
+		return then(animation, LoopType.HOLD_ON_LAST_FRAME);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class RawAnimation {
 	 */
 	public RawAnimation thenPlayXTimes(String animationName, int playCount) {
 		for (int i = 0; i < playCount; i++) {
-			then(animationName, i == playCount - 1 ? Animation.LoopType.DEFAULT : Animation.LoopType.PLAY_ONCE);
+			then(animationName, i == playCount - 1 ? LoopType.DEFAULT : LoopType.PLAY_ONCE);
 		}
 
 		return this;
@@ -110,7 +110,7 @@ public final class RawAnimation {
 	 * @param animationName The name of the animation to play. <u>MUST</u> match the name of the animation in the <code>.animation.json</code> file.
 	 * @param loopType The loop type handler for the animation, overriding the default value set in the animation json
 	 */
-	public RawAnimation then(String animationName, Animation.LoopType loopType) {
+	public RawAnimation then(String animationName, LoopType loopType) {
 		this.animationList.add(new Stage(animationName, loopType));
 
 		return this;
@@ -169,17 +169,17 @@ public final class RawAnimation {
 	 * <p>
 	 * This is an entry object representing a single animation stage of the final compiled animation.
 	 */
-	public record Stage(String animationName, Animation.LoopType loopType, int additionalTicks) {
+	public record Stage(String animationName, LoopType loopType, int additionalTicks) {
         public static final StreamCodec<ByteBuf, Stage> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, Stage::animationName,
-                ByteBufCodecs.STRING_UTF8.map(Animation.LoopType::fromString, Animation.LoopType::getId), Stage::loopType,
+                ByteBufCodecs.STRING_UTF8.map(LoopType::fromString, LoopType::getId), Stage::loopType,
                 ByteBufCodecs.VAR_INT, Stage::additionalTicks,
                 Stage::new);
 
 		@ApiStatus.Internal
 		public static final String WAIT = "internal.wait";
 
-		public Stage(String animationName, Animation.LoopType loopType) {
+		public Stage(String animationName, LoopType loopType) {
 			this(animationName, loopType, 0);
 		}
 

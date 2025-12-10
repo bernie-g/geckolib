@@ -1,33 +1,30 @@
 package software.bernie.geckolib.animatable.manager;
 
+import com.google.common.base.Suppliers;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animation.state.BoneSnapshot;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * The animation data collection for a given animatable instance
  * <p>
- * Generally speaking, a single working-instance of an {@link GeoAnimatable Animatable}
+ * Typically a single working-instance of a {@link GeoAnimatable}
  * will have a single instance of {@code AnimatableManager} associated with it
  */
 public class AnimatableManager<T extends GeoAnimatable> {
-	private final Map<String, BoneSnapshot> boneSnapshotCollection = new Object2ObjectOpenHashMap<>();
-	private final Map<String, AnimationController<T>> animationControllers;
-	private Map<DataTicket<?>, Object> animatableInstanceData;
-
-	private double lastUpdateTime;
-	private boolean isFirstTick = true;
-	private double firstTickTime = -1;
+	protected final Map<String, AnimationController<T>> animationControllers;
+	protected final Supplier<Map<DataTicket<?>, Object>> animatableInstanceData = Suppliers.memoize(Reference2ObjectOpenHashMap::new);
+    protected double firstRenderTick = 0;
 
 	/**
 	 * Instantiates a new AnimatableManager for the given animatable, calling {@link GeoAnimatable#registerControllers} to define its controllers
@@ -40,12 +37,19 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		this.animationControllers = registrar.build();
 	}
 
+    /**
+     * Get the controller map for this animatable's manager
+     */
+    public Map<String, AnimationController<T>> getAnimationControllers() {
+        return this.animationControllers;
+    }
+
 	/**
 	 * Add an {@link AnimationController} to this animatable's manager
 	 * <p>
-	 * Generally speaking you probably should have added it during {@link GeoAnimatable#registerControllers}
+	 * Generally speaking; you probably should have added it during {@link GeoAnimatable#registerControllers}
 	 */
-	public void addController(AnimationController controller) {
+	public void addController(AnimationController<T> controller) {
 		getAnimationControllers().put(controller.getName(), controller);
 	}
 
@@ -56,43 +60,6 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		getAnimationControllers().remove(name);
 	}
 
-	public Map<String, AnimationController<T>> getAnimationControllers() {
-		return this.animationControllers;
-	}
-
-	public Map<String, BoneSnapshot> getBoneSnapshotCollection() {
-		return this.boneSnapshotCollection;
-	}
-
-	public void clearSnapshotCache() {
-		getBoneSnapshotCollection().clear();
-	}
-
-	public double getLastUpdateTime() {
-		return this.lastUpdateTime;
-	}
-
-	public void updatedAt(double updateTime) {
-		this.lastUpdateTime = updateTime;
-	}
-
-	public double getFirstTickTime() {
-		return this.firstTickTime;
-	}
-
-	public void startedAt(double time) {
-		this.firstTickTime = time;
-	}
-
-	public boolean isFirstTick() {
-		return this.isFirstTick;
-	}
-
-	@ApiStatus.Internal
-	public void finishFirstTick() {
-		this.isFirstTick = false;
-	}
-
 	/**
 	 * Set a custom data point to be used later
 	 *
@@ -100,17 +67,15 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * @param data The piece of data to store
 	 */
 	public <D> void setAnimatableData(DataTicket<D> dataTicket, D data) {
-		if (this.animatableInstanceData == null)
-			this.animatableInstanceData = new Object2ObjectOpenHashMap<>();
-
-		this.animatableInstanceData.put(dataTicket, data);
+		this.animatableInstanceData.get().put(dataTicket, data);
 	}
 
 	/**
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
 	 */
-	public <D> D getAnimatableData(DataTicket<D> dataTicket) {
-		return this.animatableInstanceData != null ? (D)this.animatableInstanceData.get(dataTicket) : null;
+	@SuppressWarnings("unchecked")
+    public <D> D getAnimatableData(DataTicket<D> dataTicket) {
+		return (D)this.animatableInstanceData.get().get(dataTicket);
 	}
 
 	/**
@@ -124,7 +89,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 */
 	public void tryTriggerAnimation(String animName) {
 		for (AnimationController<?> controller : getAnimationControllers().values()) {
-			if (controller.tryTriggerAnimation(animName))
+			if (controller.triggerAnimation(animName))
 				return;
 		}
 	}
@@ -139,7 +104,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		AnimationController<?> controller = getAnimationControllers().get(controllerName);
 
 		if (controller != null)
-			controller.tryTriggerAnimation(animName);
+			controller.triggerAnimation(animName);
 	}
 
 	/**
@@ -167,14 +132,30 @@ public class AnimatableManager<T extends GeoAnimatable> {
 			controller.stopTriggeredAnimation();
 	}
 
+    /**
+     * Tell this AnimatableManager instance that it was used to render its Animatable at the given tick
+     */
+    public void markRenderedAt(double animatableTick) {
+        if (this.firstRenderTick > animatableTick)
+            this.firstRenderTick = animatableTick;
+    }
+
+    /**
+     * Get the first time this animatable was used for rendering, in terms of its own age
+     */
+    public double getFirstRenderTick() {
+        return this.firstRenderTick;
+    }
+
 	/**
 	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
 	 */
-	public record ControllerRegistrar(List<AnimationController<? extends GeoAnimatable>> controllers) {
+	@SuppressWarnings("unchecked")
+    public record ControllerRegistrar(List<AnimationController<? extends GeoAnimatable>> controllers) {
 		/**
 		 * Add multiple {@link AnimationController}s to this registrar
 		 */
-		public ControllerRegistrar add(AnimationController<?>... controllers) {
+        public ControllerRegistrar add(AnimationController<?>... controllers) {
 			controllers().addAll(Arrays.asList(controllers));
 
 			return this;
@@ -192,7 +173,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 		/**
 		 * Remove an {@link AnimationController} from this registrar by name
 		 * <p>
-		 * This is mostly only useful if you're sub-classing an existing animatable object and want to modify the super list
+		 * This is mostly only useful if you're subclassing an existing animatable object and want to modify the super list
 		 */
 		public ControllerRegistrar remove(String name) {
 			controllers().removeIf(controller -> controller.getName().equals(name));
@@ -200,13 +181,14 @@ public class AnimatableManager<T extends GeoAnimatable> {
 			return this;
 		}
 
-		@ApiStatus.Internal
-		private <T extends GeoAnimatable> Object2ObjectArrayMap<String, AnimationController<T>> build() {
+		@SuppressWarnings("rawtypes")
+        @ApiStatus.Internal
+		private <T extends GeoAnimatable> Map<String, AnimationController<T>> build() {
 			Object2ObjectArrayMap<String, AnimationController<?>> map = new Object2ObjectArrayMap<>(controllers().size());
 
 			controllers().forEach(controller -> map.put(controller.getName(), controller));
 
-			return (Object2ObjectArrayMap)map;
+			return (Map)map;
 		}
 	}
 }

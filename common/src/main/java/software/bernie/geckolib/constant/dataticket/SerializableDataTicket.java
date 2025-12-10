@@ -5,7 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.constant.DataTickets;
 
@@ -52,7 +52,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<Double> ofDouble(ResourceLocation id) {
+	public static SerializableDataTicket<Double> ofDouble(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), Double.class, ByteBufCodecs.DOUBLE);
 	}
 
@@ -61,7 +61,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<Float> ofFloat(ResourceLocation id) {
+	public static SerializableDataTicket<Float> ofFloat(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), Float.class, ByteBufCodecs.FLOAT);
 	}
 
@@ -70,7 +70,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<Boolean> ofBoolean(ResourceLocation id) {
+	public static SerializableDataTicket<Boolean> ofBoolean(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), Boolean.class, ByteBufCodecs.BOOL);
 	}
 
@@ -79,7 +79,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<Integer> ofInt(ResourceLocation id) {
+	public static SerializableDataTicket<Integer> ofInt(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), Integer.class, ByteBufCodecs.INT);
 	}
 
@@ -88,7 +88,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<String> ofString(ResourceLocation id) {
+	public static SerializableDataTicket<String> ofString(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), String.class, ByteBufCodecs.STRING_UTF8);
 	}
 
@@ -97,7 +97,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static <E extends Enum<E>> SerializableDataTicket<E> ofEnum(ResourceLocation id, Class<E> enumClass) {
+	public static <E extends Enum<E>> SerializableDataTicket<E> ofEnum(Identifier id, Class<E> enumClass) {
 		return SerializableDataTicket.create(id.toString(), enumClass, new StreamCodec<>() {
 			@Override
 			public E decode(RegistryFriendlyByteBuf buf) {
@@ -116,7 +116,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<Vec3> ofVec3(ResourceLocation id) {
+	public static SerializableDataTicket<Vec3> ofVec3(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), Vec3.class, ByteBufCodecs.VECTOR3F.map(Vec3::new, Vec3::toVector3f));
 	}
 
@@ -125,7 +125,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 *
 	 * @param id The unique id of your ticket. Include your modid
 	 */
-	public static SerializableDataTicket<BlockPos> ofBlockPos(ResourceLocation id) {
+	public static SerializableDataTicket<BlockPos> ofBlockPos(Identifier id) {
 		return SerializableDataTicket.create(id.toString(), BlockPos.class, new StreamCodec<>() {
 			@Override
 			public BlockPos decode(RegistryFriendlyByteBuf buf) {

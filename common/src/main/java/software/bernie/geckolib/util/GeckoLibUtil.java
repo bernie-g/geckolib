@@ -10,8 +10,8 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.InstancedAnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.EasingType;
+import software.bernie.geckolib.animation.object.EasingType;
+import software.bernie.geckolib.animation.object.LoopType;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
@@ -52,15 +52,15 @@ public final class GeckoLibUtil {
 	}
 
 	/**
-	 * Register a custom {@link Animation.LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
+	 * Register a custom {@link LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
 	 * <p>
 	 * <b><u>MUST be called during mod construct</u></b>
 	 *
 	 * @param name The name of the {@code LoopType} handler
 	 * @param loopType The {@code LoopType} implementation to use for the given name
 	 */
-	synchronized public static Animation.LoopType addCustomLoopType(String name, Animation.LoopType loopType) {
-		return Animation.LoopType.register(name, loopType);
+	synchronized public static LoopType addCustomLoopType(String name, LoopType loopType) {
+		return LoopType.register(name, loopType);
 	}
 
 	/**
@@ -130,4 +130,6 @@ public final class GeckoLibUtil {
 
 		return patched && Objects.equals(map1, map2);
 	}
+
+    private GeckoLibUtil() {}
 }

@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -38,7 +39,7 @@ public class BlockEntityRenderStateMixin implements GeoRenderState {
     @Unique
     @Override
     public int getPackedLight() {
-        return this.lightCoords;
+        return getOrDefaultGeckolibData(DataTickets.PACKED_LIGHT, this.lightCoords);
     }
 
     @Unique

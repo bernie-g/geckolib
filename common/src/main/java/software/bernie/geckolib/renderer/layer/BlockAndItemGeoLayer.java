@@ -14,13 +14,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.internal.PerBoneRender;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -67,24 +68,29 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      */
     public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<@NotNull ItemStack, @NotNull BlockState>> retrievalFunction) {}
 
-
     /**
      * Register per-bone render operations, to be rendered after the main model is done.
      * <p>
      * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
      * is currently rendering.
      *
+     * @param renderPassInfo The collated render-related data for this render pass
      * @param consumer The registrar to accept the per-bone render tasks
      */
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        if (!didRenderModel)
+    public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+        if (!renderPassInfo.willRender())
             return;
 
+        final R renderState = renderPassInfo.renderState();
+        final BakedGeoModel model = renderPassInfo.model();
+
         for (RenderData<R> renderData : getRelevantBones(renderState, model)) {
-            model.getBone(renderData.boneName).ifPresentOrElse(bone -> createPerBoneRender(bone, renderData, consumer, renderState), () ->
-                    GeckoLibConstants.LOGGER.error("Unable to find bone for ItemArmorGeoLayer: {}, skipping", renderData.boneName));
+            model.getBone(renderData.boneName)
+                    .ifPresentOrElse(bone -> createPerBoneRender(bone, renderData, consumer, renderState),
+                                     () -> GeckoLibConstants.LOGGER.error("Unable to find bone for ItemArmorGeoLayer: {}, skipping", renderData.boneName));
         }
+
     }
 
     private void createPerBoneRender(GeoBone bone, RenderData<R> renderData, BiConsumer<GeoBone, PerBoneRender<R>> consumer, R renderState) {
@@ -92,18 +98,18 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
 
         renderObject.ifLeft(stack -> {
             if (!stack.isEmpty()) {
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
-                                       packedLight, packedOverlay, renderColor) -> {
+                consumer.accept(bone, (renderPassInfo, bone2, renderTasks) -> {
                     //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    submitItemStackRender(poseStack, bone2, stack, renderData.displayContext, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+                    submitItemStackRender(renderPassInfo.poseStack(), bone2, stack, renderData.displayContext, renderPassInfo.renderState(), renderTasks,
+                                          renderPassInfo.cameraState(), renderPassInfo.packedLight(), renderPassInfo.packedOverlay(), renderPassInfo.renderColor());
                 });
             }
         }).ifRight(blockState -> {
             if (!blockState.isAir()) {
-                consumer.accept(bone, (renderState2, poseStack, bone2, renderTasks, cameraState,
-                                       packedLight, packedOverlay, renderColor) -> {
+                consumer.accept(bone, (renderPassInfo, bone2, renderTasks) -> {
                     //RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-                    submitBlockRender(poseStack, bone2, blockState, renderState2, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+                    submitBlockRender(renderPassInfo.poseStack(), bone2, blockState, renderPassInfo.renderState(), renderTasks,
+                                      renderPassInfo.cameraState(), renderPassInfo.packedLight(), renderPassInfo.packedOverlay(), renderPassInfo.renderColor());
                 });
             }
         });

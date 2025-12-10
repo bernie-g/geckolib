@@ -19,7 +19,7 @@ ${mod_description}
     config = "${mod_id}.mixins.json"
 
 [[accessTransformers]]
-    file = "META-INF/accesstransformer-nf.cfg"
+    file = "META-INF/accesstransformer.cfg"
 
 [[dependencies.geckolib]]
     modId="neoforge"

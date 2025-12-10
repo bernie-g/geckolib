@@ -9,8 +9,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraftforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -26,9 +24,8 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      * <p>
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
-    @NotNull
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState & GeoRenderState> @NonNull Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return IClientItemExtensions.of(stack).getGenericArmorModel(entityRenderState, stack, slot, defaultModel);
     }
 
@@ -37,9 +34,8 @@ public final class GeckoLibClientForge implements GeckoLibClient {
      *
      * @return The GeoModel for the item, or null if not applicable
      */
-    @Nullable
     @Override
-    public GeoModel<?> getGeoModelForItem(ItemStack item) {
+    public @Nullable GeoModel<?> getGeoModelForItem(ItemStack item) {
         if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoRenderer)
             return geoRenderer.getGeoModel();
 

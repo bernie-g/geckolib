@@ -3,7 +3,7 @@ package software.bernie.geckolib.animatable.client;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
@@ -51,8 +51,7 @@ public interface GeoRenderProvider {
      *
      * @return The cached <code>GeoItemRenderer</code> instance for this provider, or null if not applicable
      */
-    @Nullable
-    default GeoItemRenderer<?> getGeoItemRenderer() {
+    default @Nullable GeoItemRenderer<?> getGeoItemRenderer() {
         return null;
     }
 
@@ -63,8 +62,7 @@ public interface GeoRenderProvider {
      * @param equipmentSlot The slot the ItemStack would be rendered in
      * @return The cached GeoArmorRenderer instance for this provider, or null if no armor renderer applies
      */
-    @Nullable
-    default GeoArmorRenderer<?, ?> getGeoArmorRenderer(ItemStack itemStack, EquipmentSlot equipmentSlot) {
+    default @Nullable GeoArmorRenderer<?, ?> getGeoArmorRenderer(ItemStack itemStack, EquipmentSlot equipmentSlot) {
         return null;
     }
 }

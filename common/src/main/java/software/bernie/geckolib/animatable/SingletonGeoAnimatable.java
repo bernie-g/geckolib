@@ -2,13 +2,13 @@ package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.cache.SyncedSingletonAnimatableCache;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
@@ -43,8 +43,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * @return The synced data, or null if no data of that type has been synced
      */
     @ApiStatus.NonExtendable
-    @Nullable
-    default <D> D getAnimData(long instanceId, SerializableDataTicket<D> dataTicket) {
+    default <D> @Nullable D getAnimData(long instanceId, SerializableDataTicket<D> dataTicket) {
         return getAnimatableInstanceCache().getManagerForId(instanceId).getAnimatableData(dataTicket);
     }
 
@@ -205,8 +204,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * 		private final BlockEntityWithoutLevelRenderer itemRenderer;
      *
      *        @Override
-     *        @Nullable
-     *        BlockEntityWithoutLevelRenderer getItemRenderer(GeoArmor armor) {
+     *        @Nullable BlockEntityWithoutLevelRenderer getItemRenderer(GeoArmor armor) {
      *          if (this.itemRenderer == null)
      *              this.itemRenderer = new MyItemRenderer();
      *

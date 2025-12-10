@@ -1,16 +1,14 @@
 package software.bernie.geckolib.renderer.layer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 import java.util.function.Function;
 
@@ -21,18 +19,18 @@ import java.util.function.Function;
  * If you are using this to use custom textures/rendertypes on specific bones, use {@link CustomBoneTextureGeoLayer} instead.
  */
 public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
-    protected final ResourceLocation texture;
-    protected final Function<ResourceLocation, RenderType> renderType;
+    protected final Identifier texture;
+    protected final Function<Identifier, RenderType> renderType;
 
     TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer) {
         this(renderer, MissingTextureAtlasSprite.getLocation(), null);
     }
 
-    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, ResourceLocation texture) {
+    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture) {
         this(renderer, texture, null);
     }
 
-    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, ResourceLocation texture, Function<ResourceLocation, RenderType> renderType) {
+    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture, Function<Identifier, RenderType> renderType) {
         super(renderer);
 
         this.texture = texture;
@@ -43,7 +41,7 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
      * Get the texture resource path for the given {@link GeoRenderState}
      */
     @Override
-    protected ResourceLocation getTextureResource(R renderState) {
+    protected Identifier getTextureResource(R renderState) {
         return this.texture;
     }
 
@@ -51,7 +49,7 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
      * Get the render type for the render pass
      */
     protected RenderType getRenderType(R renderState) {
-        final ResourceLocation texture = getTextureResource(renderState);
+        final Identifier texture = getTextureResource(renderState);
 
         if (this.renderType == null)
             return this.renderer.getRenderType(renderState, texture);
@@ -68,14 +66,13 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
      * and you may need to factor this in to your design
      */
     @Override
-    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-        if (!didRenderModel)
+    public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
+        if (!renderPassInfo.willRender())
             return;
 
-        RenderType renderType = getRenderType(renderState);
+        RenderType renderType = getRenderType(renderPassInfo.renderState());
 
         if (renderType != null)
-            this.renderer.submitRenderTasks(renderState, poseStack, bakedModel, renderTasks.order(1), cameraState, this.renderer.getGeoModel(), renderType, null, packedLight, packedOverlay, renderColor);
+            this.renderer.submitRenderTasks(renderPassInfo, renderTasks.order(1), renderType);
     }
 }

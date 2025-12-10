@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
 import net.minecraft.util.Mth;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -30,8 +30,8 @@ public final class ATan2Function extends MathFunction {
     }
 
     @Override
-    public double compute(AnimationState<?> animationState) {
-        return Math.atan2(this.y.get(animationState), this.x.get(animationState)) * Mth.RAD_TO_DEG;
+    public double compute(ControllerState controllerState) {
+        return Math.atan2(this.y.get(controllerState), this.x.get(controllerState)) * Mth.RAD_TO_DEG;
     }
 
     @Override

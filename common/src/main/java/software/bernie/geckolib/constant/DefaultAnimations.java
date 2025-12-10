@@ -1,14 +1,18 @@
 package software.bernie.geckolib.constant;
 
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.object.PlayState;
+import software.bernie.geckolib.animation.state.AnimationTest;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.internal.BoneSnapshots;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 import java.util.function.Function;
 
@@ -109,7 +113,7 @@ public final class DefaultAnimations {
 	/**
 	 * Generic {@link DefaultAnimations#SPAWN spawn} controller
 	 * <p>
-	 * Plays the spawn animation as long as the current {@link GeoAnimatable#getTick tick} of the animatable is {@literal <=} the value provided in {@code ticks}
+	 * Plays the spawn animation as long as the current age of the animatable is {@literal <=} the value provided in {@code ticks}
 	 * <p>
 	 * For the {@code objectSupplier}, provide the relevant object for the animatable being animated
 	 * </p>
@@ -126,7 +130,7 @@ public final class DefaultAnimations {
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> getSpawnController(int spawnTicks) {
 		return new AnimationController<>("Spawn", test ->
-				test.getData(DataTickets.TICK) <= spawnTicks ? test.setAndContinue(DefaultAnimations.SPAWN) : PlayState.STOP);
+				test.renderState().getAnimatableAge() <= spawnTicks ? test.setAndContinue(DefaultAnimations.SPAWN) : PlayState.STOP);
 	}
 
 	/**
@@ -152,8 +156,6 @@ public final class DefaultAnimations {
 		return new AnimationController<>("Attack", test -> {
 			if (test.getDataOrDefault(DataTickets.SWINGING_ARM, false))
 				return test.setAndContinue(attackAnimation);
-
-			test.controller().forceAnimationReset();
 
 			return PlayState.STOP;
 		});
@@ -231,4 +233,24 @@ public final class DefaultAnimations {
 			return test.setAndContinue(IDLE);
 		});
 	}
+
+    /**
+     * Hardcoded head rotation to look towards an entity's facing direction.
+     * <p>
+     * Consider replacing this with an <code>AnimationController</code> animation using the below values:
+     * <p>
+     * <code>xrot: math.to_rad(-query.head_x_rotation)</code><br>
+     * <code>yrot: math.to_rad(-query.head_y_rotation)</code>
+     *
+     * @param headBone The name of the bone to rotate
+     */
+    public static <R extends GeoRenderState> void hardcodedHeadRotation(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots, String headBone) {
+        snapshots.get(headBone).ifPresent(bone -> {
+            float pitch = renderPassInfo.getGeckolibData(DataTickets.ENTITY_PITCH);
+            float yaw = renderPassInfo.getGeckolibData(DataTickets.ENTITY_YAW);
+
+            bone.setRotX(-pitch * Mth.DEG_TO_RAD);
+            bone.setRotY(-yaw * Mth.DEG_TO_RAD);
+        });
+    }
 }

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.PreparableReloadListener.PreparationBarrier;
 import net.minecraft.server.packs.resources.Resource;
@@ -13,8 +13,8 @@ import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.animation.Animation;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.loading.json.ModelFormatVersion;
 import software.bernie.geckolib.loading.json.raw.Model;
 import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
@@ -46,38 +46,38 @@ import java.util.stream.Collectors;
  * and {@link GeoModel Models}
  */
 public final class GeckoLibResources {
-	public static final ResourceLocation RELOAD_LISTENER_ID = GeckoLibConstants.id("geckolib_resources");
-	public static final ResourceLocation ANIMATIONS_PATH = GeckoLibConstants.id("geckolib/animations");
-	public static final ResourceLocation MODELS_PATH = GeckoLibConstants.id("geckolib/models");
+	public static final Identifier RELOAD_LISTENER_ID = GeckoLibConstants.id("geckolib_resources");
+	public static final Identifier ANIMATIONS_PATH = GeckoLibConstants.id("geckolib/animations");
+	public static final Identifier MODELS_PATH = GeckoLibConstants.id("geckolib/models");
 	public static final Pattern SUFFIX_STRIPPER = Pattern.compile("((\\.geo)|((\\.animation)s?))?(\\.json)$");
 	public static final Pattern PREFIX_STRIPPER = Pattern.compile("^(geckolib/)((animations/)|(models/))?");
 
-	private static Map<ResourceLocation, BakedAnimations> ANIMATIONS = Collections.emptyMap();
-	private static Map<ResourceLocation, BakedGeoModel> MODELS = Collections.emptyMap();
+	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
+	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
 
 	/**
 	 * Get GeckoLib's cache of all the loaded animations from the {@link #ANIMATIONS_PATH}
 	 */
-	public static Map<ResourceLocation, BakedAnimations> getBakedAnimations() {
+	public static BakedAnimationCache getBakedAnimations() {
 		return ANIMATIONS;
 	}
 
 	/**
 	 * Get GeckoLib's cache of all the loaded geo models from the {@link #MODELS_PATH}
 	 */
-	public static Map<ResourceLocation, BakedGeoModel> getBakedModels() {
+	public static BakedModelCache getBakedModels() {
 		return MODELS;
 	}
 
 	@ApiStatus.Internal
 	public static CompletableFuture<Void> reload(PreparableReloadListener.SharedState sharedState, Executor prepExecutor, PreparationBarrier preparationBarrier, Executor applicationExecutor) {
-		CompletableFuture<Map<ResourceLocation, BakedAnimations>> animations = loadAnimations(prepExecutor, sharedState.resourceManager());
-		CompletableFuture<Map<ResourceLocation, BakedGeoModel>> models = loadModels(prepExecutor, sharedState.resourceManager());
+		CompletableFuture<Map<Identifier, BakedAnimations>> animations = loadAnimations(prepExecutor, sharedState.resourceManager());
+		CompletableFuture<Map<Identifier, BakedGeoModel>> models = loadModels(prepExecutor, sharedState.resourceManager());
 
 		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), prepExecutor)
 				.thenCompose(ignored -> CompletableFuture.allOf(animations, models).thenCompose(preparationBarrier::wait).thenRunAsync(() -> {
-					GeckoLibResources.ANIMATIONS = animations.join();
-					GeckoLibResources.MODELS = models.join();
+					GeckoLibResources.ANIMATIONS = new BakedAnimationCache(animations.join());
+					GeckoLibResources.MODELS = new BakedModelCache(models.join());
 					BakedAnimationsAdapter.COMPRESSION_CACHE = null;
 				}, applicationExecutor));
 	}
@@ -87,7 +87,7 @@ public final class GeckoLibResources {
 	 *
 	 * @return The stripped location, or the original path if no match is found
 	 */
-	public static ResourceLocation stripPrefixAndSuffix(ResourceLocation path) {
+	public static Identifier stripPrefixAndSuffix(Identifier path) {
 		String newPath = path.getPath();
 		Matcher prefixMatcher = PREFIX_STRIPPER.matcher(newPath);
 		newPath = prefixMatcher.find() ? newPath.substring(prefixMatcher.end()) : newPath;
@@ -100,7 +100,7 @@ public final class GeckoLibResources {
 	/**
 	 * Provide a {@link Future} for retrieving and baking all animation jsons from the {@link #ANIMATIONS_PATH}
 	 */
-	private static CompletableFuture<Map<ResourceLocation, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
+	private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, ANIMATIONS_PATH.getPath(), GeckoLibResources::bakeAnimations,
 								 ex -> new BakedAnimations(new Object2ObjectOpenHashMap<>()));
 	}
@@ -108,7 +108,7 @@ public final class GeckoLibResources {
 	/**
 	 * Provide a {@link Future} for retrieving and baking all geo model jsons from the {@link #MODELS_PATH}
 	 */
-	private static CompletableFuture<Map<ResourceLocation, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
+	private static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, MODELS_PATH.getPath(), GeckoLibResources::bakeModel,
 								 ex -> null);
 	}
@@ -118,13 +118,11 @@ public final class GeckoLibResources {
 	 * <p>
 	 * Automatically handles sequentially managed file I/O and parallelized task deployment
 	 */
-	private static <BAKED> CompletableFuture<Map<ResourceLocation, BAKED>> bakeJsonResources(Executor backgroundExecutor, ResourceManager resourceManager, String assetPath,
-																							 BiFunction<ResourceLocation, JsonObject, BAKED> elementFactory, Function<Throwable, BAKED> exceptionalFactory) {
-
-
+	private static <BAKED> CompletableFuture<Map<Identifier, BAKED>> bakeJsonResources(Executor backgroundExecutor, ResourceManager resourceManager, String assetPath,
+																							 BiFunction<Identifier, JsonObject, BAKED> elementFactory, Function<Throwable, BAKED> exceptionalFactory) {
 		return loadResources(backgroundExecutor, resourceManager, assetPath, "json", GeckoLibResources::readJsonFile)
 				.thenCompose(resources -> {
-					List<CompletableFuture<Pair<ResourceLocation, BAKED>>> tasks = new ObjectArrayList<>(resources.size());
+					List<CompletableFuture<Pair<Identifier, BAKED>>> tasks = new ObjectArrayList<>(resources.size());
 
 					resources.forEach(pair -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(stripPrefixAndSuffix(pair.left()), elementFactory.apply(pair.left(), pair.right())), backgroundExecutor)
 																.exceptionally(ex -> {
@@ -143,12 +141,12 @@ public final class GeckoLibResources {
 	 * <p>
 	 * This step is separated to prevent parallelized file I/O
 	 */
-	private static <UNBAKED> CompletableFuture<List<Pair<ResourceLocation, UNBAKED>>> loadResources(Executor executor, ResourceManager resourceManager, String assetPath, String fileType, BiFunction<ResourceLocation, Resource, UNBAKED> elementFactory) {
+	private static <UNBAKED> CompletableFuture<List<Pair<Identifier, UNBAKED>>> loadResources(Executor executor, ResourceManager resourceManager, String assetPath, String fileType, BiFunction<Identifier, Resource, UNBAKED> elementFactory) {
 		final String fileTypeSuffix = "." + fileType;
 
 		return CompletableFuture.supplyAsync(() -> resourceManager.listResources(assetPath, fileName -> fileName.getPath().endsWith(fileTypeSuffix)), executor)
 				.thenCompose(resources -> {
-					List<CompletableFuture<Pair<ResourceLocation, UNBAKED>>> tasks = new ObjectArrayList<>(resources.size());
+					List<CompletableFuture<Pair<Identifier, UNBAKED>>> tasks = new ObjectArrayList<>(resources.size());
 
 					resources.forEach((path, resource) -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(path, elementFactory.apply(path, resource)), executor)));
 
@@ -160,7 +158,7 @@ public final class GeckoLibResources {
 	 * Bake a {@link BakedGeoModel} from its {@link JsonObject} serialized form
 	 */
 	@NotNull
-	private static BakedGeoModel bakeModel(ResourceLocation path, JsonObject json) {
+	private static BakedGeoModel bakeModel(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".animation.json"))
 			throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
 
@@ -181,7 +179,7 @@ public final class GeckoLibResources {
 	 * Bake the {@link BakedAnimations} from a {@link JsonObject} serialized form
 	 */
 	@NotNull
-	private static BakedAnimations bakeAnimations(ResourceLocation path, JsonObject json) {
+	private static BakedAnimations bakeAnimations(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".geo.json"))
 			throw new RuntimeException("Found model file in animations folder! '" + path + "'");
 
@@ -199,7 +197,7 @@ public final class GeckoLibResources {
 	/**
 	 * Read a single resource into its {@link JsonObject} form
 	 */
-	private static JsonObject readJsonFile(ResourceLocation id, Resource resource) {
+	private static JsonObject readJsonFile(Identifier id, Resource resource) {
 		try (Reader reader = resource.openAsReader()) {
 			return GsonHelper.parse(reader);
 		}

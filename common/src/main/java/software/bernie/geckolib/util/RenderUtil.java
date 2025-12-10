@@ -4,11 +4,10 @@ import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -18,82 +17,85 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
+import org.joml.Matrix4fc;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.cache.object.GeoCube;
-import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoQuad;
+import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+
+import java.util.List;
 
 /**
  * Helper class for various methods and functions useful while rendering
  */
 public final class RenderUtil {
-	public static void translateMatrixToBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(-bone.getPosX() / 16f, bone.getPosY() / 16f, bone.getPosZ() / 16f);
-	}
+    /**
+     * Transform a PoseStack to match a bone's render position.
+     * <p>
+     * Can only be used inside of a {@link RenderPassInfo#renderPosed} call
+     */
+    public static void transformToBone(PoseStack poseStack, GeoBone bone) {
+        final List<GeoBone> boneQueue = new ObjectArrayList<>();
+        GeoBone parent = bone;
 
-	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		if (bone.getRotZ() != 0)
-			poseStack.mulPose(Axis.ZP.rotation(bone.getRotZ()));
+        boneQueue.add(bone);
 
-		if (bone.getRotY() != 0)
-			poseStack.mulPose(Axis.YP.rotation(bone.getRotY()));
+        while (parent.parent() != null) {
+            parent = parent.parent();
+            boneQueue.add(parent);
+        }
 
-		if (bone.getRotX() != 0)
-			poseStack.mulPose(Axis.XP.rotation(bone.getRotX()));
-	}
-
-	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
-		Vec3 rotation = cube.rotation();
-
-		poseStack.mulPose(new Quaternionf().rotationXYZ(0, 0, (float)rotation.z()));
-		poseStack.mulPose(new Quaternionf().rotationXYZ(0, (float)rotation.y(), 0));
-		poseStack.mulPose(new Quaternionf().rotationXYZ((float)rotation.x(), 0, 0));
-	}
-
-	public static void scaleMatrixForBone(PoseStack poseStack, GeoBone bone) {
-		poseStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
-	}
-
-	public static void translateToPivotPoint(PoseStack poseStack, GeoCube cube) {
-		Vec3 pivot = cube.pivot();
-		poseStack.translate(pivot.x() / 16f, pivot.y() / 16f, pivot.z() / 16f);
-	}
-
-	public static void translateToPivotPoint(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(bone.getPivotX() / 16f, bone.getPivotY() / 16f, bone.getPivotZ() / 16f);
-	}
-
-	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoCube cube) {
-		Vec3 pivot = cube.pivot();
-
-		poseStack.translate(-pivot.x() / 16f, -pivot.y() / 16f, -pivot.z() / 16f);
-	}
-
-	public static void translateAwayFromPivotPoint(PoseStack poseStack, GeoBone bone) {
-		poseStack.translate(-bone.getPivotX() / 16f, -bone.getPivotY() / 16f, -bone.getPivotZ() / 16f);
-	}
+        for (GeoBone bone2 : boneQueue) {
+            prepMatrixForBone(poseStack, bone2);
+        }
+    }
 
 	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
-		translateToPivotPoint(poseStack, bone);
-		rotateMatrixAroundBone(poseStack, bone);
+        bone.translateToPivotPoint(poseStack);
+
+        if (bone.baseRotZ() != 0)
+            poseStack.mulPose(Axis.ZP.rotation(bone.baseRotZ()));
+
+        if (bone.baseRotY() != 0)
+            poseStack.mulPose(Axis.YP.rotation(bone.baseRotY()));
+
+        if (bone.baseRotX() != 0)
+            poseStack.mulPose(Axis.XP.rotation(bone.baseRotX()));
+
+        if (bone.frameSnapshot != null)
+            bone.frameSnapshot.rotate(poseStack);
 	}
 
 	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
-		translateMatrixToBone(poseStack, bone);
-		translateToPivotPoint(poseStack, bone);
-		rotateMatrixAroundBone(poseStack, bone);
-		scaleMatrixForBone(poseStack, bone);
-		translateAwayFromPivotPoint(poseStack, bone);
+        if (bone.frameSnapshot != null)
+            bone.frameSnapshot.translate(poseStack);
+
+        translateAndRotateMatrixForBone(poseStack, bone);
+        bone.translateAwayFromPivotPoint(poseStack);
 	}
-	
-	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
+
+    /**
+     * Convert a {@link Matrix4fc} pose to a three-dimensional vector position, multiplying it by input values
+     * to allow for inline transformations
+     */
+    public static Vec3 renderPoseToPosition(Matrix4fc pose, float xScale, float yScale, float zScale) {
+        final Vector4f position = pose.transform(new Vector4f(0, 0, 0, 1));
+
+        return new Vec3(position.x() * xScale, position.y() * yScale, position.z() * zScale);
+    }
+
+    /**
+     * Extract the relative pose of an input matrix from a base matrix
+     */
+	public static Matrix4f extractPoseFromRoot(Matrix4fc baseMatrix, Matrix4f inputMatrix) {
 		inputMatrix = new Matrix4f(inputMatrix);
 		
 		inputMatrix.invert();
@@ -105,7 +107,7 @@ public final class RenderUtil {
 	/**
      * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation
 	 * <p>
-     * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRender} override
+     * Usually used for rotating projectiles towards their trajectory, in an {@link GeoRenderer#preRenderPass} override
 	 */
 	public static void faceRotation(PoseStack poseStack, Entity animatable, float partialTick) {
 		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
@@ -120,28 +122,6 @@ public final class RenderUtil {
 	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
 		return matrix.add(new Matrix4f().m30(vector.x).m31(vector.y).m32(vector.z));
 	}
-
-    /**
-     * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
-     */
-    public static <T extends GeoAnimatable> void setBonesVisible(GeoModel<T> model, boolean visible, String... boneNames) {
-        for (String boneName : boneNames) {
-            model.getBone(boneName).ifPresent(bone -> bone.setHidden(!visible));
-        }
-    }
-
-    /**
-     * Sets a {@link GeoBone} as visible or hidden, with support for lazy variable passing
-     */
-    public static void setBonesVisible(boolean visible, @Nullable GeoBone... bones) {
-        if (bones == null)
-            return;
-
-        for (GeoBone bone : bones) {
-            if (bone != null)
-                bone.setHidden(!visible);
-        }
-    }
 	
 	/**
 	 * Gets the actual dimensions of a texture resource from a given path
@@ -149,23 +129,14 @@ public final class RenderUtil {
 	 * @param texture The path of the texture resource to check
 	 * @return The dimensions (width x height) of the texture
 	 */
-	public static IntIntPair getTextureDimensions(ResourceLocation texture) {
+	public static IntIntPair getTextureDimensions(Identifier texture) {
 		GpuTexture gpuTexture = Minecraft.getInstance().getTextureManager().getTexture(texture).getTexture();
 
 		return IntIntPair.of(gpuTexture.getWidth(0), gpuTexture.getHeight(0));
 	}
 
 	/**
-	 * Rotates a {@link GeoBone} to match a provided {@link ModelPart}'s rotations
-	 * <p>
-	 * Usually used for items or armor rendering to match the rotations of other non-geo model parts
-	 */
-	public static void matchModelPartRot(ModelPart from, GeoBone to) {
-		to.updateRotation(-from.xRot, -from.yRot, from.zRot);
-	}
-
-	/**
-	 * If a {@link GeoCube} is a 2d plane the {@link software.bernie.geckolib.cache.object.GeoQuad Quad's}
+	 * If a {@link GeoCube} is a 2d plane the {@link GeoQuad Quad's}
 	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks
 	 * <p>
 	 * This performs a pseudo-ABS function to help resolve some of those issues
@@ -182,35 +153,9 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * Converts a {@link Direction} to a rotational float for rotation purposes
-	 */
-	public static float getDirectionAngle(Direction direction) {
-		return switch(direction) {
-			case SOUTH -> 90f;
-			case NORTH -> 270f;
-			case EAST -> 180f;
-			default -> 0f;
-		};
-	}
-
-	/**
-	 * Special helper function for lerping yaw.
-	 * <p>
-	 * This exists because yaw in Minecraft handles its yaw a bit strangely, and can cause incorrect results if lerped without accounting for special-cases
-	 */
-	public static double lerpYaw(double delta, double start, double end) {
-		start = Mth.wrapDegrees(start);
-		end = Mth.wrapDegrees(end);
-		double diff = start - end;
-		end = diff > 180 || diff < -180 ? start + Math.copySign(360 - Math.abs(diff), diff) : end;
-
-		return Mth.lerp(delta, start, end);
-	}
-
-	/**
 	 * Helper method to create the glowmask resource location for a given input texture
 	 */
-	public static ResourceLocation getEmissiveResource(ResourceLocation textureLocation) {
+	public static Identifier getEmissiveResource(Identifier textureLocation) {
 		return textureLocation.withPath(path -> path.replace(".png", "_glowmask.png"));
 	}
 
@@ -220,8 +165,7 @@ public final class RenderUtil {
      * @param entityType The {@link EntityType} to retrieve the replaced renderer for
      * @return The GeckoLib replaced renderer for the given entity, or null if not applicable
      */
-    @Nullable
-    public static GeoReplacedEntityRenderer<?, ?, ?> getReplacedEntityRenderer(EntityType<?> entityType) {
+    public static @Nullable GeoReplacedEntityRenderer<?, ?, ?> getReplacedEntityRenderer(EntityType<?> entityType) {
         return Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType) instanceof GeoReplacedEntityRenderer<?, ?, ?> replacedEntityRenderer ? replacedEntityRenderer : null;
     }
 
@@ -231,8 +175,7 @@ public final class RenderUtil {
      * @param item The item to retrieve the renderer for
      * @return The GeoItemRenderer instance, or null if not applicable
      */
-    @Nullable
-    public static GeoItemRenderer<?> getGeckoLibItemRenderer(Item item) {
+    public static @Nullable GeoItemRenderer<?> getGeckoLibItemRenderer(Item item) {
         return GeoRenderProvider.of(item).getGeoItemRenderer();
     }
 
@@ -242,8 +185,7 @@ public final class RenderUtil {
      * @param entityType The <code>EntityType</code> to retrieve the renderer for
      * @return The <code>GeoEntityRenderer</code> instance, or null if not applicable
      */
-    @Nullable
-    public static GeoEntityRenderer<?, ?> getGeckoLibEntityRenderer(EntityType<?> entityType) {
+    public static @Nullable GeoEntityRenderer<?, ?> getGeckoLibEntityRenderer(EntityType<?> entityType) {
         return Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType) instanceof GeoEntityRenderer<?, ?> geoEntityRenderer ? geoEntityRenderer : null;
     }
 
@@ -253,8 +195,7 @@ public final class RenderUtil {
      * @param blockEntityType The <code>BlockEntityType</code> to retrieve the renderer for
      * @return The <code>GeoBlockRenderer</code> instance, or null if not applicable
      */
-    @Nullable
-    public static GeoBlockRenderer<?, ?> getGeckoLibBlockRenderer(BlockEntityType<?> blockEntityType) {
+    public static @Nullable GeoBlockRenderer<?, ?> getGeckoLibBlockRenderer(BlockEntityType<?> blockEntityType) {
         return Minecraft.getInstance().getBlockEntityRenderDispatcher().renderers.get(blockEntityType) instanceof GeoBlockRenderer<?, ?> geoBlockRenderer ? geoBlockRenderer : null;
     }
 
@@ -265,8 +206,7 @@ public final class RenderUtil {
      * @return The <code>GeoArmorRenderer</code> instance, or null if not applicable
      * @see #getGeckoLibArmorRenderer(ItemStack, EquipmentSlot)
      */
-    @Nullable
-    public static GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(Item item) {
+    public static @Nullable GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(Item item) {
         final ItemStack stack = item.getDefaultInstance();
         final Equippable equippable = stack.getOrDefault(DataComponents.EQUIPPABLE, null);
 
@@ -283,8 +223,7 @@ public final class RenderUtil {
      * @param slot The {@link EquipmentSlot} to retrieve the renderer for
      * @return The <code>GeoArmorRenderer</code> instance, or null if not applicable
      */
-    @Nullable
-    public static GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(ItemStack stack, EquipmentSlot slot) {
+    public static @Nullable GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(ItemStack stack, EquipmentSlot slot) {
         return GeoRenderProvider.of(stack).getGeoArmorRenderer(stack, slot);
     }
 
@@ -294,10 +233,11 @@ public final class RenderUtil {
      * @param entityType The {@code EntityType} to retrieve the replaced {@link GeoAnimatable} for
      * @return The {@code GeoAnimatable} instance, or null if one isn't found
      */
-    @Nullable
-    public static GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
+    public static @Nullable GeoAnimatable getReplacedAnimatable(EntityType<?> entityType) {
         final GeoReplacedEntityRenderer<?, ?, ?> replacedEntityRenderer = getReplacedEntityRenderer(entityType);
 
         return replacedEntityRenderer == null ? null : replacedEntityRenderer.getAnimatable();
     }
+
+    private RenderUtil() {}
 }

@@ -81,6 +81,13 @@ public interface GeoRenderState {
     }
 
     /**
+     * Get the age of the animatable in ticks, including the current partial tick
+     */
+    default double getAnimatableAge() {
+        return getOrDefaultGeckolibData(DataTickets.TICK, 0d);
+    }
+
+    /**
      * Internal method used for more complex handling internally.
      * <p>
      * <b>YOU SHOULD NOT BE USING THIS</b>

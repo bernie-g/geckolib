@@ -4,11 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import org.apache.logging.log4j.Level;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 import software.bernie.geckolib.loading.math.function.generic.*;
 import software.bernie.geckolib.loading.math.function.limit.ClampFunction;
@@ -140,7 +140,7 @@ public class MathParser {
      * @param name The name of the variable - this should match the name in the expression string
      * @param value The new value to set the Variable to
      */
-    public static void setVariable(String name, ToDoubleFunction<AnimationState<?>> value) {
+    public static void setVariable(String name, ToDoubleFunction<ControllerState> value) {
         getVariableFor(name).set(value);
     }
 

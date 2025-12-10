@@ -3,7 +3,7 @@ package software.bernie.geckolib;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,10 +21,10 @@ public final class GeckoLibConstants {
     public static void init() {}
 
     /**
-     * Helper method to create a ResourceLocation predefined with GeckoLib's {@link #MODID}
+     * Helper method to create a Identifier predefined with GeckoLib's {@link #MODID}
      */
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(GeckoLibConstants.MODID, path);
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, path);
     }
 
     /**
@@ -35,7 +35,7 @@ public final class GeckoLibConstants {
      * @param resource The location or id of the resource the error pertains to
      * @param message The error message to display
      */
-    public static RuntimeException exception(ResourceLocation resource, String message) {
+    public static RuntimeException exception(Identifier resource, String message) {
         return new RuntimeException(resource + ": " + message);
     }
 
@@ -48,7 +48,7 @@ public final class GeckoLibConstants {
      * @param message The error message to display
      * @param exception The exception to throw
      */
-    public static RuntimeException exception(ResourceLocation resource, String message, Throwable exception) {
+    public static RuntimeException exception(Identifier resource, String message, Throwable exception) {
         return new RuntimeException(resource + ": " + message, exception);
     }
 }

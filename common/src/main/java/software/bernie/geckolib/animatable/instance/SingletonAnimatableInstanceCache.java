@@ -2,6 +2,7 @@ package software.bernie.geckolib.animatable.instance;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 
@@ -14,6 +15,7 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
 public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected final Long2ObjectMap<AnimatableManager<?>> managers = new Long2ObjectOpenHashMap<>();
 
+    @ApiStatus.Internal
 	public SingletonAnimatableInstanceCache(GeoAnimatable animatable) {
 		super(animatable);
 	}
@@ -23,8 +25,9 @@ public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	 * <p>
 	 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
 	 */
-	@Override
-	public AnimatableManager<?> getManagerForId(long uniqueId) {
-		return this.managers.computeIfAbsent(uniqueId, key -> new AnimatableManager<>(this.animatable));
+	@SuppressWarnings("unchecked")
+    @Override
+	public <T extends GeoAnimatable> AnimatableManager<T> getManagerForId(long uniqueId) {
+		return (AnimatableManager<T>)this.managers.computeIfAbsent(uniqueId, key -> new AnimatableManager<>(this.animatable));
 	}
 }

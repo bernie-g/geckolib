@@ -1,6 +1,6 @@
 package software.bernie.geckolib.model;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -12,9 +12,9 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * Additionally, it encourages consistency and sorting of asset paths.
  */
 public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoModel<T> {
-	private ResourceLocation modelPath;
-	private ResourceLocation texturePath;
-	private ResourceLocation animationsPath;
+	private Identifier modelPath;
+	private Identifier texturePath;
+	private Identifier animationsPath;
 
 	/**
 	 * Create a new instance of this model class
@@ -22,9 +22,9 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * The asset path should be the truncated relative path from the base folder
 	 * <p>
 	 * E.G.
-	 * <pre>{@code new ResourceLocation("myMod", "animals/red_fish")}</pre>
+	 * <pre>{@code new Identifier("myMod", "animals/red_fish")}</pre>
 	 */
-	public DefaultedGeoModel(ResourceLocation assetSubpath) {
+	public DefaultedGeoModel(Identifier assetSubpath) {
 		this.modelPath = buildFormattedModelPath(assetSubpath);
 		this.texturePath = buildFormattedTexturePath(assetSubpath);
 		this.animationsPath = buildFormattedAnimationPath(assetSubpath);
@@ -35,7 +35,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * <p>
 	 * This is useful if your animatable shares a model path with another animatable that differs in path to the texture and animations for this model
 	 */
-	public DefaultedGeoModel<T> withAltModel(ResourceLocation altPath) {
+	public DefaultedGeoModel<T> withAltModel(Identifier altPath) {
 		this.modelPath = buildFormattedModelPath(altPath);
 
 		return this;
@@ -46,7 +46,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * <p>
 	 * This is useful if your animatable shares an animations path with another animatable that differs in path to the model and texture for this model
 	 */
-	public DefaultedGeoModel<T> withAltAnimations(ResourceLocation altPath) {
+	public DefaultedGeoModel<T> withAltAnimations(Identifier altPath) {
 		this.animationsPath = buildFormattedAnimationPath(altPath);
 
 		return this;
@@ -57,7 +57,7 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	 * <p>
 	 * This is useful if your animatable shares a texture path with another animatable that differs in path to the model and animations for this model
 	 */
-	public DefaultedGeoModel<T> withAltTexture(ResourceLocation altPath) {
+	public DefaultedGeoModel<T> withAltTexture(Identifier altPath) {
 		this.texturePath = buildFormattedTexturePath(altPath);
 
 		return this;
@@ -66,30 +66,30 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	/**
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 *
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code new Identifier(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted model resource path based on recommended defaults. E.G. <pre>{@code "mymod:entity/animal/goat"}</pre>
 	 */
-	public ResourceLocation buildFormattedModelPath(ResourceLocation basePath) {
+	public Identifier buildFormattedModelPath(Identifier basePath) {
 		return basePath.withPrefix(subtype() + "/");
 	}
 
 	/**
 	 * Constructs a defaulted resource path for a animation.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 *
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code new Identifier(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted animation resource path based on recommended defaults. E.G. <pre>{@code "mymod:entity/animal/goat"}</pre>
 	 */
-	public ResourceLocation buildFormattedAnimationPath(ResourceLocation basePath) {
+	public Identifier buildFormattedAnimationPath(Identifier basePath) {
 		return basePath.withPrefix(subtype() + "/");
 	}
 
 	/**
 	 * Constructs a defaulted resource path for a geo.json file based on the input namespace and subpath, automatically using the {@link DefaultedGeoModel#subtype() subtype}
 	 *
-	 * @param basePath The base path of your resource. E.G. <pre>{@code new ResourceLocation(MyMod.MOD_ID, "animal/goat")}</pre>
+	 * @param basePath The base path of your resource. E.G. <pre>{@code new Identifier(MyMod.MOD_ID, "animal/goat")}</pre>
 	 * @return The formatted texture resource path based on recommended defaults. E.G. <pre>{@code "mymod:textures/entity/animal/goat.png"}</pre>
 	 */
-	public ResourceLocation buildFormattedTexturePath(ResourceLocation basePath) {
+	public Identifier buildFormattedTexturePath(Identifier basePath) {
 		return basePath.withPath("textures/" + subtype() + "/" + basePath.getPath() + ".png");
 	}
 
@@ -108,17 +108,17 @@ public abstract class DefaultedGeoModel<T extends GeoAnimatable> extends GeoMode
 	protected abstract String subtype();
 
 	@Override
-	public ResourceLocation getModelResource(GeoRenderState renderState) {
+	public Identifier getModelResource(GeoRenderState renderState) {
 		return this.modelPath;
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(GeoRenderState renderState) {
+	public Identifier getTextureResource(GeoRenderState renderState) {
 		return this.texturePath;
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(T animatable) {
+	public Identifier getAnimationResource(T animatable) {
 		return this.animationsPath;
 	}
 }

@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.renderer.texture.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,17 +18,17 @@ import software.bernie.geckolib.renderer.texture.GeckoLibAnimatedTexture;
  */
 @Mixin(value = TextureManager.class, priority = 2000)
 public abstract class TextureManagerMixin {
-	@Shadow protected abstract TextureContents loadContentsSafe(ResourceLocation textureId, ReloadableTexture texture);
+	@Shadow protected abstract TextureContents loadContentsSafe(Identifier textureId, ReloadableTexture texture);
 
-	@Shadow public abstract void register(ResourceLocation path, AbstractTexture texture);
+	@Shadow public abstract void register(Identifier path, AbstractTexture texture);
 
     /**
      * Swap out the vanilla SimpleTexture for a GeckoLibAnimatedTexture if the texture is animated
      */
-	@WrapOperation(method = "getTexture(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
-			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
+	@WrapOperation(method = "getTexture(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
+			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
 			require = 0)
-	private SimpleTexture geckolib$replaceAnimatableTexture(ResourceLocation location, Operation<SimpleTexture> original) {
+	private SimpleTexture geckolib$replaceAnimatableTexture(Identifier location, Operation<SimpleTexture> original) {
 		GeckoLibAnimatedTexture animatableTexture = new GeckoLibAnimatedTexture(location);
 
 		TextureContents contents = loadContentsSafe(location, animatableTexture);
@@ -48,10 +48,10 @@ public abstract class TextureManagerMixin {
     /**
      * Force-cancel texture registration if texture is GeckolibAnimatedTexture, since we already did it in <code>geckolib$replaceAnimatableTexture</code>
      */
-	@WrapWithCondition(method = "getTexture(Lnet/minecraft/resources/ResourceLocation;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
-			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/ResourceLocation;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),
+	@WrapWithCondition(method = "getTexture(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
+			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/Identifier;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),
 			require = 0)
-	private boolean geckolib$skipAnimatableTextureRegistration(TextureManager textureManager, ResourceLocation id, ReloadableTexture texture) {
+	private boolean geckolib$skipAnimatableTextureRegistration(TextureManager textureManager, Identifier id, ReloadableTexture texture) {
 		return !(texture instanceof GeckoLibAnimatedTexture);
 	}
 }

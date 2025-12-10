@@ -2,7 +2,7 @@ package software.bernie.geckolib.loading.math;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -15,18 +15,18 @@ import java.util.function.ToDoubleFunction;
  * All mathematical objects are an extension of this interface, allowing for a recursively nestable
  * mathematical system that can be accessed via this one access point
  */
-public interface MathValue extends ToDoubleFunction<AnimationState<?>> {
+public interface MathValue extends ToDoubleFunction<ControllerState> {
     /**
      * Get computed or stored value based on the current AnimationState
      */
-    double get(AnimationState<?> animationState);
+    double get(ControllerState controllerState);
 
     /**
      * Return whether this type of MathValue should be considered mutable; its value could change.<br>
      * This is used to cache calculated values, optimising computational work
      * <p>
      * By definition, any value that returns true from this method <b><u>must not</u></b>
-     * utilise the passed {@link AnimationState}, and must instead be a stored constant or pre-computed value
+     * utilise the passed {@link ControllerState}, and must instead be a stored constant or pre-computed value
      */
     default boolean isMutable() {
         return true;
@@ -67,8 +67,9 @@ public interface MathValue extends ToDoubleFunction<AnimationState<?>> {
      * Overloaded, use {@link #get} instead
      */
     @ApiStatus.Internal
+    @Deprecated
     @Override
-    default double applyAsDouble(AnimationState<?> animationState) {
-        return get(animationState);
+    default double applyAsDouble(ControllerState controllerState) {
+        return get(controllerState);
     }
 }

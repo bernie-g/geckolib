@@ -1,6 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.Set;
@@ -21,12 +21,12 @@ public record CompoundValue(MathValue[] subValues, Set<Variable> usedVariables) 
     }
 
     @Override
-    public double get(AnimationState<?> animationState) {
+    public double get(ControllerState controllerState) {
         for (int i = 0; i < this.subValues.length - 1; i++) {
-            this.subValues[i].get(animationState);
+            this.subValues[i].get(controllerState);
         }
 
-        return this.subValues[this.subValues.length - 1].get(animationState);
+        return this.subValues[this.subValues.length - 1].get(controllerState);
     }
 
     @Override

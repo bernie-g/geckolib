@@ -4,22 +4,23 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.function.Function;
@@ -44,7 +45,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	GeoRenderer<T, O, R> getRenderer();
 
 	/**
-	 * Returns the GeckoLib render state for the current render pass
+	 * @return The GeckoLib render state for the current render pass
 	 */
 	R getRenderState();
 
@@ -56,8 +57,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
      * @param dataTicket The DataTicket denoting the data to be retrieved
      * @return The data associated with the DataTicket, or null if there is no existing data
      */
-	@Nullable
-	default <D> D getRenderData(DataTicket<D> dataTicket) {
+	default <D> @Nullable D getRenderData(DataTicket<D> dataTicket) {
 		final GeoRenderState renderState = getRenderState();
 
         return renderState.getOrDefaultGeckolibData(dataTicket, null);
@@ -159,12 +159,17 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/**
 		 * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
 		 * <p>
 		 * This event is cancellable.<br>
 		 * If the event is cancelled, the block entity will not be rendered.
 		 */
 		interface Pre<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<R> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -261,12 +266,17 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/**
 		 * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the armor piece will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<R> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -358,12 +368,17 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/**
 		 * Pre-render event for entities being rendered by {@link GeoEntityRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the entity will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<R> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -460,12 +475,17 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/**
 		 * Pre-render event for replaced entities being rendered by {@link GeoReplacedEntityRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the entity will not be rendered.
 		 */
 		interface Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<R> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -478,7 +498,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
             BakedGeoModel getModel();
 
             /**
-             * @return The render submission collector for this render pass
+             * Returns the render submission collector for this render pass
              */
             SubmitNodeCollector getRenderTasks();
 
@@ -576,12 +596,17 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/**
 		 * Pre-render event for items being rendered by {@link GeoItemRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the item will not be rendered.
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<GeoRenderState> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.
@@ -672,19 +697,23 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
             /**
              * Get the associated render data object for this render pass, or null if not applicable
              */
-            @Nullable
-            E getRelatedObject();
+			@Nullable E getRelatedObject();
 		}
 
 		/**
 		 * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
 		 * <p>
-		 * This event is called before rendering, but after {@link GeoRenderer#preRender}
+		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the object will not be rendered.
 		 */
 		interface Pre<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
+            /**
+             * Returns the render pass info for the current render pass for this animatable
+             */
+            RenderPassInfo<R> getRenderPassInfo();
+
             /**
              * Get the PoseStack for the current render pass.<br>
              * The renderer has not yet scaled or positioned the PoseStack as this stage.

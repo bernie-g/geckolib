@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntityType;
@@ -16,6 +15,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 
 /**
  * Specialty class for rendering directionally oriented projectiles.
@@ -40,9 +40,9 @@ public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable,
      * Applies rotation transformations to the renderer prior to render time to account for various entity states
      */
     @Override
-    protected void applyRotations(R renderState, PoseStack poseStack, float nativeScale, CameraRenderState cameraState) {
-        poseStack.mulPose(Axis.YP.rotationDegrees(renderState.getGeckolibData(DataTickets.ENTITY_YAW)));
-        poseStack.mulPose(Axis.XP.rotationDegrees(renderState.getGeckolibData(DataTickets.ENTITY_PITCH)));
+    protected void applyRotations(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, float nativeScale) {
+        poseStack.mulPose(Axis.YP.rotationDegrees(renderPassInfo.getGeckolibData(DataTickets.ENTITY_YAW)));
+        poseStack.mulPose(Axis.XP.rotationDegrees(renderPassInfo.getGeckolibData(DataTickets.ENTITY_PITCH)));
     }
 
     /**

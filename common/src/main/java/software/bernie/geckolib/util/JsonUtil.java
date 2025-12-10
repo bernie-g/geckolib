@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -16,8 +16,6 @@ import java.util.function.Function;
  * Json helper class for various json functions
  */
 public final class JsonUtil {
-    private JsonUtil() {}
-
     /**
      * Convert a {@link JsonArray} of doubles to a {@code double[]}
      * <p>
@@ -94,40 +92,35 @@ public final class JsonUtil {
     /**
      * Retrieves an optionally present Long from the provided {@link JsonObject}, or null if the element isn't present
      */
-    @Nullable
-    public static Long getOptionalLong(JsonObject obj, String elementName) {
+    public static @Nullable Long getOptionalLong(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsLong(obj, elementName) : null;
     }
 
     /**
      * Retrieves an optionally present Boolean from the provided {@link JsonObject}, or null if the element isn't present
      */
-    @Nullable
-    public static Boolean getOptionalBoolean(JsonObject obj, String elementName) {
+    public static @Nullable Boolean getOptionalBoolean(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsBoolean(obj, elementName) : null;
     }
 
     /**
      * Retrieves an optionally present Float from the provided {@link JsonObject}, or null if the element isn't present
      */
-    @Nullable
-    public static Float getOptionalFloat(JsonObject obj, String elementName) {
+    public static @Nullable Float getOptionalFloat(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsFloat(obj, elementName) : null;
     }
 
     /**
      * Retrieves an optionally present Double from the provided {@link JsonObject}, or null if the element isn't present
      */
-    @Nullable
-    public static Double getOptionalDouble(JsonObject obj, String elementName) {
+    public static @Nullable Double getOptionalDouble(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsDouble(obj, elementName) : null;
     }
 
     /**
      * Retrieves an optionally present Integer from the provided {@link JsonObject}, or null if the element isn't present
      */
-    @Nullable
-    public static Integer getOptionalInteger(JsonObject obj, String elementName) {
+    public static @Nullable Integer getOptionalInteger(JsonObject obj, String elementName) {
         return obj.has(elementName) ? GsonHelper.getAsInt(obj, elementName) : null;
     }
 
@@ -137,4 +130,6 @@ public final class JsonUtil {
     public static Vec3 arrayToVec(double[] array) {
         return new Vec3(array[0], array[1], array[2]);
     }
+
+    private JsonUtil() {}
 }

@@ -3,14 +3,16 @@ package software.bernie.geckolib.loading.json.typeadapter;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.keyframe.event.data.CustomInstructionKeyframeData;
-import software.bernie.geckolib.animation.keyframe.event.data.ParticleKeyframeData;
-import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
+import software.bernie.geckolib.cache.animation.Animation;
+import software.bernie.geckolib.cache.animation.keyframeevent.CustomInstructionKeyframeData;
+import software.bernie.geckolib.cache.animation.keyframeevent.ParticleKeyframeData;
+import software.bernie.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.lang.reflect.Type;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,21 +51,20 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMark
 
 	private static SoundKeyframeData[] buildSoundFrameData(JsonObject rootObj) {
 		JsonObject soundsObj = GsonHelper.getAsJsonObject(rootObj, "sound_effects", new JsonObject());
-		SoundKeyframeData[] sounds = new SoundKeyframeData[soundsObj.size()];
-		int index = 0;
+        List<SoundKeyframeData> sounds = new ObjectArrayList<>(soundsObj.size());
 
 		for (Map.Entry<String, JsonElement> entry : soundsObj.entrySet()) {
-			sounds[index] = new SoundKeyframeData(Double.parseDouble(entry.getKey()) * 20d, GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "effect"));
-			index++;
+			sounds.add(new SoundKeyframeData(Double.parseDouble(entry.getKey()), GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "effect")));
 		}
 
-		return sounds;
+        sounds.sort(Comparator.comparing(SoundKeyframeData::getTime));
+
+		return sounds.toArray(new SoundKeyframeData[0]);
 	}
 
 	private static ParticleKeyframeData[] buildParticleFrameData(JsonObject rootObj) {
 		JsonObject particlesObj = GsonHelper.getAsJsonObject(rootObj, "particle_effects", new JsonObject());
-		ParticleKeyframeData[] particles = new ParticleKeyframeData[particlesObj.size()];
-		int index = 0;
+        List<ParticleKeyframeData> particles = new ObjectArrayList<>(particlesObj.size());
 
 		for (Map.Entry<String, JsonElement> entry : particlesObj.entrySet()) {
 			JsonObject obj = entry.getValue().getAsJsonObject();
@@ -71,20 +72,20 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMark
 			String locator = GsonHelper.getAsString(obj, "locator", "");
 			String script = GsonHelper.getAsString(obj, "pre_effect_script", "");
 
-			particles[index] = new ParticleKeyframeData(Double.parseDouble(entry.getKey()) * 20d, effect, locator, script);
-			index++;
+			particles.add(new ParticleKeyframeData(Double.parseDouble(entry.getKey()), effect, locator, script));
 		}
 
-		return particles;
+        particles.sort(Comparator.comparing(ParticleKeyframeData::getTime));
+
+        return particles.toArray(new ParticleKeyframeData[0]);
 	}
 
 	private static CustomInstructionKeyframeData[] buildCustomFrameData(JsonObject rootObj) {
 		JsonObject customInstructionsObj = GsonHelper.getAsJsonObject(rootObj, "timeline", new JsonObject());
-		CustomInstructionKeyframeData[] customInstructions = new CustomInstructionKeyframeData[customInstructionsObj.size()];
-		int index = 0;
+		List<CustomInstructionKeyframeData> customInstructions = new ObjectArrayList<>(customInstructionsObj.size());
 
 		for (Map.Entry<String, JsonElement> entry : customInstructionsObj.entrySet()) {
-			String instructions = "";
+			String instructions;
 
 			if (entry.getValue() instanceof JsonArray array) {
 				instructions = GEO_GSON.fromJson(array, ObjectArrayList.class).toString();
@@ -92,11 +93,15 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMark
 			else if (entry.getValue() instanceof JsonPrimitive primitive) {
 				instructions = primitive.getAsString();
 			}
+            else {
+                instructions = "";
+            }
 
-			customInstructions[index] = new CustomInstructionKeyframeData(Double.parseDouble(entry.getKey()) * 20d, instructions);
-			index++;
+			customInstructions.add(new CustomInstructionKeyframeData(Double.parseDouble(entry.getKey()), instructions));
 		}
 
-		return customInstructions;
+        customInstructions.sort(Comparator.comparing(CustomInstructionKeyframeData::getTime));
+
+		return customInstructions.toArray(new CustomInstructionKeyframeData[0]);
 	}
 }

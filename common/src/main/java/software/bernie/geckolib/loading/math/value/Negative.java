@@ -1,6 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.Set;
@@ -15,8 +15,8 @@ import java.util.Set;
  */
 public record Negative(MathValue value) implements MathValue {
     @Override
-    public double get(AnimationState<?> animationState) {
-        return -this.value.get(animationState);
+    public double get(ControllerState controllerState) {
+        return -this.value.get(controllerState);
     }
 
     @Override

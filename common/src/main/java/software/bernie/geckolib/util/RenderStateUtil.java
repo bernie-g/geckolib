@@ -42,8 +42,6 @@ public final class RenderStateUtil {
         newRenderState.nameTag = oldRenderState.nameTag;
         newRenderState.nameTagAttachment = oldRenderState.nameTagAttachment;
         newRenderState.leashStates = oldRenderState.leashStates;
-        newRenderState.hitboxesRenderState = oldRenderState.hitboxesRenderState;
-        newRenderState.serverHitboxesRenderState = oldRenderState.serverHitboxesRenderState;
         newRenderState.shadowRadius = oldRenderState.shadowRadius;
 
         newRenderState.shadowPieces.addAll(oldRenderState.shadowPieces);
@@ -109,9 +107,9 @@ public final class RenderStateUtil {
 
         newRenderState.mainArm = oldRenderState.mainArm;
         newRenderState.rightArmPose = oldRenderState.rightArmPose;
-        newRenderState.rightHandItem = oldRenderState.rightHandItem;
+        newRenderState.rightHandItemState = oldRenderState.rightHandItemState;
         newRenderState.leftArmPose = oldRenderState.leftArmPose;
-        newRenderState.leftHandItem = oldRenderState.leftHandItem;
+        newRenderState.leftHandItemState = oldRenderState.leftHandItemState;
     }
 
     /**
@@ -269,4 +267,6 @@ public final class RenderStateUtil {
 
         return newRenderState;
     }
+
+    private RenderStateUtil() {}
 }

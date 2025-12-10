@@ -14,7 +14,7 @@ import net.minecraft.client.resources.metadata.animation.AnimationFrame;
 import net.minecraft.client.resources.metadata.animation.AnimationMetadataSection;
 import net.minecraft.client.resources.metadata.animation.FrameSize;
 import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceMetadata;
@@ -38,7 +38,7 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 	protected AnimationContents animationContents = null;
 	protected boolean isAnimated = false;
 
-	public AnimatableTexture(final ResourceLocation location) {
+	public AnimatableTexture(final Identifier location) {
 		super(location);
 	}
 

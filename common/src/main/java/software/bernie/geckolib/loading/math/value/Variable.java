@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.math.value;
 
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.Set;
@@ -16,19 +16,19 @@ import java.util.function.ToDoubleFunction;
  * <br>
  * Returns the currently stored value, which may be modified at any given time via {@link #set}. Values may be lazily evaluated to eliminate wasteful usage
  */
-public record Variable(String name, AtomicReference<ToDoubleFunction<AnimationState<?>>> value) implements MathValue {
+public record Variable(String name, AtomicReference<ToDoubleFunction<ControllerState>> value) implements MathValue {
     public Variable(String name, double value) {
         this(name, animationState -> value);
     }
 
-    public Variable(String name, ToDoubleFunction<AnimationState<?>> value) {
+    public Variable(String name, ToDoubleFunction<ControllerState> value) {
         this(name, new AtomicReference<>(value));
     }
 
     @Override
-    public double get(AnimationState<?> animationState) {
+    public double get(ControllerState controllerState) {
         try {
-            return this.value.get().applyAsDouble(animationState);
+            return this.value.get().applyAsDouble(controllerState);
         }
         catch (Exception ex) {
             GeckoLibConstants.LOGGER.error("Attempted to use Molang variable for incompatible animatable type (" + this.name + "). An animation json needs to be fixed", ex.getMessage());
@@ -38,10 +38,10 @@ public record Variable(String name, AtomicReference<ToDoubleFunction<AnimationSt
     }
 
     public void set(final double value) {
-        this.value.set(animationState -> value);
+        this.value.set(controllerState -> value);
     }
 
-    public void set(final ToDoubleFunction<AnimationState<?>> value) {
+    public void set(final ToDoubleFunction<ControllerState> value) {
         this.value.set(value);
     }
 
@@ -53,5 +53,10 @@ public record Variable(String name, AtomicReference<ToDoubleFunction<AnimationSt
     @Override
     public String toString() {
         return "variable(" + this.name + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        return this.name.hashCode();
     }
 }

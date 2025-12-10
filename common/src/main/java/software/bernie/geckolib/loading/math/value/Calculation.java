@@ -1,7 +1,7 @@
 package software.bernie.geckolib.loading.math.value;
 
 import org.apache.commons.lang3.mutable.MutableDouble;
-import software.bernie.geckolib.animatable.processing.AnimationState;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.Operator;
 
@@ -21,12 +21,12 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
     }
 
     @Override
-    public double get(AnimationState<?> animationState) {
+    public double get(ControllerState controllerState) {
         if (this.isMutable)
-            return this.operator.compute(this.argA.get(animationState), this.argB.get(animationState));
+            return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
 
         if (this.cachedValue.getValue() == Double.MIN_VALUE)
-            this.cachedValue.setValue(this.operator.compute(this.argA.get(animationState), this.argB.get(animationState)));
+            this.cachedValue.setValue(this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState)));
 
         return this.cachedValue.getValue();
     }

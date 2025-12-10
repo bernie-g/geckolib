@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -20,6 +21,8 @@ import java.util.Map;
 public class EntityRenderStateMixin implements GeoRenderState {
     @Shadow
     public int lightCoords;
+    @Shadow
+    public float ageInTicks;
     @Unique
     private final Map<DataTicket<?>, Object> geckolib$data = new Reference2ObjectOpenHashMap<>();
 
@@ -38,7 +41,12 @@ public class EntityRenderStateMixin implements GeoRenderState {
     @Unique
     @Override
     public int getPackedLight() {
-        return this.lightCoords;
+        return getOrDefaultGeckolibData(DataTickets.PACKED_LIGHT, this.lightCoords);
+    }
+
+    @Override
+    public double getAnimatableAge() {
+        return getOrDefaultGeckolibData(DataTickets.TICK, (double)this.ageInTicks);
     }
 
     @Unique

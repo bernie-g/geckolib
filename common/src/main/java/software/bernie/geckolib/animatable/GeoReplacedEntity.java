@@ -3,11 +3,11 @@ package software.bernie.geckolib.animatable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	/**
 	 * Returns the {@link EntityType} this entity is intending to replace
 	 * <p>
-	 * This is used for rendering an animation purposes.
+	 * This is used for rendering and animations
 	 */
 	EntityType<?> getReplacingEntityType();
 
@@ -39,8 +39,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	 * @return The synced data, or null if no data of that type has been synced
 	 */
 	@ApiStatus.NonExtendable
-	@Nullable
-	default <D> D getAnimData(Entity entity, SerializableDataTicket<D> dataTicket) {
+	default <D> @Nullable D getAnimData(Entity entity, SerializableDataTicket<D> dataTicket) {
 		return getAnimatableInstanceCache().getManagerForId(entity.getId()).getAnimatableData(dataTicket);
 	}
 
@@ -123,19 +122,6 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 		else {
 			GeckoLibServices.NETWORK.stopTriggeredEntityAnim(relatedEntity, true, controllerName, animName);
 		}
-	}
-	
-	/**
-	 * Returns the current age/tick of the animatable instance
-	 * <p>
-	 * By default, this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
-	 *
-	 * @param entity The Entity representing this animatable
-	 * @return The current tick/age of the animatable, for animation purposes
-	 */
-	@Override
-	default double getTick(Object entity) {
-		return ((Entity)entity).tickCount;
 	}
 
 	// These methods aren't used for GeoReplacedEntity

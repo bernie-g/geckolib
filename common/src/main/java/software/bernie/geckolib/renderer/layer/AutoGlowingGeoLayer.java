@@ -3,22 +3,26 @@ package software.bernie.geckolib.renderer.layer;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.LayeringTransform;
+import net.minecraft.client.renderer.rendertype.RenderSetup;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
+import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Map;
@@ -33,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
 public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends TextureLayerGeoLayer<T, O, R> {
-	private final Map<ResourceLocation, ResourceLocation> emissiveResourceCache = new Object2ObjectOpenHashMap<>();
+	private final Map<Identifier, Identifier> emissiveResourceCache = new Object2ObjectOpenHashMap<>();
 	protected static final RenderPipeline RENDER_PIPELINE = RenderPipelines.register(EmissiveRenderType.createRenderPipeline());
 
 	public AutoGlowingGeoLayer(GeoRenderer<T, O, R> renderer) {
@@ -44,7 +48,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * Get the texture resource path for the given {@link GeoRenderState}
 	 */
 	@Override
-	protected ResourceLocation getTextureResource(R renderState) {
+	protected Identifier getTextureResource(R renderState) {
 		return this.emissiveResourceCache.computeIfAbsent(this.renderer.getTextureLocation(renderState), RenderUtil::getEmissiveResource);
 	}
 
@@ -78,14 +82,14 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	/**
 	 * Get the render type to use for this glowlayer renderer, or null if the layer should not render
 	 * <p>
-	 * Uses a custom RenderType similar to {@link RenderType#eyes(ResourceLocation)} by default
+	 * Uses a custom RenderType similar to {@link RenderTypes#eyes(Identifier)} by default
 	 * <p>
 	 * Automatically accounts for entity states like invisibility and glowing
 	 */
 	@Nullable
 	@Override
 	protected RenderType getRenderType(R renderState) {
-		ResourceLocation texture = getTextureResource(renderState);
+		Identifier texture = getTextureResource(renderState);
 		boolean respectLighting = shouldRespectWorldLighting(renderState);
 		boolean zOffset = shouldAddZOffset(renderState);
 
@@ -95,11 +99,11 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		boolean invisible = entityRenderState.isInvisible;
 
 		if (invisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
-			return RenderType.itemEntityTranslucentCull(texture);
+			return RenderTypes.itemEntityTranslucentCull(texture);
 
 		if (entityRenderState.appearsGlowing()) {
 			if (invisible)
-				return RenderType.outline(texture);
+				return RenderTypes.outline(texture);
 
 			return EmissiveRenderType.getRenderType(texture, true, respectLighting, zOffset);
 		}
@@ -116,10 +120,13 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * and you may need to factor this in to your design
 	 */
 
-	@Override
-    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-		super.submitRenderTask(renderState, poseStack, bakedModel, renderTasks, cameraState, getBrightness(renderState), packedOverlay, renderColor, didRenderModel);
+    @Override
+    public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
+        final int packedLight = renderPassInfo.packedLight();
+
+        renderPassInfo.renderState().addGeckolibData(DataTickets.PACKED_LIGHT, getBrightness(renderPassInfo.renderState()));
+        super.submitRenderTask(renderPassInfo, renderTasks);
+        renderPassInfo.renderState().addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
 	}
 
 	/**
@@ -131,7 +138,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		/**
 		 * Get or create a GeckoLib emissive RenderType instance for the given input variables
 		 */
-		public static RenderType getRenderType(ResourceLocation texture, boolean outline, boolean respectLighting, boolean zOffset) {
+		public static RenderType getRenderType(Identifier texture, boolean outline, boolean respectLighting, boolean zOffset) {
 			return CACHE.computeIfAbsent(new Entry(texture, outline, respectLighting, zOffset), EmissiveRenderType::buildNewInstance);
 		}
 
@@ -158,33 +165,27 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		 * Create GeckoLib's custom {@link RenderType} for emissive rendering since <code>EYES</code> isn't quite right
 		 */
 		private static RenderType buildNewInstance(Entry entry) {
-			final RenderType.CompositeState.CompositeStateBuilder compositeStateBuilder = RenderType.CompositeState.builder()
-					.setTextureState(new RenderStateShard.TextureStateShard(entry.texture, false))
-					.setLayeringState(entry.zOffset ? RenderType.VIEW_OFFSET_Z_LAYERING : RenderStateShard.NO_LAYERING);
+			final RenderSetup.RenderSetupBuilder builder = RenderSetup.builder(RENDER_PIPELINE)
+					.withTexture("Sampler0", entry.texture)
+					.setLayeringTransform(entry.zOffset ? LayeringTransform.VIEW_OFFSET_Z_LAYERING : LayeringTransform.NO_LAYERING)
+					.setOutline(entry.outline ? RenderSetup.OutlineProperty.AFFECTS_OUTLINE : RenderSetup.OutlineProperty.NONE)
+					.sortOnUpload();
 
 			if (entry.respectLighting) {
-				return RenderType.create(GeckoLibConstants.MODID + "_entity_translucent_emissive",
-										 RenderType.TRANSIENT_BUFFER_SIZE,
-										 true,
-										 true,
-										 RenderPipelines.ENTITY_TRANSLUCENT_EMISSIVE,
-										 compositeStateBuilder
-												 .setOverlayState(RenderType.OVERLAY)
-												 .createCompositeState(entry.outline));
+				return RenderType.create(GeckoLibConstants.MODID + "_entity_translucent_emissive", builder
+						.useOverlay()
+						.affectsCrumbling()
+						.createRenderSetup());
 			}
 
-			return RenderType.create(GeckoLibConstants.MODID + "_emissive",
-									 RenderType.TRANSIENT_BUFFER_SIZE,
-									 false,
-									 true,
-									 RENDER_PIPELINE,
-									 compositeStateBuilder.createCompositeState(entry.outline));
+			return RenderType.create(GeckoLibConstants.MODID + "_emissive", builder
+					.createRenderSetup());
 		}
 
 		/**
 		 * Cached entry key for given input variables and texture
 		 */
-		public record Entry(ResourceLocation texture, boolean outline, boolean respectLighting, boolean zOffset) {
+		public record Entry(Identifier texture, boolean outline, boolean respectLighting, boolean zOffset) {
 			@Override
 			public int hashCode() {
 				return Objects.hash(this.texture, this.outline, this.respectLighting, this.zOffset);

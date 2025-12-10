@@ -5,7 +5,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
@@ -13,7 +13,6 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.manager.ContextAwareAnimatableManager;
 import software.bernie.geckolib.cache.AnimatableIdCache;
 import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -64,19 +63,6 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 		return id;
 	}
-	
-	/**
-	 * Returns the current age/tick of the animatable instance
-	 * <p>
-	 * By default this is just the animatable's age in ticks, but this method allows for non-ticking custom animatables to provide their own values
-	 *
-	 * @param itemStack The ItemStack representing this animatable
-	 * @return The current tick/age of the animatable, for animation purposes
-	 */
-	@Override
-	default double getTick(Object itemStack) {
-		return ClientUtil.getCurrentTick();
-	}
 
 	/**
 	 * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
@@ -88,9 +74,8 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	/**
 	 * Replaces the default AnimatableInstanceCache for GeoItems if {@link GeoItem#isPerspectiveAware()} is true, for perspective-dependent handling
 	 */
-	@Nullable
 	@Override
-	default AnimatableInstanceCache animatableCacheOverride() {
+	default @Nullable AnimatableInstanceCache animatableCacheOverride() {
 		if (isPerspectiveAware())
 			return new ContextBasedAnimatableInstanceCache(this);
 
@@ -113,8 +98,9 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		 * <p>
 		 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
 		 */
-		@Override
-		public AnimatableManager<?> getManagerForId(long uniqueId) {
+		@SuppressWarnings("unchecked")
+        @Override
+		public AnimatableManager<GeoItem> getManagerForId(long uniqueId) {
 			if (!this.managers.containsKey(uniqueId))
 				this.managers.put(uniqueId, new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
 					@Override
@@ -136,7 +122,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 					}
 				});
 
-			return this.managers.get(uniqueId);
+			return (AnimatableManager<GeoItem>)this.managers.get(uniqueId);
 		}
 	}
 }
