@@ -11,7 +11,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
@@ -157,8 +157,7 @@ public final class GeckoLibResources {
 	/**
 	 * Bake a {@link BakedGeoModel} from its {@link JsonObject} serialized form
 	 */
-	@NotNull
-	private static BakedGeoModel bakeModel(Identifier path, JsonObject json) {
+	private static @NonNull BakedGeoModel bakeModel(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".animation.json"))
 			throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
 
@@ -178,8 +177,7 @@ public final class GeckoLibResources {
 	/**
 	 * Bake the {@link BakedAnimations} from a {@link JsonObject} serialized form
 	 */
-	@NotNull
-	private static BakedAnimations bakeAnimations(Identifier path, JsonObject json) {
+	private static @NonNull BakedAnimations bakeAnimations(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".geo.json"))
 			throw new RuntimeException("Found model file in animations folder! '" + path + "'");
 

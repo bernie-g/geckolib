@@ -8,7 +8,7 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
@@ -26,7 +26,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> @NotNull Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState & GeoRenderState> @NonNull Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return defaultModel;
     }
 

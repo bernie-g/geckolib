@@ -31,7 +31,7 @@ import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -311,9 +311,8 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	/**
 	 * Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided {@link ItemStack}
 	 */
-	@NotNull
 	@ApiStatus.Internal
-	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
+	protected <S extends HumanoidRenderState & GeoRenderState> @NonNull Model<?> getArmorModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
 		final S humanoidRenderState = renderState instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
 		final EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
 		final HumanoidModel defaultModel = GeckoLibClient.HUMANOID_ARMOR_MODEL.get().get(slot);

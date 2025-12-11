@@ -7,7 +7,7 @@ import net.minecraft.client.resources.model.EquipmentClientInfo;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.model.GeoModel;
@@ -25,7 +25,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> @NotNull Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState & GeoRenderState> @NonNull Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return IClientItemExtensions.of(stack).getGenericArmorModel(stack, type, defaultModel);
     }
 
