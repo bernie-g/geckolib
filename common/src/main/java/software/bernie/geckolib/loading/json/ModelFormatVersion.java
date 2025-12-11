@@ -49,8 +49,7 @@ public enum ModelFormatVersion {
 		return this.errorMessage;
 	}
 
-	@Nullable
-	public static ModelFormatVersion match(String version) {
+	public static @Nullable ModelFormatVersion match(String version) {
 		return LOOKUP.get().get(version);
 	}
 }

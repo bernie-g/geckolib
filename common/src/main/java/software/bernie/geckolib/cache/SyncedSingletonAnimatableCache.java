@@ -39,8 +39,7 @@ public final class SyncedSingletonAnimatableCache {
      * @param syncedAnimatableId the className
      */
     @ApiStatus.Internal
-    @Nullable
-    public static GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
+    public static @Nullable GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
         GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
 
         if (animatable == null)

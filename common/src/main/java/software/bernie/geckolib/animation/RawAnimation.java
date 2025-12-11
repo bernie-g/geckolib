@@ -90,7 +90,7 @@ public final class RawAnimation {
 	}
 
 	/**
-	 * Append an animation to the animation chain, playing the named animation <code>playCount</code> times,
+	 * Append an animation to the animation chain, playing the named animation {@code playCount} times,
 	 * then stopping or progressing to the next chained animation depending on the loop type set in the animation json
 	 *
 	 * @param animationName The name of the animation to play X times

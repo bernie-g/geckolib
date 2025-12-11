@@ -201,8 +201,7 @@ public record AnimationTimeline(Stage[] stages) {
     /**
      * Create a timeline from a given {@link RawAnimation}, or null if no animations were found
      */
-    @Nullable
-    public static <T extends GeoAnimatable> AnimationTimeline create(RawAnimation rawAnimation, T animatable, GeoModel<T> model, int transitionTicks) {
+    public static <T extends GeoAnimatable> @Nullable AnimationTimeline create(RawAnimation rawAnimation, T animatable, GeoModel<T> model, int transitionTicks) {
         final List<RawAnimation.Stage> rawStages = rawAnimation.getAnimationStages();
         final List<Stage> stages = new ObjectArrayList<>(rawStages.size());
         final double transitionTime = transitionTicks / 20f;

@@ -237,7 +237,7 @@ public class AnimationProcessor {
      * <p>
      * Returns null if an animation by the given name for the provided animatable doesn't exist
      */
-    public @Nullable static <T extends GeoAnimatable> Animation getOrCreateAnimation(RawAnimation.Stage stage, T animatable, GeoModel<T> geoModel) {
+    public static <T extends GeoAnimatable> @Nullable Animation getOrCreateAnimation(RawAnimation.Stage stage, T animatable, GeoModel<T> geoModel) {
         // This is intentional. DO NOT CHANGE THIS or Tslat will be unhappy
         //noinspection StringEquality
         if (stage.animationName() == RawAnimation.Stage.WAIT)

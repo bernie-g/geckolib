@@ -42,9 +42,8 @@ public record CompileObjectRenderStateEvent<T extends GeoAnimatable, E, R extend
         return this.renderState;
     }
 
-    @Nullable
     @Override
-    public E getRelatedObject() {
+    public @Nullable E getRelatedObject() {
         return this.relatedObject;
     }
 }

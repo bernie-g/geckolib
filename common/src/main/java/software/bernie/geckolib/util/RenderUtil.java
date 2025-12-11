@@ -202,8 +202,8 @@ public final class RenderUtil {
     /**
      * Gets a registered {@link GeoArmorRenderer} for a given {@link Item}, if applicable
      *
-     * @param item The <code>Item</code> to retrieve the renderer for
-     * @return The <code>GeoArmorRenderer</code> instance, or null if not applicable
+     * @param item The {@code Item} to retrieve the renderer for
+     * @return The {@code GeoArmorRenderer} instance, or null if not applicable
      * @see #getGeckoLibArmorRenderer(ItemStack, EquipmentSlot)
      */
     public static @Nullable GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(Item item) {
@@ -219,9 +219,9 @@ public final class RenderUtil {
     /**
      * Gets a registered {@link GeoArmorRenderer} for a given {@link ItemStack}, if applicable
      *
-     * @param stack The <code>ItemStack</code> to retrieve the renderer for
+     * @param stack The {@code ItemStack} to retrieve the renderer for
      * @param slot The {@link EquipmentSlot} to retrieve the renderer for
-     * @return The <code>GeoArmorRenderer</code> instance, or null if not applicable
+     * @return The {@code GeoArmorRenderer} instance, or null if not applicable
      */
     public static @Nullable GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(ItemStack stack, EquipmentSlot slot) {
         return GeoRenderProvider.of(stack).getGeoArmorRenderer(stack, slot);

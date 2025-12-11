@@ -24,10 +24,8 @@ public final class DieRollFunction extends MathFunction {
     private final MathValue rolls;
     private final MathValue min;
     private final MathValue max;
-    @Nullable
-    private final MathValue seed;
-    @Nullable
-    private final Random random;
+    private final @Nullable MathValue seed;
+    private final @Nullable Random random;
 
     public DieRollFunction(MathValue... values) {
         super(values);

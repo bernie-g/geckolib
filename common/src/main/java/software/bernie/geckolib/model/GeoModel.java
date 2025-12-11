@@ -74,8 +74,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	 * @return The Animation instance for the provided {@code name}, or null if none match
 	 */
 	@ApiStatus.Internal
-    @Nullable
-	public Animation getBakedAnimation(T animatable, String name) throws RuntimeException {
+	public @Nullable Animation getBakedAnimation(T animatable, String name) throws RuntimeException {
         final Identifier animationFile = getAnimationResource(animatable);
         final Identifier[] fallbackFiles = getAnimationResourceFallbacks(animatable);
 

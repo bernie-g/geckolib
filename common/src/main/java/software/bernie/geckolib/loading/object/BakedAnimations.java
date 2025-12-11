@@ -14,8 +14,7 @@ public record BakedAnimations(Map<String, Animation> animations) {
 	/**
 	 * Gets an {@link Animation} by its name, if present
 	 */
-	@Nullable
-	public Animation getAnimation(String name) {
+	public @Nullable Animation getAnimation(String name) {
 		return this.animations.get(name);
 	}
 }

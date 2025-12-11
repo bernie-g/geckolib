@@ -50,9 +50,8 @@ public class EntityRenderStateMixin implements GeoRenderState {
     }
 
     @Unique
-    @Nullable
     @Override
-    public <D> D getGeckolibData(DataTicket<D> dataTicket) {
+    public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
         Object data = this.geckolib$data.get(dataTicket);
 
         if (data == null && !hasGeckolibData(dataTicket))
@@ -69,9 +68,8 @@ public class EntityRenderStateMixin implements GeoRenderState {
     }
 
     @Unique
-    @Nullable
     @Override
-    public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+    public <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         Object data = this.geckolib$data.get(dataTicket);
 
         if (data == null && !hasGeckolibData(dataTicket))

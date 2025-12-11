@@ -134,7 +134,7 @@ public abstract class GeoAbstractTexture extends ReloadableTexture {
 	 * Append a suffix to a given Identifier's path
 	 * <p>
 	 * E.G.
-	 * <code>("minecraft:test_path", "_extended") -> "minecraft:test_path_extended"</code>
+	 * {@code ("minecraft:test_path", "_extended") -> "minecraft:test_path_extended"}
 	 *
 	 * @param location The base Identifier
 	 * @param suffix The suffix to append literally to the base location's path

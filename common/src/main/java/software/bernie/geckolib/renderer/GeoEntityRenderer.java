@@ -270,9 +270,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
-    @Nullable
     @Override
-    public RenderType getRenderType(R renderState, Identifier texture) {
+    public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         if (renderState.isInvisible && !renderState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER))
             return RenderTypes.itemEntityTranslucentCull(texture);
 
@@ -560,9 +559,8 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      */
     @Deprecated
     @ApiStatus.Internal
-    @Nullable
     @Override
-    public final R createRenderState() {
+    public final @Nullable R createRenderState() {
         return null;
     }
     //</editor-fold>

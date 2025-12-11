@@ -25,9 +25,8 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      * <p>
      * If no custom model applies to this item, the {@code defaultModel} is returned
      */
-    @NotNull
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState & GeoRenderState> @NotNull Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return defaultModel;
     }
 
@@ -36,9 +35,8 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      *
      * @return The GeoModel for the item, or null if not applicable
      */
-    @Nullable
     @Override
-    public GeoModel<?> getGeoModelForItem(ItemStack item) {
+    public @Nullable GeoModel<?> getGeoModelForItem(ItemStack item) {
         if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoItemRenderer)
             return geoItemRenderer.getGeoModel();
 

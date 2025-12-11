@@ -24,8 +24,7 @@ public class CompileObjectRenderStateEvent<T extends GeoAnimatable, E, R extends
     private final GeoObjectRenderer<T, E, R> renderer;
     private final R renderState;
     private final T animatable;
-    @Nullable
-    private final E relatedObject;
+    private final @Nullable E relatedObject;
 
     public CompileObjectRenderStateEvent(GeoObjectRenderer<T, E, R> renderer, R renderState, T animatable, @Nullable E relatedObject) {
         this.renderer = renderer;
@@ -50,9 +49,8 @@ public class CompileObjectRenderStateEvent<T extends GeoAnimatable, E, R extends
         return this.renderState;
     }
 
-    @Nullable
     @Override
-    public E getRelatedObject() {
+    public @Nullable E getRelatedObject() {
         return this.relatedObject;
     }
 }

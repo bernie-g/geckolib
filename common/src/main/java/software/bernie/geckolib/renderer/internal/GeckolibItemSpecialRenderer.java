@@ -84,9 +84,8 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     public static class Unbaked implements SpecialModelRenderer.Unbaked {
         public static final MapCodec<GeckolibItemSpecialRenderer.Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
 
-        @Nullable
         @Override
-        public SpecialModelRenderer<?> bake(BakingContext context) {
+        public @Nullable SpecialModelRenderer<?> bake(BakingContext context) {
             return new GeckolibItemSpecialRenderer<>();
         }
 

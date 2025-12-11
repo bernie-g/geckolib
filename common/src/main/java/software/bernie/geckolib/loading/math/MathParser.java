@@ -110,8 +110,7 @@ public class MathParser {
      * @param values The input values for the function
      * @return A new instance of the MathFunction
      */
-    @Nullable
-    public static <T extends MathFunction> T buildFunction(String name, MathValue... values) {
+    public static <T extends MathFunction> @Nullable T buildFunction(String name, MathValue... values) {
         if (!FUNCTION_FACTORIES.containsKey(name))
             return null;
 
@@ -246,8 +245,7 @@ public class MathParser {
      * <p>
      * This allows for arbitrary-length operators and best-matching for partially-colliding operators
      */
-    @Nullable
-    protected static String tryMergeOperativeSymbols(char[] chars, int index) {
+    protected static @Nullable String tryMergeOperativeSymbols(char[] chars, int index) {
         char ch = chars[index];
 
         if (!Operator.isOperativeSymbol(ch))
@@ -387,8 +385,7 @@ public class MathParser {
      * @return A compiled MathValue instance, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    @Nullable
-    protected static MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+    protected static @Nullable MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
@@ -406,8 +403,7 @@ public class MathParser {
      * @return A compiled MathValue value, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    @Nullable
-    protected static MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
+    protected static @Nullable MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
         if (symbol.right().isPresent())
             return new Group(symbol.right().get().getFirst());
 
@@ -438,8 +434,7 @@ public class MathParser {
      * @return A compiled {@link Calculation} or {@link VariableAssignment} value, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    @Nullable
-    protected static MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected static @Nullable MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
         int operatorIndex = -1;
         Operator lastOperator = null;
@@ -477,8 +472,7 @@ public class MathParser {
      * @return A compiled Ternary value, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    @Nullable
-    protected static Ternary compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected static @Nullable Ternary compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
 
         if (symbolCount < 3)
@@ -529,8 +523,7 @@ public class MathParser {
      * @return A compiled MathValue, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    @Nullable
-    protected static MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
+    protected static @Nullable MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
             if (name.length() == 1)
                 return new BooleanNegate(args.getFirst());

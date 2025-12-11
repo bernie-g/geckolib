@@ -10,7 +10,7 @@ import software.bernie.geckolib.loading.math.function.MathFunction;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns the <a href="https://en.wikipedia.org/wiki/Hermite_polynomials">Hermite</a>> basis <code>3t^2 - 2t^3</code> curve interpolation value based on the input value
+ * Returns the <a href="https://en.wikipedia.org/wiki/Hermite_polynomials">Hermite</a>> basis {@code 3t^2 - 2t^3} curve interpolation value based on the input value
  */
 public final class HermiteBlendFunction extends MathFunction {
     private final MathValue valueA;

@@ -105,8 +105,7 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
      * @param dataTicket The DataTicket associated with the data
      * @return The data contained on this RenderState, null if the data is set to null, or an exception if the data doesn't exist
      */
-    @Nullable
-    public <D> D getData(DataTicket<D> dataTicket) {
+    public <D> @Nullable D getData(DataTicket<D> dataTicket) {
         return this.renderState.getGeckolibData(dataTicket);
     }
 
@@ -118,8 +117,7 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
      * @param defaultValue The fallback value if no data has been set for the given DataTicket
      * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
      */
-    @Nullable
-    public <D> D getDataOrDefault(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+    public <D> @Nullable D getDataOrDefault(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         D data = getData(dataTicket);
 
         return data != null || this.renderState.hasGeckolibData(dataTicket) ? data : defaultValue;

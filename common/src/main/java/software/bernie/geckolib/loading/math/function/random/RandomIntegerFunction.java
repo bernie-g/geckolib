@@ -23,12 +23,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public final class RandomIntegerFunction extends MathFunction {
     private final MathValue valueA;
-    @Nullable
-    private final MathValue valueB;
-    @Nullable
-    private final MathValue seed;
-    @Nullable
-    private final Random random;
+    private final @Nullable MathValue valueB;
+    private final @Nullable MathValue seed;
+    private final @Nullable Random random;
 
     public RandomIntegerFunction(MathValue... values) {
         super(values);

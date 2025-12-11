@@ -42,8 +42,7 @@ public interface GeoRenderState {
      * @param dataTicket The DataTicket associated with the data
      * @return The data contained on this RenderState, null if the data is set to null, or an exception if the data doesn't exist
      */
-    @Nullable
-    <D> D getGeckolibData(DataTicket<D> dataTicket);
+    <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket);
 
     /**
      * Get previously set data on the RenderState by its associated {@link DataTicket},
@@ -53,8 +52,7 @@ public interface GeoRenderState {
      * @param defaultValue The fallback value if no data has been set for the given DataTicket
      * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
      */
-    @Nullable
-    default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+    default <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         D data = getGeckolibData(dataTicket);
 
         return data != null || hasGeckolibData(dataTicket) ? data : defaultValue;
@@ -114,9 +112,8 @@ public interface GeoRenderState {
             return this.data.containsKey(dataTicket);
         }
 
-        @Nullable
         @Override
-        public <D> D getGeckolibData(DataTicket<D> dataTicket) {
+        public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
             Object data = this.data.get(dataTicket);
 
             if (data == null && !hasGeckolibData(dataTicket))
@@ -132,9 +129,8 @@ public interface GeoRenderState {
             }
         }
 
-        @Nullable
         @Override
-        public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+        public <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
             Object data = this.data.get(dataTicket);
 
             if (data == null && !hasGeckolibData(dataTicket))

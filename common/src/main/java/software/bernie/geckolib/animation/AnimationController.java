@@ -131,8 +131,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /**
      * @return The current {@code AnimationTimeline} instance for the {@link #currentRawAnimation} playing, or null if no animation is playing
      */
-    @Nullable
-    public AnimationTimeline getTimeline() {
+    public @Nullable AnimationTimeline getTimeline() {
         return this.timeline;
     }
 
@@ -155,16 +154,15 @@ public class AnimationController<T extends GeoAnimatable> {
     /**
      * @return The current animation marker this controller is playing
      */
-    @Nullable
-    public AnimationPoint getCurrentAnimationPoint() {
+    public @Nullable AnimationPoint getCurrentAnimationPoint() {
         return this.animationPoint;
     }
 
     /**
      * @return The current unprocessed animation this controller should be playing
      */
-    @Nullable
-    public RawAnimation getCurrentRawAnimation() {
+
+    public @Nullable RawAnimation getCurrentRawAnimation() {
         return this.currentRawAnimation;
     }
 
@@ -464,8 +462,7 @@ public class AnimationController<T extends GeoAnimatable> {
      * If the controller has no animation handling for this render pass, returns null.
      */
     @InternalApi
-    @Nullable
-    public ControllerState extractControllerState(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, MolangQueries.Actor<T> actor, GeoModel<T> geoModel) {
+    public @Nullable ControllerState extractControllerState(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, MolangQueries.Actor<T> actor, GeoModel<T> geoModel) {
         if (!checkControllerState(animatable, renderState, manager, geoModel))
             return null;
 

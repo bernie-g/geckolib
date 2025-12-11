@@ -25,8 +25,7 @@ import java.util.Objects;
  * Each bone instance is a singleton, belonging to a single {@link BakedGeoModel}
  */
 public abstract class GeoBone {
-    @Nullable
-	protected final GeoBone parent;
+	protected final @Nullable GeoBone parent;
 	protected final String name;
 
     protected final GeoBone[] children;
@@ -59,8 +58,7 @@ public abstract class GeoBone {
     /**
      * @return The parent bone of this bone, or null if this bone has no parent
      */
-    @Nullable
-    public GeoBone parent() {
+    public @Nullable GeoBone parent() {
         return this.parent;
     }
 

@@ -21,8 +21,7 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
      * @param animationName The name of the animation to retrieve from the animation file
      * @return The baked {@link Animation} instance, or null if not found
      */
-    @Nullable
-    public Animation getAnimation(Identifier animationFile, Identifier[] fallbackFiles, String animationName) {
+    public @Nullable Animation getAnimation(Identifier animationFile, Identifier[] fallbackFiles, String animationName) {
         BakedAnimations animations = null;
 
         for (int i = -1; i < fallbackFiles.length; i++) {

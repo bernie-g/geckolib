@@ -98,8 +98,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
      * <p>
      * Mostly used for interpolation handling and tick-frame advancement
      */
-    @Nullable
-    protected GeckoLibAnimatedTexture.AnimationInfo buildAnimatedTexture(AnimationMetadataSection animMeta) {
+    protected GeckoLibAnimatedTexture.@Nullable AnimationInfo buildAnimatedTexture(AnimationMetadataSection animMeta) {
         final FrameSize frameSize = animMeta.calculateFrameSize(this.baseImage.getWidth(), this.baseImage.getHeight());
         this.frameWidth = frameSize.width();
         this.frameHeight = frameSize.height();
@@ -196,8 +195,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         protected final int frameRowSize;
         protected final boolean interpolateFrames;
 
-        @Nullable
-        protected final InterpolationData interpolationData;
+        protected final @Nullable InterpolationData interpolationData;
         protected final NativeImage currentFrameBuffer;
         int currentFrame;
         int subFrame;

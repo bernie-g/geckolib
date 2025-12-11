@@ -113,8 +113,7 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 
 	protected class AnimationContents {
 		protected final FrameSize frameSize;
-		@Nullable
-		protected final Texture animatedTexture;
+		protected final @Nullable Texture animatedTexture;
 
 		private AnimationContents(NativeImage image, AnimationMetadataSection animMeta) {
 			this.frameSize = animMeta.calculateFrameSize(image.getWidth(), image.getHeight());
@@ -125,8 +124,7 @@ public class AnimatableTexture extends SimpleTexture implements Tickable {
 			return this.animatedTexture != null;
 		}
 
-		@Nullable
-		private Texture createTexture(NativeImage image, AnimationMetadataSection animMeta) {
+		private @Nullable Texture createTexture(NativeImage image, AnimationMetadataSection animMeta) {
 			if (!Mth.isMultipleOf(image.getWidth(), this.frameSize.width()) || !Mth.isMultipleOf(image.getHeight(), this.frameSize.height())) {
 				GeckoLibConstants.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.resourceId(), image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
 

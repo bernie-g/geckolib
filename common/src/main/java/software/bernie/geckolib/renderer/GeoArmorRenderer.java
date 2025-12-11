@@ -186,9 +186,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
-    @Nullable
     @Override
-    public RenderType getRenderType(R renderState, Identifier texture) {
+    public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         return RenderTypes.armorCutoutNoCull(texture);
     }
 
@@ -369,8 +368,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @ApiStatus.Internal
     private record StackForRender(ItemStack stack, EquipmentSlot slot, GeoArmorRenderer renderer, HumanoidModel<?> baseModel) {
-        @Nullable
-        private static <S extends HumanoidRenderState, A extends HumanoidModel<S>> StackForRender find(
+        private static <S extends HumanoidRenderState, A extends HumanoidModel<S>> @Nullable StackForRender find(
                 ItemStack stack, EquipmentSlot slot, S entityRenderState, BiFunction<S, EquipmentSlot, A> modelFunction) {
             final Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
             GeoRenderProvider geckolibRenderers;
@@ -442,9 +440,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Compile an array of GeckoLib-relevant equipment pieces for the purposes of rendering
      */
-	@Nullable
-	@ApiStatus.Internal
-	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> List<StackForRender> getRelevantSlotsForRendering(
+    @ApiStatus.Internal
+	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> @Nullable List<StackForRender> getRelevantSlotsForRendering(
             LivingEntity entity, R entityRenderState, BiFunction<R, EquipmentSlot, A> modelFunction) {
 		List<StackForRender> relevantSlots = null;
 

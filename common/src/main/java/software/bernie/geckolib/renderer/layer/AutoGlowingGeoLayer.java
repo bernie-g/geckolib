@@ -86,9 +86,8 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	 * <p>
 	 * Automatically accounts for entity states like invisibility and glowing
 	 */
-	@Nullable
 	@Override
-	protected RenderType getRenderType(R renderState) {
+	protected @Nullable RenderType getRenderType(R renderState) {
 		Identifier texture = getTextureResource(renderState);
 		boolean respectLighting = shouldRespectWorldLighting(renderState);
 		boolean zOffset = shouldAddZOffset(renderState);

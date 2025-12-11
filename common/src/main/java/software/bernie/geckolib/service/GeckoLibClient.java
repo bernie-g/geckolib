@@ -38,8 +38,7 @@ public interface GeckoLibClient {
      *
      * @return The GeoModel for the item, or null if not applicable
      */
-    @Nullable
-    GeoModel<?> getGeoModelForItem(ItemStack item);
+    @Nullable GeoModel<?> getGeoModelForItem(ItemStack item);
 
     /**
      * Return the dye value for a given ItemStack, or the defaul value if not present.

@@ -118,9 +118,8 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @Deprecated
     @ApiStatus.Internal
-    @Nullable
     @Override
-    public R createRenderState() {
+    public @Nullable R createRenderState() {
         return null;
     }
 
@@ -284,9 +283,8 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
-    @Nullable
     @Override
-    public RenderType getRenderType(R renderState, Identifier texture) {
+    public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         if (renderState.isInvisible && !renderState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER))
             return RenderTypes.itemEntityTranslucentCull(texture);
 
