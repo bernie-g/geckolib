@@ -16,7 +16,7 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
     /**
      * Get a baked {@link Animation} from the animation cache by its file id and animation name
      *
-     * @param animationFile The file identifier of the animations file - (E.G. <code>mymod:entity/my_mob</code>)
+     * @param animationFile The file identifier of the animations file - (E.G. {@code mymod:entity/my_mob})
      * @param fallbackFiles Any possible fallback animation file locations, in case the specific animation isn't found in the primary animation file
      * @param animationName The name of the animation to retrieve from the animation file
      * @return The baked {@link Animation} instance, or null if not found

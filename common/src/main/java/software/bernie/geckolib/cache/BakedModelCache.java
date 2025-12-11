@@ -14,7 +14,7 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
     /**
      * Get a {@link BakedGeoModel} from the model cache by its file id
      *
-     * @param modelFile The file identifier of the animations file - (E.G. <code>mymod:entity/my_mob</code>)
+     * @param modelFile The file identifier of the animations file - (E.G. {@code mymod:entity/my_mob})
      */
     public BakedGeoModel getModel(Identifier modelFile) {
         BakedGeoModel model = this.cache.get(modelFile);

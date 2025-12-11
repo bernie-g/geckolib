@@ -142,7 +142,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		}
 
 		/**
-		 * Create GeckoLib's custom {@link RenderPipeline} for emissive rendering since <code>EYES</code> isn't quite right
+		 * Create GeckoLib's custom {@link RenderPipeline} for emissive rendering since {@code EYES} isn't quite right
 		 */
 		private static RenderPipeline createRenderPipeline() {
 			return RenderPipeline.builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
@@ -161,7 +161,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		}
 
 		/**
-		 * Create GeckoLib's custom {@link RenderType} for emissive rendering since <code>EYES</code> isn't quite right
+		 * Create GeckoLib's custom {@link RenderType} for emissive rendering since {@code EYES} isn't quite right
 		 */
 		private static RenderType buildNewInstance(Entry entry) {
 			final RenderSetup.RenderSetupBuilder builder = RenderSetup.builder(RENDER_PIPELINE)

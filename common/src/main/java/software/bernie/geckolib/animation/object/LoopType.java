@@ -58,7 +58,7 @@ public interface LoopType {
      * Returns either {@link LoopType#PLAY_ONCE} or {@link LoopType#LOOP} based on a boolean or string element type,
      * or any other registered loop type with a matching type string
      *
-     * @param json The <code>loop</code> {@link JsonElement} to attempt to parse
+     * @param json The {@code loop} {@link JsonElement} to attempt to parse
      * @return A usable LoopType instance
      */
     static LoopType fromJson(JsonElement json) {

@@ -46,7 +46,7 @@ public abstract class TextureManagerMixin {
 	}
 
     /**
-     * Force-cancel texture registration if texture is GeckolibAnimatedTexture, since we already did it in <code>geckolib$replaceAnimatableTexture</code>
+     * Force-cancel texture registration if texture is GeckolibAnimatedTexture, since we already did it in {@code geckolib$replaceAnimatableTexture}
      */
 	@WrapWithCondition(method = "getTexture(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/texture/AbstractTexture;",
 			at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/texture/TextureManager;registerAndLoad(Lnet/minecraft/resources/Identifier;Lnet/minecraft/client/renderer/texture/ReloadableTexture;)V"),

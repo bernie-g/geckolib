@@ -292,7 +292,7 @@ public interface EasingType {
 	/**
 	 * A negative elastic function, equivalent to inverting briefly before increasing
 	 * <p>
-	 * <code>f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)</code>
+	 * {@code f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)}
 	 * <p>
 	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	 */
@@ -305,7 +305,7 @@ public interface EasingType {
 	/**
 	 * An exponential function, equivalent to an exponential curve to the {@code n} root
 	 * <p>
-	 * <code>f(t) = t^n</code>
+	 * {@code f(t) = t^n}
 	 *
 	 * @param n The exponent
 	 */

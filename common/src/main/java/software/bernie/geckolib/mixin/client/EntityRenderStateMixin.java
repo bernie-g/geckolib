@@ -15,7 +15,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import java.util.Map;
 
 /**
- * Duck-typing mixin to apply the {@link GeoRenderState} duck interface to <code>EntityRenderStates</code>
+ * Duck-typing mixin to apply the {@link GeoRenderState} duck interface to {@code EntityRenderStates}
  */
 @Mixin(EntityRenderState.class)
 public class EntityRenderStateMixin implements GeoRenderState {

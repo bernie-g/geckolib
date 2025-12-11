@@ -38,7 +38,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
     /**
      * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
      * <p>
-     * Override and call <code>super</code> with modified scale values as needed to further modify the scale of the model
+     * Override and call {@code super} with modified scale values as needed to further modify the scale of the model
      */
     @Override
     public void scaleModelForRender(RenderPassInfo<R> renderPassInfo, float widthScale, float heightScale) {

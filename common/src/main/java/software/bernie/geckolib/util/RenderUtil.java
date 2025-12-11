@@ -182,8 +182,8 @@ public final class RenderUtil {
     /**
      * Gets a registered {@link GeoEntityRenderer} for a given {@link EntityType}, if applicable
      *
-     * @param entityType The <code>EntityType</code> to retrieve the renderer for
-     * @return The <code>GeoEntityRenderer</code> instance, or null if not applicable
+     * @param entityType The {@code EntityType} to retrieve the renderer for
+     * @return The {@code GeoEntityRenderer} instance, or null if not applicable
      */
     public static @Nullable GeoEntityRenderer<?, ?> getGeckoLibEntityRenderer(EntityType<?> entityType) {
         return Minecraft.getInstance().getEntityRenderDispatcher().renderers.get(entityType) instanceof GeoEntityRenderer<?, ?> geoEntityRenderer ? geoEntityRenderer : null;
@@ -192,8 +192,8 @@ public final class RenderUtil {
     /**
      * Gets a registered {@link GeoBlockRenderer} for a given {@link BlockEntityType}, if applicable
      *
-     * @param blockEntityType The <code>BlockEntityType</code> to retrieve the renderer for
-     * @return The <code>GeoBlockRenderer</code> instance, or null if not applicable
+     * @param blockEntityType The {@code BlockEntityType} to retrieve the renderer for
+     * @return The {@code GeoBlockRenderer} instance, or null if not applicable
      */
     public static @Nullable GeoBlockRenderer<?, ?> getGeckoLibBlockRenderer(BlockEntityType<?> blockEntityType) {
         return Minecraft.getInstance().getBlockEntityRenderDispatcher().renderers.get(blockEntityType) instanceof GeoBlockRenderer<?, ?> geoBlockRenderer ? geoBlockRenderer : null;

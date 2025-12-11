@@ -237,10 +237,10 @@ public final class DefaultAnimations {
     /**
      * Hardcoded head rotation to look towards an entity's facing direction.
      * <p>
-     * Consider replacing this with an <code>AnimationController</code> animation using the below values:
+     * Consider replacing this with an {@code AnimationController} animation using the below values:
      * <p>
-     * <code>xrot: math.to_rad(-query.head_x_rotation)</code><br>
-     * <code>yrot: math.to_rad(-query.head_y_rotation)</code>
+     * {@code xrot: math.to_rad(-query.head_x_rotation)}<br>
+     * {@code yrot: math.to_rad(-query.head_y_rotation)}
      *
      * @param headBone The name of the bone to rotate
      */

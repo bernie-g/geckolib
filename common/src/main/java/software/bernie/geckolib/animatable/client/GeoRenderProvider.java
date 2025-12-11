@@ -47,9 +47,9 @@ public interface GeoRenderProvider {
     /**
      * Get the cached {@link GeoItemRenderer} instance for this provider.
      * <p>
-     * Normally this would be an instance of <code>GeoItemRenderer</code>
+     * Normally this would be an instance of {@code GeoItemRenderer}
      *
-     * @return The cached <code>GeoItemRenderer</code> instance for this provider, or null if not applicable
+     * @return The cached {@code GeoItemRenderer} instance for this provider, or null if not applicable
      */
     default @Nullable GeoItemRenderer<?> getGeoItemRenderer() {
         return null;

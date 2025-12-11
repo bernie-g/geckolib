@@ -194,7 +194,7 @@ public final class RenderStateUtil {
 
     /**
      * Create a partial-clone of an existing unknown RenderState into a new {@link HumanoidRenderState} for the purpose of
-     * armor rendering, which explicitly requires an <code>HumanoidRenderState</code>
+     * armor rendering, which explicitly requires an {@code HumanoidRenderState}
      * <p>
      * Because this is only being used for armor rendering, we don't need an exhaustive copy of the renderstate, and instead focus
      * solely on the data points we know are needed.

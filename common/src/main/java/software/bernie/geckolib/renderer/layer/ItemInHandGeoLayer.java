@@ -28,7 +28,7 @@ import java.util.List;
  * <p>
  * Handles all the boilerplate for basic handheld item rendering.
  * <p>
- * Assumes the {@link GeoModel} has bones for both hands called <code>RightHandItem</code> and <code>LeftHandItem</code>.
+ * Assumes the {@link GeoModel} has bones for both hands called {@code RightHandItem} and {@code LeftHandItem}.
  * If you have different names, use the {@link ItemInHandGeoLayer#ItemInHandGeoLayer(GeoRenderer, String, String)} constructor.
  */
 public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, O, R> {

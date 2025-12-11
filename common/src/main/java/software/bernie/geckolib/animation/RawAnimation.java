@@ -105,9 +105,9 @@ public final class RawAnimation {
 	}
 
 	/**
-	 * Append an animation to the animation chain, playing the named animation and proceeding based on the <code>loopType</code> parameter provided
+	 * Append an animation to the animation chain, playing the named animation and proceeding based on the {@code loopType} parameter provided
 	 *
-	 * @param animationName The name of the animation to play. <u>MUST</u> match the name of the animation in the <code>.animation.json</code> file.
+	 * @param animationName The name of the animation to play. <u>MUST</u> match the name of the animation in the {@code .animation.json} file.
 	 * @param loopType The loop type handler for the animation, overriding the default value set in the animation json
 	 */
 	public RawAnimation then(String animationName, LoopType loopType) {
