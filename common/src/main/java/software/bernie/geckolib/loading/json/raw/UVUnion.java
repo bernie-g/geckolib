@@ -2,7 +2,7 @@ package software.bernie.geckolib.loading.json.raw;
 
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
 /**

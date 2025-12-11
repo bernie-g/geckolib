@@ -3,7 +3,7 @@ package software.bernie.geckolib.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
@@ -73,7 +73,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
      * Initial access point for performing a single render pass, with an optional pre-defined {@link RenderPassInfo.BoneUpdater} to allow for pre-positioning models from outside the renderer
      */
 	public void performRenderPass(T animatable, E relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick,
-                                  @Nullable RenderPassInfo.BoneUpdater<R> boneUpdater) {
+                                  RenderPassInfo.@Nullable BoneUpdater<R> boneUpdater) {
 		R renderState = fillRenderState(animatable, relatedObject, createRenderState(animatable, null), partialTick);
 
 		renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);

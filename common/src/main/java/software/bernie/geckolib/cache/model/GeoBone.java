@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
@@ -39,12 +39,10 @@ public abstract class GeoBone {
     protected final float baseRotY;
     protected final float baseRotZ;
 
-    @Nullable
     @ApiStatus.Internal
-    public BoneSnapshot frameSnapshot = null;
-    @Nullable
+    public @Nullable BoneSnapshot frameSnapshot = null;
     @ApiStatus.Internal
-    public RenderPassInfo.BonePositionListener[] positionListeners = null;
+    public RenderPassInfo.BonePositionListener @Nullable[] positionListeners = null;
 
     protected GeoBone(@Nullable GeoBone parent, String name, GeoBone[] children, float pivotX, float pivotY, float pivotZ, float rotX, float rotY, float rotZ) {
         this.parent = parent;

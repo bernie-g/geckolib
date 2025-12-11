@@ -6,7 +6,7 @@ import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Util;
 import org.apache.logging.log4j.Level;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.function.MathFunction;

@@ -12,7 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.joml.Vector3f;
 import org.joml.Vector3fc;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -29,7 +29,7 @@ import java.util.function.Consumer;
 @ApiStatus.Internal
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
     @Override
-    public void submit(@Nullable GeckolibItemSpecialRenderer.RenderData<T> renderData, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector renderTasks,
+    public void submit(GeckolibItemSpecialRenderer.@Nullable RenderData<T> renderData, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector renderTasks,
                        int packedLight, int packedOverlay, boolean hasGlint, int outlineColor) {
         if (renderData == null)
             return;
@@ -64,9 +64,8 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
      * Should not be used
      */
     @Deprecated
-    @Nullable
     @Override
-    public GeckolibItemSpecialRenderer.RenderData<T> extractArgument(ItemStack itemStack) {
+    public GeckolibItemSpecialRenderer.@Nullable RenderData<T> extractArgument(ItemStack itemStack) {
         return extractArgument(itemStack, new ItemStackRenderState(), ItemDisplayContext.FIXED, null, null);
     }
 

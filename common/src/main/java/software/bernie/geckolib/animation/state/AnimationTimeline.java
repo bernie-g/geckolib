@@ -3,7 +3,7 @@ package software.bernie.geckolib.animation.state;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationProcessor;
@@ -127,9 +127,9 @@ public record AnimationTimeline(Stage[] stages) {
      * Run through any {@link KeyFrameData} between the given times, calling the appropriate handlers for each
      */
     public <T extends GeoAnimatable> void triggerKeyframeMarkersBetween(T animatable, GeoRenderState renderState, double fromTime, double toTime, AnimationController<T> controller,
-                                              @Nullable AnimationController.KeyframeEventHandler<T, SoundKeyframeData> soundHandler,
-                                              @Nullable AnimationController.KeyframeEventHandler<T, ParticleKeyframeData> particleHandler,
-                                              @Nullable AnimationController.KeyframeEventHandler<T, CustomInstructionKeyframeData> customInstructionHandler) {
+                                              AnimationController.@Nullable KeyframeEventHandler<T, SoundKeyframeData> soundHandler,
+                                              AnimationController.@Nullable KeyframeEventHandler<T, ParticleKeyframeData> particleHandler,
+                                              AnimationController.@Nullable KeyframeEventHandler<T, CustomInstructionKeyframeData> customInstructionHandler) {
         if (soundHandler == null && particleHandler == null && customInstructionHandler == null)
             return;
 

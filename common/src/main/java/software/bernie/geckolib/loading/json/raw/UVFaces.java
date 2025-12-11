@@ -4,7 +4,7 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Container class for UV face information, only used in deserialization at startup

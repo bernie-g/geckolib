@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.util.Mth;
 import org.apache.logging.log4j.util.InternalApi;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
