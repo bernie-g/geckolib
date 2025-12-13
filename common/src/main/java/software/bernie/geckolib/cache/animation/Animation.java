@@ -17,6 +17,13 @@ import java.util.Set;
  * A compiled animation instance for use by the {@link AnimationController}
  * <p>
  * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of {@code Animation} is considered final and immutable
+ *
+ * @param name The name of the animation, as defined in the animation .json
+ * @param length The length of the animation (in seconds)
+ * @param loopType The default loop type of this animation
+ * @param boneAnimations The keyframes of this animation, organized by bone groups
+ * @param usedVariables The {@link Variable}s used by this animation
+ * @param keyframeMarkers The keyframe instruction markers for this animation, as defined in the animation .json
  */
 public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Set<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
 	/**

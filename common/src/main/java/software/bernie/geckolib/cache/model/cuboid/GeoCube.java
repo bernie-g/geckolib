@@ -13,6 +13,11 @@ import software.bernie.geckolib.util.RenderUtil;
 
 /**
  * Baked cuboid for a {@link GeoBone}
+ *
+ * @param quads The quad array for this cube, pre-sorted to render in correct order
+ * @param pivot The pivot point of this cube
+ * @param rotation The baked rotation value of this cube
+ * @param size The x/y/z dimensions of this cube
  */
 public record GeoCube(GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
     /**

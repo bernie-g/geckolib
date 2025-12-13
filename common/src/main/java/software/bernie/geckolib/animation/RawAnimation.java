@@ -168,12 +168,16 @@ public final class RawAnimation {
 	 * An animation stage for a {@link RawAnimation} builder
 	 * <p>
 	 * This is an entry object representing a single animation stage of the final compiled animation.
+	 *
+	 * @param animationName The name of the animation as defined in the animation .json
+	 * @param loopType The type of looping to apply to this stage. {@link LoopType#DEFAULT} defers to the loop type specified in the animation .json
+	 * @param waitTicks The number of ticks to wait for, for a wait stage. This is only used internally via {@link RawAnimation#thenWait(int)}
 	 */
-	public record Stage(String animationName, LoopType loopType, int additionalTicks) {
+	public record Stage(String animationName, LoopType loopType, int waitTicks) {
         public static final StreamCodec<ByteBuf, Stage> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8, Stage::animationName,
                 ByteBufCodecs.STRING_UTF8.map(LoopType::fromString, LoopType::getId), Stage::loopType,
-                ByteBufCodecs.VAR_INT, Stage::additionalTicks,
+                ByteBufCodecs.VAR_INT, Stage::waitTicks,
                 Stage::new);
 
 		@ApiStatus.Internal

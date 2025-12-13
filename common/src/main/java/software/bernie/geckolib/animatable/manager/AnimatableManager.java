@@ -20,6 +20,8 @@ import java.util.function.Supplier;
  * <p>
  * Typically a single working-instance of a {@link GeoAnimatable}
  * will have a single instance of {@code AnimatableManager} associated with it
+ *
+ * @param <T> Animatable class type
  */
 public class AnimatableManager<T extends GeoAnimatable> {
 	protected final Map<String, AnimationController<T>> animationControllers;
@@ -149,6 +151,8 @@ public class AnimatableManager<T extends GeoAnimatable> {
 
 	/**
 	 * Helper class for the AnimatableManager to cleanly register controllers in one shot at instantiation for efficiency
+	 *
+	 * @param controllers The registered controllers collection for this registrar
 	 */
 	@SuppressWarnings("unchecked")
     public record ControllerRegistrar(List<AnimationController<? extends GeoAnimatable>> controllers) {

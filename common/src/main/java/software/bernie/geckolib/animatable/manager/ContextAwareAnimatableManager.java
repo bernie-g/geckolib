@@ -14,6 +14,9 @@ import java.util.Map;
  * This can be used for things like perspective-dependent animation handling and other similar functionality
  * <p>
  * This relies entirely on data present in {@link AnimatableManager#getAnimatableData} saved to this manager to determine context
+ *
+ * @param <T> Animatable class type
+ * @param <C> Context object class type
  */
 public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> extends AnimatableManager<T> {
 	private final Map<C, AnimatableManager<T>> managers;

@@ -19,6 +19,8 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> BlockEntity animatable class type
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
@@ -56,6 +58,9 @@ public class CompileBlockRenderStateEvent<T extends BlockEntity & GeoAnimatable,
 
     /**
      * Event listener interface for the {@link Block.CompileRenderState} GeoRenderEvent
+     *
+     * @param <T> BlockEntity animatable class type
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {

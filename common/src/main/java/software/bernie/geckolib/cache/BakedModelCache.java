@@ -9,6 +9,8 @@ import java.util.Map;
 
 /**
  * Container record for GeckoLib's baked model cache
+ *
+ * @param cache The baked models map as loaded from the resource files
  */
 public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
     /**

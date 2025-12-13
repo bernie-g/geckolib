@@ -21,7 +21,7 @@ public final class GeckoLibConstants {
     public static void init() {}
 
     /**
-     * Helper method to create a Identifier predefined with GeckoLib's {@link #MODID}
+     * Helper method to create an Identifier predefined with GeckoLib's {@link #MODID}
      */
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, path);

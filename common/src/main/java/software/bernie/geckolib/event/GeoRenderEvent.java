@@ -30,6 +30,10 @@ import java.util.function.Function;
  * <p>
  * This interface exists for multiloader-friendly event handling.<br>
  * The actual event objects are loader-dependent.
+ *
+ * @param <T> Animatable class type
+ * @param <O> Associated object class type, or {@link Void} if none
+ * @param <R> RenderState class type
  */
 public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderState> {
 	/**
@@ -93,6 +97,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for {@link BlockEntity BlockEntities} being rendered by {@link GeoBlockRenderer}
+	 *
+	 * @param <T> BlockEntity animatable class type
+	 * @param <R> RenderState class type
 	 */
 	interface Block<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends GeoRenderEvent<T, Void, R> {
         /**
@@ -105,6 +112,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoBlockRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> BlockEntity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderLayers<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
 			@ApiStatus.Internal
@@ -138,6 +148,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Block} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> BlockEntity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderState<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
 			/**
@@ -163,6 +176,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is cancellable.<br>
 		 * If the event is cancelled, the block entity will not be rendered.
+		 *
+		 * @param <T> BlockEntity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface Pre<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
             /**
@@ -195,6 +211,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for armor pieces being rendered by {@link GeoArmorRenderer}
+	 *
+	 * @param <T> Item animatable class type
+	 * @param <R> RenderState class type
 	 */
 	interface Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
         /**
@@ -207,6 +226,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoArmorRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> Item animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
 			@ApiStatus.Internal
@@ -240,6 +262,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> Item animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
 			/**
@@ -269,7 +294,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the armor piece will not be rendered.
+         * If the event is canceled, the armor piece will not be rendered.
+		 *
+		 * @param <T> Item animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
             /**
@@ -302,6 +330,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for {@link net.minecraft.world.entity.Entity Entities} being rendered by {@link GeoEntityRenderer}
+	 *
+	 * @param <T> Entity animatable class type
+	 * @param <R> RenderState class type
 	 */
 	interface Entity<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends GeoRenderEvent<T, Void, R> {
         /**
@@ -314,6 +345,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoEntityRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> Entity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderLayers<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
 			@ApiStatus.Internal
@@ -347,6 +381,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Entity} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> Entity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderState<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
 			/**
@@ -372,6 +409,9 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the entity will not be rendered.
+		 *
+		 * @param <T> Entity animatable class type
+		 * @param <R> RenderState class type
 		 */
 		interface Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
             /**
@@ -404,6 +444,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for miscellaneous {@link software.bernie.geckolib.animatable.GeoReplacedEntity replaced entities} being rendered by {@link GeoReplacedEntityRenderer}
+	 *
+	 * @param <T> Entity animatable class type. This is the animatable being rendered
+	 * @param <E> Entity class type. This is the entity being replaced
+	 * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 	 */
 	interface ReplacedEntity<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends GeoRenderEvent<T, E, R> {
         /**
@@ -416,6 +460,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoReplacedEntityRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> Entity animatable class type. This is the animatable being rendered
+		 * @param <E> Entity class type. This is the entity being replaced
+		 * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 		 */
 		interface CompileRenderLayers<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
 			@ApiStatus.Internal
@@ -449,6 +497,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link ReplacedEntity} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> Entity animatable class type. This is the animatable being rendered
+		 * @param <E> Entity class type. This is the entity being replaced
+		 * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 		 */
 		interface CompileRenderState<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
 			/**
@@ -478,7 +530,11 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
          * This event is cancellable.<br>
-         * If the event is cancelled, the entity will not be rendered.
+         * If the event is canceled, the entity will not be rendered.
+		 *
+		 * @param <T> Entity animatable class type. This is the animatable being rendered
+		 * @param <E> Entity class type. This is the entity being replaced
+		 * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 		 */
 		interface Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
             /**
@@ -511,6 +567,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for {@link ItemStack Items} being rendered by {@link GeoItemRenderer}
+	 *
+	 * @param <T> Item animatable class type
 	 */
 	interface Item<T extends net.minecraft.world.item.Item & GeoAnimatable> extends GeoRenderEvent<T, GeoItemRenderer.RenderData, GeoRenderState> {
 		/**
@@ -523,6 +581,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoItemRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> Item animatable class type
 		 */
 		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
 			@ApiStatus.Internal
@@ -556,6 +616,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Item} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> Item animatable class type
 		 */
 		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
 			/**
@@ -600,6 +662,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the item will not be rendered.
+		 *
+		 * @param <T> Item animatable class type
 		 */
 		interface Pre<T extends net.minecraft.world.item.Item & GeoAnimatable> extends Item<T> {
             /**
@@ -632,6 +696,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 
 	/**
 	 * Renderer events for miscellaneous {@link GeoAnimatable animatables} being rendered by {@link GeoObjectRenderer}
+	 *
+	 * @param <T> Object animatable class type
+	 * @param <E> Associated object class type, or {@link Void} if none
+	 * @param <R> RenderState class type
 	 */
 	interface Object<T extends GeoAnimatable, E, R extends GeoRenderState> extends GeoRenderEvent<T, E, R> {
 		/**
@@ -644,6 +712,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * One-time event for a {@link GeoObjectRenderer} called on first initialisation
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
+		 *
+		 * @param <T> Object animatable class type
+		 * @param <E> Associated object class type, or {@link Void} if none
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderLayers<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
 			@ApiStatus.Internal
@@ -677,6 +749,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * This event is called in preparation for rendering, when the renderer is gathering data to pass through
 		 * <p>
 		 * Use this event to add data that you may need in a later {@link Object} event, or to override/replace data used in rendering
+		 *
+		 * @param <T> Object animatable class type
+		 * @param <E> Associated object class type, or {@link Void} if none
+		 * @param <R> RenderState class type
 		 */
 		interface CompileRenderState<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
 			/**
@@ -707,6 +783,10 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
          * <p>
          * This event is cancellable.<br>
          * If the event is cancelled, the object will not be rendered.
+		 *
+		 * @param <T> Object animatable class type
+		 * @param <E> Associated object class type, or {@link Void} if none
+		 * @param <R> RenderState class type
 		 */
 		interface Pre<T extends GeoAnimatable, E, R extends GeoRenderState> extends Object<T, E, R> {
             /**

@@ -2,6 +2,7 @@ package software.bernie.geckolib.animation.state;
 
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.object.EasingType;
 import software.bernie.geckolib.animation.object.LoopType;
 import software.bernie.geckolib.cache.animation.Animation;
@@ -21,6 +22,12 @@ import java.util.function.Function;
  * <p>
  * Data structure:
  * <pre>{@code int[boneIndex][scale|rotation|translation][x|y|z]}</pre>
+ *
+ * @param animation The specific animation this point is for
+ * @param easingOverride The optional EasingType override the controller that created this AnimationPoint has set
+ * @param loopType The loop type for this animation as defined by the {@link RawAnimation}
+ * @param animTime The current animation-relative time this point is for
+ * @param keyFramePoints The keyframe index array defining the {@link BoneAnimation} keyframe index for this point
  */
 public record AnimationPoint(Animation animation, @Nullable EasingType easingOverride, LoopType loopType, double animTime, int[][][] keyFramePoints) {
     public static final int NO_KEYFRAME = -2;

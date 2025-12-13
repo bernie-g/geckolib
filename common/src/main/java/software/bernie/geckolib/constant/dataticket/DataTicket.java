@@ -8,6 +8,8 @@ import java.util.Objects;
 
 /**
  * Ticket object to define a typed data object
+ *
+ * @param <D> Data type for this ticket
  */
 public class DataTicket<D> {
 	static final Map<Pair<Class<?>, String>, DataTicket<?>> IDENTITY_CACHE = new Object2ObjectOpenHashMap<>();

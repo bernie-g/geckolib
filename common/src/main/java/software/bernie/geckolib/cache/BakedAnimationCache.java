@@ -11,6 +11,8 @@ import java.util.Map;
 
 /**
  * Container record for GeckoLib's baked animation cache
+ *
+ * @param cache The baked animations map as loaded from the resource files
  */
 public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
     /**

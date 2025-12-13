@@ -241,7 +241,7 @@ public class AnimationProcessor {
         // This is intentional. DO NOT CHANGE THIS or Tslat will be unhappy
         //noinspection StringEquality
         if (stage.animationName() == RawAnimation.Stage.WAIT)
-            return Animation.generateWaitAnimation(stage.additionalTicks());
+            return Animation.generateWaitAnimation(stage.waitTicks());
 
         return geoModel.getBakedAnimation(animatable, stage.animationName());
     }

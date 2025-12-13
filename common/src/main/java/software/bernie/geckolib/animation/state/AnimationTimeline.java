@@ -22,6 +22,8 @@ import java.util.List;
 
 /**
  * Timeline holder for a given {@link RawAnimation} in combination with a {@link AnimationController}'s {@link AnimationController#getTransitionTicks()}
+ *
+ * @param stages The array of stages this timeline represents, based on an interleave of transition periods and Animations
  */
 @ApiStatus.Internal
 public record AnimationTimeline(Stage[] stages) {
@@ -229,6 +231,12 @@ public record AnimationTimeline(Stage[] stages) {
 
     /**
      * Container class representing a single stage of the timeline
+     *
+     * @param startTime The time of the start of the stage (in seconds)
+     * @param endTime The time of the end of the stage (in seconds). Is equal to the startTime of the following stage
+     * @param isTransition Whether this is a transition stage
+     * @param animation The animation to be extracting keyframes for animation for this stage. For transition stages, is the animation transitioning to, or from if at the end of the timeline
+     * @param loopType The loop type for this stage as defined by the {@link RawAnimation} used to construct this timeline
      */
     public record Stage(double startTime, double endTime, boolean isTransition, @Nullable Animation animation, @Nullable LoopType loopType) {
         /**

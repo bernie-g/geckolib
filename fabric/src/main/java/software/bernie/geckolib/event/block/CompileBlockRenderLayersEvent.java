@@ -3,6 +3,7 @@ package software.bernie.geckolib.event.block;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.event.GeoRenderEvent;
@@ -17,6 +18,8 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> BlockEntity animatable class type
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see Armor.CompileRenderLayers
  */
@@ -39,6 +42,9 @@ public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable
 
     /**
      * Event listener interface for the {@link CompileBlockRenderLayersEvent} GeoRenderEvent
+     *
+     * @param <T> BlockEntity animatable class type
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {

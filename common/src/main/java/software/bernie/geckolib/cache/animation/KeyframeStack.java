@@ -8,6 +8,10 @@ import java.util.Set;
 
 /**
  * Stores a triplet of {@link Keyframe Keyframes} in an ordered stack
+ *
+ * @param xKeyframes The keyframe markers for the x-axis, sorted by time
+ * @param yKeyframes The keyframe markers for the y-axis, sorted by time
+ * @param zKeyframes The keyframe markers for the z-axis, sorted by time
  */
 public record KeyframeStack(Keyframe[] xKeyframes, Keyframe[] yKeyframes, Keyframe[] zKeyframes) {
 	public static final KeyframeStack EMPTY = new KeyframeStack(new Keyframe[0], new Keyframe[0], new Keyframe[0]);

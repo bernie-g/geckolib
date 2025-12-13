@@ -12,6 +12,15 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * Effectively an animation equivalent of a RenderState.<br>
  * The AnimationController should solely rely on the data in this state to handle its animation state for the purpose of rendering
+ *
+ * @param animationPoint The animation point for this render pass
+ * @param prevAnimationPoint The animation point for the last animation played on this controller, if transitioning from a previous animation
+ * @param transitionTime The transition-relative time a transition has been running (in seconds)
+ * @param transitionTicks The length in ticks that transitions should take, as defined by the {@link AnimationController}
+ * @param additive Whether this controller is applying animations additively
+ * @param easingOverride The optional easing override for this render pass
+ * @param renderState The RenderState instance for this render pass
+ * @param queryValues The pre-computed Molang query values for this render pass, for the contained AnimationPoints
  */
 public record ControllerState(AnimationPoint animationPoint, @Nullable AnimationPoint prevAnimationPoint, double transitionTime, int transitionTicks, boolean additive,
                               @Nullable EasingType easingOverride, GeoRenderState renderState, Reference2DoubleMap<Variable> queryValues) {

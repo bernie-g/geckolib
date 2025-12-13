@@ -426,6 +426,8 @@ public class AnimationController<T extends GeoAnimatable> {
      *		return test.setAndContinue(myIdleAnimation);
      *	}
      *};}</pre>
+     *
+     * @param <A> Animatable class type
      */
     @FunctionalInterface
     public interface AnimationStateHandler<A extends GeoAnimatable> {
@@ -446,6 +448,9 @@ public class AnimationController<T extends GeoAnimatable> {
      * <p>
      * When the keyframe is encountered, the {@link KeyframeEventHandler#handle(KeyFrameEvent)} method will be called.
      * You can then take whatever action you want at this point.
+     *
+     * @param <A> Animatable class type
+     * @param <E> Keyframe data class type
      */
     @FunctionalInterface
     public interface KeyframeEventHandler<A extends GeoAnimatable, E extends KeyFrameData> {

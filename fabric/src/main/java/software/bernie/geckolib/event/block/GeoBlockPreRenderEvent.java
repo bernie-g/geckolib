@@ -26,6 +26,8 @@ import software.bernie.geckolib.renderer.internal.RenderPassInfo;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> BlockEntity animatable class type
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see Pre
  */
@@ -86,6 +88,9 @@ public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R ext
      * Event listener interface for the {@link Block.Pre} GeoRenderEvent
      * <p>
      * Return false to cancel the render pass
+     *
+     * @param <T> BlockEntity animatable class type
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {

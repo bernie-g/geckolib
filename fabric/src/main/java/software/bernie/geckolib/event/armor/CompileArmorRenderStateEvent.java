@@ -19,6 +19,8 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> Item animatable class type
+ * @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires {@link HumanoidRenderState} as a minimum
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
@@ -63,6 +65,9 @@ public class CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends Hu
 
     /**
      * Event listener interface for the {@link Armor.CompileRenderState} GeoRenderEvent
+     *
+     * @param <T> Item animatable class type
+     * @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires {@link HumanoidRenderState} as a minimum
      */
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {

@@ -18,6 +18,10 @@ import java.util.function.Supplier;
 
 /**
  * Baked model object for Geckolib models
+ *
+ * @param topLevelBones The root bone(s) for this model, as defined in the model .json
+ * @param properties The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
+ * @param boneLookup A deferred lookup cache of every bone by its name for quick-retrieval
  */
 public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
 	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties) {

@@ -18,6 +18,9 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> Object animatable class type
+ * @param <E> Associated object class type, or {@link Void} if none
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
@@ -62,6 +65,10 @@ public class CompileObjectRenderStateEvent<T extends GeoAnimatable, E, R extends
 
     /**
      * Event listener interface for the {@link Object.CompileRenderState} GeoRenderEvent
+     *
+     * @param <T> Object animatable class type
+     * @param <E> Associated object class type, or {@link Void} if none
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends GeoAnimatable, E, R extends GeoRenderState> {

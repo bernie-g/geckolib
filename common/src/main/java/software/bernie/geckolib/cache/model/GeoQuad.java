@@ -9,6 +9,12 @@ import software.bernie.geckolib.loading.json.raw.FaceUV;
 
 /**
  * Quad data holder
+ *
+ * @param vertices The vertex array for this quad
+ * @param normalX The x-axis normal value for this quad
+ * @param normalY The y-axis normal value for this quad
+ * @param normalZ The z-axis normal value for this quad
+ * @param direction The cube-face of this quad. This does not necessarily represent the actual direction the quad is facing
  */
 public record GeoQuad(GeoVertex[] vertices, float normalX, float normalY, float normalZ, Direction direction) {
     public Vector3f normalVec() {

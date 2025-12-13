@@ -26,6 +26,8 @@ import software.bernie.geckolib.renderer.internal.RenderPassInfo;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> Entity animatable class type
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see Pre
  */
@@ -86,6 +88,9 @@ public class GeoEntityPreRenderEvent<T extends Entity & GeoAnimatable, R extends
      * Event listener interface for the {@link Entity.Pre} GeoRenderEvent
      * <p>
      * Return false to cancel the render pass
+     *
+     * @param <T> Entity animatable class type
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> {

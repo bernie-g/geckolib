@@ -14,6 +14,8 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * @param renderState The {@link GeoRenderState} for this render pass
  * @param controller The {@link software.bernie.geckolib.animation.AnimationController} responsible for the currently playing animation
  * @param keyframeData The {@link KeyFrameData} relevant to the encountered {@link Keyframe}
+ * @param <T> Animatable class type
+ * @param <E> Keyframe data class type
  *
  * @see AnimationController.KeyframeEventHandler
  */

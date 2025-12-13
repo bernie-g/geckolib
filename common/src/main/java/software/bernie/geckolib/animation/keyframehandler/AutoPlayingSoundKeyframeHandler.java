@@ -25,6 +25,8 @@ import software.bernie.geckolib.util.ClientUtil;
  * namespace:soundid
  * namespace:soundid|volume|pitch
  * }</pre>
+ *
+ * @param <A> Animatable class type
  */
 public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements AnimationController.KeyframeEventHandler<A, SoundKeyframeData> {
     @Override

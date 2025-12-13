@@ -17,6 +17,8 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <p>
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
+ * @param <T> Item animatable class type
+ * @param <R> RenderState class type
  * @see GeoRenderEvent
  * @see CompileRenderLayers
  */
@@ -40,6 +42,9 @@ public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends H
 
     /**
      * Event listener interface for the {@link Armor.CompileRenderLayers} GeoRenderEvent
+     *
+     * @param <T> Item animatable class type
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {

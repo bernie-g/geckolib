@@ -13,6 +13,8 @@ import software.bernie.geckolib.constant.DataTickets;
  * Network-compatible {@link DataTicket} implementation
  * <p>
  * Used for sending data from server -> client in an easy manner
+ *
+ * @param <D> Data type for this ticket
  */
 public final class SerializableDataTicket<D> extends DataTicket<D> {
 	public static final StreamCodec<RegistryFriendlyByteBuf, SerializableDataTicket<?>> STREAM_CODEC = StreamCodec.composite(
