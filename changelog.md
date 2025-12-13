@@ -2,5 +2,5 @@
 
 ## Changes:
 ### Internal:
-* Moved GeckoLib's nullability annotations to the JSpecify spec
+* Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec
 * Cleaned up more Javadocs
