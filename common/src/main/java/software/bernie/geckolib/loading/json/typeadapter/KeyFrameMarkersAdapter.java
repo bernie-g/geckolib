@@ -3,12 +3,12 @@ package software.bernie.geckolib.loading.json.typeadapter;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.ApiStatus;
+import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.animation.keyframeevent.CustomInstructionKeyframeData;
 import software.bernie.geckolib.cache.animation.keyframeevent.ParticleKeyframeData;
 import software.bernie.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
-import software.bernie.geckolib.loading.json.raw.*;
-import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.lang.reflect.Type;
 import java.util.Comparator;
@@ -17,30 +17,20 @@ import java.util.Map;
 
 /**
  * {@link Gson} {@link JsonDeserializer} for {@link Animation.KeyframeMarkers}
- * <p>
- * Acts as the deserialization interface for {@code Keyframes}
  */
-public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMarkers> {
-	public static final Gson GEO_GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
-			.registerTypeAdapter(Bone.class, Bone.deserializer())
-			.registerTypeAdapter(Cube.class, Cube.deserializer())
-			.registerTypeAdapter(FaceUV.class, FaceUV.deserializer())
-			.registerTypeAdapter(LocatorClass.class, LocatorClass.deserializer())
-			.registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
-			.registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
-			.registerTypeAdapter(Model.class, Model.deserializer())
-			.registerTypeAdapter(ModelProperties.class, ModelProperties.deserializer())
-			.registerTypeAdapter(PolyMesh.class, PolyMesh.deserializer())
-			.registerTypeAdapter(PolysUnion.class, PolysUnion.deserializer())
-			.registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())
-			.registerTypeAdapter(UVFaces.class, UVFaces.deserializer())
-			.registerTypeAdapter(UVUnion.class, UVUnion.deserializer())
-			.registerTypeAdapter(Animation.KeyframeMarkers.class, new KeyFramesAdapter())
-			.registerTypeAdapter(BakedAnimations.class, new BakedAnimationsAdapter())
-			.create();
+@ApiStatus.Internal
+public final class KeyFrameMarkersAdapter {
+	/**
+	 * Create a GSON {@link JsonDeserializer} for {@link Animation.KeyframeMarkers}
+	 */
+	public static JsonDeserializer<Animation.KeyframeMarkers> deserializer() throws JsonParseException {
+		return KeyFrameMarkersAdapter::fromJson;
+	}
 
-	@Override
-	public Animation.KeyframeMarkers deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws JsonParseException {
+	/**
+	 * Deserialize a {@link Animation.KeyframeMarkers} from a {@link JsonElement}.
+	 */
+	private static Animation.KeyframeMarkers fromJson(JsonElement json, Type type, JsonDeserializationContext context) {
 		JsonObject obj = json.getAsJsonObject();
 		SoundKeyframeData[] sounds = buildSoundFrameData(obj);
 		ParticleKeyframeData[] particles = buildParticleFrameData(obj);
@@ -88,7 +78,7 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.KeyframeMark
 			String instructions;
 
 			if (entry.getValue() instanceof JsonArray array) {
-				instructions = GEO_GSON.fromJson(array, ObjectArrayList.class).toString();
+				instructions = GeckoLibResources.GSON.fromJson(array, ObjectArrayList.class).toString();
 			}
 			else if (entry.getValue() instanceof JsonPrimitive primitive) {
 				instructions = primitive.getAsString();

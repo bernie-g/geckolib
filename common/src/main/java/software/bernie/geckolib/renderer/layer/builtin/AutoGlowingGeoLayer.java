@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.layer;
+package software.bernie.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
@@ -22,7 +22,8 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Map;
@@ -34,6 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * By default, it uses a custom RenderType created by GeckoLib to make things easier, but it can be overridden as needed
  *
+ * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
  */
 public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends TextureLayerGeoLayer<T, O, R> {

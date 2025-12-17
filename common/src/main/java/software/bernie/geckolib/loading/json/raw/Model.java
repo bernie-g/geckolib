@@ -9,6 +9,9 @@ import software.bernie.geckolib.util.JsonUtil;
 
 /**
  * Container class for model information, only used in deserialization at startup
+ *
+ * @param formatVersion The <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemaslist?view=minecraft-bedrock-stable">geometry format version</a> for this model
+ * @param minecraftGeometry The geometry array for this model. Typically only one geometry exists per model
  */
 public record Model(String formatVersion, MinecraftGeometry[] minecraftGeometry) {
 	public static JsonDeserializer<Model> deserializer() throws JsonParseException {

@@ -14,7 +14,7 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.event.GeoRenderEvent;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 /**
  * Loader-agnostic service interface for GeckoLib's various events

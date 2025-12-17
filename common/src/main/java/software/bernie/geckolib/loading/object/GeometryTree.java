@@ -10,6 +10,9 @@ import java.util.Map;
 
 /**
  * Container class for a {@link Bone} structure, used at startup during deserialization
+ *
+ * @param topLevelBones The root bone(s) for this model, as defined in the model .json
+ * @param properties The additional properties collection for the model
  */
 public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProperties properties) {
 	public static GeometryTree fromModel(Model model) {

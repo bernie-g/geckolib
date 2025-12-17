@@ -11,6 +11,11 @@ import software.bernie.geckolib.util.JsonUtil;
 
 /**
  * Container class for face UV information, only used in deserialization at startup
+ *
+ * @param materialInstance An optional material reference for this face, not used by GeckoLib
+ * @param uv The uv origin for this face
+ * @param uvSize The uv size for this face
+ * @param uvRotation The uv rotation for this face, defaults to {@link Rotation#NONE}. Must be in 90-degree increments
  */
 public record FaceUV(@Nullable String materialInstance, double[] uv, double[] uvSize, Rotation uvRotation) {
 	public static JsonDeserializer<FaceUV> deserializer() throws JsonParseException {

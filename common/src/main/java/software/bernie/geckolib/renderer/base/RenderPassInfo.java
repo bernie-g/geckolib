@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.internal;
+package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -18,8 +18,6 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.object.DeferredCache;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.List;
@@ -36,6 +34,8 @@ import java.util.Map;
  * This should hopefully make it easier to organise and manage data for rendering for end-users
  * <p>
  * <b><u>NOTE:</u></b> All objects contained by this instance should be considered functionally immutable.
+ *
+ * @param <R> RenderState class type
  */
 public class RenderPassInfo<R extends GeoRenderState> {
     protected final GeoRenderer<?, ?, R> renderer;
@@ -245,6 +245,8 @@ public class RenderPassInfo<R extends GeoRenderState> {
 
     /**
      * Singular GeoBone-positioning callback to run immediately before rendering a model
+     *
+     * @param <R> RenderState class type
      */
     @FunctionalInterface
     public interface BoneUpdater<R extends GeoRenderState> {

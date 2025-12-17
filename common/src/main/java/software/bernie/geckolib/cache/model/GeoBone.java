@@ -10,7 +10,7 @@ import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.util.MiscUtil;
 import software.bernie.geckolib.util.RenderUtil;
 

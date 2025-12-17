@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.layer;
+package software.bernie.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -20,8 +20,9 @@ import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.PerBoneRender;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.function.BiConsumer;
@@ -31,6 +32,10 @@ import java.util.function.BiConsumer;
  * <p>
  * Due to the way Mojang handles {@link VertexConsumer buffers}, and for safety; this layer only supports one bone at a time.
  * Add multiple copies of this layer if your model has multiple bones you want to render with a custom texture
+ *
+ * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
 public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     protected final String boneName;

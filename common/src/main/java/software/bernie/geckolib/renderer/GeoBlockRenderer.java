@@ -24,7 +24,7 @@ import software.bernie.geckolib.model.DefaultedBlockGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 
@@ -35,6 +35,9 @@ import java.util.function.Function;
  * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically
  * <p>
  * All blocks added to be rendered by GeckoLib should use an instance of this class.
+ *
+ * @param <T> BlockEntity animatable class type
+ * @param <R> RenderState class type
  */
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);

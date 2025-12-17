@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.internal;
+package software.bernie.geckolib.renderer.base;
 
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.GeoBone;

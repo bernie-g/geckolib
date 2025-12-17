@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.layer;
+package software.bernie.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -8,7 +8,8 @@ import net.minecraft.resources.Identifier;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.function.Function;
 
@@ -17,6 +18,10 @@ import java.util.function.Function;
  * <p>
  * This should only be used if the additional render pass isn't specific to any bones, as this re-renders the entire model.
  * If you are using this to use custom textures/rendertypes on specific bones, use {@link CustomBoneTextureGeoLayer} instead.
+ *
+ * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
 public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     protected final Identifier texture;

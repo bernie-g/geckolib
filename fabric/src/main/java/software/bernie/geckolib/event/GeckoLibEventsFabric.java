@@ -30,7 +30,7 @@ import software.bernie.geckolib.event.replacedentity.CompileReplacedEntityRender
 import software.bernie.geckolib.event.replacedentity.GeoReplacedEntityPreRenderEvent;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.service.GeckoLibEvents;
 
 /**

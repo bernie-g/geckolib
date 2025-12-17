@@ -1,15 +1,16 @@
-package software.bernie.geckolib.renderer.internal;
+package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import software.bernie.geckolib.cache.model.GeoBone;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 /**
  * A functional interface for submitting a render operation at the {@link PoseStack.Pose pose} of a bone.
  * <p>
  * Typically you would submit an instance of this to {@link GeoRenderLayer#addPerBoneRender}
+ *
+ * @param <R> RenderState class type
  */
 @FunctionalInterface
 public interface PerBoneRender<R extends GeoRenderState> {

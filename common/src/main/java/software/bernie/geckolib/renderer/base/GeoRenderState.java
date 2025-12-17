@@ -95,6 +95,8 @@ public interface GeoRenderState {
 
     /**
      * Built-in implementation class for GeoRenderState, used for Geo renderers that don't already have one
+     *
+     * @param data The internal ticket-data map for this RenderState instance
      */
     @ApiStatus.Internal
     record Impl(Map<DataTicket<?>, Object> data) implements GeoRenderState {

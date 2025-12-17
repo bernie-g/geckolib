@@ -10,6 +10,10 @@ import software.bernie.geckolib.util.JsonUtil;
 
 /**
  * Container class for generic geometry information, only used in deserialization at startup
+ *
+ * @param bones The raw bone array for this geometry
+ * @param cape The cape name for this geometry, not used by GeckoLib
+ * @param modelProperties The additional model properties for this geometry, if present
  */
 public record MinecraftGeometry(Bone[] bones, @Nullable String cape, @Nullable ModelProperties modelProperties) {
 	public static JsonDeserializer<MinecraftGeometry> deserializer() throws JsonParseException {

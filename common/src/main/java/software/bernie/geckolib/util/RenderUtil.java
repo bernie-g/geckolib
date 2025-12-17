@@ -29,7 +29,7 @@ import software.bernie.geckolib.cache.model.GeoQuad;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.List;
 

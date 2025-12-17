@@ -23,7 +23,7 @@ import software.bernie.geckolib.model.DefaultedItemGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -35,6 +35,8 @@ import java.util.function.Function;
  * Base {@link GeoRenderer} class for rendering {@link Item Items} specifically
  * <p>
  * All items added to be rendered by GeckoLib should use an instance of this class.
+ *
+ * @param <T> Item animatable class type
  */
 public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRenderer<T, GeoItemRenderer.RenderData, GeoRenderState> {
 	protected final GeoRenderLayersContainer<T, RenderData, GeoRenderState> renderLayers = new GeoRenderLayersContainer<>(this);

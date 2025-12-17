@@ -23,7 +23,7 @@ import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.internal.BoneSnapshots;
+import software.bernie.geckolib.renderer.base.BoneSnapshots;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.Collection;

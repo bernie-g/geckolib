@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.layer;
+package software.bernie.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
@@ -45,8 +45,9 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.PerBoneRender;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.service.GeckoLibClient;
 import software.bernie.geckolib.util.RenderStateUtil;
 import software.bernie.geckolib.util.RenderUtil;
@@ -62,6 +63,10 @@ import java.util.function.Function;
  * Supports both {@link GeoItem GeckoLib} and vanilla armor models
  * <p>
  * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering
+ *
+ * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
 public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends EntityRenderState & GeoRenderState> extends GeoRenderLayer<T, O, R> {
 	protected final EquipmentLayerRenderer equipmentRenderer;

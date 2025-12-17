@@ -6,6 +6,8 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.object.EasingType;
 import software.bernie.geckolib.animation.object.LoopType;
@@ -31,11 +33,21 @@ import java.util.concurrent.ConcurrentMap;
  * {@link Gson} {@link JsonDeserializer} for {@link BakedAnimations}.<br>
  * Acts as the deserialization interface for {@code BakedAnimations}
  */
-public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations> {
-	public static ConcurrentMap<Double, Constant> COMPRESSION_CACHE = null;
+@ApiStatus.Internal
+public final class BakedAnimationsAdapter {
+	public static @Nullable ConcurrentMap<Double, Constant> COMPRESSION_CACHE = null;
 
-	@Override
-	public BakedAnimations deserialize(JsonElement json, Type type, JsonDeserializationContext context) throws RuntimeException {
+	/**
+	 * Create a GSON {@link JsonDeserializer} for {@link BakedAnimations}
+	 */
+	public static JsonDeserializer<BakedAnimations> deserializer() throws JsonParseException {
+		return BakedAnimationsAdapter::fromJson;
+	}
+
+	/**
+	 * Deserialize a {@link BakedAnimations} from a {@link JsonElement}.
+	 */
+	public static BakedAnimations fromJson(JsonElement json, Type type, JsonDeserializationContext context) {
 		JsonObject obj = json.getAsJsonObject();
 		Map<String, Animation> animations = new Object2ObjectOpenHashMap<>(obj.size());
 
@@ -48,7 +60,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 					compoundEx.withMessage("Unable to parse animation: " + entry.getKey());
 				}
 				else {
-                    GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", entry.getKey());
+					GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", entry.getKey());
 				}
 
 				ex.printStackTrace();
@@ -58,7 +70,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return new BakedAnimations(animations);
 	}
 
-	private Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws CompoundException {
+	private static Animation bakeAnimation(String name, JsonObject animationObj, JsonDeserializationContext context) throws CompoundException {
 		double length = animationObj.has("animation_length") ? GsonHelper.getAsDouble(animationObj, "animation_length") : -1;
 		LoopType loopType = LoopType.fromJson(animationObj.get("loop"));
 		BoneAnimation[] boneAnimations = bakeBoneAnimations(GsonHelper.getAsJsonObject(animationObj, "bones", new JsonObject()));
@@ -70,7 +82,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return Animation.create(name, length, loopType, boneAnimations, keyframes);
 	}
 
-	private BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws CompoundException {
+	private static BoneAnimation[] bakeBoneAnimations(JsonObject bonesObj) throws CompoundException {
 		BoneAnimation[] animations = new BoneAnimation[bonesObj.size()];
 		int index = 0;
 
@@ -181,7 +193,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 			throw new JsonParseException("Invalid keyframe data - expected array, found " + keyframe);
 	}
 
-	private KeyframeStack buildKeyframeStack(List<DoubleObjectPair<JsonElement>> entries, boolean isForRotation) throws CompoundException {
+	private static KeyframeStack buildKeyframeStack(List<DoubleObjectPair<JsonElement>> entries, boolean isForRotation) throws CompoundException {
 		if (entries.isEmpty())
 			return KeyframeStack.EMPTY;
 
@@ -229,7 +241,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return new KeyframeStack(addSplineArgs(xFrames), addSplineArgs(yFrames), addSplineArgs(zFrames));
 	}
 
-	private List<Keyframe> addSplineArgs(List<Keyframe> frames) {
+	private static List<Keyframe> addSplineArgs(List<Keyframe> frames) {
 		if (frames.size() == 1) {
 			Keyframe frame = frames.getFirst();
 
@@ -254,7 +266,7 @@ public class BakedAnimationsAdapter implements JsonDeserializer<BakedAnimations>
 		return frames;
 	}
 
-	private MathValue compressMathValue(MathValue input) {
+	private static MathValue compressMathValue(MathValue input) {
 		if (COMPRESSION_CACHE == null || input.isMutable())
 			return input;
 

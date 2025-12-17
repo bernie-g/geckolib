@@ -1,6 +1,9 @@
 package software.bernie.geckolib.cache;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import com.google.gson.Strictness;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -16,9 +19,9 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.loading.json.ModelFormatVersion;
-import software.bernie.geckolib.loading.json.raw.Model;
+import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
-import software.bernie.geckolib.loading.json.typeadapter.KeyFramesAdapter;
+import software.bernie.geckolib.loading.json.typeadapter.KeyFrameMarkersAdapter;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 import software.bernie.geckolib.loading.object.GeometryTree;
@@ -51,6 +54,23 @@ public final class GeckoLibResources {
 	public static final Identifier MODELS_PATH = GeckoLibConstants.id("geckolib/models");
 	public static final Pattern SUFFIX_STRIPPER = Pattern.compile("((\\.geo)|((\\.animation)s?))?(\\.json)$");
 	public static final Pattern PREFIX_STRIPPER = Pattern.compile("^(geckolib/)((animations/)|(models/))?");
+	public static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
+			.registerTypeAdapter(Bone.class, Bone.deserializer())
+			.registerTypeAdapter(Cube.class, Cube.deserializer())
+			.registerTypeAdapter(FaceUV.class, FaceUV.deserializer())
+			.registerTypeAdapter(LocatorClass.class, LocatorClass.deserializer())
+			.registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
+			.registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
+			.registerTypeAdapter(Model.class, Model.deserializer())
+			.registerTypeAdapter(ModelProperties.class, ModelProperties.deserializer())
+			.registerTypeAdapter(PolyMesh.class, PolyMesh.deserializer())
+			.registerTypeAdapter(PolysUnion.class, PolysUnion.deserializer())
+			.registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())
+			.registerTypeAdapter(UVFaces.class, UVFaces.deserializer())
+			.registerTypeAdapter(UVUnion.class, UVUnion.deserializer())
+			.registerTypeAdapter(Animation.KeyframeMarkers.class, KeyFrameMarkersAdapter.deserializer())
+			.registerTypeAdapter(BakedAnimations.class, BakedAnimationsAdapter.deserializer())
+			.create();
 
 	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
 	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
@@ -161,7 +181,7 @@ public final class GeckoLibResources {
 		if (path.getPath().endsWith(".animation.json"))
 			throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
 
-		Model model = KeyFramesAdapter.GEO_GSON.fromJson(json, Model.class);
+		Model model = GSON.fromJson(json, Model.class);
 		ModelFormatVersion matchedVersion = ModelFormatVersion.match(model.formatVersion());
 
 		if (matchedVersion == null) {
@@ -182,7 +202,7 @@ public final class GeckoLibResources {
 			throw new RuntimeException("Found model file in animations folder! '" + path + "'");
 
 		try {
-			return KeyFramesAdapter.GEO_GSON.fromJson(GsonHelper.getAsJsonObject(json, "animations"), BakedAnimations.class);
+			return GSON.fromJson(GsonHelper.getAsJsonObject(json, "animations"), BakedAnimations.class);
 		}
 		catch (CompoundException ex) {
 			throw ex.withMessage(path + ": Error building animations from JSON");

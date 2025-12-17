@@ -12,8 +12,8 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.PerBoneRender;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.PerBoneRender;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.function.BiConsumer;
 
@@ -21,6 +21,10 @@ import java.util.function.BiConsumer;
  * Render layer base class for rendering additional layers of effects or textures over an existing model at runtime
  * <p>
  * Contains the base boilerplate and helper code for various render layer features
+ *
+ * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
 public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderState> {
 	protected final GeoRenderer<T, O, R> renderer;

@@ -38,7 +38,7 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -53,6 +53,9 @@ import java.util.function.Function;
  * All entities added to be rendered by GeckoLib should use an instance of this class
  * <p>
  * This also includes {@link net.minecraft.world.entity.projectile.Projectile Projectiles}
+ *
+ * @param <T> Entity animatable class type
+ * @param <R> RenderState class type
  */
 public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<T, R> implements GeoRenderer<T, Void, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);

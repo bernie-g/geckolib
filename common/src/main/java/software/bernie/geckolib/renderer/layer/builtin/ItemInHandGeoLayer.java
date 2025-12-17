@@ -1,4 +1,4 @@
-package software.bernie.geckolib.renderer.layer;
+package software.bernie.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Either;
@@ -30,6 +30,10 @@ import java.util.List;
  * <p>
  * Assumes the {@link GeoModel} has bones for both hands called {@code RightHandItem} and {@code LeftHandItem}.
  * If you have different names, use the {@link ItemInHandGeoLayer#ItemInHandGeoLayer(GeoRenderer, String, String)} constructor.
+ *
+ * @param <T> Entity animatable class type. Inherited from the renderer this layer is attached to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
+ * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
 public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, O, R> {
     protected final String rightHandBone;

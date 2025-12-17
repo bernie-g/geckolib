@@ -24,7 +24,7 @@ public record UVFaces(@Nullable FaceUV north, @Nullable FaceUV south, @Nullable 
 		};
 	}
 
-	public FaceUV fromDirection(Direction direction) {
+	public @Nullable FaceUV fromDirection(Direction direction) {
 		return switch(direction) {
 			case NORTH -> north;
 			case SOUTH -> south;

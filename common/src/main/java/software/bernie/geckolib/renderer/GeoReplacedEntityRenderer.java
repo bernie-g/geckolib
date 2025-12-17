@@ -36,7 +36,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 import software.bernie.geckolib.util.ClientUtil;
@@ -48,6 +48,10 @@ import java.util.function.Function;
 /**
  * An alternate to {@link GeoEntityRenderer}, used specifically for replacing existing non-geckolib
  * entities with geckolib rendering dynamically, without the need for an additional entity class
+ *
+ * @param <T> Entity animatable class type. This is the animatable being rendered
+ * @param <E> Entity class type. This is the entity being replaced
+ * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
  */
 public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<E, R> implements GeoRenderer<T, E, R> {
 	protected final GeoRenderLayersContainer<T, E, R> renderLayers = new GeoRenderLayersContainer<>(this);

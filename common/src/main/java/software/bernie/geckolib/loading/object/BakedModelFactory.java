@@ -71,7 +71,7 @@ public interface BakedModelFactory {
 	/**
 	 * Build an individual quad
 	 */
-	default GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
+	default @Nullable GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
 		if (!uvUnion.isBoxUV()) {
 			FaceUV faceUV = uvUnion.faceUV().fromDirection(direction);
 

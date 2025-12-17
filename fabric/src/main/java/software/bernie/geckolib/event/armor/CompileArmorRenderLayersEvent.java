@@ -18,7 +18,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
  * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
  *
  * @param <T> Item animatable class type
- * @param <R> RenderState class type
+ * @param <R> RenderState class type. GeckoLib armor rendering requires {@link HumanoidRenderState} as the minimum class type
  * @see GeoRenderEvent
  * @see CompileRenderLayers
  */

@@ -33,7 +33,7 @@ import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 
@@ -48,6 +48,8 @@ import java.util.function.UnaryOperator;
  * <p>
  * All custom armor added to be rendered in-world by GeckoLib should use an instance of this class
  *
+ * @param <T> Item animatable class type
+ * @param <R> RenderState class type. GeckoLib armor rendering requires {@link HumanoidRenderState} as the minimum class type
  * @see GeoItem
  */
 public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {

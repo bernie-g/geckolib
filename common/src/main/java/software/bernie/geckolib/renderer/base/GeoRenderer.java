@@ -16,8 +16,6 @@ import software.bernie.geckolib.animation.state.AnimationTest;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.value.Variable;
-import software.bernie.geckolib.renderer.internal.BoneSnapshots;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.function.ToDoubleFunction;

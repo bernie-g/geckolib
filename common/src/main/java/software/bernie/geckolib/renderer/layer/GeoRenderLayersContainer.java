@@ -12,6 +12,10 @@ import java.util.List;
  * Base interface for a container for {@link GeoRenderLayer GeoRenderLayers}
  * <p>
  * Each renderer should contain an instance of this, for holding its layers and handling events
+ *
+ * @param <T> Animatable class type. Inherited from the renderer this container belongs to
+ * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this container belongs to
+ * @param <R> RenderState class type. Inherited from the renderer this container belongs to
  */
 @ApiStatus.Internal
 public class GeoRenderLayersContainer<T extends GeoAnimatable, O, R extends GeoRenderState> {

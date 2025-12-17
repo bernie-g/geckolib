@@ -10,7 +10,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.internal.RenderPassInfo;
+import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 
@@ -23,9 +23,13 @@ import java.util.function.Function;
  * Before using this class you should ensure your use-case isn't already covered by one of the other existing renderers
  * <p>
  * It is <b>strongly</b> recommended you override {@link GeoRenderer#getInstanceId} if using this renderer
+ *
+ * @param <T> Animatable class type
+ * @param <O> Associated object class type, or {@link Void} if none
+ * @param <R> RenderState class type
  */
-public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderState> implements GeoRenderer<T, E, R> {
-	protected final GeoRenderLayersContainer<T, E, R> renderLayers = new GeoRenderLayersContainer<>(this);
+public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderState> implements GeoRenderer<T, O, R> {
+	protected final GeoRenderLayersContainer<T, O, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
 	protected float scaleWidth = 1;
@@ -65,14 +69,14 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
      * All GeckoLib renderers should immediately defer their respective default {@code submit} calls to this, for consistent handling
      * @see #performRenderPass(GeoAnimatable, Object, PoseStack, SubmitNodeCollector, CameraRenderState, int, int, RenderPassInfo.BoneUpdater)
      */
-    public void performRenderPass(T animatable, E relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick) {
+    public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick) {
         performRenderPass(animatable, relatedObject, poseStack, renderTasks, cameraState, packedLight, partialTick, null);
     }
 
     /**
      * Initial access point for performing a single render pass, with an optional pre-defined {@link RenderPassInfo.BoneUpdater} to allow for pre-positioning models from outside the renderer
      */
-	public void performRenderPass(T animatable, E relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick,
+	public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick,
                                   RenderPassInfo.@Nullable BoneUpdater<R> boneUpdater) {
 		R renderState = fillRenderState(animatable, relatedObject, createRenderState(animatable, null), partialTick);
 
@@ -84,7 +88,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
      * Called to create the {@link GeoRenderState} for this render pass
      */
     @Override
-    public R createRenderState(T animatable, E relatedObject) {
+    public R createRenderState(T animatable, O relatedObject) {
         return (R)new GeoRenderState.Impl();
     }
 
@@ -101,21 +105,21 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
      * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
      */
     @Override
-    public List<GeoRenderLayer<T, E, R>> getRenderLayers() {
+    public List<GeoRenderLayer<T, O, R>> getRenderLayers() {
         return this.renderLayers.getRenderLayers();
     }
 
     /**
      * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
      */
-    public GeoObjectRenderer<T, E, R> withRenderLayer(Function<? super GeoObjectRenderer<T, E, R>, GeoRenderLayer<T, E, R>> renderLayer) {
+    public GeoObjectRenderer<T, O, R> withRenderLayer(Function<? super GeoObjectRenderer<T, O, R>, GeoRenderLayer<T, O, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
 
     /**
      * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
      */
-    public GeoObjectRenderer<T, E, R> withRenderLayer(GeoRenderLayer<T, E, R> renderLayer) {
+    public GeoObjectRenderer<T, O, R> withRenderLayer(GeoRenderLayer<T, O, R> renderLayer) {
         this.renderLayers.addLayer(renderLayer);
 
         return this;
@@ -124,14 +128,14 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
     /**
      * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
      */
-    public GeoObjectRenderer<T, E, R> withScale(float scale) {
+    public GeoObjectRenderer<T, O, R> withScale(float scale) {
         return withScale(scale, scale);
     }
 
     /**
      * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
      */
-    public GeoObjectRenderer<T, E, R> withScale(float scaleWidth, float scaleHeight) {
+    public GeoObjectRenderer<T, O, R> withScale(float scaleWidth, float scaleHeight) {
         this.scaleWidth = scaleWidth;
         this.scaleHeight = scaleHeight;
 
@@ -150,7 +154,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, E, R extends GeoRenderSt
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, @Nullable E relatedObject, R renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
         GeckoLibServices.Client.EVENTS.fireCompileObjectRenderState(this, renderState, animatable, relatedObject);
     }
 

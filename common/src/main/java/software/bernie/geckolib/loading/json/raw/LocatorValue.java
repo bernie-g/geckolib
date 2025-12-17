@@ -7,6 +7,9 @@ import software.bernie.geckolib.util.JsonUtil;
 
 /**
  * Container class for locator value information, only used in deserialization at startup
+ *
+ * @param locatorClass The locator class for this value
+ * @param values The values for this locator type
  */
 public record LocatorValue(@Nullable LocatorClass locatorClass, double[] values) {
 	public static JsonDeserializer<LocatorValue> deserializer() throws JsonParseException {

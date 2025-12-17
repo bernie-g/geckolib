@@ -25,6 +25,8 @@ import java.util.function.Consumer;
 
 /**
  * SpecialModelRenderer instance to faciliate rendering GeckoLib items using the vanilla special renderer system
+ *
+ * @param <T> Item animatable class type
  */
 @ApiStatus.Internal
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
