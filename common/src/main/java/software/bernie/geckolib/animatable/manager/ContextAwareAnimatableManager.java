@@ -151,7 +151,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	 * <p>
 	 * Submanagers do not have their data set, and instead it is all kept in this parent manager
 	 */
-	public <D> D getAnimatableData(DataTicket<D> dataTicket) {
+	public <D> @Nullable D getAnimatableData(DataTicket<D> dataTicket) {
 		return super.getAnimatableData(dataTicket);
 	}
 }

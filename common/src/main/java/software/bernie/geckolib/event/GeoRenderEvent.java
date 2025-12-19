@@ -23,6 +23,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -64,7 +65,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	default <D> @Nullable D getRenderData(DataTicket<D> dataTicket) {
 		final GeoRenderState renderState = getRenderState();
 
-        return renderState.getOrDefaultGeckolibData(dataTicket, null);
+        return renderState.getGeckolibData(dataTicket);
 	}
 
     /**
@@ -92,7 +93,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	 * Returns the Class the {@link GeoAnimatable} being rendered belongs to
 	 */
 	default Class<? extends GeoAnimatable> getAnimatableClass() {
-		return getRenderData(DataTickets.ANIMATABLE_CLASS);
+        //noinspection unchecked
+        return Objects.requireNonNull(getRenderData(DataTickets.ANIMATABLE_CLASS));
 	}
 
 	/**
@@ -164,7 +166,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-            default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+            default <D> void addData(DataTicket<D> dataTicket, D data) {
                 getRenderState().addGeckolibData(dataTicket, data);
             }
 		}
@@ -283,7 +285,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-            default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+            default <D> void addData(DataTicket<D> dataTicket, D data) {
                 getRenderState().addGeckolibData(dataTicket, data);
             }
 		}
@@ -397,7 +399,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-			default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+			default <D> void addData(DataTicket<D> dataTicket, D data) {
 				getRenderState().addGeckolibData(dataTicket, data);
 			}
 		}
@@ -519,7 +521,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-            default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+            default <D> void addData(DataTicket<D> dataTicket, D data) {
                 getRenderState().addGeckolibData(dataTicket, data);
             }
 		}
@@ -650,7 +652,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-			default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+			default <D> void addData(DataTicket<D> dataTicket, D data) {
 				getRenderState().addGeckolibData(dataTicket, data);
 			}
 		}
@@ -766,7 +768,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 			 * @param dataTicket The DataTicket denoting the data to be added
 			 * @param data The data to be added
 			 */
-			default <D> void addData(DataTicket<D> dataTicket, @Nullable D data) {
+			default <D> void addData(DataTicket<D> dataTicket, D data) {
 				getRenderState().addGeckolibData(dataTicket, data);
 			}
 

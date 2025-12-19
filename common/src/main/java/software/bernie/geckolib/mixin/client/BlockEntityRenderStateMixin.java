@@ -26,7 +26,7 @@ public class BlockEntityRenderStateMixin implements GeoRenderState {
 
     @Unique
     @Override
-    public <D> void addGeckolibData(DataTicket<D> dataTicket, @Nullable D data) {
+    public <D> void addGeckolibData(DataTicket<D> dataTicket, D data) {
         this.geckolib$data.put(dataTicket, data);
     }
 

@@ -28,7 +28,7 @@ public class EntityRenderStateMixin implements GeoRenderState {
 
     @Unique
     @Override
-    public <D> void addGeckolibData(DataTicket<D> dataTicket, @Nullable D data) {
+    public <D> void addGeckolibData(DataTicket<D> dataTicket, D data) {
         this.geckolib$data.put(dataTicket, data);
     }
 
@@ -54,10 +54,8 @@ public class EntityRenderStateMixin implements GeoRenderState {
     public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
         Object data = this.geckolib$data.get(dataTicket);
 
-        if (data == null && !hasGeckolibData(dataTicket))
-            throw new IllegalArgumentException("Attempted to retrieve data from GeoRenderState that does not exist. Check your code!");
-
         try {
+            //noinspection unchecked
             return (D)data;
         }
         catch (ClassCastException ex) {
@@ -69,13 +67,14 @@ public class EntityRenderStateMixin implements GeoRenderState {
 
     @Unique
     @Override
-    public <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+    public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D defaultValue) {
         Object data = this.geckolib$data.get(dataTicket);
 
-        if (data == null && !hasGeckolibData(dataTicket))
+        if (data == null)
             return defaultValue;
 
         try {
+            //noinspection unchecked
             return (D)data;
         }
         catch (ClassCastException ex) {

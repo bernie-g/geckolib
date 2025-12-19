@@ -263,7 +263,7 @@ public interface EasingType {
 	 * <p>
 	 * <a href="http://easings.net/#easeInElastic">Easings.net#easeInElastic</a>
 	 */
-	static Double2DoubleFunction elastic(Double n) {
+	static Double2DoubleFunction elastic(@Nullable Double n) {
 		double n2 = n == null ? 1 : n;
 
 		return t -> 1 - Math.pow(Math.cos(t * Math.PI / 2f), 3) * Math.cos(t * n2 * Math.PI);
@@ -278,7 +278,7 @@ public interface EasingType {
 	 * <p>
 	 * <a href="http://easings.net/#easeInBounce">Easings.net#easeInBounce</a>
 	 */
-	static Double2DoubleFunction bounce(Double n) {
+	static Double2DoubleFunction bounce(@Nullable Double n) {
 		final double n2 = n == null ? 0.5d : n;
 
 		Double2DoubleFunction one = x -> 121f / 16f * x * x;
@@ -296,7 +296,7 @@ public interface EasingType {
 	 * <p>
 	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	 */
-	static Double2DoubleFunction back(Double n) {
+	static Double2DoubleFunction back(@Nullable Double n) {
 		final double n2 = n == null ? 1.70158d : n * 1.70158d;
 
 		return t -> t * t * ((n2 + 1) * t - n2);
@@ -340,7 +340,7 @@ public interface EasingType {
 	 * Returns a stepped value based on the nearest step to the input value.<br>
 	 * The size (grade) of the steps depends on the provided value of {@code n}
 	 **/
-	static Double2DoubleFunction step(Double n) {
+	static Double2DoubleFunction step(@Nullable Double n) {
 		double n2 = n == null ? 2 : n;
 
 		if (n2 < 2)
@@ -400,12 +400,12 @@ public interface EasingType {
 		}
 
 		@Override
-		public Double2DoubleFunction buildTransformer(Double value) {
+		public Double2DoubleFunction buildTransformer(@Nullable Double value) {
 			return easeInOut(EasingType::catmullRom);
 		}
 
 		@Override
-		public double apply(EasingState easingState, Double easingValue, double lerpValue, ControllerState controllerState) {
+		public double apply(EasingState easingState, @Nullable Double easingValue, double lerpValue, ControllerState controllerState) {
 			if (easingState.delta() >= 1)
 				return easingState.toValue();
 

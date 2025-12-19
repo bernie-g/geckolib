@@ -76,7 +76,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 	 * Retrieve a custom data point that was stored earlier, or null if it hasn't been stored
 	 */
 	@SuppressWarnings("unchecked")
-    public <D> D getAnimatableData(DataTicket<D> dataTicket) {
+    public <D> @Nullable D getAnimatableData(DataTicket<D> dataTicket) {
 		return (D)this.animatableInstanceData.get().get(dataTicket);
 	}
 

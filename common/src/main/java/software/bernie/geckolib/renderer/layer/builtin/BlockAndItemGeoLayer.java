@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.NonNull;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
@@ -71,7 +70,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param retrievalFunction The function to retrieve the {@link ItemStack} or {@link BlockState} to render. You probably need to override
      * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} as well
      */
-    public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<@NonNull ItemStack, @NonNull BlockState>> retrievalFunction) {}
+    public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<ItemStack, BlockState>> retrievalFunction) {}
 
     /**
      * Register per-bone render operations, to be rendered after the main model is done.

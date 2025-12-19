@@ -29,6 +29,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 public class CompileReplacedEntityRenderStateEvent<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> implements GeoRenderEvent.ReplacedEntity.CompileRenderState<T, E, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?, ?> listener : listeners) {
+            //noinspection unchecked
             listener.handle(event);
         }
     });

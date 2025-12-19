@@ -112,13 +112,11 @@ public interface GeoRenderState {
         }
 
         @Override
-        public <D> D getGeckolibData(DataTicket<D> dataTicket) {
+        public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
             Object data = this.data.get(dataTicket);
 
-            if (data == null)
-                throw new IllegalArgumentException("Attempted to retrieve data from GeoRenderState that does not exist. Check your code!");
-
             try {
+                //noinspection unchecked
                 return (D)data;
             }
             catch (ClassCastException ex) {
@@ -132,10 +130,11 @@ public interface GeoRenderState {
         public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D defaultValue) {
             Object data = this.data.get(dataTicket);
 
-            if (data == null && !hasGeckolibData(dataTicket))
+            if (data == null)
                 return defaultValue;
 
             try {
+                //noinspection unchecked
                 return (D)data;
             }
             catch (ClassCastException ex) {

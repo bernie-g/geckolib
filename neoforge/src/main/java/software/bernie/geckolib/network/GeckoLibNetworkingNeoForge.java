@@ -35,6 +35,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      * <p>
      * <b><u>FOR GECKOLIB USE ONLY</u></b>
      */
+    @SuppressWarnings("unchecked")
     @Override
     public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
         if (isClientBound) {

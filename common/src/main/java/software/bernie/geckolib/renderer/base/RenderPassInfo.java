@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
@@ -117,7 +117,6 @@ public class RenderPassInfo<R extends GeoRenderState> {
     /**
      * @return The packed overlay coordinates for this render pass
      */
-    @SuppressWarnings("DataFlowIssue")
     public int packedOverlay() {
         return this.renderState.getOrDefaultGeckolibData(DataTickets.PACKED_OVERLAY, OverlayTexture.NO_OVERLAY);
     }
@@ -125,7 +124,6 @@ public class RenderPassInfo<R extends GeoRenderState> {
     /**
      * @return The packed (ARGB) colour/tint value for this render pass
      */
-    @SuppressWarnings("DataFlowIssue")
     public int renderColor() {
     	return this.renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, 0xFFFFFFFF);
     }
@@ -143,7 +141,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
      *
      * @see #renderState()
      */
-    public <D> D getGeckolibData(DataTicket<D> dataTicket) {
+    public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
         return this.renderState().getGeckolibData(dataTicket);
     }
 

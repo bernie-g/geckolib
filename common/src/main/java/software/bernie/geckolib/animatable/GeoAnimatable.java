@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animatable;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
@@ -48,7 +49,7 @@ public interface GeoAnimatable {
 	 * Don't override this unless you know what you're doing.
 	 */
     @ApiStatus.OverrideOnly
-	default AnimatableInstanceCache animatableCacheOverride() {
+	default @Nullable AnimatableInstanceCache animatableCacheOverride() {
 		return null;
 	}
 }
