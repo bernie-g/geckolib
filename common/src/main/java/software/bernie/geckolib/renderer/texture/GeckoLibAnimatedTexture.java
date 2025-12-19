@@ -39,10 +39,10 @@ import java.util.stream.IntStream;
  * otherwise, a new instance of {@link SimpleTexture} is returned to preserve expected runtime operation for things like Iris.
  */
 public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTexture {
-    protected AnimationInfo animatedTexture;
+    protected @Nullable AnimationInfo animatedTexture = null;
     protected int frameWidth;
     protected int frameHeight;
-    protected NativeImage baseImage;
+    protected @Nullable NativeImage baseImage;
 
     public GeckoLibAnimatedTexture(Identifier location) {
         super(location);
@@ -65,19 +65,20 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
             this.baseImage = NativeImage.read(stream);
         }
 
-        if (this.baseImage != null)
-            this.animatedTexture = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(this::buildAnimatedTexture).orElse(null);
+        this.animatedTexture = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(this::buildAnimatedTexture).orElse(null);
 
         return new TextureContents(this.baseImage, resource.metadata().getSection(TextureMetadataSection.TYPE).orElse(null));
     }
 
     @Override
     public void apply(TextureContents textureContents) {
-        AddressMode address = textureContents.clamp() ? AddressMode.CLAMP_TO_EDGE : AddressMode.REPEAT;
-        FilterMode filter = textureContents.blur() ? FilterMode.LINEAR : FilterMode.NEAREST;
-        this.sampler = RenderSystem.getSamplerCache().getSampler(address, address, filter, filter, false);
+        if (this.baseImage != null) {
+            AddressMode address = textureContents.clamp() ? AddressMode.CLAMP_TO_EDGE : AddressMode.REPEAT;
+            FilterMode filter = textureContents.blur() ? FilterMode.LINEAR : FilterMode.NEAREST;
+            this.sampler = RenderSystem.getSamplerCache().getSampler(address, address, filter, filter, false);
 
-        doLoad(this.baseImage);
+            doLoad(this.baseImage);
+        }
     }
 
     @Override
@@ -99,6 +100,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
      * Mostly used for interpolation handling and tick-frame advancement
      */
     protected GeckoLibAnimatedTexture.@Nullable AnimationInfo buildAnimatedTexture(AnimationMetadataSection animMeta) {
+        if (this.baseImage == null)
+            return null;
+
         final FrameSize frameSize = animMeta.calculateFrameSize(this.baseImage.getWidth(), this.baseImage.getHeight());
         this.frameWidth = frameSize.width();
         this.frameHeight = frameSize.height();
@@ -171,7 +175,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
      */
     @Override
     public void tick() {
-        this.animatedTexture.tick();
+        if (this.animatedTexture != null)
+            this.animatedTexture.tick();
     }
 
     @Override
@@ -217,6 +222,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         }
 
         public void tick() {
+            if (GeckoLibAnimatedTexture.this.baseImage == null)
+                return;
+
             this.subFrame++;
             FrameInfo prevFrameInfo = this.frames.get(this.currentFrame);
 
@@ -236,7 +244,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
                 }
             }
             else if (this.interpolationData != null) {
-                this.interpolationData.tickAndUpload(getTexture());
+                this.interpolationData.tickAndUpload(GeckoLibAnimatedTexture.this.baseImage, getTexture());
             }
         }
 
@@ -261,7 +269,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
             /**
              * Check and upload a newly created, interpolated frame, as necessary
              */
-            protected void tickAndUpload(GpuTexture gpuTexture) {
+            protected void tickAndUpload(NativeImage image, GpuTexture gpuTexture) {
                 AnimationInfo instance = AnimationInfo.this;
                 List<FrameInfo> frames = instance.frames;
                 FrameInfo currentFrameInfo = frames.get(instance.currentFrame);
@@ -269,11 +277,13 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
 
                 if (currentFrameInfo.index != nextFrameIndex) {
                     float partialFrame = instance.subFrame / (float)currentFrameInfo.time;
+                    int frameHeight = GeckoLibAnimatedTexture.this.frameHeight;
+                    int frameWidth = GeckoLibAnimatedTexture.this.frameWidth;
 
-                    for (int pixelY = 0; pixelY < GeckoLibAnimatedTexture.this.frameHeight; pixelY++) {
-                        for (int pixelX = 0; pixelX < GeckoLibAnimatedTexture.this.frameWidth; pixelX++) {
-                            int framePixel = getPixel(instance, currentFrameInfo.index, pixelX, pixelY);
-                            int nextFramePixel = getPixel(instance, nextFrameIndex, pixelX, pixelY);
+                    for (int pixelY = 0; pixelY < frameHeight; pixelY++) {
+                        for (int pixelX = 0; pixelX < frameWidth; pixelX++) {
+                            int framePixel = getPixel(image, instance, currentFrameInfo.index, pixelX, pixelY, frameWidth, frameHeight);
+                            int nextFramePixel = getPixel(image, instance, nextFrameIndex, pixelX, pixelY, frameWidth, frameHeight);
 
                             this.buffer.setPixel(pixelX, pixelY, ARGB.linearLerp(partialFrame, framePixel, nextFramePixel));
                         }
@@ -286,10 +296,8 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
             /**
              * Get the frame-relative pixel for the given input coordinates and frame index from the root texture
              */
-            protected int getPixel(AnimationInfo animationInfo, int frameIndex, int x, int y) {
-                GeckoLibAnimatedTexture texture = GeckoLibAnimatedTexture.this;
-
-                return texture.baseImage.getPixel(x + animationInfo.getFrameColumn(frameIndex) * texture.frameWidth, y + animationInfo.getFrameRow(frameIndex) * texture.frameHeight);
+            protected int getPixel(NativeImage image, AnimationInfo animationInfo, int frameIndex, int x, int y, int frameWidth, int frameHeight) {
+                return image.getPixel(x + animationInfo.getFrameColumn(frameIndex) * frameWidth, y + animationInfo.getFrameRow(frameIndex) * frameHeight);
             }
 
             @Override
