@@ -47,6 +47,6 @@ public class CompoundException extends RuntimeException {
         final String name = "Geckolib.CompoundException";
         final String message = getLocalizedMessage();
 
-        return message != null ? name + ": " + message : name;
+        return !message.isEmpty() ? name + ": " + message : name;
     }
 }
