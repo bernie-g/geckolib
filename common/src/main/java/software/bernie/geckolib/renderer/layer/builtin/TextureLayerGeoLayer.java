@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer.layer.builtin;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
@@ -66,10 +65,7 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
     /**
      * This is the method that is actually called by the render for your render layer to function
      * <p>
-     * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
-     * <p>
-     * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
-     * and you may need to factor this in to your design
+     * This is called <i>after</i> the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
      */
     @Override
     public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {

@@ -94,10 +94,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	/**
 	 * This is the method that is actually called by the render for your render layer to function
 	 * <p>
-	 * This is called <i>after</i> the animatable has been rendered, but before supplementary rendering like nametags
-	 * <p>
-	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc)
-	 * and you may need to factor this in to your design
+	 * This is called <i>after</i> the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
 	 */
 	public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 
