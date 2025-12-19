@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.core.component.DataComponents;
@@ -21,8 +20,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.equipment.Equippable;
 import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -39,6 +38,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
@@ -227,7 +227,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
         renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
         renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState instanceof LivingEntityRenderState livingRenderState && livingRenderState.isInvisibleToPlayer);
+        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState.isInvisibleToPlayer);
         renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
     }
 
@@ -262,6 +262,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * <p>
      * If the provided {@link RenderType} is null, no submission will be made
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void submitRenderTasks(RenderPassInfo<R> renderPassInfo, OrderedSubmitNodeCollector renderTasks, @Nullable RenderType renderType) {
         if (renderType == null)
@@ -274,8 +275,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack = renderPassInfo.poseStack();
             final R renderState = renderPassInfo.renderState();
-            final EquipmentSlot slot = renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT);
-            final HumanoidModel baseModel = renderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
+            final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+            final HumanoidModel baseModel = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
             final BakedGeoModel bakedModel = renderPassInfo.model();
 
             renderPassInfo.addBoneUpdater((renderPassInfo1, snapshots) -> {
@@ -368,6 +369,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Helper class to consolidate the retrieval and validation of an individual slot for rendering
      */
+    @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     private record StackForRender(ItemStack stack, EquipmentSlot slot, GeoArmorRenderer renderer, HumanoidModel<?> baseModel) {
         private static <S extends HumanoidRenderState, A extends HumanoidModel<S>> @Nullable StackForRender find(
@@ -379,7 +381,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
                 return null;
 
             final A baseModel = modelFunction.apply(entityRenderState, slot);
-            final GeoArmorRenderer armorRenderer = geckolibRenderers.getGeoArmorRenderer(stack, slot);
+            final GeoArmorRenderer<?, ?> armorRenderer = geckolibRenderers.getGeoArmorRenderer(stack, slot);
 
             if (armorRenderer == null)
                 return null;
@@ -395,16 +397,17 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      *
      * @return true if the armor piece was a GeckoLib armor piece and was rendered
      */
+    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
             BiFunction<R, EquipmentSlot, A> modelFunction, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
         final StackForRender stackForRender = StackForRender.find(stack, slot, entityRenderState, modelFunction);
         EnumMap<EquipmentSlot, R> perSlotData;
 
-        if (stackForRender == null || !(entityRenderState instanceof GeoRenderState geoRenderState))
+        if (stackForRender == null)
             return false;
 
-        if ((perSlotData = geoRenderState.getOrDefaultGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, null)) == null || !perSlotData.containsKey(slot))
+        if ((perSlotData = entityRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA)) == null || !perSlotData.containsKey(slot))
             return false;
 
         R perSlotRenderState = perSlotData.get(slot);
@@ -418,7 +421,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * <p>
      * Called internally by a mixin
 	 */
-	@ApiStatus.Internal
+	@SuppressWarnings("unchecked")
+    @ApiStatus.Internal
 	public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
             R baseRenderState, LivingEntity entity, float partialTick, BiFunction<R, EquipmentSlot, A> modelFunction, Function<EquipmentSlot, R> renderStateSupplier) {
 		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, modelFunction);
@@ -466,6 +470,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Disabled because we use the {@link HumanoidRenderState} that vanilla compiles for the entity
      */
+    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     @Deprecated
     @Override

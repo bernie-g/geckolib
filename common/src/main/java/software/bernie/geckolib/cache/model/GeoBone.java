@@ -164,7 +164,7 @@ public abstract class GeoBone {
             final Matrix4f bonePose = new Matrix4f(poseStack.last().pose());
             final Matrix4f localPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getPreRenderMatrixState());
             final Matrix4f modelPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getModelRenderMatrixState());
-            final Vec3 position = renderPassInfo.renderState().getOrDefaultGeckolibData(DataTickets.POSITION, null);
+            final Vec3 position = renderPassInfo.renderState().getGeckolibData(DataTickets.POSITION);
             final Matrix4f worldPose = position == null ? null : new Matrix4f(modelPose).translate(position.toVector3f());
             final Vec3 localPos = RenderUtil.renderPoseToPosition(localPose, 1, 1, 1);
             final Vec3 modelPos = RenderUtil.renderPoseToPosition(modelPose, -16, 16, 16);

@@ -214,7 +214,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
             renderSkullAsArmor(renderPassInfo, bone, equipmentStack, skullBlock, renderTasks);
 		}
         else if (RenderUtil.getGeckoLibArmorRenderer(equipmentStack, slot) instanceof GeoArmorRenderer geoArmorRenderer) {
-            EnumMap<EquipmentSlot, R> perSlotData = renderState.getOrDefaultGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, null);
+            EnumMap<EquipmentSlot, R> perSlotData = renderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA);
 
             if (perSlotData != null) {
                 R slotRenderState = perSlotData.get(slot);
