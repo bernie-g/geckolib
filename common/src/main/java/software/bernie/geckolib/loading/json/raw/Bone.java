@@ -18,7 +18,7 @@ import java.util.Map;
  * @param inflate The optional inflation value for this bone
  * @param locators The map of locator markers by their name contained by this bone
  * @param mirror An optional mirror toggle for this bone, not used by GeckoLib
- * @param name The name of this bone, or null if unnamed
+ * @param name The name of this bone
  * @param neverRender An optional render toggle for this bone, not used by GeckoLib
  * @param parent The name of the parent bone for this bone
  * @param pivot The x/y/z pivot position of this bone
@@ -29,7 +29,7 @@ import java.util.Map;
  */
 public record Bone(Cube[] cubes, @Nullable Boolean debug, // TODO Check support for current bedrock format values
 				   @Nullable Double inflate, @Nullable Map<String, LocatorValue> locators,
-				   @Nullable Boolean mirror, @Nullable String name, @Nullable Boolean neverRender,
+				   @Nullable Boolean mirror, String name, @Nullable Boolean neverRender,
 				   @Nullable String parent, double[] pivot, @Nullable PolyMesh polyMesh,
 				   @Nullable Long renderGroupId, double[] rotation,
 				   @Nullable TextureMesh[] textureMeshes) {

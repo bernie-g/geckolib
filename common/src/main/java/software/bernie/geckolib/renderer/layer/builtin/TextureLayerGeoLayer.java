@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
@@ -25,7 +26,7 @@ import java.util.function.Function;
  */
 public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     protected final Identifier texture;
-    protected final Function<Identifier, RenderType> renderType;
+    protected final @Nullable Function<Identifier, RenderType> renderType;
 
     TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer) {
         this(renderer, MissingTextureAtlasSprite.getLocation(), null);
@@ -35,11 +36,11 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
         this(renderer, texture, null);
     }
 
-    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture, Function<Identifier, RenderType> renderType) {
+    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture, @Nullable Function<Identifier, RenderType> renderTypeFunction) {
         super(renderer);
 
         this.texture = texture;
-        this.renderType = renderType;
+        this.renderType = renderTypeFunction;
     }
 
     /**
@@ -53,7 +54,7 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
     /**
      * Get the render type for the render pass
      */
-    protected RenderType getRenderType(R renderState) {
+    protected @Nullable RenderType getRenderType(R renderState) {
         final Identifier texture = getTextureResource(renderState);
 
         if (this.renderType == null)

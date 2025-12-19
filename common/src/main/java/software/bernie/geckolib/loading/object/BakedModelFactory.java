@@ -55,8 +55,8 @@ public interface BakedModelFactory {
 	 * <p>
 	 * Vertices have already been mirrored here if {@code mirror} is true
 	 */
-	default GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
-		GeoQuad[] quads = new GeoQuad[6];
+	default @Nullable GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
+		@Nullable GeoQuad[] quads = new GeoQuad[6];
 
 		quads[0] = buildQuad(vertices, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.WEST);
 		quads[1] = buildQuad(vertices, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.EAST);
@@ -72,47 +72,46 @@ public interface BakedModelFactory {
 	 * Build an individual quad
 	 */
 	default @Nullable GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
-		if (!uvUnion.isBoxUV()) {
-			FaceUV faceUV = uvUnion.faceUV().fromDirection(direction);
+		return uvUnion.uvData().map(boxUvs -> {
+			double[] uvSize = cube.size();
+			Vec3 uvSizeVec = new Vec3(Math.floor(uvSize[0]), Math.floor(uvSize[1]), Math.floor(uvSize[2]));
+			double[][] uvData = switch(direction) {
+				case WEST -> new double[][] {
+						new double[] {boxUvs[0] + uvSizeVec.z + uvSizeVec.x, boxUvs[1] + uvSizeVec.z},
+						new double[] {uvSizeVec.z, uvSizeVec.y}
+				};
+				case EAST -> new double[][] {
+						new double[] { boxUvs[0], boxUvs[1] + uvSizeVec.z },
+						new double[] { uvSizeVec.z, uvSizeVec.y }
+				};
+				case NORTH -> new double[][] {
+						new double[] {boxUvs[0] + uvSizeVec.z, boxUvs[1] + uvSizeVec.z},
+						new double[] {uvSizeVec.x, uvSizeVec.y}
+				};
+				case SOUTH -> new double[][] {
+						new double[] {boxUvs[0] + uvSizeVec.z + uvSizeVec.x + uvSizeVec.z, boxUvs[1] + uvSizeVec.z},
+						new double[] {uvSizeVec.x, uvSizeVec.y }
+				};
+				case UP -> new double[][] {
+						new double[] {boxUvs[0] + uvSizeVec.z, boxUvs[1]},
+						new double[] {uvSizeVec.x, uvSizeVec.z}
+				};
+				case DOWN -> new double[][] {
+						new double[] {boxUvs[0] + uvSizeVec.z + uvSizeVec.x, boxUvs[1] + uvSizeVec.z},
+						new double[] {uvSizeVec.x, -uvSizeVec.z}
+				};
+			};
+
+			return GeoQuad.build(vertices.verticesForQuad(direction, true, mirror || cube.mirror() == Boolean.TRUE), uvData[0], uvData[1], FaceUV.Rotation.NONE, textureWidth, textureHeight, mirror, direction);
+		}, uvFaces -> {
+			FaceUV faceUV = uvFaces.fromDirection(direction);
 
 			if (faceUV == null)
 				return null;
 
 			return GeoQuad.build(vertices.verticesForQuad(direction, false, mirror || cube.mirror() == Boolean.TRUE), faceUV.uv(), faceUV.uvSize(),
-					faceUV.uvRotation(), textureWidth, textureHeight, mirror, direction);
-		}
-
-		double[] uv = cube.uv().boxUVCoords();
-		double[] uvSize = cube.size();
-		Vec3 uvSizeVec = new Vec3(Math.floor(uvSize[0]), Math.floor(uvSize[1]), Math.floor(uvSize[2]));
-		double[][] uvData = switch(direction) {
-			case WEST -> new double[][] {
-					new double[] {uv[0] + uvSizeVec.z + uvSizeVec.x, uv[1] + uvSizeVec.z},
-					new double[] {uvSizeVec.z, uvSizeVec.y}
-			};
-			case EAST -> new double[][] {
-					new double[] { uv[0], uv[1] + uvSizeVec.z },
-					new double[] { uvSizeVec.z, uvSizeVec.y }
-			};
-			case NORTH -> new double[][] {
-					new double[] {uv[0] + uvSizeVec.z, uv[1] + uvSizeVec.z},
-					new double[] {uvSizeVec.x, uvSizeVec.y}
-			};
-			case SOUTH -> new double[][] {
-					new double[] {uv[0] + uvSizeVec.z + uvSizeVec.x + uvSizeVec.z, uv[1] + uvSizeVec.z},
-					new double[] {uvSizeVec.x, uvSizeVec.y }
-			};
-			case UP -> new double[][] {
-					new double[] {uv[0] + uvSizeVec.z, uv[1]},
-					new double[] {uvSizeVec.x, uvSizeVec.z}
-			};
-			case DOWN -> new double[][] {
-					new double[] {uv[0] + uvSizeVec.z + uvSizeVec.x, uv[1] + uvSizeVec.z},
-					new double[] {uvSizeVec.x, -uvSizeVec.z}
-			};
-		};
-
-		return GeoQuad.build(vertices.verticesForQuad(direction, true, mirror || cube.mirror() == Boolean.TRUE), uvData[0], uvData[1], FaceUV.Rotation.NONE, textureWidth, textureHeight, mirror, direction);
+								 faceUV.uvRotation(), textureWidth, textureHeight, mirror, direction);
+		});
 	}
 
 	static BakedModelFactory getForNamespace(String namespace) {
@@ -146,11 +145,11 @@ public interface BakedModelFactory {
 		}
 
 		@Override
-		public GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, GeoBone parent) {
+		public GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, @Nullable GeoBone parent) {
 			Bone bone = boneStructure.self();
             Vec3 pivot = JsonUtil.arrayToVec(bone.pivot());
             Vec3 rotation = JsonUtil.arrayToVec(bone.rotation());
-            GeoBone[] childBones = new GeoBone[boneStructure.children().values().size()];
+            GeoBone[] childBones = new GeoBone[boneStructure.children().size()];
             GeoCube[] cubes = new GeoCube[bone.cubes().length];
             GeoBone newBone = new CuboidGeoBone(parent, bone.name(), childBones, cubes, (float)-pivot.x, (float)pivot.y, (float)pivot.z,
                                                 (float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y), (float)Math.toRadians(rotation.z));
@@ -181,7 +180,7 @@ public interface BakedModelFactory {
 
 			pivot = pivot.multiply(-1, 1, 1);
 			rotation = new Vec3(Math.toRadians(-rotation.x), Math.toRadians(-rotation.y), Math.toRadians(rotation.z));
-			GeoQuad[] quads = buildQuads(cube.uv(), new VertexSet(origin, vertexSize, inflate), cube, (float)properties.textureWidth(), (float)properties.textureHeight(), mirror);
+			@Nullable GeoQuad[] quads = buildQuads(cube.uv(), new VertexSet(origin, vertexSize, inflate), cube, (float)properties.textureWidth(), (float)properties.textureHeight(), mirror);
 
 			return new GeoCube(quads, pivot, rotation, size);
 		}
