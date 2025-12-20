@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.loading.json.raw.Bone;
 import software.bernie.geckolib.loading.json.raw.MinecraftGeometry;
 import software.bernie.geckolib.loading.json.raw.Model;
-import software.bernie.geckolib.loading.json.raw.ModelProperties;
+import software.bernie.geckolib.loading.json.raw.GeometryDescription;
 
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * @param topLevelBones The root bone(s) for this model, as defined in the model .json
  * @param properties The additional properties collection for the model
  */
-public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProperties properties) {
+public record GeometryTree(Map<String, BoneStructure> topLevelBones, GeometryDescription properties) {
 	public static GeometryTree fromModel(Model model) {
 		final Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
 		final MinecraftGeometry geometry = model.minecraftGeometry()[0];
@@ -48,6 +48,6 @@ public record GeometryTree(Map<String, BoneStructure> topLevelBones, ModelProper
 			}
 		}
 
-		return new GeometryTree(topLevelBones, geometry.modelProperties());
+		return new GeometryTree(topLevelBones, geometry.geometryDescription());
 	}
 }

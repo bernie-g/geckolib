@@ -39,7 +39,7 @@ public interface BakedModelFactory {
 	 * @param properties The loaded properties for the model
 	 * @param parent The parent bone for this bone, or null if a top-level bone
 	 */
-	GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, @Nullable GeoBone parent);
+	GeoBone constructBone(BoneStructure boneStructure, GeometryDescription properties, @Nullable GeoBone parent);
 
 	/**
 	 * Construct a {@link GeoCube} from the relevant raw input data
@@ -48,7 +48,7 @@ public interface BakedModelFactory {
 	 * @param properties The loaded properties for the model
 	 * @param boneInflation The inflation value assigned to the bone this cube belongs to
 	 */
-	GeoCube constructCube(Cube cube, ModelProperties properties, float boneInflation);
+	GeoCube constructCube(Cube cube, GeometryDescription properties, float boneInflation);
 
 	/**
 	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier
@@ -145,7 +145,7 @@ public interface BakedModelFactory {
 		}
 
 		@Override
-		public GeoBone constructBone(BoneStructure boneStructure, ModelProperties properties, @Nullable GeoBone parent) {
+		public GeoBone constructBone(BoneStructure boneStructure, GeometryDescription properties, @Nullable GeoBone parent) {
 			Bone bone = boneStructure.self();
             Vec3 pivot = JsonUtil.arrayToVec(bone.pivot());
             Vec3 rotation = JsonUtil.arrayToVec(bone.rotation());
@@ -168,7 +168,7 @@ public interface BakedModelFactory {
 		}
 
 		@Override
-		public GeoCube constructCube(Cube cube, ModelProperties properties, float boneInflation) {
+		public GeoCube constructCube(Cube cube, GeometryDescription properties, float boneInflation) {
 			boolean mirror = cube.mirror() == Boolean.TRUE;
 			double inflate = cube.inflate() != null ? cube.inflate() / 16f : boneInflation / 16f;
 			Vec3 size = JsonUtil.arrayToVec(cube.size());

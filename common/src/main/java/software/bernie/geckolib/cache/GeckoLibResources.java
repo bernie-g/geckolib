@@ -61,7 +61,7 @@ public final class GeckoLibResources {
 			.registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
 			.registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
 			.registerTypeAdapter(Model.class, Model.deserializer())
-			.registerTypeAdapter(ModelProperties.class, ModelProperties.deserializer())
+			.registerTypeAdapter(GeometryDescription.class, GeometryDescription.deserializer())
 			.registerTypeAdapter(PolyMesh.class, PolyMesh.deserializer())
 			.registerTypeAdapter(PolysUnion.class, PolysUnion.deserializer())
 			.registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())
