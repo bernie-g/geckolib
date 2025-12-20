@@ -17,6 +17,7 @@ import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 import software.bernie.geckolib.loading.json.ModelFormatVersion;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
@@ -61,7 +62,7 @@ public final class GeckoLibResources {
 			.registerTypeAdapter(LocatorValue.class, LocatorValue.deserializer())
 			.registerTypeAdapter(MinecraftGeometry.class, MinecraftGeometry.deserializer())
 			.registerTypeAdapter(Model.class, Model.deserializer())
-			.registerTypeAdapter(GeometryDescription.class, GeometryDescription.deserializer())
+			.registerTypeAdapter(GeometryDescription.class, GeometryDescription.gsonDeserializer())
 			.registerTypeAdapter(PolyMesh.class, PolyMesh.deserializer())
 			.registerTypeAdapter(PolysUnion.class, PolysUnion.deserializer())
 			.registerTypeAdapter(TextureMesh.class, TextureMesh.deserializer())

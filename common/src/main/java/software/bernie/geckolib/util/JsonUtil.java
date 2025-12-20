@@ -17,6 +17,28 @@ import java.util.function.Function;
  */
 public final class JsonUtil {
     /**
+     * Parse a Vec3 instance from a raw json input
+     */
+    public static @Nullable Vec3 jsonToVec3(@Nullable JsonElement element) {
+        if (element == null)
+            return null;
+
+        if (element.isJsonArray())
+            return arrayToVec(jsonArrayToDoubleArray(element.getAsJsonArray()));
+
+        if (element.isJsonObject()) {
+            final JsonObject object = element.getAsJsonObject();
+
+            if (!object.has("x") || !object.has("y") || !object.has("z"))
+                throw new IllegalStateException("Json object input must have x, y, and z properties to parse into a Vec3: " + element);
+
+            return new Vec3(GsonHelper.getAsDouble(object, "x"), GsonHelper.getAsDouble(object, "y"), GsonHelper.getAsDouble(object, "z"));
+        }
+
+        throw new IllegalStateException("Json input must be an array or object to parse into a Vec3: " + element);
+    }
+
+    /**
      * Convert a {@link JsonArray} of doubles to a {@code double[]}
      * <p>
      * No type checking is done, so if the array contains anything other than doubles, this will throw an exception
@@ -43,11 +65,38 @@ public final class JsonUtil {
      * @param context The {@link com.google.gson.Gson} context for deserialization
      * @param objectClass The object type that the array contains
      */
-    public static <T> T[] jsonArrayToObjectArray(JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
-        T[] objArray = (T[]) Array.newInstance(objectClass, array.size());
+    @SuppressWarnings("unchecked")
+    public static <T> T[] jsonArrayToObjectArray(@Nullable JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
+        if (array == null)
+            return (T[])new Object[0];
+
+        T[] objArray = (T[])Array.newInstance(objectClass, array.size());
 
         for (int i = 0; i < array.size(); i++) {
             objArray[i] = context.deserialize(array.get(i), objectClass);
+        }
+
+        return objArray;
+    }
+
+    /**
+     * Converts a {@link JsonArray} to an array of objects, mapped using the mapping function
+     *
+     * @param array The array containing the objects to be converted
+     * @param mappingFunction The function to map a json element to an object of the intended type
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> @Nullable T @Nullable[] jsonArrayToObjectArray(@Nullable JsonArray array, Function<JsonElement, @Nullable T> mappingFunction) {
+        if (array == null)
+            return null;
+
+        T[] objArray = (T[])new Object[array.size()];
+
+        for (int i = 0; i < array.size(); i++) {
+            T object = mappingFunction.apply(array.get(i));
+
+            if (object != null)
+                objArray[i] = object;
         }
 
         return objArray;
@@ -125,9 +174,12 @@ public final class JsonUtil {
     }
 
     /**
-     * Converts a given double array to its {@link Vec3} equivalent
+     * Convert a double array to a positional Vec3
      */
     public static Vec3 arrayToVec(double[] array) {
+        if (array[0] == 0 && array[1] == 0 && array[2] == 0)
+            return Vec3.ZERO;
+
         return new Vec3(array[0], array[1], array[2]);
     }
 

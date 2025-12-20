@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.loading.json.raw.Bone;
 import software.bernie.geckolib.loading.json.raw.MinecraftGeometry;
 import software.bernie.geckolib.loading.json.raw.Model;
-import software.bernie.geckolib.loading.json.raw.GeometryDescription;
+import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 
 import java.util.Map;
 

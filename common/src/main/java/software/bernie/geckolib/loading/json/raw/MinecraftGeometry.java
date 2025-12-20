@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 import software.bernie.geckolib.util.JsonUtil;
 
 /**
@@ -18,10 +19,10 @@ import software.bernie.geckolib.util.JsonUtil;
 public record MinecraftGeometry(Bone[] bones, @Nullable String cape, @Nullable GeometryDescription geometryDescription) {
 	public static JsonDeserializer<MinecraftGeometry> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
-			JsonObject obj = json.getAsJsonObject();
-			Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", new JsonArray(0)), context, Bone.class);
-			String cape = GsonHelper.getAsString(obj, "cape", null);
-			GeometryDescription geometryDescription = GsonHelper.getAsObject(obj, "description", null, context, GeometryDescription.class);
+			final JsonObject obj = json.getAsJsonObject();
+			final Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", new JsonArray(0)), context, Bone.class);
+			final String cape = GsonHelper.getAsString(obj, "cape", null);
+			final GeometryDescription geometryDescription = GsonHelper.getAsObject(obj, "description", null, context, GeometryDescription.class);
 
 			return new MinecraftGeometry(bones, cape, geometryDescription);
 		};

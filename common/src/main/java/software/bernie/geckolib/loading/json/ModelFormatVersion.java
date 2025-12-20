@@ -25,7 +25,7 @@ public enum ModelFormatVersion {
 
 	private final String serializedName;
 	private final boolean supported;
-	private final String errorMessage;
+	private final @Nullable String errorMessage;
 
 	ModelFormatVersion(String serializedName) {
 		this(serializedName, null);
@@ -45,7 +45,7 @@ public enum ModelFormatVersion {
 		return this.supported;
 	}
 
-	public String getErrorMessage() {
+	public @Nullable String getErrorMessage() {
 		return this.errorMessage;
 	}
 

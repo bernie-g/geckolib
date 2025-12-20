@@ -44,9 +44,9 @@ public class AnimationController<T extends GeoAnimatable> {
     protected final AnimationStateHandler<T> stateHandler;
     protected final Supplier<Map<String, RawAnimation>> triggerableAnimations = Suppliers.memoize(Object2ObjectOpenHashMap::new);
 
-    protected KeyframeEventHandler<T, SoundKeyframeData> soundKeyframeHandler = null;
-    protected KeyframeEventHandler<T, ParticleKeyframeData> particleKeyframeHandler = null;
-    protected KeyframeEventHandler<T, CustomInstructionKeyframeData> customKeyframeHandler = null;
+    protected @Nullable KeyframeEventHandler<T, SoundKeyframeData> soundKeyframeHandler = null;
+    protected @Nullable KeyframeEventHandler<T, ParticleKeyframeData> particleKeyframeHandler = null;
+    protected @Nullable KeyframeEventHandler<T, CustomInstructionKeyframeData> customKeyframeHandler = null;
 
     protected boolean additiveAnimations = false;
     protected int transitionTicks = 0;
@@ -320,6 +320,7 @@ public class AnimationController<T extends GeoAnimatable> {
      * <p>
      * Can be safely called repeatedly with the same animation, as duplicate calls are ignored and continue playing the original animation as expected
      */
+    @SuppressWarnings("ConstantValue")
     public void setAnimation(RawAnimation rawAnimation) {
         if (rawAnimation == null || rawAnimation.getStageCount() == 0) {
             GeckoLibConstants.LOGGER.warn("Tried to set an empty or null animation on controller {}!", this.name);

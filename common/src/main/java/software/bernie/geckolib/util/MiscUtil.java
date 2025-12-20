@@ -7,6 +7,9 @@ import net.minecraft.util.Mth;
  * Helper class for miscellaneous functions that don't fit into the other util classes
  */
 public final class MiscUtil {
+    public static final float WORLD_TO_MODEL_SIZE = 1 / 16f;
+    public static final float MODEL_TO_WORLD_SIZE = 16f;
+
     /**
      * Converts a {@link Direction} to a rotational float for rotation purposes
      */

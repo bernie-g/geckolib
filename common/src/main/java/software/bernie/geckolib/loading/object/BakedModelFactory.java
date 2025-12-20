@@ -11,6 +11,7 @@ import software.bernie.geckolib.cache.model.GeoQuad;
 import software.bernie.geckolib.cache.model.GeoVertex;
 import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
+import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 import software.bernie.geckolib.loading.json.raw.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.JsonUtil;

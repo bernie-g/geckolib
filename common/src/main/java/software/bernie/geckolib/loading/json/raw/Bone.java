@@ -44,11 +44,11 @@ public record Bone(Cube[] cubes, @Nullable Boolean debug, // TODO Check support 
 			String name = GsonHelper.getAsString(obj, "name", null);
 			Boolean neverRender = JsonUtil.getOptionalBoolean(obj, "neverRender");
 			String parent = GsonHelper.getAsString(obj, "parent", null);
-			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", new JsonArray(0)));
+			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", null));
 			PolyMesh polyMesh = GsonHelper.getAsObject(obj, "poly_mesh", null, context, PolyMesh.class);
 			Long renderGroupId = JsonUtil.getOptionalLong(obj, "render_group_id");
 			double[] rotation = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "rotation", null));
-			TextureMesh[] textureMeshes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "texture_meshes", new JsonArray(0)), context, TextureMesh.class);
+			TextureMesh[] textureMeshes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "texture_meshes", null), context, TextureMesh.class);
 
 			return new Bone(cubes, debug, inflate, locators, mirror, name, neverRender, parent, pivot, polyMesh, renderGroupId, rotation, textureMeshes);
 		};
