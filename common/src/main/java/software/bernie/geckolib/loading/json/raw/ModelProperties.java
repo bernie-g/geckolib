@@ -4,46 +4,30 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
 /**
  * Container class for model property information, only used in deserialization at startup
+ *
+ * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */
-public record ModelProperties(@Nullable Boolean animationArmsDown, @Nullable Boolean animationArmsOutFront,
-							  @Nullable Boolean animationDontShowArmor, @Nullable Boolean animationInvertedCrouch,
-							  @Nullable Boolean animationNoHeadBob, @Nullable Boolean animationSingleArmAnimation,
-							  @Nullable Boolean animationSingleLegAnimation, @Nullable Boolean animationStationaryLegs,
-							  @Nullable Boolean animationStatueOfLibertyArms, @Nullable Boolean animationUpsideDown,
-							  @Nullable String identifier, @Nullable Boolean preserveModelPose,
-							  double textureHeight, double textureWidth,
-							  @Nullable Double visibleBoundsHeight, double[] visibleBoundsOffset,
-							  @Nullable Double visibleBoundsWidth) {
+public record ModelProperties(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset,
+							  @Nullable Integer textureWidth, @Nullable Integer textureHeight) {
 	public static JsonDeserializer<ModelProperties> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
-			JsonObject obj = json.getAsJsonObject();
-			Boolean animationArmsDown = JsonUtil.getOptionalBoolean(obj, "animationArmsDown");
-			Boolean animationArmsOutFront = JsonUtil.getOptionalBoolean(obj, "animationArmsOutFront");
-			Boolean animationDontShowArmor = JsonUtil.getOptionalBoolean(obj, "animationDontShowArmor");
-			Boolean animationInvertedCrouch = JsonUtil.getOptionalBoolean(obj, "animationInvertedCrouch");
-			Boolean animationNoHeadBob = JsonUtil.getOptionalBoolean(obj, "animationNoHeadBob");
-			Boolean animationSingleArmAnimation = JsonUtil.getOptionalBoolean(obj, "animationSingleArmAnimation");
-			Boolean animationSingleLegAnimation = JsonUtil.getOptionalBoolean(obj, "animationSingleLegAnimation");
-			Boolean animationStationaryLegs = JsonUtil.getOptionalBoolean(obj, "animationStationaryLegs");
-			Boolean animationStatueOfLibertyArms = JsonUtil.getOptionalBoolean(obj, "animationStatueOfLibertyArms");
-			Boolean animationUpsideDown = JsonUtil.getOptionalBoolean(obj, "animationUpsideDown");
-			String identifier = GsonHelper.getAsString(obj, "identifier", null);
-			Boolean preserveModelPose = JsonUtil.getOptionalBoolean(obj, "preserve_model_pose");
-			double textureHeight = GsonHelper.getAsDouble(obj, "texture_height");
-			double textureWidth = GsonHelper.getAsDouble(obj, "texture_width");
-			Double visibleBoundsHeight = JsonUtil.getOptionalDouble(obj, "visible_bounds_height");
-			double[] visibleBoundsOffset = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "visible_bounds_offset", null));
-			Double visibleBoundsWidth = JsonUtil.getOptionalDouble(obj, "visible_bounds_width");
+			final JsonObject obj = json.getAsJsonObject();
+			final String identifier = GsonHelper.getAsString(obj, "identifier");
+			final Float visibleBoundsWidth = JsonUtil.getOptionalFloat(obj, "visible_bounds_width");
+			final Float visibleBoundsHeight = JsonUtil.getOptionalFloat(obj, "visible_bounds_height");
+			final double[] visibleBoundsOffset = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "visible_bounds_offset", null));
+			final int textureWidth = GsonHelper.getAsInt(obj, "texture_width");
+			final int textureHeight = GsonHelper.getAsInt(obj, "texture_height");
 
-			return new ModelProperties(animationArmsDown, animationArmsOutFront, animationDontShowArmor, animationInvertedCrouch,
-					animationNoHeadBob, animationSingleArmAnimation, animationSingleLegAnimation, animationStationaryLegs,
-					animationStatueOfLibertyArms, animationUpsideDown, identifier, preserveModelPose, textureHeight,
-					textureWidth, visibleBoundsHeight, visibleBoundsOffset, visibleBoundsWidth);
+			return new ModelProperties(identifier == null ? String.valueOf(obj.hashCode()) : identifier,
+									   visibleBoundsWidth, visibleBoundsHeight, new Vec3(visibleBoundsOffset[0], visibleBoundsOffset[1], visibleBoundsOffset[2]),
+									   textureWidth, textureHeight);
 		};
 	}
 }
