@@ -251,6 +251,19 @@ public class AnimationController<T extends GeoAnimatable> {
     }
 
     /**
+     * Sets a transition time (in ticks) for this controller.
+     * <p>
+     * This value is used for animation interpolation into, out of, and between animations
+     * <p>
+     * <b><u>NOTE:</u></b> This value does not take effect until a new animation is set via {@link #setAnimation(RawAnimation)}
+     */
+    public AnimationController<T> setTransitionTicks(int ticks) {
+        this.transitionTicks = ticks;
+
+        return this;
+    }
+
+    /**
      * Sets the controller's {@link EasingType} override for animations, ignoring the json-based easing preference
      * <p>
      * By default, the controller will use whatever {@code EasingType} was defined in the animation .json
