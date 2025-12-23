@@ -171,6 +171,26 @@ public final class JsonUtil {
     }
 
     /**
+     * Converts a {@link JsonObject} to a {@link Map} of String keys to their respective {@link JsonPrimitive} objects
+     *
+     * @param obj The base {@code JsonObject} to convert
+     * @param context The {@link Gson} deserialization context
+     * @param mappingFunction The mapping function to convert a given element to its intended primitive type
+     */
+    public static <T> @Nullable Map<String, T> jsonObjToPrimitiveMap(@Nullable JsonObject obj, JsonDeserializationContext context, Function<JsonElement, T> mappingFunction) {
+        if (obj == null)
+            return null;
+
+        Map<String, T> map = new Object2ObjectOpenHashMap<>(obj.size());
+
+        for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
+            map.put(entry.getKey(), mappingFunction.apply(entry.getValue()));
+        }
+
+        return map;
+    }
+
+    /**
      * Retrieves an optionally present Long from the provided {@link JsonObject}, or null if the element isn't present
      */
     public static @Nullable Long getOptionalLong(JsonObject obj, String elementName) {
