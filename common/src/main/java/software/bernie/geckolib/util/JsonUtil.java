@@ -1,6 +1,7 @@
 package software.bernie.geckolib.util;
 
 import com.google.gson.*;
+import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
@@ -13,7 +14,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 /**
- * Json helper class for various json functions
+ * JSON helper class for various .json functions
  */
 public final class JsonUtil {
     /**
