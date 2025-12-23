@@ -5,10 +5,26 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 
+import java.util.Optional;
+
 /**
  * Basic container class for a U/V coordinate pair or per-face UV mapping
  */
 public record GeometryUv(Either<GeometryUvPair, GeometryUvMapping> uvData) {
+    /**
+     * Get the uv value pair, if present
+     */
+    public Optional<GeometryUvPair> uv() {
+        return this.uvData.left();
+    }
+
+    /**
+     * Get the UV face mapping data, if present
+     */
+    public Optional<GeometryUvMapping> uvFaceMapping() {
+        return this.uvData.right();
+    }
+
     /**
      * Parse a GeometryUv instance from raw .json input via {@link Gson}
      */
