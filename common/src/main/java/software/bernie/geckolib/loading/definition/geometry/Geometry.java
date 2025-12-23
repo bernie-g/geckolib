@@ -28,7 +28,6 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             .registerTypeAdapter(GeometryDefinition.class, GeometryDefinition.gsonDeserializer())
             .registerTypeAdapter(GeometryDescription.class, GeometryDescription.gsonDeserializer())
             .registerTypeAdapter(GeometryLocator.class, GeometryLocator.gsonDeserializer())
-            .registerTypeAdapter(GeometryLocators.class, GeometryLocators.gsonDeserializer())
             .registerTypeAdapter(GeometryPolyIndex.class, GeometryPolyIndex.gsonDeserializer())
             .registerTypeAdapter(GeometryPolyIndices.class, GeometryPolyIndices.gsonDeserializer())
             .registerTypeAdapter(GeometryPolyMesh.class, GeometryPolyMesh.gsonDeserializer())
