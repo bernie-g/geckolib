@@ -21,7 +21,7 @@ import java.util.Optional;
 @ApiStatus.Internal
 public record GeometryPolyIndices(Either<GeometryPolyIndex[], GeometryPolyIndex[]> trisOrQuads) {
     /**
-     * Get the mesh tries indices array, if present
+     * Get the mesh tris indices array, if present
      */
     public Optional<GeometryPolyIndex[]> tris() {
         return this.trisOrQuads.left();
