@@ -12,7 +12,7 @@ import software.bernie.geckolib.util.JsonUtil;
  * This is the root-level object for a fully processed .geo file
  *
  * @param formatVersion The bedrock geometry format version of this geometry instance
- * @param debug An optional debug marker for this geometry instance, not used by GeckoLib
+ * @param debug An optional debug marker for this geometry instance. Not used by GeckoLib
  * @param definitions The array of geometry definitions contained in this geometry instance
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */

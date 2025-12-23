@@ -13,7 +13,7 @@ import software.bernie.geckolib.util.JsonUtil;
  * This is not a 1:1 parity container for the specification, as GeckoLib intentionally discards properties that have no possible uses
  *
  * @param description Associated geometry definition data for this geometry instance. Not technically optional, but GeckoLib accepts it anyway
- * @param cape An optional cape identifier, not used by GeckoLib
+ * @param cape An optional cape identifier. Not used by GeckoLib
  * @param bones The bones definition for this geometry instance
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */

@@ -16,10 +16,10 @@ import software.bernie.geckolib.util.JsonUtil;
  * <p>
  * This is not a 1:1 parity container for the specification, as GeckoLib intentionally discards properties that have no possible uses
  *
- * @param identifier The asset identifier for this model, not used by GeckoLib
- * @param visibleBoundsWidth The width of the visible bounds for this model, not used by GeckoLib
- * @param visibleBoundsHeight The height of the visible bounds for this model, not used by GeckoLib
- * @param visibleBoundsOffset The offset of the visible bounds for this model, not used by GeckoLib
+ * @param identifier The asset identifier for this model. Not used by GeckoLib
+ * @param visibleBoundsWidth The width of the visible bounds for this model. Not used by GeckoLib
+ * @param visibleBoundsHeight The height of the visible bounds for this model. Not used by GeckoLib
+ * @param visibleBoundsOffset The offset of the visible bounds for this model. Not used by GeckoLib
  * @param textureWidth The width of the texture for this model. Technically optional, but GeckoLib requires it
  * @param textureHeight The height of the texture for this model. Technically optional, but GeckoLib requires it
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
