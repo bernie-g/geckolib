@@ -12,11 +12,39 @@ import java.lang.reflect.Array;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * JSON helper class for various .json functions
  */
 public final class JsonUtil {
+    /**
+     * Parse an Either instance from a {@link JsonObject}, throwing an exception if neither predicate matches
+     */
+    public static <L, R> @Nullable Either<@Nullable L, @Nullable R> getEither(JsonObject obj,
+                                                                              Predicate<JsonObject> leftPredicate, Predicate<JsonObject> rightPredicate,
+                                                                              Function<JsonObject, @Nullable L> leftFactory, Function<JsonObject, @Nullable R> rightFactory) {
+        return getEither(obj, null, leftPredicate, rightPredicate, leftFactory, rightFactory);
+    }
+
+    /**
+     * Parse an Either instance from a {@link JsonObject}, with allowance for a short-circuiting null return
+     */
+    public static <L, R> @Nullable Either<@Nullable L, @Nullable R> getEither(JsonObject obj, @Nullable Predicate<JsonObject> nullPredicate,
+                                                                              Predicate<JsonObject> leftPredicate, Predicate<JsonObject> rightPredicate,
+                                                                              Function<JsonObject, @Nullable L> leftFactory, Function<JsonObject, @Nullable R> rightFactory) {
+        if (nullPredicate != null && nullPredicate.test(obj))
+            return null;
+
+        if (leftPredicate.test(obj))
+            return Either.left(leftFactory.apply(obj));
+
+        if (rightPredicate.test(obj))
+            return Either.right(rightFactory.apply(obj));
+
+        throw new JsonParseException("Invalid Json object, contained value was neither of the two possible formats!");
+    }
+
     /**
      * Parse a Vec3 instance from a raw .json input
      */
@@ -129,7 +157,10 @@ public final class JsonUtil {
      * @param context The {@link Gson} deserialization context
      * @param objectType The object class that the map should contain
      */
-    public static <T> Map<String, T> jsonObjToMap(JsonObject obj, JsonDeserializationContext context, Class<T> objectType) {
+    public static <T> @Nullable Map<String, T> jsonObjToMap(@Nullable JsonObject obj, JsonDeserializationContext context, Class<T> objectType) {
+        if (obj == null)
+            return null;
+
         Map<String, T> map = new Object2ObjectOpenHashMap<>(obj.size());
 
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
