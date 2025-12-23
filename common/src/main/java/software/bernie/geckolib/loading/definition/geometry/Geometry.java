@@ -21,7 +21,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
     /**
      * Publicly accessible GSON parser for GeckoLib geometry .json files
      */
-    public static final Gson GSON = new GsonBuilder()
+    public static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
             .registerTypeAdapter(Geometry.class, gsonDeserializer())
             .registerTypeAdapter(GeometryBone.class, GeometryBone.gsonDeserializer())
             .registerTypeAdapter(GeometryCube.class, GeometryCube.gsonDeserializer())
