@@ -31,7 +31,7 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
                            @Nullable String binding, @Nullable GeometryLocators locators, @Nullable GeometryPolyMesh polyMesh,
                            GeometryTextureMesh @Nullable[] textureMeshes) {
     /**
-     * Parse a GeometryBone instance from raw json input via {@link Gson}
+     * Parse a GeometryBone instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryBone> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

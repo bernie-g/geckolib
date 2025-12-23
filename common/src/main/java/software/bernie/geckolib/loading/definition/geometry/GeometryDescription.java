@@ -28,7 +28,7 @@ import software.bernie.geckolib.util.JsonUtil;
 public record GeometryDescription(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset,
 								  int textureWidth, int textureHeight) {
 	/**
-	 * Parse a GeometryDescription instance from raw json input via {@link Gson}
+	 * Parse a GeometryDescription instance from raw .json input via {@link Gson}
 	 */
 	public static JsonDeserializer<GeometryDescription> gsonDeserializer() throws JsonParseException {
 		return (json, type, context) -> {

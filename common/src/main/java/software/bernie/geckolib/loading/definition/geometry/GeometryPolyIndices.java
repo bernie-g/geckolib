@@ -35,7 +35,7 @@ public record GeometryPolyIndices(Either<GeometryPolyIndex[], GeometryPolyIndex[
     }
 
     /**
-     * Parse a GeometryPolyIndices instance from raw json input via {@link Gson}
+     * Parse a GeometryPolyIndices instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryPolyIndices> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

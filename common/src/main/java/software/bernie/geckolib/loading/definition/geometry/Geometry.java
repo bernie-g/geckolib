@@ -19,7 +19,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record Geometry(String formatVersion, boolean debug, GeometryDefinition[] definitions) {
     /**
-     * Publicly accessible GSON parser for GeckoLib geometry json files
+     * Publicly accessible GSON parser for GeckoLib geometry .json files
      */
     public static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Geometry.class, gsonDeserializer())
@@ -40,7 +40,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             .create();
 
     /**
-     * Parse a Geometry instance from raw json input via {@link Gson}
+     * Parse a Geometry instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<Geometry> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

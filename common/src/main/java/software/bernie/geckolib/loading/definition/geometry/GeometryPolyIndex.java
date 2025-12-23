@@ -16,7 +16,7 @@ import org.jetbrains.annotations.ApiStatus;
 @ApiStatus.Internal
 public record GeometryPolyIndex(float position, float normal, float scale) {
     /**
-     * Parse a GeometryPolyIndex instance from raw json input via {@link Gson}
+     * Parse a GeometryPolyIndex instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryPolyIndex> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

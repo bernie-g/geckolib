@@ -20,7 +20,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record GeometryDefinition(@Nullable GeometryDescription description, @Nullable String cape, GeometryBone[] bones) {
     /**
-     * Parse a GeometryDefinition instance from raw json input via {@link Gson}
+     * Parse a GeometryDefinition instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryDefinition> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

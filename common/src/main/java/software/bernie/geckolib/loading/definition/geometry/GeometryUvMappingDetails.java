@@ -19,7 +19,7 @@ import software.bernie.geckolib.object.Rotation;
  */
 public record GeometryUvMappingDetails(GeometryUvPair uv, @Nullable GeometryUvPair uvSize, Rotation uvRotation, @Nullable String materialInstance) {
     /**
-     * Parse a GeometryUvMappingDetails instance from raw json input via {@link Gson}
+     * Parse a GeometryUvMappingDetails instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryUvMappingDetails> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

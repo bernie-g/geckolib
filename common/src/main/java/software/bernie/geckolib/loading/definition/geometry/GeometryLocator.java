@@ -21,7 +21,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record GeometryLocator(Vec3 offset, @Nullable Vec3 rotation) {
     /**
-     * Parse a GeometryLocators instance from raw json input via {@link Gson}
+     * Parse a GeometryLocators instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryLocator> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

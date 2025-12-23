@@ -10,7 +10,7 @@ import com.google.gson.JsonParseException;
  */
 public record GeometryUvPair(double u, double v) {
     /**
-     * Parse a GeometryUvPair instance from raw json input via {@link Gson}
+     * Parse a GeometryUvPair instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryUvPair> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

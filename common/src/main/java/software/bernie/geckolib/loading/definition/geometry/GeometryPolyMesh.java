@@ -23,7 +23,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record GeometryPolyMesh(boolean normalizedUvs, Vec3 @Nullable[] positions, Vec3 @Nullable[] normals, @Nullable GeometryUv[] uvs, GeometryPolyIndices polys, String polysFormat) {
     /**
-     * Parse a GeometryTextureMesh instance from raw json input via {@link Gson}
+     * Parse a GeometryTextureMesh instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryPolyMesh> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

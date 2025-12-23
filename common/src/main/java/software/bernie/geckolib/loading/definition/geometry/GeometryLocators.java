@@ -20,7 +20,7 @@ import java.util.Map;
 @ApiStatus.Internal
 public record GeometryLocators(Map<String, GeometryLocator> locators) {
     /**
-     * Parse a GeometryLocators instance from raw json input via {@link Gson}
+     * Parse a GeometryLocators instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryLocators> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

@@ -26,7 +26,7 @@ import software.bernie.geckolib.util.MiscUtil;
 @ApiStatus.Internal
 public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable Vec3 rotation, @Nullable Vec3 pivot, float inflate, boolean mirror, GeometryUv uv) {
     /**
-     * Parse a GeometryBone instance from raw json input via {@link Gson}
+     * Parse a GeometryBone instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryCube> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

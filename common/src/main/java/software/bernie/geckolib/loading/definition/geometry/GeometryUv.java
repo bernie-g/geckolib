@@ -10,7 +10,7 @@ import com.mojang.datafixers.util.Either;
  */
 public record GeometryUv(Either<GeometryUvPair, GeometryUvMapping> uvData) {
     /**
-     * Parse a GeometryUv instance from raw json input via {@link Gson}
+     * Parse a GeometryUv instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryUv> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

@@ -23,7 +23,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record GeometryTextureMesh(Identifier texture, @Nullable Vec3 position, @Nullable Vec3 localPivot, @Nullable Vec3 rotation, @Nullable Vec3 scale) {
     /**
-     * Parse a GeometryTextureMesh instance from raw json input via {@link Gson}
+     * Parse a GeometryTextureMesh instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryTextureMesh> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {

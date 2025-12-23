@@ -17,7 +17,7 @@ import java.util.function.Function;
  */
 public final class JsonUtil {
     /**
-     * Parse a Vec3 instance from a raw json input
+     * Parse a Vec3 instance from a raw .json input
      */
     public static @Nullable Vec3 jsonToVec3(@Nullable JsonElement element) {
         if (element == null)

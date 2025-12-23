@@ -16,7 +16,7 @@ import java.util.Map;
  */
 public record GeometryUvMapping(EnumMap<Direction, GeometryUvMappingDetails> uvFaces) {
     /**
-     * Parse a GeometryUvMapping instance from raw json input via {@link Gson}
+     * Parse a GeometryUvMapping instance from raw .json input via {@link Gson}
      */
     public static JsonDeserializer<GeometryUvMapping> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
