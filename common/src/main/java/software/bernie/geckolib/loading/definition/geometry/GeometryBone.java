@@ -7,6 +7,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
+import java.util.Map;
+
 /**
  * Container class for a single geometry bone, only used for intermediary steps between .json deserialization and GeckoLib object creation
  *
@@ -28,7 +30,7 @@ import software.bernie.geckolib.util.JsonUtil;
 @ApiStatus.Internal
 public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 pivot, @Nullable Vec3 rotation, boolean debug,
                            boolean mirror, float inflate, int renderGroupId, GeometryCube[] cubes,
-                           @Nullable String binding, @Nullable GeometryLocators locators, @Nullable GeometryPolyMesh polyMesh,
+                           @Nullable String binding, @Nullable Map<String, GeometryLocator> locators, @Nullable GeometryPolyMesh polyMesh,
                            GeometryTextureMesh @Nullable[] textureMeshes) {
     /**
      * Parse a GeometryBone instance from raw .json input via {@link Gson}
@@ -46,7 +48,7 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
             final int renderGroupId = GsonHelper.getAsInt(obj, "render_group_id", 0);
             final GeometryCube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", null), context, GeometryCube.class);
             final String binding = GsonHelper.getAsString(obj, "binding", null);
-            final GeometryLocators locators = GsonHelper.getAsObject(obj, "locators", null, context, GeometryLocators.class);
+            final Map<String, GeometryLocator> locators = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "locators", null), context, GeometryLocator.class);
             final GeometryPolyMesh polyMesh = GsonHelper.getAsObject(obj, "poly_mesh", null, context, GeometryPolyMesh.class);
             final GeometryTextureMesh[] textureMeshes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "texture_meshes", null), context, GeometryTextureMesh.class);
 
