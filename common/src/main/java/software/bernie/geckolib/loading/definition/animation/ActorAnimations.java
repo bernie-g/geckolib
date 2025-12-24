@@ -24,6 +24,14 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
      */
     public static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
             .registerTypeAdapter(ActorAnimations.class, gsonDeserializer())
+            .registerTypeAdapter(ActorAnimation.class, ActorAnimations.gsonDeserializer())
+            .registerTypeAdapter(ActorAnimationParticleEffect.class, ActorAnimationParticleEffect.gsonDeserializer())
+            .registerTypeAdapter(ActorAnimationSoundEffect.class, ActorAnimationSoundEffect.gsonDeserializer())
+            .registerTypeAdapter(ActorBoneAnimation.class, ActorBoneAnimation.gsonDeserializer())
+            .registerTypeAdapter(ActorBoneAnimationEntry.class, ActorBoneAnimationEntry.gsonDeserializer())
+            .registerTypeAdapter(ActorBoneAnimationKeyframe.class, ActorBoneAnimationKeyframe.gsonDeserializer())
+            .registerTypeAdapter(ActorBoneAnimationKeyframeValues.class, ActorBoneAnimationKeyframeValues.gsonDeserializer())
+            .registerTypeAdapter(DoubleOrString.class, DoubleOrString.gsonDeserializer())
             .create();
 
     /**
