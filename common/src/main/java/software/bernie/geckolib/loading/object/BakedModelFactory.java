@@ -142,7 +142,7 @@ public interface BakedModelFactory {
 				bones.add(constructBone(boneStructure, geometryTree.properties(), null));
 			}
 
-			return new BakedGeoModel(bones.toArray(new GeoBone[0]), geometryTree.properties());
+			return new BakedGeoModel(bones.toArray(new GeoBone[0]), ModelProperties.fromDescription(geometryTree.properties()));
 		}
 
 		@Override

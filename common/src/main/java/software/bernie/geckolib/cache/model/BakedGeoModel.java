@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
+import software.bernie.geckolib.loading.json.raw.ModelProperties;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.util.RenderUtil;
@@ -17,14 +17,14 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * Baked model object for Geckolib models
+ * Baked model object for GeckoLib models
  *
  * @param topLevelBones The root bone(s) for this model, as defined in the model .json
  * @param properties The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
  * @param boneLookup A deferred lookup cache of every bone by its name for quick-retrieval
  */
-public record BakedGeoModel(GeoBone[] topLevelBones, GeometryDescription properties, Supplier<Map<String, GeoBone>> boneLookup) {
-	public BakedGeoModel(GeoBone[] topLevelBones, GeometryDescription properties) {
+public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
+	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties) {
 		this(topLevelBones, properties, createBoneMap(topLevelBones));
 	}
 
