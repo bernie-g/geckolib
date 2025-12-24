@@ -13,7 +13,7 @@ import software.bernie.geckolib.loading.definition.geometry.Geometry;
  * <p>
  * Not currently used by GeckoLib
  */
-public interface GeckoLibDeserialization {
+public interface GeckoLibLoader {
     /**
      * Deserialize an identified resource into an unbaked {@link Geometry} instance, ready for
      * transposition into a usable {@link BakedGeoModel}
