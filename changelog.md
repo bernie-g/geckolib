@@ -5,7 +5,11 @@
 * GeoRenderState#addGeckolibData no longer accepts `null` values
 * Re-added `#setTransitionTicks` to `AnimationController`
 * Added `JsonUtil#jsonToVec3` direct helper method
-* Rebuilt GeckoLib's json parsing library to be up to date with the current bedrock geometry spec (1.21.0), and moved the GSON instance to `Geometry`
+* Begun building a new SPI-based .json deserialization pipeline, to allow for safer and more extensible model & animation loading
+  * By default, GeckoLib will continue to use GSON to deserialize into intermediary unbaked objects
+    * I am looking at making a GeckoLib addon that uses a faster library (possibly FastJson?) to speed up loading of assets, potentially substantially
+  * This system is not fully implemented yet, but the majority of the code has been written and reviewed to ensure it meets current Bedrock geometry & animation specs (1.21.0 and 1.8.0 respectively)
+  * This will in theory allow mod authors to create their own adapters in the event they want to do custom loading or handling, without sacrificing on safety 
 
 ### Internal:
 * Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec
