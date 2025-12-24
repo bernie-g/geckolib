@@ -7,6 +7,9 @@ import software.bernie.geckolib.service.GeckoLibClient;
 
 import java.util.ServiceLoader;
 
+/**
+ * Service holder class for access to the various SPI platforms that GeckoLib uses
+ */
 public final class GeckoLibServices {
     public static final GeckoLibPlatform PLATFORM = load(GeckoLibPlatform.class);
     public static final GeckoLibNetworking NETWORK = load(GeckoLibNetworking.class);
