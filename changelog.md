@@ -10,6 +10,7 @@
     * I am looking at making a GeckoLib addon that uses a faster library (possibly FastJson?) to speed up loading of assets, potentially substantially
   * This system is not fully implemented yet, but the majority of the code has been written and reviewed to ensure it meets current Bedrock geometry & animation specs (1.21.0 and 1.8.0 respectively)
   * This will in theory allow mod authors to create their own adapters in the event they want to do custom loading or handling, without sacrificing on safety 
+* Removed `GeckoLibClient#getGeoModelForItem` as it was unused and unnecessary, use `RenderUtil#getGeckoLibItemRenderer` instead and get the model as needed
 
 ### Internal:
 * Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec
