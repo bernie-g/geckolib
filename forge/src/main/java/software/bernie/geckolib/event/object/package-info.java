@@ -2,6 +2,6 @@
  * Event classes related to GeckoLib miscellaneous-object rendering
  */
 @NullMarked
-package software.bernie.geckolib.animatable.client;
+package software.bernie.geckolib.event.object;
 
 import org.jspecify.annotations.NullMarked;

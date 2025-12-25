@@ -2,6 +2,6 @@
  * Forge-specific platform functionality
  */
 @NullMarked
-package software.bernie.geckolib.animatable.client;
+package software.bernie.geckolib.platform;
 
 import org.jspecify.annotations.NullMarked;

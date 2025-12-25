@@ -12,7 +12,8 @@ plugins {
 val modId: String by project
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val mappingsMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion = libs.versions.parchment.asProvider().get()
+val parchmentMcVersion = libs.versions.parchment.minecraft.get()
+val parchmentVersion   = libs.versions.parchment.asProvider().get()
 val forgeVersion = libs.versions.forge.asProvider().get()
 
 version = libs.versions.geckolib.get()
@@ -22,36 +23,45 @@ base {
 }
 
 minecraft {
-    mappings("official", mappingsMcVersion)
-    //mappings("parchment", "${mappingsMcVersion}-${parchmentVersion}")
+    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
 
-    accessTransformers {
-        project(":common").file("src/main/resources/META-INF/accesstransformer.cfg")
-    }
+    accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
         configureEach {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
             systemProperty("forge.logging.console.level", "debug")
+
+            args("--mixin.config=${modId}.mixins.json")
         }
 
         register("client") {
             args("--username", "Dev")
-            args("-mixin.config=${modId}.mixins.json")
         }
 
         register("client2") {
             args("--username", "Dev2")
-            args("-mixin.config=${modId}.mixins.json")
         }
 
-        register("server") {
-            args("-mixin.config=${modId}.mixins.json")
-        }
+        register("server") {}
     }
 }
 
 repositories {
+    maven(minecraft.mavenizer)
+    maven(fg.forgeMaven)
+    maven(fg.minecraftLibsMaven)
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = "Sponge"
+                url = uri("https://repo.spongepowered.org/repository/maven-public")
+            }
+        }
+        filter {
+            includeGroupAndSubgroups("org.spongepowered")
+        }
+    }
     exclusiveContent {
         forRepository {
             maven {
@@ -63,6 +73,8 @@ repositories {
             includeGroup("software.bernie.geckolib")
         }
     }
+    mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -72,7 +84,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //implementation(fg.deobf(libs.examplemod.forge.get()))
+    //implementation(libs.examplemod.forge.get())
 }
 
 //Make the result of the jarJar task the one with no classifier instead of no classifier and "all"
@@ -81,7 +93,7 @@ tasks.named<Jar>("jar").configure {
 }
 
 tasks.withType<Test>().configureEach {
-    failOnNoDiscoveredTests = false
+    enabled = false;
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -132,7 +144,6 @@ publishing {
         publications {
             create<MavenPublication>("geckolib") {
                 from(components["java"])
-                //jarJar.component(this)
                 artifactId = base.archivesName.get()
             }
         }
