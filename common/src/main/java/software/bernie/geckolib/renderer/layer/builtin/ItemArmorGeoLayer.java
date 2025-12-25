@@ -33,7 +33,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
@@ -205,7 +204,8 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 */
 	protected void buildRenderTask(RenderPassInfo<R> renderPassInfo, EquipmentSlot slot, Function<HumanoidModel<?>, ModelPart> modelPartFactory, ItemStack equipmentStack, CuboidGeoBone bone,
                                    SubmitNodeCollector renderTasks) {
-		if (equipmentStack.isEmpty())
+		// TODO Rewrite this Geo layer to make work :(
+		if (true || equipmentStack.isEmpty())
 			return;
 
         final PoseStack poseStack = renderPassInfo.poseStack();
