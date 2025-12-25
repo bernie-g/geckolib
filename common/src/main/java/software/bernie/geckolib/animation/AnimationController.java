@@ -363,7 +363,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /**
      * Set the current position of the {@link Animation} currently playing
      * <p>
-     * Has no effect if no animation is currently playing, or if another animation is started afterwards
+     * Has no effect if no animation is currently playing, or if another animation is started afterward
      */
     public void setAnimationTime(double animTime) {
         if (animTime < 0)
@@ -385,7 +385,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /**
      * Set the current position on the overall timeline
      * <p>
-     * Has no effect if no animation is currently playing, or if another animation is started afterwards
+     * Has no effect if no animation is currently playing, or if another animation is started afterward
      */
     public void setTimelineTime(double timelineTime) {
         this.timelineTime = timelineTime;
