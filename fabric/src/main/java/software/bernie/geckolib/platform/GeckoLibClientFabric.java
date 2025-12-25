@@ -30,19 +30,6 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     }
 
     /**
-     * Helper method for retrieving an (ideally) cached instance of the GeoModel for the given item
-     *
-     * @return The GeoModel for the item, or null if not applicable
-     */
-    @Override
-    public @Nullable GeoModel<?> getGeoModelForItem(ItemStack item) {
-        if (GeoRenderProvider.of(item).getGeoItemRenderer() instanceof GeoRenderer<?, ?, ?> geoItemRenderer)
-            return geoItemRenderer.getGeoModel();
-
-        return null;
-    }
-
-    /**
      * Return the dye value for a given ItemStack, or the defaul value if not present.
      * <p>
      * This is split off to allow for handling of loader-specific handling for dyed items
