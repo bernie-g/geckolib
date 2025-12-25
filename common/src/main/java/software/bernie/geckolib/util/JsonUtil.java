@@ -95,9 +95,9 @@ public final class JsonUtil {
      * @param objectClass The object type that the array contains
      */
     @SuppressWarnings("unchecked")
-    public static <T> T[] jsonArrayToObjectArray(@Nullable JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
+    public static <T> T @Nullable [] jsonArrayToObjectArray(@Nullable JsonArray array, JsonDeserializationContext context, Class<T> objectClass) {
         if (array == null)
-            return (T[])new Object[0];
+            return null;
 
         T[] objArray = (T[])Array.newInstance(objectClass, array.size());
 
@@ -112,10 +112,10 @@ public final class JsonUtil {
      * Converts a {@link JsonArray} to an array of objects, mapped using the mapping function
      *
      * @param array The array containing the objects to be converted
-     * @param mappingFunction The function to map a json element to an object of the intended type
+     * @param mappingFunction The function to map a .json element to an object of the intended type
      */
     @SuppressWarnings("unchecked")
-    public static <T> @Nullable T @Nullable[] jsonArrayToObjectArray(@Nullable JsonArray array, Function<JsonElement, @Nullable T> mappingFunction) {
+    public static <T> T @Nullable[] jsonArrayToObjectArray(@Nullable JsonArray array, Function<JsonElement, @Nullable T> mappingFunction) {
         if (array == null)
             return null;
 
