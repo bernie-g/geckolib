@@ -26,10 +26,10 @@ import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.BoneSnapshots;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
@@ -256,13 +256,43 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     }
 
     /**
+     * Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
+     * <p>
+     * No manipulation of the RenderState is permitted here
+     */
+    @Override
+    public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
+        final R renderState = renderPassInfo.renderState();
+        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+        final HumanoidModel baseModel = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
+        final List<ArmorSegment> segments = getSegmentsForSlot(renderState, slot);
+
+        if (!segments.isEmpty()) {
+            baseModel.setupAnim(renderState);
+
+            for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
+                snapshots.get(getBoneNameForSegment(renderState, segment)).ifPresent(snapshot -> {
+                    final ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
+                    final Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
+
+                    snapshot.setRotX(-modelPart.xRot)
+                            .setRotY(-modelPart.yRot)
+                            .setRotZ(modelPart.zRot)
+                            .setTranslateX(bonePos.x)
+                            .setTranslateY(bonePos.y)
+                            .setTranslateZ(bonePos.z);
+                });
+            }
+        }
+    }
+
+    /**
      * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
      * <p>
      * Once the render task has been submitted here, no further manipulations of the render pass should be made.
      * <p>
      * If the provided {@link RenderType} is null, no submission will be made
      */
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void submitRenderTasks(RenderPassInfo<R> renderPassInfo, OrderedSubmitNodeCollector renderTasks, @Nullable RenderType renderType) {
         if (renderType == null)
@@ -271,41 +301,17 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         final int packedLight = renderPassInfo.packedLight();
         final int packedOverlay = renderPassInfo.packedOverlay();
         final int renderColor = renderPassInfo.renderColor();
+        final R renderState = renderPassInfo.renderState();
+        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
 
         renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack = renderPassInfo.poseStack();
-            final R renderState = renderPassInfo.renderState();
-            final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
-            final HumanoidModel baseModel = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
-            final BakedGeoModel bakedModel = renderPassInfo.model();
-
-            renderPassInfo.addBoneUpdater((renderPassInfo1, snapshots) -> {
-                final List<ArmorSegment> segments = getSegmentsForSlot(renderState, slot);
-
-                if (!segments.isEmpty()) {
-                    baseModel.setupAnim(renderState);
-
-                    for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
-                        snapshots.get(getBoneNameForSegment(renderState, segment)).ifPresent(snapshot -> {
-                            final ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
-                            final Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
-
-                            snapshot.setRotX(-modelPart.xRot)
-                                    .setRotY(-modelPart.yRot)
-                                    .setRotZ(modelPart.zRot)
-                                    .setTranslateX(bonePos.x)
-                                    .setTranslateY(bonePos.y)
-                                    .setTranslateZ(bonePos.z);
-                        });
-                    }
-                }
-            });
 
             poseStack.pushPose();
             poseStack.last().set(pose);
             renderPassInfo.renderPosed(() -> {
                 for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
-                    bakedModel.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
+                    renderPassInfo.model().getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
                         bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
                     });
                 }
