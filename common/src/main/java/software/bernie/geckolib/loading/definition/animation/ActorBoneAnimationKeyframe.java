@@ -31,7 +31,7 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
                 final JsonObject obj = json.getAsJsonObject();
                 final ActorBoneAnimationKeyframeValues values = GsonHelper.getAsObject(obj, "vector", null, context, ActorBoneAnimationKeyframeValues.class);
                 final String interpolationType = obj.has("lerp_mode") ? obj.get("lerp_mode").getAsString() : obj.has("easing") ? obj.get("easing").getAsString() : null;
-                final DoubleOrString[] easingArgs = obj.has("easingArgs") ? JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "easingArgs", null), context, DoubleOrString.class) : null;
+                final DoubleOrString[] easingArgs = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "easingArgs", null), context, DoubleOrString.class);
                 final ActorBoneAnimationKeyframe preKeyframe = GsonHelper.getAsObject(obj, "pre", null, context, ActorBoneAnimationKeyframe.class);
                 final ActorBoneAnimationKeyframe postKeyframe = GsonHelper.getAsObject(obj, "post", null, context, ActorBoneAnimationKeyframe.class);
 

@@ -18,7 +18,7 @@ import software.bernie.geckolib.util.JsonUtil;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */
 @ApiStatus.Internal
-public record GeometryDefinition(@Nullable GeometryDescription description, @Nullable String cape, GeometryBone[] bones) {
+public record GeometryDefinition(@Nullable GeometryDescription description, @Nullable String cape, GeometryBone @Nullable [] bones) {
     /**
      * Parse a GeometryDefinition instance from raw .json input via {@link Gson}
      */

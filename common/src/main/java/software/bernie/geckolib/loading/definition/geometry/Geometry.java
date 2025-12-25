@@ -46,10 +46,10 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             final JsonObject obj = json.getAsJsonObject();
             final String version = GsonHelper.getAsString(obj, "format_version");
             final boolean debug = GsonHelper.getAsBoolean(obj, "debug", false);
-            final GeometryDefinition[] definitions = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "minecraft:geometry", new JsonArray(0)), context, GeometryDefinition.class);
+            final GeometryDefinition[] definitions = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "minecraft:geometry", null), context, GeometryDefinition.class);
 
-            if (definitions.length == 0)
-                GeckoLibConstants.LOGGER.warn("No geometry definitions found in model file!");
+            if (definitions == null || definitions.length == 0)
+                throw new JsonParseException("No geometry definitions found in model file!");
 
             return new Geometry(version, debug, definitions);
         };

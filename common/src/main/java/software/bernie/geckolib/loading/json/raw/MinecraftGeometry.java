@@ -20,9 +20,12 @@ public record MinecraftGeometry(Bone[] bones, @Nullable String cape, @Nullable G
 	public static JsonDeserializer<MinecraftGeometry> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			final JsonObject obj = json.getAsJsonObject();
-			final Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", new JsonArray(0)), context, Bone.class);
+			Bone[] bones = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "bones", null), context, Bone.class);
 			final String cape = GsonHelper.getAsString(obj, "cape", null);
 			final GeometryDescription geometryDescription = GsonHelper.getAsObject(obj, "description", null, context, GeometryDescription.class);
+
+			if (bones == null)
+				bones = new Bone[0];
 
 			return new MinecraftGeometry(bones, cape, geometryDescription);
 		};

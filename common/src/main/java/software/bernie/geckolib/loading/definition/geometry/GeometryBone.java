@@ -29,7 +29,7 @@ import java.util.Map;
  */
 @ApiStatus.Internal
 public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 pivot, @Nullable Vec3 rotation, boolean debug,
-                           boolean mirror, float inflate, int renderGroupId, GeometryCube[] cubes,
+                           boolean mirror, float inflate, int renderGroupId, GeometryCube @Nullable [] cubes,
                            @Nullable String binding, @Nullable Map<String, GeometryLocator> locators, @Nullable GeometryPolyMesh polyMesh,
                            GeometryTextureMesh @Nullable[] textureMeshes) {
     /**
@@ -46,7 +46,7 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
             final boolean mirror = GsonHelper.getAsBoolean(obj, "mirror", false);
             final float inflate = GsonHelper.getAsFloat(obj, "inflate", 0f);
             final int renderGroupId = GsonHelper.getAsInt(obj, "render_group_id", 0);
-            final GeometryCube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", null), context, GeometryCube.class);
+            final GeometryCube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", new JsonArray()), context, GeometryCube.class);
             final String binding = GsonHelper.getAsString(obj, "binding", null);
             final Map<String, GeometryLocator> locators = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "locators", null), context, GeometryLocator.class);
             final GeometryPolyMesh polyMesh = GsonHelper.getAsObject(obj, "poly_mesh", null, context, GeometryPolyMesh.class);

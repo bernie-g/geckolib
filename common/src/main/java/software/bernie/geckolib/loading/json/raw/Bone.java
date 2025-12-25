@@ -27,7 +27,7 @@ import java.util.Map;
  * @param rotation The x/y/z rotation of this bone
  * @param textureMeshes An optional texture mesh definition for this bone, not used by GeckoLib
  */
-public record Bone(Cube[] cubes, @Nullable Boolean debug, // TODO Check support for current bedrock format values
+public record Bone(Cube[] cubes, @Nullable Boolean debug,
 				   @Nullable Double inflate, @Nullable Map<String, LocatorValue> locators,
 				   @Nullable Boolean mirror, String name, @Nullable Boolean neverRender,
 				   @Nullable String parent, double[] pivot, @Nullable PolyMesh polyMesh,
@@ -36,7 +36,7 @@ public record Bone(Cube[] cubes, @Nullable Boolean debug, // TODO Check support 
 	public static JsonDeserializer<Bone> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			JsonObject obj = json.getAsJsonObject();
-			Cube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", new JsonArray(0)), context, Cube.class);
+			Cube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", null), context, Cube.class);
 			Boolean debug = JsonUtil.getOptionalBoolean(obj, "debug");
 			Double inflate = JsonUtil.getOptionalDouble(obj, "inflate");
 			Map<String, LocatorValue> locators = obj.has("locators") ? JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "locators"), context, LocatorValue.class) : null;
@@ -49,6 +49,9 @@ public record Bone(Cube[] cubes, @Nullable Boolean debug, // TODO Check support 
 			Long renderGroupId = JsonUtil.getOptionalLong(obj, "render_group_id");
 			double[] rotation = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "rotation", null));
 			TextureMesh[] textureMeshes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "texture_meshes", null), context, TextureMesh.class);
+
+			if (cubes == null)
+				cubes = new Cube[0];
 
 			return new Bone(cubes, debug, inflate, locators, mirror, name, neverRender, parent, pivot, polyMesh, renderGroupId, rotation, textureMeshes);
 		};

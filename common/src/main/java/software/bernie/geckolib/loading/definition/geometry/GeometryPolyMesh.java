@@ -21,7 +21,7 @@ import software.bernie.geckolib.util.JsonUtil;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */
 @ApiStatus.Internal
-public record GeometryPolyMesh(boolean normalizedUvs, Vec3 @Nullable[] positions, Vec3 @Nullable[] normals, @Nullable GeometryUv[] uvs, GeometryPolyIndices polys, String polysFormat) {
+public record GeometryPolyMesh(boolean normalizedUvs, Vec3 @Nullable[] positions, Vec3 @Nullable[] normals, GeometryUv @Nullable [] uvs, GeometryPolyIndices polys, String polysFormat) {
     /**
      * Parse a GeometryTextureMesh instance from raw .json input via {@link Gson}
      */
