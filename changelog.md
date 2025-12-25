@@ -6,6 +6,7 @@
 * Fixed GeoArmorRenderer crashing when using renderlayers
 * Fixed animations interpolating from previous animations that had already finished
 * Fixed animations not transitioning back to base pose when finishing if transition time is present
+* Fixed animations not rotating properly when animating bones that are rotated by default 
 
 ### API:
 * GeoRenderState#addGeckolibData no longer accepts `null` values
