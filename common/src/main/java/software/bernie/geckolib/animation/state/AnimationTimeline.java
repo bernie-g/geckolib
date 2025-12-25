@@ -223,6 +223,9 @@ public record AnimationTimeline(Stage[] stages) {
             }
         }
 
+        if (transitionTime > 0)
+            stages.add(Stage.transition(currentTime, transitionTime, stages.getLast().animation()));
+
         if (stages.isEmpty())
             return null;
 
