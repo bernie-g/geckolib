@@ -475,6 +475,7 @@ public class AnimationController<T extends GeoAnimatable> {
     protected static final int NOT_TRIGGERED = -1;
     protected static final int NOT_ANIMATING = -1;
     protected static final int FINISHED_ANIMATING = -2;
+
     /**
      * Extract the necessary data for this controller to play its animations during an upcoming render pass.
      * <p>
