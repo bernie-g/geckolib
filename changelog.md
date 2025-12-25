@@ -1,6 +1,12 @@
 ## GeckoLib v5.4-alpha-2
 
 ## Changes:
+### Fixes:
+* Fixed GeoArmorRenderer not rendering properly
+* Fixed GeoArmorRenderer crashing when using renderlayers
+* Fixed animations interpolating from previous animations that had already finished
+* Fixed animations not transitioning back to base pose when finishing if transition time is present
+
 ### API:
 * GeoRenderState#addGeckolibData no longer accepts `null` values
 * Re-added `#setTransitionTicks` to `AnimationController`
@@ -11,6 +17,8 @@
   * This system is not fully implemented yet, but the majority of the code has been written and reviewed to ensure it meets current Bedrock geometry & animation specs (1.21.0 and 1.8.0 respectively)
   * This will in theory allow mod authors to create their own adapters in the event they want to do custom loading or handling, without sacrificing on safety 
 * Removed `GeckoLibClient#getGeoModelForItem` as it was unused and unnecessary, use `RenderUtil#getGeckoLibItemRenderer` instead and get the model as needed
+* `GeckoLibServices.Client` was extracted to `GeckoLibClientServices`, because java kept failing to compile for seemingly no reason
+* Created `GeoBone#positionAndRender`, which implements the full render operation for a given bone
 
 ### Internal:
 * Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec
