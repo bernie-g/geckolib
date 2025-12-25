@@ -34,7 +34,7 @@ public interface GeckoLibClient {
     <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
 
     /**
-     * Return the dye value for a given ItemStack, or the defaul value if not present.
+     * Return the dye value for a given ItemStack, or the default value if not present.
      * <p>
      * This is split off to allow for handling of loader-specific handling for dyed items
      */
