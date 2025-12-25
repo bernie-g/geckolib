@@ -332,7 +332,7 @@ public class AnimationController<T extends GeoAnimatable> {
             return;
 
         this.currentRawAnimation = rawAnimation;
-        this.transitionFromPoint = this.animationPoint;
+        this.transitionFromPoint = getCurrentTimelineTime() > 0 ? this.animationPoint : null;
         this.animationPoint = null;
         this.triggeredAnimTime = NOT_TRIGGERED;
     }
@@ -352,7 +352,7 @@ public class AnimationController<T extends GeoAnimatable> {
             return false;
 
         this.currentRawAnimation = animation;
-        this.transitionFromPoint = this.animationPoint;
+        this.transitionFromPoint = getCurrentTimelineTime() > 0 ? this.animationPoint : null;
         this.triggeredAnimTime = ClientUtil.getCurrentTick();
         this.animationPoint = null;
         this.playState = PlayState.CONTINUE;
