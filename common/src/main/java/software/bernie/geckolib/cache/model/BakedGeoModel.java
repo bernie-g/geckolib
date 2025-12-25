@@ -1,7 +1,6 @@
 package software.bernie.geckolib.cache.model;
 
 import com.google.common.base.Suppliers;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
@@ -9,7 +8,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import software.bernie.geckolib.loading.json.raw.ModelProperties;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
-import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -42,17 +40,8 @@ public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties,
      * Render this model
      */
     public <R extends GeoRenderState> void render(RenderPassInfo<R> renderPassInfo, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
-        final PoseStack poseStack = renderPassInfo.poseStack();
-
         for (GeoBone bone : topLevelBones()) {
-            poseStack.pushPose();
-            RenderUtil.prepMatrixForBone(poseStack, bone);
-            bone.updateBonePositionListeners(poseStack, renderPassInfo);
-
-            bone.render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
-            bone.renderChildren(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
-
-            poseStack.popPose();
+			bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
         }
     }
 

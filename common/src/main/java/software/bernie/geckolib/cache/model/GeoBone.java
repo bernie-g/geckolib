@@ -142,6 +142,23 @@ public abstract class GeoBone {
     }
 
     /**
+     * Perform a full render operation on this bone, including positioning it based on its {@link BoneSnapshot}
+     * and rendering any child bones
+     */
+    public <R extends GeoRenderState> void positionAndRender(RenderPassInfo<R> renderPassInfo, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
+        final PoseStack poseStack = renderPassInfo.poseStack();
+
+        poseStack.pushPose();
+        RenderUtil.prepMatrixForBone(poseStack, this);
+        updateBonePositionListeners(poseStack, renderPassInfo);
+
+        render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
+        renderChildren(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
+
+        poseStack.popPose();
+    }
+
+    /**
      * Apply a translation to the provided PoseStack to this bone's pivot point
      */
     public void translateToPivotPoint(PoseStack poseStack) {
