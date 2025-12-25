@@ -23,7 +23,6 @@ import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
@@ -307,11 +306,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
             renderPassInfo.renderPosed(() -> {
                 for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
                     bakedModel.getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
-                        bone.render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
+                        bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
                     });
                 }
-
-                renderPassInfo.model().render(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
             });
             poseStack.popPose();
         });
