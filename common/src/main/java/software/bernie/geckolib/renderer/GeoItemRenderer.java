@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -250,7 +251,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileItemRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileItemRenderLayers(this);
     }
 
     /**
@@ -258,7 +259,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, RenderData renderData, GeoRenderState renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileItemRenderState(this, renderState, animatable, renderData);
+        GeckoLibClientServices.EVENTS.fireCompileItemRenderState(this, renderState, animatable, renderData);
     }
 
     /**
@@ -268,7 +269,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireItemPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireItemPreRender(renderPassInfo, renderTasks);
     }
     //</editor-fold>
 }

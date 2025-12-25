@@ -1,19 +1,19 @@
 package software.bernie.geckolib;
 
 import org.jspecify.annotations.Nullable;
-import software.bernie.geckolib.service.*;
+import software.bernie.geckolib.service.GeckoLibClient;
+import software.bernie.geckolib.service.GeckoLibEvents;
 
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
 /**
- * Service holder class for access to the various SPI platforms that GeckoLib uses
+ * Service holder class for access to the various SPI platforms that GeckoLib uses for client-specific functionality
  */
-public final class GeckoLibServices {
-    public static final GeckoLibPlatform PLATFORM = load(GeckoLibPlatform.class);
-    public static final GeckoLibNetworking NETWORK = load(GeckoLibNetworking.class);
-    //private static final GeckoLibLoader LOADER = load(GeckoLibLoader.class, null);
+public class GeckoLibClientServices {
+    public static final GeckoLibEvents EVENTS = load(GeckoLibEvents.class);
+    public static final GeckoLibClient ITEM_RENDERING = load(GeckoLibClient.class);
 
     private static <T> T load(Class<T> clazz) {
         return load(clazz, null);

@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
@@ -548,7 +549,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileReplacedEntityRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderLayers(this);
     }
 
     /**
@@ -556,7 +557,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, E entity, R renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
+        GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
     }
 
     /**
@@ -566,7 +567,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireReplacedEntityPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireReplacedEntityPreRender(renderPassInfo, renderTasks);
     }
     //</editor-fold>
 }

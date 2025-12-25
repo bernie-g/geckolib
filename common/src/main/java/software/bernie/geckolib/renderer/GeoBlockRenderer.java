@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
@@ -235,7 +236,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileBlockRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileBlockRenderLayers(this);
     }
 
     /**
@@ -243,7 +244,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, Void relatedObject, R renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileBlockRenderState(this, renderState, animatable);
+        GeckoLibClientServices.EVENTS.fireCompileBlockRenderState(this, renderState, animatable);
     }
 
     /**
@@ -253,7 +254,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireBlockPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireBlockPreRender(renderPassInfo, renderTasks);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
@@ -147,7 +148,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileObjectRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileObjectRenderLayers(this);
     }
 
     /**
@@ -155,7 +156,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileObjectRenderState(this, renderState, animatable, relatedObject);
+        GeckoLibClientServices.EVENTS.fireCompileObjectRenderState(this, renderState, animatable, relatedObject);
     }
 
     /**
@@ -165,7 +166,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireObjectPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireObjectPreRender(renderPassInfo, renderTasks);
     }
     //</editor-fold>
 }

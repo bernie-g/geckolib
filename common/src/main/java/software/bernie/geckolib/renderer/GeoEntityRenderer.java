@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
@@ -536,7 +537,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileEntityRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileEntityRenderLayers(this);
     }
 
     /**
@@ -544,7 +545,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, Void relatedObject, R renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileEntityRenderState(this, renderState, animatable);
+        GeckoLibClientServices.EVENTS.fireCompileEntityRenderState(this, renderState, animatable);
     }
 
     /**
@@ -554,7 +555,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireEntityPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireEntityPreRender(renderPassInfo, renderTasks);
     }
 
     /**

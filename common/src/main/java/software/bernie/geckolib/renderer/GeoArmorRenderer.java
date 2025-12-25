@@ -22,6 +22,7 @@ import net.minecraft.world.item.equipment.Equippable;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
@@ -176,7 +177,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @Override
     public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
-        return GeckoLibServices.Client.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
+        return GeckoLibClientServices.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
     }
 
     /**
@@ -321,7 +322,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @Override
     public void fireCompileRenderLayersEvent() {
-        GeckoLibServices.Client.EVENTS.fireCompileArmorRenderLayers(this);
+        GeckoLibClientServices.EVENTS.fireCompileArmorRenderLayers(this);
     }
 
     /**
@@ -329,7 +330,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @Override
     public void fireCompileRenderStateEvent(T animatable, RenderData relatedObject, R renderState, float partialTick) {
-        GeckoLibServices.Client.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
+        GeckoLibClientServices.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
     }
 
     /**
@@ -339,7 +340,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
-        return GeckoLibServices.Client.EVENTS.fireArmorPreRender(renderPassInfo, renderTasks);
+        return GeckoLibClientServices.EVENTS.fireArmorPreRender(renderPassInfo, renderTasks);
     }
 
     /**
