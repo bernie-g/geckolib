@@ -7,6 +7,9 @@ import com.google.gson.JsonParseException;
 
 /**
  * A simple U/V coordinate pair container
+ *
+ * @param u The U coordinate for this pair
+ * @param v The V coordinate for this pair
  */
 public record GeometryUvPair(double u, double v) {
     /**

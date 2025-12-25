@@ -11,6 +11,9 @@ import org.jetbrains.annotations.ApiStatus;
  * <p>
  * This information isn't used by GeckoLib natively
  *
+ * @param position The position array index
+ * @param normal The normal array index
+ * @param scale The scale array index
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */
 @ApiStatus.Internal

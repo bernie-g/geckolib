@@ -15,6 +15,7 @@ import java.util.Map;
  * Note that the name of the animation isn't contained here, and is instead held by the {@link ActorAnimations#animations()} map
  *
  * @param animLength The defined length (in seconds) of the animation. Defaults to the time of the last keyframe, but can be overridden manually
+ * @param loop The loop type for this animation, or just a true/false for default looping or non-looping
  * @param startDelay The optional delay (in Molang-seconds) before starting this animation. Not used by GeckoLib
  * @param loopDelay The optional delay (in Molang-seconds) between the end of the animation, and when it loops, if a loop is required. Not used by GeckoLib
  * @param animTimeUpdate The optional expression (in Molang-seconds) defining how to evaluate the current animation time. Not used by GeckoLib

@@ -9,6 +9,8 @@ import java.util.Optional;
 
 /**
  * Basic container class for a U/V coordinate pair or per-face UV mapping
+ *
+ * @param uvData The container for the UV data
  */
 public record GeometryUv(Either<GeometryUvPair, GeometryUvMapping> uvData) {
     /**
