@@ -104,7 +104,7 @@ public record AnimationTimeline(Stage[] stages) {
      * If the timeline position is during a transition, the resultant point will be the start of the following animation if transitioning to an animation,
      * or end of the preceding animation if transitioning to reset
      * <p>
-     * Returns null if the timeline is empty
+     * Returns {@code null} if the timeline is empty
      */
     public AnimationPoint createAnimationPoint(double timelineTime, @Nullable AnimationPoint existingPoint, @Nullable EasingType easingOverride) {
         final int stageIndex = getStageIndex(timelineTime);
