@@ -61,17 +61,24 @@ public final class RenderUtil {
 	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
         bone.translateToPivotPoint(poseStack);
 
-        if (bone.baseRotZ() != 0)
-            poseStack.mulPose(Axis.ZP.rotation(bone.baseRotZ()));
+        float xRot = bone.baseRotX();
+        float yRot = bone.baseRotY();
+        float zRot = bone.baseRotZ();
 
-        if (bone.baseRotY() != 0)
-            poseStack.mulPose(Axis.YP.rotation(bone.baseRotY()));
+        if (bone.frameSnapshot != null) {
+            xRot += bone.frameSnapshot.getRotX();
+            yRot += bone.frameSnapshot.getRotY();
+            zRot += bone.frameSnapshot.getRotZ();
+        }
 
-        if (bone.baseRotX() != 0)
-            poseStack.mulPose(Axis.XP.rotation(bone.baseRotX()));
+        if (zRot != 0)
+            poseStack.mulPose(Axis.ZP.rotation(zRot));
 
-        if (bone.frameSnapshot != null)
-            bone.frameSnapshot.rotate(poseStack);
+        if (yRot != 0)
+            poseStack.mulPose(Axis.YP.rotation(yRot));
+
+        if (xRot != 0)
+            poseStack.mulPose(Axis.XP.rotation(xRot));
 	}
 
 	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
