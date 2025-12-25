@@ -11,9 +11,9 @@
     jopt-simple = "5.0.4"
 
 # Fabric
-    fabric = "0.18.2"
+    fabric = "0.18.4"
     fabric-range = "0.18"
-    fabric-api = "0.139.4+1.21.11"
+    fabric-api = "0.140.2+1.21.11"
     fabric-api-range = "0.139.4+1.21.11"
 
 # Forge
@@ -26,7 +26,7 @@
 # Neoforge
     neoforge-loader-range = "[5,)"
     neoforge-range = "[21.11.0-beta,)"
-    neoforge = "21.11.0-beta"
+    neoforge = "21.11.13-beta"
 
 # Dependencies
     mixin = "0.8.7"
