@@ -111,7 +111,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
         GeoBlockRenderer<T, R> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoBlockRenderer} called on first initialisation
+		 * One-time event for a {@link GeoBlockRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -172,12 +172,12 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		}
 
 		/**
-		 * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}
+		 * Pre-render event for BlockEntities being rendered by {@link GeoBlockRenderer}
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
 		 * <p>
-		 * This event is cancellable.<br>
-		 * If the event is cancelled, the block entity will not be rendered.
+		 * This event is cancelable.<br>
+		 * If the event is canceled, the BlockEntity will not be rendered.
 		 *
 		 * @param <T> BlockEntity animatable class type
 		 * @param <R> RenderState class type
@@ -225,7 +225,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
         GeoArmorRenderer<T, R> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoArmorRenderer} called on first initialisation
+		 * One-time event for a {@link GeoArmorRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -344,7 +344,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
         GeoEntityRenderer<T, R> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoEntityRenderer} called on first initialisation
+		 * One-time event for a {@link GeoEntityRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -409,8 +409,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
-         * This event is cancellable.<br>
-         * If the event is cancelled, the entity will not be rendered.
+         * This event is cancelable.<br>
+         * If the event is canceled, the entity will not be rendered.
 		 *
 		 * @param <T> Entity animatable class type
 		 * @param <R> RenderState class type
@@ -459,7 +459,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
         GeoReplacedEntityRenderer<T, E, R> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoReplacedEntityRenderer} called on first initialisation
+		 * One-time event for a {@link GeoReplacedEntityRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -580,7 +580,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		GeoItemRenderer<T> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoItemRenderer} called on first initialisation
+		 * One-time event for a {@link GeoItemRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -662,8 +662,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
-         * This event is cancellable.<br>
-         * If the event is cancelled, the item will not be rendered.
+         * This event is cancelable.<br>
+         * If the event is canceled, the item will not be rendered.
 		 *
 		 * @param <T> Item animatable class type
 		 */
@@ -711,7 +711,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		GeoObjectRenderer<T, E, R> getRenderer();
 
 		/**
-		 * One-time event for a {@link GeoObjectRenderer} called on first initialisation
+		 * One-time event for a {@link GeoObjectRenderer} called on first initialization
 		 * <p>
 		 * Use this event to add render layers to the renderer as needed
 		 *
@@ -783,8 +783,8 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		 * <p>
 		 * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
          * <p>
-         * This event is cancellable.<br>
-         * If the event is cancelled, the object will not be rendered.
+         * This event is cancelable.<br>
+         * If the event is canceled, the object will not be rendered.
 		 *
 		 * @param <T> Object animatable class type
 		 * @param <E> Associated object class type, or {@link Void} if none

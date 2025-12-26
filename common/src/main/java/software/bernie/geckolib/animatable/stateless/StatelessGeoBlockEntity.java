@@ -18,7 +18,7 @@ public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable,
     @Override
     default void playAnimation(RawAnimation animation) {
         if (!(this instanceof BlockEntity self))
-            throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-blockentity animatable!");
+            throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-BlockEntity animatable!");
 
         if (self.getLevel() instanceof ServerLevel level) {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingBlock(new StatelessBlockEntityPlayAnimPacket(self.getBlockPos(), animation), level, self.getBlockPos());
@@ -34,7 +34,7 @@ public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable,
     @Override
     default void stopAnimation(String animation) {
         if (!(this instanceof BlockEntity self))
-            throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-blockentity animatable!");
+            throw new ClassCastException("Cannot use StatelessGeoBlockEntity on a non-BlockEntity animatable!");
 
         if (self.getLevel() instanceof ServerLevel level) {
             GeckoLibServices.NETWORK.sendToAllPlayersTrackingBlock(new StatelessBlockEntityStopAnimPacket(self.getBlockPos(), animation), level, self.getBlockPos());

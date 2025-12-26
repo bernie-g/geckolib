@@ -10,7 +10,7 @@ import software.bernie.geckolib.loading.math.function.MathFunction;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns the log value (euler base) of the input value
+ * Returns the log value (Euler base) of the input value
  */
 public final class LogFunction extends MathFunction {
     private final MathValue value;

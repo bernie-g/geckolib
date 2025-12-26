@@ -52,7 +52,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * <p>
      * <b><u>DO NOT OVERRIDE</u></b>
      *
-     * @param relatedEntity An entity related to the state of the data for syncing (E.G. The player holding the item)
+     * @param relatedEntity An entity related to the state of the data for syncing (E.G., The player holding the item)
      * @param instanceId    The unique id that identifies the specific animatable instance
      * @param dataTicket    The DataTicket to sync the data for
      * @param data          The data to sync
@@ -90,7 +90,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * <p>
      * <b><u>DO NOT OVERRIDE</u></b>
      *
-     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
      * @param instanceId     The unique id that identifies the specific animatable instance
      * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
      * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
@@ -119,7 +119,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * <p>
      * <b><u>DO NOT OVERRIDE</u></b>
      *
-     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
      * @param instanceId The unique id that identifies the specific animatable instance
      * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
      * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
@@ -148,7 +148,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * <p>
      * <b><u>DO NOT OVERRIDE</u></b>
      *
-     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
      * @param instanceId     The unique id that identifies the specific animatable instance
      * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
      * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
@@ -165,7 +165,7 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      * <p>
      * <b><u>DO NOT OVERRIDE</u></b>
      *
-     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G. The player holding the item)
+     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
      * @param instanceId The unique id that identifies the specific animatable instance
      * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
      * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation

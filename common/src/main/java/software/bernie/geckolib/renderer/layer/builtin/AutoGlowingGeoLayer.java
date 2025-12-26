@@ -69,21 +69,21 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 	/**
 	 * Override to return true to apply a view-space z-offset to the render buffer
 	 * <p>
-	 * Typically, you'd use this for armour rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
+	 * Typically, you'd use this for armor rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
 	 */
 	protected boolean shouldAddZOffset(R renderState) {
 		return getRenderer() instanceof GeoArmorRenderer;
 	}
 
 	/**
-	 * Override to return a different lighting value if you want to customise the level of emissivity
+	 * Override to return a different lighting value if you want to customize the level of emissivity
 	 */
 	protected int getBrightness(R renderState) {
 		return LightTexture.FULL_SKY;
 	}
 
 	/**
-	 * Get the render type to use for this glowlayer renderer, or null if the layer should not render
+	 * Get the render type to use for this glowmask renderer, or null if the layer should not render
 	 * <p>
 	 * Uses a custom RenderType similar to {@link RenderTypes#eyes(Identifier)} by default
 	 * <p>

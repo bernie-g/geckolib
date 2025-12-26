@@ -33,9 +33,9 @@ public final class MiscUtil {
     }
 
     /**
-     * Special helper function for lerping yaw.
+     * Special helper function for interpolating yaw.
      * <p>
-     * This exists because yaw in Minecraft handles its yaw a bit strangely; and can cause incorrect results if lerped without accounting for special cases
+     * This exists because yaw in Minecraft handles its yaw a bit strangely; and can cause incorrect results if interpolated without accounting for special cases
      */
     public static double lerpYaw(double delta, double start, double end) {
         start = Mth.wrapDegrees(start);

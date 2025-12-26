@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.object;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.loading.json.raw.Bone;
 import software.bernie.geckolib.loading.json.raw.MinecraftGeometry;
 import software.bernie.geckolib.loading.json.raw.Model;
@@ -12,9 +13,9 @@ import java.util.Map;
  * Container class for a {@link Bone} structure, used at startup during deserialization
  *
  * @param topLevelBones The root bone(s) for this model, as defined in the model .json
- * @param properties The additional properties collection for the model
+ * @param properties The additional properties collection for the model, if present
  */
-public record GeometryTree(Map<String, BoneStructure> topLevelBones, GeometryDescription properties) {
+public record GeometryTree(Map<String, BoneStructure> topLevelBones, @Nullable GeometryDescription properties) {
 	public static GeometryTree fromModel(Model model) {
 		final Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();
 		final MinecraftGeometry geometry = model.minecraftGeometry()[0];

@@ -3,6 +3,7 @@ package software.bernie.geckolib.loading.definition.geometry;
 import com.google.gson.*;
 import net.minecraft.core.Direction;
 
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -25,6 +26,9 @@ public record GeometryUvMapping(EnumMap<Direction, GeometryUvMappingDetails> uvF
 
             for (Map.Entry<String, JsonElement> face : obj.entrySet()) {
                 final Direction direction = Direction.byName(face.getKey());
+
+                if (direction == null)
+                    throw new JsonParseException("Error while parsing UV values. Expected Direction value: (" + Arrays.toString(Direction.values()) + "), found " + face.getKey());
 
                 uvFaces.put(direction, context.deserialize(face.getValue(), GeometryUvMappingDetails.class));
             }

@@ -47,7 +47,7 @@ public final class RandomIntegerFunction extends MathFunction {
         int valueA = (int)Math.round(this.valueA.get(controllerState));
         Random random;
 
-        if (this.random != null) {
+        if (this.random != null && this.seed != null) {
             this.random.setSeed((long)this.seed.get(controllerState));
             random = this.random;
         }

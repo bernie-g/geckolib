@@ -12,7 +12,7 @@ import software.bernie.geckolib.constant.DataTickets;
 /**
  * Network-compatible {@link DataTicket} implementation
  * <p>
- * Used for sending data from server -> client in an easy manner
+ * Used for sending data from {@code server -> client} in an easy manner
  *
  * @param <D> Data type for this ticket
  */
@@ -58,7 +58,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 		return this.streamCodec;
 	}
 
-	// Pre-defined typings for use
+	// Pre-defined common types for use
 
 	/**
 	 * Generate a new {@code SerializableDataTicket<Double>} for the given id

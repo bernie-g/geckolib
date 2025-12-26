@@ -45,7 +45,7 @@ public final class RandomFunction extends MathFunction {
         double result;
         double valueA = this.valueA.get(controllerState);
 
-        if (this.random != null) {
+        if (this.random != null && this.seed != null) {
             this.random.setSeed((long)this.seed.get(controllerState));
 
             result = this.random.nextDouble();

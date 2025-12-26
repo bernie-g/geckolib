@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Container class holding all of the common information relevant for a single render pass in GeckoLib.
+ * Container class holding all the common information relevant for a single render pass in GeckoLib.
  * <p>
  * {@link GeoRenderer} builds an instance of this at the start of a render pass, and uses it until completion, then discards it.
  * <p>
  * This allows for a significant aggregation of the various objects passed to render methods, as well as
  * allowing extensibility where it may be wanted
  * <p>
- * This should hopefully make it easier to organise and manage data for rendering for end-users
+ * This should hopefully make it easier to organize and manage data for rendering for end-users
  * <p>
  * <b><u>NOTE:</u></b> All objects contained by this instance should be considered functionally immutable.
  *
@@ -122,7 +122,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
     }
 
     /**
-     * @return The packed (ARGB) colour/tint value for this render pass
+     * @return The packed (ARGB) color/tint value for this render pass
      */
     public int renderColor() {
     	return this.renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, 0xFFFFFFFF);

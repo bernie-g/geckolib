@@ -48,7 +48,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	protected float scaleHeight = 1;
 
     /**
-     * Creates a new defaulted renderer instance, using the blockentity's registered id as the file name for its assets
+     * Creates a new defaulted renderer instance, using the BlockEntity's registered id as the file name for its assets
      */
     public GeoBlockRenderer(BlockEntityType<? extends T> blockEntityType) {
         this(new DefaultedBlockGeoModel<>(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType))));

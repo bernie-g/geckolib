@@ -10,7 +10,7 @@ import software.bernie.geckolib.util.JsonUtil;
 /**
  * Container class for locator class information, only used in deserialization at startup
  *
- * @param ignoreInheritedScale An optional boolean to ignore scale values inhereted from the parent bone
+ * @param ignoreInheritedScale An optional boolean to ignore scale values inherited from the parent bone
  * @param offset The x/y/z position of the locator, in model-space
  * @param rotation The x/y/z rotation of the locator, in degrees
  */

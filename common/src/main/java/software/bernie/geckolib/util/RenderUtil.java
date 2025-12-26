@@ -40,7 +40,7 @@ public final class RenderUtil {
     /**
      * Transform a PoseStack to match a bone's render position.
      * <p>
-     * Can only be used inside of a {@link RenderPassInfo#renderPosed} call
+     * Can only be used inside a {@link RenderPassInfo#renderPosed} call
      */
     public static void transformToBone(PoseStack poseStack, GeoBone bone) {
         final List<GeoBone> boneQueue = new ObjectArrayList<>();
@@ -48,8 +48,7 @@ public final class RenderUtil {
 
         boneQueue.add(bone);
 
-        while (parent.parent() != null) {
-            parent = parent.parent();
+        while ((parent = parent.parent()) != null) {
             boneQueue.add(parent);
         }
 
@@ -147,8 +146,8 @@ public final class RenderUtil {
 	}
 
 	/**
-	 * If a {@link GeoCube} is a 2d plane the {@link GeoQuad Quad's}
-	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks
+	 * If a {@link GeoCube} is a 2d plane and the {@link GeoQuad Quad's} normal is inverted on an intersecting plane,
+     * it can cause issues with shaders and other lighting tasks
 	 * <p>
 	 * This performs a pseudo-ABS function to help resolve some of those issues
 	 */
@@ -217,6 +216,7 @@ public final class RenderUtil {
      * @return The {@code GeoArmorRenderer} instance, or null if not applicable
      * @see #getGeckoLibArmorRenderer(ItemStack, EquipmentSlot)
      */
+    @SuppressWarnings({"DataFlowIssue", "ConstantValue"})
     public static @Nullable GeoArmorRenderer<?, ?> getGeckoLibArmorRenderer(Item item) {
         final ItemStack stack = item.getDefaultInstance();
         final Equippable equippable = stack.getOrDefault(DataComponents.EQUIPPABLE, null);

@@ -24,7 +24,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import java.util.function.Consumer;
 
 /**
- * SpecialModelRenderer instance to faciliate rendering GeckoLib items using the vanilla special renderer system
+ * SpecialModelRenderer instance to facilitate rendering GeckoLib items using the vanilla special renderer system
  *
  * @param <T> Item animatable class type
  */

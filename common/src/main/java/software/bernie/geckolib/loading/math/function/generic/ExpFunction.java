@@ -10,7 +10,7 @@ import software.bernie.geckolib.loading.math.function.MathFunction;
  * <p>
  * <b>Contract:</b>
  * <br>
- * Returns euler's number raised to the power of the input value
+ * Returns Euler's number raised to the power of the input value
  */
 public final class ExpFunction extends MathFunction {
     private final MathValue value;

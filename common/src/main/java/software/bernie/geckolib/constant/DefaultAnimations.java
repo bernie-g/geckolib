@@ -64,7 +64,7 @@ public final class DefaultAnimations {
     /**
      * An AnimationController that does nothing, to be used for handling triggered animations that don't need to be on any other controller
      * <p>
-     * This should <b><u>only</u></b> be used where you need a controller for some triggered animations, but don't want them to interfere with any other animations
+     * This should <b><u>only</u></b> be used where you need a controller for some triggered animations but don't want them to interfere with any other animations
      */
     public static <T extends GeoAnimatable> AnimationController<T> triggerOnlyController() {
         return new AnimationController<>("Actions", test -> PlayState.STOP);
@@ -149,7 +149,7 @@ public final class DefaultAnimations {
 	 * <p>
 	 * Resets the animation each time it stops, ready for the next swing
 	 *
-	 * @param attackAnimation The attack animation to play (E.G. swipe, strike, stomp, swing, etc)
+	 * @param attackAnimation The attack animation to play (E.G., swipe, strike, stomp, swing, etc.)
 	 * @return A new {@link AnimationController} instance to use
 	 */
 	public static <T extends LivingEntity & GeoAnimatable> AnimationController<T> genericAttackAnimation(RawAnimation attackAnimation) {

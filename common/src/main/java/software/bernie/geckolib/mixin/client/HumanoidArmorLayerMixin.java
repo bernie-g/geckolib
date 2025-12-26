@@ -22,7 +22,7 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
     }
 
     /**
-     * Injection into the render point for armour on HumanoidModels (Players, Zombies, etc) to defer to GeckoLib item-armor rendering as applicable
+     * Injection into the render point for armor on HumanoidModels (Players, Zombies, etc.) to defer to GeckoLib item-armor rendering as applicable
      * <p>
      * Does nothing if GeckoLib has nothing to handle for the given arguments
      */

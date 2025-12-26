@@ -84,7 +84,7 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
     /**
      * Helper method for {@link AnimationController#setAnimationSpeed}
      *
-     * @param speed The speed modifier for the controller (2 = twice as fast, 0.5 = half as fast, etc)
+     * @param speed The speed modifier for the controller (2 = twice as fast, 0.5 = half as fast, etc.)
      */
     public void setControllerSpeed(float speed) {
         this.controller.setAnimationSpeed(speed);

@@ -230,7 +230,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      * @param renderState The GeoRenderState for this render pass. This must be already compiled
      * @param poseStack The PoseStack to render under
      * @param renderTasks The render task collector for the render pass
-     * @param outlineColor The rendering outline colour this render pass should apply (as if glowing)
+     * @param outlineColor The rendering outline color this render pass should apply (as if glowing)
      */
     public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
         renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);

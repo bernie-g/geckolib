@@ -274,7 +274,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      * <p>
      * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
      * <p>
-     * Override this to change the way a model will render (such as translucent models, etc)
+     * Override this to change the way a model will render (such as translucent models, etc.)
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
@@ -300,7 +300,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
         LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
 
         renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : animatable.isInvisible() && animatable.isInvisibleTo(ClientUtil.getClientPlayer()));
+        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : animatable.isInvisible() && (ClientUtil.getClientPlayer() == null || animatable.isInvisibleTo(ClientUtil.getClientPlayer())));
         renderState.addGeckolibData(DataTickets.IS_SHAKING, livingRenderState != null ? livingRenderState.isFullyFrozen : animatable.isFullyFrozen());
         renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : animatable.getPose());
         renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : animatable.getXRot(partialTick));
@@ -422,7 +422,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
      * By default, it is an {@link EntityRenderState}, or a {@link LivingEntityRenderState} if the entity is an instance of {@link LivingEntity}<br>
      * All EntityRenderStates of any kind are automatically {@link GeoRenderState}s
      * <p>
-     * Override this if you want to utilise a different subclass of EntityRenderState
+     * Override this if you want to utilize a different subclass of EntityRenderState
      */
     @SuppressWarnings("unchecked")
     @Override

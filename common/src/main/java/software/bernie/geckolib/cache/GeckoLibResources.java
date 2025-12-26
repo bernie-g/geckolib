@@ -119,7 +119,7 @@ public final class GeckoLibResources {
 	}
 
 	/**
-	 * Provide a {@link Future} for retrieving and baking all animation jsons from the {@link #ANIMATIONS_PATH}
+	 * Provide a {@link Future} for retrieving and baking all animation JSONs from the {@link #ANIMATIONS_PATH}
 	 */
 	private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, ANIMATIONS_PATH.getPath(), GeckoLibResources::bakeAnimations,

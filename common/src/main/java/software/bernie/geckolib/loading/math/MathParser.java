@@ -35,7 +35,7 @@ import java.util.function.ToDoubleFunction;
 import java.util.regex.Pattern;
 
 /**
- * Mathematical expression parser that breaks down String-expressions into tokenised objects that can be used for automated computation.
+ * Mathematical expression parser that breaks down String-expressions into tokenized objects that can be used for automated computation.
  * <p>
  * Original design: <a href="https://github.com/fadookie/particleman/tree/be1ce93c3cbd0f894742e3f41c0c6b23880be046/mclib">McLib - McHorse, Eliot Lash, Hiroku</a>
  * under <a href="https://github.com/fadookie/particleman/blob/be1ce93c3cbd0f894742e3f41c0c6b23880be046/LICENSE-mclib.md">MIT License</a>
@@ -91,7 +91,7 @@ public class MathParser {
     /**
      * Register a new {@link MathFunction} to be handled by GeckoLib for parsing and internal use.
      * <p>
-     * Overrides are supported, but should be avoided unless specifically needed
+     * Overrides are supported but should be avoided unless specifically needed
      *
      * @param name The string representation of the function. This will be the parsed value from input math strings.
      * @param factory The constructor-factory for the given function
@@ -214,7 +214,7 @@ public class MathParser {
     }
 
     /**
-     * Breakdown an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
+     * Break down an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
      */
     public static char[] decomposeExpression(String expression) throws CompoundException {
         if (!EXPRESSION_FORMAT.matcher(expression).matches())

@@ -185,7 +185,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * <p>
      * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
      * <p>
-     * Override this to change the way a model will render (such as translucent models, etc)
+     * Override this to change the way a model will render (such as translucent models, etc.)
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
@@ -199,7 +199,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      *
      * @param animatable The Animatable instance being renderer
      * @param stackAndSlot An object related to the render pass or null if not applicable.
-     *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+     *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      */
     @ApiStatus.OverrideOnly
     @Override
@@ -450,7 +450,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	}
 
     /**
-     * Compile an array of GeckoLib-relevant equipment pieces for the purposes of rendering
+     * Compile an array of GeckoLib-relevant equipment pieces for rendering
      */
     @ApiStatus.Internal
 	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> @Nullable List<StackForRender> getRelevantSlotsForRendering(

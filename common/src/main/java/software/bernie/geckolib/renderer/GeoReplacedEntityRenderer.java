@@ -23,6 +23,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -184,7 +185,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      *
      * @param animatable The Animatable instance being renderer
      * @param replacedEntity An object related to the render pass or null if not applicable.
-     *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+     *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      */
     @ApiStatus.OverrideOnly
     @Override
@@ -200,8 +201,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     @Override
     public int getRenderColor(T animatable, E replacedEntity, float partialTick) {
         int color = GeoRenderer.super.getRenderColor(animatable, replacedEntity, partialTick);
+        Player player = ClientUtil.getClientPlayer();
 
-        if (replacedEntity.isInvisible() && !replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer()))
+        if (replacedEntity.isInvisible() && player != null && !replacedEntity.isInvisibleTo(player))
             color = ARGB.color(Mth.ceil(ARGB.alpha(color) * 38 / 255f), color);
 
         return color;
@@ -244,13 +246,14 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
             return false;
 
         final Minecraft minecraft = Minecraft.getInstance();
-        boolean visibleToClient = !entity.isInvisibleTo(ClientUtil.getClientPlayer());
+        final Player player = ClientUtil.getClientPlayer();
+        boolean visibleToClient = player != null && !entity.isInvisibleTo(player);
         Team entityTeam = entity.getTeam();
 
-        if (entityTeam == null)
+        if (player == null || entityTeam == null)
             return Minecraft.renderNames() && entity != minecraft.getCameraEntity() && visibleToClient && !entity.isVehicle();
 
-        Team playerTeam = ClientUtil.getClientPlayer().getTeam();
+        Team playerTeam = player.getTeam();
 
         return switch (entityTeam.getNameTagVisibility()) {
             case ALWAYS -> visibleToClient;
@@ -286,7 +289,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * <p>
      * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
      * <p>
-     * Override this to change the way a model will render (such as translucent models, etc)
+     * Override this to change the way a model will render (such as translucent models, etc.)
      *
      * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
      */
@@ -312,7 +315,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
 
         renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : replacedEntity.isInvisible() && replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer()));
+        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : replacedEntity.isInvisible() && (ClientUtil.getClientPlayer() == null || replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer())));
         renderState.addGeckolibData(DataTickets.IS_SHAKING, livingRenderState != null ? livingRenderState.isFullyFrozen : replacedEntity.isFullyFrozen());
         renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : replacedEntity.getPose());
         renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : replacedEntity.getXRot(partialTick));
@@ -433,7 +436,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * By default, it is an {@link EntityRenderState}, or a {@link LivingEntityRenderState} if the entity is an instance of {@link LivingEntity}<br>
      * All EntityRenderStates of any kind are automatically {@link GeoRenderState}s
      * <p>
-     * Override this if you want to utilise a different subclass of EntityRenderState
+     * Override this if you want to use a different subclass of EntityRenderState
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -544,7 +547,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         }
 
         renderState.deathTime = entity.deathTime > 0 ? (float)entity.deathTime + partialTick : 0;
-        renderState.isInvisibleToPlayer = renderState.isInvisible && entity.isInvisibleTo(ClientUtil.getClientPlayer());
+        renderState.isInvisibleToPlayer = renderState.isInvisible && (ClientUtil.getClientPlayer() == null || entity.isInvisibleTo(ClientUtil.getClientPlayer()));
     }
 
     /**

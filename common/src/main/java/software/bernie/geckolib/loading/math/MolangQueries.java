@@ -240,7 +240,7 @@ public final class MolangQueries {
 
 	/**
 	 * Holder object representing an animatable about to be rendered, along with some associated helper objects.<br>
-	 * Used in {@link #setActorVariable(String, ToDoubleFunction)}  actor variables} for pre-computing variable values
+	 * Used in {@link #setActorVariable(String, ToDoubleFunction) actor variables} for pre-computing variable values
  	 *
 	 * @param animatable The animatable instance being prepared for render
 	 * @param renderState The {@link GeoRenderState} being built for the render pass
@@ -294,7 +294,7 @@ public final class MolangQueries {
 		});
 		MolangQueries.<Entity>setActorVariable(DISTANCE_FROM_CAMERA, actor -> actor.cameraPos.distanceTo(actor.animatable.position()));
 		MolangQueries.<Entity>setActorVariable(GET_ACTOR_INFO_ID, actor -> actor.animatable.getId());
-		MolangQueries.<Entity>setActorVariable(EQUIPMENT_COUNT, actor -> actor.animatable instanceof EquipmentUser armorable ? Arrays.stream(EquipmentSlot.values()).filter(EquipmentSlot::isArmor).filter(slot -> !armorable.getItemBySlot(slot).isEmpty()).count() : 0);
+		MolangQueries.<Entity>setActorVariable(EQUIPMENT_COUNT, actor -> actor.animatable instanceof EquipmentUser equipmentUser ? Arrays.stream(EquipmentSlot.values()).filter(EquipmentSlot::isArmor).filter(slot -> !equipmentUser.getItemBySlot(slot).isEmpty()).count() : 0);
 		MolangQueries.<Entity>setActorVariable(HAS_COLLISION, actor -> !actor.animatable.noPhysics ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(HAS_GRAVITY, actor -> !actor.animatable.isNoGravity() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(HAS_OWNER, actor -> actor.animatable instanceof OwnableEntity ownable && ownable.getOwnerReference() != null ? 1 : 0);
@@ -314,7 +314,7 @@ public final class MolangQueries {
 		MolangQueries.<Entity>setActorVariable(IS_ON_FIRE, actor -> actor.animatable.isOnFire() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_ON_GROUND, actor -> actor.animatable.onGround() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_RIDING, actor -> actor.animatable.isPassenger() ? 1 : 0);
-		MolangQueries.<Entity>setActorVariable(IS_SADDLED, actor -> actor.animatable instanceof EquipmentUser saddleable && !saddleable.getItemBySlot(EquipmentSlot.SADDLE).isEmpty() ? 1 : 0);
+		MolangQueries.<Entity>setActorVariable(IS_SADDLED, actor -> actor.animatable instanceof EquipmentUser equipmentUser && !equipmentUser.getItemBySlot(EquipmentSlot.SADDLE).isEmpty() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SILENT, actor -> actor.animatable.isSilent() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SNEAKING, actor -> actor.animatable.isCrouching() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SPRINTING, actor -> actor.animatable.isSprinting() ? 1 : 0);

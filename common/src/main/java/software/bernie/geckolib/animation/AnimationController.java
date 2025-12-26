@@ -91,7 +91,7 @@ public class AnimationController<T extends GeoAnimatable> {
      *
      * @param name The name of the controller - should represent what animations it handles
      * @param transitionTicks The amount of time (in <b>ticks</b>) that the controller should take to transition between animations.
-     *                        Lerping is automatically applied where possible
+     *                        Interpolation is automatically applied where possible
      * @param stateHandler The animation state handler responsible for deciding which animations to play
      */
     public AnimationController(String name, int transitionTicks, AnimationStateHandler<T> stateHandler) {
@@ -585,7 +585,7 @@ public class AnimationController<T extends GeoAnimatable> {
                 this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
 
                 return;
-                // TODO evaluate this vs lerping overtime value
+                // TODO evaluate this vs interpolating overtime value
                 //this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
                 //                                            this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
             }

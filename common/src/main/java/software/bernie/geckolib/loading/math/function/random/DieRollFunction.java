@@ -16,8 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * <br>
  * Returns a random value based on the input values:
  * <ul>
- *     <li>Three inputs generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive)</li>
- *     <li>Four inputs generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive), seeded by the fourth input</li>
+ *     <li>Three inputs: Generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive)</li>
+ *     <li>Four inputs: Generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive), seeded by the fourth input</li>
  * </ul>
  */
 public final class DieRollFunction extends MathFunction {

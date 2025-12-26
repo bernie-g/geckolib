@@ -74,7 +74,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
 	 * <p>
 	 * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
 	 * <p>
-	 * Override this to change the way a model will render (such as translucent models, etc)
+	 * Override this to change the way a model will render (such as translucent models, etc.)
 	 *
 	 * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
 	 */
@@ -90,7 +90,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
 	 *
 	 * @param animatable The animatable instance being rendered
 	 * @param relatedObject An object related to the render pass or null if not applicable.
-	 *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+	 *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
