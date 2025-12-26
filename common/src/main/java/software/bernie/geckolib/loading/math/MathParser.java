@@ -111,11 +111,11 @@ public class MathParser {
      * @return A new instance of the MathFunction
      */
     @SuppressWarnings("unchecked")
-    public static <T extends MathFunction> @Nullable T buildFunction(String name, MathValue... values) {
+    public static <T extends MathFunction> Optional<T> buildFunction(String name, MathValue... values) {
         if (!FUNCTION_FACTORIES.containsKey(name))
-            return null;
+            return Optional.empty();
 
-        return (T)FUNCTION_FACTORIES.get(name).create(values);
+        return Optional.of((T)FUNCTION_FACTORIES.get(name).create(values));
     }
 
     /**
@@ -270,7 +270,7 @@ public class MathParser {
     /**
      * Compile a collection of 'symbols' from the given char array representing the expression split into individual characters
      *
-     * @return A list of either string symbols, or a group of pre-compiled arguments of a grouping
+     * @return A list of either string symbols or a group of pre-compiled arguments of a grouping
      * <p>
      * This list is formatted such that each entry is either:
      * <ul>
@@ -368,16 +368,14 @@ public class MathParser {
             Optional<String> prefix = symbols.getFirst().left().filter(left -> left.startsWith("-") || left.startsWith("!") || isFunctionRegistered(left));
             Optional<List<MathValue>> group = symbols.get(1).right();
 
-            if (prefix.isPresent() && group.isPresent())
-                return compileFunction(prefix.get(), group.get());
+            if (prefix.isPresent() && group.isPresent()) {
+                Optional<? extends MathValue> value = compileFunction(prefix.get(), group.get());
+
+                return value.orElseThrow(() -> new CompoundException("Unable to parse function '" + prefix.get() + "' with arguments: " + group.get()));
+            }
         }
 
-        MathValue value = compileValue(symbols);
-
-        if (value != null)
-            return value;
-
-        throw new CompoundException("Unable to parse compiled symbols from expression: " + symbols);
+        return compileValue(symbols).orElseThrow(() -> new CompoundException("Unable to parse compiled symbols from expression: " + symbols));
     }
 
     /**
@@ -386,13 +384,13 @@ public class MathParser {
      * @return A compiled MathValue instance, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    protected static @Nullable MathValue compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+    protected static Optional<? extends MathValue> compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
-        Ternary ternary = compileTernary(symbols);
+        Optional<Ternary> ternary = compileTernary(symbols);
 
-        if (ternary != null)
+        if (ternary.isPresent())
             return ternary;
 
         return compileCalculation(symbols);
@@ -404,13 +402,14 @@ public class MathParser {
      * @return A compiled MathValue value, or null if not applicable
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    protected static @Nullable MathValue compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
+    protected static Optional<MathValue> compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
         if (symbol.right().isPresent())
-            return new Group(symbol.right().get().getFirst());
+            return Optional.of(new Group(symbol.right().get().getFirst()));
 
+        //noinspection NullableProblems
         return symbol.left().map(string -> {
             if (string.startsWith("!"))
-                return new BooleanNegate(compileSingleValue(Either.left(string.substring(1))));
+                return compileSingleValue(Either.left(string.substring(1))).map(BooleanNegate::new).orElse(null);
 
             if (isNumeric(string))
                 return new Constant(Double.parseDouble(string));
@@ -423,19 +422,19 @@ public class MathParser {
             }
 
             if (isFunctionRegistered(string))
-                return compileFunction(string, List.of());
+                return compileFunction(string, List.of()).orElse(null);
 
             return null;
-        }).orElse(null);
+        });
     }
 
     /**
      * Compile a MathValue value instance from the given symbols list, if applicable
      *
-     * @return A compiled {@link Calculation} or {@link VariableAssignment} value, or null if not applicable
+     * @return A compiled {@link Calculation} or {@link VariableAssignment} value, or empty if a calculation is not applicable to the provided symbols
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    protected static @Nullable MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected static Optional<MathValue> compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
         int operatorIndex = -1;
         Operator lastOperator = null;
@@ -452,7 +451,7 @@ public class MathParser {
                 if (!(parseSymbols(symbols.subList(0, i)) instanceof Variable variable))
                     throw new CompoundException("Attempted to assign a value to a non-variable");
 
-                return new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount)));
+                return Optional.of(new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount))));
             }
 
             if (lastOperator == null || !operator.takesPrecedenceOver(lastOperator)) {
@@ -464,20 +463,20 @@ public class MathParser {
             }
         }
 
-        return lastOperator == null ? null : new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount)));
+        return lastOperator == null ? Optional.empty() : Optional.of(new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount))));
     }
 
     /**
      * Compile a {@link Ternary} value instance from the given symbols list, if applicable
      *
-     * @return A compiled Ternary value, or null if not applicable
+     * @return A compiled Ternary value, or empty if a ternary does not apply to the provided symbols
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    protected static @Nullable Ternary compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected static Optional<Ternary> compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
 
         if (symbolCount < 3)
-            return null;
+            return Optional.empty();
 
         Supplier<MathValue> condition = null;
         Supplier<MathValue> ifTrue = null;
@@ -509,9 +508,9 @@ public class MathParser {
         }
 
         if (ternaryState == 0 && condition != null && ifTrue != null && lastColon < symbolCount - 1)
-            return new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(lastColon + 1, symbolCount)));
+            return Optional.of(new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(lastColon + 1, symbolCount))));
 
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -521,26 +520,26 @@ public class MathParser {
      *
      * @param name The name of the function or value
      * @param args The symbols list for the value
-     * @return A compiled MathValue, or null if not applicable
+     * @return A compiled MathValue, or empty if not function is registered by the given name
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
-    protected static @Nullable MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
+    protected static Optional<? extends MathValue> compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
             if (name.length() == 1)
-                return new BooleanNegate(args.getFirst());
+                return Optional.of(new BooleanNegate(args.getFirst()));
 
-            return new BooleanNegate(compileFunction(name.substring(1), args));
+            return compileFunction(name.substring(1), args).map(BooleanNegate::new);
         }
 
         if (name.startsWith("-")) {
             if (name.length() == 1)
-                return new Negative(args.getFirst());
+                return Optional.of(new Negative(args.getFirst()));
 
-            return new Negative(compileFunction(name.substring(1), args));
+            return compileFunction(name.substring(1), args).map(Negative::new);
         }
 
         if (!isFunctionRegistered(name))
-            return null;
+            return Optional.empty();
 
         return buildFunction(name, args.toArray(new MathValue[0]));
     }
@@ -564,7 +563,7 @@ public class MathParser {
     /**
      * Determine if the given string is likely to be an existing or new variable declaration
      * <p>
-     * Functionally this is just a confirmation-by-elimination check, since names don't really have a defined form
+     * Functionally, this is just a confirmation-by-elimination check since names don't really have a defined form
      */
     protected static boolean isLikelyVariable(String string) {
         if (MolangQueries.isExistingVariable(string))
