@@ -24,15 +24,20 @@ import java.util.function.Supplier;
 public interface GeoRenderState {
     /**
      * Add data to the RenderState
+     *
      * @param dataTicket The DataTicket identifying the data
      * @param data The associated data
      */
-    <D> void addGeckolibData(DataTicket<D> dataTicket, D data);
+    default <D> void addGeckolibData(DataTicket<D> dataTicket, D data) {
+        getDataMap().put(dataTicket, data);
+    }
 
     /**
      * @return Whether the RenderState has data associated with the given {@link DataTicket}
      */
-    boolean hasGeckolibData(DataTicket<?> dataTicket);
+    default boolean hasGeckolibData(DataTicket<?> dataTicket) {
+        return getDataMap().containsKey(dataTicket);
+    }
 
     /**
      * Get previously set data on the RenderState by its associated {@link DataTicket}.
@@ -40,7 +45,19 @@ public interface GeoRenderState {
      * @param dataTicket The DataTicket associated with the data
      * @return The data contained on this RenderState, null if the data doesn't exist
      */
-    <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket);
+    default <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
+        Object data = getDataMap().get(dataTicket);
+
+        try {
+            //noinspection unchecked
+            return (D)data;
+        }
+        catch (ClassCastException ex) {
+            GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
+
+            throw ex;
+        }
+    }
 
     /**
      * Get previously set data on the RenderState by its associated {@link DataTicket},
@@ -114,49 +131,6 @@ public interface GeoRenderState {
     record Impl(Map<DataTicket<?>, Object> data) implements GeoRenderState {
         public Impl() {
             this(new Reference2ObjectOpenHashMap<>());
-        }
-
-        @Override
-        public <D> void addGeckolibData(DataTicket<D> dataTicket, D data) {
-            this.data.put(dataTicket, data);
-        }
-
-        @Override
-        public boolean hasGeckolibData(DataTicket<?> dataTicket) {
-            return this.data.containsKey(dataTicket);
-        }
-
-        @Override
-        public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
-            Object data = this.data.get(dataTicket);
-
-            try {
-                //noinspection unchecked
-                return (D)data;
-            }
-            catch (ClassCastException ex) {
-                GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
-
-                throw ex;
-            }
-        }
-
-        @Override
-        public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D defaultValue) {
-            Object data = this.data.get(dataTicket);
-
-            if (data == null)
-                return defaultValue;
-
-            try {
-                //noinspection unchecked
-                return (D)data;
-            }
-            catch (ClassCastException ex) {
-                GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
-
-                return defaultValue;
-            }
         }
 
         @ApiStatus.Internal
