@@ -86,6 +86,10 @@ public final class RenderUtil {
             bone.frameSnapshot.translate(poseStack);
 
         translateAndRotateMatrixForBone(poseStack, bone);
+
+        if (bone.frameSnapshot != null)
+            bone.frameSnapshot.scale(poseStack);
+
         bone.translateAwayFromPivotPoint(poseStack);
 	}
 
