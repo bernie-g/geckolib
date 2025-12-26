@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.cache.model.GeoBone;
@@ -57,7 +58,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      * Returns opaque white by default, multiplied by any inherent vanilla item dye color
      */
     @Override
-    public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
+    public int getRenderColor(T animatable, @Nullable RenderData stackAndSlot, float partialTick) {
         return 0xFFFFFFFF;
     }
 

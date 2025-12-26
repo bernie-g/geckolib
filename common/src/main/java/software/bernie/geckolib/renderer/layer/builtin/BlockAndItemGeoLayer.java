@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
@@ -60,7 +61,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public abstract void addRenderData(T animatable, O relatedObject, R renderState, float partialTick);
+    public abstract void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick);
 
     /**
      * Container for data needed to render an item or block for a bone.
@@ -68,7 +69,7 @@ public abstract class BlockAndItemGeoLayer<T extends GeoAnimatable, O, R extends
      * @param boneName The name of the bone to render the armor piece for
      * @param displayContext The {@link ItemDisplayContext} to use when rendering the item
      * @param retrievalFunction The function to retrieve the {@link ItemStack} or {@link BlockState} to render. You probably need to override
-     * {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} as well
+     * {@link GeoRenderLayer#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} as well
      */
     public record RenderData<R extends GeoRenderState>(String boneName, ItemDisplayContext displayContext, BiFunction<GeoBone, R, Either<ItemStack, BlockState>> retrievalFunction) {}
 

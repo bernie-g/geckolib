@@ -31,7 +31,6 @@ import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
@@ -186,7 +185,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @ApiStatus.OverrideOnly
     @Override
-    public long getInstanceId(T animatable, E replacedEntity) {
+    public long getInstanceId(T animatable, @Nullable E replacedEntity) {
         return replacedEntity.getId();
     }
 
@@ -196,7 +195,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Returns opaque white by default, modified for invisibility in spectator
      */
     @Override
-    public int getRenderColor(T animatable, E replacedEntity, float partialTick) {
+    public int getRenderColor(T animatable, @Nullable E replacedEntity, float partialTick) {
         int color = GeoRenderer.super.getRenderColor(animatable, replacedEntity, partialTick);
 
         if (replacedEntity.isInvisible() && !replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer()))
@@ -213,7 +212,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * white tint when exploding.
      */
     @Override
-    public int getPackedOverlay(T animatable, E replacedEntity, float u, float partialTick) {
+    public int getPackedOverlay(T animatable, @Nullable E replacedEntity, float u, float partialTick) {
         if (!(replacedEntity instanceof LivingEntity entity))
             return OverlayTexture.NO_OVERLAY;
 
@@ -262,7 +261,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Calculate the yaw of the given animatable.
      * <p>
      * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
-     * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
+     * Do that in {@link software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
      */
     protected final float calculateYRot(E entity, float yHeadRot, float partialTick) {
         if (!(entity.getVehicle() instanceof LivingEntity vehicle))
@@ -304,7 +303,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @ApiStatus.Internal
     @Override
-    public final void captureDefaultRenderState(T animatable, E replacedEntity, R renderState, float partialTick) {
+    public final void captureDefaultRenderState(T animatable, @Nullable E replacedEntity, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, replacedEntity, renderState, partialTick);
 
         LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
@@ -434,7 +433,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Override this if you want to utilise a different subclass of EntityRenderState
      */
     @Override
-    public R createRenderState(T animatable, E relatedObject) {
+    public R createRenderState(T animatable, @Nullable E relatedObject) {
         return (R)(relatedObject instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState());
     }
 
@@ -460,7 +459,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Fill the EntityRenderState for the current render pass.
      * <p>
      * You should only be overriding this if you have extended the {@link R renderState} type.<br>
-     * If you're just adding GeckoLib rendering data, you should be using {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
+     * If you're just adding GeckoLib rendering data, you should be using {@link software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
      */
     @ApiStatus.Internal
     @Override
@@ -556,7 +555,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, E entity, R renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, @Nullable E entity, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
     }
 

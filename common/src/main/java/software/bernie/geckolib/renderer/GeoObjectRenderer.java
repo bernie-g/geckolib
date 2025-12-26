@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
@@ -89,7 +88,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
      * Called to create the {@link GeoRenderState} for this render pass
      */
     @Override
-    public R createRenderState(T animatable, O relatedObject) {
+    public R createRenderState(T animatable, @Nullable O relatedObject) {
         return (R)new GeoRenderState.Impl();
     }
 

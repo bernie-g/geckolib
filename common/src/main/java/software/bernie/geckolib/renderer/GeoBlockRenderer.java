@@ -18,7 +18,6 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.DefaultedBlockGeoModel;
@@ -145,7 +144,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      */
     @ApiStatus.OverrideOnly
     @Override
-    public long getInstanceId(T animatable, Void ignored) {
+    public long getInstanceId(T animatable, @Nullable Void ignored) {
         return animatable.getBlockPos().hashCode();
     }
 
@@ -154,7 +153,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      */
     @ApiStatus.Internal
     @Override
-    public void captureDefaultRenderState(T animatable, Void relatedObject, R renderState, float partialTick) {
+    public void captureDefaultRenderState(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
 
         renderState.addGeckolibData(DataTickets.BLOCKSTATE, animatable.getBlockState());
@@ -243,7 +242,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, Void relatedObject, R renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileBlockRenderState(this, renderState, animatable);
     }
 
@@ -263,7 +262,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     @Deprecated
     @ApiStatus.Internal
     @Override
-    public final R createRenderState(T animatable, Void relatedObject) {
+    public final R createRenderState(T animatable, @Nullable Void relatedObject) {
         return (R)new BlockEntityRenderState();
     }
     //</editor-fold>

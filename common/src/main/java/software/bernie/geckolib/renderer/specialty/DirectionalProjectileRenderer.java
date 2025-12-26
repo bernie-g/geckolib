@@ -49,7 +49,7 @@ public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable,
      * Calculate the yaw of the given animatable.
      * <p>
      * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
-     * Do that in {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
+     * Do that in {@link software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
      */
     @Override
     protected float calculateYRot(T animatable, float yHeadRot, float partialTick) {

@@ -16,7 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
-import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.constant.DataTickets;
@@ -160,7 +159,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     @ApiStatus.Internal
     @Override
-    public long getInstanceId(T animatable, RenderData renderData) {
+    public long getInstanceId(T animatable, @Nullable RenderData renderData) {
         return GeoItem.getId(renderData.itemStack);
     }
 
@@ -169,7 +168,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      */
     @ApiStatus.Internal
     @Override
-    public void captureDefaultRenderState(T animatable, RenderData renderData, GeoRenderState renderState, float partialTick) {
+    public void captureDefaultRenderState(T animatable, @Nullable RenderData renderData, GeoRenderState renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
 
         ItemStack stack = renderData.itemStack;
@@ -242,7 +241,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      * Called to create the {@link GeoRenderState} for this render pass
      */
     @Override
-    public GeoRenderState createRenderState(T animatable, RenderData relatedObject) {
+    public GeoRenderState createRenderState(T animatable, @Nullable RenderData relatedObject) {
         return new GeoRenderState.Impl();
     }
 
@@ -258,7 +257,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, RenderData renderData, GeoRenderState renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, @Nullable RenderData renderData, GeoRenderState renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileItemRenderState(this, renderState, animatable, renderData);
     }
 

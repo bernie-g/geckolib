@@ -54,7 +54,7 @@ public abstract class GeoModel<T extends GeoAnimatable> {
      * @param relatedObject The associated data for the renderer calling this method (E.G. {@link GeoItemRenderer.RenderData})
      * @param renderState The render state being compiled for this render pass
      */
-    public void addAdditionalStateData(T animatable, Object relatedObject, GeoRenderState renderState) {}
+    public void addAdditionalStateData(T animatable, @Nullable Object relatedObject, GeoRenderState renderState) {}
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
 

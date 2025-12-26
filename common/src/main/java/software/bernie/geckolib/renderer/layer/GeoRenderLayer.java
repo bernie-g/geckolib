@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.cache.model.GeoBone;
@@ -78,7 +79,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
 	@ApiStatus.OverrideOnly
-	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
+	public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {}
 
 	/**
 	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRenderPass} has been called

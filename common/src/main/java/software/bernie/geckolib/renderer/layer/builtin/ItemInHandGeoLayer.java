@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ShieldItem;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.cache.model.GeoBone;
@@ -100,7 +101,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @Override
-    public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
+    public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
         EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());

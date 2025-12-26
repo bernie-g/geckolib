@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -141,7 +142,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
 	 */
 	@Override
-	public void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {
+	public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
 		final EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
 
         collectArmorData(renderState, animatable, partialTick, equipment);
@@ -257,7 +258,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	/**
-	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link #addRenderData(T, O, R, float)}
+	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link GeoRenderLayer#addRenderData(GeoAnimatable, Object, GeoRenderState, float)}
 	 */
 	protected ItemStack getEquipmentStack(RenderPassInfo<R> renderPassInfo, GeoBone bone, EquipmentSlot slot) {
 		return (ItemStack)renderPassInfo.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).getOrDefault(slot, ItemStack.EMPTY);

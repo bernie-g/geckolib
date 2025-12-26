@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationProcessor;
@@ -48,7 +49,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * <p>
      * Returns opaque white by default
      */
-    int getRenderColor(T animatable, O relatedObject, float partialTick);
+    int getRenderColor(T animatable, @Nullable O relatedObject, float partialTick);
 
     /**
      * Gets a packed overlay coordinate pair for rendering
@@ -57,7 +58,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
      * white tint when exploding.
      */
-    int getPackedOverlay(T animatable, O relatedObject, float u, float partialTick);
+    int getPackedOverlay(T animatable, @Nullable O relatedObject, float u, float partialTick);
 
     /**
      * Gets the id that represents the current animatable's instance for animation purposes.
@@ -67,7 +68,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
      */
     @ApiStatus.OverrideOnly
-    default long getInstanceId(T animatable, O relatedObject) {
+    default long getInstanceId(T animatable, @Nullable O relatedObject) {
         return animatable.hashCode();
     }
 
@@ -82,7 +83,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * Internal method for capturing the common RenderState data for all animatable objects
      */
     @ApiStatus.Internal
-    default void captureDefaultRenderState(T animatable, O relatedObject, R renderState, float partialTick) {
+    default void captureDefaultRenderState(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
         long instanceId = getInstanceId(animatable, relatedObject);
 
         renderState.addGeckolibData(DataTickets.TICK, ClientUtil.getCurrentTick());
@@ -98,7 +99,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
     /**
      * Called to create the {@link GeoRenderState} for this render pass
      */
-    R createRenderState(T animatable, O relatedObject);
+    R createRenderState(T animatable, @Nullable O relatedObject);
 
     /**
      * Override to add any custom {@link DataTicket}s you need to capture for rendering.
@@ -113,7 +114,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
     @ApiStatus.OverrideOnly
-    void addRenderData(T animatable, O relatedObject, R renderState, float partialTick);
+    void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick);
 
     /**
      * This method is called once per render-frame for each {@link GeoAnimatable} being rendered
@@ -121,7 +122,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * Use this method to set custom {@link Variable Variable} values via
      * {@link MathParser#setVariable(String, ToDoubleFunction) MathParser.setVariable}
      */
-    void setMolangQueryValues(T animatable, O relatedObject, R renderState, float partialTick);
+    void setMolangQueryValues(T animatable, @Nullable O relatedObject, R renderState, float partialTick);
 
     /**
      * Create the {@link GeoRenderState} for the upcoming render pass
@@ -130,7 +131,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * Override {@link #addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
      */
     @ApiStatus.NonExtendable
-    default R fillRenderState(T animatable, O relatedObject, R renderState, float partialTick) {
+    default R fillRenderState(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
         captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
         addRenderData(animatable, relatedObject, renderState, partialTick);
         getGeoModel().addAdditionalStateData(animatable, relatedObject, renderState);
@@ -169,7 +170,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
      * Apply the animation modifications from the relevant {@link AnimationController}s for this render pass
      */
     default void applyAnimationControllers(RenderPassInfo<R> renderPassInfo, BoneSnapshots boneSnapshots) {
-        ControllerState[] controllerStates = renderPassInfo.getGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES);
+        ControllerState[] controllerStates = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES, new ControllerState[0]);
 
         for (int i = 0; i < controllerStates.length; i++) {
             AnimationProcessor.createBoneSnapshots(controllerStates[i], boneSnapshots);
@@ -219,7 +220,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
     /**
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
-    void fireCompileRenderStateEvent(T animatable, O relatedObject, R renderState, float partialTick);
+    void fireCompileRenderStateEvent(T animatable, @Nullable O relatedObject, R renderState, float partialTick);
 
     /**
      * Create and fire the relevant {@code Pre-Render} event hook for this renderer

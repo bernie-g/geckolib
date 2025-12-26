@@ -35,7 +35,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
 	 * Returns opaque white by default
 	 */
     @Override
-	default int getRenderColor(T animatable, O relatedObject, float partialTick) {
+	default int getRenderColor(T animatable, @Nullable O relatedObject, float partialTick) {
 		return 0xFFFFFFFF;
 	}
 
@@ -47,7 +47,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
 	 * white tint when exploding.
 	 */
     @Override
-	default int getPackedOverlay(T animatable, O relatedObject, float u, float partialTick) {
+	default int getPackedOverlay(T animatable, @Nullable O relatedObject, float u, float partialTick) {
 		return OverlayTexture.NO_OVERLAY;
 	}
 
@@ -95,7 +95,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	 */
 	@ApiStatus.OverrideOnly
-    default void addRenderData(T animatable, O relatedObject, R renderState, float partialTick) {}
+    default void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {}
 
     /**
      * This method is called once per render-frame for each {@link GeoAnimatable} being rendered
@@ -104,7 +104,7 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
      * {@link MathParser#setVariable(String, ToDoubleFunction) MathParser.setVariable}
      */
     @Override
-    default void setMolangQueryValues(T animatable, O relatedObject, R renderState, float partialTick) {}
+    default void setMolangQueryValues(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {}
 
     /**
      * Initial access point for performing a single render pass; it all begins here.<br>
