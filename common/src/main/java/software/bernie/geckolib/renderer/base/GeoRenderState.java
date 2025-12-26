@@ -12,6 +12,7 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * Duck interface injected into all RenderState-like objects that are relevant for GeckoLib rendering
@@ -53,6 +54,20 @@ public interface GeoRenderState {
         D data = getGeckolibData(dataTicket);
 
         return data != null ? data : defaultValue;
+    }
+
+    /**
+     * Get previously set data on the RenderState by its associated {@link DataTicket},
+     * or a default value if the data does not exist
+     *
+     * @param dataTicket The DataTicket associated with the data
+     * @param defaultValue A supplier for the fallback value if no data has been set for the given DataTicket
+     * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
+     */
+    default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, Supplier<D> defaultValue) {
+        D data = getGeckolibData(dataTicket);
+
+        return data != null ? data : defaultValue.get();
     }
 
     /**
