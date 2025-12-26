@@ -69,8 +69,8 @@ public interface GeoBlockEntity extends GeoAnimatable {
 	 */
 	@ApiStatus.NonExtendable
 	default void triggerAnim(@Nullable String controllerName, String animName) {
-		BlockEntity blockEntity = (BlockEntity)this;
-		Level level = blockEntity.getLevel();
+		final BlockEntity blockEntity = (BlockEntity)this;
+		final Level level = blockEntity.getLevel();
 
 		if (level == null) {
             GeckoLibConstants.LOGGER.error("Attempting to trigger an animation for a BlockEntity too early! Must wait until after the BlockEntity has been set in the world. ({})", blockEntity.getClass());
@@ -79,7 +79,14 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 
 		if (level.isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(0).tryTriggerAnimation(controllerName, animName);
+			AnimatableManager<?> manager = getAnimatableInstanceCache().getManagerForId(0);
+
+			if (controllerName == null) {
+				manager.tryTriggerAnimation(animName);
+			}
+			else {
+				manager.tryTriggerAnimation(controllerName, animName);
+			}
 		}
 		else {
 			GeckoLibServices.NETWORK.triggerBlockEntityAnim(blockEntity.getBlockPos(), (ServerLevel)level, controllerName, animName);

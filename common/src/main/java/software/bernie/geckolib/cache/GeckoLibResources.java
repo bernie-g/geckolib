@@ -14,6 +14,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
@@ -126,7 +127,7 @@ public final class GeckoLibResources {
 	}
 
 	/**
-	 * Provide a {@link Future} for retrieving and baking all geo model jsons from the {@link #MODELS_PATH}
+	 * Provide a {@link Future} for retrieving and baking all geo model JSONs from the {@link #MODELS_PATH}
 	 */
 	private static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, MODELS_PATH.getPath(), GeckoLibResources::bakeModel,
@@ -139,7 +140,7 @@ public final class GeckoLibResources {
 	 * Automatically handles sequentially managed file I/O and parallelized task deployment
 	 */
 	private static <BAKED> CompletableFuture<Map<Identifier, BAKED>> bakeJsonResources(Executor backgroundExecutor, ResourceManager resourceManager, String assetPath,
-																							 BiFunction<Identifier, JsonObject, BAKED> elementFactory, Function<Throwable, BAKED> exceptionalFactory) {
+																							 BiFunction<Identifier, JsonObject, BAKED> elementFactory, Function<Throwable, @Nullable BAKED> exceptionalFactory) {
 		return loadResources(backgroundExecutor, resourceManager, assetPath, "json", GeckoLibResources::readJsonFile)
 				.thenCompose(resources -> {
 					List<CompletableFuture<Pair<Identifier, BAKED>>> tasks = new ObjectArrayList<>(resources.size());

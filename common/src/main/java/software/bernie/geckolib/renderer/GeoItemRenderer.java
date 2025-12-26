@@ -177,7 +177,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
         renderState.addGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderData.renderPerspective);
         renderState.addGeckolibData(DataTickets.IS_ENCHANTED, stack.isEnchanted());
         renderState.addGeckolibData(DataTickets.IS_STACKABLE, stack.isStackable());
-        renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, stack.getUseDuration(ClientUtil.getClientPlayer()));
+        renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, ClientUtil.getClientPlayer() != null ? stack.getUseDuration(ClientUtil.getClientPlayer()) : 72000);
         renderState.addGeckolibData(DataTickets.MAX_DURABILITY, stack.getMaxDamage());
         renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, stack.isDamageableItem() ? stack.getMaxDamage() - stack.getDamageValue() : 1);
     }

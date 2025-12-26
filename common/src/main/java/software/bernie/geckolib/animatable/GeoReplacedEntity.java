@@ -124,7 +124,8 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	default void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {}
 
 	// These methods aren't used for GeoReplacedEntity
-	@ApiStatus.NonExtendable
+	@SuppressWarnings("DataFlowIssue")
+    @ApiStatus.NonExtendable
 	@Override
 	default Object getRenderProvider() {
 		return null;

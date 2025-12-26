@@ -310,7 +310,7 @@ public final class MolangQueries {
 		MolangQueries.<Entity>setActorVariable(IS_IN_WATER, actor -> actor.animatable.isInWater() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_IN_WATER_OR_RAIN, actor -> actor.animatable.isInWaterOrRain() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_LEASHED, actor -> actor.animatable instanceof Leashable leashable && leashable.isLeashed() ? 1 : 0);
-		MolangQueries.<Entity>setActorVariable(IS_MOVING, actor -> actor.renderState.getGeckolibData(DataTickets.IS_MOVING) ? 1 : 0);
+		MolangQueries.<Entity>setActorVariable(IS_MOVING, actor -> actor.renderState.getOrDefaultGeckolibData(DataTickets.IS_MOVING, false) ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_ON_FIRE, actor -> actor.animatable.isOnFire() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_ON_GROUND, actor -> actor.animatable.onGround() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_RIDING, actor -> actor.animatable.isPassenger() ? 1 : 0);
@@ -319,7 +319,7 @@ public final class MolangQueries {
 		MolangQueries.<Entity>setActorVariable(IS_SNEAKING, actor -> actor.animatable.isCrouching() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SPRINTING, actor -> actor.animatable.isSprinting() ? 1 : 0);
 		MolangQueries.<Entity>setActorVariable(IS_SWIMMING, actor -> actor.animatable.isSwimming() ? 1 : 0);
-		MolangQueries.<Entity>setActorVariable(MOVEMENT_DIRECTION, actor -> actor.renderState.getGeckolibData(DataTickets.IS_MOVING) ? Direction.getApproximateNearest(actor.animatable.getDeltaMovement()).get3DDataValue() : 6);
+		MolangQueries.<Entity>setActorVariable(MOVEMENT_DIRECTION, actor -> actor.renderState.getOrDefaultGeckolibData(DataTickets.IS_MOVING, false) ? Direction.getApproximateNearest(actor.animatable.getDeltaMovement()).get3DDataValue() : 6);
 		MolangQueries.<Entity>setActorVariable(RIDER_BODY_X_ROTATION, actor -> actor.animatable.isVehicle() ? actor.animatable.getFirstPassenger() instanceof LivingEntity ? 0 : actor.animatable.getFirstPassenger().getViewXRot(actor.partialTick) : 0);
 		MolangQueries.<Entity>setActorVariable(RIDER_BODY_Y_ROTATION, actor -> actor.animatable.isVehicle() ? actor.animatable.getFirstPassenger() instanceof LivingEntity living ? Mth.lerp(actor.partialTick, living.yBodyRotO, living.yBodyRot) : actor.animatable.getFirstPassenger().getViewYRot(actor.partialTick) : 0);
 		MolangQueries.<Entity>setActorVariable(RIDER_HEAD_X_ROTATION, actor -> actor.animatable.getFirstPassenger() instanceof LivingEntity living ? living.getViewXRot(actor.partialTick) : 0);

@@ -3,6 +3,7 @@ package software.bernie.geckolib.loading.json.raw;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
@@ -28,7 +29,7 @@ public record Cube(@Nullable Double inflate, @Nullable Boolean mirror, double[] 
 			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", null));
 			double[] rotation = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "rotation", null));
 			double[] size = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "size", null));
-			UVUnion uvUnion = GsonHelper.getAsObject(obj, "uv", null, context, UVUnion.class);
+			UVUnion uvUnion = GsonHelper.getAsObject(obj, "uv", new UVUnion(Either.left(new double[]{0, 0})), context, UVUnion.class);
 
 			return new Cube(inflate, mirror, origin, pivot, rotation, size, uvUnion);
 		};

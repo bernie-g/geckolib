@@ -19,7 +19,7 @@ import software.bernie.geckolib.util.JsonUtil;
  * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
  */
 @ApiStatus.Internal
-public record GeometryLocator(Vec3 offset, @Nullable Vec3 rotation) {
+public record GeometryLocator(@Nullable Vec3 offset, @Nullable Vec3 rotation) {
     /**
      * Parse a GeometryLocators instance from raw .json input via {@link Gson}
      */

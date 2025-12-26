@@ -29,6 +29,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayersContainer;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -50,7 +51,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      * Creates a new defaulted renderer instance, using the blockentity's registered id as the file name for its assets
      */
     public GeoBlockRenderer(BlockEntityType<? extends T> blockEntityType) {
-        this(new DefaultedBlockGeoModel<>(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType)));
+        this(new DefaultedBlockGeoModel<>(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType))));
     }
 
 	public GeoBlockRenderer(GeoModel<T> model) {
@@ -76,7 +77,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      * Rotate the {@link PoseStack} based on the determined {@link Direction} the block is facing
      */
     protected void tryRotateByBlockstate(RenderPassInfo<R> renderPassInfo, PoseStack poseStack) {
-        final Direction facing = renderPassInfo.getGeckolibData(DataTickets.BLOCK_FACING);
+        final Direction facing = renderPassInfo.getOrDefaultGeckolibData(DataTickets.BLOCK_FACING, Direction.NORTH);
 
         switch (facing) {
             case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180));
@@ -108,6 +109,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     /**
      * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
      */
+    @SuppressWarnings("UnusedReturnValue")
     public GeoBlockRenderer<T, R> withRenderLayer(Function<? super GeoBlockRenderer<T, R>, GeoRenderLayer<T, Void, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }

@@ -31,7 +31,7 @@ public record Bone(Cube[] cubes, @Nullable Boolean debug,
 				   @Nullable Boolean mirror, String name, @Nullable Boolean neverRender,
 				   @Nullable String parent, double[] pivot, @Nullable PolyMesh polyMesh,
 				   @Nullable Long renderGroupId, double[] rotation,
-				   @Nullable TextureMesh[] textureMeshes) {
+				   TextureMesh @Nullable [] textureMeshes) {
 	public static JsonDeserializer<Bone> deserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			JsonObject obj = json.getAsJsonObject();
@@ -40,7 +40,7 @@ public record Bone(Cube[] cubes, @Nullable Boolean debug,
 			Double inflate = JsonUtil.getOptionalDouble(obj, "inflate");
 			Map<String, LocatorValue> locators = obj.has("locators") ? JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "locators"), context, LocatorValue.class) : null;
 			Boolean mirror = JsonUtil.getOptionalBoolean(obj, "mirror");
-			String name = GsonHelper.getAsString(obj, "name", null);
+			String name = GsonHelper.getAsString(obj, "name");
 			Boolean neverRender = JsonUtil.getOptionalBoolean(obj, "neverRender");
 			String parent = GsonHelper.getAsString(obj, "parent", null);
 			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", null));

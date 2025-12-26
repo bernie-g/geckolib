@@ -24,6 +24,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.spider.Spider;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -186,8 +187,9 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     @Override
     public int getRenderColor(T animatable, @Nullable Void relatedObject, float partialTick) {
         int color = GeoRenderer.super.getRenderColor(animatable, relatedObject, partialTick);
+        Player player = ClientUtil.getClientPlayer();
 
-        if (animatable.isInvisible() && !animatable.isInvisibleTo(ClientUtil.getClientPlayer()))
+        if (animatable.isInvisible() && player != null && !animatable.isInvisibleTo(player))
             color = ARGB.color(Mth.ceil(ARGB.alpha(color) * 38 / 255f), color);
 
         return color;
@@ -230,10 +232,11 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
             return false;
 
         final Minecraft minecraft = Minecraft.getInstance();
-        boolean visibleToClient = !animatable.isInvisibleTo(ClientUtil.getClientPlayer());
+        final Player player = ClientUtil.getClientPlayer();
+        boolean visibleToClient = player != null && !animatable.isInvisibleTo(player);
         Team entityTeam = animatable.getTeam();
 
-        if (entityTeam == null)
+        if (player == null || entityTeam == null)
             return Minecraft.renderNames() && animatable != minecraft.getCameraEntity() && visibleToClient && !animatable.isVehicle();
 
         Team playerTeam = ClientUtil.getClientPlayer().getTeam();

@@ -5,6 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.GeckoLibConstants;
@@ -31,6 +32,11 @@ import software.bernie.geckolib.util.ClientUtil;
 public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements AnimationController.KeyframeEventHandler<A, SoundKeyframeData> {
     @Override
     public void handle(KeyFrameEvent<A, SoundKeyframeData> event) {
+        final Level level = ClientUtil.getLevel();
+
+        if (level == null)
+            return;
+
         String[] segments = event.keyframeData().getSound().split("\\|");
 
         BuiltInRegistries.SOUND_EVENT.get(Identifier.read(segments[0]).getOrThrow()).ifPresent(sound -> {
@@ -44,7 +50,7 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
                 SoundSource source = animatableClass.isAssignableFrom(BlockEntity.class) ? SoundSource.BLOCKS :
                                      animatableClass.isAssignableFrom(Enemy.class) ? SoundSource.HOSTILE : SoundSource.NEUTRAL;
 
-                ClientUtil.getLevel().playLocalSound(position.x, position.y, position.z, sound.value(), source, volume, pitch, false);
+                level.playLocalSound(position.x, position.y, position.z, sound.value(), source, volume, pitch, false);
             }
             else {
                 GeckoLibConstants.LOGGER.warn("Found sound keyframe handler, but AnimationState had no position data for animatable: {}", animatableClass.getName());

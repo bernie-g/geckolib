@@ -5,6 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -35,7 +36,9 @@ public record BlockEntityDataSyncPacket<D>(BlockPos pos, SerializableDataTicket<
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            if (ClientUtil.getLevel().getBlockEntity(this.pos) instanceof GeoBlockEntity blockEntity)
+            final Level level = ClientUtil.getLevel();
+
+            if (level != null && level.getBlockEntity(this.pos) instanceof GeoBlockEntity blockEntity)
                 blockEntity.setAnimData(this.dataTicket, this.data);
         });
     }

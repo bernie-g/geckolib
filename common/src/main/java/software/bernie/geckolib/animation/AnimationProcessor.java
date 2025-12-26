@@ -60,12 +60,14 @@ public class AnimationProcessor {
             final Vec3 cameraPos = ClientUtil.getCameraPos();
             final double renderTime = manager.getFirstRenderTick() - tick;
 
-            for (AnimationController<T> controller : controllers) {
-                MolangQueries.Actor<T> actor = new MolangQueries.Actor<>(animatable, renderState, controller, renderTime, partialTick, level, player, cameraPos);
-                ControllerState controllerState = controller.extractControllerState(animatable, renderState, manager, actor, geoModel);
+            if (level != null && player != null) {
+                for (AnimationController<T> controller : controllers) {
+                    MolangQueries.Actor<T> actor = new MolangQueries.Actor<>(animatable, renderState, controller, renderTime, partialTick, level, player, cameraPos);
+                    ControllerState controllerState = controller.extractControllerState(animatable, renderState, manager, actor, geoModel);
 
-                if (controllerState != null)
-                    controllerStates.add(controllerState);
+                    if (controllerState != null)
+                        controllerStates.add(controllerState);
+                }
             }
         }
 

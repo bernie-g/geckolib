@@ -51,7 +51,7 @@ public final class DieRollIntegerFunction extends MathFunction {
         int sum = 0;
         Random random;
 
-        if (this.random != null) {
+        if (this.random != null && this.seed != null) {
             random = this.random;
             random.setSeed((long)this.seed.get(controllerState));
         }
