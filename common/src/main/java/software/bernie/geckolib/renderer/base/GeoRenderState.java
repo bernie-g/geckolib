@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.constant.DataTickets;
@@ -67,7 +68,8 @@ public interface GeoRenderState {
      * @param defaultValue The fallback value if no data has been set for the given DataTicket
      * @return The data contained on this RenderState, or {@code defaultValue} if not present
      */
-    default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D defaultValue) {
+    @Contract("_,null->null;_,!null->!null")
+    default <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         D data = getGeckolibData(dataTicket);
 
         return data != null ? data : defaultValue;
@@ -81,7 +83,7 @@ public interface GeoRenderState {
      * @param defaultValue A supplier for the fallback value if no data has been set for the given DataTicket
      * @return The data contained on this RenderState, or {@code defaultValue} if not present
      */
-    default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, Supplier<D> defaultValue) {
+    default <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, Supplier<@Nullable D> defaultValue) {
         D data = getGeckolibData(dataTicket);
 
         return data != null ? data : defaultValue.get();

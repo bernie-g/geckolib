@@ -16,6 +16,7 @@ import java.util.function.Consumer;
 
 public record BlockEntityDataSyncPacket<D>(BlockPos pos, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
     public static final CustomPacketPayload.Type<BlockEntityDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("blockentity_data_sync"));
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final StreamCodec<RegistryFriendlyByteBuf, BlockEntityDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
         SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
         buf.writeBlockPos(packet.pos);

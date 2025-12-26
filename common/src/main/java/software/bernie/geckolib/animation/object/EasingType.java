@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @FunctionalInterface
 public interface EasingType {
-	final Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
+	Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
 
 	EasingType LINEAR = register("linear", register("none", value -> easeIn(EasingType::linear)));
 	EasingType STEP = register("step", value -> easeIn(step(value)));

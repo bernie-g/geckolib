@@ -25,10 +25,10 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
         if (this.isMutable)
             return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
 
-        if (this.cachedValue.getValue() == Double.MIN_VALUE)
+        if (this.cachedValue.doubleValue() == Double.MIN_VALUE)
             this.cachedValue.setValue(this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState)));
 
-        return this.cachedValue.getValue();
+        return this.cachedValue.doubleValue();
     }
 
     @Override

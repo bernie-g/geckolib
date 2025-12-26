@@ -107,7 +107,7 @@ public final class DefaultAnimations {
 	 * Continuously plays the idle animation
 	 */
 	public static <T extends GeoAnimatable> AnimationController<T> genericIdleController() {
-		return new AnimationController<T>("Idle", test -> test.setAndContinue(IDLE));
+		return new AnimationController<>("Idle", test -> test.setAndContinue(IDLE));
 	}
 
 	/**
@@ -246,8 +246,8 @@ public final class DefaultAnimations {
      */
     public static <R extends GeoRenderState> void hardcodedHeadRotation(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots, String headBone) {
         snapshots.get(headBone).ifPresent(bone -> {
-            float pitch = renderPassInfo.getGeckolibData(DataTickets.ENTITY_PITCH);
-            float yaw = renderPassInfo.getGeckolibData(DataTickets.ENTITY_YAW);
+            float pitch = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_PITCH, 0f);
+            float yaw = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f);
 
             bone.setRotX(-pitch * Mth.DEG_TO_RAD);
             bone.setRotY(-yaw * Mth.DEG_TO_RAD);

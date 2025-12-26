@@ -28,6 +28,7 @@ import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Internal class for handling the processing of animations and animation-related functionality.
@@ -43,8 +44,9 @@ public class AnimationProcessor {
      * @param animatable The animatable relevant to the upcoming render pass
      * @param renderState The {@link GeoRenderState} being built for the upcoming render pass
      */
+    @SuppressWarnings("unchecked")
     public static <T extends GeoAnimatable> void extractControllerStates(T animatable, GeoRenderState renderState, GeoModel<T> geoModel) {
-        final AnimatableManager<T> manager = renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER);
+        final AnimatableManager<T> manager = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER));
         final Collection<AnimationController<T>> controllers = manager.getAnimationControllers().values();
         final double tick = renderState.getAnimatableAge();
         final List<ControllerState> controllerStates = new ObjectArrayList<>(controllers.size());
@@ -149,11 +151,11 @@ public class AnimationProcessor {
         }
 
         Keyframe fromKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
+        Keyframe toKeyframe;
 
-        if (fromKeyframe == null)
-            return transform == AnimationPoint.Transform.SCALE ? 1 : 0;
+        if (fromKeyframe == null || (toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis)) == null)
+            return transform.defaultValue;
 
-        Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
         double from = fromKeyframe.endValue().get(controllerState);
         double to = toKeyframe.endValue().get(controllerState);
         double delta = fromKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();

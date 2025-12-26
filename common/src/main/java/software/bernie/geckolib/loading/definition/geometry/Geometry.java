@@ -3,7 +3,6 @@ package software.bernie.geckolib.loading.definition.geometry;
 import com.google.gson.*;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
-import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.util.JsonUtil;
 
 /**

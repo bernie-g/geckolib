@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 
 public record SingletonDataSyncPacket<D>(String syncableId, long instanceId, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
     public static final CustomPacketPayload.Type<SingletonDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("singleton_data_sync"));
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final StreamCodec<RegistryFriendlyByteBuf, SingletonDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
         SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
         buf.writeUtf(packet.syncableId);
@@ -36,10 +37,14 @@ public record SingletonDataSyncPacket<D>(String syncableId, long instanceId, Ser
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            GeoAnimatable animatable = SyncedSingletonAnimatableCache.getSyncedAnimatable(this.syncableId);
+            final Player player = ClientUtil.getClientPlayer();
+            final GeoAnimatable animatable;
+
+            if (player == null || (animatable = SyncedSingletonAnimatableCache.getSyncedAnimatable(this.syncableId)) == null)
+                return;
 
             if (animatable instanceof SingletonGeoAnimatable singleton)
-                singleton.setAnimData(ClientUtil.getClientPlayer(), this.instanceId, this.dataTicket, this.data);
+                singleton.setAnimData(player, this.instanceId, this.dataTicket, this.data);
         });
     }
 }

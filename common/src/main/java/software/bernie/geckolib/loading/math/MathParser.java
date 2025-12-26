@@ -98,9 +98,9 @@ public class MathParser {
      */
     public static void registerFunction(String name, MathFunction.Factory<?> factory) {
         if (FUNCTION_FACTORIES.put(name, factory) != null)
-            GeckoLibConstants.LOGGER.log(Level.WARN, "Duplicate registration of MathFunction: '" + name + "'. Ignore if intentional override");
+            GeckoLibConstants.LOGGER.log(Level.WARN, "Duplicate registration of MathFunction: '{}'. Ignore if intentional override", name);
 
-        GeckoLibConstants.LOGGER.log(Level.DEBUG, "Registered MathFunction '" + name + "'");
+        GeckoLibConstants.LOGGER.log(Level.DEBUG, "Registered MathFunction '{}'", name);
     }
 
     /**
@@ -110,6 +110,7 @@ public class MathParser {
      * @param values The input values for the function
      * @return A new instance of the MathFunction
      */
+    @SuppressWarnings("unchecked")
     public static <T extends MathFunction> @Nullable T buildFunction(String name, MathValue... values) {
         if (!FUNCTION_FACTORIES.containsKey(name))
             return null;

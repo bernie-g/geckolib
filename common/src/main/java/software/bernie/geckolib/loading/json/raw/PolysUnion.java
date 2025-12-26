@@ -49,6 +49,6 @@ public record PolysUnion(double[][][] union, @Nullable Type type) {
 
 	public enum Type {
 		@SerializedName(value = "quad_list") QUAD,
-		@SerializedName(value = "tri_list") TRI;
+		@SerializedName(value = "tri_list") TRI
 	}
 }

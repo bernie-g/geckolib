@@ -78,9 +78,6 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 		if (relatedEntity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(relatedEntity.getId());
 
-			if (animatableManager == null)
-				return;
-
 			if (controllerName != null) {
 				animatableManager.tryTriggerAnimation(controllerName, animName);
 			}
@@ -108,9 +105,6 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 	default void stopTriggeredAnim(Entity relatedEntity, @Nullable String controllerName, @Nullable String animName) {
 		if (relatedEntity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(relatedEntity.getId());
-
-			if (animatableManager == null)
-				return;
 
 			if (controllerName != null) {
 				animatableManager.stopTriggeredAnimation(controllerName, animName);

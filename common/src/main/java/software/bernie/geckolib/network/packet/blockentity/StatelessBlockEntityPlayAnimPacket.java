@@ -5,6 +5,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
@@ -30,7 +31,9 @@ public record StatelessBlockEntityPlayAnimPacket(BlockPos blockPos, RawAnimation
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            if (ClientUtil.getLevel().getBlockEntity(this.blockPos) instanceof GeoBlockEntity blockEntity && blockEntity instanceof StatelessGeoBlockEntity statelessAnimatable)
+            final Level level = ClientUtil.getLevel();
+
+            if (level != null && level.getBlockEntity(this.blockPos) instanceof GeoBlockEntity blockEntity && blockEntity instanceof StatelessGeoBlockEntity statelessAnimatable)
                 statelessAnimatable.handleClientAnimationPlay(blockEntity, 0, this.animation);
         });
     }

@@ -146,7 +146,8 @@ public final class GeckoLibResources {
 
 					resources.forEach(pair -> tasks.add(CompletableFuture.supplyAsync(() -> Pair.of(stripPrefixAndSuffix(pair.left()), elementFactory.apply(pair.left(), pair.right())), backgroundExecutor)
 																.exceptionally(ex -> {
-																	ex.printStackTrace();
+                                                                    //noinspection CallToPrintStackTrace
+                                                                    ex.printStackTrace();
 
 																	return Pair.of(pair.left(), exceptionalFactory.apply(ex));
 																})));

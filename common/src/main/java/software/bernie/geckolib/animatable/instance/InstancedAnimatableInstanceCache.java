@@ -12,7 +12,7 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
  * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
  */
 public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
-	protected Supplier<AnimatableManager<?>> manager = Suppliers.memoize(() -> new AnimatableManager<>(this.animatable));
+	protected final Supplier<AnimatableManager<?>> manager = Suppliers.memoize(() -> new AnimatableManager<>(this.animatable));
 
 	public InstancedAnimatableInstanceCache(GeoAnimatable animatable) {
 		super(animatable);

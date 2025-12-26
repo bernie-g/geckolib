@@ -1,5 +1,6 @@
 package software.bernie.geckolib.animation.state;
 
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
@@ -103,7 +104,7 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
      * Use {@link #hasData(DataTicket)} if unsure
      *
      * @param dataTicket The DataTicket associated with the data
-     * @return The data contained on this RenderState, null if the data is set to null, or an exception if the data doesn't exist
+     * @return The data contained on this RenderState, null if the data doesn't exist
      */
     public <D> @Nullable D getData(DataTicket<D> dataTicket) {
         return this.renderState.getGeckolibData(dataTicket);
@@ -115,8 +116,9 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
      *
      * @param dataTicket The DataTicket associated with the data
      * @param defaultValue The fallback value if no data has been set for the given DataTicket
-     * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
+     * @return The data contained on this RenderState or {@code defaultValue} if not present
      */
+    @Contract("_,null->null;_,!null->!null")
     public <D> @Nullable D getDataOrDefault(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         D data = getData(dataTicket);
 

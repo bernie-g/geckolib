@@ -32,6 +32,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
      * Injection mixin to allow for capture of data for {@link GeoRenderState}s for {@link GeoArmorRenderer}s,
      * given that they never normally receive the entity context
      */
+    @SuppressWarnings({"ConstantValue", "rawtypes", "unchecked"})
     @WrapMethod(method = "createRenderState(Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;")
     public S geckolib$captureDataForArmorLayer(T entity, float partialTick, Operation<S> original) {
         S renderState = original.call(entity, partialTick);
@@ -54,6 +55,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
     /**
      * Sugar method for blind-casting RenderStates to GeckoLib-supported generic types
      */
+    @SuppressWarnings("unchecked")
     @Unique
     private static <R extends HumanoidRenderState & GeoRenderState> R geckolib$castRenderState(EntityRenderState renderState) {
         return (R)renderState;

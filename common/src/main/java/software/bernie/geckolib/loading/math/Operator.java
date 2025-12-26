@@ -21,7 +21,7 @@ public record Operator(String symbol, int precedence, Operation operation) imple
     private static final CharSet OPERATOR_SYMBOLS = Util.make(new CharOpenHashSet(15), set -> set.addAll(Arrays.asList('?', ':', ',')));
     private static int LONGEST_OPERATOR;
 
-    public static final Operator ADD = register("+", 1, (a, b) -> a + b);
+    public static final Operator ADD = register("+", 1, Double::sum);
     public static final Operator SUB = register("-", 1, (a, b) -> a - b);
     public static final Operator MUL = register("*", 2, (a, b) -> a * b);
     public static final Operator DIV = register("/", 2, (a, b) -> b == 0 ? a : a / b);

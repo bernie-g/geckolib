@@ -181,7 +181,8 @@ public final class MolangQueries {
 	 * @param <T> The animatable type your variable operates on
 	 * @param valueFunction The function that generates the variable value based on the animatable and render state
 	 */
-	public static <T> void setActorVariable(String name, ToDoubleFunction<Actor<T>> valueFunction) {
+	@SuppressWarnings({"rawtypes", "unchecked"})
+    public static <T> void setActorVariable(String name, ToDoubleFunction<Actor<T>> valueFunction) {
 		Variable variable = getVariableFor(name);
 
 		ACTOR_VARIABLES.put(variable, (ToDoubleFunction)valueFunction);

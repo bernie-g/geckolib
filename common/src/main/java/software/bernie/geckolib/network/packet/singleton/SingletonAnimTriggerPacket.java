@@ -37,8 +37,12 @@ public record SingletonAnimTriggerPacket(String syncableId, long instanceId, Opt
             if (animatable != null) {
                 AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
 
-                if (animatableManager != null)
-                    animatableManager.tryTriggerAnimation(this.controllerName.orElse(null), this.animName);
+                if (this.controllerName.isPresent()) {
+                    animatableManager.tryTriggerAnimation(this.controllerName.get(), this.animName);
+                }
+                else {
+                    animatableManager.tryTriggerAnimation(this.animName);
+                }
             }
         });
     }

@@ -31,7 +31,9 @@ public record Variable(String name, AtomicReference<ToDoubleFunction<ControllerS
             return this.value.get().applyAsDouble(controllerState);
         }
         catch (Exception ex) {
-            GeckoLibConstants.LOGGER.error("Attempted to use Molang variable for incompatible animatable type (" + this.name + "). An animation json needs to be fixed", ex.getMessage());
+            GeckoLibConstants.LOGGER.error("Attempted to use Molang variable for incompatible animatable type ({}). An animation json needs to be fixed", this.name);
+            //noinspection CallToPrintStackTrace
+            ex.printStackTrace();
 
             return 0;
         }

@@ -222,15 +222,17 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     }
 
     public enum Transform {
-        SCALE(0, BoneAnimation::scaleKeyFrames),
-        ROTATION(1, BoneAnimation::rotationKeyFrames),
-        TRANSLATION(2, BoneAnimation::positionKeyFrames);
+        SCALE(0, 1f, BoneAnimation::scaleKeyFrames),
+        ROTATION(1, 0f, BoneAnimation::rotationKeyFrames),
+        TRANSLATION(2, 0f, BoneAnimation::positionKeyFrames);
 
         public final int index;
+        public final float defaultValue;
         public final Function<BoneAnimation, KeyframeStack> stackFunction;
 
-        Transform(int index, Function<BoneAnimation, KeyframeStack> stackFunction) {
+        Transform(int index, float defaultValue, Function<BoneAnimation, KeyframeStack> stackFunction) {
             this.index = index;
+            this.defaultValue = defaultValue;
             this.stackFunction = stackFunction;
         }
 

@@ -7,6 +7,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.cache.model.GeoQuad;
 import software.bernie.geckolib.util.RenderUtil;
@@ -19,7 +20,7 @@ import software.bernie.geckolib.util.RenderUtil;
  * @param rotation The baked rotation value of this cube
  * @param size The x/y/z dimensions of this cube
  */
-public record GeoCube(GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
+public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
     /**
      * Submit this cuboid's quads to the vertex consumer
      */

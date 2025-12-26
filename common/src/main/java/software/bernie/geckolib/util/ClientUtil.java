@@ -2,11 +2,13 @@ package software.bernie.geckolib.util;
 
 import com.mojang.blaze3d.Blaze3D;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.MoonPhase;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Helper class for segregating client-side code
@@ -15,14 +17,14 @@ public final class ClientUtil {
 	/**
 	 * Get the player on the client
 	 */
-	public static Player getClientPlayer() {
+	public static @Nullable Player getClientPlayer() {
 		return Minecraft.getInstance().player;
 	}
 
 	/**
 	 * Gets the current level on the client
 	 */
-	public static Level getLevel() {
+	public static @Nullable Level getLevel() {
 		return Minecraft.getInstance().level;
 	}
 
@@ -30,7 +32,9 @@ public final class ClientUtil {
 	 * Whether the local (client) player has a cape
 	 */
 	public static boolean clientPlayerHasCape() {
-		return Minecraft.getInstance().player.getSkin().cape() != null;
+		final LocalPlayer player = Minecraft.getInstance().player;
+
+		return player != null && player.getSkin().cape() != null;
 	}
 
 	/**

@@ -18,6 +18,8 @@ import java.util.function.ToDoubleFunction;
 public interface MathValue extends ToDoubleFunction<ControllerState> {
     /**
      * Get computed or stored value based on the current AnimationState
+     * <p>
+     * If this MathValue uses the {@code controllerState}, it should return {@code true} from {@link #isMutable()}
      */
     double get(ControllerState controllerState);
 
@@ -47,7 +49,7 @@ public interface MathValue extends ToDoubleFunction<ControllerState> {
      * Only used internally when building the MathValue instance
      */
     @ApiStatus.Internal
-    public static Set<Variable> collectUsedVariables(MathValue... values) {
+    static Set<Variable> collectUsedVariables(MathValue... values) {
         if (values.length == 0)
             return Set.of();
 

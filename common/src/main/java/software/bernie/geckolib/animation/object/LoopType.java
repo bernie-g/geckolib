@@ -2,6 +2,7 @@ package software.bernie.geckolib.animation.object;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.state.AnimationPoint;
@@ -61,7 +62,7 @@ public interface LoopType {
      * @param json The {@code loop} {@link JsonElement} to attempt to parse
      * @return A usable LoopType instance
      */
-    static LoopType fromJson(JsonElement json) {
+    static LoopType fromJson(@Nullable JsonElement json) {
         if (json == null || !json.isJsonPrimitive())
             return PLAY_ONCE;
 

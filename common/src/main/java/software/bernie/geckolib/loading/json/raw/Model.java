@@ -1,6 +1,5 @@
 package software.bernie.geckolib.loading.json.raw;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;

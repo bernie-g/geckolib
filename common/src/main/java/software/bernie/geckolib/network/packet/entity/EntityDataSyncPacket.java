@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 
 public record EntityDataSyncPacket<D>(int entityId, boolean isReplacedEntity, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
     public static final CustomPacketPayload.Type<EntityDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("entity_data_sync"));
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static final StreamCodec<RegistryFriendlyByteBuf, EntityDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
         SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
         buf.writeVarInt(packet.entityId);

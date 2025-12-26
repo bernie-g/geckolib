@@ -23,6 +23,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Built-in GeoLayer for rendering the item in a {@link LivingEntity}'s hands.
@@ -58,7 +59,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      */
     @Override
     protected List<RenderData<R>> getRelevantBones(R renderState, BakedGeoModel model) {
-        boolean isLeftHanded = renderState.getGeckolibData(DataTickets.IS_LEFT_HANDED).booleanValue();
+        boolean isLeftHanded = renderState.getOrDefaultGeckolibData(DataTickets.IS_LEFT_HANDED, false);
 
         return List.of(
                 renderDataForHand(this.rightHandBone, HumanoidArm.RIGHT, isLeftHanded, renderState),
@@ -100,10 +101,12 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
      * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
      * @param partialTick The fraction of a tick that has elapsed as of the current render pass
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
-        EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
+        EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, (Supplier<EnumMap>)() -> new EnumMap<>(EquipmentSlot.class));
 
+        //noinspection DataFlowIssue
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());
         equipment.put(EquipmentSlot.OFFHAND, animatable.getOffhandItem());
 

@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animatable.instance;
 
 import com.google.common.base.Suppliers;
+import net.minecraft.world.item.ItemStack;
 import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
@@ -31,14 +32,14 @@ public abstract class AnimatableInstanceCache {
 
 			singleton.createGeoRenderer(consumer::setValue);
 
-			return consumer.getValue();
+			return consumer.get();
 		});
 	}
 
 	/**
 	 * This creates or gets the cached animatable manager for any unique ID
 	 * <p>
-	 * For itemstacks, this is typically a reserved ID provided by GeckoLib. {@code Entities} and {@code BlockEntities}
+	 * For {@link ItemStack}s, this is typically a reserved ID provided by GeckoLib. {@code Entities} and {@code BlockEntities}
 	 * pass their position or int ID. They typically only have one {@link AnimatableManager} per cache anyway
 	 *
 	 * @param uniqueId A unique ID. For every ID the same animation manager

@@ -71,9 +71,6 @@ public interface GeoEntity extends GeoAnimatable {
 		if (entity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
 
-			if (animatableManager == null)
-				return;
-
 			if (controllerName != null) {
 				animatableManager.tryTriggerAnimation(controllerName, animName);
 			}
@@ -102,9 +99,6 @@ public interface GeoEntity extends GeoAnimatable {
 
 		if (entity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
-
-			if (animatableManager == null)
-				return;
 
 			if (controllerName != null) {
 				animatableManager.stopTriggeredAnimation(controllerName, animName);

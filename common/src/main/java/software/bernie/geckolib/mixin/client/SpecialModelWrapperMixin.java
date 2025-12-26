@@ -20,8 +20,9 @@ public class SpecialModelWrapperMixin {
     /**
      * Expand the data points available for GeckoLib item rendering, since vanilla ignores most of it
      */
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @WrapOperation(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/special/SpecialModelRenderer;extractArgument(Lnet/minecraft/world/item/ItemStack;)Ljava/lang/Object;"))
-    public <T> T geckolib$extractAllArguments(SpecialModelRenderer<T> instance, ItemStack itemStack, Operation<T> original,
+    public <T> @Nullable T geckolib$extractAllArguments(SpecialModelRenderer<T> instance, ItemStack itemStack, Operation<T> original,
                                               ItemStackRenderState renderState, ItemStack itemStack2, ItemModelResolver modelResolver,
                                               ItemDisplayContext displayContext, @Nullable ClientLevel level, @Nullable ItemOwner itemOwner, int layerIndex) {
         return instance instanceof GeckolibItemSpecialRenderer geckolibRenderer ?

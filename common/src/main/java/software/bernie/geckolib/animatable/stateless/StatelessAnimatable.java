@@ -65,10 +65,6 @@ public sealed interface StatelessAnimatable permits StatelessGeoEntity, Stateles
     @ApiStatus.Internal
     default void handleClientAnimationPlay(GeoAnimatable animatable, long animatableId, RawAnimation animation) {
         AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(animatableId);
-
-        if (animatableManager == null)
-            return;
-
         String animKey = animation.getStageCount() == 1 ? animation.getAnimationStages().getFirst().animationName() : animation.toString();
         AnimationController<?> controller = animatableManager.getAnimationControllers().computeIfAbsent(animKey, StatelessAnimationController::new);
 
@@ -79,9 +75,6 @@ public sealed interface StatelessAnimatable permits StatelessGeoEntity, Stateles
     @ApiStatus.Internal
     default void handleClientAnimationStop(GeoAnimatable animatable, long animatableId, String animName) {
         AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(animatableId);
-
-        if (animatableManager == null)
-            return;
 
         if (animatableManager.getAnimationControllers().get(animName) instanceof StatelessAnimationController statelessController)
             statelessController.setCurrentAnimation(null);

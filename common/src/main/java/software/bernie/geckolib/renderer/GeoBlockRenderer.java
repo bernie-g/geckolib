@@ -60,6 +60,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     /**
      * Attempt to extract a direction from the block so that the model can be oriented correctly
      */
+    @SuppressWarnings("unchecked")
     protected Direction getBlockStateDirection(T blockEntity) {
         BlockState blockState = blockEntity.getBlockState();
 
@@ -215,6 +216,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
      * <p>
      * You generally shouldn't need to override or use this
      */
+    @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     @Override
     public R createRenderState() {
@@ -259,6 +261,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     /**
      * @deprecated Unusable because of vanilla implementation. Use {@link #createRenderState()}
      */
+    @SuppressWarnings("unchecked")
     @Deprecated
     @ApiStatus.Internal
     @Override

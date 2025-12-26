@@ -6,6 +6,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -32,9 +33,10 @@ public record StatelessEntityStopAnimPacket(int entityId, boolean isReplacedEnti
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            Entity entity = ClientUtil.getLevel().getEntity(this.entityId);
+            final Level level = ClientUtil.getLevel();
+            final Entity entity;
 
-            if (entity == null)
+            if (level == null || (entity = level.getEntity(this.entityId)) == null)
                 return;
 
             GeoAnimatable animatable = this.isReplacedEntity ?

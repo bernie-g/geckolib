@@ -7,6 +7,7 @@
 * Fixed animations interpolating from previous animations that had already finished
 * Fixed animations not transitioning back to base pose when finishing if transition time is present
 * Fixed animations not rotating properly when animating bones that are rotated by default 
+* Fixed bone scaling not applying
 
 ### API:
 * GeoRenderState#addGeckolibData no longer accepts `null` values
@@ -20,6 +21,8 @@
 * Removed `GeckoLibClient#getGeoModelForItem` as it was unused and unnecessary, use `RenderUtil#getGeckoLibItemRenderer` instead and get the model as needed
 * `GeckoLibServices.Client` was extracted to `GeckoLibClientServices`, because java kept failing to compile for seemingly no reason
 * Created `GeoBone#positionAndRender`, which implements the full render operation for a given bone
+* Added a supplier-based fallback overload for `GeoRenderState#getOrDefaultGeckolibData` for deferred computation
+* Added `SerializableDataTicket#enforceValidTicket`
 
 ### Internal:
 * Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec

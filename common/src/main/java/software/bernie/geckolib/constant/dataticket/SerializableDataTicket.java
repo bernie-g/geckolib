@@ -18,17 +18,27 @@ import software.bernie.geckolib.constant.DataTickets;
  */
 public final class SerializableDataTicket<D> extends DataTicket<D> {
 	public static final StreamCodec<RegistryFriendlyByteBuf, SerializableDataTicket<?>> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.STRING_UTF8,
-			SerializableDataTicket::id,
-            DataTickets::byName);
+			Identifier.STREAM_CODEC,
+			SerializableDataTicket::getRegisteredId,
+            SerializableDataTicket::enforceValidTicket);
 
 	private final StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec;
+	private final Identifier registeredId;
 
-	private SerializableDataTicket(String id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
-		super(id, objectType);
+	private SerializableDataTicket(Identifier id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
+		super(id.toString(), objectType);
 
 		this.streamCodec = streamCodec;
+		this.registeredId = id;
 	}
+
+	/**
+	 * Get the registered ID for this ticket
+	 */
+	public Identifier getRegisteredId() {
+		return this.registeredId;
+	}
+
 	/**
 	 * Create a new network-syncable DataTicket for a given name and object type
 	 * <p>
@@ -36,8 +46,9 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * <p>
 	 * This DataTicket should then be stored statically somewhere and re-used.
 	 */
-	public static <D> SerializableDataTicket<D> create(String id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
-		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id), pair -> DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, streamCodec)));
+	@SuppressWarnings("unchecked")
+    public static <D> SerializableDataTicket<D> create(Identifier id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
+		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id.toString()), pair -> DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, streamCodec)));
 	}
 
 	/**
@@ -55,7 +66,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Double> ofDouble(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), Double.class, ByteBufCodecs.DOUBLE);
+		return SerializableDataTicket.create(id, Double.class, ByteBufCodecs.DOUBLE);
 	}
 
 	/**
@@ -64,7 +75,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Float> ofFloat(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), Float.class, ByteBufCodecs.FLOAT);
+		return SerializableDataTicket.create(id, Float.class, ByteBufCodecs.FLOAT);
 	}
 
 	/**
@@ -73,7 +84,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Boolean> ofBoolean(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), Boolean.class, ByteBufCodecs.BOOL);
+		return SerializableDataTicket.create(id, Boolean.class, ByteBufCodecs.BOOL);
 	}
 
 	/**
@@ -82,7 +93,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Integer> ofInt(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), Integer.class, ByteBufCodecs.INT);
+		return SerializableDataTicket.create(id, Integer.class, ByteBufCodecs.INT);
 	}
 
 	/**
@@ -91,7 +102,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<String> ofString(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), String.class, ByteBufCodecs.STRING_UTF8);
+		return SerializableDataTicket.create(id, String.class, ByteBufCodecs.STRING_UTF8);
 	}
 
 	/**
@@ -100,7 +111,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static <E extends Enum<E>> SerializableDataTicket<E> ofEnum(Identifier id, Class<E> enumClass) {
-		return SerializableDataTicket.create(id.toString(), enumClass, new StreamCodec<>() {
+		return SerializableDataTicket.create(id, enumClass, new StreamCodec<>() {
 			@Override
 			public E decode(RegistryFriendlyByteBuf buf) {
 				return Enum.valueOf(enumClass, buf.readUtf());
@@ -119,7 +130,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<Vec3> ofVec3(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), Vec3.class, ByteBufCodecs.VECTOR3F.map(Vec3::new, Vec3::toVector3f));
+		return SerializableDataTicket.create(id, Vec3.class, ByteBufCodecs.VECTOR3F.map(Vec3::new, Vec3::toVector3f));
 	}
 
 	/**
@@ -128,7 +139,7 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * @param id The unique id of your ticket. Include your modid
 	 */
 	public static SerializableDataTicket<BlockPos> ofBlockPos(Identifier id) {
-		return SerializableDataTicket.create(id.toString(), BlockPos.class, new StreamCodec<>() {
+		return SerializableDataTicket.create(id, BlockPos.class, new StreamCodec<>() {
 			@Override
 			public BlockPos decode(RegistryFriendlyByteBuf buf) {
 				return buf.readBlockPos();
@@ -139,5 +150,17 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 				buf.writeBlockPos(blockPos);
 			}
 		});
+	}
+
+	/**
+	 * Retrieve a SerializableDataTicket by its registered ID, throwing an exception if not found
+	 */
+	public static SerializableDataTicket<?> enforceValidTicket(Identifier name) throws IllegalStateException {
+		final SerializableDataTicket<?> ticket = DataTickets.byName(name);
+
+		if (ticket == null)
+			throw new IllegalStateException("Attempted to retrieve a SerializableDataTicket that does not exist! Likely didn't register the ticket properly: " + name);
+
+		return ticket;
 	}
 }

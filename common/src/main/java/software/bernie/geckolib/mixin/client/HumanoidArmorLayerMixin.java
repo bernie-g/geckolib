@@ -26,6 +26,7 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
      * <p>
      * Does nothing if GeckoLib has nothing to handle for the given arguments
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @WrapWithCondition(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
             at = @At(
                     value = "INVOKE",

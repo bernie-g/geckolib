@@ -87,6 +87,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
     /**
      * Called to create the {@link GeoRenderState} for this render pass
      */
+    @SuppressWarnings("unchecked")
     @Override
     public R createRenderState(T animatable, @Nullable O relatedObject) {
         return (R)new GeoRenderState.Impl();

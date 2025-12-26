@@ -63,7 +63,8 @@ public final class BakedAnimationsAdapter {
 					GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", entry.getKey());
 				}
 
-				ex.printStackTrace();
+                //noinspection CallToPrintStackTrace
+                ex.printStackTrace();
 			}
 		}
 
@@ -99,7 +100,7 @@ public final class BakedAnimationsAdapter {
 		return animations;
 	}
 
-	private static List<DoubleObjectPair<JsonElement>> getKeyframes(JsonElement element) {
+	private static List<DoubleObjectPair<JsonElement>> getKeyframes(@Nullable JsonElement element) {
 		if (element == null)
 			return List.of();
 
@@ -270,7 +271,8 @@ public final class BakedAnimationsAdapter {
 		if (COMPRESSION_CACHE == null || input.isMutable())
 			return input;
 
-		return COMPRESSION_CACHE.computeIfAbsent(input.get(null), Constant::new);
+        //noinspection DataFlowIssue
+        return COMPRESSION_CACHE.computeIfAbsent(input.get(null), Constant::new);
 	}
 
 	private static double calculateAnimationLength(BoneAnimation[] boneAnimations) {

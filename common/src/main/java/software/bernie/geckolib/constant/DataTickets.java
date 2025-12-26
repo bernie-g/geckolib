@@ -3,6 +3,7 @@ package software.bernie.geckolib.constant;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * Additionally handles registration of {@link SerializableDataTicket SerializableDataTickets}
  */
+@SuppressWarnings("rawtypes")
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
 	
@@ -86,8 +88,9 @@ public final class DataTickets {
 	public static final SerializableDataTicket<Boolean> CLOSED = SerializableDataTicket.ofBoolean(GeckoLibConstants.id("closed"));
 	public static final SerializableDataTicket<Direction> DIRECTION = SerializableDataTicket.ofEnum(GeckoLibConstants.id("direction"), Direction.class);
 
-	public static @Nullable SerializableDataTicket<?> byName(String id) {
-		return SERIALIZABLE_TICKETS.getOrDefault(id, null);
+	@SuppressWarnings("DataFlowIssue")
+    public static @Nullable SerializableDataTicket<?> byName(Identifier id) {
+		return SERIALIZABLE_TICKETS.getOrDefault(id.toString(), null);
 	}
 
 	/**
@@ -98,7 +101,7 @@ public final class DataTickets {
 		SerializableDataTicket<?> existingTicket = SERIALIZABLE_TICKETS.putIfAbsent(ticket.id(), ticket);
 
 		if (existingTicket != null)
-			GeckoLibConstants.LOGGER.error("Duplicate SerializableDataTicket registered! This will cause issues. Existing: " + existingTicket.id() + ", New: " + ticket.id());
+            GeckoLibConstants.LOGGER.error("Duplicate SerializableDataTicket registered! This will cause issues. Existing: {}, New: {}", existingTicket.id(), ticket.id());
 
 		return ticket;
 	}

@@ -41,7 +41,7 @@ public record FaceUV(@Nullable String materialInstance, double[] uv, double[] uv
 				return Rotation.values()[(value % 360) / 90];
 			}
 			catch (Exception e) {
-				GeckoLibConstants.LOGGER.error("Invalid Face UV rotation: " + value);
+                GeckoLibConstants.LOGGER.error("Invalid Face UV rotation: {}", value);
 
 				return fromValue(Mth.floor(Math.abs(value) / 90f) * 90);
 			}

@@ -1,5 +1,8 @@
 package software.bernie.geckolib.object;
 
+import org.jspecify.annotations.Nullable;
+
+import java.util.Objects;
 import java.util.function.Function;
 
 /**
@@ -11,13 +14,13 @@ import java.util.function.Function;
  * @param <O> The output object type
  */
 public class DeferredCache<I, O> {
-    private I input;
-    private O output = null;
     private boolean computed = false;
     private final Function<I, O> mappingFunction;
+    private @Nullable I input;
+    private @Nullable O output = null;
 
     public DeferredCache(I input, Function<I, O> mappingFunction) {
-        this.input = input;
+        this.input = Objects.requireNonNull(input);
         this.mappingFunction = mappingFunction;
     }
 
@@ -27,7 +30,7 @@ public class DeferredCache<I, O> {
      * Can only be accessed until the output has been computed
      */
     public I getInput() {
-        if (this.computed)
+        if (this.computed || this.input == null)
             throw new IllegalStateException("Attempting to access input after output of deferred cache has been calculated!");
 
         return this.input;
@@ -39,7 +42,7 @@ public class DeferredCache<I, O> {
      * Can only be accessed once the output has been computed
      */
     public O getOutput() {
-        if (!this.computed)
+        if (!this.computed || this.output == null)
             throw new IllegalStateException("Attempting to access output before it has been calculated!");
 
         return this.output;
@@ -52,7 +55,7 @@ public class DeferredCache<I, O> {
      */
     public O compute() {
         if (!this.computed) {
-            this.output = this.mappingFunction.apply(this.input);
+            this.output = this.mappingFunction.apply(Objects.requireNonNull(this.input));
             this.input = null;
             this.computed = true;
         }

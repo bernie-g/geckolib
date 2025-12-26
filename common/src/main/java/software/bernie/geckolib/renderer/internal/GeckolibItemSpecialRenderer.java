@@ -51,9 +51,14 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
     /**
      * Wrap the {@link #extractArgument(ItemStack)} call to provide all the context available, rather than just what Mojang provides
      */
-    public GeckolibItemSpecialRenderer.RenderData<T> extractArgument(ItemStack itemStack, ItemStackRenderState renderState, ItemDisplayContext context,
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public GeckolibItemSpecialRenderer.@Nullable RenderData<T> extractArgument(ItemStack itemStack, ItemStackRenderState renderState, ItemDisplayContext context,
                                                                      @Nullable ClientLevel level, @Nullable ItemOwner itemOwner) {
-        var item = makeCovariantItem(itemStack.getItem());
+        T item = makeCovariantItem(itemStack.getItem());
+
+        if (item == null)
+            return null;
+
         GeoItemRenderer<T> renderer = (GeoItemRenderer)GeoRenderProvider.of(item).getGeoItemRenderer();
 
         if (renderer == null)
@@ -71,7 +76,8 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
         return extractArgument(itemStack, new ItemStackRenderState(), ItemDisplayContext.FIXED, null, null);
     }
 
-    private T makeCovariantItem(Item item) {
+    @SuppressWarnings("unchecked")
+    private @Nullable T makeCovariantItem(Item item) {
         return item instanceof GeoAnimatable ? (T)item : null;
     }
 

@@ -30,7 +30,8 @@ public class DataTicket<D> {
 	 * <p>
 	 * This DataTicket should then be stored statically somewhere and re-used.
 	 */
-	public static <D> DataTicket<D> create(String id, Class<? extends D> objectType) {
+	@SuppressWarnings("unchecked")
+    public static <D> DataTicket<D> create(String id, Class<? extends D> objectType) {
 		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id), pair -> new DataTicket<>(id, objectType));
 	}
 
