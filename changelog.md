@@ -23,6 +23,7 @@
 
 ### Internal:
 * Moved GeckoLib's nullability annotations to the [JSpecify](https://jspecify.dev) spec
+  * You will find a significant increase in nullability notations and null handling in the library, which should help eliminate confusion as to the state of the code
 * Cleaned up more Javadocs
 * Added a significant amount of additional documentation - specifically in package-info files and parameter type descriptions
 * Renamed RawAnimation#additionalTicks to RawAnimation#waitTicks
