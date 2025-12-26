@@ -41,8 +41,8 @@ public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable,
      */
     @Override
     protected void applyRotations(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, float nativeScale) {
-        poseStack.mulPose(Axis.YP.rotationDegrees(renderPassInfo.getGeckolibData(DataTickets.ENTITY_YAW)));
-        poseStack.mulPose(Axis.XP.rotationDegrees(renderPassInfo.getGeckolibData(DataTickets.ENTITY_PITCH)));
+        poseStack.mulPose(Axis.YP.rotationDegrees(renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f)));
+        poseStack.mulPose(Axis.XP.rotationDegrees(renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_PITCH, 0f)));
     }
 
     /**

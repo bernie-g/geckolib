@@ -68,10 +68,11 @@ import java.util.function.Function;
  * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
  * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
  */
+@SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends EntityRenderState & GeoRenderState> extends GeoRenderLayer<T, O, R> {
 	protected final EquipmentLayerRenderer equipmentRenderer;
 	protected final EquipmentAssetManager equipmentAssets;
-	protected final Function<SkullBlock.Type, SkullModelBase> skullModels;
+	protected final Function<SkullBlock.Type, @Nullable SkullModelBase> skullModels;
     protected final PlayerSkinRenderCache skinCache;
 
 	public ItemArmorGeoLayer(GeoRenderer<T, O, R> geoRenderer, EntityRendererProvider.Context context) {
@@ -303,7 +304,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		HumanoidRenderState humanoidRenderState = new HumanoidRenderState();
         R renderState = renderPassInfo.renderState();
 		Vec3 elytraRotation = renderState.getOrDefaultGeckolibData(DataTickets.ELYTRA_ROTATION, Vec3.ZERO);
-		humanoidRenderState.isCrouching = renderState.getGeckolibData(DataTickets.IS_CROUCHING);
+		humanoidRenderState.isCrouching = renderState.getOrDefaultGeckolibData(DataTickets.IS_CROUCHING, false);
 		humanoidRenderState.elytraRotX = (float)elytraRotation.x;
 		humanoidRenderState.elytraRotY = (float)elytraRotation.y;
 		humanoidRenderState.elytraRotZ = (float)elytraRotation.z;
@@ -332,16 +333,20 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	protected void renderSkullAsArmor(RenderPassInfo<R> renderPassInfo, GeoBone bone, ItemStack stack, AbstractSkullBlock skullBlock, SubmitNodeCollector renderTasks) {
 		SkullBlock.Type type = skullBlock.getType();
 		SkullModelBase model = this.skullModels.apply(type);
-        ResolvableProfile profile = stack.get(DataComponents.PROFILE);
+
+		if (model == null)
+			return;
+
+		ResolvableProfile profile = stack.get(DataComponents.PROFILE);
 		RenderType renderType = profile == null ? PlayerSkinRenderCache.DEFAULT_PLAYER_SKIN_RENDER_TYPE : this.skinCache.getOrDefault(profile).renderType();
-        PoseStack poseStack = renderPassInfo.poseStack();
+		PoseStack poseStack = renderPassInfo.poseStack();
 
 		poseStack.pushPose();
 		RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 		poseStack.scale(1.1875f, 1.1875f, 1.1875f);
 		poseStack.translate(-0.5f, 0, -0.5f);
 
-        SkullBlockRenderer.submitSkull(null, 0, 0, poseStack, renderTasks, renderPassInfo.packedLight(), model, renderType, renderPassInfo.renderState().outlineColor, null);
+		SkullBlockRenderer.submitSkull(null, 0, 0, poseStack, renderTasks, renderPassInfo.packedLight(), model, renderType, renderPassInfo.renderState().outlineColor, null);
 		poseStack.popPose();
 	}
 

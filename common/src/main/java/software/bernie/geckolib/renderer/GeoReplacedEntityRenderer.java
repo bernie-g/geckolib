@@ -29,6 +29,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -112,7 +113,8 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	 * @param renderState The base GeoRenderState to cast
 	 * @return The GeoRenderState cast <i>additively</i> as a LivingEntityRenderState
 	 */
-	protected <S extends LivingEntityRenderState & GeoRenderState> S convertRenderStateToLiving(GeoRenderState renderState) {
+	@SuppressWarnings("unchecked")
+    protected <S extends LivingEntityRenderState & GeoRenderState> S convertRenderStateToLiving(GeoRenderState renderState) {
 		return (S)renderState;
 	}
 
@@ -146,6 +148,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     /**
      * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
      */
+    @SuppressWarnings("UnusedReturnValue")
     public GeoReplacedEntityRenderer<T, E, R> withRenderLayer(Function<? super GeoReplacedEntityRenderer<T, E, R>, GeoRenderLayer<T, E, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
@@ -185,7 +188,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @ApiStatus.OverrideOnly
     @Override
-    public long getInstanceId(T animatable, @Nullable E replacedEntity) {
+    public long getInstanceId(T animatable, @SuppressWarnings("NullableProblems") @NonNull E replacedEntity) {
         return replacedEntity.getId();
     }
 
@@ -195,7 +198,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Returns opaque white by default, modified for invisibility in spectator
      */
     @Override
-    public int getRenderColor(T animatable, @Nullable E replacedEntity, float partialTick) {
+    public int getRenderColor(T animatable, E replacedEntity, float partialTick) {
         int color = GeoRenderer.super.getRenderColor(animatable, replacedEntity, partialTick);
 
         if (replacedEntity.isInvisible() && !replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer()))
@@ -212,7 +215,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * white tint when exploding.
      */
     @Override
-    public int getPackedOverlay(T animatable, @Nullable E replacedEntity, float u, float partialTick) {
+    public int getPackedOverlay(T animatable, E replacedEntity, float u, float partialTick) {
         if (!(replacedEntity instanceof LivingEntity entity))
             return OverlayTexture.NO_OVERLAY;
 
@@ -289,7 +292,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @Override
     public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
-        if (renderState.isInvisible && !renderState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER))
+        if (renderState.isInvisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
             return RenderTypes.itemEntityTranslucentCull(texture);
 
         if (!renderState.isInvisible)
@@ -303,7 +306,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     @ApiStatus.Internal
     @Override
-    public final void captureDefaultRenderState(T animatable, @Nullable E replacedEntity, R renderState, float partialTick) {
+    public final void captureDefaultRenderState(T animatable, E replacedEntity, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, replacedEntity, renderState, partialTick);
 
         LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
@@ -314,7 +317,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : replacedEntity.getPose());
         renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : replacedEntity.getXRot(partialTick));
         renderState.addGeckolibData(DataTickets.ENTITY_YAW, livingRenderState != null ? livingRenderState.yRot : calculateYRot(replacedEntity, 0, partialTick));
-        renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, livingRenderState != null ? livingRenderState.bodyRot : renderState.getGeckolibData(DataTickets.ENTITY_YAW));
+        renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, livingRenderState != null ? livingRenderState.bodyRot : renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
         renderState.addGeckolibData(DataTickets.VELOCITY, replacedEntity.getDeltaMovement());
         renderState.addGeckolibData(DataTickets.BLOCKPOS, replacedEntity.blockPosition());
         renderState.addGeckolibData(DataTickets.SPRINTING, replacedEntity.isSprinting());
@@ -392,9 +395,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      */
     protected void applyRotations(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, float nativeScale) {
         final R renderState = renderPassInfo.renderState();
-        float rotationYaw = renderState.getGeckolibData(DataTickets.ENTITY_BODY_YAW);
+        float rotationYaw = renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_BODY_YAW, 0f);
 
-        if (renderState.getGeckolibData(DataTickets.IS_SHAKING))
+        if (renderState.getOrDefaultGeckolibData(DataTickets.IS_SHAKING, false))
             rotationYaw += (float)(Math.cos(renderState.ageInTicks * 3.25d) * Math.PI * 0.4d);
 
         boolean sleeping = renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING;
@@ -432,8 +435,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * <p>
      * Override this if you want to utilise a different subclass of EntityRenderState
      */
+    @SuppressWarnings("unchecked")
     @Override
-    public R createRenderState(T animatable, @Nullable E relatedObject) {
+    public R createRenderState(T animatable, E relatedObject) {
         return (R)(relatedObject instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState());
     }
 
@@ -555,7 +559,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, @Nullable E entity, R renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, E entity, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
     }
 

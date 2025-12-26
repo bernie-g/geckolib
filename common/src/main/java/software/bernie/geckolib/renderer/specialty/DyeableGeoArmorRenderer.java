@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import org.jspecify.annotations.Nullable;
@@ -14,8 +15,8 @@ import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.BoneSnapshots;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.Set;
@@ -27,7 +28,7 @@ import java.util.Set;
  */
 public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoArmorRenderer<T, R> {
     protected final Set<GeoBone> dyeableBones = new ReferenceOpenHashSet<>();
-    protected BakedGeoModel lastModel = null;
+    protected @Nullable BakedGeoModel lastModel = null;
 
     public DyeableGeoArmorRenderer(GeoModel<T> model) {
         super(model);
@@ -58,7 +59,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
      * Returns opaque white by default, multiplied by any inherent vanilla item dye color
      */
     @Override
-    public int getRenderColor(T animatable, @Nullable RenderData stackAndSlot, float partialTick) {
+    public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
         return 0xFFFFFFFF;
     }
 
@@ -79,9 +80,12 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
             renderPassInfo.addPerBoneRender(bone, (renderPassInfo1, bone1, renderTasks1) -> {
                 final R renderState = renderPassInfo1.renderState();
                 final int renderColor = renderPassInfo1.renderColor();
+                final RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
 
-                renderTasks1.submitCustomGeometry(renderPassInfo1.poseStack(), getRenderType(renderState, getTextureLocation(renderState)), (pose, vertexConsumer) ->
-                        renderDyedBone(renderState, pose, bone1, renderPassInfo1, vertexConsumer, renderColor));
+                if (renderType != null) {
+                    renderTasks1.submitCustomGeometry(renderPassInfo1.poseStack(), renderType, (pose, vertexConsumer) ->
+                            renderDyedBone(renderState, pose, bone1, renderPassInfo1, vertexConsumer, renderColor));
+                }
             });
         }
     }
@@ -94,7 +98,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
 
         poseStack.last().set(pose);
         bone1.render(renderPassInfo1, new PoseStack(), vertexConsumer, renderPassInfo1.packedLight(), renderPassInfo1.packedOverlay(),
-                     ARGB.multiply(renderColor, getColorForBone(renderState, bone1, renderState.getGeckolibData(DataTickets.RENDER_COLOR))));
+                     ARGB.multiply(renderColor, getColorForBone(renderState, bone1, renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, -1))));
     }
 
     /**

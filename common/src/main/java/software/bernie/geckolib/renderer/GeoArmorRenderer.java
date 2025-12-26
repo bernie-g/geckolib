@@ -139,6 +139,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
      */
+    @SuppressWarnings("UnusedReturnValue")
     public GeoArmorRenderer<T, R> withRenderLayer(Function<? super GeoArmorRenderer<T, R>, GeoRenderLayer<T, GeoArmorRenderer.RenderData, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
@@ -175,7 +176,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * Returns opaque white by default, multiplied by any inherent vanilla item dye color
      */
     @Override
-    public int getRenderColor(T animatable, @Nullable RenderData stackAndSlot, float partialTick) {
+    public int getRenderColor(T animatable, @SuppressWarnings("NullableProblems") RenderData stackAndSlot, float partialTick) {
         return GeckoLibClientServices.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
     }
 
@@ -202,7 +203,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      */
     @ApiStatus.OverrideOnly
     @Override
-    public long getInstanceId(T animatable, @Nullable RenderData stackAndSlot) {
+    public long getInstanceId(T animatable, @SuppressWarnings("NullableProblems") RenderData stackAndSlot) {
         long stackId = GeoItem.getId(stackAndSlot.itemStack());
 
         if (stackId == Long.MAX_VALUE) {
@@ -217,9 +218,10 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Internal method for capturing the common RenderState data for all animatable objects
      */
+    
     @ApiStatus.Internal
     @Override
-    public void captureDefaultRenderState(T animatable, @Nullable RenderData renderData, R renderState, float partialTick) {
+    public void captureDefaultRenderState(T animatable, @SuppressWarnings("NullableProblems") RenderData renderData, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
 
         renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
@@ -260,6 +262,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * <p>
      * No manipulation of the RenderState is permitted here
      */
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
         final R renderState = renderPassInfo.renderState();
@@ -311,9 +314,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
             poseStack.last().set(pose);
             renderPassInfo.renderPosed(() -> {
                 for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
-                    renderPassInfo.model().getBone(getBoneNameForSegment(renderState, segment)).ifPresent(bone -> {
-                        bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
-                    });
+                    renderPassInfo.model().getBone(getBoneNameForSegment(renderState, segment))
+                            .ifPresent(bone -> bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor));
                 }
             });
             poseStack.popPose();
@@ -332,7 +334,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
      * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
      */
     @Override
-    public void fireCompileRenderStateEvent(T animatable, @Nullable RenderData relatedObject, R renderState, float partialTick) {
+    public void fireCompileRenderStateEvent(T animatable, @SuppressWarnings("NullableProblems") RenderData relatedObject, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
     }
 
@@ -478,7 +480,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     @ApiStatus.Internal
     @Deprecated
     @Override
-    public R createRenderState(T animatable, @Nullable RenderData relatedObject) {
+    public R createRenderState(T animatable, @SuppressWarnings("NullableProblems") RenderData relatedObject) {
         return (R)new HumanoidRenderState();
     }
 
