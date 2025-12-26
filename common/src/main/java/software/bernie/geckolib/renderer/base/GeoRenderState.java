@@ -48,7 +48,7 @@ public interface GeoRenderState {
      *
      * @param dataTicket The DataTicket associated with the data
      * @param defaultValue The fallback value if no data has been set for the given DataTicket
-     * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
+     * @return The data contained on this RenderState, or {@code defaultValue} if not present
      */
     default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D defaultValue) {
         D data = getGeckolibData(dataTicket);
@@ -62,7 +62,7 @@ public interface GeoRenderState {
      *
      * @param dataTicket The DataTicket associated with the data
      * @param defaultValue A supplier for the fallback value if no data has been set for the given DataTicket
-     * @return The data contained on this RenderState, null if the data is set to null, or {@code defaultValue} if not present
+     * @return The data contained on this RenderState, or {@code defaultValue} if not present
      */
     default <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, Supplier<D> defaultValue) {
         D data = getGeckolibData(dataTicket);
