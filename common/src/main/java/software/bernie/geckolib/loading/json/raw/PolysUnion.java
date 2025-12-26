@@ -39,8 +39,8 @@ public record PolysUnion(double[][][] union, @Nullable Type type) {
 	}
 
 	private static double[][][] makeSizedMatrix(JsonArray array) {
-		JsonArray subArray = array.size() > 0 ? array.get(0).getAsJsonArray() : null;
-		JsonArray subSubArray = subArray != null && subArray.size() > 0 ? subArray.get(0).getAsJsonArray() : null;
+		JsonArray subArray = !array.isEmpty() ? array.get(0).getAsJsonArray() : null;
+		JsonArray subSubArray = subArray != null && !subArray.isEmpty() ? subArray.get(0).getAsJsonArray() : null;
 		int ySize = subArray != null ? subArray.size() : 0;
 		int zSize = subSubArray != null ? subSubArray.size() : 0;
 

@@ -31,6 +31,6 @@ public record Ternary(MathValue condition, MathValue trueValue, MathValue falseV
 
     @Override
     public String toString() {
-        return this.condition.toString() + " ? " + this.trueValue.toString() + " : " + this.falseValue.toString();
+        return this.condition + " ? " + this.trueValue + " : " + this.falseValue;
     }
 }

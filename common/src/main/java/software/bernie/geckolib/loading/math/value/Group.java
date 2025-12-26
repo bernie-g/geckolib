@@ -31,6 +31,6 @@ public record Group(MathValue contents) implements MathValue {
 
     @Override
     public String toString() {
-        return "(" + this.contents.toString() + ")";
+        return "(" + this.contents + ")";
     }
 }

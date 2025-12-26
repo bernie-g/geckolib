@@ -17,7 +17,7 @@ import java.util.Arrays;
 public record EasingState(EasingType easingType, MathValue[] easingArgs, double delta, double fromValue, double toValue) {
 	@Override
 	public String toString() {
-        return "EasingType: " + this.easingType.toString() +
+        return "EasingType: " + this.easingType +
                " | EasingArgs: " + Arrays.toString(this.easingArgs) +
                " | Delta: " + this.delta +
                " | From: " + this.fromValue +

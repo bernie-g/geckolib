@@ -38,6 +38,6 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
 
     @Override
     public String toString() {
-        return this.argA.toString() + " " + this.operator.symbol() + " " + this.argB.toString();
+        return this.argA + " " + this.operator.symbol() + " " + this.argB;
     }
 }

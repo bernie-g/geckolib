@@ -31,6 +31,6 @@ public record BooleanNegate(MathValue value) implements MathValue {
 
     @Override
     public String toString() {
-        return "!" + this.value.toString();
+        return "!" + this.value;
     }
 }

@@ -31,6 +31,7 @@ public interface BoneSnapshots {
     /**
      * Get a {@link GeoBone}'s {@link BoneSnapshot} by the bone itself
      */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     default BoneSnapshot get(GeoBone bone) {
         return bone.frameSnapshot != null ? bone.frameSnapshot : get(bone.name()).get();
     }

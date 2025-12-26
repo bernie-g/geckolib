@@ -11,6 +11,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.model.GeoBone;
@@ -59,7 +60,7 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
     /**
      * Get the render type for the render pass
      */
-    protected RenderType getRenderType(R renderState, Identifier texture) {
+    protected @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         return this.renderer.getRenderType(renderState, texture);
     }
 
@@ -116,21 +117,24 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         int packedLight = renderPassInfo.packedLight();
         int packedOverlay = renderPassInfo.packedOverlay();
         int renderColor = renderPassInfo.renderColor();
+        RenderType renderType = getRenderType(renderState, boneTexture);
 
-        renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), getRenderType(renderState, boneTexture), (pose, buffer) -> {
-            PoseStack poseStack = new PoseStack();
+        if (renderType != null) {
+            renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, buffer) -> {
+                PoseStack poseStack = new PoseStack();
 
-            poseStack.last().set(pose);
-            poseStack.pushPose();
-            RenderUtil.prepMatrixForBone(poseStack, bone);
-            bone.updateBonePositionListeners(poseStack, renderPassInfo);
+                poseStack.last().set(pose);
+                poseStack.pushPose();
+                RenderUtil.prepMatrixForBone(poseStack, bone);
+                bone.updateBonePositionListeners(poseStack, renderPassInfo);
 
-            for (GeoCube cube : ((CuboidGeoBone)bone).cubes) {
-                renderCube(cube, poseStack, buffer, packedLight, packedOverlay, renderColor, widthRatio, heightRatio);
-            }
+                for (GeoCube cube : ((CuboidGeoBone)bone).cubes) {
+                    renderCube(cube, poseStack, buffer, packedLight, packedOverlay, renderColor, widthRatio, heightRatio);
+                }
 
-            poseStack.popPose();
-        });
+                poseStack.popPose();
+            });
+        }
     }
 
     /**

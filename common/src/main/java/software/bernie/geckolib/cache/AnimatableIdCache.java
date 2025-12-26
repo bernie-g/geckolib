@@ -17,7 +17,8 @@ public final class AnimatableIdCache extends SavedData {
 	private static final Codec<AnimatableIdCache> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 			Codec.LONG.fieldOf("last_id").forGetter(cache -> cache.lastId)
 	).apply(builder, AnimatableIdCache::new));
-	public static final SavedDataType<AnimatableIdCache> TYPE = new SavedDataType<>(GeckoLibConstants.MODID + "_id_cache", AnimatableIdCache::new, CODEC, null);
+	@SuppressWarnings("DataFlowIssue")
+    public static final SavedDataType<AnimatableIdCache> TYPE = new SavedDataType<>(GeckoLibConstants.MODID + "_id_cache", AnimatableIdCache::new, CODEC, null);
 
 	private long lastId;
 

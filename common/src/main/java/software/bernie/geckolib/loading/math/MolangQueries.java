@@ -201,7 +201,7 @@ public final class MolangQueries {
 		if (ACTOR_VARIABLES.containsKey(variable))
 			throw new IllegalArgumentException("Cannot replace actor variables");
 
-		variable.set((ToDoubleFunction)valueFunction);
+		variable.set(valueFunction);
 	}
 
 	/**

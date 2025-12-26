@@ -28,6 +28,6 @@ public record VariableAssignment(Variable variable, MathValue value) implements 
 
     @Override
     public String toString() {
-        return this.variable.name() + "=" + this.value.toString();
+        return this.variable.name() + "=" + this.value;
     }
 }

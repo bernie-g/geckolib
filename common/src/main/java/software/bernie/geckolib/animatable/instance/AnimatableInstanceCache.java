@@ -2,6 +2,7 @@ package software.bernie.geckolib.animatable.instance;
 
 import com.google.common.base.Suppliers;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
@@ -57,12 +58,13 @@ public abstract class AnimatableInstanceCache {
 	}
 
 	/**
-	 * Helper method to get a data point from the {@link AnimatableManager#getAnimatableData data collection} for this animatable
+	 * Helper method to get a data point from the {@link AnimatableManager#getAnimatableData data collection} for this animatable,
+	 * or null if the data isn't present
 	 *
 	 * @param uniqueId The unique identifier for this animatable instance
 	 * @param dataTicket The DataTicket for the data
 	 */
-	public <D> D getDataPoint(long uniqueId, DataTicket<D> dataTicket) {
+	public <D> @Nullable D getDataPoint(long uniqueId, DataTicket<D> dataTicket) {
 		return getManagerForId(uniqueId).getAnimatableData(dataTicket);
 	}
 

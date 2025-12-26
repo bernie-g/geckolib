@@ -31,7 +31,7 @@ public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderStat
      * Note that this is a best-case approximation of movement, and you should ideally be using Molang
      */
     public boolean isMoving() {
-        return this.renderState.getGeckolibData(DataTickets.IS_MOVING);
+        return this.renderState.getOrDefaultGeckolibData(DataTickets.IS_MOVING, false);
     }
 
     /**

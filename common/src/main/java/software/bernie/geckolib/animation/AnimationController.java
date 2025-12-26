@@ -49,7 +49,7 @@ public class AnimationController<T extends GeoAnimatable> {
     protected @Nullable KeyframeEventHandler<T, CustomInstructionKeyframeData> customKeyframeHandler = null;
 
     protected boolean additiveAnimations = false;
-    protected int transitionTicks = 0;
+    protected int transitionTicks;
     protected double animationSpeed = 1;
     protected boolean handlesTriggeredAnimations = false;
     protected @Nullable EasingType easingOverride = null;
