@@ -151,7 +151,7 @@ public class AnimationProcessor {
         Keyframe fromKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
 
         if (fromKeyframe == null)
-            return 0;
+            return transform == AnimationPoint.Transform.SCALE ? 1 : 0;
 
         Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
         double from = fromKeyframe.endValue().get(controllerState);
