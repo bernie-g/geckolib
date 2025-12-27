@@ -175,7 +175,7 @@ public class AnimationProcessor {
         int prevBoneIndex;
 
         if (toKeyframe == null || (prevBoneIndex = prevAnimation.findBoneIndex(boneSnapshot.getBone())) < 0)
-            return 0;
+            return transform.defaultValue;
 
         double from = wrapRotation(findAnimationPointValue(boneSnapshot, controllerState, prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
         double to = toKeyframe.startValue().get(controllerState);
@@ -205,7 +205,7 @@ public class AnimationProcessor {
      */
     private static float getSnapshotResetTarget(BoneSnapshot snapshot, AnimationPoint.Transform transform, AnimationPoint.Axis axis, boolean additive) {
         if (!additive)
-            return 0;
+            return transform.defaultValue;
 
         return switch (transform) {
             case SCALE -> switch (axis) {
