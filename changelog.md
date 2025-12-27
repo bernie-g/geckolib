@@ -1,4 +1,4 @@
-## GeckoLib v5.4-alpha-2
+## GeckoLib v5.4
 
 ## Changes:
 ### Fixes:
