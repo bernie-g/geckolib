@@ -61,15 +61,10 @@ public final class ClientUtil {
 	}
 
     /**
-     * Get the game time for the client world, or a global game time if no world is loaded<br>
-     * Returned value is in ticks
+	 * @return A global 'game time' in ticks
      */
     public static double getCurrentTick() {
-        final Minecraft mc = Minecraft.getInstance();
-
-        return mc.level != null ?
-               mc.level.getGameTime() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) :
-               Blaze3D.getTime() * 20d;
+        return Blaze3D.getTime() * 20d + Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
     }
 
     @ApiStatus.Internal
