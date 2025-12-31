@@ -63,6 +63,8 @@ public final class ClientUtil {
     /**
      * Get the game time for the client world, or a global game time if no world is loaded<br>
      * Returned value is in ticks
+	 * <p>
+	 * Note that due to vanilla desync issues, the level will occasionally go backwards 1 tick
      */
     public static double getCurrentTick() {
         final Minecraft mc = Minecraft.getInstance();
