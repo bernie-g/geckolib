@@ -543,7 +543,7 @@ public class AnimationController<T extends GeoAnimatable> {
         if (this.currentRawAnimation == null)
             return;
 
-        double startTimeOffset = this.triggeredAnimTime >= 0 ? (safetyCheckTickLinearity(ClientUtil.getCurrentTick(), this.triggeredAnimTime) - this.triggeredAnimTime) * prevAnimSpeed : 0;
+        double startTimeOffset = this.triggeredAnimTime >= 0 ? (safetyCheckTickLinearity(ClientUtil.getCurrentTick(), this.triggeredAnimTime) - this.triggeredAnimTime) / 20f * prevAnimSpeed : 0;
         this.timeline = AnimationTimeline.create(this.currentRawAnimation, animatable, geoModel, this.triggeredAnimTime > 0 ? prevTransitionTicks : this.transitionTicks);
 
         if (this.timeline == null)
