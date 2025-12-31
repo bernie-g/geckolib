@@ -148,7 +148,10 @@ public final class RawAnimation {
 		if (this == obj)
 			return true;
 
-		if (obj == null || getClass() != obj.getClass())
+		if (!(obj instanceof RawAnimation otherAnim))
+			return false;
+
+		if (this.animationList.size() != otherAnim.animationList.size())
 			return false;
 
 		return hashCode() == obj.hashCode();
