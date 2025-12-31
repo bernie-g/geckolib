@@ -145,7 +145,7 @@ public record AnimationTimeline(Stage[] stages) {
             Stage stage = this.stages[i];
 
             if (stage.startTime > maxTime)
-                return;
+                break;
 
             if (stage.endTime > minTime && !stage.isTransition) {
                 double animFromTime = Math.max(0, minTime - stage.startTime);
