@@ -508,7 +508,7 @@ public class AnimationController<T extends GeoAnimatable> {
         final RawAnimation prevRawAnimation = this.currentRawAnimation;
         final double prevAnimationSpeed = this.animationSpeed;
         final double prevTimelineTime = this.timelineTime;
-        final double timeDelta = this.playState == PlayState.PAUSE ? 0 : (renderState.getAnimatableAge() - this.lastAnimatableAge) / 20f * prevAnimationSpeed;
+        final double timeDelta = this.playState == PlayState.PAUSE ? 0 : (safetyCheckTickLinearity(renderState.getAnimatableAge(), this.lastAnimatableAge) - this.lastAnimatableAge) / 20f * prevAnimationSpeed;
         this.timelineTime = this.timeline == null ? NOT_ANIMATING : this.timelineTime < 0 ? this.timelineTime : Mth.clamp(this.timelineTime + timeDelta, 0, this.timeline.totalTime());
         this.lastAnimatableAge = renderState.getAnimatableAge();
 
@@ -543,7 +543,7 @@ public class AnimationController<T extends GeoAnimatable> {
         if (this.currentRawAnimation == null)
             return;
 
-        double startTimeOffset = this.triggeredAnimTime >= 0 ? (ClientUtil.getCurrentTick() - this.triggeredAnimTime) * prevAnimSpeed : 0;
+        double startTimeOffset = this.triggeredAnimTime >= 0 ? (safetyCheckTickLinearity(ClientUtil.getCurrentTick(), this.triggeredAnimTime) - this.triggeredAnimTime) * prevAnimSpeed : 0;
         this.timeline = AnimationTimeline.create(this.currentRawAnimation, animatable, geoModel, this.triggeredAnimTime > 0 ? prevTransitionTicks : this.transitionTicks);
 
         if (this.timeline == null)
@@ -658,8 +658,21 @@ public class AnimationController<T extends GeoAnimatable> {
                                                   this.name, animatable.getClass().getName(), animation.name());
             }
         }
-
-
     }
+
+    /**
+     * Because Minecraft sometimes <i>goes backwards</i> one tick, we have to safety check and adjust to avoid invalid backtracking
+     */
+    @InternalApi
+    private double safetyCheckTickLinearity(double currentTick, double compareTo) {
+        if (currentTick > compareTo)
+            return currentTick;
+
+        if (currentTick < compareTo - 1)
+            return compareTo;
+
+        return (int)compareTo + (currentTick - (int)currentTick);
+    }
+
     //</editor-fold>
 }
