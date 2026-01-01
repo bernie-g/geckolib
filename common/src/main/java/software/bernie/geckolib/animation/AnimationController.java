@@ -583,10 +583,9 @@ public class AnimationController<T extends GeoAnimatable> {
 
                 this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
 
+                this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
+                                                            this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
                 return;
-                // TODO evaluate this vs interpolating overtime value
-                //this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
-                //                                            this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
             }
             else {
                 this.transitionFromPoint = prevTimelineTime < this.timelineTime ?
