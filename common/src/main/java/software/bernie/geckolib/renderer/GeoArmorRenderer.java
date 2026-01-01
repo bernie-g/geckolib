@@ -21,6 +21,7 @@ import net.minecraft.world.item.component.DyedItemColor;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
+import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.GeckoLibServices;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -327,6 +328,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 	@ApiStatus.Internal
 	public void renderToBuffer(PoseStack poseStack, @Nullable VertexConsumer buffer, int packedLight,
 							   int packedOverlay, int colour) {
+		if (this.currentEntity == null) {
+            GeckoLibConstants.LOGGER.error("A mod is attempting to render GeckoLib armor ({}) without using GeoRenderProvider! " +
+										   "IClientItemExtensions is not supported for GeckoLib!", getClass());
+
+			return;
+		}
+
 		Minecraft mc = Minecraft.getInstance();
 		MultiBufferSource bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
 
