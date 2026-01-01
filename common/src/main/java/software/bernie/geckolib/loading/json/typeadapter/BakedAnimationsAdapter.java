@@ -218,7 +218,6 @@ public final class BakedAnimationsAdapter {
 			MathValue rawXValue = MathParser.parseJson(keyFrameVector.get(0));
 			MathValue rawYValue = MathParser.parseJson(keyFrameVector.get(1));
 			MathValue rawZValue = MathParser.parseJson(keyFrameVector.get(2));
-            // TODO Check change on *= -1 on X/Y axis for rotation keyframes, convert to rad
 			MathValue xValue = compressMathValue(isForRotation ? new Negative(new ToRadFunction(rawXValue)) : rawXValue);
 			MathValue yValue = compressMathValue(isForRotation ? new Negative(new ToRadFunction(rawYValue)) : rawYValue);
 			MathValue zValue = compressMathValue(isForRotation ? new ToRadFunction(rawZValue) : rawZValue);
