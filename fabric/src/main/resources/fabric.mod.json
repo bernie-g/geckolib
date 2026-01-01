@@ -33,6 +33,9 @@
 		"java": ">=17",
 		"minecraft": ">=${minecraft_version}"
 	},
+	"breaks": {
+		"geckoanimfix": "*"
+	},
 	"custom": {
 		"modmenu": {
 			"badges": [ "library" ]

@@ -33,3 +33,7 @@ ${mod_description}
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.geckolib]]
+    modId="geckoanimfix"
+    type="incompatible"
+    side="BOTH"
