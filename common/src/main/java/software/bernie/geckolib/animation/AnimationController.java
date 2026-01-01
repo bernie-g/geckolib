@@ -25,7 +25,6 @@ import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.util.ClientUtil;
-import software.bernie.geckolib.util.MiscUtil;
 
 import java.util.Map;
 import java.util.Objects;
@@ -577,8 +576,8 @@ public class AnimationController<T extends GeoAnimatable> {
         AnimationTimeline.Stage prevAnimStage = this.timeline.getAnimationStage(prevTimelineTime);
         AnimationTimeline.Stage currentAnimStage = this.timeline.getAnimationStage(this.timelineTime);
 
-        if (prevAnimStage != currentAnimStage || MiscUtil.areFloatsEqual(currentAnimStage.endTime(), this.timelineTime)) {
-            if (!isBacktracking && this.animationPoint.animation().loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
+        if (prevAnimStage != currentAnimStage || (this.timelineTime >= currentAnimStage.endTime() && prevTimelineTime < currentAnimStage.endTime())) {
+            if (!isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevTimelineTime, prevAnimStage.endTime(), this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
 
