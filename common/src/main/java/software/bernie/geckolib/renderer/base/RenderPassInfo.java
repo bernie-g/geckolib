@@ -191,7 +191,12 @@ public class RenderPassInfo<R extends GeoRenderState> {
      * Updaters added after that point will be ignored
      */
     public void addBoneUpdater(BoneUpdater<R> updater) {
-        this.boneUpdates.getInput().add(updater);
+        try {
+            this.boneUpdates.getInput().add(updater);
+        }
+        catch (IllegalStateException ex) {
+            GeckoLibConstants.LOGGER.error("BoneUpdater added after render pass submission", ex);
+        }
     }
 
     /**
