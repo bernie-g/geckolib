@@ -1,7 +1,6 @@
 package software.bernie.geckolib.renderer.layer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
@@ -86,9 +85,7 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 	 * <p>
 	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
 	 * <p>
-	 * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here<br>
-	 * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc.)
-	 * and you may need to factor this in to your design
+	 * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here
 	 */
 	public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 

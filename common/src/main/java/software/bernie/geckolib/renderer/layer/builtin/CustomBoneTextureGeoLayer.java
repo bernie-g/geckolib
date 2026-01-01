@@ -69,9 +69,7 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
      * <p>
      * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
      * <p>
-     * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here<br>
-     * <b><u>NOTE:</u></b> If the passed {@link VertexConsumer buffer} is null, then the animatable was not actually rendered (invisible, etc.)
-     * and you may need to factor this in to your design
+     * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here
      */
     @ApiStatus.Internal
     @Override
