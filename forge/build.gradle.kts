@@ -135,6 +135,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
     mainFile.changelogType = "markdown"
 
+    //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 

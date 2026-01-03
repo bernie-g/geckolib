@@ -102,19 +102,15 @@ tasks.withType<ProcessResources>().configureEach {
 
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    projectId = "8BmcQJ2H"
-    versionNumber.set(project.version.toString())
-    versionName = "Fabric ${mcVersion}"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
-    changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
-    gameVersions.set(listOf(mcVersion))
+    projectId = "8BmcQJ2H"
+    versionName = "Fabric $mcVersion"
     versionType = "release"
     loaders.set(listOf("fabric"))
-    dependencies {
-        required.project("fabric-api")
-    }
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(mcVersion))
+    changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 
-    //debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -122,24 +118,27 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.remapJar)
+    val mainFile = upload(388172, tasks.jar)
+    mainFile.displayName = "Fabric $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
+    mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
+    mainFile.changelogType = "markdown"
 
     //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
-    publishing {
-        publications {
-            create<MavenPublication>("geckolib") {
-                from(components["java"])
-                artifactId = base.archivesName.get()
-            }
+publishing {
+    publications {
+        create<MavenPublication>("geckolib") {
+            from(components["java"])
+            artifactId = base.archivesName.get()
         }
+    }
 }
 
 tasks.named<DefaultTask>("publish").configure {
