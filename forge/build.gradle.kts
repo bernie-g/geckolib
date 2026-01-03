@@ -108,16 +108,17 @@ tasks.withType<ProcessResources>().configureEach {
 }
 
 modrinth {
-		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-		projectId = "8BmcQJ2H"
-		versionNumber.set(project.version.toString())
-		versionName = "Forge ${mcVersion}"
-        uploadFile.set(tasks.named<Jar>("jar"))
-		changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
-		gameVersions.set(listOf(mcVersion))
-		loaders.set(listOf("forge"))
+    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
+    uploadFile.set(tasks.named<Jar>("jar"))
+    projectId = "8BmcQJ2H"
+    versionName = "Forge $mcVersion"
+    versionType = "release"
+    loaders.set(listOf("forge"))
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(mcVersion))
+    changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 
-        //https://github.com/modrinth/minotaur#available-properties
+    //https://github.com/modrinth/minotaur#available-properties
 }
 
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
@@ -130,9 +131,9 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
+    mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
     mainFile.changelogType = "markdown"
-    mainFile.addEnvironment("Client", "Server")
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
