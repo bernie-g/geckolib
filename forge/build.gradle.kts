@@ -129,6 +129,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
+    mainFile.displayName = "GeckoLib Forge $version"
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
