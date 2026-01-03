@@ -125,12 +125,14 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
     val mainFile = upload(388172, tasks.jar)
+    mainFile.displayName = "Forge $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
     mainFile.addJavaVersion("Java 21")
-    mainFile.displayName = "GeckoLib Forge $version"
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
+    mainFile.changelogType = "markdown"
+    mainFile.addEnvironment("Client", "Server")
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
