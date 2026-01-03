@@ -87,11 +87,6 @@ dependencies {
     //implementation(libs.examplemod.forge.get())
 }
 
-//Make the result of the jarJar task the one with no classifier instead of no classifier and "all"
-tasks.named<Jar>("jar").configure {
-    archiveClassifier.set("slim")
-}
-
 tasks.withType<Test>().configureEach {
     enabled = false;
 }
