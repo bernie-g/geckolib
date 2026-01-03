@@ -128,7 +128,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 17")
+    mainFile.addJavaVersion("Java 21")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
