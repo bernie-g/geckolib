@@ -1,10 +1,4 @@
-v4.8.2
+v4.8.3
 
-- Fix a double-space in DynamicGeoBlockRenderer's javadocs
-- Fix an incorrect link in StatelessAnimatable
-- Clean up an ugly javadoc entry in GeoReplacedEntity
-- Clean up some javadocs in GeoModel
-- Clean up some javadocs in GeoAnimatable
-- Clean up some javadocs in ContextAwareAnimatableManager
-- Clean up some javadocs in AnimatableManager
-- Fixed Singleton Geo animatables not showing a triggered anim when newly created for other players in multiplayer
+- Added a safety check for mods attempting to render GeckoLib armor without using GeoRenderProvider. (#755, #804, etc)
+- Marked GeckoAnimFix as an incompatible mod since they refuse to stop breaking GeckoLib with their download-farming mod.
