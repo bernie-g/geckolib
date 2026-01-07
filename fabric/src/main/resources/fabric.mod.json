@@ -29,7 +29,7 @@
 	"mixins": [
 		"geckolib.mixins.json"
 	],
-	"accessWidener": "geckolib.accesswidener",
+	"accessWidener": "geckolib.classtweaker",
 	"depends": {
    		"fabricloader": ">=${fabric_loader_version_range}",
 		"fabric-api": ">=${fabric_api_version_range}",

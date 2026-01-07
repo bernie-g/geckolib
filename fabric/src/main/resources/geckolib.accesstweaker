@@ -1,4 +1,8 @@
-accessWidener	v1	named
+classTweaker v1 named
+
+# GeoRenderState
+transitive-inject-interface net/minecraft/client/renderer/entity/state/EntityRenderState software/bernie/geckolib/renderer/base/GeoRenderState
+
 # Custom RenderTypes
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;
 accessible field net/minecraft/client/renderer/RenderPipelines MATRICES_FOG_LIGHT_DIR_SNIPPET Lcom/mojang/blaze3d/pipeline/RenderPipeline$Snippet;
