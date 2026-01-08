@@ -1,5 +1,6 @@
 package software.bernie.geckolib.constant.dataticket;
 
+import com.google.common.reflect.TypeToken;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -8,6 +9,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.constant.DataTickets;
+
+import java.lang.reflect.Type;
 
 /**
  * Network-compatible {@link DataTicket} implementation
@@ -25,8 +28,8 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	private final StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec;
 	private final Identifier registeredId;
 
-	private SerializableDataTicket(Identifier id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
-		super(id.toString(), objectType);
+	private SerializableDataTicket(Identifier id, Class<? extends D> objectType, Type dataType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
+		super(id.toString(), objectType, dataType);
 
 		this.streamCodec = streamCodec;
 		this.registeredId = id;
@@ -46,9 +49,22 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 	 * <p>
 	 * This DataTicket should then be stored statically somewhere and re-used.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({"unchecked", "rawtypes"})
     public static <D> SerializableDataTicket<D> create(Identifier id, Class<? extends D> objectType, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
-		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id.toString()), pair -> DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, streamCodec)));
+		return create(id, objectType, (TypeToken)TypeToken.of(objectType), streamCodec);
+	}
+
+	/**
+	 * Create a new network-syncable DataTicket for a given name and object type
+	 * <p>
+	 * <b><u>MUST</u></b> be created during mod construct
+	 * <p>
+	 * This DataTicket should then be stored statically somewhere and re-used.
+	 */
+	@SuppressWarnings("unchecked")
+    public static <D> SerializableDataTicket<D> create(Identifier id, Class<? extends D> objectType, TypeToken<D> typeToken, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
+		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id.toString()), pair ->
+				DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, typeToken.getType(), streamCodec)));
 	}
 
 	/**
