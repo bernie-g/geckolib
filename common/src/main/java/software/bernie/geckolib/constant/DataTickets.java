@@ -30,7 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
-	
+
+	// TODO 26.1 - drop class and properly generify the constants
 	// Builtin tickets
 	// These tickets are used by GeckoLib by default, usually added in by the GeoRenderer for use in animations
 	public static final DataTicket<Double> TICK = DataTicket.create("tick", Double.class, new TypeToken<>() {});
