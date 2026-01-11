@@ -579,7 +579,9 @@ public class AnimationController<T extends GeoAnimatable> {
         if (this.transitionFromPoint != null && prevAnimStage != currentAnimStage)
             this.transitionFromPoint = null;
 
-        if (prevAnimStage != currentAnimStage || (this.timelineTime >= currentAnimStage.endTime() && prevTimelineTime < currentAnimStage.endTime())) {
+        if (prevAnimStage != currentAnimStage || this.timelineTime >= currentAnimStage.endTime()) {
+            final double preLoopTimelineTime = this.timelineTime;
+
             if (!isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevTimelineTime, prevAnimStage.endTime(), this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
@@ -587,11 +589,13 @@ public class AnimationController<T extends GeoAnimatable> {
                 this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
                 this.transitionFromPoint = null;
 
-                this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
-                                                            this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
+                if (this.timelineTime > prevAnimStage.startTime() && this.timelineTime < Math.min(preLoopTimelineTime, prevAnimStage.endTime())) {
+                    this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
+                                                                this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
+                }
                 return;
             }
-            else {
+            else if (prevTimelineTime < currentAnimStage.endTime()) {
                 this.transitionFromPoint = prevTimelineTime < this.timelineTime ?
                                            this.animationPoint :
                                            this.timeline.createAnimationPoint(currentAnimStage.endTime(), null, this.easingOverride);
