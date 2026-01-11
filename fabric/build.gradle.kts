@@ -55,7 +55,7 @@ dependencies {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/geckolib.accesstweaker")
+	accessWidenerPath = file("src/main/resources/geckolib.classtweaker")
 
     //mixin.defaultRefmapName.set("${modId}.refmap.json")
 
