@@ -1,11 +1,10 @@
-## GeckoLib v5.4.1
+## GeckoLib v5.4.2
 
-### Changes:
-* Cleaned up some outdated tooltips
-* Added some additional context to DeferredCache errors from `RenderPassInfo#addBoneUpdater`
+### Additions
+* Added a bone name based equivalent of `RenderPassInfo#addBonePositionListener`
+* Added transitive interface injections for Common, NeoForge, and Fabric
+* Added a `TypeToken` alternative to classes for `DataTickets`, to allow for generic-typed DataTickets
 
-### Bug Fixes:
-* Fixed `AnimationController` sometimes thinking time has gone backwards (thanks Mojang?)
-* Fixed `AnimationController` handling triggered animations in ticks instead of seconds
-* Fixed keyframe markers not being triggered properly (or sometimes at all)
-* Fixed in-code loop type usage not being respected
+### Bug Fixes
+* Fixed a bug causing the first keyframe of animations to be skipped entirely (#807, #805)
+* Fixed hold on last frame loop type not working (#806)
