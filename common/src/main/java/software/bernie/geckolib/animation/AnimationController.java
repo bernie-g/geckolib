@@ -576,12 +576,16 @@ public class AnimationController<T extends GeoAnimatable> {
         AnimationTimeline.Stage prevAnimStage = this.timeline.getAnimationStage(prevTimelineTime);
         AnimationTimeline.Stage currentAnimStage = this.timeline.getAnimationStage(this.timelineTime);
 
+        if (this.transitionFromPoint != null && prevAnimStage != currentAnimStage)
+            this.transitionFromPoint = null;
+
         if (prevAnimStage != currentAnimStage || (this.timelineTime >= currentAnimStage.endTime() && prevTimelineTime < currentAnimStage.endTime())) {
             if (!isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevTimelineTime, prevAnimStage.endTime(), this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
 
                 this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
+                this.transitionFromPoint = null;
 
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevAnimStage.startTime(), this.timelineTime, this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
