@@ -105,7 +105,7 @@ modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
     projectId = "8BmcQJ2H"
-    versionName = "Fabric $mcVersion"
+    versionName = "Fabric $mcVersion-$version"
     versionType = "release"
     loaders.set(listOf("fabric"))
     versionNumber.set(project.version.toString())

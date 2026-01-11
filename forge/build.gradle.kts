@@ -117,7 +117,7 @@ modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
     projectId = "8BmcQJ2H"
-    versionName = "Forge $mcVersion"
+    versionName = "Forge $mcVersion-$version"
     versionType = "release"
     loaders.set(listOf("forge"))
     versionNumber.set(project.version.toString())

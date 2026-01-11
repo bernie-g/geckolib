@@ -103,7 +103,7 @@ modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
     projectId = "8BmcQJ2H"
-    versionName = "NeoForge $mcVersion"
+    versionName = "NeoForge $mcVersion-$version"
     versionType = "release"
     loaders.set(listOf("neoforge"))
     versionNumber.set(project.version.toString())
