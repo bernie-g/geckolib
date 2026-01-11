@@ -119,7 +119,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.jar)
+    val mainFile = upload(388172, tasks.remapJar)
     mainFile.displayName = "Fabric $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
