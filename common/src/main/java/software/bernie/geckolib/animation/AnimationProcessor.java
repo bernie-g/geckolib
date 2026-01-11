@@ -160,7 +160,7 @@ public class AnimationProcessor {
 
         double from = fromKeyframe.endValue().get(controllerState);
         double to = toKeyframe.endValue().get(controllerState);
-        double delta = fromKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
+        double delta = (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
         EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
