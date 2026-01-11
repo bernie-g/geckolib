@@ -28,6 +28,11 @@ neoForge {
     parchment.minecraftVersion.set(parchmentMcVersion)
     parchment.mappingsVersion.set(parchmentVersion)
 
+    interfaceInjectionData {
+        from(project(":common").file("src/main/resources/META-INF/interface_injections.json"))
+        publish(project(":common").file("src/main/resources/META-INF/interface_injections.json"))
+    }
+
     runs {
         configureEach {
             logLevel = org.slf4j.event.Level.DEBUG
@@ -60,6 +65,10 @@ repositories {
         }
     }
     mavenLocal()
+
+    flatDir {
+        dirs("libs")
+    }
 }
 
 dependencies {

@@ -80,6 +80,7 @@ repositories {
 dependencies {
     compileOnly(project(":common"))
     implementation(minecraft.dependency(libs.forge))
+
     annotationProcessor(libs.forge.eventbusvalidator)
 
     // Only enable for testing as needed
@@ -89,6 +90,11 @@ dependencies {
 
 tasks.withType<Test>().configureEach {
     enabled = false;
+}
+
+tasks.withType<ProcessResources>().configureEach {
+    from(project(":common").sourceSets.getByName("main").resources)
+    exclude("**/interface_injections.json")
 }
 
 tasks.withType<JavaCompile>().configureEach {

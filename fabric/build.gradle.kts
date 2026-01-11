@@ -55,7 +55,7 @@ dependencies {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/geckolib.accesswidener")
+	accessWidenerPath = file("src/main/resources/geckolib.accesstweaker")
 
     //mixin.defaultRefmapName.set("${modId}.refmap.json")
 
@@ -98,6 +98,7 @@ tasks.withType<Javadoc>().configureEach {
 tasks.withType<ProcessResources>().configureEach {
    from(project(":common").sourceSets.getByName("main").resources)
     exclude("**/accesstransformer.cfg")
+    exclude("**/interface_injections.json")
 }
 
 modrinth {
