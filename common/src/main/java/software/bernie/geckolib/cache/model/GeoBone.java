@@ -130,8 +130,7 @@ public abstract class GeoBone {
         if (this.frameSnapshot == null || !this.frameSnapshot.areChildrenHidden()) {
             for (GeoBone child : this.children) {
                 poseStack.pushPose();
-                RenderUtil.prepMatrixForBone(poseStack, child);
-                child.updateBonePositionListeners(poseStack, renderPassInfo);
+                RenderUtil.prepMatrixForBoneAndUpdateListeners(poseStack, child, renderPassInfo);
 
                 child.render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
                 child.renderChildren(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
@@ -182,7 +181,7 @@ public abstract class GeoBone {
             final Matrix4f localPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getPreRenderMatrixState());
             final Matrix4f modelPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getModelRenderMatrixState());
             final Vec3 position = renderPassInfo.renderState().getGeckolibData(DataTickets.POSITION);
-            final Matrix4f worldPose = position == null ? null : new Matrix4f(modelPose).translate(position.toVector3f());
+            final Matrix4f worldPose = position == null ? null : RenderUtil.addPosToMatrix(new Matrix4f(localPose), position);
             final Vec3 localPos = RenderUtil.renderPoseToPosition(localPose, 1, 1, 1);
             final Vec3 modelPos = RenderUtil.renderPoseToPosition(modelPose, -16, 16, 16);
             final Vec3 worldPos = worldPose == null ? null : RenderUtil.renderPoseToPosition(worldPose, 1, 1, 1);

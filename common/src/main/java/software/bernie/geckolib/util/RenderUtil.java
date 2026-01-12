@@ -80,7 +80,19 @@ public final class RenderUtil {
             poseStack.mulPose(Axis.XP.rotation(xRot));
 	}
 
+    /**
+     * Make the necessarily manipulations of the {@link PoseStack} to position a bone based on its current snapshot and state
+     */
 	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
+        prepMatrixForBoneAndUpdateListeners(poseStack, bone, null);
+	}
+
+    /**
+     * Make the necessarily manipulations of the {@link PoseStack} to position a bone based on its current snapshot and state
+     * <p>
+     * Additionally update the RenderPassInfo's {@link RenderPassInfo.BonePositionListener}s, if applicable
+     */
+	public static void prepMatrixForBoneAndUpdateListeners(PoseStack poseStack, GeoBone bone, @Nullable RenderPassInfo<?> renderPassInfo) {
         if (bone.frameSnapshot != null)
             bone.frameSnapshot.translate(poseStack);
 
@@ -88,6 +100,9 @@ public final class RenderUtil {
 
         if (bone.frameSnapshot != null)
             bone.frameSnapshot.scale(poseStack);
+
+        if (renderPassInfo != null)
+            bone.updateBonePositionListeners(poseStack, renderPassInfo);
 
         bone.translateAwayFromPivotPoint(poseStack);
 	}
@@ -113,6 +128,17 @@ public final class RenderUtil {
 
 		return inputMatrix;
 	}
+
+    /**
+     * Directly translate a Matrix pose by a given position
+     */
+    public static Matrix4f addPosToMatrix(Matrix4f baseMatrix, Vec3 pos) {
+        baseMatrix.m30(baseMatrix.m30() + (float)pos.x)
+                .m31(baseMatrix.m31() + (float)pos.y)
+                .m32(baseMatrix.m32() + (float)pos.z);
+
+        return baseMatrix;
+    }
 	
 	/**
      * Translates the provided {@link PoseStack} to face towards the given {@link Entity}'s rotation
