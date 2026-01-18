@@ -1,10 +1,8 @@
-## GeckoLib v5.4.2
+## GeckoLib v5.4.3
 
 ### Additions
-* Added a bone name based equivalent of `RenderPassInfo#addBonePositionListener`
-* Added transitive interface injections for Common, NeoForge, and Fabric
-* Added a `TypeToken` alternative to classes for `DataTickets`, to allow for generic-typed DataTickets
+* Added `RenderUtil#prepMatrixForBoneAndUpdateListeners`
+* Added `RenderUtil#addPosToMatrix`
 
 ### Bug Fixes
-* Fixed a bug causing the first keyframe of animations to be skipped entirely (#807, #805)
-* Fixed hold on last frame loop type not working (#806)
+* Fixed Bone Position Listeners not getting the right positions
