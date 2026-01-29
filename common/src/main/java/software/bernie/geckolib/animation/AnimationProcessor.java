@@ -160,7 +160,7 @@ public class AnimationProcessor {
 
         double from = fromKeyframe.endValue().get(controllerState);
         double to = toKeyframe.endValue().get(controllerState);
-        double delta = (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
+        double delta = toKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
         EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
@@ -179,7 +179,7 @@ public class AnimationProcessor {
 
         double from = wrapRotation(findAnimationPointValue(boneSnapshot, controllerState, prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
         double to = toKeyframe.startValue().get(controllerState);
-        double delta = Math.min(1, controllerState.transitionTime() / (float)controllerState.transitionTicks());
+        double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / (float)controllerState.transitionTicks());
         EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
