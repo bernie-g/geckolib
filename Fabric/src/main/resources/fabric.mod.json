@@ -32,5 +32,8 @@
 		"fabric-api": ">=${fabric_api_version_range}",
 		"java": ">=17",
 		"minecraft": ">=${minecraft_version}"
+	},
+	"breaks": {
+		"geckoanimfix": "*"
 	}
 }
