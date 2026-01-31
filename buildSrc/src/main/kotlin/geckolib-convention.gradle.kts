@@ -19,6 +19,13 @@ idea {
     }
 }
 
+eclipse {
+    classpath {
+        isDownloadSources = true
+        isDownloadJavadoc = true
+    }
+}
+
 repositories {
     mavenLocal {
         name = "GeckoLib Examples MavenLocal"
