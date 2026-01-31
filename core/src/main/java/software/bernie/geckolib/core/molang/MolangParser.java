@@ -42,6 +42,7 @@ public class MolangParser extends MathBuilder {
 		// Replace radian based sin and cos with degree-based functions
 		this.functions.put("cos", CosDegrees.class);
 		this.functions.put("sin", SinDegrees.class);
+		register(new Variable("math.pi", Math.PI));
 
 		remap("abs", "math.abs");
 		remap("acos", "math.acos");
