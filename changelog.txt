@@ -1,3 +1,4 @@
-v4.8.2
+v4.8.3
 
-- Fix triggered animations not applying on Singleton animatables when first used in multiplayer for other players (on Fabric)
+- Fix GeckoLib not knowing what `math.pi` is and breaking animations (??? How has no-one told me about this until now)
+- Add incompatibility with geckoanimfix since the author refuses to remove the mod even though it breaks Geckolib and actually does nothing at all
