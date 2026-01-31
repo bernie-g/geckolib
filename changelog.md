@@ -1,8 +1,5 @@
-## GeckoLib v5.4.3
-
-### Additions
-* Added `RenderUtil#prepMatrixForBoneAndUpdateListeners`
-* Added `RenderUtil#addPosToMatrix`
+## GeckoLib v5.4.4
 
 ### Bug Fixes
-* Fixed Bone Position Listeners not getting the right positions
+* Fixed looping animations somethings causing vanishing entities
+* Fixed GeckoLib failing to load an animation with an empty string as the keyframe

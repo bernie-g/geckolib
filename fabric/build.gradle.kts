@@ -38,6 +38,10 @@ repositories {
             includeGroup("software.bernie.geckolib")
         }
     }
+
+    flatDir {
+        dirs("libs")
+    }
 }
 
 dependencies {
