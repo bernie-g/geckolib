@@ -217,6 +217,9 @@ public class MathParser {
      * Break down an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
      */
     public static char[] decomposeExpression(String expression) throws CompoundException {
+        if (expression.isEmpty())
+            return new char[] {0};
+
         if (!EXPRESSION_FORMAT.matcher(expression).matches())
             throw new CompoundException("Invalid characters found in expression: '" + expression + "'");
 
