@@ -5,8 +5,17 @@ plugins {
     eclipse
 }
 
+val geckolib = extensions.create(
+    "geckolib",
+    GeckoLibBuildPlugin::class.java,
+    project
+)!!
+
+project.version = geckolib.modVersion
+project.base.archivesName = "geckolib-${project.name}-${geckolib.mcVersion}"
+
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(geckolib.javaVersion.version()))
 
     withSourcesJar()
     withJavadocJar()
@@ -51,74 +60,57 @@ repositories {
             includeGroup("maven.modrinth")
         }
     }
+    flatDir {
+        dir("libs")
+    }
 }
 
-val libs = project.versionCatalogs.find("libs")
-
-val modId: String by project
-val modDisplayName: String by project
-val modAuthors: String by project
-val modContributors: String by project
-val modLicense: String by project
-val modDescription: String by project
-val modVersion = libs.get().findVersion("geckolib").get()
-val mcVersion = libs.get().findVersion("minecraft").get()
-val forgeVersion = libs.get().findVersion("forge").get()
-val forgeVersionRange = libs.get().findVersion("forge.range").get()
-val fmlVersionRange = libs.get().findVersion("forge.fml.range").get()
-val mcVersionRange = libs.get().findVersion("minecraft.range").get()
-val fapiVersion = libs.get().findVersion("fabric.api").get()
-val fapiVersionRange = libs.get().findVersion("fabric.api.range").get()
-val fabricVersion = libs.get().findVersion("fabric").get()
-val fabricVersionRange = libs.get().findVersion("fabric.range").get()
-val neoforgeVersionRange = libs.get().findVersion("neoforge.range").get()
-val neoforgeLoaderVersionRange = libs.get().findVersion("neoforge.loader.range").get()
-
 tasks.withType<Jar>().configureEach {
+    withCommonSource { from(it.allSource) }
+
     from(rootProject.file("LICENSE")) {
-        rename { "${it}_${modDisplayName}" }
+        rename { "${it}_${geckolib.modDisplayName}" }
     }
+
+    if (project.name != "common")
+        from(project(":common").sourceSets.getByName("main").allSource)
 
     manifest {
         attributes(mapOf(
-                "Specification-Title"     to modDisplayName,
-                "Specification-Vendor"    to modAuthors,
-                "Specification-Version"   to modVersion,
-                "Implementation-Title"    to modDisplayName,
-                "Implementation-Version"  to modVersion,
-                "Implementation-Vendor"   to modAuthors,
-                "Built-On-Minecraft"      to mcVersion,
-                "MixinConfigs"            to "$modId.mixins.json"
+                "Specification-Title"     to geckolib.modDisplayName,
+                "Specification-Vendor"    to geckolib.modAuthors,
+                "Specification-Version"   to geckolib.modVersion,
+                "Implementation-Title"    to geckolib.modDisplayName,
+                "Implementation-Version"  to geckolib.modVersion,
+                "Implementation-Vendor"   to geckolib.modAuthors,
+                "Built-On-Minecraft"      to geckolib.mcVersion,
+                "MixinConfigs"            to "${geckolib.modId}.mixins.json"
         ))
     }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    this.options.encoding = "UTF-8"
-    this.options.getRelease().set(21)
-}
-
 tasks.withType<ProcessResources>().configureEach {
     val expandProps = mapOf(
-            "version" to modVersion,
-            "group" to project.group,
-            "minecraft_version" to mcVersion,
-            "forge_version" to forgeVersion,
-            "forge_loader_range" to fmlVersionRange,
-            "forge_version_range" to forgeVersionRange,
-            "minecraft_version_range" to mcVersionRange,
-            "fabric_api_version" to fapiVersion,
-            "fabric_api_version_range" to fapiVersionRange,
-            "fabric_loader_version" to fabricVersion,
-            "fabric_loader_version_range" to fabricVersionRange,
-            "mod_display_name" to modDisplayName,
-            "mod_authors" to modAuthors,
-            "mod_contributors" to modContributors,
-            "mod_id" to modId,
-            "mod_license" to modLicense,
-            "mod_description" to modDescription,
-            "neoforge_version_range" to neoforgeVersionRange,
-            "neoforge_loader_range" to neoforgeLoaderVersionRange
+            "version"                       to geckolib.modVersion,
+            "group"                         to project.group,
+            "minecraft_version"             to geckolib.mcVersion,
+            "java_version"                  to geckolib.javaVersion,
+            "forge_version"                 to geckolib.forgeVersion,
+            "forge_loader_range"            to geckolib.fmlVersion,
+            "forge_version_range"           to geckolib.forgeVersion.range(),
+            "minecraft_version_range"       to geckolib.mcVersion.range(),
+            "fabric_loader_version"         to geckolib.fabricVersion,
+            "fabric_loader_version_range"   to geckolib.fabricVersionRange,
+            "fabric_api_version"            to geckolib.fabricApiVersion,
+            "fabric_api_version_range"      to geckolib.fabricApiVersionRange,
+            "neoforge_version_range"        to geckolib.neoforgeVersion.range(),
+            "neoforge_loader_range"         to geckolib.neoforgeLoaderVersion.range(),
+            "mod_display_name"              to geckolib.modDisplayName,
+            "mod_authors"                   to geckolib.modAuthors,
+            "mod_contributors"              to geckolib.modContributors,
+            "mod_id"                        to geckolib.modId,
+            "mod_license"                   to geckolib.modLicense,
+            "mod_description"               to geckolib.modDescription
     )
 
     filesMatching(listOf("pack.mcmeta", "fabric.mod.json", "META-INF/neoforge.mods.toml", "META-INF/mods.toml", "*.mixins.json")) {
@@ -126,21 +118,57 @@ tasks.withType<ProcessResources>().configureEach {
     }
 
     inputs.properties(expandProps)
+    withCommonSource { from(it.resources) }
+}
+
+tasks.withType<Wrapper>().configureEach {
+    // Set to ALL and refresh gradle TWICE if you want to receive the full gradle source set
+    // Only really useful for working on the buildscripts, otherwise saves downloading the entire gradle cache
+    distributionType = Wrapper.DistributionType.BIN
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    this.options.encoding = "UTF-8"
+    this.options.release.set(21)
+
+    withCommonSource { source(it.allSource) }
+}
+
+tasks.withType<Test>().configureEach {
+    failOnNoDiscoveredTests = false
+}
+
+tasks.withType<Javadoc>().configureEach {
+    withCommonSource { source(it.allJava) }
+}
+
+tasks.named<Jar>("sourcesJar").configure {
+    withCommonSource { from(it.allSource) }
 }
 
 publishing {
     repositories {
-        if (System.getenv("cloudUsername") == null && System.getenv("cloudPassword") == null) {
+        val cloudsmithUsername = providers.environmentVariable("CLOUDSMITH_USERNAME");
+        val cloudsmithPassword = providers.environmentVariable("CLOUDSMITH_PASSWORD");
+
+        if (!cloudsmithUsername.isPresent || !cloudsmithPassword.isPresent) {
             mavenLocal()
         }
-        else maven {
-            name = "cloudsmith"
-            url = uri("https://maven.cloudsmith.io/geckolib3/geckolib/")
+        else {
+            maven {
+                name = "Cloudsmith"
+                url = uri("https://maven.cloudsmith.io/geckolib3/geckolib/")
 
-            credentials {
-                username = System.getenv("cloudUsername")
-                password = System.getenv("cloudPassword")
+                credentials {
+                    username = cloudsmithUsername.get()
+                    password = cloudsmithPassword.get()
+                }
             }
         }
     }
+}
+
+fun withCommonSource(consumer: (SourceSet) -> Unit) {
+    if (project.name != "common")
+        project(":common").sourceSets.getByName("main")?.let { consumer(it) }
 }

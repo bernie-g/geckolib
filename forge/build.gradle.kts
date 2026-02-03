@@ -9,18 +9,7 @@ plugins {
     alias(libs.plugins.forge.at)
 }
 
-val modId: String by project
-val mcVersion = libs.versions.minecraft.asProvider().get()
-val mappingsMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion   = libs.versions.parchment.asProvider().get()
-val forgeVersion = libs.versions.forge.asProvider().get()
-
-version = libs.versions.geckolib.get()
-
-base {
-    archivesName = "geckolib-forge-${mcVersion}"
-}
+val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
 
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
@@ -32,7 +21,7 @@ minecraft {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
             systemProperty("forge.logging.console.level", "debug")
 
-            args("--mixin.config=${modId}.mixins.json")
+            args("--mixin.config=${geckolib.modId}.mixins.json")
         }
 
         register("client") {
@@ -62,19 +51,7 @@ repositories {
             includeGroupAndSubgroups("org.spongepowered")
         }
     }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Geckolib Examples"
-                url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-            }
-        }
-        filter {
-            includeGroup("software.bernie.geckolib")
-        }
-    }
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {
@@ -88,40 +65,19 @@ dependencies {
     //implementation(libs.examplemod.forge.get())
 }
 
-tasks.withType<Test>().configureEach {
-    enabled = false;
-}
-
 tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
     exclude("**/interface_injections.json")
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
 }
 
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
     projectId = "8BmcQJ2H"
-    versionName = "Forge $mcVersion-$version"
+    versionName = "Forge ${geckolib.mcVersion}-${geckolib.modVersion}"
     versionType = "release"
     loaders.set(listOf("forge"))
-    versionNumber.set(project.version.toString())
-    gameVersions.set(listOf(mcVersion))
+    versionNumber.set(geckolib.modVersion.version())
+    gameVersions.set(listOf(geckolib.mcVersion.version()))
     changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 
     //https://github.com/modrinth/minotaur#available-properties
@@ -132,11 +88,11 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
     val mainFile = upload(388172, tasks.jar)
-    mainFile.displayName = "Forge $version"
+    mainFile.displayName = "Forge ${geckolib.modVersion}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
-    mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 21")
+    mainFile.addGameVersion(geckolib.mcVersion.version())
+    mainFile.addJavaVersion("Java ${geckolib.javaVersion}")
     mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
     mainFile.changelogType = "markdown"

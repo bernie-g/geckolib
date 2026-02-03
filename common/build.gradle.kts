@@ -4,23 +4,16 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
-version = libs.versions.geckolib.get()
-
-base {
-    archivesName = "geckolib-common-${libs.versions.minecraft.asProvider().get()}"
-}
+val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
 
 neoForge {
-    neoFormVersion = libs.versions.neoform.get()
+    neoFormVersion = geckolib.neoformVersion.version()
     accessTransformers.files.setFrom("src/main/resources/META-INF/accesstransformer.cfg")
 
     interfaceInjectionData {
         from("src/main/resources/META-INF/interface_injections.json")
         publish(file("src/main/resources/META-INF/interface_injections.json"))
     }
-
-    parchment.minecraftVersion.set(libs.versions.parchment.minecraft.get())
-    parchment.mappingsVersion.set(libs.versions.parchment.asProvider().get())
 }
 
 dependencies {

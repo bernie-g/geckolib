@@ -1,5 +1,6 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 import net.fabricmc.loom.task.RemapJarTask
+import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
     id("geckolib-convention")
@@ -8,50 +9,12 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-val modId: String by project
-val mcVersion = libs.versions.minecraft.asProvider().get()
-val parchmentMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion = libs.versions.parchment.asProvider().get()
-
-version = libs.versions.geckolib.get()
-
-base {
-    archivesName = "geckolib-fabric-${mcVersion}"
-}
-
-repositories {
-    maven {
-        name = "ParchmentMC"
-        url = uri("https://maven.parchmentmc.org")
-        content {
-            includeGroupAndSubgroups("org.parchmentmc")
-        }
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Geckolib Examples"
-                url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-            }
-        }
-        filter {
-            includeGroup("software.bernie.geckolib")
-        }
-    }
-
-    flatDir {
-        dirs("libs")
-    }
-}
+val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
 
 dependencies {
-    minecraft(libs.minecraft)
-    mappings(loom.layered() {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchmentMcVersion}:${parchmentVersion}@zip")
-    })
-    modImplementation(libs.fabric)
-    modImplementation(libs.fabric.api)
+    minecraft(libs.loom.minecraft)
+    implementation(libs.fabric)
+    implementation(libs.fabric.api)
     compileOnly(project(":common"))
 
     // ExampleMod
@@ -61,59 +24,38 @@ dependencies {
 loom {
 	accessWidenerPath = file("src/main/resources/geckolib.classtweaker")
 
-    //mixin.defaultRefmapName.set("${modId}.refmap.json")
-
     runs {
-        named("client") {
-            configName = "Fabric Client"
-
-            client()
+        configureEach {
+            configName = "Fabric ${name.capitalized()}"
+            runDir("runs/$name")
             ideConfigGenerated(true)
-            runDir("runs/" + name)
+        }
+
+        named("client") {
+            client()
             programArg("--username=Dev")
         }
 
         named("server") {
-            configName = "Fabric Server"
-
             server()
-            ideConfigGenerated(true)
-            runDir("runs/" + name)
         }
     }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Test>().configureEach {
-    failOnNoDiscoveredTests = false
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
 tasks.withType<ProcessResources>().configureEach {
-   from(project(":common").sourceSets.getByName("main").resources)
     exclude("**/accesstransformer.cfg")
     exclude("**/interface_injections.json")
 }
 
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
+    uploadFile.set(tasks.jar)
     projectId = "8BmcQJ2H"
-    versionName = "Fabric $mcVersion-$version"
+    versionName = "Fabric ${geckolib.mcVersion}-$version"
     versionType = "release"
     loaders.set(listOf("fabric"))
     versionNumber.set(project.version.toString())
-    gameVersions.set(listOf(mcVersion))
+    gameVersions.set(listOf(geckolib.mcVersion.version()))
     changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 
     //https://github.com/modrinth/minotaur#available-properties
@@ -123,11 +65,11 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.remapJar)
+    val mainFile = upload(388172, tasks.jar)
     mainFile.displayName = "Fabric $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
-    mainFile.addGameVersion(mcVersion)
+    mainFile.addGameVersion(geckolib.mcVersion)
     mainFile.addJavaVersion("Java 21")
     mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)

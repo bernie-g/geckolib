@@ -8,25 +8,13 @@ plugins {
     alias(libs.plugins.moddevgradle)
 }
 
-val modId: String by project
-val mcVersion = libs.versions.minecraft.asProvider().get()
-val parchmentMcVersion = libs.versions.parchment.minecraft.get()
-val parchmentVersion = libs.versions.parchment.asProvider().get()
-val neoforgeVersion = libs.versions.neoforge.asProvider().get()
-
-version = libs.versions.geckolib.get()
-
-base {
-    archivesName = "geckolib-neoforge-${mcVersion}"
-}
+val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
 
 neoForge {
-    version = neoforgeVersion
+    version = geckolib.neoforgeVersion.version()
 
     accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
     validateAccessTransformers = true
-    parchment.minecraftVersion.set(parchmentMcVersion)
-    parchment.mappingsVersion.set(parchmentVersion)
 
     interfaceInjectionData {
         from(project(":common").file("src/main/resources/META-INF/interface_injections.json"))
@@ -38,7 +26,7 @@ neoForge {
             logLevel = org.slf4j.event.Level.DEBUG
         }
 
-        mods.create(modId).sourceSet(project.sourceSets.getByName("main"))
+        mods.create(geckolib.modId).sourceSet(project.sourceSets.getByName("main"))
 
         register("client") {
             client()
@@ -56,21 +44,6 @@ neoForge {
     }
 }
 
-repositories {
-    maven {
-        name = "Geckolib Examples"
-        url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
-        content {
-            includeGroup("software.bernie.geckolib")
-        }
-    }
-    mavenLocal()
-
-    flatDir {
-        dirs("libs")
-    }
-}
-
 dependencies {
     compileOnly(project(":common"))
 
@@ -79,35 +52,15 @@ dependencies {
     //runtimeOnly(libs.examplemod.neoforge)
 }
 
-tasks.withType<Test>().configureEach {
-    enabled = false;
-}
-
-tasks.named<JavaCompile>("compileJava").configure {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
-}
-
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     uploadFile.set(tasks.named<Jar>("jar"))
     projectId = "8BmcQJ2H"
-    versionName = "NeoForge $mcVersion-$version"
+    versionName = "NeoForge ${geckolib.mcVersion}-$version"
     versionType = "release"
     loaders.set(listOf("neoforge"))
     versionNumber.set(project.version.toString())
-    gameVersions.set(listOf(mcVersion))
+    gameVersions.set(listOf(geckolib.mcVersion.version()))
     changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
 
     //https://github.com/modrinth/minotaur#available-properties
@@ -121,7 +74,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.displayName = "NeoForge $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
-    mainFile.addGameVersion(mcVersion)
+    mainFile.addGameVersion(geckolib.mcVersion)
     mainFile.addJavaVersion("Java 21")
     mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
