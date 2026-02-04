@@ -11,8 +11,8 @@
 # Fabric
     fabric = "0.18.4"
     fabric-range = ">=0.18"
-    fabric-api = "0.143.0+26.1"
-    fabric-api-range = ">=0.143.0+26.1"
+    fabric-api = "0.143.1+26.1"
+    fabric-api-range = ">=0.143.1+26.1"
 
 # Forge
     forge-fml = { strictly = "[61,)", prefer = "61" }
@@ -48,17 +48,17 @@
     fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 
 # Forge
-    forge = { group = "net.minecraftforge", name = "forge-1.21.11", version.ref = "forge" }
+    forge = { group = "net.minecraftforge", name = "forge-26.1", version.ref = "forge" }
     forge-eventbusvalidator = { group = "net.minecraftforge", name = "eventbus-validator", version.ref = "forge-eventbusvalidator" }
 
 # NeoForge
     neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
 
 # Testing
-    examplemod-common = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-common-1.21.11", version.ref = "examplemod" }
-    examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-1.21.11", version.ref = "examplemod" }
-    examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-1.21.11", version.ref = "examplemod" }
-    examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-1.21.11", version.ref = "examplemod" }
+    examplemod-common = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-common-26.1", version.ref = "examplemod" }
+    examplemod-fabric = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-fabric-26.1", version.ref = "examplemod" }
+    examplemod-forge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-forge-26.1", version.ref = "examplemod" }
+    examplemod-neoforge = { group = "software.bernie.geckolib", name = "geckolib-examples-ml-neoforge-26.1", version.ref = "examplemod" }
 
 [plugins]
 # Publishing
