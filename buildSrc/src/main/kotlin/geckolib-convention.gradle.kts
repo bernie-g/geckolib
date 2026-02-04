@@ -1,5 +1,3 @@
-import org.gradle.internal.extensions.stdlib.capitalized
-
 plugins {
     java
     `maven-publish`
@@ -14,7 +12,7 @@ val geckolib = extensions.create(
 )!!
 
 project.version = geckolib.modVersion
-project.base.archivesName = "GeckoLib-${project.name.capitalized()}-${geckolib.mcVersion}"
+project.base.archivesName = "geckolib-${project.name}-${geckolib.mcVersion}"
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(geckolib.javaVersion.version()))
