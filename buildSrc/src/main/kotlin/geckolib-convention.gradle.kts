@@ -66,8 +66,6 @@ repositories {
 }
 
 tasks.withType<Jar>().configureEach {
-    withCommonSource { from(it.allSource) }
-
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${geckolib.modDisplayName}" }
     }
@@ -90,6 +88,8 @@ tasks.withType<Jar>().configureEach {
 }
 
 tasks.withType<ProcessResources>().configureEach {
+    withCommonSource { from(it.resources) }
+
     val expandProps = mapOf(
             "version"                       to geckolib.modVersion,
             "group"                         to project.group,
@@ -118,7 +118,6 @@ tasks.withType<ProcessResources>().configureEach {
     }
 
     inputs.properties(expandProps)
-    withCommonSource { from(it.resources) }
 }
 
 tasks.withType<Wrapper>().configureEach {
@@ -138,12 +137,12 @@ tasks.withType<Test>().configureEach {
     failOnNoDiscoveredTests = false
 }
 
-tasks.withType<Javadoc>().configureEach {
-    withCommonSource { source(it.allJava) }
-}
-
 tasks.named<Jar>("sourcesJar").configure {
     withCommonSource { from(it.allSource) }
+}
+
+tasks.withType<Javadoc>().configureEach {
+    withCommonSource { source(it.allJava) }
 }
 
 publishing {
