@@ -41,9 +41,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	 * or {@link Long#MAX_VALUE} if one hasn't been assigned
 	 */
 	static long getId(ItemStack stack) {
-		return Optional.ofNullable(stack.getComponentsPatch().get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
-				.filter(Optional::isPresent)
-				.<Long>map(Optional::get)
+		return Optional.ofNullable(stack.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
 				.orElse(Long.MAX_VALUE);
 	}
 

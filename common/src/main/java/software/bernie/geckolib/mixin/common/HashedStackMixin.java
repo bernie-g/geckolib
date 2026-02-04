@@ -2,9 +2,7 @@ package software.bernie.geckolib.mixin.common;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import net.minecraft.core.component.DataComponentPatch;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.TypedDataComponent;
+import net.minecraft.core.component.*;
 import net.minecraft.network.HashedPatchMap;
 import net.minecraft.network.HashedStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,10 +29,9 @@ public class HashedStackMixin {
 
         DataComponentType<Long> componentType = GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get();
         int remoteStackHashedId = patchMap.addedComponents().getOrDefault(componentType, Integer.MIN_VALUE);
-        int localStackHashedId = Optional.ofNullable(componentPatch.get(componentType))
-                .map(optional ->
-                             optional.map(value -> hasher.apply(new TypedDataComponent<>(componentType, (long)value)))
-                                     .orElse(Integer.MIN_VALUE))
+        int localStackHashedId = Optional.ofNullable(componentPatch.get(DataComponentMap.EMPTY, componentType))
+                .map(value -> hasher
+                        .apply(new TypedDataComponent<>(componentType, value)))
                 .orElse(Integer.MIN_VALUE);
 
         return remoteStackHashedId == localStackHashedId;

@@ -2,8 +2,8 @@ package software.bernie.geckolib.renderer.base;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.util.LightCoordsUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
@@ -97,7 +97,7 @@ public interface GeoRenderState {
      * @return The packed int light coordinates
      */
     default int getPackedLight() {
-        return getOrDefaultGeckolibData(DataTickets.PACKED_LIGHT, LightTexture.FULL_BRIGHT);
+        return getOrDefaultGeckolibData(DataTickets.PACKED_LIGHT, LightCoordsUtil.FULL_BRIGHT);
     }
 
     /**

@@ -269,7 +269,7 @@ public final class MolangQueries {
 		setActorVariable(MOON_BRIGHTNESS, actor -> DimensionType.MOON_BRIGHTNESS_PER_PHASE[ClientUtil.getClientMoonPhase().index()]);
 		setActorVariable(MOON_PHASE, actor -> ClientUtil.getClientMoonPhase().index());
 		setActorVariable(PLAYER_LEVEL, actor -> actor.clientPlayer.experienceLevel);
-		setActorVariable(TIME_OF_DAY, actor -> actor.level.getDayTime() / 24000d);
+		setActorVariable(TIME_OF_DAY, actor -> actor.level.getDefaultClockTime() / 24000d);
 		setActorVariable(TIME_STAMP, actor -> actor.level.getGameTime());
 
 		setDefaultBlockEntityQueryValues();

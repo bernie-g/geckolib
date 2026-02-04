@@ -63,7 +63,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
      */
     @Override
     public void sendToAllPlayersTrackingBlock(MultiloaderPacket packet, ServerLevel level, BlockPos pos) {
-        PacketDistributor.sendToPlayersTrackingChunk(level, new ChunkPos(pos), packet);
+        PacketDistributor.sendToPlayersTrackingChunk(level, ChunkPos.containing(pos), packet);
     }
 
     /**
