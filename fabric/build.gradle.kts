@@ -1,5 +1,4 @@
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import net.fabricmc.loom.task.RemapJarTask
 import org.gradle.internal.extensions.stdlib.capitalized
 
 plugins {
@@ -70,7 +69,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(geckolib.mcVersion)
-    mainFile.addJavaVersion("Java 21")
+    mainFile.addJavaVersion("Java ${geckolib.javaVersion}")
     mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
     mainFile.changelogType = "markdown"
