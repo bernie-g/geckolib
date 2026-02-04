@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.util.Brightness;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -82,7 +83,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	}
 
 	/**
-	 * Returns the {@link LightTexture packed light} value for this render pass
+	 * Returns the {@link Brightness packed light} value for this render pass
 	 */
 	default int packedLight() {
 		return getRenderState().getPackedLight();
