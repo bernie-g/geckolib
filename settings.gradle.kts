@@ -1,6 +1,5 @@
 pluginManagement {
     repositories {
-        gradlePluginPortal()
         maven {
             name = "Forge"
             url = uri("https://maven.minecraftforge.net/")
@@ -32,6 +31,8 @@ pluginManagement {
                 includeGroupAndSubgroups("org.spongepowered")
             }
         }
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
