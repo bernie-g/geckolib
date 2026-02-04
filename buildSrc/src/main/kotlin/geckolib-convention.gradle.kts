@@ -116,8 +116,8 @@ tasks.withType<ProcessResources>().configureEach {
 }
 
 tasks.withType<Wrapper>().configureEach {
-    // Set to ALL and refresh gradle TWICE if you want to receive the full gradle source set
-    // Only really useful for working on the buildscripts, otherwise saves downloading the entire gradle cache
+    // Set to ALL and refresh Gradle TWICE if you want to receive the full Gradle source set
+    // Only really useful for working on the buildscripts, otherwise saves downloading the entire Gradle cache
     distributionType = Wrapper.DistributionType.BIN
 }
 
