@@ -70,9 +70,6 @@ tasks.withType<Jar>().configureEach {
         rename { "${it}_${geckolib.modDisplayName}" }
     }
 
-    if (project.name != "common")
-        from(project(":common").sourceSets.getByName("main").allSource)
-
     manifest {
         attributes(mapOf(
                 "Specification-Title"     to geckolib.modDisplayName,
@@ -84,7 +81,7 @@ tasks.withType<Jar>().configureEach {
                 "Built-On-Minecraft"      to geckolib.mcVersion,
                 "MixinConfigs"            to "${geckolib.modId}.mixins.json"
         ))
-    }
+}
 }
 
 tasks.withType<ProcessResources>().configureEach {
@@ -130,11 +127,14 @@ tasks.withType<JavaCompile>().configureEach {
     this.options.encoding = "UTF-8"
     this.options.release.set(java.toolchain.languageVersion.get().asInt())
 
-    withCommonSource { source(it.allSource) }
 }
 
 tasks.withType<Test>().configureEach {
     failOnNoDiscoveredTests = false
+}
+
+tasks.named<JavaCompile>("compileJava").configure {
+    withCommonSource { source(it.allSource) }
 }
 
 tasks.named<Jar>("sourcesJar").configure {
