@@ -17,13 +17,6 @@ pluginManagement {
             }
         }
         maven {
-            name = "Parchment"
-            url = uri("https://maven.parchmentmc.org")
-            content {
-                includeGroupAndSubgroups("org.parchmentmc")
-            }
-        }
-        maven {
             name = "NeoForge"
             url = uri("https://maven.neoforged.net/")
             content {
