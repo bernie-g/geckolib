@@ -67,7 +67,7 @@ repositories {
 
 tasks.withType<Jar>().configureEach {
     from(rootProject.file("LICENSE")) {
-        rename { "${it}_${geckolib.modDisplayName}" }
+        rename { "$it.txt" }
     }
 
     manifest {
