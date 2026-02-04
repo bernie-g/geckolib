@@ -66,9 +66,7 @@ repositories {
 }
 
 tasks.withType<Jar>().configureEach {
-    from(rootProject.file("LICENSE")) {
-        rename { "$it.txt" }
-    }
+    from(rootProject.file("LICENSE")) { rename { "$it.txt" } }
 
     manifest {
         attributes(mapOf(
