@@ -79,7 +79,7 @@ tasks.withType<Jar>().configureEach {
                 "Built-On-Minecraft"      to geckolib.mcVersion,
                 "MixinConfigs"            to "${geckolib.modId}.mixins.json"
         ))
-}
+    }
 }
 
 tasks.withType<ProcessResources>().configureEach {
