@@ -52,7 +52,7 @@ public final class RenderUtil {
             boneQueue.add(parent);
         }
 
-        for (GeoBone bone2 : boneQueue) {
+        for (GeoBone bone2 : boneQueue.reversed()) {
             prepMatrixForBone(poseStack, bone2);
         }
     }
