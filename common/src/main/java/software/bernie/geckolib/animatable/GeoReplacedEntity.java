@@ -1,7 +1,6 @@
 package software.bernie.geckolib.animatable;
 
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
@@ -20,13 +19,6 @@ import java.util.function.Consumer;
  * @see <a href="https://github.com/bernie-g/geckolib/wiki/Entity-Animations">GeckoLib Wiki - Entity Animations</a>
  */
 public interface GeoReplacedEntity extends SingletonGeoAnimatable {
-	/**
-	 * Returns the {@link EntityType} this entity is intending to replace
-	 * <p>
-	 * This is used for rendering and animations
-	 */
-	EntityType<?> getReplacingEntityType();
-
 	/**
 	 * Get server-synced animation data via its relevant {@link SerializableDataTicket}
 	 * <p>
