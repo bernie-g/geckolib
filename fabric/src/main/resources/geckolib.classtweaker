@@ -2,6 +2,7 @@ classTweaker v1 official
 
 # GeoRenderState
 transitive-inject-interface net/minecraft/client/renderer/entity/state/EntityRenderState software/bernie/geckolib/renderer/base/GeoRenderState
+transitive-inject-interface net/minecraft/client/renderer/blockentity/state/BlockEntityRenderState software/bernie/geckolib/renderer/base/GeoRenderState
 
 # Custom RenderTypes
 accessible method net/minecraft/client/renderer/RenderPipelines register (Lcom/mojang/blaze3d/pipeline/RenderPipeline;)Lcom/mojang/blaze3d/pipeline/RenderPipeline;

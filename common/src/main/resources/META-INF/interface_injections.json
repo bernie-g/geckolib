@@ -1,5 +1,8 @@
 {
   "net/minecraft/client/renderer/entity/state/EntityRenderState": [
     "software/bernie/geckolib/renderer/base/GeoRenderState"
+  ],
+  "net/minecraft/client/renderer/blockentity/state/BlockEntityRenderState": [
+    "software/bernie/geckolib/renderer/base/GeoRenderState"
   ]
 }
