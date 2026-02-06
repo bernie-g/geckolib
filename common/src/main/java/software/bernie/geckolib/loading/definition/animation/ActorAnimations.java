@@ -46,6 +46,4 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
             return new ActorAnimations(formatVersion, animations);
         };
     }
-
-
 }
