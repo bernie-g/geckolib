@@ -11,18 +11,14 @@ import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 
 import java.util.Map;
 
-/**
- * Caching class for {@link SingletonGeoAnimatable}s that have been registered as syncable
- */
+/// Caching class for [SingletonGeoAnimatable]s that have been registered as syncable
 public final class SyncedSingletonAnimatableCache {
     private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
     private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
-    /**
-     * Registers a synced {@link SingletonGeoAnimatable} object for networking support
-     * <p>
-     * It is recommended that you don't call this directly, instead implementing and calling {@link SingletonGeoAnimatable#registerSyncedAnimatable}
-     */
+    /// Registers a synced [SingletonGeoAnimatable] object for networking support
+    ///
+    /// It is recommended that you don't call this directly, instead implementing and calling [SingletonGeoAnimatable#registerSyncedAnimatable]
     @ApiStatus.Internal
     public static void registerSyncedAnimatable(SingletonGeoAnimatable animatable) {
         synchronized (SYNCED_ANIMATABLES) {
@@ -33,11 +29,9 @@ public final class SyncedSingletonAnimatableCache {
         }
     }
 
-    /**
-     * Gets a registered synced {@link SingletonGeoAnimatable} object by name
-     *
-     * @param syncedAnimatableId the className
-     */
+    /// Gets a registered synced [SingletonGeoAnimatable] object by name
+    ///
+    /// @param syncedAnimatableId the className
     @ApiStatus.Internal
     public static @Nullable GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
         GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
@@ -48,12 +42,10 @@ public final class SyncedSingletonAnimatableCache {
         return animatable;
     }
 
-    /**
-     * Get a synced singleton animatable's id for use with {@link #SYNCED_ANIMATABLES}
-     * <p>
-     * This <b><u>MUST</u></b> be used when retrieving from {@link #SYNCED_ANIMATABLES}
-     * as this method eliminates class duplication collisions
-     */
+    /// Get a synced singleton animatable's id for use with [#SYNCED_ANIMATABLES]
+    ///
+    /// This **<u>MUST</u>** be used when retrieving from [#SYNCED_ANIMATABLES]
+    /// as this method eliminates class duplication collisions
     public static String getOrCreateId(SingletonGeoAnimatable animatable) {
         return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
             String baseId = animatable.getClass().getName();

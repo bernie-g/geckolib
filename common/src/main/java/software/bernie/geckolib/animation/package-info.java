@@ -1,6 +1,4 @@
-/**
- * Contains classes relating to animations, their handling, and other related objects
- */
+/// Contains classes relating to animations, their handling, and other related objects
 @NullMarked
 package software.bernie.geckolib.animation;
 

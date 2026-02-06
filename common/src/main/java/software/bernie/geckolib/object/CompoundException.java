@@ -5,11 +5,9 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.List;
 import java.util.StringJoiner;
 
-/**
- * Nestable {@link Exception} that allows for a stacktrace to additively append context to a singular exception without needing to re-build the stack trace for each wrapper.
- * <p>
- * This allows for faster stacked exceptions without having errors land sporadically throughout the log as tasks are asynchronously completed.
- */
+/// Nestable [Exception] that allows for a stacktrace to additively append context to a singular exception without needing to re-build the stack trace for each wrapper.
+///
+/// This allows for faster stacked exceptions without having errors land sporadically throughout the log as tasks are asynchronously completed.
 public class CompoundException extends RuntimeException {
     private final List<String> messages = new ObjectArrayList<>();
 
@@ -17,13 +15,11 @@ public class CompoundException extends RuntimeException {
         this.messages.add(message);
     }
 
-    /**
-     * Add a message to the stack.
-     * The message will be given its own line in the log, displayed <u>before</u> any lines already added
-     *
-     * @param message The message to add
-     * @return this
-     */
+    /// Add a message to the stack.
+    /// The message will be given its own line in the log, displayed <u>before</u> any lines already added
+    ///
+    /// @param message The message to add
+    /// @return this
     public CompoundException withMessage(String message) {
         this.messages.add(message);
 

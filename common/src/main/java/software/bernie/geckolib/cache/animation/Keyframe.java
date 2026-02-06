@@ -11,16 +11,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * Animation keyframe data
- *
- * @param startTime The time (in seconds) the keyframe starts at
- * @param length The length (in seconds) the keyframe lasts for
- * @param startValue The value to start the keyframe's transformation with
- * @param endValue The value to end the keyframe's transformation with
- * @param easingType The {@code EasingType} to use for transformations
- * @param easingArgs The arguments to provide to the easing calculation
- */
+/// Animation keyframe data
+///
+/// @param startTime The time (in seconds) the keyframe starts at
+/// @param length The length (in seconds) the keyframe lasts for
+/// @param startValue The value to start the keyframe's transformation with
+/// @param endValue The value to end the keyframe's transformation with
+/// @param easingType The `EasingType` to use for transformations
+/// @param easingArgs The arguments to provide to the easing calculation
 public record Keyframe(double startTime, double length, MathValue startValue, MathValue endValue, EasingType easingType, MathValue[] easingArgs) {
 	public Keyframe(double startTime, double length, MathValue startValue, MathValue endValue) {
 		this(startTime, length, startValue, endValue, EasingType.LINEAR);
@@ -34,9 +32,7 @@ public record Keyframe(double startTime, double length, MathValue startValue, Ma
 		this(startTime, length, startValue, endValue, easingType, easingArgs.toArray(new MathValue[0]));
 	}
 
-	/**
-	 * Extract and collect all {@link Variable}s used in this keyframe
-	 */
+	/// Extract and collect all [Variable]s used in this keyframe
 	public Set<Variable> getUsedVariables() {
 		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
 

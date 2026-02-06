@@ -1,6 +1,4 @@
-/**
- * Base .animation adapter classes
- */
+/// Base .animation adapter classes
 @NullMarked
 @ApiStatus.Internal
 package software.bernie.geckolib.loading.definition.animation;

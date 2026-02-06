@@ -11,35 +11,29 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
-/**
- * The {@link GeoAnimatable} interface specific to {@link BlockEntity BlockEntities}
- *
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Block-Animations">GeckoLib Wiki - Block Animations</a>
- */
+/// The [GeoAnimatable] interface specific to [BlockEntities][BlockEntity]
+///
+/// @see <a href="https://github.com/bernie-g/geckolib/wiki/Block-Animations">GeckoLib Wiki - Block Animations</a>
 public interface GeoBlockEntity extends GeoAnimatable {
-	/**
-	 * Get server-synced animation data via its relevant {@link SerializableDataTicket}.
-	 * <p>
-	 * Should only be used on the <u>client-side</u>
-	 * <p>
-	 * <b><u>DO NOT OVERRIDE</u></b>
-	 *
-	 * @param dataTicket The data ticket for the data to retrieve
-	 * @return The synced data, or null if no data of that type has been synced
-	 */
+	/// Get server-synced animation data via its relevant [SerializableDataTicket].
+	///
+	/// Should only be used on the <u>client-side</u>
+	///
+	/// **<u>DO NOT OVERRIDE</u>**
+	///
+	/// @param dataTicket The data ticket for the data to retrieve
+	/// @return The synced data, or null if no data of that type has been synced
 	@ApiStatus.NonExtendable
 	default <D> @Nullable D getAnimData(SerializableDataTicket<D> dataTicket) {
 		return getAnimatableInstanceCache().getManagerForId(0).getAnimatableData(dataTicket);
 	}
 
-	/**
-	 * Saves an arbitrary piece of data to this animatable's {@link AnimatableManager}
-	 * <p>
-	 * <b><u>DO NOT OVERRIDE</u></b>
-	 *
-	 * @param dataTicket The DataTicket to sync the data for
-	 * @param data The data to sync
-	 */
+	/// Saves an arbitrary piece of data to this animatable's [AnimatableManager]
+	///
+	/// **<u>DO NOT OVERRIDE</u>**
+	///
+	/// @param dataTicket The DataTicket to sync the data for
+	/// @param data The data to sync
 	@ApiStatus.NonExtendable
 	default <D> void setAnimData(SerializableDataTicket<D> dataTicket, D data) {
 		BlockEntity blockEntity = (BlockEntity)this;
@@ -59,14 +53,12 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 	}
 
-	/**
-	 * Trigger an animation for this BlockEntity, based on the controller name and animation name
-	 * <p>
-	 * <b><u>DO NOT OVERRIDE</u></b>
-	 *
-	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
-	 * @param animName The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
-	 */
+	/// Trigger an animation for this BlockEntity, based on the controller name and animation name
+	///
+	/// **<u>DO NOT OVERRIDE</u>**
+	///
+	/// @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	/// @param animName The name of animation to trigger. This needs to have been registered with the controller via [AnimationController.triggerableAnim][AnimationController#triggerableAnim]
 	@ApiStatus.NonExtendable
 	default void triggerAnim(@Nullable String controllerName, String animName) {
 		final BlockEntity blockEntity = (BlockEntity)this;
@@ -93,16 +85,14 @@ public interface GeoBlockEntity extends GeoAnimatable {
 		}
 	}
 
-	/**
-	 * Stop a previously triggered animation for this BlockEntity for the given controller name and animation name
-	 * <p>
-	 * This can be fired from either the client or the server, but optimally you would call it from the server
-	 * <p>
-	 * <b><u>DO NOT OVERRIDE</u></b>
-	 *
-	 * @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
-	 * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
-	 */
+	/// Stop a previously triggered animation for this BlockEntity for the given controller name and animation name
+	///
+	/// This can be fired from either the client or the server, but optimally you would call it from the server
+	///
+	/// **<u>DO NOT OVERRIDE</u>**
+	///
+	/// @param controllerName The name of the controller name the animation belongs to, or null to do an inefficient lazy search
+	/// @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
 	@ApiStatus.NonExtendable
 	default void stopTriggeredAnim(@Nullable String controllerName, @Nullable String animName) {
 		BlockEntity blockEntity = (BlockEntity)this;

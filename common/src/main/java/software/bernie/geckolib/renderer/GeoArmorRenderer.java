@@ -43,15 +43,13 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-/**
- * Base {@link GeoRenderer} for rendering in-world armor specifically
- * <p>
- * All custom armor added to be rendered in-world by GeckoLib should use an instance of this class
- *
- * @param <T> Item animatable class type
- * @param <R> RenderState class type. GeckoLib armor rendering requires {@link HumanoidRenderState} as the minimum class type
- * @see GeoItem
- */
+/// Base [GeoRenderer] for rendering in-world armor specifically
+///
+/// All custom armor added to be rendered in-world by GeckoLib should use an instance of this class
+///
+/// @param <T> Item animatable class type
+/// @param <R> RenderState class type. GeckoLib armor rendering requires [HumanoidRenderState] as the minimum class type
+/// @see GeoItem
 public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
     protected static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	protected final GeoRenderLayersContainer<T, GeoArmorRenderer.RenderData, R> renderLayers = new GeoRenderLayersContainer<>(this);
@@ -60,10 +58,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-    /**
-     * Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
-     */
-	public <I extends T> GeoArmorRenderer(I armorItem) {
+    /// Creates a new defaulted renderer instance, using the item's registered id as the file name for its assets
+    public <I extends T> GeoArmorRenderer(I armorItem) {
 		this(new DefaultedGeoModel<>(BuiltInRegistries.ITEM.getKey(armorItem)) {
             @Override
             protected String subtype() {
@@ -76,11 +72,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 		this.model = model;
 	}
 
-    /**
-     * Return the list of {@link ArmorSegment}s that should be rendered for the given {@link EquipmentSlot} for this render pass.
-     * <p>
-     * Override this if your armor piece renders different pieces than the default setup
-     */
+    /// Return the list of [ArmorSegment]s that should be rendered for the given [EquipmentSlot] for this render pass.
+    ///
+    /// Override this if your armor piece renders different pieces than the default setup
     public List<ArmorSegment> getSegmentsForSlot(R renderState, EquipmentSlot slot) {
         return switch (slot) {
             case HEAD -> List.of(ArmorSegment.HEAD);
@@ -91,11 +85,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         };
     }
 
-    /**
-     * Return the equivalent bone name for the given {@link ArmorSegment} for this render pass.
-     * <p>
-     * Override this if your armor has different bone names for some reason.
-     */
+    /// Return the equivalent bone name for the given [ArmorSegment] for this render pass.
+    ///
+    /// Override this if your armor has different bone names for some reason.
     public String getBoneNameForSegment(R renderState, ArmorSegment segment) {
         return switch (segment) {
             case HEAD -> "armorHead";
@@ -109,60 +101,46 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         };
     }
 
-	/**
-	 * Data container for additional render context information for creating the RenderState for this renderer
-	 *
-	 * @param itemStack The ItemStack about to be rendered
-	 * @param slot The EquipmentSlot the ItemStack is in
-	 * @param entity The entity wearing the item
-     * @param baseModel The base vanilla model for the armor piece being rendered
-	 */
+	/// Data container for additional render context information for creating the RenderState for this renderer
+	///
+	/// @param itemStack The ItemStack about to be rendered
+	/// @param slot The EquipmentSlot the ItemStack is in
+	/// @param entity The entity wearing the item
+	/// @param baseModel The base vanilla model for the armor piece being rendered
 	public record RenderData(ItemStack itemStack, EquipmentSlot slot, LivingEntity entity, HumanoidModel<?> baseModel) {}
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
-    /**
-     * Gets the model instance for this renderer
-     */
+    /// Gets the model instance for this renderer
     @Override
     public GeoModel<T> getGeoModel() {
         return this.model;
     }
 
-    /**
-     * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
-     */
+    /// Returns the list of registered [GeoRenderLayers][GeoRenderLayer] for this renderer
     @Override
     public List<GeoRenderLayer<T, RenderData, R>> getRenderLayers() {
         return this.renderLayers.getRenderLayers();
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     @SuppressWarnings("UnusedReturnValue")
     public GeoArmorRenderer<T, R> withRenderLayer(Function<? super GeoArmorRenderer<T, R>, GeoRenderLayer<T, GeoArmorRenderer.RenderData, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     public GeoArmorRenderer<T, R> withRenderLayer(GeoRenderLayer<T, GeoArmorRenderer.RenderData, R> renderLayer) {
         this.renderLayers.addLayer(renderLayer);
 
         return this;
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoArmorRenderer<T, R> withScale(float scale) {
         return withScale(scale, scale);
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoArmorRenderer<T, R> withScale(float scaleWidth, float scaleHeight) {
         this.scaleWidth = scaleWidth;
         this.scaleHeight = scaleHeight;
@@ -170,37 +148,31 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         return this;
     }
 
-    /**
-     * Gets a tint-applying color to render the given animatable with
-     * <p>
-     * Returns opaque white by default, multiplied by any inherent vanilla item dye color
-     */
+    /// Gets a tint-applying color to render the given animatable with
+    ///
+    /// Returns opaque white by default, multiplied by any inherent vanilla item dye color
     @Override
     public int getRenderColor(T animatable, @SuppressWarnings("NullableProblems") RenderData stackAndSlot, float partialTick) {
         return GeckoLibClientServices.ITEM_RENDERING.getDyedItemColor(stackAndSlot.itemStack(), 0xFFFFFFFF);
     }
 
-    /**
-     * Gets the {@link RenderType} to render the current render pass with
-     * <p>
-     * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
-     * <p>
-     * Override this to change the way a model will render (such as translucent models, etc.)
-     *
-     * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
-     */
+    /// Gets the [RenderType] to render the current render pass with
+    ///
+    /// Uses the [RenderTypes#entityCutoutNoCull] `RenderType` by default
+    ///
+    /// Override this to change the way a model will render (such as translucent models, etc.)
+    ///
+    /// @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
     @Override
     public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         return RenderTypes.armorCutoutNoCull(texture);
     }
 
-    /**
-     * Gets the id that represents the current animatable's instance for animation purposes.
-     *
-     * @param animatable The Animatable instance being renderer
-     * @param stackAndSlot An object related to the render pass or null if not applicable.
-     *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
-     */
+    /// Gets the id that represents the current animatable's instance for animation purposes.
+    ///
+    /// @param animatable The Animatable instance being renderer
+    /// @param stackAndSlot An object related to the render pass or null if not applicable.
+    ///                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
     @ApiStatus.OverrideOnly
     @Override
     public long getInstanceId(T animatable, @SuppressWarnings("NullableProblems") RenderData stackAndSlot) {
@@ -215,10 +187,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         return -stackId;
     }
 
-    /**
-     * Internal method for capturing the common RenderState data for all animatable objects
-     */
-    
+    /// Internal method for capturing the common RenderState data for all animatable objects
     @ApiStatus.Internal
     @Override
     public void captureDefaultRenderState(T animatable, @SuppressWarnings("NullableProblems") RenderData renderData, R renderState, float partialTick) {
@@ -233,35 +202,29 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
     }
 
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * Override and call {@code super} with modified scale values as needed to further modify the scale of the model
-     */
+    /// Scales the [PoseStack] in preparation for rendering the model, excluding when re-rendering the model as part of a [GeoRenderLayer] or external render call
+    ///
+    /// Override and call `super` with modified scale values as needed to further modify the scale of the model
     @Override
     public void scaleModelForRender(RenderPassInfo<R> renderPassInfo, float widthScale, float heightScale) {
         GeoRenderer.super.scaleModelForRender(renderPassInfo, this.scaleWidth * widthScale, this.scaleHeight * heightScale);
     }
 
-    /**
-     * Transform the {@link PoseStack} in preparation for rendering the model.
-     * <p>
-     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
-     * If you need to do pre-scale translations, use {@link #preRenderPass}
-     * <p>
-     * PoseStack translations made here are kept until the end of the render process
-     */
+    /// Transform the [PoseStack] in preparation for rendering the model.
+    ///
+    /// This is called after [#scaleModelForRender], and so any transformations here will be scaled appropriately.
+    /// If you need to do pre-scale translations, use [#preRenderPass]
+    ///
+    /// PoseStack translations made here are kept until the end of the render process
     @Override
     public void adjustRenderPose(RenderPassInfo<R> renderPassInfo) {
         renderPassInfo.poseStack().translate(0, 24 / 16f, 0);
         renderPassInfo.poseStack().scale(-1, -1, 1);
     }
 
-    /**
-     * Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
-     * <p>
-     * No manipulation of the RenderState is permitted here
-     */
+    /// Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
+    ///
+    /// No manipulation of the RenderState is permitted here
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
@@ -289,13 +252,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         }
     }
 
-    /**
-     * Build and submit the actual render task to the {@link OrderedSubmitNodeCollector} here.
-     * <p>
-     * Once the render task has been submitted here, no further manipulations of the render pass should be made.
-     * <p>
-     * If the provided {@link RenderType} is null, no submission will be made
-     */
+    /// Build and submit the actual render task to the [OrderedSubmitNodeCollector] here.
+    ///
+    /// Once the render task has been submitted here, no further manipulations of the render pass should be made.
+    ///
+    /// If the provided [RenderType] is null, no submission will be made
     @Override
     public void submitRenderTasks(RenderPassInfo<R> renderPassInfo, OrderedSubmitNodeCollector renderTasks, @Nullable RenderType renderType) {
         if (renderType == null)
@@ -322,35 +283,27 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         });
     }
 
-    /**
-     * Create and fire the relevant {@code CompileLayers} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileLayers` event hook for this renderer
     @Override
     public void fireCompileRenderLayersEvent() {
         GeckoLibClientServices.EVENTS.fireCompileArmorRenderLayers(this);
     }
 
-    /**
-     * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileRenderState` event hook for this renderer
     @Override
     public void fireCompileRenderStateEvent(T animatable, @SuppressWarnings("NullableProblems") RenderData relatedObject, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileArmorRenderState(this, renderState, animatable, relatedObject);
     }
 
-    /**
-     * Create and fire the relevant {@code Pre-Render} event hook for this renderer
-     *
-     * @return Whether the renderer should proceed based on the cancellation state of the event
-     */
+    /// Create and fire the relevant `Pre-Render` event hook for this renderer
+    ///
+    /// @return Whether the renderer should proceed based on the cancellation state of the event
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeckoLibClientServices.EVENTS.fireArmorPreRender(renderPassInfo, renderTasks);
     }
 
-    /**
-     * Enum representing the different parts of a humanoid armor GeckoLib handles for rendering.
-     */
+    /// Enum representing the different parts of a humanoid armor GeckoLib handles for rendering.
     public enum ArmorSegment {
         HEAD(EquipmentSlot.HEAD, model -> model.head, pos -> pos.mul(1, -1, 1)),
         CHEST(EquipmentSlot.CHEST, model -> model.body, pos -> pos.mul(1, -1, 1)),
@@ -372,9 +325,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         }
     }
 
-    /**
-     * Helper class to consolidate the retrieval and validation of an individual slot for rendering
-     */
+    /// Helper class to consolidate the retrieval and validation of an individual slot for rendering
     @SuppressWarnings("rawtypes")
     @ApiStatus.Internal
     private record StackForRender(ItemStack stack, EquipmentSlot slot, GeoArmorRenderer renderer, HumanoidModel<?> baseModel) {
@@ -396,13 +347,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         }
     }
 
-    /**
-     * Attempt to render a GeckoLib {@link GeoArmorRenderer armor piece} for the given slot
-     * <p>
-     * This is typically only called by an internal mixin
-     *
-     * @return true if the armor piece was a GeckoLib armor piece and was rendered
-     */
+    /// Attempt to render a GeckoLib [armor piece][GeoArmorRenderer] for the given slot
+    ///
+    /// This is typically only called by an internal mixin
+    ///
+    /// @return true if the armor piece was a GeckoLib armor piece and was rendered
     @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
@@ -422,11 +371,9 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         return true;
     }
 
-	/**
-	 * Capture and assign RenderState data for each GeckoLib-relevant equipment slot for rendering
-     * <p>
-     * Called internally by a mixin
-	 */
+	/// Capture and assign RenderState data for each GeckoLib-relevant equipment slot for rendering
+	///
+	/// Called internally by a mixin
 	@SuppressWarnings("unchecked")
     @ApiStatus.Internal
 	public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
@@ -449,9 +396,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 		baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, slotRenderData);
 	}
 
-    /**
-     * Compile an array of GeckoLib-relevant equipment pieces for rendering
-     */
+    /// Compile an array of GeckoLib-relevant equipment pieces for rendering
     @ApiStatus.Internal
 	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> @Nullable List<StackForRender> getRelevantSlotsForRendering(
             LivingEntity entity, R entityRenderState, BiFunction<R, EquipmentSlot, A> modelFunction) {
@@ -473,9 +418,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 		return relevantSlots;
 	}
 
-    /**
-     * Disabled because we use the {@link HumanoidRenderState} that vanilla compiles for the entity
-     */
+    /// Disabled because we use the [HumanoidRenderState] that vanilla compiles for the entity
     @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     @Deprecated

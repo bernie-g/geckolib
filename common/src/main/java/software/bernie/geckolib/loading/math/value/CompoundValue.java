@@ -6,15 +6,12 @@ import software.bernie.geckolib.loading.math.MathValue;
 import java.util.Set;
 import java.util.StringJoiner;
 
-/**
- * {@link MathValue} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Contains a collection of sub-expressions that evaluate before returning the last expression, or 0 if no return is defined.
- * Sub-expressions have no bearing on the final return with exception for where they may be setting variable values
- */
+/// [MathValue] value supplier
+///
+/// **Contract:**
+///
+/// Contains a collection of sub-expressions that evaluate before returning the last expression, or 0 if no return is defined.
+/// Sub-expressions have no bearing on the final return with exception for where they may be setting variable values
 public record CompoundValue(MathValue[] subValues, Set<Variable> usedVariables) implements MathValue {
     public CompoundValue(MathValue[] subValues) {
         this(subValues, MathValue.collectUsedVariables(subValues));

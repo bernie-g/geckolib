@@ -30,20 +30,16 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * Internal class for handling the processing of animations and animation-related functionality.
- * <p>
- * This is distinct from {@link AnimationController} in that the controller handles the <i>state</i> of an animatable's animations,
- * whereas AnimationProcessor handles the <i>logic</i> of individual animations.
- */
+/// Internal class for handling the processing of animations and animation-related functionality.
+///
+/// This is distinct from [AnimationController] in that the controller handles the _state_ of an animatable's animations,
+/// whereas AnimationProcessor handles the _logic_ of individual animations.
 @ApiStatus.Internal
 public class AnimationProcessor {
-    /**
-     * Perform the necessary preparations for the upcoming render pass and collect it to be passed along with the {@link GeoRenderState}
-     *
-     * @param animatable The animatable relevant to the upcoming render pass
-     * @param renderState The {@link GeoRenderState} being built for the upcoming render pass
-     */
+    /// Perform the necessary preparations for the upcoming render pass and collect it to be passed along with the [GeoRenderState]
+    ///
+    /// @param animatable The animatable relevant to the upcoming render pass
+    /// @param renderState The [GeoRenderState] being built for the upcoming render pass
     @SuppressWarnings("unchecked")
     public static <T extends GeoAnimatable> void extractControllerStates(T animatable, GeoRenderState renderState, GeoModel<T> geoModel) {
         final AnimatableManager<T> manager = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER));
@@ -74,9 +70,7 @@ public class AnimationProcessor {
         renderState.addGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES, controllerStates.toArray(new ControllerState[0]));
     }
 
-    /**
-     * Create the {@link BoneSnapshot}s for the upcoming render pass based on the provided {@link AnimationPoint}s
-     */
+    /// Create the [BoneSnapshot]s for the upcoming render pass based on the provided [AnimationPoint]s
     public static void createBoneSnapshots(ControllerState controllerState, BoneSnapshots snapshots) {
         final AnimationPoint animation = controllerState.animationPoint();
         final AnimationPoint prevAnimation = controllerState.prevAnimationPoint();
@@ -141,9 +135,7 @@ public class AnimationProcessor {
         snapshot.setTranslation(xPos, yPos, zPos);
     }
 
-    /**
-     * Compute the effective animation point value from the provided {@link AnimationPoint}s and associated values
-     */
+    /// Compute the effective animation point value from the provided [AnimationPoint]s and associated values
     public static float findAnimationPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation, @Nullable AnimationPoint prevAnimation,
                                                 int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
         if (controllerState.transitionTime() >= 0) {
@@ -166,9 +158,7 @@ public class AnimationProcessor {
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
     }
 
-    /**
-     * Compute the effective animation point value from the provided {@link AnimationPoint}s, transitioning to the next animation
-     */
+    /// Compute the effective animation point value from the provided [AnimationPoint]s, transitioning to the next animation
     private static float findTransitionPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation, AnimationPoint prevAnimation,
                                                   int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
         Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
@@ -185,9 +175,7 @@ public class AnimationProcessor {
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
     }
 
-    /**
-     * Compute the effective animation point value from the provided {@link AnimationPoint}s, resetting back to the base bone state
-     */
+    /// Compute the effective animation point value from the provided [AnimationPoint]s, resetting back to the base bone state
     private static float findResetPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation,
                                              int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
         ControllerState previousState = new ControllerState(controllerState.animationPoint(), null, -1, 0,
@@ -200,9 +188,7 @@ public class AnimationProcessor {
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
     }
 
-    /**
-     * Get the base snapshot value to return to when resetting from an animation
-     */
+    /// Get the base snapshot value to return to when resetting from an animation
     private static float getSnapshotResetTarget(BoneSnapshot snapshot, AnimationPoint.Transform transform, AnimationPoint.Axis axis, boolean additive) {
         if (!additive)
             return transform.defaultValue;
@@ -226,9 +212,7 @@ public class AnimationProcessor {
         };
     }
 
-    /**
-     * Wraps keyframe values to be the nearest multiple of 360 degrees, so that resetting and transitioning don't result in massive backspins
-     */
+    /// Wraps keyframe values to be the nearest multiple of 360 degrees, so that resetting and transitioning don't result in massive backspins
     private static double wrapRotation(double value, AnimationPoint.Transform transform) {
         if (transform != AnimationPoint.Transform.ROTATION)
             return value;
@@ -236,11 +220,9 @@ public class AnimationProcessor {
         return Mth.wrapDegrees(value * Mth.RAD_TO_DEG) * Mth.DEG_TO_RAD;
     }
 
-    /**
-     * Get the {@link Animation} associated with the given {@link RawAnimation.Stage}
-     * <p>
-     * Returns null if an animation by the given name for the provided animatable doesn't exist
-     */
+    /// Get the [Animation] associated with the given [RawAnimation.Stage]
+    ///
+    /// Returns null if an animation by the given name for the provided animatable doesn't exist
     public static <T extends GeoAnimatable> @Nullable Animation getOrCreateAnimation(RawAnimation.Stage stage, T animatable, GeoModel<T> geoModel) {
         // This is intentional. DO NOT CHANGE THIS or Tslat will be unhappy
         //noinspection StringEquality

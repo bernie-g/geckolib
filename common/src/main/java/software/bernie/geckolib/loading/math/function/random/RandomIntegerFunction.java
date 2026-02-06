@@ -8,19 +8,16 @@ import software.bernie.geckolib.loading.math.function.MathFunction;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns a random integer value based on the input values:
- * <ul>
- *     <li>A single input generates a value between 0 and that input (exclusive)</li>
- *     <li>Two inputs generates a random value between the first (inclusive) and second input (inclusive)</li>
- *     <li>Three inputs generates a random value between the first (inclusive) and second input (inclusive), seeded by the third input</li>
- * </ul>
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns a random integer value based on the input values:
+///
+///   - A single input generates a value between 0 and that input (exclusive)
+///   - Two inputs generates a random value between the first (inclusive) and second input (inclusive)
+///   - Three inputs generates a random value between the first (inclusive) and second input (inclusive), seeded by the third input
+///
 public final class RandomIntegerFunction extends MathFunction {
     private final MathValue valueA;
     private final @Nullable MathValue valueB;

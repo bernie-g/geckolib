@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the remainder value of the input value when modulo'd by the modulus value
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the remainder value of the input value when modulo'd by the modulus value
 public final class ModFunction extends MathFunction {
     private final MathValue value;
     private final MathValue modulus;

@@ -8,13 +8,11 @@ import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for generic geometry information, only used in deserialization at startup
- *
- * @param bones The raw bone array for this geometry
- * @param cape The cape name for this geometry, not used by GeckoLib
- * @param geometryDescription The additional model properties for this geometry, if present
- */
+/// Container class for generic geometry information, only used in deserialization at startup
+///
+/// @param bones The raw bone array for this geometry
+/// @param cape The cape name for this geometry, not used by GeckoLib
+/// @param geometryDescription The additional model properties for this geometry, if present
 public record MinecraftGeometry(Bone[] bones, @Nullable String cape, @Nullable GeometryDescription geometryDescription) {
 	public static JsonDeserializer<MinecraftGeometry> deserializer() throws JsonParseException {
 		return (json, type, context) -> {

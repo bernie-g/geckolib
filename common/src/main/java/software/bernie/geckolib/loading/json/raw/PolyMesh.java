@@ -7,9 +7,7 @@ import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for poly mesh information, only used in deserialization at startup
- */
+/// Container class for poly mesh information, only used in deserialization at startup
 public record PolyMesh(@Nullable Boolean normalizedUVs, double[] normals, @Nullable PolysUnion polysUnion, double[] positions, double[] uvs) {
 	public static JsonDeserializer<PolyMesh> deserializer() throws JsonParseException {
 		return (json, type, context) -> {

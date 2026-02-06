@@ -5,14 +5,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the first value plus the difference between the first and second input values multiplied by the third input value
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the first value plus the difference between the first and second input values multiplied by the third input value
 public final class LerpFunction extends MathFunction {
     private final MathValue min;
     private final MathValue max;

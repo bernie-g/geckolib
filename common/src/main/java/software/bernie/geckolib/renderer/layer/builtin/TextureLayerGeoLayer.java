@@ -13,16 +13,14 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.function.Function;
 
-/**
- * Built-in GeoLayer for quickly performing another render pass for the same model after the main render pass has completed.
- * <p>
- * This should only be used if the additional render pass isn't specific to any bones, as this re-renders the entire model.
- * If you are using this to use custom textures/rendertypes on specific bones, use {@link CustomBoneTextureGeoLayer} instead.
- *
- * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- */
+/// Built-in GeoLayer for quickly performing another render pass for the same model after the main render pass has completed.
+///
+/// This should only be used if the additional render pass isn't specific to any bones, as this re-renders the entire model.
+/// If you are using this to use custom textures/rendertypes on specific bones, use [CustomBoneTextureGeoLayer] instead.
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     protected final Identifier texture;
     protected final @Nullable Function<Identifier, RenderType> renderType;
@@ -42,17 +40,13 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
         this.renderType = renderTypeFunction;
     }
 
-    /**
-     * Get the texture resource path for the given {@link GeoRenderState}
-     */
+    /// Get the texture resource path for the given [GeoRenderState]
     @Override
     protected Identifier getTextureResource(R renderState) {
         return this.texture;
     }
 
-    /**
-     * Get the render type for the render pass
-     */
+    /// Get the render type for the render pass
     protected @Nullable RenderType getRenderType(R renderState) {
         final Identifier texture = getTextureResource(renderState);
 
@@ -62,11 +56,9 @@ public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRende
         return this.renderType.apply(texture);
     }
 
-    /**
-     * This is the method that is actually called by the render for your render layer to function
-     * <p>
-     * This is called <i>after</i> the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
-     */
+    /// This is the method that is actually called by the render for your render layer to function
+    ///
+    /// This is called _after_ the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
     @Override
     public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         if (!renderPassInfo.willRender())

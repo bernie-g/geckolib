@@ -17,13 +17,11 @@ import software.bernie.geckolib.util.RenderUtil;
 import java.util.Arrays;
 import java.util.Objects;
 
-/**
- * Baked "bone" group object representing a collection of renderable objects (E.G. cubes) and recursively nested children.
- * <p>
- * GeoBones themselves do not render; instead they render the renderable objects they contain (such as {@link GeoCube}s).
- * <p>
- * Each bone instance is a singleton, belonging to a single {@link BakedGeoModel}
- */
+/// Baked "bone" group object representing a collection of renderable objects (E.G. cubes) and recursively nested children.
+///
+/// GeoBones themselves do not render; instead they render the renderable objects they contain (such as [GeoCube]s).
+///
+/// Each bone instance is a singleton, belonging to a single [BakedGeoModel]
 public abstract class GeoBone {
 	protected final @Nullable GeoBone parent;
 	protected final String name;
@@ -55,77 +53,55 @@ public abstract class GeoBone {
         this.baseRotZ = rotZ;
     }
 
-    /**
-     * @return The parent bone of this bone, or null if this bone has no parent
-     */
+    /// @return The parent bone of this bone, or null if this bone has no parent
     public @Nullable GeoBone parent() {
         return this.parent;
     }
 
-    /**
-     * @return The name of this bone, as defined in the model json
-     */
+    /// @return The name of this bone, as defined in the model json
     public String name() {
         return this.name;
     }
 
-    /**
-     * @return The child bones of this bone
-     */
+    /// @return The child bones of this bone
     public GeoBone[] children() {
         return this.children;
     }
 
-    /**
-     * @return The pivot x coordinate of this bone, relative to its parent bone
-     */
+    /// @return The pivot x coordinate of this bone, relative to its parent bone
     public float pivotX() {
         return this.pivotX;
     }
 
-    /**
-     * @return The pivot y coordinate of this bone, relative to its parent bone
-     */
+    /// @return The pivot y coordinate of this bone, relative to its parent bone
     public float pivotY() {
         return this.pivotY;
     }
 
-    /**
-     * @return The pivot z coordinate of this bone, relative to its parent bone
-     */
+    /// @return The pivot z coordinate of this bone, relative to its parent bone
     public float pivotZ() {
         return this.pivotZ;
     }
 
-    /**
-     * @return The base x rotation of this bone in radians, relative to its parent bone
-     */
+    /// @return The base x rotation of this bone in radians, relative to its parent bone
     public float baseRotX() {
         return this.baseRotX;
     }
 
-    /**
-     * @return The base y rotation of this bone in radians, relative to its parent bone
-     */
+    /// @return The base y rotation of this bone in radians, relative to its parent bone
     public float baseRotY() {
         return this.baseRotY;
     }
 
-    /**
-     * @return The base z rotation of this bone in radians, relative to its parent bone
-     */
+    /// @return The base z rotation of this bone in radians, relative to its parent bone
     public float baseRotZ() {
         return this.baseRotZ;
     }
 
-    /**
-     * Render this GeoBone using the provided {@link RenderPassInfo}
-     */
+    /// Render this GeoBone using the provided [RenderPassInfo]
     public abstract <R extends GeoRenderState> void render(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor);
 
-    /**
-     * Render all {@link #children} of this bone
-     */
+    /// Render all [#children] of this bone
     public void renderChildren(RenderPassInfo<?> renderPassInfo, PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
         if (this.frameSnapshot == null || !this.frameSnapshot.areChildrenHidden()) {
             for (GeoBone child : this.children) {
@@ -140,10 +116,8 @@ public abstract class GeoBone {
         }
     }
 
-    /**
-     * Perform a full render operation on this bone, including positioning it based on its {@link BoneSnapshot}
-     * and rendering any child bones
-     */
+    /// Perform a full render operation on this bone, including positioning it based on its [BoneSnapshot]
+    /// and rendering any child bones
     public <R extends GeoRenderState> void positionAndRender(RenderPassInfo<R> renderPassInfo, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
         final PoseStack poseStack = renderPassInfo.poseStack();
 
@@ -157,23 +131,17 @@ public abstract class GeoBone {
         poseStack.popPose();
     }
 
-    /**
-     * Apply a translation to the provided PoseStack to this bone's pivot point
-     */
+    /// Apply a translation to the provided PoseStack to this bone's pivot point
     public void translateToPivotPoint(PoseStack poseStack) {
         poseStack.translate(pivotX() / 16f, pivotY() / 16f, pivotZ() / 16f);
     }
 
-    /**
-     * Apply a translation to the provided PoseStack away from this bone's pivot point
-     */
+    /// Apply a translation to the provided PoseStack away from this bone's pivot point
     public void translateAwayFromPivotPoint(PoseStack poseStack) {
         poseStack.translate(-pivotX() / 16f, -pivotY() / 16f, -pivotZ() / 16f);
     }
 
-    /**
-     * Pass the current render position to any applied {@link RenderPassInfo.BonePositionListener}s
-     */
+    /// Pass the current render position to any applied [RenderPassInfo.BonePositionListener]s
     @ApiStatus.Internal
     public void updateBonePositionListeners(PoseStack poseStack, RenderPassInfo<?> renderPassInfo) {
         if (this.positionListeners != null) {

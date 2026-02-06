@@ -1,6 +1,4 @@
-/**
- * GeckoLib BlockEntity syncing and functionality packets
- */
+/// GeckoLib BlockEntity syncing and functionality packets
 @NullMarked
 package software.bernie.geckolib.network.packet.blockentity;
 

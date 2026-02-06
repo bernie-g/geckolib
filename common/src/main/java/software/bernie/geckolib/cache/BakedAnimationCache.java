@@ -9,20 +9,16 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.util.Map;
 
-/**
- * Container record for GeckoLib's baked animation cache
- *
- * @param cache The baked animations map as loaded from the resource files
- */
+/// Container record for GeckoLib's baked animation cache
+///
+/// @param cache The baked animations map as loaded from the resource files
 public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
-    /**
-     * Get a baked {@link Animation} from the animation cache by its file id and animation name
-     *
-     * @param animationFile The file identifier of the animations file - (E.G. {@code mymod:entity/my_mob})
-     * @param fallbackFiles Any possible fallback animation file locations, in case the specific animation isn't found in the primary animation file
-     * @param animationName The name of the animation to retrieve from the animation file
-     * @return The baked {@link Animation} instance, or null if not found
-     */
+    /// Get a baked [Animation] from the animation cache by its file id and animation name
+    ///
+    /// @param animationFile The file identifier of the animations file - (E.G. `mymod:entity/my_mob`)
+    /// @param fallbackFiles Any possible fallback animation file locations, in case the specific animation isn't found in the primary animation file
+    /// @param animationName The name of the animation to retrieve from the animation file
+    /// @return The baked [Animation] instance, or null if not found
     public @Nullable Animation getAnimation(Identifier animationFile, Identifier[] fallbackFiles, String animationName) {
         BakedAnimations animations = null;
 
@@ -56,12 +52,10 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
         return null;
     }
 
-    /**
-     * Strips out unnecessary prefix/suffix components of an animation resource path.<br>
-     * Typically these are leftovers from previous versions of GeckoLib.
-     *
-     * @deprecated To be removed once a sufficient time has passed to allow devs to fix their paths
-     */
+    /// Strips out unnecessary prefix/suffix components of an animation resource path.
+    /// Typically these are leftovers from previous versions of GeckoLib.
+    ///
+    /// @deprecated To be removed once a sufficient time has passed to allow devs to fix their paths
     @ApiStatus.Internal
     @Deprecated(forRemoval = true)
     private static Identifier stripLegacyPath(Identifier legacyPath) {

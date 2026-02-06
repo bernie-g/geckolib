@@ -8,18 +8,15 @@ import software.bernie.geckolib.loading.math.function.MathFunction;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns a random value based on the input values:
- * <ul>
- *     <li>Three inputs: Generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive)</li>
- *     <li>Four inputs: Generates the sum of <i>n</i> (first input) random values between the second (inclusive) and third input (exclusive), seeded by the fourth input</li>
- * </ul>
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns a random value based on the input values:
+///
+///   - Three inputs: Generates the sum of _n_ (first input) random values between the second (inclusive) and third input (exclusive)
+///   - Four inputs: Generates the sum of _n_ (first input) random values between the second (inclusive) and third input (exclusive), seeded by the fourth input
+///
 public final class DieRollFunction extends MathFunction {
     private final MathValue rolls;
     private final MathValue min;

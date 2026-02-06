@@ -1,6 +1,4 @@
-/**
- * Miscellaneous object classes related to managing animations
- */
+/// Miscellaneous object classes related to managing animations
 @NullMarked
 package software.bernie.geckolib.animation.object;
 

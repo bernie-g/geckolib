@@ -5,16 +5,12 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
 
-/**
- * A simple U/V coordinate pair container
- *
- * @param u The U coordinate for this pair
- * @param v The V coordinate for this pair
- */
+/// A simple U/V coordinate pair container
+///
+/// @param u The U coordinate for this pair
+/// @param v The V coordinate for this pair
 public record GeometryUvPair(double u, double v) {
-    /**
-     * Parse a GeometryUvPair instance from raw .json input via {@link Gson}
-     */
+    /// Parse a GeometryUvPair instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryUvPair> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             final JsonArray uv = json.getAsJsonArray();

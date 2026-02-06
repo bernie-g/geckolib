@@ -28,13 +28,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.ToDoubleFunction;
 
-/**
- * Helper class for the builtin <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> query string constants for the {@link MathParser}.
- * <p>
- * These do not constitute a definitive list of queries; merely the default ones
- * <p>
- * Note that the implementations of the various queries in GeckoLib may not necessarily match its implementation in Bedrock
- */
+/// Helper class for the builtin <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> query string constants for the [MathParser].
+///
+/// These do not constitute a definitive list of queries; merely the default ones
+///
+/// Note that the implementations of the various queries in GeckoLib may not necessarily match its implementation in Bedrock
 public final class MolangQueries {
 	public static final String ACTOR_COUNT = "query.actor_count";
 	public static final String ANIM_TIME = "query.anim_time";
@@ -126,41 +124,33 @@ public final class MolangQueries {
 		setDefaultQueryValues();
 	}
 
-	/**
-	 * Returns whether a variable under the given identifier has already been registered, without creating a new instance
-	 */
+	/// Returns whether a variable under the given identifier has already been registered, without creating a new instance
 	public static boolean isExistingVariable(String name) {
 		return VARIABLES.containsKey(name);
 	}
 
-	/**
-	 * Register a new {@link Variable} with the math parsing system
-	 * <p>
-	 * Technically supports overriding by matching keys, though you should try to update the existing variable instances instead if possible
-	 *
-	 * @see MathParser#registerVariable(Variable)
-	 */
+	/// Register a new [Variable] with the math parsing system
+	///
+	/// Technically supports overriding by matching keys, though you should try to update the existing variable instances instead if possible
+	///
+	/// @see MathParser#registerVariable(Variable)
 	static void registerVariable(Variable variable) {
 		VARIABLES.put(variable.name(), variable);
 	}
 
-	/**
-	 * @return The registered {@link Variable} instance for the given name
-	 *
-	 * @see MathParser#getVariableFor(String)
-	 */
+	/// @return The registered [Variable] instance for the given name
+	///
+	/// @see MathParser#getVariableFor(String)
 	static Variable getVariableFor(String name) {
 		return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
 	}
 
-	/**
-	 * Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
-	 *
-	 * @param text The base text to parse
-	 * @param properName The "correct" prefix to apply
-	 * @param aliases The available prefixes to check and replace
-	 * @return The unaliased string, or the original string if no aliases match
-	 */
+	/// Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
+	///
+	/// @param text The base text to parse
+	/// @param properName The "correct" prefix to apply
+	/// @param aliases The available prefixes to check and replace
+	/// @return The unaliased string, or the original string if no aliases match
 	private static String applyPrefixAliases(String text, String properName, String... aliases) {
 		for (String alias : aliases) {
 			if (text.startsWith(alias))
@@ -170,17 +160,15 @@ public final class MolangQueries {
 		return text;
 	}
 
-	/**
-	 * Set a Molang variable that operates on data relevant to the {@link GeoAnimatable} or associated variables at the time of rendering.
-	 * <p>
-	 * Because of the state-based nature of the render pipeline, this has to be handled slightly differently
-	 * to standard {@link Variable}s
-	 * <p>
-	 * You should only be doing this once, at mod construct
-	 *
-	 * @param <T> The animatable type your variable operates on
-	 * @param valueFunction The function that generates the variable value based on the animatable and render state
-	 */
+	/// Set a Molang variable that operates on data relevant to the [GeoAnimatable] or associated variables at the time of rendering.
+	///
+	/// Because of the state-based nature of the render pipeline, this has to be handled slightly differently
+	/// to standard [Variable]s
+	///
+	/// You should only be doing this once, at mod construct
+	///
+	/// @param <T> The animatable type your variable operates on
+	/// @param valueFunction The function that generates the variable value based on the animatable and render state
 	@SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> void setActorVariable(String name, ToDoubleFunction<Actor<T>> valueFunction) {
 		Variable variable = getVariableFor(name);
@@ -189,13 +177,11 @@ public final class MolangQueries {
         variable.set(state -> state.getQueryValue(variable));
 	}
 
-	/**
-	 * Set a Molang variable to a given value function based on an {@link AnimationState}
-	 * <p>
-	 * Note that {@link #setActorVariable(String, ToDoubleFunction) actor variables} cannot be overridden here
-	 *
-	 * @param valueFunction The value function to set the variable to
-	 */
+	/// Set a Molang variable to a given value function based on an [AnimationState]
+	///
+	/// Note that [actor variables][#setActorVariable(String, ToDoubleFunction)] cannot be overridden here
+	///
+	/// @param valueFunction The value function to set the variable to
 	public static <T extends GeoAnimatable> void setVariableFunction(String name, ToDoubleFunction<ControllerState> valueFunction) {
 		Variable variable = getVariableFor(name);
 
@@ -205,13 +191,11 @@ public final class MolangQueries {
 		variable.set(valueFunction);
 	}
 
-	/**
-	 * Set a Molang variable to a given value
-	 * <p>
-	 * Note that {@link #setActorVariable(String, ToDoubleFunction) actor variables} cannot be overridden here
-	 *
-	 * @param value The value to set the variable to
-	 */
+	/// Set a Molang variable to a given value
+	///
+	/// Note that [actor variables][#setActorVariable(String, ToDoubleFunction)] cannot be overridden here
+	///
+	/// @param value The value to set the variable to
 	public static void setVariableValue(String name, double value) {
 		Variable variable = getVariableFor(name);
 
@@ -221,14 +205,12 @@ public final class MolangQueries {
 		variable.set(value);
 	}
 
-	/**
-	 * Compute and cache the provided variables into the provided value map, to be passed into a following render pass
-	 *
-	 * @param actor The actor instance for this render pass
-	 * @param variables The list of variables to compute values for
-	 * @param valueMap The map to store the computed values into
-	 * @param <T> The lowest-common type of object your actor needs to be in order to evaluate this variable
-	 */
+	/// Compute and cache the provided variables into the provided value map, to be passed into a following render pass
+	///
+	/// @param actor The actor instance for this render pass
+	/// @param variables The list of variables to compute values for
+	/// @param valueMap The map to store the computed values into
+	/// @param <T> The lowest-common type of object your actor needs to be in order to evaluate this variable
 	public static <T extends GeoAnimatable> void buildActorVariables(Actor<T> actor, Set<Variable> variables, Reference2DoubleMap<Variable> valueMap) {
 		for (Variable variable : variables) {
             ToDoubleFunction<Actor<? extends GeoAnimatable>> function = ACTOR_VARIABLES.get(variable);
@@ -238,19 +220,17 @@ public final class MolangQueries {
 		}
 	}
 
-	/**
-	 * Holder object representing an animatable about to be rendered, along with some associated helper objects.<br>
-	 * Used in {@link #setActorVariable(String, ToDoubleFunction) actor variables} for pre-computing variable values
- 	 *
-	 * @param animatable The animatable instance being prepared for render
-	 * @param renderState The {@link GeoRenderState} being built for the render pass
-	 * @param controller The {@link AnimationController} relevant to the actor at the time this actor is being used
-	 * @param renderTime The amount of time (in ticks) this animatable has existed since the first time it rendered
-	 * @param partialTick The fraction of a tick that has passed as of the upcoming render frame
-	 * @param level The client's level
-	 * @param clientPlayer The client player
-	 * @param cameraPos The position of the client player's camera
-	 */
+	/// Holder object representing an animatable about to be rendered, along with some associated helper objects.
+	/// Used in [actor variables][#setActorVariable(String, ToDoubleFunction)] for pre-computing variable values
+	///
+	/// @param animatable The animatable instance being prepared for render
+	/// @param renderState The [GeoRenderState] being built for the render pass
+	/// @param controller The [AnimationController] relevant to the actor at the time this actor is being used
+	/// @param renderTime The amount of time (in ticks) this animatable has existed since the first time it rendered
+	/// @param partialTick The fraction of a tick that has passed as of the upcoming render frame
+	/// @param level The client's level
+	/// @param clientPlayer The client player
+	/// @param cameraPos The position of the client player's camera
 	public record Actor<T>(T animatable, GeoRenderState renderState, AnimationController<?> controller, double renderTime, float partialTick, Level level, Player clientPlayer, Vec3 cameraPos) {}
 
 	private static void setDefaultQueryValues() {

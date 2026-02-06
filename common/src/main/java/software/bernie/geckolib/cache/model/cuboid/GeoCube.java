@@ -12,18 +12,14 @@ import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.cache.model.GeoQuad;
 import software.bernie.geckolib.util.RenderUtil;
 
-/**
- * Baked cuboid for a {@link GeoBone}
- *
- * @param quads The quad array for this cube, pre-sorted to render in correct order
- * @param pivot The pivot point of this cube
- * @param rotation The baked rotation value of this cube
- * @param size The x/y/z dimensions of this cube
- */
+/// Baked cuboid for a [GeoBone]
+///
+/// @param quads The quad array for this cube, pre-sorted to render in correct order
+/// @param pivot The pivot point of this cube
+/// @param rotation The baked rotation value of this cube
+/// @param size The x/y/z dimensions of this cube
 public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
-    /**
-     * Submit this cuboid's quads to the vertex consumer
-     */
+    /// Submit this cuboid's quads to the vertex consumer
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
         translateToPivotPoint(poseStack);
         rotate(poseStack);
@@ -44,9 +40,7 @@ public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3
 
     }
 
-    /**
-     * Apply a rotation to the provided PoseStack by this cube's rotation values
-     */
+    /// Apply a rotation to the provided PoseStack by this cube's rotation values
     public void rotate(PoseStack poseStack) {
         final Vec3 rotation = rotation();
 
@@ -55,16 +49,12 @@ public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3
         poseStack.mulPose(new Quaternionf().rotationXYZ((float)rotation.x(), 0, 0));
     }
 
-    /**
-     * Apply a translation to the provided PoseStack to this cube's pivot point
-     */
+    /// Apply a translation to the provided PoseStack to this cube's pivot point
     public void translateToPivotPoint(PoseStack poseStack) {
         poseStack.translate(pivot().x() / 16f, pivot().y() / 16f, pivot().z() / 16f);
     }
 
-    /**
-     * Apply a translation to the provided PoseStack away from this cube's pivot point
-     */
+    /// Apply a translation to the provided PoseStack away from this cube's pivot point
     public void translateAwayFromPivotPoint(PoseStack poseStack) {
         poseStack.translate(-pivot().x() / 16f, -pivot().y() / 16f, -pivot().z() / 16f);
     }

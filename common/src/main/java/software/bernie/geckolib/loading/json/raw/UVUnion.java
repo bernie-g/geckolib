@@ -5,13 +5,9 @@ import com.google.gson.JsonParseException;
 import com.mojang.datafixers.util.Either;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for UV information, only used in deserialization at startup
- */
+/// Container class for UV information, only used in deserialization at startup
 public record UVUnion(Either<double[], UVFaces> uvData) {
-	/**
-	 * @return Whether this UVUnion is Box-UV style
-	 */
+	/// @return Whether this UVUnion is Box-UV style
 	public boolean isBoxUV() {
 		return this.uvData.left().isPresent();
 	}

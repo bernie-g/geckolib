@@ -28,16 +28,14 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.function.BiConsumer;
 
-/**
- * Built-in GeoLayer for rendering a custom texture for a specific bone.
- * <p>
- * Due to the way Mojang handles {@link VertexConsumer buffers}, and for safety; this layer only supports one bone at a time.
- * Add multiple copies of this layer if your model has multiple bones you want to render with a custom texture
- *
- * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- */
+/// Built-in GeoLayer for rendering a custom texture for a specific bone.
+///
+/// Due to the way Mojang handles [buffers][VertexConsumer], and for safety; this layer only supports one bone at a time.
+/// Add multiple copies of this layer if your model has multiple bones you want to render with a custom texture
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     protected final String boneName;
     protected final Identifier texture;
@@ -49,28 +47,22 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         this.texture = texture;
     }
 
-    /**
-     * Get the texture resource path for the given {@link GeoRenderState}.
-     */
+    /// Get the texture resource path for the given [GeoRenderState].
     @Override
     protected Identifier getTextureResource(R renderState) {
         return this.texture;
     }
 
-    /**
-     * Get the render type for the render pass
-     */
+    /// Get the render type for the render pass
     protected @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         return this.renderer.getRenderType(renderState, texture);
     }
 
-    /**
-     * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRenderPass} has been called
-     * <p>
-     * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
-     * <p>
-     * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here
-     */
+    /// This method is called by the [GeoRenderer] before rendering, immediately after [GeoRenderer#preRenderPass] has been called
+    ///
+    /// This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
+    ///
+    /// **<u>NOTE:</u>** Changing VertexConsumers or RenderTypes must not be performed here
     @ApiStatus.Internal
     @Override
     public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
@@ -83,15 +75,13 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         }
     }
 
-    /**
-     * Register per-bone render operations, to be rendered after the main model is done.
-     * <p>
-     * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
-     * is currently rendering.
-     *
-     * @param renderPassInfo The collated render-related data for this render pass
-     * @param consumer The registrar to accept the per-bone render tasks
-     */
+    /// Register per-bone render operations, to be rendered after the main model is done.
+    ///
+    /// Even though the task is called after the main model renders, the [PoseStack] provided will be posed as if the bone
+    /// is currently rendering.
+    ///
+    /// @param renderPassInfo The collated render-related data for this render pass
+    /// @param consumer The registrar to accept the per-bone render tasks
     @Override
     public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
         if (renderPassInfo.willRender()) {
@@ -101,9 +91,7 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         }
     }
 
-    /**
-     * Render the bone with the replacement texture
-     */
+    /// Render the bone with the replacement texture
     protected void renderBone(RenderPassInfo<R> renderPassInfo, GeoBone bone, SubmitNodeCollector renderTasks) {
         R renderState = renderPassInfo.renderState();
         Identifier boneTexture = getTextureResource(renderState);
@@ -135,10 +123,8 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         }
     }
 
-    /**
-     * Submit a cube's modified quads to the vertex consumer
-     * @see GeoCube#render(PoseStack, VertexConsumer, int, int, int)
-     */
+    /// Submit a cube's modified quads to the vertex consumer
+    /// @see GeoCube#render(PoseStack, VertexConsumer, int, int, int)
     @ApiStatus.Internal
     public void renderCube(GeoCube cube, PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor, float widthRatio, float heightRatio) {
         cube.translateToPivotPoint(poseStack);
@@ -159,10 +145,8 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         }
     }
 
-    /**
-     * Submit a modified texture quad to the vertex consumer
-     * @see GeoQuad#render(Matrix4f, Vector3f, VertexConsumer, int, int, int)
-     */
+    /// Submit a modified texture quad to the vertex consumer
+    /// @see GeoQuad#render(Matrix4f, Vector3f, VertexConsumer, int, int, int)
     @ApiStatus.Internal
     protected void renderQuad(GeoQuad quad, Matrix4f pose, Vector3f normal, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor, float widthRatio, float heightRatio) {
         for (GeoVertex vertex : quad.vertices()) {

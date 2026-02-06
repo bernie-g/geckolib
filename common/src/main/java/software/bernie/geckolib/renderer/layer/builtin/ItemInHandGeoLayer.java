@@ -25,18 +25,16 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.function.Supplier;
 
-/**
- * Built-in GeoLayer for rendering the item in a {@link LivingEntity}'s hands.
- * <p>
- * Handles all the boilerplate for basic handheld item rendering.
- * <p>
- * Assumes the {@link GeoModel} has bones for both hands called {@code RightHandItem} and {@code LeftHandItem}.
- * If you have different names, use the {@link ItemInHandGeoLayer#ItemInHandGeoLayer(GeoRenderer, String, String)} constructor.
- *
- * @param <T> Entity animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- */
+/// Built-in GeoLayer for rendering the item in a [LivingEntity]'s hands.
+///
+/// Handles all the boilerplate for basic handheld item rendering.
+///
+/// Assumes the [GeoModel] has bones for both hands called `RightHandItem` and `LeftHandItem`.
+/// If you have different names, use the [ItemInHandGeoLayer#ItemInHandGeoLayer(GeoRenderer, String, String)] constructor.
+///
+/// @param <T> Entity animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, O, R> {
     protected final String rightHandBone;
     protected final String leftHandBone;
@@ -52,11 +50,9 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         this.leftHandBone = leftHandBoneName;
     }
 
-    /**
-     * Return a list of the bone names that this layer will render for.
-     * <p>
-     * Ideally, you would cache this list in a class-field if you don't need any data from the input renderState or model
-     */
+    /// Return a list of the bone names that this layer will render for.
+    ///
+    /// Ideally, you would cache this list in a class-field if you don't need any data from the input renderState or model
     @Override
     protected List<RenderData<R>> getRelevantBones(R renderState, BakedGeoModel model) {
         boolean isLeftHanded = renderState.getOrDefaultGeckolibData(DataTickets.IS_LEFT_HANDED, false);
@@ -66,16 +62,12 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
                 renderDataForHand(this.leftHandBone, HumanoidArm.LEFT, isLeftHanded, renderState));
     }
 
-    /**
-     * Helper method for creating {@link RenderData} for a given hand
-     */
+    /// Helper method for creating [RenderData] for a given hand
     protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, R renderState) {
         return renderDataForHand(boneName, HumanoidArm.RIGHT, false, renderState);
     }
 
-    /**
-     * Helper method for creating {@link RenderData} for a given hand
-     */
+    /// Helper method for creating [RenderData] for a given hand
     protected static <R extends GeoRenderState> RenderData<R> renderDataForHand(String boneName, HumanoidArm arm, boolean isLeftHanded, R renderState) {
         HumanoidArm mainHandArm = isLeftHanded ? HumanoidArm.LEFT : HumanoidArm.RIGHT;
         EquipmentSlot slot = arm == mainHandArm ? EquipmentSlot.MAINHAND : EquipmentSlot.OFFHAND;
@@ -89,18 +81,16 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         return new RenderData<>(boneName, context, (bone, renderState2) -> Either.left((ItemStack)renderState2.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).get(slot)));
     }
 
-    /**
-     * Override to add any custom {@link DataTicket}s you need to capture for rendering.
-     * <p>
-     * The animatable is discarded from the rendering context after this, so any data needed
-     * for rendering should be captured in the renderState provided
-     *
-     * @param animatable The animatable instance being rendered
-     * @param relatedObject An object related to the render pass or null if not applicable.
-     *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
-     * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
-     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
-     */
+    /// Override to add any custom [DataTicket]s you need to capture for rendering.
+    ///
+    /// The animatable is discarded from the rendering context after this, so any data needed
+    /// for rendering should be captured in the renderState provided
+    ///
+    /// @param animatable The animatable instance being rendered
+    /// @param relatedObject An object related to the render pass or null if not applicable.
+    ///                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+    /// @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+    /// @param partialTick The fraction of a tick that has elapsed as of the current render pass
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
@@ -114,9 +104,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         renderState.addGeckolibData(DataTickets.IS_LEFT_HANDED, animatable.getMainArm() == HumanoidArm.LEFT);
     }
 
-    /**
-     * Render the given {@link ItemStack} for the provided {@link GeoBone}.
-     */
+    /// Render the given [ItemStack] for the provided [GeoBone].
     @Override
     protected void submitItemStackRender(PoseStack poseStack, GeoBone bone, ItemStack stack, ItemDisplayContext displayContext, R renderState, SubmitNodeCollector renderTasks,
                                          CameraRenderState cameraState, int packedLight, int packedOverlay, int renderColor) {

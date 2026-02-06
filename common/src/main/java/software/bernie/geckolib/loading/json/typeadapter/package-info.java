@@ -1,6 +1,4 @@
-/**
- * Base .json type adapter classes
- */
+/// Base .json type adapter classes
 @NullMarked
 package software.bernie.geckolib.loading.json.typeadapter;
 

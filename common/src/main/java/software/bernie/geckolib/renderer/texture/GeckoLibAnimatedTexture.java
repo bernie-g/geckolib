@@ -30,14 +30,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
-/**
- * Animated texture handler for GeckoLib animated textures.
- * <p>
- * Uses the vanilla {@link AnimationMetadataSection animated texture schema}, but extrapolates it for non-atlas textures
- * <p>
- * <b><u>NOTE:</u></b> Initially, GeckoLib wraps all texture retrievals in this, to check for animation meta. If it {@link #isAnimated() exists}, this instance is kept,
- * otherwise, a new instance of {@link SimpleTexture} is returned to preserve expected runtime operation for things like Iris.
- */
+/// Animated texture handler for GeckoLib animated textures.
+///
+/// Uses the vanilla [animated texture schema][AnimationMetadataSection], but extrapolates it for non-atlas textures
+///
+/// **<u>NOTE:</u>** Initially, GeckoLib wraps all texture retrievals in this, to check for animation meta. If it [exists][#isAnimated()], this instance is kept,
+/// otherwise, a new instance of [SimpleTexture] is returned to preserve expected runtime operation for things like Iris.
 public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTexture {
     protected @Nullable AnimationInfo animatedTexture = null;
     protected int frameWidth;
@@ -48,11 +46,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         super(location);
     }
 
-    /**
-     * If GeckoLib found and constructed a valid animated texture schema.
-     * <p>
-     * Returning false from here makes this no different from a standard {@link SimpleTexture}, and an instance of that should be used instead
-     */
+    /// If GeckoLib found and constructed a valid animated texture schema.
+    ///
+    /// Returning false from here makes this no different from a standard [SimpleTexture], and an instance of that should be used instead
     public boolean isAnimated() {
         return this.animatedTexture != null;
     }
@@ -94,11 +90,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         uploadFrame(gpuDevice, image, 0, 0, this.texture);
     }
 
-    /**
-     * Compile the AnimatedTexture information for this texture instance
-     * <p>
-     * Mostly used for interpolation handling and tick-frame advancement
-     */
+    /// Compile the AnimatedTexture information for this texture instance
+    ///
+    /// Mostly used for interpolation handling and tick-frame advancement
     protected GeckoLibAnimatedTexture.@Nullable AnimationInfo buildAnimatedTexture(AnimationMetadataSection animMeta) {
         if (this.baseImage == null)
             return null;
@@ -161,18 +155,14 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         return new AnimationInfo(List.copyOf(frameList), frameColumns, animMeta.interpolatedFrames());
     }
 
-    /**
-     * Upload the given {@link NativeImage} to the in-memory texture buffer, with an optional offset for non-interpolated frames
-     */
+    /// Upload the given [NativeImage] to the in-memory texture buffer, with an optional offset for non-interpolated frames
     protected void uploadFrame(GpuDevice gpuDevice, NativeImage image, int x, int y, GpuTexture gpuTexture) {
         gpuDevice.createCommandEncoder().writeToTexture(gpuTexture, image, 0, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
     }
 
-    /**
-     * Called by {@link TextureManager} every tick to allow the texture to update itself as necessary.
-     * <p>
-     * This effectively caps "real" frames at 20fps, but interpolation allows us to fudge this a little.
-     */
+    /// Called by [TextureManager] every tick to allow the texture to update itself as necessary.
+    ///
+    /// This effectively caps "real" frames at 20fps, but interpolation allows us to fudge this a little.
     @Override
     public void tick() {
         if (this.animatedTexture != null)
@@ -190,11 +180,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         super.close();
     }
 
-    /**
-     * Container class for the animation information for this texture instance
-     * <p>
-     * Functionally somewhat of a clone of {@link SpriteContents.AnimationState}, but extrapolated to be extensible and manageable
-     */
+    /// Container class for the animation information for this texture instance
+    ///
+    /// Functionally somewhat of a clone of [SpriteContents.AnimationState], but extrapolated to be extensible and manageable
     protected class AnimationInfo implements AutoCloseable {
         protected final List<FrameInfo> frames;
         protected final int frameRowSize;
@@ -254,11 +242,9 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
                 this.interpolationData.close();
         }
 
-        /**
-         * Handler class for interpolated frame generation and injection
-         * <p>
-         * This class is only instantiated if the {@link AnimationMetadataSection} enables {@link AnimationMetadataSection#interpolatedFrames() interpolation}
-         */
+        /// Handler class for interpolated frame generation and injection
+        ///
+        /// This class is only instantiated if the [AnimationMetadataSection] enables [interpolation][AnimationMetadataSection#interpolatedFrames()]
         protected class InterpolationData implements AutoCloseable {
             protected final NativeImage buffer;
 
@@ -266,9 +252,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
                 this.buffer = new NativeImage(frameWidth, frameHeight, false);
             }
 
-            /**
-             * Check and upload a newly created, interpolated frame, as necessary
-             */
+            /// Check and upload a newly created, interpolated frame, as necessary
             protected void tickAndUpload(NativeImage image, GpuTexture gpuTexture) {
                 AnimationInfo instance = AnimationInfo.this;
                 List<FrameInfo> frames = instance.frames;
@@ -293,9 +277,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
                 }
             }
 
-            /**
-             * Get the frame-relative pixel for the given input coordinates and frame index from the root texture
-             */
+            /// Get the frame-relative pixel for the given input coordinates and frame index from the root texture
             protected int getPixel(NativeImage image, AnimationInfo animationInfo, int frameIndex, int x, int y, int frameWidth, int frameHeight) {
                 return image.getPixel(x + animationInfo.getFrameColumn(frameIndex) * frameWidth, y + animationInfo.getFrameRow(frameIndex) * frameHeight);
             }
@@ -307,8 +289,6 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         }
     }
 
-    /**
-     * Container class for holding a single animation frame's data
-     */
+    /// Container class for holding a single animation frame's data
     protected record FrameInfo(int index, int time) {}
 }

@@ -1,6 +1,4 @@
-/**
- * Client-side mixins for various functionality injections
- */
+/// Client-side mixins for various functionality injections
 @NullMarked
 package software.bernie.geckolib.mixin.client;
 

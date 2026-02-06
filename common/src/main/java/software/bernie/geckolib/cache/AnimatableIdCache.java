@@ -8,11 +8,9 @@ import net.minecraft.world.level.saveddata.SavedDataType;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 
-/**
- * Storage class that keeps track of the last animatable id used, and provides new ones on request
- * <p>
- * Generally only used for {@link net.minecraft.world.item.Item Items}, but any {@link SingletonAnimatableInstanceCache singleton} will likely use this.
- */
+/// Storage class that keeps track of the last animatable id used, and provides new ones on request
+///
+/// Generally only used for [Items][net.minecraft.world.item.Item], but any [singleton][SingletonAnimatableInstanceCache] will likely use this.
 public final class AnimatableIdCache extends SavedData {
 	private static final Codec<AnimatableIdCache> CODEC = RecordCodecBuilder.create(builder -> builder.group(
 			Codec.LONG.fieldOf("last_id").forGetter(cache -> cache.lastId)
@@ -30,12 +28,10 @@ public final class AnimatableIdCache extends SavedData {
 		this.lastId = lastId;
 	}
 
-	/**
-	 * Get the next free id from the id cache
-	 *
-	 * @param level An arbitrary ServerLevel. It doesn't matter which one
-	 * @return The next free ID, which is immediately reserved for use after calling this method
-	 */
+	/// Get the next free id from the id cache
+	///
+	/// @param level An arbitrary ServerLevel. It doesn't matter which one
+	/// @return The next free ID, which is immediately reserved for use after calling this method
 	public static long getFreeId(ServerLevel level) {
 		return getCache(level.getServer().overworld()).getNextId();
 	}

@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the input value raised to the power of the second input value
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the input value raised to the power of the second input value
 public final class PowFunction extends MathFunction {
     private final MathValue value;
     private final MathValue power;

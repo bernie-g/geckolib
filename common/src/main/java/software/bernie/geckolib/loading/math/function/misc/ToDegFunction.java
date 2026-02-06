@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Converts the input value to degrees
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Converts the input value to degrees
 public final class ToDegFunction extends MathFunction {
     private final MathValue value;
 

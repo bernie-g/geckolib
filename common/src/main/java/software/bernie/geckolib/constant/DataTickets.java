@@ -23,11 +23,9 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Stores the default (builtin) {@link DataTicket DataTickets} used in GeckoLib
- * <p>
- * Additionally handles registration of {@link SerializableDataTicket SerializableDataTickets}
- */
+/// Stores the default (builtin) [DataTickets][DataTicket] used in GeckoLib
+///
+/// Additionally handles registration of [SerializableDataTickets][SerializableDataTicket]
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
 
@@ -94,9 +92,7 @@ public final class DataTickets {
 		return SERIALIZABLE_TICKETS.getOrDefault(id.toString(), null);
 	}
 
-	/**
-	 * Internal only. You should NOT be using this
-	 */
+	/// Internal only. You should NOT be using this
 	@ApiStatus.Internal
 	public static <D> SerializableDataTicket<D> registerSerializable(SerializableDataTicket<D> ticket) {
 		SerializableDataTicket<?> existingTicket = SERIALIZABLE_TICKETS.putIfAbsent(ticket.id(), ticket);

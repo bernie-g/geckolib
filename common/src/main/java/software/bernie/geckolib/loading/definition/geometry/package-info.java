@@ -1,6 +1,4 @@
-/**
- * Base .geo adapter classes
- */
+/// Base .geo adapter classes
 @NullMarked
 @ApiStatus.Internal
 package software.bernie.geckolib.loading.definition.geometry;

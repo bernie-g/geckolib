@@ -7,17 +7,13 @@ import software.bernie.geckolib.cache.model.BakedGeoModel;
 
 import java.util.Map;
 
-/**
- * Container record for GeckoLib's baked model cache
- *
- * @param cache The baked models map as loaded from the resource files
- */
+/// Container record for GeckoLib's baked model cache
+///
+/// @param cache The baked models map as loaded from the resource files
 public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
-    /**
-     * Get a {@link BakedGeoModel} from the model cache by its file id
-     *
-     * @param modelFile The file identifier of the animations file - (E.G. {@code mymod:entity/my_mob})
-     */
+    /// Get a [BakedGeoModel] from the model cache by its file id
+    ///
+    /// @param modelFile The file identifier of the animations file - (E.G. `mymod:entity/my_mob`)
     public BakedGeoModel getModel(Identifier modelFile) {
         BakedGeoModel model = this.cache.get(modelFile);
 
@@ -37,12 +33,10 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
         return model;
     }
 
-    /**
-     * Strips out unnecessary prefix/suffix components of a model resource path.<br>
-     * Typically these are leftovers from previous versions of GeckoLib.
-     *
-     * @deprecated To be removed once a sufficient time has passed to allow devs to fix their paths
-     */
+    /// Strips out unnecessary prefix/suffix components of a model resource path.
+    /// Typically these are leftovers from previous versions of GeckoLib.
+    ///
+    /// @deprecated To be removed once a sufficient time has passed to allow devs to fix their paths
     @ApiStatus.Internal
     @Deprecated(forRemoval = true)
     private static Identifier stripLegacyPath(Identifier legacyPath) {

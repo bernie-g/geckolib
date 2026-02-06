@@ -15,24 +15,18 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.function.Supplier;
 
-/**
- * Loader-agnostic service interface for clientside functionalities
- */
+/// Loader-agnostic service interface for clientside functionalities
 public interface GeckoLibClient {
     Supplier<ArmorModelSet<HumanoidModel<?>>> HUMANOID_ARMOR_MODEL = Suppliers.memoize(() -> ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, Minecraft.getInstance().getEntityModels(), HumanoidModel::new));
     Supplier<ElytraModel> GENERIC_ELYTRA_MODEL = Suppliers.memoize(() -> new ElytraModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.ELYTRA)));
 
-    /**
-     * Helper method for retrieving an (ideally) cached instance of the armor model for a given Item
-     * <p>
-     * If no custom model applies to this item, the {@code defaultModel} is returned
-     */
+    /// Helper method for retrieving an (ideally) cached instance of the armor model for a given Item
+    ///
+    /// If no custom model applies to this item, the `defaultModel` is returned
     <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
 
-    /**
-     * Return the dye value for a given ItemStack, or the default value if not present.
-     * <p>
-     * This is split off to allow for handling of loader-specific handling for dyed items
-     */
+    /// Return the dye value for a given ItemStack, or the default value if not present.
+    ///
+    /// This is split off to allow for handling of loader-specific handling for dyed items
     int getDyedItemColor(ItemStack itemStack, int defaultColor);
 }

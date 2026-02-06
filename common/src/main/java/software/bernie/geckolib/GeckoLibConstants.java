@@ -9,9 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Supplier;
 
-/**
- * Holder class for several properties and/or handlers inherent to GeckoLib
- */
+/// Holder class for several properties and/or handlers inherent to GeckoLib
 public final class GeckoLibConstants {
     public static final Logger LOGGER = LogManager.getLogger("GeckoLib");
     public static final String MODID = "geckolib";
@@ -20,34 +18,28 @@ public final class GeckoLibConstants {
 
     public static void init() {}
 
-    /**
-     * Helper method to create an Identifier predefined with GeckoLib's {@link #MODID}
-     */
+    /// Helper method to create an Identifier predefined with GeckoLib's [#MODID]
     public static Identifier id(String path) {
         return Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, path);
     }
 
-    /**
-     * Throw an exception pertaining to a specific resource
-     * <p>
-     * This mostly serves as a helper for consistent formatting of exceptions
-     *
-     * @param resource The location or id of the resource the error pertains to
-     * @param message The error message to display
-     */
+    /// Throw an exception pertaining to a specific resource
+    ///
+    /// This mostly serves as a helper for consistent formatting of exceptions
+    ///
+    /// @param resource The location or id of the resource the error pertains to
+    /// @param message The error message to display
     public static RuntimeException exception(Identifier resource, String message) {
         return new RuntimeException(resource + ": " + message);
     }
 
-    /**
-     * Throw an exception pertaining to a specific resource
-     * <p>
-     * This mostly serves as a helper for consistent formatting of exceptions
-     *
-     * @param resource The location or id of the resource the error pertains to
-     * @param message The error message to display
-     * @param exception The exception to throw
-     */
+    /// Throw an exception pertaining to a specific resource
+    ///
+    /// This mostly serves as a helper for consistent formatting of exceptions
+    ///
+    /// @param resource The location or id of the resource the error pertains to
+    /// @param message The error message to display
+    /// @param exception The exception to throw
     public static RuntimeException exception(Identifier resource, String message, Throwable exception) {
         return new RuntimeException(resource + ": " + message, exception);
     }

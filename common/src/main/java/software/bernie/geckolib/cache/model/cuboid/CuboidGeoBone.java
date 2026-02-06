@@ -7,9 +7,7 @@ import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Implementation of GeoBone for cuboid rendering
- */
+/// Implementation of GeoBone for cuboid rendering
 public final class CuboidGeoBone extends GeoBone {
     public final GeoCube[] cubes;
 

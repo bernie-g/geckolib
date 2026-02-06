@@ -15,21 +15,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * {@link Gson} {@link JsonDeserializer} for {@link Animation.KeyframeMarkers}
- */
+/// [Gson] [JsonDeserializer] for [Animation.KeyframeMarkers]
 @ApiStatus.Internal
 public final class KeyFrameMarkersAdapter {
-	/**
-	 * Create a GSON {@link JsonDeserializer} for {@link Animation.KeyframeMarkers}
-	 */
+	/// Create a GSON [JsonDeserializer] for [Animation.KeyframeMarkers]
 	public static JsonDeserializer<Animation.KeyframeMarkers> deserializer() throws JsonParseException {
 		return KeyFrameMarkersAdapter::fromJson;
 	}
 
-	/**
-	 * Deserialize a {@link Animation.KeyframeMarkers} from a {@link JsonElement}.
-	 */
+	/// Deserialize a [Animation.KeyframeMarkers] from a [JsonElement].
 	private static Animation.KeyframeMarkers fromJson(JsonElement json, Type type, JsonDeserializationContext context) {
 		JsonObject obj = json.getAsJsonObject();
 		SoundKeyframeData[] sounds = buildSoundFrameData(obj);

@@ -21,11 +21,9 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
         super(renderer);
     }
 
-    /**
-     * Injection into the render point for armor on HumanoidModels (Players, Zombies, etc.) to defer to GeckoLib item-armor rendering as applicable
-     * <p>
-     * Does nothing if GeckoLib has nothing to handle for the given arguments
-     */
+    /// Injection into the render point for armor on HumanoidModels (Players, Zombies, etc.) to defer to GeckoLib item-armor rendering as applicable
+    ///
+    /// Does nothing if GeckoLib has nothing to handle for the given arguments
     @SuppressWarnings({"rawtypes", "unchecked"})
     @WrapWithCondition(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V",
             at = @At(

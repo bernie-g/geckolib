@@ -32,14 +32,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-/**
- * Base {@link GeoRenderer} class for rendering {@link BlockEntity Blocks} specifically
- * <p>
- * All blocks added to be rendered by GeckoLib should use an instance of this class.
- *
- * @param <T> BlockEntity animatable class type
- * @param <R> RenderState class type
- */
+/// Base [GeoRenderer] class for rendering [Blocks][BlockEntity] specifically
+///
+/// All blocks added to be rendered by GeckoLib should use an instance of this class.
+///
+/// @param <T> BlockEntity animatable class type
+/// @param <R> RenderState class type
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -47,9 +45,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
-    /**
-     * Creates a new defaulted renderer instance, using the BlockEntity's registered id as the file name for its assets
-     */
+    /// Creates a new defaulted renderer instance, using the BlockEntity's registered id as the file name for its assets
     public GeoBlockRenderer(BlockEntityType<? extends T> blockEntityType) {
         this(new DefaultedBlockGeoModel<>(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType))));
     }
@@ -58,9 +54,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 		this.model = model;
 	}
 
-    /**
-     * Attempt to extract a direction from the block so that the model can be oriented correctly
-     */
+    /// Attempt to extract a direction from the block so that the model can be oriented correctly
     @SuppressWarnings("unchecked")
     protected Direction getBlockStateDirection(T blockEntity) {
         BlockState blockState = blockEntity.getBlockState();
@@ -73,9 +67,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
         return Direction.NORTH;
     }
 
-    /**
-     * Rotate the {@link PoseStack} based on the determined {@link Direction} the block is facing
-     */
+    /// Rotate the [PoseStack] based on the determined [Direction] the block is facing
     protected void tryRotateByBlockstate(RenderPassInfo<R> renderPassInfo, PoseStack poseStack) {
         final Direction facing = renderPassInfo.getOrDefaultGeckolibData(DataTickets.BLOCK_FACING, Direction.NORTH);
 
@@ -90,49 +82,37 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     }
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
-    /**
-     * Gets the model instance for this renderer
-     */
+    /// Gets the model instance for this renderer
     @Override
     public GeoModel<T> getGeoModel() {
         return this.model;
     }
 
-    /**
-     * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
-     */
+    /// Returns the list of registered [GeoRenderLayers][GeoRenderLayer] for this renderer
     @Override
     public List<GeoRenderLayer<T, Void, R>> getRenderLayers() {
         return this.renderLayers.getRenderLayers();
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     @SuppressWarnings("UnusedReturnValue")
     public GeoBlockRenderer<T, R> withRenderLayer(Function<? super GeoBlockRenderer<T, R>, GeoRenderLayer<T, Void, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     public GeoBlockRenderer<T, R> withRenderLayer(GeoRenderLayer<T, Void, R> renderLayer) {
         this.renderLayers.addLayer(renderLayer);
 
         return this;
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoBlockRenderer<T, R> withScale(float scale) {
         return withScale(scale, scale);
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoBlockRenderer<T, R> withScale(float scaleWidth, float scaleHeight) {
         this.scaleWidth = scaleWidth;
         this.scaleHeight = scaleHeight;
@@ -140,20 +120,16 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
         return this;
     }
 
-    /**
-     * Gets the id that represents the current animatable's instance for animation purposes.
-     *
-     * @param animatable The Animatable instance being renderer
-     */
+    /// Gets the id that represents the current animatable's instance for animation purposes.
+    ///
+    /// @param animatable The Animatable instance being renderer
     @ApiStatus.OverrideOnly
     @Override
     public long getInstanceId(T animatable, @Nullable Void ignored) {
         return animatable.getBlockPos().hashCode();
     }
 
-    /**
-     * Internal method for capturing the common RenderState data for all animatable objects
-     */
+    /// Internal method for capturing the common RenderState data for all animatable objects
     @ApiStatus.Internal
     @Override
     public void captureDefaultRenderState(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
@@ -164,60 +140,50 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
         renderState.addGeckolibData(DataTickets.BLOCK_FACING, getBlockStateDirection(animatable));
     }
 
-    /**
-     * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
-     * <p>
-     * Manipulation of the model's bones is not permitted here
-     * <p>
-     * Use this method to handle any preparation or pre-work required for the render submission.
-     *
-     * @see #scaleModelForRender
-     * @see #adjustRenderPose
-     * @see #adjustModelBonesForRender
-     */
+    /// Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
+    ///
+    /// Manipulation of the model's bones is not permitted here
+    ///
+    /// Use this method to handle any preparation or pre-work required for the render submission.
+    ///
+    /// @see #scaleModelForRender
+    /// @see #adjustRenderPose
+    /// @see #adjustModelBonesForRender
     @Override
     public void preRenderPass(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         renderPassInfo.poseStack().translate(0.5d, 0, 0.5d);
     }
 
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * Override and call {@code super} with modified scale values as needed to further modify the scale of the model
-     */
+    /// Scales the [PoseStack] in preparation for rendering the model, excluding when re-rendering the model as part of a [GeoRenderLayer] or external render call
+    ///
+    /// Override and call `super` with modified scale values as needed to further modify the scale of the model
     @Override
     public void scaleModelForRender(RenderPassInfo<R> renderPassInfo, float widthScale, float heightScale) {
         GeoRenderer.super.scaleModelForRender(renderPassInfo, this.scaleWidth * widthScale, this.scaleHeight * heightScale);
     }
 
-    /**
-     * Transform the {@link PoseStack} in preparation for rendering the model.
-     * <p>
-     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
-     * If you need to do pre-scale translations, use {@link #preRenderPass}
-     * <p>
-     * PoseStack translations made here are kept until the end of the render process
-     */
+    /// Transform the [PoseStack] in preparation for rendering the model.
+    ///
+    /// This is called after [#scaleModelForRender], and so any transformations here will be scaled appropriately.
+    /// If you need to do pre-scale translations, use [#preRenderPass]
+    ///
+    /// PoseStack translations made here are kept until the end of the render process
     @Override
     public void adjustRenderPose(RenderPassInfo<R> renderPassInfo) {
         tryRotateByBlockstate(renderPassInfo, renderPassInfo.poseStack());
     }
 
-    /**
-     * Initial access point for vanilla's {@link BlockEntityRenderer} interface<br>
-     * Immediately defers to {@link GeoRenderer#performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState)}
-     */
+    /// Initial access point for vanilla's [BlockEntityRenderer] interface
+    /// Immediately defers to [GeoRenderer#performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState)]
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {
         GeoRenderer.super.performRenderPass(renderState, poseStack, renderTasks, cameraRenderState);
     }
 
-    /**
-     * Default return for creating the {@link BlockEntityRenderState}.
-     * <p>
-     * You generally shouldn't need to override or use this
-     */
+    /// Default return for creating the [BlockEntityRenderState].
+    ///
+    /// You generally shouldn't need to override or use this
     @SuppressWarnings("unchecked")
     @ApiStatus.Internal
     @Override
@@ -225,44 +191,34 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
         return (R)new BlockEntityRenderState();
     }
 
-    /**
-     * Create the contextually relevant {@link BlockEntityRenderState} for the current render pass
-     */
+    /// Create the contextually relevant [BlockEntityRenderState] for the current render pass
     @Override
     public void extractRenderState(T blockEntity, R renderState, float partialTick, Vec3 cameraPos, ModelFeatureRenderer.@Nullable CrumblingOverlay damageOverlayState) {
         BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, partialTick, cameraPos, damageOverlayState);
         fillRenderState(blockEntity, null, renderState, partialTick);
     }
 
-    /**
-     * Create and fire the relevant {@code CompileLayers} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileLayers` event hook for this renderer
     @Override
     public void fireCompileRenderLayersEvent() {
         GeckoLibClientServices.EVENTS.fireCompileBlockRenderLayers(this);
     }
 
-    /**
-     * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileRenderState` event hook for this renderer
     @Override
     public void fireCompileRenderStateEvent(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileBlockRenderState(this, renderState, animatable);
     }
 
-    /**
-     * Create and fire the relevant {@code Pre-Render} event hook for this renderer
-     *
-     * @return Whether the renderer should proceed based on the cancellation state of the event
-     */
+    /// Create and fire the relevant `Pre-Render` event hook for this renderer
+    ///
+    /// @return Whether the renderer should proceed based on the cancellation state of the event
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeckoLibClientServices.EVENTS.fireBlockPreRender(renderPassInfo, renderTasks);
     }
 
-    /**
-     * @deprecated Unusable because of vanilla implementation. Use {@link #createRenderState()}
-     */
+    /// @deprecated Unusable because of vanilla implementation. Use [#createRenderState()]
     @SuppressWarnings("unchecked")
     @Deprecated
     @ApiStatus.Internal

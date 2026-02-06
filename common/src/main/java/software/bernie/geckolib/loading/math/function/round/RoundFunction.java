@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the closest integer value to the input value
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the closest integer value to the input value
 public final class RoundFunction extends MathFunction {
     private final MathValue value;
 

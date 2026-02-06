@@ -14,49 +14,41 @@ import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.function.Consumer;
 
-/**
- * The {@link GeoAnimatable} interface specific to singleton objects
- * <p>
- * This primarily applies to armor and items
- *
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
- */
+/// The [GeoAnimatable] interface specific to singleton objects
+///
+/// This primarily applies to armor and items
+///
+/// @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
 public interface SingletonGeoAnimatable extends GeoAnimatable {
-    /**
-     * Register this as a synched {@code SingletonGeoAnimatable} instance with GeckoLib's networking functions
-     * <p>
-     * This should be called inside the constructor of your object.
-     */
+    /// Register this as a synched `SingletonGeoAnimatable` instance with GeckoLib's networking functions
+    ///
+    /// This should be called inside the constructor of your object.
     static void registerSyncedAnimatable(SingletonGeoAnimatable animatable) {
         SyncedSingletonAnimatableCache.registerSyncedAnimatable(animatable);
     }
 
-    /**
-     * Get server-synced animation data via its relevant {@link SerializableDataTicket}
-     * <p>
-     * Should only be used on the <u>client-side</u>
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param instanceId The animatable's instance id
-     * @param dataTicket The data ticket for the data to retrieve
-     * @return The synced data, or null if no data of that type has been synced
-     */
+    /// Get server-synced animation data via its relevant [SerializableDataTicket]
+    ///
+    /// Should only be used on the <u>client-side</u>
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param instanceId The animatable's instance id
+    /// @param dataTicket The data ticket for the data to retrieve
+    /// @return The synced data, or null if no data of that type has been synced
     @ApiStatus.NonExtendable
     default <D> @Nullable D getAnimData(long instanceId, SerializableDataTicket<D> dataTicket) {
         return getAnimatableInstanceCache().getManagerForId(instanceId).getAnimatableData(dataTicket);
     }
 
-    /**
-     * Saves an arbitrary piece of syncable data to this animatable's {@link AnimatableManager}
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param relatedEntity An entity related to the state of the data for syncing (E.G., The player holding the item)
-     * @param instanceId    The unique id that identifies the specific animatable instance
-     * @param dataTicket    The DataTicket to sync the data for
-     * @param data          The data to sync
-     */
+    /// Saves an arbitrary piece of syncable data to this animatable's [AnimatableManager]
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param relatedEntity An entity related to the state of the data for syncing (E.G., The player holding the item)
+    /// @param instanceId    The unique id that identifies the specific animatable instance
+    /// @param dataTicket    The DataTicket to sync the data for
+    /// @param data          The data to sync
     @ApiStatus.NonExtendable
     default <D> void setAnimData(Entity relatedEntity, long instanceId, SerializableDataTicket<D> dataTicket, D data) {
         if (relatedEntity.level().isClientSide()) {
@@ -67,34 +59,30 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
         }
     }
 
-    /**
-     * Syncs an arbitrary piece of data to all players targeted by the packetTarget
-     * <p>
-     * This method should only be called on the <u>server side</u>
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param instanceId The unique id that identifies the specific animatable instance
-     * @param dataTicket The DataTicket to sync the data for
-     * @param data       The data to sync
-     */
+    /// Syncs an arbitrary piece of data to all players targeted by the packetTarget
+    ///
+    /// This method should only be called on the <u>server side</u>
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param instanceId The unique id that identifies the specific animatable instance
+    /// @param dataTicket The DataTicket to sync the data for
+    /// @param data       The data to sync
     @ApiStatus.NonExtendable
     default <D> void syncAnimData(long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
         GeckoLibServices.NETWORK.syncSingletonAnimData(this, instanceId, dataTicket, data, entityToTrack);
     }
 
-    /**
-     * Trigger a client-side animation for this GeoAnimatable for the given controller name and animation name
-     * <p>
-     * This can be fired from either the client or the server, but optimally you would call it from the server
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
-     * @param instanceId     The unique id that identifies the specific animatable instance
-     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
-     * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
-     */
+    /// Trigger a client-side animation for this GeoAnimatable for the given controller name and animation name
+    ///
+    /// This can be fired from either the client or the server, but optimally you would call it from the server
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
+    /// @param instanceId     The unique id that identifies the specific animatable instance
+    /// @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+    /// @param animName       The name of animation to trigger. This needs to have been registered with the controller via [AnimationController.triggerableAnim][AnimationController#triggerableAnim]
     @ApiStatus.NonExtendable
     default void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
         if (relatedEntity.level().isClientSide()) {
@@ -112,18 +100,16 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
         }
     }
 
-    /**
-     * Stop a previously triggered animation for this GeoAnimatable for the given controller name and animation name
-     * <p>
-     * This can be fired from either the client or the server, but optimally you would call it from the server
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
-     * @param instanceId The unique id that identifies the specific animatable instance
-     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
-     * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
-     */
+    /// Stop a previously triggered animation for this GeoAnimatable for the given controller name and animation name
+    ///
+    /// This can be fired from either the client or the server, but optimally you would call it from the server
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
+    /// @param instanceId The unique id that identifies the specific animatable instance
+    /// @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+    /// @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
     @ApiStatus.NonExtendable
     default void stopTriggeredAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
         if (relatedEntity.level().isClientSide()) {
@@ -141,80 +127,56 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
         }
     }
 
-    /**
-     * Trigger a client-side animation for this GeoAnimatable's armor rendering for the given controller name and animation name
-     * <p>
-     * This can be fired from either the client or the server, but optimally you would call it from the server
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
-     * @param instanceId     The unique id that identifies the specific animatable instance
-     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
-     * @param animName       The name of animation to trigger. This needs to have been registered with the controller via {@link AnimationController#triggerableAnim AnimationController.triggerableAnim}
-     */
+    /// Trigger a client-side animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+    ///
+    /// This can be fired from either the client or the server, but optimally you would call it from the server
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param relatedEntity  An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
+    /// @param instanceId     The unique id that identifies the specific animatable instance
+    /// @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+    /// @param animName       The name of animation to trigger. This needs to have been registered with the controller via [AnimationController.triggerableAnim][AnimationController#triggerableAnim]
     @ApiStatus.NonExtendable
     default void triggerArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
         triggerAnim(relatedEntity, -instanceId, controllerName, animName);
     }
 
-    /**
-     * Stop a previously triggered animation for this GeoAnimatable's armor rendering for the given controller name and animation name
-     * <p>
-     * This can be fired from either the client or the server, but optimally you would call it from the server
-     * <p>
-     * <b><u>DO NOT OVERRIDE</u></b>
-     *
-     * @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
-     * @param instanceId The unique id that identifies the specific animatable instance
-     * @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
-     * @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
-     */
+    /// Stop a previously triggered animation for this GeoAnimatable's armor rendering for the given controller name and animation name
+    ///
+    /// This can be fired from either the client or the server, but optimally you would call it from the server
+    ///
+    /// **<u>DO NOT OVERRIDE</u>**
+    ///
+    /// @param relatedEntity An entity related to the animatable to trigger the animation for (E.G., The player holding the item)
+    /// @param instanceId The unique id that identifies the specific animatable instance
+    /// @param controllerName The name of the controller the animation belongs to, or null to do an inefficient lazy search
+    /// @param animName The name of the triggered animation to stop, or null to stop any currently playing triggered animation
     @ApiStatus.NonExtendable
     default void stopTriggeredArmorAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, @Nullable String animName) {
         stopTriggeredAnim(relatedEntity, -instanceId, controllerName, animName);
     }
 
-    /**
-     * Override the default handling for instantiating an AnimatableInstanceCache for this animatable
-     * <p>
-     * Don't override this unless you know what you're doing
-     */
+    /// Override the default handling for instantiating an AnimatableInstanceCache for this animatable
+    ///
+    /// Don't override this unless you know what you're doing
     @Override
     default @Nullable AnimatableInstanceCache animatableCacheOverride() {
         return new SingletonAnimatableInstanceCache(this);
     }
 
-    /**
-     * Create your GeoRenderProvider reference here
-     * <p>
-     * <b><u>MUST provide an anonymous class</u></b>
-     * <p>
-     * Example Code:
-     * <pre>{@code
-     * @Override
-     * public void createRenderer(Consumer<GeoRenderProvider> consumer) {
-     * 	consumer.accept(new GeoRenderProvider() {
-     * 		private final BlockEntityWithoutLevelRenderer itemRenderer;
-     *
-     *        @Override
-     *        @Nullable BlockEntityWithoutLevelRenderer getItemRenderer(GeoArmor armor) {
-     *          if (this.itemRenderer == null)
-     *              this.itemRenderer = new MyItemRenderer();
-     *
-     * 			return this.itemRenderer;
-     *        }
-     *    }
-     * }
-     * }</pre>
-     *
-     * @param consumer Consumer of your new GeoRenderProvider instance
-     */
+    /// Create your GeoRenderProvider reference here
+    ///
+    /// **<u>MUST provide an anonymous class</u>**
+    ///
+    /// Example Code:
+    /// <pre>
+    /// `void createRenderer(Consumer<GeoRenderProvider> consumer){consumer.accept(new GeoRenderProvider(){private final BlockEntityWithoutLevelRenderer itemRenderer;getItemRenderer(GeoArmor armor){if (this.itemRenderer == null)this.itemRenderer = new MyItemRenderer();return this.itemRenderer;}}}`</pre>
+    ///
+    /// @param consumer Consumer of your new GeoRenderProvider instance
     default void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {}
 
-    /**
-     * Get the cached {@link GeoRenderProvider} from your {@link AnimatableInstanceCache}
-     */
+    /// Get the cached [GeoRenderProvider] from your [AnimatableInstanceCache]
     default Object getRenderProvider() {
         return getAnimatableInstanceCache().getRenderProvider();
     }

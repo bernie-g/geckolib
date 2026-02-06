@@ -20,9 +20,7 @@ public class SpecialModelRenderersMixin {
     @Final
     private static ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends SpecialModelRenderer.Unbaked>> ID_MAPPER;
 
-    /**
-     * Inject GeckoLib's custom item model renderer into the vanilla map of special renderers
-     */
+    /// Inject GeckoLib's custom item model renderer into the vanilla map of special renderers
     @Inject(method = "bootstrap", at = @At("TAIL"))
     private static void geckolib$addSpecialRenderer(CallbackInfo ci) {
         ID_MAPPER.put(GeckoLibConstants.id("geckolib"), GeckolibItemSpecialRenderer.Unbaked.MAP_CODEC);

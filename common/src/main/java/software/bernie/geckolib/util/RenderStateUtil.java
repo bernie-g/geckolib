@@ -3,15 +3,11 @@ package software.bernie.geckolib.util;
 import net.minecraft.client.renderer.entity.state.*;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-/**
- * Helper class for RenderState-related functionality.
- * <p>
- * Primarily used for cloning RenderStates
- */
+/// Helper class for RenderState-related functionality.
+///
+/// Primarily used for cloning RenderStates
 public final class RenderStateUtil {
-    /**
-     * Create a fully cloned copy of an existing {@link EntityRenderState}.
-     */
+    /// Create a fully cloned copy of an existing [EntityRenderState].
     public static EntityRenderState cloneEntityState(EntityRenderState existingState) {
         final EntityRenderState newState = new EntityRenderState();
 
@@ -20,9 +16,7 @@ public final class RenderStateUtil {
         return newState;
     }
 
-    /**
-     * Fully copy an existing {@link EntityRenderState} to a new one.
-     */
+    /// Fully copy an existing [EntityRenderState] to a new one.
     public static void fullCopyEntityState(EntityRenderState newRenderState, EntityRenderState oldRenderState) {
         newRenderState.entityType = oldRenderState.entityType;
         newRenderState.x = oldRenderState.x;
@@ -48,9 +42,7 @@ public final class RenderStateUtil {
         ((GeoRenderState)newRenderState).getDataMap().putAll(((GeoRenderState)oldRenderState).getDataMap());
     }
 
-    /**
-     * Create a fully cloned copy of an existing {@link LivingEntityRenderState}.
-     */
+    /// Create a fully cloned copy of an existing [LivingEntityRenderState].
     public static LivingEntityRenderState cloneLivingEntityState(LivingEntityRenderState existingState) {
         final LivingEntityRenderState newState = new LivingEntityRenderState();
 
@@ -59,9 +51,7 @@ public final class RenderStateUtil {
         return newState;
     }
 
-    /**
-     * Fully copy an existing {@link LivingEntityRenderState} to a new one.
-     */
+    /// Fully copy an existing [LivingEntityRenderState] to a new one.
     public static void fullCopyLivingEntityState(LivingEntityRenderState newRenderState, LivingEntityRenderState oldRenderState) {
         fullCopyEntityState(newRenderState, oldRenderState);
 
@@ -88,9 +78,7 @@ public final class RenderStateUtil {
         newRenderState.wornHeadProfile = oldRenderState.wornHeadProfile;
     }
 
-    /**
-     * Create a fully cloned copy of an existing {@link ArmedEntityRenderState}.
-     */
+    /// Create a fully cloned copy of an existing [ArmedEntityRenderState].
     public static ArmedEntityRenderState cloneArmedEntityState(ArmedEntityRenderState existingState) {
         final ArmedEntityRenderState newState = new ArmedEntityRenderState();
 
@@ -99,9 +87,7 @@ public final class RenderStateUtil {
         return newState;
     }
 
-    /**
-     * Fully copy an existing {@link ArmedEntityRenderState} to a new one.
-     */
+    /// Fully copy an existing [ArmedEntityRenderState] to a new one.
     public static void fullCopyArmedEntityState(ArmedEntityRenderState newRenderState, ArmedEntityRenderState oldRenderState) {
         fullCopyLivingEntityState(newRenderState, oldRenderState);
 
@@ -112,9 +98,7 @@ public final class RenderStateUtil {
         newRenderState.leftHandItemState = oldRenderState.leftHandItemState;
     }
 
-    /**
-     * Create a fully cloned copy of an existing {@link HumanoidRenderState}.
-     */
+    /// Create a fully cloned copy of an existing [HumanoidRenderState].
     public static HumanoidRenderState cloneHumanoidEntityState(HumanoidRenderState existingState) {
         final HumanoidRenderState newState = new HumanoidRenderState();
 
@@ -123,9 +107,7 @@ public final class RenderStateUtil {
         return newState;
     }
 
-    /**
-     * Fully copy an existing {@link HumanoidRenderState} to a new one.
-     */
+    /// Fully copy an existing [HumanoidRenderState] to a new one.
     public static void fullCopyHumanoidEntityState(HumanoidRenderState newRenderState, HumanoidRenderState oldRenderState) {
         fullCopyArmedEntityState(newRenderState, oldRenderState);
 
@@ -150,9 +132,7 @@ public final class RenderStateUtil {
         newRenderState.feetEquipment = oldRenderState.feetEquipment;
     }
 
-    /**
-     * Create a fully cloned copy of an existing {@link AvatarRenderState}.
-     */
+    /// Create a fully cloned copy of an existing [AvatarRenderState].
     public static AvatarRenderState cloneAvatarEntityState(AvatarRenderState existingState) {
         final AvatarRenderState newState = new AvatarRenderState();
 
@@ -161,9 +141,7 @@ public final class RenderStateUtil {
         return newState;
     }
 
-    /**
-     * Fully copy an existing {@link AvatarRenderState} to a new one.
-     */
+    /// Fully copy an existing [AvatarRenderState] to a new one.
     public static void fullCopyAvatarEntityState(AvatarRenderState newRenderState, AvatarRenderState oldRenderState) {
         fullCopyHumanoidEntityState(newRenderState, oldRenderState);
 
@@ -192,15 +170,13 @@ public final class RenderStateUtil {
         newRenderState.heldOnHead = oldRenderState.heldOnHead;
     }
 
-    /**
-     * Create a partial-clone of an existing unknown RenderState into a new {@link HumanoidRenderState} for the purpose of
-     * armor rendering, which explicitly requires an {@code HumanoidRenderState}
-     * <p>
-     * Because this is only being used for armor rendering, we don't need an exhaustive copy of the renderstate and instead focus
-     * solely on the data points we know are needed.
-     * <p>
-     * If you are doing custom modeling and a data point here is missing and causing you issues, let me know in Discord and I'll add it
-     */
+    /// Create a partial-clone of an existing unknown RenderState into a new [HumanoidRenderState] for the purpose of
+    /// armor rendering, which explicitly requires an `HumanoidRenderState`
+    ///
+    /// Because this is only being used for armor rendering, we don't need an exhaustive copy of the renderstate and instead focus
+    /// solely on the data points we know are needed.
+    ///
+    /// If you are doing custom modeling and a data point here is missing and causing you issues, let me know in Discord and I'll add it
     public static HumanoidRenderState makeMinimalArmorRenderingClone(final HumanoidRenderState newRenderState, final EntityRenderState oldRenderState) {
         ((GeoRenderState)newRenderState).getDataMap().putAll(((GeoRenderState)oldRenderState).getDataMap());
 

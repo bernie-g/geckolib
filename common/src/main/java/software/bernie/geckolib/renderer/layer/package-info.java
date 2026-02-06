@@ -1,6 +1,4 @@
-/**
- * GeoRenderLayer classes and related objects
- */
+/// GeoRenderLayer classes and related objects
 @NullMarked
 package software.bernie.geckolib.renderer.layer;
 

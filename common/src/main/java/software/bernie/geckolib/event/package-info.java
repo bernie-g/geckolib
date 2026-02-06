@@ -1,6 +1,4 @@
-/**
- * Contains classes relating to GeckoLib's event hooks and callbacks
- */
+/// Contains classes relating to GeckoLib's event hooks and callbacks
 @NullMarked
 package software.bernie.geckolib.event;
 

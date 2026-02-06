@@ -1,6 +1,4 @@
-/**
- * Miscellaneous object classes related to loading models
- */
+/// Miscellaneous object classes related to loading models
 @NullMarked
 package software.bernie.geckolib.loading.object;
 

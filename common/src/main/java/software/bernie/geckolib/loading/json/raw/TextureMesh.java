@@ -7,9 +7,7 @@ import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for texture mesh information, only used in deserialization at startup
- */
+/// Container class for texture mesh information, only used in deserialization at startup
 public record TextureMesh(double[] localPivot, double[] position, double[] rotation, double[] scale, @Nullable String texture) {
 	public static JsonDeserializer<TextureMesh> deserializer() throws JsonParseException {
 		return (json, type, context) -> {

@@ -6,9 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.util.GsonHelper;
 import org.jspecify.annotations.Nullable;
 
-/**
- * Container class for UV face information, only used in deserialization at startup
- */
+/// Container class for UV face information, only used in deserialization at startup
 public record UVFaces(@Nullable FaceUV north, @Nullable FaceUV south, @Nullable FaceUV east, @Nullable FaceUV west, @Nullable FaceUV up, @Nullable FaceUV down) {
 	public static JsonDeserializer<UVFaces> deserializer() {
 		return (json, type, context) -> {

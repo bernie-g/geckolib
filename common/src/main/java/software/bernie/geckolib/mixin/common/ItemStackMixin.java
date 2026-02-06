@@ -9,14 +9,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-/**
- * Injection into ItemStack functionality to handle duplication and splitting with GeckoLib stack identifiers
- */
+/// Injection into ItemStack functionality to handle duplication and splitting with GeckoLib stack identifiers
 @Mixin(ItemStack.class)
 public class ItemStackMixin {
-    /**
-     * Remove the GeckoLib stack ID when splitting up a stack into two
-     */
+    /// Remove the GeckoLib stack ID when splitting up a stack into two
     @WrapOperation(method = "split", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copyWithCount(I)Lnet/minecraft/world/item/ItemStack;"))
     public ItemStack geckolib$removeGeckolibIdOnCopy(ItemStack instance, int count, Operation<ItemStack> original) {
         ItemStack copy = original.call(instance, count);
@@ -27,11 +23,9 @@ public class ItemStackMixin {
         return copy;
     }
 
-    /**
-     * Consider ItemStacks equal if the only difference is their GeckoLib stack ID
-     * <p>
-     * We do this so that the game doesn't prevent combining stacks due solely to GeckoLib sync IDs.
-     */
+    /// Consider ItemStacks equal if the only difference is their GeckoLib stack ID
+    ///
+    /// We do this so that the game doesn't prevent combining stacks due solely to GeckoLib sync IDs.
     @WrapOperation(method = "isSameItemSameComponents", at = @At(value = "INVOKE", target = "Ljava/util/Objects;equals(Ljava/lang/Object;Ljava/lang/Object;)Z"))
     private static boolean geckolib$skipGeckolibIdOnCompare(Object a, Object b, Operation<Boolean> original) {
         if (original.call(a, b))

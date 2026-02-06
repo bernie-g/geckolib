@@ -8,9 +8,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
-/**
- * Service holder class for access to the various SPI platforms that GeckoLib uses for client-specific functionality
- */
+/// Service holder class for access to the various SPI platforms that GeckoLib uses for client-specific functionality
 public class GeckoLibClientServices {
     public static final GeckoLibEvents EVENTS = load(GeckoLibEvents.class);
     public static final GeckoLibClient ITEM_RENDERING = load(GeckoLibClient.class);

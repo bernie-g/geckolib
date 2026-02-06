@@ -11,25 +11,21 @@ import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for geometry properties, only used for intermediary steps between .json deserialization and GeckoLib object creation
- * <p>
- * This is not a 1:1 parity container for the specification, as GeckoLib intentionally discards properties that have no possible uses
- *
- * @param identifier The asset identifier for this model. Not used by GeckoLib
- * @param visibleBoundsWidth The width of the visible bounds for this model. Not used by GeckoLib
- * @param visibleBoundsHeight The height of the visible bounds for this model. Not used by GeckoLib
- * @param visibleBoundsOffset The offset of the visible bounds for this model. Not used by GeckoLib
- * @param textureWidth The width of the texture for this model. Technically optional, but GeckoLib requires it
- * @param textureHeight The height of the texture for this model. Technically optional, but GeckoLib requires it
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
- */
+/// Container class for geometry properties, only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// This is not a 1:1 parity container for the specification, as GeckoLib intentionally discards properties that have no possible uses
+///
+/// @param identifier The asset identifier for this model. Not used by GeckoLib
+/// @param visibleBoundsWidth The width of the visible bounds for this model. Not used by GeckoLib
+/// @param visibleBoundsHeight The height of the visible bounds for this model. Not used by GeckoLib
+/// @param visibleBoundsOffset The offset of the visible bounds for this model. Not used by GeckoLib
+/// @param textureWidth The width of the texture for this model. Technically optional, but GeckoLib requires it
+/// @param textureHeight The height of the texture for this model. Technically optional, but GeckoLib requires it
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
 public record GeometryDescription(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset,
 								  int textureWidth, int textureHeight) {
-	/**
-	 * Parse a GeometryDescription instance from raw .json input via {@link Gson}
-	 */
+	/// Parse a GeometryDescription instance from raw .json input via [Gson]
 	public static JsonDeserializer<GeometryDescription> gsonDeserializer() throws JsonParseException {
 		return (json, type, context) -> {
 			final JsonObject obj = json.getAsJsonObject();

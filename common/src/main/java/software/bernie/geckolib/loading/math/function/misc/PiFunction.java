@@ -5,14 +5,11 @@ import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 import software.bernie.geckolib.loading.math.value.Constant;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns <a href="https://en.wikipedia.org/wiki/Pi">PI</a>
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns <a href="https://en.wikipedia.org/wiki/Pi">PI</a>
 public final class PiFunction extends MathFunction {
     public PiFunction(MathValue... values) {
         super(values);

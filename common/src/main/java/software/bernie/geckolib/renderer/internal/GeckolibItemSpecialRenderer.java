@@ -23,11 +23,9 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.function.Consumer;
 
-/**
- * SpecialModelRenderer instance to facilitate rendering GeckoLib items using the vanilla special renderer system
- *
- * @param <T> Item animatable class type
- */
+/// SpecialModelRenderer instance to facilitate rendering GeckoLib items using the vanilla special renderer system
+///
+/// @param <T> Item animatable class type
 @ApiStatus.Internal
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
     @Override
@@ -48,9 +46,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
         consumer.accept(new Vector3f(0, 0, 0));
     }
 
-    /**
-     * Wrap the {@link #extractArgument(ItemStack)} call to provide all the context available, rather than just what Mojang provides
-     */
+    /// Wrap the [#extractArgument(ItemStack)] call to provide all the context available, rather than just what Mojang provides
     @SuppressWarnings({"unchecked", "rawtypes"})
     public GeckolibItemSpecialRenderer.@Nullable RenderData<T> extractArgument(ItemStack itemStack, ItemStackRenderState renderState, ItemDisplayContext context,
                                                                      @Nullable ClientLevel level, @Nullable ItemOwner itemOwner) {
@@ -67,9 +63,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
         return new RenderData<>(item, buildRenderState(item, itemStack, renderer, renderState, context, level, itemOwner), renderer);
     }
 
-    /**
-     * Should not be used
-     */
+    /// Should not be used
     @Deprecated
     @Override
     public GeckolibItemSpecialRenderer.@Nullable RenderData<T> extractArgument(ItemStack itemStack) {

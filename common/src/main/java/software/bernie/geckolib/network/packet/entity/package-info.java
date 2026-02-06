@@ -1,6 +1,4 @@
-/**
- * GeckoLib entity syncing and functionality packets
- */
+/// GeckoLib entity syncing and functionality packets
 @NullMarked
 package software.bernie.geckolib.network.packet.entity;
 

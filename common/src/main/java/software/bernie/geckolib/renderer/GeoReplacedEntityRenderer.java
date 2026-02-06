@@ -47,14 +47,12 @@ import software.bernie.geckolib.util.MiscUtil;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * An alternate to {@link GeoEntityRenderer}, used specifically for replacing existing non-geckolib
- * entities with geckolib rendering dynamically, without the need for an additional entity class
- *
- * @param <T> Entity animatable class type. This is the animatable being rendered
- * @param <E> Entity class type. This is the entity being replaced
- * @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
- */
+/// An alternate to [GeoEntityRenderer], used specifically for replacing existing non-geckolib
+/// entities with geckolib rendering dynamically, without the need for an additional entity class
+///
+/// @param <T> Entity animatable class type. This is the animatable being rendered
+/// @param <E> Entity class type. This is the entity being replaced
+/// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<E, R> implements GeoRenderer<T, E, R> {
 	protected final GeoRenderLayersContainer<T, E, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -75,54 +73,44 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 			throw new IllegalArgumentException("Direct entity instances are not permitted for GeoReplacedEntityRenderer animatables! Extract the GeoAnimatable from the Entity instead.");
 	}
 
-	/**
-	 * Return the cached {@link GeoAnimatable} instance for this renderer
-	 */
+	/// Return the cached [GeoAnimatable] instance for this renderer
 	public T getAnimatable() {
 		return this.animatable;
 	}
 
-	/**
-	 * Get the maximum distance (in blocks) that an entity's nameplate should be visible when it is sneaking
-	 * <p>
-	 * This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render
-	 * <p>
-	 * This is hard-capped at a maximum of 256 blocks regardless of what this method returns
-	 */
+	/// Get the maximum distance (in blocks) that an entity's nameplate should be visible when it is sneaking
+	///
+	/// This is only a short-circuit predicate, and other conditions after this check must be also passed in order for the name to render
+	///
+	/// This is hard-capped at a maximum of 256 blocks regardless of what this method returns
 	public double getNameRenderCutoffDistance(E entity) {
 		return 32d;
 	}
 
-	/**
-	 * Returns the max rotation value for dying entities
-	 * <p>
-	 * You might want to modify this for different aesthetics, such as a {@link Spider} flipping upside down on death
-	 * <p>
-	 * Functionally equivalent to {@code LivingEntityRenderer#getFlipDegrees}
-	 */
+	/// Returns the max rotation value for dying entities
+	///
+	/// You might want to modify this for different aesthetics, such as a [Spider] flipping upside down on death
+	///
+	/// Functionally equivalent to `LivingEntityRenderer#getFlipDegrees`
 	protected float getDeathMaxRotation(GeoRenderState renderState) {
 		return 90f;
 	}
 
-	/**
-	 * Makes a covariant variable of the given {@link GeoRenderState} and {@link LivingEntityRenderState}
-	 * (Essentially a variable that is <b>both</b> types) for ease of use
-	 * <p>
-	 * Because of the lack of extensibility in covariant return types, a new version of this method needs to be made
-	 * for any other covariant combination
-	 *
-	 * @param renderState The base GeoRenderState to cast
-	 * @return The GeoRenderState cast <i>additively</i> as a LivingEntityRenderState
-	 */
+	/// Makes a covariant variable of the given [GeoRenderState] and [LivingEntityRenderState]
+	/// (Essentially a variable that is **both** types) for ease of use
+	///
+	/// Because of the lack of extensibility in covariant return types, a new version of this method needs to be made
+	/// for any other covariant combination
+	///
+	/// @param renderState The base GeoRenderState to cast
+	/// @return The GeoRenderState cast _additively_ as a LivingEntityRenderState
 	@SuppressWarnings("unchecked")
     protected <S extends LivingEntityRenderState & GeoRenderState> S convertRenderStateToLiving(GeoRenderState renderState) {
 		return (S)renderState;
 	}
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
-    /**
-     * @deprecated GeckoLib defers creation of this to allow for dynamic handling in {@link #extractRenderState(Entity, EntityRenderState, float)}
-     */
+    /// @deprecated GeckoLib defers creation of this to allow for dynamic handling in [#extractRenderState(Entity, EntityRenderState, float)]
     @Deprecated
     @ApiStatus.Internal
     @Override
@@ -130,49 +118,37 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         return null;
     }
 
-    /**
-     * Gets the model instance for this renderer
-     */
+    /// Gets the model instance for this renderer
     @Override
     public GeoModel<T> getGeoModel() {
         return this.model;
     }
 
-    /**
-     * Returns the list of registered {@link GeoRenderLayer GeoRenderLayers} for this renderer
-     */
+    /// Returns the list of registered [GeoRenderLayers][GeoRenderLayer] for this renderer
     @Override
     public List<GeoRenderLayer<T, E, R>> getRenderLayers() {
         return this.renderLayers.getRenderLayers();
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     @SuppressWarnings("UnusedReturnValue")
     public GeoReplacedEntityRenderer<T, E, R> withRenderLayer(Function<? super GeoReplacedEntityRenderer<T, E, R>, GeoRenderLayer<T, E, R>> renderLayer) {
         return withRenderLayer(renderLayer.apply(this));
     }
 
-    /**
-     * Adds a {@link GeoRenderLayer} to this renderer, to be called after the main model is rendered each frame
-     */
+    /// Adds a [GeoRenderLayer] to this renderer, to be called after the main model is rendered each frame
     public GeoReplacedEntityRenderer<T, E, R> withRenderLayer(GeoRenderLayer<T, E, R> renderLayer) {
         this.renderLayers.addLayer(renderLayer);
 
         return this;
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoReplacedEntityRenderer<T, E, R> withScale(float scale) {
         return withScale(scale, scale);
     }
 
-    /**
-     * Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
-     */
+    /// Sets a scale override for this renderer, telling GeckoLib to pre-scale the model
     public GeoReplacedEntityRenderer<T, E, R> withScale(float scaleWidth, float scaleHeight) {
         this.scaleWidth = scaleWidth;
         this.scaleHeight = scaleHeight;
@@ -180,24 +156,20 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         return this;
     }
 
-    /**
-     * Gets the id that represents the current animatable's instance for animation purposes.
-     *
-     * @param animatable The Animatable instance being renderer
-     * @param replacedEntity An object related to the render pass or null if not applicable.
-     *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
-     */
+    /// Gets the id that represents the current animatable's instance for animation purposes.
+    ///
+    /// @param animatable The Animatable instance being renderer
+    /// @param replacedEntity An object related to the render pass or null if not applicable.
+    ///                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
     @ApiStatus.OverrideOnly
     @Override
     public long getInstanceId(T animatable, @SuppressWarnings("NullableProblems") @NonNull E replacedEntity) {
         return replacedEntity.getId();
     }
 
-    /**
-     * Gets a tint-applying color to render the given animatable with
-     * <p>
-     * Returns opaque white by default, modified for invisibility in spectator
-     */
+    /// Gets a tint-applying color to render the given animatable with
+    ///
+    /// Returns opaque white by default, modified for invisibility in spectator
     @Override
     public int getRenderColor(T animatable, E replacedEntity, float partialTick) {
         int color = GeoRenderer.super.getRenderColor(animatable, replacedEntity, partialTick);
@@ -209,13 +181,11 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         return color;
     }
 
-    /**
-     * Gets a packed overlay coordinate pair for rendering
-     * <p>
-     * Mostly just used for the red tint when an entity is hurt,
-     * but can be used for other things like the {@link net.minecraft.world.entity.monster.Creeper}
-     * white tint when exploding.
-     */
+    /// Gets a packed overlay coordinate pair for rendering
+    ///
+    /// Mostly just used for the red tint when an entity is hurt,
+    /// but can be used for other things like the [net.minecraft.world.entity.monster.Creeper]
+    /// white tint when exploding.
     @Override
     public int getPackedOverlay(T animatable, E replacedEntity, float u, float partialTick) {
         if (!(replacedEntity instanceof LivingEntity entity))
@@ -225,11 +195,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
                                    OverlayTexture.v(entity.hurtTime > 0 || entity.deathTime > 0));
     }
 
-    /**
-     * Whether the entity's nametag should be rendered or not
-     * <p>
-     * Used to determine nametag attachment in {@link EntityRenderer#extractRenderState(Entity, EntityRenderState, float)}
-     */
+    /// Whether the entity's nametag should be rendered or not
+    ///
+    /// Used to determine nametag attachment in [EntityRenderer#extractRenderState(Entity, EntityRenderState, float)]
     @Override
     public boolean shouldShowName(E entity, double distToCameraSq) {
         if (!(entity instanceof LivingEntity))
@@ -263,12 +231,10 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         };
     }
 
-    /**
-     * Calculate the yaw of the given animatable.
-     * <p>
-     * Normally only called for non-{@link LivingEntity LivingEntities}, and shouldn't be considered a safe place to modify rotation<br>
-     * Do that in {@link software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
-     */
+    /// Calculate the yaw of the given animatable.
+    ///
+    /// Normally only called for non-[LivingEntities][LivingEntity], and shouldn't be considered a safe place to modify rotation
+    /// Do that in [software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)] instead
     protected final float calculateYRot(E entity, float yHeadRot, float partialTick) {
         if (!(entity.getVehicle() instanceof LivingEntity vehicle))
             return entity.getVisualRotationYInDegrees();
@@ -284,15 +250,13 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     }
 
 
-    /**
-     * Gets the {@link RenderType} to render the current render pass with
-     * <p>
-     * Uses the {@link RenderTypes#entityCutoutNoCull} {@code RenderType} by default
-     * <p>
-     * Override this to change the way a model will render (such as translucent models, etc.)
-     *
-     * @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
-     */
+    /// Gets the [RenderType] to render the current render pass with
+    ///
+    /// Uses the [RenderTypes#entityCutoutNoCull] `RenderType` by default
+    ///
+    /// Override this to change the way a model will render (such as translucent models, etc.)
+    ///
+    /// @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
     @Override
     public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         if (renderState.isInvisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
@@ -304,9 +268,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         return renderState.appearsGlowing() ? RenderTypes.outline(texture) : null;
     }
 
-    /**
-     * Internal method for capturing the common RenderState data for all animatable objects
-     */
+    /// Internal method for capturing the common RenderState data for all animatable objects
     @ApiStatus.Internal
     @Override
     public final void captureDefaultRenderState(T animatable, E replacedEntity, R renderState, float partialTick) {
@@ -333,11 +295,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         }
     }
 
-    /**
-     * Scales the {@link PoseStack} in preparation for rendering the model, excluding when re-rendering the model as part of a {@link GeoRenderLayer} or external render call
-     * <p>
-     * Override and call {@code super} with modified scale values as needed to further modify the scale of the model
-     */
+    /// Scales the [PoseStack] in preparation for rendering the model, excluding when re-rendering the model as part of a [GeoRenderLayer] or external render call
+    ///
+    /// Override and call `super` with modified scale values as needed to further modify the scale of the model
     @Override
     public void scaleModelForRender(RenderPassInfo<R> renderPassInfo, float widthScale, float heightScale) {
         float nativeScale = renderPassInfo.renderState() instanceof LivingEntityRenderState livingRenderState ? livingRenderState.scale : 1;
@@ -345,14 +305,12 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         GeoRenderer.super.scaleModelForRender(renderPassInfo, widthScale * this.scaleWidth * nativeScale, heightScale * this.scaleHeight * nativeScale);
     }
 
-    /**
-     * Transform the {@link PoseStack} in preparation for rendering the model.
-     * <p>
-     * This is called after {@link #scaleModelForRender}, and so any transformations here will be scaled appropriately.
-     * If you need to do pre-scale translations, use {@link #preRenderPass}
-     * <p>
-     * PoseStack translations made here are kept until the end of the render process
-     */
+    /// Transform the [PoseStack] in preparation for rendering the model.
+    ///
+    /// This is called after [#scaleModelForRender], and so any transformations here will be scaled appropriately.
+    /// If you need to do pre-scale translations, use [#preRenderPass]
+    ///
+    /// PoseStack translations made here are kept until the end of the render process
     @Override
     public void adjustRenderPose(RenderPassInfo<R> renderPassInfo) {
         final R renderState = renderPassInfo.renderState();
@@ -373,29 +331,23 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         poseStack.translate(0, 0.01f, 0);
     }
 
-    /**
-     * Initial access point for vanilla's {@link GeoEntityRenderer} class<br>
-     * Immediately defers to {@link GeoRenderer#performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState)}
-     */
+    /// Initial access point for vanilla's [GeoEntityRenderer] class
+    /// Immediately defers to [GeoRenderer#performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState)]
     @ApiStatus.Internal
     @Override
     public void submit(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         GeoRenderer.super.performRenderPass(renderState, poseStack, renderTasks, cameraState);
     }
 
-    /**
-     * Called after the rest of the render pass has completed, including discarding the PoseStack's pose.
-     * <p>
-     * The actual rendering of the object has not yet taken place, as that is done in a deferred {@link #performRenderPass submission}
-     */
+    /// Called after the rest of the render pass has completed, including discarding the PoseStack's pose.
+    ///
+    /// The actual rendering of the object has not yet taken place, as that is done in a deferred [submission][#performRenderPass]
     @Override
     public void postRenderPass(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         super.submit(renderPassInfo.renderState(), renderPassInfo.poseStack(), renderTasks, renderPassInfo.cameraState());
     }
 
-    /**
-     * Applies rotation transformations to the renderer prior to render time to account for various entity states
-     */
+    /// Applies rotation transformations to the renderer prior to render time to account for various entity states
     protected void applyRotations(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, float nativeScale) {
         final R renderState = renderPassInfo.renderState();
         float rotationYaw = renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_BODY_YAW, 0f);
@@ -430,27 +382,23 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         }
     }
 
-    /**
-     * Create the base (blank) {@link R renderState} instance for this renderer.
-     * <p>
-     * By default, it is an {@link EntityRenderState}, or a {@link LivingEntityRenderState} if the entity is an instance of {@link LivingEntity}<br>
-     * All EntityRenderStates of any kind are automatically {@link GeoRenderState}s
-     * <p>
-     * Override this if you want to use a different subclass of EntityRenderState
-     */
+    /// Create the base (blank) [renderState][R] instance for this renderer.
+    ///
+    /// By default, it is an [EntityRenderState], or a [LivingEntityRenderState] if the entity is an instance of [LivingEntity]
+    /// All EntityRenderStates of any kind are automatically [GeoRenderState]s
+    ///
+    /// Override this if you want to use a different subclass of EntityRenderState
     @SuppressWarnings("unchecked")
     @Override
     public R createRenderState(T animatable, E relatedObject) {
         return (R)(relatedObject instanceof LivingEntity ? new LivingEntityRenderState() : new EntityRenderState());
     }
 
-    /**
-     * Create the contextually relevant EntityRenderState for the current render pass
-     * <p>
-     * GeckoLib also uses this to dynamically handle the default EntityRenderState setup
-     * <p>
-     * If overriding this for a custom RenderState, ensure you call {@code super} first
-     */
+    /// Create the contextually relevant EntityRenderState for the current render pass
+    ///
+    /// GeckoLib also uses this to dynamically handle the default EntityRenderState setup
+    ///
+    /// If overriding this for a custom RenderState, ensure you call `super` first
     @ApiStatus.Internal
     @Override
     public final R createRenderState(E entity, float partialTick) {
@@ -462,12 +410,10 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         return renderState;
     }
 
-    /**
-     * Fill the EntityRenderState for the current render pass.
-     * <p>
-     * You should only be overriding this if you have extended the {@link R renderState} type.<br>
-     * If you're just adding GeckoLib rendering data, you should be using {@link software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)} instead
-     */
+    /// Fill the EntityRenderState for the current render pass.
+    ///
+    /// You should only be overriding this if you have extended the [renderState][R] type.
+    /// If you're just adding GeckoLib rendering data, you should be using [software.bernie.geckolib.renderer.base.GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)] instead
     @ApiStatus.Internal
     @Override
     public void extractRenderState(E entity, R renderState, float partialTick) {
@@ -479,11 +425,9 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         fillRenderState(this.animatable, entity, renderState, partialTick);
     }
 
-    /**
-     * Replica of {@link LivingEntityRenderer#extractRenderState(LivingEntity, LivingEntityRenderState, float)}.
-     * <p>
-     * This is only called if the entity for this renderer is a {@link LivingEntity}
-     */
+    /// Replica of [LivingEntityRenderer#extractRenderState(LivingEntity, LivingEntityRenderState, float)].
+    ///
+    /// This is only called if the entity for this renderer is a [LivingEntity]
     protected void extractLivingEntityRenderState(LivingEntity entity, LivingEntityRenderState renderState, float partialTick, ItemModelResolver itemModelResolver) {
         final float lerpHeadYRot = Mth.rotLerp(partialTick, entity.yHeadRotO, entity.yHeadRot);
         final Component customName = entity.getCustomName();
@@ -550,27 +494,21 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         renderState.isInvisibleToPlayer = renderState.isInvisible && (ClientUtil.getClientPlayer() == null || entity.isInvisibleTo(ClientUtil.getClientPlayer()));
     }
 
-    /**
-     * Create and fire the relevant {@code CompileLayers} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileLayers` event hook for this renderer
     @Override
     public void fireCompileRenderLayersEvent() {
         GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderLayers(this);
     }
 
-    /**
-     * Create and fire the relevant {@code CompileRenderState} event hook for this renderer
-     */
+    /// Create and fire the relevant `CompileRenderState` event hook for this renderer
     @Override
     public void fireCompileRenderStateEvent(T animatable, E entity, R renderState, float partialTick) {
         GeckoLibClientServices.EVENTS.fireCompileReplacedEntityRenderState(this, renderState, animatable, entity);
     }
 
-    /**
-     * Create and fire the relevant {@code Pre-Render} event hook for this renderer
-     *
-     * @return Whether the renderer should proceed based on the cancellation state of the event
-     */
+    /// Create and fire the relevant `Pre-Render` event hook for this renderer
+    ///
+    /// @return Whether the renderer should proceed based on the cancellation state of the event
     @Override
     public boolean firePreRenderEvent(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeckoLibClientServices.EVENTS.fireReplacedEntityPreRender(renderPassInfo, renderTasks);

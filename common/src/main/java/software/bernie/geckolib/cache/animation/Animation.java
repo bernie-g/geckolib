@@ -13,28 +13,24 @@ import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.Set;
 
-/**
- * A compiled animation instance for use by the {@link AnimationController}
- * <p>
- * Modifications or extensions of a compiled Animation are not supported, and therefore an instance of {@code Animation} is considered final and immutable
- *
- * @param name The name of the animation, as defined in the animation .json
- * @param length The length of the animation (in seconds)
- * @param loopType The default loop type of this animation
- * @param boneAnimations The keyframes of this animation, organized by bone groups
- * @param usedVariables The {@link Variable}s used by this animation
- * @param keyframeMarkers The keyframe instruction markers for this animation, as defined in the animation .json
- */
+/// A compiled animation instance for use by the [AnimationController]
+///
+/// Modifications or extensions of a compiled Animation are not supported, and therefore an instance of `Animation` is considered final and immutable
+///
+/// @param name The name of the animation, as defined in the animation .json
+/// @param length The length of the animation (in seconds)
+/// @param loopType The default loop type of this animation
+/// @param boneAnimations The keyframes of this animation, organized by bone groups
+/// @param usedVariables The [Variable]s used by this animation
+/// @param keyframeMarkers The keyframe instruction markers for this animation, as defined in the animation .json
 public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Set<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
-	/**
-	 * Create a new Animation instance from the given values, automatically compiling the {@link #usedVariables} list
-	 *
-	 * @param name The name of the animation
-	 * @param length The length (in seconds) of the animation
-	 * @param loopType The type of looping this animation should have once finished
-	 * @param boneAnimations The keyframe stacks for each bone in this animation
-	 * @param keyframeMarkers Any custom keyframe instructions this animation contains
-	 */
+	/// Create a new Animation instance from the given values, automatically compiling the [#usedVariables] list
+	///
+	/// @param name The name of the animation
+	/// @param length The length (in seconds) of the animation
+	/// @param loopType The type of looping this animation should have once finished
+	/// @param boneAnimations The keyframe stacks for each bone in this animation
+	/// @param keyframeMarkers Any custom keyframe instructions this animation contains
 	public static Animation create(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, KeyframeMarkers keyframeMarkers) {
 		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
 
@@ -46,9 +42,7 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	}
 
 	public record KeyframeMarkers(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {
-        /**
-         * @return Whether there are any keyframe markers of any type
-         */
+        /// @return Whether there are any keyframe markers of any type
         public boolean isEmpty() {
             return this.sounds.length == 0 && this.particles.length == 0 && this.customInstructions.length == 0;
         }

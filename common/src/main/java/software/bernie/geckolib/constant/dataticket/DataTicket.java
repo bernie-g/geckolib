@@ -8,11 +8,9 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Ticket object to define a typed data object
- *
- * @param <D> Data type for this ticket
- */
+/// Ticket object to define a typed data object
+///
+/// @param <D> Data type for this ticket
 public class DataTicket<D> {
 	static final Map<Pair<Type, String>, DataTicket<?>> IDENTITY_CACHE = new Object2ObjectOpenHashMap<>();
 
@@ -20,30 +18,24 @@ public class DataTicket<D> {
 	private final Class<? extends D> objectType;
 	private final Type dataType;
 
-	/**
-	 * @see #create(String, Class)
-	 */
+	/// @see #create(String, Class)
 	DataTicket(String id, Class<? extends D> objectType, Type dataType) {
 		this.id = id;
 		this.objectType = objectType;
 		this.dataType = dataType;
 	}
 
-	/**
-	 * Create a new DataTicket for a given name and object type
-	 * <p>
-	 * This DataTicket should then be stored statically somewhere and re-used.
-	 */
+	/// Create a new DataTicket for a given name and object type
+	///
+	/// This DataTicket should then be stored statically somewhere and re-used.
 	@SuppressWarnings({"unchecked", "rawtypes"})
     public static <D> DataTicket<D> create(String id, Class<? extends D> objectType) {
 		return create(id, objectType, (TypeToken)TypeToken.of(objectType));
 	}
 
-	/**
-	 * Create a new DataTicket for a given name and object type
-	 * <p>
-	 * This DataTicket should then be stored statically somewhere and re-used.
-	 */
+	/// Create a new DataTicket for a given name and object type
+	///
+	/// This DataTicket should then be stored statically somewhere and re-used.
 	@SuppressWarnings("unchecked")
     public static <D> DataTicket<D> create(String id, Class<? super D> objectType, TypeToken<D> token) {
 		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(token.getType(), id), pair -> new DataTicket<>(id, objectType, token.getType()));
@@ -53,19 +45,15 @@ public class DataTicket<D> {
 		return this.id;
 	}
 
-	/**
-	 * Get the object class that this DataTicket's data is for
-	 *
-	 * @deprecated Use {@link #dataType()} instead
-	 */
+	/// Get the object class that this DataTicket's data is for
+	///
+	/// @deprecated Use [#dataType()] instead
 	@Deprecated(forRemoval = true)
 	public Class<? extends D> objectType() {
 		return this.objectType;
 	}
 
-	/**
-	 * Get the java object type that this DataTicket's data is for
-	 */
+	/// Get the java object type that this DataTicket's data is for
 	public Type dataType() {
 		return this.dataType;
 	}

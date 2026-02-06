@@ -1,6 +1,4 @@
-/**
- * Animatable-instance container classes
- */
+/// Animatable-instance container classes
 @NullMarked
 package software.bernie.geckolib.animatable.instance;
 

@@ -18,38 +18,30 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
 
-/**
- * The {@link GeoAnimatable GeoAnimatable} interface specific to {@link net.minecraft.world.item.Item Items}
- * <p>
- * This also applies to armor, as they are just items too.
- *
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
- */
+/// The [GeoAnimatable][GeoAnimatable] interface specific to [Items][net.minecraft.world.item.Item]
+///
+/// This also applies to armor, as they are just items too.
+///
+/// @see <a href="https://github.com/bernie-g/geckolib/wiki/Item-Animations">GeckoLib Wiki - Item Animations</a>
+/// @see <a href="https://github.com/bernie-g/geckolib/wiki/Armor-Animations">GeckoLib Wiki - Armor Animations</a>
 public interface GeoItem extends SingletonGeoAnimatable {
-	/**
-	 * Register this as a synched {@code GeoAnimatable} instance with GeckoLib's networking functions
-	 * <p>
-	 * This should be called inside the constructor of your object.
-	 */
+	/// Register this as a synched `GeoAnimatable` instance with GeckoLib's networking functions
+	///
+	/// This should be called inside the constructor of your object.
 	static void registerSyncedAnimatable(SingletonGeoAnimatable animatable) {
 		SingletonGeoAnimatable.registerSyncedAnimatable(animatable);
 	}
 
-	/**
-	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT},
-	 * or {@link Long#MAX_VALUE} if one hasn't been assigned
-	 */
+	/// Gets the unique identifying number from this ItemStack's [NBT][Tag],
+	/// or [Long#MAX_VALUE] if one hasn't been assigned
 	static long getId(ItemStack stack) {
 		return Optional.ofNullable(stack.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
 				.orElse(Long.MAX_VALUE);
 	}
 
-	/**
-	 * Gets the unique identifying number from this ItemStack's {@link Tag NBT}
-	 * <p>
-	 * If no ID has been reserved for this stack yet, it will reserve a new id and assign it
-	 */
+	/// Gets the unique identifying number from this ItemStack's [NBT][Tag]
+	///
+	/// If no ID has been reserved for this stack yet, it will reserve a new id and assign it
 	static long getOrAssignId(ItemStack stack, ServerLevel level) {
 		if (!(stack.getComponents() instanceof PatchedDataComponentMap components))
 			return Long.MAX_VALUE;
@@ -62,16 +54,12 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		return id;
 	}
 
-	/**
-	 * Whether this item animatable is perspective-aware, handling animations differently depending on the {@link ItemDisplayContext render perspective}
-	 */
+	/// Whether this item animatable is perspective-aware, handling animations differently depending on the [render perspective][ItemDisplayContext]
 	default boolean isPerspectiveAware() {
 		return false;
 	}
 
-	/**
-	 * Replaces the default AnimatableInstanceCache for GeoItems if {@link GeoItem#isPerspectiveAware()} is true, for perspective-dependent handling
-	 */
+	/// Replaces the default AnimatableInstanceCache for GeoItems if [GeoItem#isPerspectiveAware()] is true, for perspective-dependent handling
 	@Override
 	default @Nullable AnimatableInstanceCache animatableCacheOverride() {
 		if (isPerspectiveAware())
@@ -80,22 +68,18 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		return SingletonGeoAnimatable.super.animatableCacheOverride();
 	}
 
-	/**
-	 * AnimatableInstanceCache specific to GeoItems, for doing render perspective-based animations
-	 * <p>
-	 * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
-	 * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
-	 */
+	/// AnimatableInstanceCache specific to GeoItems, for doing render perspective-based animations
+	///
+	/// You should **<u>NOT</u>** be instantiating this directly unless you know what you are doing.
+	/// Use [GeckoLibUtil.createInstanceCache][software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache] instead
 	class ContextBasedAnimatableInstanceCache extends SingletonAnimatableInstanceCache {
 		public ContextBasedAnimatableInstanceCache(GeoAnimatable animatable) {
 			super(animatable);
 		}
 
-		/**
-		 * Gets an {@link AnimatableManager} instance from this cache, cached under the id provided, or a new one if one doesn't already exist
-		 * <p>
-		 * This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
-		 */
+		/// Gets an [AnimatableManager] instance from this cache, cached under the id provided, or a new one if one doesn't already exist
+		///
+		/// This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
 		@SuppressWarnings("unchecked")
         @Override
 		public AnimatableManager<GeoItem> getManagerForId(long uniqueId) {

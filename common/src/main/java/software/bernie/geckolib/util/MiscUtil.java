@@ -3,16 +3,12 @@ package software.bernie.geckolib.util;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 
-/**
- * Helper class for miscellaneous functions that don't fit into the other util classes
- */
+/// Helper class for miscellaneous functions that don't fit into the other util classes
 public final class MiscUtil {
     public static final float WORLD_TO_MODEL_SIZE = 1 / 16f;
     public static final float MODEL_TO_WORLD_SIZE = 16f;
 
-    /**
-     * Converts a {@link Direction} to a rotational float for rotation purposes
-     */
+    /// Converts a [Direction] to a rotational float for rotation purposes
     public static float getDirectionAngle(Direction direction) {
         return switch(direction) {
             case SOUTH -> 90f;
@@ -22,21 +18,17 @@ public final class MiscUtil {
         };
     }
 
-    /**
-     * Return whether the two floating point values should be considered numerically equal
-     * <p>
-     * This is important because of the way floating point values work, there may not necessarily be
-     * 1:1 equality between two functionally equal floating point values
-     */
+    /// Return whether the two floating point values should be considered numerically equal
+    ///
+    /// This is important because of the way floating point values work, there may not necessarily be
+    /// 1:1 equality between two functionally equal floating point values
     public static boolean areFloatsEqual(double a, double b) {
         return Math.abs(a - b) < Mth.EPSILON;
     }
 
-    /**
-     * Special helper function for interpolating yaw.
-     * <p>
-     * This exists because yaw in Minecraft handles its yaw a bit strangely; and can cause incorrect results if interpolated without accounting for special cases
-     */
+    /// Special helper function for interpolating yaw.
+    ///
+    /// This exists because yaw in Minecraft handles its yaw a bit strangely; and can cause incorrect results if interpolated without accounting for special cases
     public static double lerpYaw(double delta, double start, double end) {
         start = Mth.wrapDegrees(start);
         end = Mth.wrapDegrees(end);

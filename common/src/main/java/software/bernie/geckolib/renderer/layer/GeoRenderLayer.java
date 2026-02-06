@@ -17,15 +17,13 @@ import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.function.BiConsumer;
 
-/**
- * Render layer base class for rendering additional layers of effects or textures over an existing model at runtime
- * <p>
- * Contains the base boilerplate and helper code for various render layer features
- *
- * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- */
+/// Render layer base class for rendering additional layers of effects or textures over an existing model at runtime
+///
+/// Contains the base boilerplate and helper code for various render layer features
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderState> {
 	protected final GeoRenderer<T, O, R> renderer;
 
@@ -33,77 +31,61 @@ public abstract class GeoRenderLayer<T extends GeoAnimatable, O, R extends GeoRe
 		this.renderer = renderer;
 	}
 
-	/**
-	 * Get the {@link GeoModel} currently being rendered
-	 */
+	/// Get the [GeoModel] currently being rendered
 	public GeoModel<T> getGeoModel() {
 		return this.renderer.getGeoModel();
 	}
 
-	/**
-	 * Gets the {@link BakedGeoModel} instance that is currently being used.
-	 * <p>
-	 * This can be directly used for re-rendering
-	 */
+	/// Gets the [BakedGeoModel] instance that is currently being used.
+	///
+	/// This can be directly used for re-rendering
 	public BakedGeoModel getDefaultBakedModel(GeoRenderState renderState) {
 		return getGeoModel().getBakedModel(getGeoModel().getModelResource(renderState));
 	}
 
-	/**
-	 * Get the renderer responsible for the current render operation
-	 */
+	/// Get the renderer responsible for the current render operation
 	public GeoRenderer<T, O, R> getRenderer() {
 		return this.renderer;
 	}
 
-	/**
-	 * Get the texture resource path for the given {@link GeoRenderState}.
-	 * <p>
-	 * By default, falls back to {@link GeoModel#getTextureResource(GeoRenderState)}
-	 */
+	/// Get the texture resource path for the given [GeoRenderState].
+	///
+	/// By default, falls back to [GeoModel#getTextureResource(GeoRenderState)]
 	protected Identifier getTextureResource(R renderState) {
 		return this.renderer.getTextureLocation(renderState);
 	}
 
-	/**
-	 * Override to add any custom {@link DataTicket}s you need to capture for rendering.
-	 * <p>
-	 * The animatable is discarded from the rendering context after this, so any data needed
-	 * for rendering should be captured in the renderState provided
-	 *
-	 * @param animatable The animatable instance being rendered
-	 * @param relatedObject An object related to the render pass or null if not applicable.
-	 *                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
-	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
-     * @param partialTick The fraction of a tick that has elapsed as of the current render pass
-	 */
+	/// Override to add any custom [DataTicket]s you need to capture for rendering.
+	///
+	/// The animatable is discarded from the rendering context after this, so any data needed
+	/// for rendering should be captured in the renderState provided
+	///
+	/// @param animatable The animatable instance being rendered
+	/// @param relatedObject An object related to the render pass or null if not applicable.
+	///                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+	/// @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
+	/// @param partialTick The fraction of a tick that has elapsed as of the current render pass
 	@ApiStatus.OverrideOnly
 	public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {}
 
-	/**
-	 * This method is called by the {@link GeoRenderer} before rendering, immediately after {@link GeoRenderer#preRenderPass} has been called
-	 * <p>
-	 * This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
-	 * <p>
-	 * <b><u>NOTE:</u></b> Changing VertexConsumers or RenderTypes must not be performed here
-	 */
+	/// This method is called by the [GeoRenderer] before rendering, immediately after [GeoRenderer#preRenderPass] has been called
+	///
+	/// This allows for RenderLayers to perform pre-render manipulations such as hiding or showing bones.
+	///
+	/// **<u>NOTE:</u>** Changing VertexConsumers or RenderTypes must not be performed here
 	public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 
-	/**
-	 * This is the method that is actually called by the render for your render layer to function
-	 * <p>
-	 * This is called <i>after</i> the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
-	 */
+	/// This is the method that is actually called by the render for your render layer to function
+	///
+	/// This is called _after_ the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
 	public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {}
 
-	/**
-	 * Register per-bone render operations, to be rendered after the main model is done.
-	 * <p>
-	 * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
-	 * is currently rendering.
-	 *
-     * @param renderPassInfo The collated render-related data for this render pass
-	 * @param consumer The registrar to accept the per-bone render tasks
-	 */
+	/// Register per-bone render operations, to be rendered after the main model is done.
+	///
+	/// Even though the task is called after the main model renders, the [PoseStack] provided will be posed as if the bone
+	/// is currently rendering.
+	///
+	/// @param renderPassInfo The collated render-related data for this render pass
+	/// @param consumer The registrar to accept the per-bone render tasks
 	public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {}
 }

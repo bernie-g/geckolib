@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns Euler's number raised to the power of the input value
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns Euler's number raised to the power of the input value
 public final class ExpFunction extends MathFunction {
     private final MathValue value;
 

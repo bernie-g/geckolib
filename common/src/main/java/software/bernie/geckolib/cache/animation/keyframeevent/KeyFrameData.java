@@ -4,12 +4,10 @@ import software.bernie.geckolib.cache.animation.Keyframe;
 
 import java.util.Objects;
 
-/**
- * Base class for custom {@link Keyframe} events
- *
- * @see ParticleKeyframeData
- * @see SoundKeyframeData
- */
+/// Base class for custom [Keyframe] events
+///
+/// @see ParticleKeyframeData
+/// @see SoundKeyframeData
 public abstract class KeyFrameData {
 	private final double animationTime;
 
@@ -17,9 +15,7 @@ public abstract class KeyFrameData {
 		this.animationTime = time;
 	}
 
-	/**
-	 * Gets the time position (in seconds) of the keyframe instruction in its animation
-	 */
+	/// Gets the time position (in seconds) of the keyframe instruction in its animation
 	public double getTime() {
 		return this.animationTime;
 	}

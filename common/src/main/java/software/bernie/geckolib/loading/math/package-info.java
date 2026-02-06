@@ -1,6 +1,4 @@
-/**
- * Classes related to the Molang math-parsing system
- */
+/// Classes related to the Molang math-parsing system
 @NullMarked
 package software.bernie.geckolib.loading.math;
 

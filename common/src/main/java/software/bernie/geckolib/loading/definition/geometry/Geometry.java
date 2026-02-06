@@ -5,21 +5,17 @@ import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for a full geometry file definition, only used for intermediary steps between .json deserialization and GeckoLib object creation
- * <p>
- * This is the root-level object for a fully processed .geo file
- *
- * @param formatVersion The bedrock geometry format version of this geometry instance
- * @param debug An optional debug marker for this geometry instance. Not used by GeckoLib
- * @param definitions The array of geometry definitions contained in this geometry instance
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
- */
+/// Container class for a full geometry file definition, only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// This is the root-level object for a fully processed .geo file
+///
+/// @param formatVersion The bedrock geometry format version of this geometry instance
+/// @param debug An optional debug marker for this geometry instance. Not used by GeckoLib
+/// @param definitions The array of geometry definitions contained in this geometry instance
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
 public record Geometry(String formatVersion, boolean debug, GeometryDefinition[] definitions) {
-    /**
-     * Publicly accessible GSON parser for GeckoLib geometry .json files
-     */
+    /// Publicly accessible GSON parser for GeckoLib geometry .json files
     public static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
             .registerTypeAdapter(Geometry.class, gsonDeserializer())
             .registerTypeAdapter(GeometryBone.class, GeometryBone.gsonDeserializer())
@@ -37,9 +33,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             .registerTypeAdapter(GeometryUvPair.class, GeometryUvPair.gsonDeserializer())
             .create();
 
-    /**
-     * Parse a Geometry instance from raw .json input via {@link Gson}
-     */
+    /// Parse a Geometry instance from raw .json input via [Gson]
     public static JsonDeserializer<Geometry> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             final JsonObject obj = json.getAsJsonObject();

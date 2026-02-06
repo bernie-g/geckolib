@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the largest value that is less than or equal to the input value and is equal to an integer
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the largest value that is less than or equal to the input value and is equal to an integer
 public final class FloorFunction extends MathFunction {
     private final MathValue value;
 

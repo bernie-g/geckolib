@@ -57,17 +57,15 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-/**
- * Builtin class for handling dynamic armor rendering on GeckoLib entities
- * <p>
- * Supports both {@link GeoItem GeckoLib} and vanilla armor models
- * <p>
- * Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering
- *
- * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- */
+/// Builtin class for handling dynamic armor rendering on GeckoLib entities
+///
+/// Supports both [GeckoLib][GeoItem] and vanilla armor models
+///
+/// Unlike a traditional armor renderer, this renderer renders per-bone, giving much more flexible armor rendering
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 @SuppressWarnings({"rawtypes", "unchecked"})
 public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends EntityRenderState & GeoRenderState> extends GeoRenderLayer<T, O, R> {
 	protected final EquipmentLayerRenderer equipmentRenderer;
@@ -84,19 +82,15 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
         this.skinCache = context.getPlayerSkinRenderCache();
 	}
 
-	/**
-	 * Return a list of the bone names that this layer will render for.
-	 * <p>
-	 * Ideally, you would cache this list in a static field if you don't need any data from the input renderState or model
-	 */
+	/// Return a list of the bone names that this layer will render for.
+	///
+	/// Ideally, you would cache this list in a static field if you don't need any data from the input renderState or model
 	protected abstract List<RenderData> getRelevantBones(RenderPassInfo<R> renderPassInfo);
 
-	/**
-	 * Container for data needed to render an armor piece for a bone.
-	 *
-	 * @param boneName The name of the bone to render the armor piece for
-	 * @param armorSegment The armor segment to render
-	 */
+	/// Container for data needed to render an armor piece for a bone.
+	///
+	/// @param boneName The name of the bone to render the armor piece for
+	/// @param armorSegment The armor segment to render
 	public record RenderData(String boneName, GeoArmorRenderer.ArmorSegment armorSegment) {
 		public static RenderData head(String boneName) {
 			return new RenderData(boneName, GeoArmorRenderer.ArmorSegment.HEAD);
@@ -131,17 +125,15 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		}
 	}
 
-	/**
-	 * Override to add any custom {@link DataTicket}s you need to capture for rendering.
-	 * <p>
-	 * The animatable is discarded from the rendering context after this, so any data needed
-	 * for rendering should be captured in the renderState provided
-	 *
-	 * @param animatable The animatable instance being rendered
-	 * @param relatedObject An object related to the render pass or null if not applicable.
-	 *                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
-	 * @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
-	 */
+	/// Override to add any custom [DataTicket]s you need to capture for rendering.
+	///
+	/// The animatable is discarded from the rendering context after this, so any data needed
+	/// for rendering should be captured in the renderState provided
+	///
+	/// @param animatable The animatable instance being rendered
+	/// @param relatedObject An object related to the render pass or null if not applicable.
+	///                         (E.G. ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
+	/// @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
 	@Override
 	public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
 		final EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, new EnumMap<>(EquipmentSlot.class));
@@ -174,15 +166,13 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
             baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, headRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA));
     }
 
-	/**
-	 * Register per-bone render operations, to be rendered after the main model is done.
-	 * <p>
-	 * Even though the task is called after the main model renders, the {@link PoseStack} provided will be posed as if the bone
-	 * is currently rendering.
-	 *
-	 * @param consumer The registrar to accept the per-bone render tasks
-	 */
-    @Override
+	/// Register per-bone render operations, to be rendered after the main model is done.
+	///
+	/// Even though the task is called after the main model renders, the [PoseStack] provided will be posed as if the bone
+	/// is currently rendering.
+	///
+	/// @param consumer The registrar to accept the per-bone render tasks
+	@Override
     public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
 		for (RenderData renderData : getRelevantBones(renderPassInfo)) {
             renderPassInfo.model().getBone(renderData.boneName).filter(CuboidGeoBone.class::isInstance)
@@ -201,9 +191,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		}
 	}
 
-	/**
-	 * Perform the actual rendering operation for the given bone and equipment
-	 */
+	/// Perform the actual rendering operation for the given bone and equipment
 	protected void buildRenderTask(RenderPassInfo<R> renderPassInfo, EquipmentSlot slot, Function<HumanoidModel<?>, ModelPart> modelPartFactory, ItemStack equipmentStack, CuboidGeoBone bone,
                                    SubmitNodeCollector renderTasks) {
 		// TODO Rewrite this Geo layer to make work :(
@@ -258,16 +246,12 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		}
 	}
 
-	/**
-	 * Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in {@link GeoRenderLayer#addRenderData(GeoAnimatable, Object, GeoRenderState, float)}
-	 */
+	/// Helper method to retrieve a stored held or worn ItemStack by the slot it's in, as computed in [GeoRenderLayer#addRenderData(GeoAnimatable, Object, GeoRenderState, float)]
 	protected ItemStack getEquipmentStack(RenderPassInfo<R> renderPassInfo, GeoBone bone, EquipmentSlot slot) {
 		return (ItemStack)renderPassInfo.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).getOrDefault(slot, ItemStack.EMPTY);
 	}
 
-	/**
-	 * Get the LayerType for the given armor piece. This defines the asset type to use in rendering a vanilla armor piece.
-	 */
+	/// Get the LayerType for the given armor piece. This defines the asset type to use in rendering a vanilla armor piece.
 	protected EquipmentClientInfo.LayerType getEquipmentLayerType(RenderPassInfo<R> renderPassInfo, GeoBone bone, EquipmentSlot slot, ItemStack armorStack, ResourceKey<EquipmentAsset> assetId) {
 		if (slot == EquipmentSlot.LEGS)
 			return EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS;
@@ -278,9 +262,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		return EquipmentClientInfo.LayerType.HUMANOID;
 	}
 
-	/**
-	 * Renders an individual armor piece base on the given {@link GeoBone} and {@link ItemStack}
-	 */
+	/// Renders an individual armor piece base on the given [GeoBone] and [ItemStack]
 	protected void renderVanillaArmorPiece(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, GeoBone bone, EquipmentSlot slot, ItemStack armorStack,
 										   Equippable equippable, ResourceKey<EquipmentAsset> assetId, Model<?> model, ModelPart modelPart, SubmitNodeCollector renderTasks) {
 		EquipmentClientInfo.LayerType layerType = getEquipmentLayerType(renderPassInfo, bone, slot, armorStack, assetId);
@@ -296,9 +278,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		this.equipmentRenderer.renderLayers(layerType, assetId, modelToRender, renderPassInfo.renderState(), armorStack, poseStack, renderTasks, renderPassInfo.packedLight(), renderPassInfo.renderState().outlineColor);
 	}
 
-	/**
-	 * Check for the presence of {@link ElytraModel Elytra} wings, and adjust the model as necessary
-	 */
+	/// Check for the presence of [Elytra][ElytraModel] wings, and adjust the model as necessary
 	protected Model checkForElytraModel(RenderPassInfo<R> renderPassInfo, EquipmentClientInfo.LayerType layerType, GeoBone bone, PoseStack poseStack) {
 		ElytraModel model = GeckoLibClient.GENERIC_ELYTRA_MODEL.get();
 		HumanoidRenderState humanoidRenderState = new HumanoidRenderState();
@@ -315,9 +295,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		return model;
 	}
 
-	/**
-	 * Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided {@link ItemStack}
-	 */
+	/// Returns a cached instance of a base HumanoidModel that is used for rendering/modelling the provided [ItemStack]
 	@ApiStatus.Internal
 	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForRender(GeoBone bone, EquipmentSlot slot, ItemStack stack, R renderState) {
 		final S humanoidRenderState = renderState instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
@@ -327,9 +305,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		return GeckoLibClientServices.ITEM_RENDERING.getArmorModelForItem(humanoidRenderState, stack, slot, layerType, defaultModel);
 	}
 
-	/**
-	 * Render a given {@link AbstractSkullBlock} as a worn armor piece in relation to a given {@link GeoBone}
-	 */
+	/// Render a given [AbstractSkullBlock] as a worn armor piece in relation to a given [GeoBone]
 	protected void renderSkullAsArmor(RenderPassInfo<R> renderPassInfo, GeoBone bone, ItemStack stack, AbstractSkullBlock skullBlock, SubmitNodeCollector renderTasks) {
 		SkullBlock.Type type = skullBlock.getType();
 		SkullModelBase model = this.skullModels.apply(type);
@@ -350,16 +326,14 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		poseStack.popPose();
 	}
 
-	/**
-	 * Prepares the given {@link ModelPart} for render by setting its translation, position, and rotation values based on the provided {@link GeoBone}
-	 * <p>
-	 * This implementation uses the <b><u>FIRST</u></b> cube in the source part
-	 * to determine the scale and position of the GeoArmor to be rendered
-	 *
-	 * @param poseStack The PoseStack being used for rendering
-	 * @param bone The GeoBone to base the translations on
-	 * @param sourcePart The ModelPart to translate
-	 */
+	/// Prepares the given [ModelPart] for render by setting its translation, position, and rotation values based on the provided [GeoBone]
+	///
+	/// This implementation uses the **<u>FIRST</u>** cube in the source part
+	/// to determine the scale and position of the GeoArmor to be rendered
+	///
+	/// @param poseStack The PoseStack being used for rendering
+	/// @param bone The GeoBone to base the translations on
+	/// @param sourcePart The ModelPart to translate
 	protected RenderPassInfo.BoneUpdater<R> positionModelPartFromBone(PoseStack poseStack, CuboidGeoBone bone, ModelPart sourcePart) {
 		final GeoCube firstCube = bone.cubes[0];
 		final Cube armorCube = sourcePart.cubes.getFirst();
@@ -389,9 +363,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
         return modelPositioner;
 	}
 
-    /**
-     * Convert an existing RenderState to a HumanoidRenderState, either by casting or creating a new one, for the purposes of RenderState filling
-     */
+    /// Convert an existing RenderState to a HumanoidRenderState, either by casting or creating a new one, for the purposes of RenderState filling
     protected <S extends HumanoidRenderState & GeoRenderState> S getOrCreateHumanoidRenderState(R renderState, boolean forceNew) {
         S newState = (S)(!forceNew && renderState instanceof HumanoidRenderState state ? state : new HumanoidRenderState());
 

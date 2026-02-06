@@ -23,20 +23,18 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Container class holding all the common information relevant for a single render pass in GeckoLib.
- * <p>
- * {@link GeoRenderer} builds an instance of this at the start of a render pass, and uses it until completion, then discards it.
- * <p>
- * This allows for a significant aggregation of the various objects passed to render methods, as well as
- * allowing extensibility where it may be wanted
- * <p>
- * This should hopefully make it easier to organize and manage data for rendering for end-users
- * <p>
- * <b><u>NOTE:</u></b> All objects contained by this instance should be considered functionally immutable.
- *
- * @param <R> RenderState class type
- */
+/// Container class holding all the common information relevant for a single render pass in GeckoLib.
+///
+/// [GeoRenderer] builds an instance of this at the start of a render pass, and uses it until completion, then discards it.
+///
+/// This allows for a significant aggregation of the various objects passed to render methods, as well as
+/// allowing extensibility where it may be wanted
+///
+/// This should hopefully make it easier to organize and manage data for rendering for end-users
+///
+/// **<u>NOTE:</u>** All objects contained by this instance should be considered functionally immutable.
+///
+/// @param <R> RenderState class type
 public class RenderPassInfo<R extends GeoRenderState> {
     protected final GeoRenderer<?, ?, R> renderer;
     protected final R renderState;
@@ -51,16 +49,14 @@ public class RenderPassInfo<R extends GeoRenderState> {
     protected final Map<GeoBone, List<PerBoneRender<R>>> boneRenderTasks = new Reference2ObjectArrayMap<>();
     protected final Map<GeoBone, List<BonePositionListener>> bonePositionListeners = new Reference2ObjectArrayMap<>();
 
-    /**
-     * @see #create
-     * @param renderer The GeoRenderer instance this instance is for
-     * @param renderState The RenderState instance for this render pass
-     * @param poseStack The PoseStack instance for this render pass
-     * @param model The BakedGeoModel instance for this render pass
-     * @param cameraState The CameraRenderState instance for this render pass
-     * @param willRender Whether the model should actually render in this render pass. Typically false if {@link GeoRenderer#getRenderType} returns null.
-     *                   This does not guarantee that the model will render, only that it should.
-     */
+    /// @see #create
+    /// @param renderer The GeoRenderer instance this instance is for
+    /// @param renderState The RenderState instance for this render pass
+    /// @param poseStack The PoseStack instance for this render pass
+    /// @param model The BakedGeoModel instance for this render pass
+    /// @param cameraState The CameraRenderState instance for this render pass
+    /// @param willRender Whether the model should actually render in this render pass. Typically false if [GeoRenderer#getRenderType] returns null.
+    ///                   This does not guarantee that the model will render, only that it should.
     protected RenderPassInfo(GeoRenderer<?, ?, R> renderer, R renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState, boolean willRender) {
         this.renderer = renderer;
         this.renderState = renderState;
@@ -72,102 +68,76 @@ public class RenderPassInfo<R extends GeoRenderState> {
         this.modelRenderPose = new Matrix4f();
     }
 
-    /**
-     * @return The GeoRenderer instance this instance is for
-     */
+    /// @return The GeoRenderer instance this instance is for
     public GeoRenderer<?, ?, R> renderer() {
         return this.renderer;
     }
 
-    /**
-     * @return The GeoRenderState instance for this render pass
-     */
+    /// @return The GeoRenderState instance for this render pass
     public R renderState() {
         return this.renderState;
     }
 
-    /**
-     * @return The PoseStack instance for this render pass
-     */
+    /// @return The PoseStack instance for this render pass
     public PoseStack poseStack() {
         return this.poseStack;
     }
 
-    /**
-     * @return The BakedGeoModel instance for this render pass
-     */
+    /// @return The BakedGeoModel instance for this render pass
     public BakedGeoModel model() {
         return this.model;
     }
 
-    /**
-     * @return The CameraRenderState instance for this render pass
-     */
+    /// @return The CameraRenderState instance for this render pass
     public CameraRenderState cameraState() {
         return this.cameraState;
     }
 
-    /**
-     * @return The packed light value for this render pass
-     */
+    /// @return The packed light value for this render pass
     public int packedLight() {
         return this.renderState.getPackedLight();
     }
 
-    /**
-     * @return The packed overlay coordinates for this render pass
-     */
+    /// @return The packed overlay coordinates for this render pass
     public int packedOverlay() {
         return this.renderState.getOrDefaultGeckolibData(DataTickets.PACKED_OVERLAY, OverlayTexture.NO_OVERLAY);
     }
 
-    /**
-     * @return The packed (ARGB) color/tint value for this render pass
-     */
+    /// @return The packed (ARGB) color/tint value for this render pass
     public int renderColor() {
     	return this.renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, 0xFFFFFFFF);
     }
 
-    /**
-     * @return Whether the model should actually render in this render pass.<br>
-     * Typically false if {@link GeoRenderer#getRenderType} returns null.
-     */
+    /// @return Whether the model should actually render in this render pass.
+    /// Typically false if [GeoRenderer#getRenderType] returns null.
     public boolean willRender() {
         return this.willRender;
     }
 
-    /**
-     * Shortcut method for retrieving render data from the {@link GeoRenderState}
-     *
-     * @see #renderState()
-     */
+    /// Shortcut method for retrieving render data from the [GeoRenderState]
+    ///
+    /// @see #renderState()
     public <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
         return this.renderState().getGeckolibData(dataTicket);
     }
 
-    /**
-     * Shortcut method for retrieving render data from the {@link GeoRenderState}
-     *
-     * @see #renderState()
-     */
+    /// Shortcut method for retrieving render data from the [GeoRenderState]
+    ///
+    /// @see #renderState()
     public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D fallback) {
         return this.renderState().getOrDefaultGeckolibData(dataTicket, fallback);
     }
 
-    /**
-     * Get the {@link PoseStack.Pose#pose()} for the current render pass representing
-     * the state of the PoseStack prior to any renderer-specific manipulations
-     */
+    /// Get the [PoseStack.Pose#pose()] for the current render pass representing
+    /// the state of the PoseStack prior to any renderer-specific manipulations
     public Matrix4f getPreRenderMatrixState() {
         return this.objectRenderPose;
     }
 
-    /**
-     * Get the {@link PoseStack.Pose#pose()} for the current render pass representing
-     * the state of the PoseStack immediately prior to submitting the render task
-     * <p>
-     * <b><u>NOTE:</u></b> Must not be called prior to {@link GeoRenderer#submitRenderTasks}
-     */
+    /// Get the [PoseStack.Pose#pose()] for the current render pass representing
+    /// the state of the PoseStack immediately prior to submitting the render task
+    ///
+    /// **<u>NOTE:</u>** Must not be called prior to [GeoRenderer#submitRenderTasks]
     public Matrix4f getModelRenderMatrixState() {
         if ((this.modelRenderPose.properties() & Matrix4fc.PROPERTY_IDENTITY) != 0)
             throw new IllegalStateException("Attempting to access model render matrix state before it has been set");
@@ -175,21 +145,17 @@ public class RenderPassInfo<R extends GeoRenderState> {
         return this.modelRenderPose;
     }
 
-    /**
-     * Add a {@link PerBoneRender} task to be executed for a specific bone in the model.
-     * <p>
-     * Typically should only be called from {@link GeoRenderLayer#addPerBoneRender}
-     */
+    /// Add a [PerBoneRender] task to be executed for a specific bone in the model.
+    ///
+    /// Typically should only be called from [GeoRenderLayer#addPerBoneRender]
     public void addPerBoneRender(GeoBone bone, PerBoneRender<R> render) {
         this.boneRenderTasks.computeIfAbsent(bone, key -> new ObjectArrayList<>()).add(render);
     }
 
-    /**
-     * Add a BoneUpdater for this render pass
-     * <p>
-     * Can only be called prior to the renderer submitting this pass for rendering<br>
-     * Updaters added after that point will be ignored
-     */
+    /// Add a BoneUpdater for this render pass
+    ///
+    /// Can only be called prior to the renderer submitting this pass for rendering
+    /// Updaters added after that point will be ignored
     public void addBoneUpdater(BoneUpdater<R> updater) {
         try {
             this.boneUpdates.getInput().add(updater);
@@ -199,29 +165,23 @@ public class RenderPassInfo<R extends GeoRenderState> {
         }
     }
 
-    /**
-     * Add a BonePositionListener for this render pass
-     * <p>
-     * Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
-     */
+    /// Add a BonePositionListener for this render pass
+    ///
+    /// Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
     public void addBonePositionListener(String boneName, BonePositionListener listener) {
         this.model.getBone(boneName).ifPresent(bone -> addBonePositionListener(bone, listener));
     }
 
-    /**
-     * Add a BonePositionListener for this render pass
-     * <p>
-     * Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
-     */
+    /// Add a BonePositionListener for this render pass
+    ///
+    /// Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
     public void addBonePositionListener(GeoBone bone, BonePositionListener listener) {
         this.bonePositionListeners.computeIfAbsent(bone, key -> new ObjectArrayList<>()).add(listener);
     }
 
-    /**
-     * Wrap a render task, posing the model using this RenderPassInfo's bone updates
-     * <p>
-     * All bone
-     */
+    /// Wrap a render task, posing the model using this RenderPassInfo's bone updates
+    ///
+    /// All bone
     @SuppressWarnings("ForLoopReplaceableByForEach")
     public void renderPosed(Runnable renderTask) {
         final BoneSnapshot[] updates = this.boneUpdates.compute();
@@ -255,25 +215,19 @@ public class RenderPassInfo<R extends GeoRenderState> {
         }
     }
 
-    /**
-     * Singular GeoBone-positioning callback to run immediately before rendering a model
-     *
-     * @param <R> RenderState class type
-     */
+    /// Singular GeoBone-positioning callback to run immediately before rendering a model
+    ///
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface BoneUpdater<R extends GeoRenderState> {
-        /**
-         * Run this BoneUpdate, adjusting one or more GeoBones for a single render pass
-         *
-         * @param renderPassInfo The collated render-related data for this render pass. GeoBone instances can be retrieved from the BakedGeoModel contained in this
-         * @param snapshots Function to retrieve a BoneSnapshot for a given bone by its name. Use this to transform a bone for this render pass
-         */
+        /// Run this BoneUpdate, adjusting one or more GeoBones for a single render pass
+        ///
+        /// @param renderPassInfo The collated render-related data for this render pass. GeoBone instances can be retrieved from the BakedGeoModel contained in this
+        /// @param snapshots Function to retrieve a BoneSnapshot for a given bone by its name. Use this to transform a bone for this render pass
         void run(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots);
     }
 
-    /**
-     * Functional interface for a listener of bone render positions
-     */
+    /// Functional interface for a listener of bone render positions
     @FunctionalInterface
     public interface BonePositionListener {
         void accept(@Nullable Vec3 worldPos, @Nullable Vec3 modelPos, @Nullable Vec3 localPos);
@@ -281,9 +235,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
 
-    /**
-     * Create a new RenderPassInfo instance
-     */
+    /// Create a new RenderPassInfo instance
     @ApiStatus.Internal
     public static <R extends GeoRenderState> RenderPassInfo<R> create(GeoRenderer<?, ?, R> renderer, R renderState, PoseStack poseStack, CameraRenderState cameraState, boolean willRender) {
         final GeoModel<?> geoModel = renderer.getGeoModel();
@@ -296,9 +248,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
         return renderPassInfo;
     }
 
-    /**
-     * Run through {@link #boneUpdates} and create update snapshots for each bone
-     */
+    /// Run through [#boneUpdates] and create update snapshots for each bone
     @SuppressWarnings("ForLoopReplaceableByForEach")
     @ApiStatus.Internal
     protected BoneSnapshot[] compileBoneUpdates(List<BoneUpdater<R>> boneUpdaters) {
@@ -322,17 +272,13 @@ public class RenderPassInfo<R extends GeoRenderState> {
         return array;
     }
 
-    /**
-     * @return The {@link PerBoneRender} collection for this render pass
-     */
+    /// @return The [PerBoneRender] collection for this render pass
     @ApiStatus.Internal
     public Map<GeoBone, List<PerBoneRender<R>>> getBoneRenderTasks() {
         return this.boneRenderTasks;
     }
 
-    /**
-     * Tell the {@link #poseStack} to cache its current state in the {@link #modelRenderPose}, for re-use later
-     */
+    /// Tell the [#poseStack] to cache its current state in the [#modelRenderPose], for re-use later
     @ApiStatus.Internal
     public void captureModelRenderPose() {
         this.modelRenderPose.set(this.poseStack.last().pose());

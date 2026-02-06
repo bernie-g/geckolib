@@ -8,11 +8,9 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.animation.object.PlayState;
 import software.bernie.geckolib.animation.state.AnimationTest;
 
-/**
- * Stateless wrapper for {@link AnimationController}
- *
- * @see StatelessAnimatable
- */
+/// Stateless wrapper for [AnimationController]
+///
+/// @see StatelessAnimatable
 public class StatelessAnimationController extends AnimationController<GeoAnimatable> {
     protected @Nullable RawAnimation currentAnim = null;
 
@@ -20,11 +18,9 @@ public class StatelessAnimationController extends AnimationController<GeoAnimata
         super(name, StatelessAnimationController::overrideStateHandler);
     }
 
-    /**
-     * Set the current animation for this controller
-     * <p>
-     * This will be used to handle the {@link AnimationTest} at each render pass
-     */
+    /// Set the current animation for this controller
+    ///
+    /// This will be used to handle the [AnimationTest] at each render pass
     public void setCurrentAnimation(@Nullable RawAnimation animation) {
         this.currentAnim = animation;
     }

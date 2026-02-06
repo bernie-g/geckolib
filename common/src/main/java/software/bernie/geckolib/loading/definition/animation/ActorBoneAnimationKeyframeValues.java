@@ -3,20 +3,16 @@ package software.bernie.geckolib.loading.definition.animation;
 import com.google.gson.*;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Container class for a single actor animation's bone animation keyframe,
- * only used for intermediary steps between .json deserialization and GeckoLib object creation
- *
- * @param xValue The x-axis value for this keyframe, either a constant {@code double}, or a {@link String} representing a value or mathematical expression
- * @param yValue The y-axis value for this keyframe, either a constant {@code double}, or a {@link String} representing a value or mathematical expression
- * @param zValue The z-axis value for this keyframe, either a constant {@code double}, or a {@link String} representing a value or mathematical expression
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
- */
+/// Container class for a single actor animation's bone animation keyframe,
+/// only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// @param xValue The x-axis value for this keyframe, either a constant `double`, or a [String] representing a value or mathematical expression
+/// @param yValue The y-axis value for this keyframe, either a constant `double`, or a [String] representing a value or mathematical expression
+/// @param zValue The z-axis value for this keyframe, either a constant `double`, or a [String] representing a value or mathematical expression
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
 @ApiStatus.Internal
 public record ActorBoneAnimationKeyframeValues(DoubleOrString xValue, DoubleOrString yValue, DoubleOrString zValue) {
-    /**
-     * Parse an ActorBoneAnimationKeyframeValues instance from raw .json input via {@link Gson}
-     */
+    /// Parse an ActorBoneAnimationKeyframeValues instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimationKeyframeValues> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             if (json instanceof JsonArray array) {

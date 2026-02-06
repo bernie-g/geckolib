@@ -7,9 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.util.JsonUtil;
 
-/**
- * Container class for poly union information, only used in deserialization at startup
- */
+/// Container class for poly union information, only used in deserialization at startup
 public record PolysUnion(double[][][] union, @Nullable Type type) {
 	public static JsonDeserializer<PolysUnion> deserializer() throws JsonParseException {
 		return (json, type, context) -> {

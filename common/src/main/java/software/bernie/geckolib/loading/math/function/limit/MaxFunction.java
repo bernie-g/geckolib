@@ -4,14 +4,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the greater of the two input values
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the greater of the two input values
 public final class MaxFunction extends MathFunction {
     private final MathValue valueA;
     private final MathValue valueB;

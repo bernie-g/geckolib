@@ -21,11 +21,9 @@ import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.Set;
 
-/**
- * A shallow-level dyeable armour renderer for GeckoLib armor models
- * <p>
- * This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms
- */
+/// A shallow-level dyeable armour renderer for GeckoLib armor models
+///
+/// This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms
 public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoArmorRenderer<T, R> {
     protected final Set<GeoBone> dyeableBones = new ReferenceOpenHashSet<>();
     protected @Nullable BakedGeoModel lastModel = null;
@@ -34,42 +32,34 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         super(model);
     }
 
-    /**
-     * Whether the given GeoBone should be considered dyeable or not
-     * <p>
-     * Note that values returned from here are cached for the last rendered {@link BakedGeoModel} and require a manual reset if you intend to change these results
-     *
-     * @return whether the bone should be dyed or not
-     */
+    /// Whether the given GeoBone should be considered dyeable or not
+    ///
+    /// Note that values returned from here are cached for the last rendered [BakedGeoModel] and require a manual reset if you intend to change these results
+    ///
+    /// @return whether the bone should be dyed or not
     protected abstract boolean isBoneDyeable(GeoBone bone);
 
-    /**
-     * Override the dye color for the given bone. By default, it returns the dye color from the item itself
-     * <p>
-     * Only bones that were marked as 'dyeable' in {@link #isBoneDyeable(GeoBone)} are provided here
-     */
+    /// Override the dye color for the given bone. By default, it returns the dye color from the item itself
+    ///
+    /// Only bones that were marked as 'dyeable' in [#isBoneDyeable(GeoBone)] are provided here
     protected int getColorForBone(R renderState, GeoBone bone, int baseColour) {
         return baseColour;
     }
 
     //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
-    /**
-     * Gets a tint-applying color to render the given animatable with
-     * <p>
-     * Returns opaque white by default, multiplied by any inherent vanilla item dye color
-     */
+    /// Gets a tint-applying color to render the given animatable with
+    ///
+    /// Returns opaque white by default, multiplied by any inherent vanilla item dye color
     @Override
     public int getRenderColor(T animatable, RenderData stackAndSlot, float partialTick) {
         return 0xFFFFFFFF;
     }
 
-    /**
-     * Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
-     * <p>
-     * Use this method to handle any preparation or pre-work required for the render submission.
-     * <p>
-     * Manipulation of the model's bones is not permitted here
-     */
+    /// Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
+    ///
+    /// Use this method to handle any preparation or pre-work required for the render submission.
+    ///
+    /// Manipulation of the model's bones is not permitted here
     @Override
     public void preRenderPass(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         super.preRenderPass(renderPassInfo, renderTasks);
@@ -90,9 +80,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         }
     }
 
-    /**
-     * Render a specific {@link GeoBone} with the given dye tint
-     */
+    /// Render a specific [GeoBone] with the given dye tint
     protected void renderDyedBone(R renderState, PoseStack.Pose pose, GeoBone bone1, RenderPassInfo<R> renderPassInfo1, VertexConsumer vertexConsumer, int renderColor) {
         final PoseStack poseStack = new PoseStack();
 
@@ -101,11 +89,9 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
                      ARGB.multiply(renderColor, getColorForBone(renderState, bone1, renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, -1))));
     }
 
-    /**
-     * Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
-     * <p>
-     * No manipulation of the RenderState is permitted here
-     */
+    /// Perform any necessary adjustments of the model here, such as positioning/scaling/rotating or hiding bones.
+    ///
+    /// No manipulation of the RenderState is permitted here
     @Override
     public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
         for (GeoBone bone : this.dyeableBones) {
@@ -113,11 +99,9 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         }
     }
 
-    /**
-     * Check whether the dye cache should be considered dirty and recomputed
-     * <p>
-     * The less this forces re-computation, the better for performance
-     */
+    /// Check whether the dye cache should be considered dirty and recomputed
+    ///
+    /// The less this forces re-computation, the better for performance
     protected void checkBoneDyeCache(RenderPassInfo<R> renderPassInfo) {
         final BakedGeoModel model = renderPassInfo.model();
 
@@ -129,9 +113,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         }
     }
 
-    /**
-     * Recursively parse through the given bones collection, collecting and caching dyeable bones as applicable
-     */
+    /// Recursively parse through the given bones collection, collecting and caching dyeable bones as applicable
     protected void collectDyeableBones(GeoBone[] bones) {
         for (GeoBone bone : bones) {
             if (isBoneDyeable(bone))

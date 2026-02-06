@@ -4,9 +4,7 @@ import software.bernie.geckolib.cache.animation.Keyframe;
 
 import java.util.Objects;
 
-/**
- * Sound {@link Keyframe} instruction holder
- */
+/// Sound [Keyframe] instruction holder
 public class SoundKeyframeData extends KeyFrameData {
 	private final String sound;
 
@@ -16,9 +14,7 @@ public class SoundKeyframeData extends KeyFrameData {
 		this.sound = sound;
 	}
 
-	/**
-	 * Gets the sound data given by the {@link Keyframe} instruction from the {@code animation.json}
-	 */
+	/// Gets the sound data given by the [Keyframe] instruction from the `animation.json`
 	public String getSound() {
 		return this.sound;
 	}

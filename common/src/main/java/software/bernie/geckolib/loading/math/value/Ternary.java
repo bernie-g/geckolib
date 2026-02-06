@@ -5,15 +5,12 @@ import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.Set;
 
-/**
- * {@link MathValue} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns one of two stored values dependent on the result of the stored condition value.
- * This returns such that a non-zero result from the condition will return the <b>true</b> stored value, otherwise returning the <b>false</b> stored value
- */
+/// [MathValue] value supplier
+///
+/// **Contract:**
+///
+/// Returns one of two stored values dependent on the result of the stored condition value.
+/// This returns such that a non-zero result from the condition will return the **true** stored value, otherwise returning the **false** stored value
 public record Ternary(MathValue condition, MathValue trueValue, MathValue falseValue, Set<Variable> usedVariables) implements MathValue {
     public Ternary(MathValue condition, MathValue trueValue, MathValue falseValue) {
         this(condition, trueValue, falseValue, MathValue.collectUsedVariables(condition, trueValue, falseValue));

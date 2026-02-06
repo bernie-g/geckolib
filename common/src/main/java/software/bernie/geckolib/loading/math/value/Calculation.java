@@ -7,14 +7,11 @@ import software.bernie.geckolib.loading.math.Operator;
 
 import java.util.Set;
 
-/**
- * {@link MathValue} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * A computed value of argA and argB defined by the contract of the {@link Operator}
- */
+/// [MathValue] value supplier
+///
+/// **Contract:**
+///
+/// A computed value of argA and argB defined by the contract of the [Operator]
 public record Calculation(Operator operator, MathValue argA, MathValue argB, boolean isMutable, Set<Variable> usedVariables, MutableDouble cachedValue) implements MathValue {
     public Calculation(Operator operator, MathValue argA, MathValue argB) {
         this(operator, argA, argB, argA.isMutable() || argB.isMutable(), MathValue.collectUsedVariables(argA, argB), new MutableDouble(Double.MIN_VALUE));

@@ -7,13 +7,9 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.network.packet.entity.StatelessEntityPlayAnimPacket;
 import software.bernie.geckolib.network.packet.entity.StatelessEntityStopAnimPacket;
 
-/**
- * Extension of {@link StatelessAnimatable} for {@link GeoEntity} animatables
- */
+/// Extension of [StatelessAnimatable] for [GeoEntity] animatables
 public non-sealed interface StatelessGeoEntity extends StatelessAnimatable, GeoEntity {
-    /**
-     * Start or continue a pre-defined animation
-     */
+    /// Start or continue a pre-defined animation
     @Override
     default void playAnimation(RawAnimation animation) {
         if (!(this instanceof Entity self))
@@ -27,9 +23,7 @@ public non-sealed interface StatelessGeoEntity extends StatelessAnimatable, GeoE
         }
     }
 
-    /**
-     * Stop an already-playing animation
-     */
+    /// Stop an already-playing animation
     @Override
     default void stopAnimation(String animation) {
         if (!(this instanceof Entity self))

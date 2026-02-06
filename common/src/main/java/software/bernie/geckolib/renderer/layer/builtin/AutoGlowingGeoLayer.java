@@ -29,16 +29,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Built-in {@link GeoRenderLayer} for rendering an emissive layer over an existing GeoAnimatable
- * <p>
- * By default, it uses a custom RenderType created by GeckoLib to make things easier, but it can be overridden as needed
- *
- * @param <T> Animatable class type. Inherited from the renderer this layer is attached to
- * @param <O> Associated object class type, or {@link Void} if none. Inherited from the renderer this layer is attached to
- * @param <R> RenderState class type. Inherited from the renderer this layer is attached to
- * @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
- */
+/// Built-in [GeoRenderLayer] for rendering an emissive layer over an existing GeoAnimatable
+///
+/// By default, it uses a custom RenderType created by GeckoLib to make things easier, but it can be overridden as needed
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
+/// @see <a href="https://github.com/bernie-g/geckolib/wiki/Emissive-Textures-Glow-Layer">GeckoLib Wiki - Glow Layers</a>
 public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends TextureLayerGeoLayer<T, O, R> {
 	private final Map<Identifier, Identifier> emissiveResourceCache = new Object2ObjectOpenHashMap<>();
 	protected static final RenderPipeline RENDER_PIPELINE = RenderPipelines.register(EmissiveRenderType.createRenderPipeline());
@@ -47,48 +45,38 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		super(renderer);
 	}
 
-	/**
-	 * Get the texture resource path for the given {@link GeoRenderState}
-	 */
+	/// Get the texture resource path for the given [GeoRenderState]
 	@Override
 	protected Identifier getTextureResource(R renderState) {
 		return this.emissiveResourceCache.computeIfAbsent(this.renderer.getTextureLocation(renderState), RenderUtil::getEmissiveResource);
 	}
 
-	/**
-	 * Override to return true if you want your emissive texture to respect lighting in the world
-	 * <p>
-	 * This will lower its overall brightness slightly but allow it to shade properly
-	 * <p>
-	 * It may also improve compatibility and/or visual aesthetics when rendering an emissive layer on a translucent model
-	 */
+	/// Override to return true if you want your emissive texture to respect lighting in the world
+	///
+	/// This will lower its overall brightness slightly but allow it to shade properly
+	///
+	/// It may also improve compatibility and/or visual aesthetics when rendering an emissive layer on a translucent model
 	protected boolean shouldRespectWorldLighting(R renderState) {
 		return false;
 	}
 
-	/**
-	 * Override to return true to apply a view-space z-offset to the render buffer
-	 * <p>
-	 * Typically, you'd use this for armor rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
-	 */
+	/// Override to return true to apply a view-space z-offset to the render buffer
+	///
+	/// Typically, you'd use this for armor rendering, but it can be worth trying if you have a custom RenderType object that isn't showing glowmasks
 	protected boolean shouldAddZOffset(R renderState) {
 		return getRenderer() instanceof GeoArmorRenderer;
 	}
 
-	/**
-	 * Override to return a different lighting value if you want to customize the level of emissivity
-	 */
+	/// Override to return a different lighting value if you want to customize the level of emissivity
 	protected int getBrightness(R renderState) {
 		return LightCoordsUtil.FULL_SKY;
 	}
 
-	/**
-	 * Get the render type to use for this glowmask renderer, or null if the layer should not render
-	 * <p>
-	 * Uses a custom RenderType similar to {@link RenderTypes#eyes(Identifier)} by default
-	 * <p>
-	 * Automatically accounts for entity states like invisibility and glowing
-	 */
+	/// Get the render type to use for this glowmask renderer, or null if the layer should not render
+	///
+	/// Uses a custom RenderType similar to [RenderTypes#eyes(Identifier)] by default
+	///
+	/// Automatically accounts for entity states like invisibility and glowing
 	@Override
 	protected @Nullable RenderType getRenderType(R renderState) {
 		Identifier texture = getTextureResource(renderState);
@@ -113,12 +101,10 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		return invisible ? null : EmissiveRenderType.getRenderType(texture, false, respectLighting, zOffset);
 	}
 
-	/**
-	 * This is the method that is actually called by the render for your render layer to function
-	 * <p>
-	 * This is called <i>after</i> the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
-	 */
-    @Override
+	/// This is the method that is actually called by the render for your render layer to function
+	///
+	/// This is called _after_ the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
+	@Override
     public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         final int packedLight = renderPassInfo.packedLight();
 
@@ -127,22 +113,16 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
         renderPassInfo.renderState().addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
 	}
 
-	/**
-	 * Wrapper class to contain the various methods involved in handling the variants of this GeckoLib's emissive RenderType
-	 */
+	/// Wrapper class to contain the various methods involved in handling the variants of this GeckoLib's emissive RenderType
 	public static class EmissiveRenderType {
 		private static final Map<Entry, RenderType> CACHE = new ConcurrentHashMap<>();
 
-		/**
-		 * Get or create a GeckoLib emissive RenderType instance for the given input variables
-		 */
+		/// Get or create a GeckoLib emissive RenderType instance for the given input variables
 		public static RenderType getRenderType(Identifier texture, boolean outline, boolean respectLighting, boolean zOffset) {
 			return CACHE.computeIfAbsent(new Entry(texture, outline, respectLighting, zOffset), EmissiveRenderType::buildNewInstance);
 		}
 
-		/**
-		 * Create GeckoLib's custom {@link RenderPipeline} for emissive rendering since {@code EYES} isn't quite right
-		 */
+		/// Create GeckoLib's custom [RenderPipeline] for emissive rendering since `EYES` isn't quite right
 		private static RenderPipeline createRenderPipeline() {
 			return RenderPipeline.builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
 					.withLocation(GeckoLibConstants.id("pipeline/emissive"))
@@ -159,9 +139,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 					.build();
 		}
 
-		/**
-		 * Create GeckoLib's custom {@link RenderType} for emissive rendering since {@code EYES} isn't quite right
-		 */
+		/// Create GeckoLib's custom [RenderType] for emissive rendering since `EYES` isn't quite right
 		private static RenderType buildNewInstance(Entry entry) {
 			final RenderSetup.RenderSetupBuilder builder = RenderSetup.builder(RENDER_PIPELINE)
 					.withTexture("Sampler0", entry.texture)
@@ -180,9 +158,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 					.createRenderSetup());
 		}
 
-		/**
-		 * Cached entry key for given input variables and texture
-		 */
+		/// Cached entry key for given input variables and texture
 		public record Entry(Identifier texture, boolean outline, boolean respectLighting, boolean zOffset) {
 			@Override
 			public int hashCode() {

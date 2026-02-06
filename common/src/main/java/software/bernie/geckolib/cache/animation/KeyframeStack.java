@@ -6,13 +6,11 @@ import software.bernie.geckolib.loading.math.value.Variable;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Stores a triplet of {@link Keyframe Keyframes} in an ordered stack
- *
- * @param xKeyframes The keyframe markers for the x-axis, sorted by time
- * @param yKeyframes The keyframe markers for the y-axis, sorted by time
- * @param zKeyframes The keyframe markers for the z-axis, sorted by time
- */
+/// Stores a triplet of [Keyframes][Keyframe] in an ordered stack
+///
+/// @param xKeyframes The keyframe markers for the x-axis, sorted by time
+/// @param yKeyframes The keyframe markers for the y-axis, sorted by time
+/// @param zKeyframes The keyframe markers for the z-axis, sorted by time
 public record KeyframeStack(Keyframe[] xKeyframes, Keyframe[] yKeyframes, Keyframe[] zKeyframes) {
 	public static final KeyframeStack EMPTY = new KeyframeStack(new Keyframe[0], new Keyframe[0], new Keyframe[0]);
 
@@ -20,9 +18,7 @@ public record KeyframeStack(Keyframe[] xKeyframes, Keyframe[] yKeyframes, Keyfra
         this(xKeyframes.toArray(new Keyframe[0]), yKeyframes.toArray(new Keyframe[0]), zKeyframes.toArray(new Keyframe[0]));
     }
 
-	/**
-	 * Extract and collect all {@link Variable}s used in this keyframe stack
-	 */
+	/// Extract and collect all [Variable]s used in this keyframe stack
 	public Set<Variable> getUsedVariables() {
 		Set<Variable> usedVariables = new ReferenceOpenHashSet<>();
 

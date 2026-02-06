@@ -1,6 +1,4 @@
-/**
- * Contains the various {@link software.bernie.geckolib.model.GeoModel} implementations
- */
+/// Contains the various [software.bernie.geckolib.model.GeoModel] implementations
 @NullMarked
 package software.bernie.geckolib.model;
 

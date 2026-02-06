@@ -1,6 +1,4 @@
-/**
- * Animatable-instance manager classes
- */
+/// Animatable-instance manager classes
 @NullMarked
 package software.bernie.geckolib.animatable.manager;
 

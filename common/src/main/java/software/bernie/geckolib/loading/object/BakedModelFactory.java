@@ -19,43 +19,33 @@ import software.bernie.geckolib.util.JsonUtil;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Base interface for a factory of {@link BakedGeoModel} objects
- * <p>
- * Handled by default by GeckoLib, but custom implementations may be added by other mods for special needs
- */
+/// Base interface for a factory of [BakedGeoModel] objects
+///
+/// Handled by default by GeckoLib, but custom implementations may be added by other mods for special needs
 public interface BakedModelFactory {
 	Map<String, BakedModelFactory> FACTORIES = new Object2ObjectOpenHashMap<>(1);
 	BakedModelFactory DEFAULT_FACTORY = new Builtin();
 
-	/**
-	 * Construct the output model from the given {@link GeometryTree}
-	 */
+	/// Construct the output model from the given [GeometryTree]
 	BakedGeoModel constructGeoModel(GeometryTree geometryTree);
 
-	/**
-	 * Construct a {@link GeoBone} from the relevant raw input data
-	 *
-	 * @param boneStructure The {@code BoneStructure} comprising the structure of the bone and its children
-	 * @param properties The loaded properties for the model
-	 * @param parent The parent bone for this bone, or null if a top-level bone
-	 */
+	/// Construct a [GeoBone] from the relevant raw input data
+	///
+	/// @param boneStructure The `BoneStructure` comprising the structure of the bone and its children
+	/// @param properties The loaded properties for the model
+	/// @param parent The parent bone for this bone, or null if a top-level bone
 	GeoBone constructBone(BoneStructure boneStructure, GeometryDescription properties, @Nullable GeoBone parent);
 
-	/**
-	 * Construct a {@link GeoCube} from the relevant raw input data
-	 *
-	 * @param cube The raw {@code Cube} comprising the structure and properties of the cube
-	 * @param properties The loaded properties for the model
-	 * @param boneInflation The inflation value assigned to the bone this cube belongs to
-	 */
+	/// Construct a [GeoCube] from the relevant raw input data
+	///
+	/// @param cube The raw `Cube` comprising the structure and properties of the cube
+	/// @param properties The loaded properties for the model
+	/// @param boneInflation The inflation value assigned to the bone this cube belongs to
 	GeoCube constructCube(Cube cube, GeometryDescription properties, float boneInflation);
 
-	/**
-	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier
-	 * <p>
-	 * Vertices have already been mirrored here if {@code mirror} is true
-	 */
+	/// Builtin method to construct the quad list from the various vertices and related data, to make it easier
+	///
+	/// Vertices have already been mirrored here if `mirror` is true
 	default @Nullable GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
 		@Nullable GeoQuad[] quads = new GeoQuad[6];
 
@@ -69,9 +59,7 @@ public interface BakedModelFactory {
 		return quads;
 	}
 
-	/**
-	 * Build an individual quad
-	 */
+	/// Build an individual quad
 	default @Nullable GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
 		return uvUnion.uvData().map(boxUvs -> {
 			double[] uvSize = cube.size();
@@ -119,16 +107,14 @@ public interface BakedModelFactory {
 		return FACTORIES.getOrDefault(namespace, DEFAULT_FACTORY);
 	}
 
-	/**
-	 * Register a custom {@link BakedModelFactory} to handle loading models in a custom way
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 * <p>
-	 * It is recommended you don't call this directly, and instead call it via {@link GeckoLibUtil#addCustomBakedModelFactory}
-	 *
-	 * @param namespace The namespace (modid) to register the factory for
-	 * @param factory The factory responsible for model loading under the given namespace
-	 */
+	/// Register a custom [BakedModelFactory] to handle loading models in a custom way
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// It is recommended you don't call this directly, and instead call it via [GeckoLibUtil#addCustomBakedModelFactory]
+	///
+	/// @param namespace The namespace (modid) to register the factory for
+	/// @param factory The factory responsible for model loading under the given namespace
 	static void register(String namespace, BakedModelFactory factory) {
 		FACTORIES.put(namespace, factory);
 	}
@@ -187,9 +173,7 @@ public interface BakedModelFactory {
 		}
 	}
 
-	/**
-	 * Holder class to make it easier to store and refer to vertices for a given cube
-	 */
+	/// Holder class to make it easier to store and refer to vertices for a given cube
 	record VertexSet(GeoVertex bottomLeftBack, GeoVertex bottomRightBack, GeoVertex topLeftBack, GeoVertex topRightBack,
                      GeoVertex topLeftFront, GeoVertex topRightFront, GeoVertex bottomLeftFront, GeoVertex bottomRightFront) {
 		public VertexSet(Vec3 origin, Vec3 vertexSize, double inflation) {
@@ -204,51 +188,37 @@ public interface BakedModelFactory {
 					new GeoVertex(origin.x + vertexSize.x + inflation, origin.y - inflation, origin.z + vertexSize.z + inflation));
 		}
 
-		/**
-		 * Returns the normal vertex array for a west-facing quad
-		 */
+		/// Returns the normal vertex array for a west-facing quad
 		public GeoVertex[] quadWest() {
 			return new GeoVertex[] {this.topRightBack, this.topLeftBack, this.bottomLeftBack, this.bottomRightBack};
 		}
 
-		/**
-		 * Returns the normal vertex array for an east-facing quad
-		 */
+		/// Returns the normal vertex array for an east-facing quad
 		public GeoVertex[] quadEast() {
 			return new GeoVertex[] {this.topLeftFront, this.topRightFront, this.bottomRightFront, this.bottomLeftFront};
 		}
 
-		/**
-		 * Returns the normal vertex array for a north-facing quad
-		 */
+		/// Returns the normal vertex array for a north-facing quad
 		public GeoVertex[] quadNorth() {
 			return new GeoVertex[] {this.topLeftBack, this.topLeftFront, this.bottomLeftFront, this.bottomLeftBack};
 		}
 
-		/**
-		 * Returns the normal vertex array for a south-facing quad
-		 */
+		/// Returns the normal vertex array for a south-facing quad
 		public GeoVertex[] quadSouth() {
 			return new GeoVertex[] {this.topRightFront, this.topRightBack, this.bottomRightBack, this.bottomRightFront};
 		}
 
-		/**
-		 * Returns the normal vertex array for a top-facing quad
-		 */
+		/// Returns the normal vertex array for a top-facing quad
 		public GeoVertex[] quadUp() {
 			return new GeoVertex[] {this.topRightBack, this.topRightFront, this.topLeftFront, this.topLeftBack};
 		}
 
-		/**
-		 * Returns the normal vertex array for a bottom-facing quad
-		 */
+		/// Returns the normal vertex array for a bottom-facing quad
 		public GeoVertex[] quadDown() {
 			return new GeoVertex[] {this.bottomLeftBack, this.bottomLeftFront, this.bottomRightFront, this.bottomRightBack};
 		}
 
-		/**
-		 * Return the vertex array relevant to the quad being built, taking into account mirroring and quad type
-		 */
+		/// Return the vertex array relevant to the quad being built, taking into account mirroring and quad type
 		public GeoVertex[] verticesForQuad(Direction direction, boolean boxUv, boolean mirror) {
 			return switch (direction) {
 				case WEST -> mirror ? quadEast() : quadWest();

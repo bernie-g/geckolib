@@ -8,9 +8,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.Map;
 import java.util.function.Supplier;
 
-/**
- * Geo format version enum, mostly just used in deserialization at startup
- */
+/// Geo format version enum, mostly just used in deserialization at startup
 public enum ModelFormatVersion {
 	V_1_12_0("1.12.0"),
 	V_1_14_0("1.14.0"),

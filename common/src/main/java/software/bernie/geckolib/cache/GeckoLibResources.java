@@ -45,10 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- * Cache class for holding loaded {@link Animation Animations}
- * and {@link GeoModel Models}
- */
+/// Cache class for holding loaded [Animations][Animation]
+/// and [Models][GeoModel]
 public final class GeckoLibResources {
 	public static final Identifier RELOAD_LISTENER_ID = GeckoLibConstants.id("geckolib_resources");
 	public static final Identifier ANIMATIONS_PATH = GeckoLibConstants.id("geckolib/animations");
@@ -76,16 +74,12 @@ public final class GeckoLibResources {
 	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
 	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
 
-	/**
-	 * Get GeckoLib's cache of all the loaded animations from the {@link #ANIMATIONS_PATH}
-	 */
+	/// Get GeckoLib's cache of all the loaded animations from the [#ANIMATIONS_PATH]
 	public static BakedAnimationCache getBakedAnimations() {
 		return ANIMATIONS;
 	}
 
-	/**
-	 * Get GeckoLib's cache of all the loaded geo models from the {@link #MODELS_PATH}
-	 */
+	/// Get GeckoLib's cache of all the loaded geo models from the [#MODELS_PATH]
 	public static BakedModelCache getBakedModels() {
 		return MODELS;
 	}
@@ -103,11 +97,9 @@ public final class GeckoLibResources {
 				}, applicationExecutor));
 	}
 
-	/**
-	 * Strip the asset prefix and suffix from the given filepath, returning the stripped location
-	 *
-	 * @return The stripped location, or the original path if no match is found
-	 */
+	/// Strip the asset prefix and suffix from the given filepath, returning the stripped location
+	///
+	/// @return The stripped location, or the original path if no match is found
 	public static Identifier stripPrefixAndSuffix(Identifier path) {
 		String newPath = path.getPath();
 		Matcher prefixMatcher = PREFIX_STRIPPER.matcher(newPath);
@@ -118,27 +110,21 @@ public final class GeckoLibResources {
 		return newPath.length() == path.getPath().length() ? path : path.withPath(newPath);
 	}
 
-	/**
-	 * Provide a {@link Future} for retrieving and baking all animation JSONs from the {@link #ANIMATIONS_PATH}
-	 */
+	/// Provide a [Future] for retrieving and baking all animation JSONs from the [#ANIMATIONS_PATH]
 	private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, ANIMATIONS_PATH.getPath(), GeckoLibResources::bakeAnimations,
 								 ex -> new BakedAnimations(new Object2ObjectOpenHashMap<>()));
 	}
 
-	/**
-	 * Provide a {@link Future} for retrieving and baking all geo model JSONs from the {@link #MODELS_PATH}
-	 */
+	/// Provide a [Future] for retrieving and baking all geo model JSONs from the [#MODELS_PATH]
 	private static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
 		return bakeJsonResources(backgroundExecutor, resourceManager, MODELS_PATH.getPath(), GeckoLibResources::bakeModel,
 								 ex -> null);
 	}
 
-	/**
-	 * Retrieve all asset JSON files from a given location, then bake them into their final form.
-	 * <p>
-	 * Automatically handles sequentially managed file I/O and parallelized task deployment
-	 */
+	/// Retrieve all asset JSON files from a given location, then bake them into their final form.
+	///
+	/// Automatically handles sequentially managed file I/O and parallelized task deployment
 	private static <BAKED> CompletableFuture<Map<Identifier, BAKED>> bakeJsonResources(Executor backgroundExecutor, ResourceManager resourceManager, String assetPath,
 																							 BiFunction<Identifier, JsonObject, BAKED> elementFactory, Function<Throwable, @Nullable BAKED> exceptionalFactory) {
 		return loadResources(backgroundExecutor, resourceManager, assetPath, "json", GeckoLibResources::readJsonFile)
@@ -158,11 +144,9 @@ public final class GeckoLibResources {
 				});
 	}
 
-	/**
-	 * Load a set of resources from their respective files for all available namespaces, into their raw/unbaked format ready for further processing.
-	 * <p>
-	 * This step is separated to prevent parallelized file I/O
-	 */
+	/// Load a set of resources from their respective files for all available namespaces, into their raw/unbaked format ready for further processing.
+	///
+	/// This step is separated to prevent parallelized file I/O
 	private static <UNBAKED> CompletableFuture<List<Pair<Identifier, UNBAKED>>> loadResources(Executor executor, ResourceManager resourceManager, String assetPath, String fileType, BiFunction<Identifier, Resource, UNBAKED> elementFactory) {
 		final String fileTypeSuffix = "." + fileType;
 
@@ -176,9 +160,7 @@ public final class GeckoLibResources {
 				});
 	}
 
-	/**
-	 * Bake a {@link BakedGeoModel} from its {@link JsonObject} serialized form
-	 */
+	/// Bake a [BakedGeoModel] from its [JsonObject] serialized form
 	private static BakedGeoModel bakeModel(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".animation.json"))
 			throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
@@ -196,9 +178,7 @@ public final class GeckoLibResources {
 		return BakedModelFactory.getForNamespace(path.getNamespace()).constructGeoModel(GeometryTree.fromModel(model));
 	}
 
-	/**
-	 * Bake the {@link BakedAnimations} from a {@link JsonObject} serialized form
-	 */
+	/// Bake the [BakedAnimations] from a [JsonObject] serialized form
 	private static BakedAnimations bakeAnimations(Identifier path, JsonObject json) {
 		if (path.getPath().endsWith(".geo.json"))
 			throw new RuntimeException("Found model file in animations folder! '" + path + "'");
@@ -214,9 +194,7 @@ public final class GeckoLibResources {
 		}
 	}
 
-	/**
-	 * Read a single resource into its {@link JsonObject} form
-	 */
+	/// Read a single resource into its [JsonObject] form
 	private static JsonObject readJsonFile(Identifier id, Resource resource) {
 		try (Reader reader = resource.openAsReader()) {
 			return GsonHelper.parse(reader);

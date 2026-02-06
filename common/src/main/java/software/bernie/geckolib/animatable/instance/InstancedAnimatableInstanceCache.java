@@ -5,12 +5,10 @@ import com.google.common.base.Suppliers;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 
-/**
- * AnimatableInstanceCache implementation for instantiated objects such as Entities or BlockEntities. Returns a single {@link AnimatableManager} instance per cache
- * <p>
- * You should <b><u>NOT</u></b> be instantiating this directly unless you know what you are doing.
- * Use {@link software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache GeckoLibUtil.createInstanceCache} instead
- */
+/// AnimatableInstanceCache implementation for instantiated objects such as Entities or BlockEntities. Returns a single [AnimatableManager] instance per cache
+///
+/// You should **<u>NOT</u>** be instantiating this directly unless you know what you are doing.
+/// Use [GeckoLibUtil.createInstanceCache][software.bernie.geckolib.util.GeckoLibUtil#createInstanceCache] instead
 public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 	protected final Supplier<AnimatableManager<?>> manager = Suppliers.memoize(() -> new AnimatableManager<>(this.animatable));
 
@@ -18,11 +16,9 @@ public class InstancedAnimatableInstanceCache extends AnimatableInstanceCache {
 		super(animatable);
 	}
 
-	/**
-	 * Gets the {@link AnimatableManager} instance from this cache
-	 * <p>
-	 * Because this cache subclass expects a 1:1 relationship of cache to animatable, only one {@code AnimatableManager} instance is used
-	 */
+	/// Gets the [AnimatableManager] instance from this cache
+	///
+	/// Because this cache subclass expects a 1:1 relationship of cache to animatable, only one `AnimatableManager` instance is used
 	@SuppressWarnings("unchecked")
     @Override
 	public AnimatableManager<?> getManagerForId(long uniqueId) {

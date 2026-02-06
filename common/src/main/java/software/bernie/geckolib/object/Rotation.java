@@ -3,18 +3,14 @@ package software.bernie.geckolib.object;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.GeckoLibConstants;
 
-/**
- * Directional enum defining 90-degree increment rotations
- */
+/// Directional enum defining 90-degree increment rotations
 public enum Rotation {
     NONE,
     CLOCKWISE_90,
     COUNTERCLOCKWISE_90,
     CLOCKWISE_180;
 
-    /**
-     * Parse a Rotation from a value in degrees
-     */
+    /// Parse a Rotation from a value in degrees
     public static Rotation fromValue(int value) {
         try {
             while (value < 0) {

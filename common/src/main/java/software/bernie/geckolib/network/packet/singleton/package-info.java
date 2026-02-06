@@ -1,6 +1,4 @@
-/**
- * GeckoLib singleton-animatable syncing and functionality packets
- */
+/// GeckoLib singleton-animatable syncing and functionality packets
 @NullMarked
 package software.bernie.geckolib.network.packet.singleton;
 

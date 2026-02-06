@@ -9,12 +9,10 @@ import software.bernie.geckolib.loading.definition.geometry.GeometryDescription;
 
 import java.util.Map;
 
-/**
- * Container class for a {@link Bone} structure, used at startup during deserialization
- *
- * @param topLevelBones The root bone(s) for this model, as defined in the model .json
- * @param properties The additional properties collection for the model, if present
- */
+/// Container class for a [Bone] structure, used at startup during deserialization
+///
+/// @param topLevelBones The root bone(s) for this model, as defined in the model .json
+/// @param properties The additional properties collection for the model, if present
 public record GeometryTree(Map<String, BoneStructure> topLevelBones, @Nullable GeometryDescription properties) {
 	public static GeometryTree fromModel(Model model) {
 		final Map<String, BoneStructure> topLevelBones = new Object2ObjectOpenHashMap<>();

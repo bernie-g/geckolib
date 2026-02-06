@@ -9,23 +9,21 @@ import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.Map;
 
-/**
- * Container class for bone information, only used in deserialization at startup
- *
- * @param cubes The unbaked cubes array for this bone
- * @param debug An optional debug marker for this bone, not used by GeckoLib
- * @param inflate The optional inflation value for this bone
- * @param locators The map of locator markers by their name contained by this bone
- * @param mirror An optional mirror toggle for this bone, not used by GeckoLib
- * @param name The name of this bone
- * @param neverRender An optional render toggle for this bone, not used by GeckoLib
- * @param parent The name of the parent bone for this bone
- * @param pivot The x/y/z pivot position of this bone
- * @param polyMesh An optional mesh definition for this bone, not used by GeckoLib
- * @param renderGroupId The numerical group id this bone belongs to, not used by GeckoLib
- * @param rotation The x/y/z rotation of this bone
- * @param textureMeshes An optional texture mesh definition for this bone, not used by GeckoLib
- */
+/// Container class for bone information, only used in deserialization at startup
+///
+/// @param cubes The unbaked cubes array for this bone
+/// @param debug An optional debug marker for this bone, not used by GeckoLib
+/// @param inflate The optional inflation value for this bone
+/// @param locators The map of locator markers by their name contained by this bone
+/// @param mirror An optional mirror toggle for this bone, not used by GeckoLib
+/// @param name The name of this bone
+/// @param neverRender An optional render toggle for this bone, not used by GeckoLib
+/// @param parent The name of the parent bone for this bone
+/// @param pivot The x/y/z pivot position of this bone
+/// @param polyMesh An optional mesh definition for this bone, not used by GeckoLib
+/// @param renderGroupId The numerical group id this bone belongs to, not used by GeckoLib
+/// @param rotation The x/y/z rotation of this bone
+/// @param textureMeshes An optional texture mesh definition for this bone, not used by GeckoLib
 public record Bone(Cube[] cubes, @Nullable Boolean debug,
 				   @Nullable Double inflate, @Nullable Map<String, LocatorValue> locators,
 				   @Nullable Boolean mirror, String name, @Nullable Boolean neverRender,

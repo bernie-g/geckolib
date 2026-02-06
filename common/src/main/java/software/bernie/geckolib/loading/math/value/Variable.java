@@ -8,14 +8,11 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.ToDoubleFunction;
 
-/**
- * {@link MathValue} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the currently stored value, which may be modified at any given time via {@link #set}. Values may be lazily evaluated to eliminate wasteful usage
- */
+/// [MathValue] value supplier
+///
+/// **Contract:**
+///
+/// Returns the currently stored value, which may be modified at any given time via [#set]. Values may be lazily evaluated to eliminate wasteful usage
 public record Variable(String name, AtomicReference<ToDoubleFunction<ControllerState>> value) implements MathValue {
     public Variable(String name, double value) {
         this(name, animationState -> value);

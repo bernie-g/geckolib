@@ -9,31 +9,27 @@ import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.Map;
 
-/**
- * Container class for a single actor animation, only used for intermediary steps between .json deserialization and GeckoLib object creation
- * <p>
- * Note that the name of the animation isn't contained here, and is instead held by the {@link ActorAnimations#animations()} map
- *
- * @param animLength The defined length (in seconds) of the animation. Defaults to the time of the last keyframe, but can be overridden manually
- * @param loop The loop type for this animation, or just a true/false for default looping or non-looping
- * @param startDelay The optional delay (in Molang-seconds) before starting this animation. Not used by GeckoLib
- * @param loopDelay The optional delay (in Molang-seconds) between the end of the animation, and when it loops, if a loop is required. Not used by GeckoLib
- * @param animTimeUpdate The optional expression (in Molang-seconds) defining how to evaluate the current animation time. Not used by GeckoLib
- * @param blendWeight The weight value defining this animation's interpolation relationship to another conflicting animation. Not used by GeckoLib
- * @param overridePrevAnimation An optional toggle to force this animation to animate as absolute, and not additive to another conflicting animation. Not used by GeckoLib
- * @param boneAnimations The bone animation map for this animation, defining the actual animation itself
- * @param particleEffects The defined particle effects track keyframe markers for this animation
- * @param soundEffects The defined sound effects track keyframe markers for this animation
- * @param timeline The defined custom instruction track keyframe markers for this animation
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
- */
+/// Container class for a single actor animation, only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// Note that the name of the animation isn't contained here, and is instead held by the [ActorAnimations#animations()] map
+///
+/// @param animLength The defined length (in seconds) of the animation. Defaults to the time of the last keyframe, but can be overridden manually
+/// @param loop The loop type for this animation, or just a true/false for default looping or non-looping
+/// @param startDelay The optional delay (in Molang-seconds) before starting this animation. Not used by GeckoLib
+/// @param loopDelay The optional delay (in Molang-seconds) between the end of the animation, and when it loops, if a loop is required. Not used by GeckoLib
+/// @param animTimeUpdate The optional expression (in Molang-seconds) defining how to evaluate the current animation time. Not used by GeckoLib
+/// @param blendWeight The weight value defining this animation's interpolation relationship to another conflicting animation. Not used by GeckoLib
+/// @param overridePrevAnimation An optional toggle to force this animation to animate as absolute, and not additive to another conflicting animation. Not used by GeckoLib
+/// @param boneAnimations The bone animation map for this animation, defining the actual animation itself
+/// @param particleEffects The defined particle effects track keyframe markers for this animation
+/// @param soundEffects The defined sound effects track keyframe markers for this animation
+/// @param timeline The defined custom instruction track keyframe markers for this animation
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
 @ApiStatus.Internal
 public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolean, String> loop, @Nullable String startDelay, @Nullable String loopDelay, @Nullable String animTimeUpdate,
                              @Nullable String blendWeight, @Nullable Boolean overridePrevAnimation, @Nullable Map<String, ActorBoneAnimation> boneAnimations,
                              @Nullable Map<String, ActorAnimationParticleEffect> particleEffects, @Nullable Map<String, ActorAnimationSoundEffect> soundEffects, @Nullable Map<String, String> timeline) {
-    /**
-     * Parse an ActorAnimation instance from raw .json input via {@link Gson}
-     */
+    /// Parse an ActorAnimation instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorAnimation> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             final JsonObject obj = json.getAsJsonObject();

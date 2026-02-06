@@ -5,14 +5,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the arc-tangent theta of the input rectangular coordinate values (y,x), with the output converted to degrees
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the arc-tangent theta of the input rectangular coordinate values (y,x), with the output converted to degrees
 public final class ATan2Function extends MathFunction {
     private final MathValue y;
     private final MathValue x;

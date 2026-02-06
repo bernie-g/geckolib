@@ -16,19 +16,15 @@ import software.bernie.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.util.ClientUtil;
 
-/**
- * Built-in helper for a {@link AnimationController.KeyframeEventHandler SoundKeyframeHandler} that automatically plays the sound defined in the keyframe data
- * <p>
- * Due to an inability to determine the position of the sound for all animatables, this handler only supports {@link software.bernie.geckolib.animatable.GeoEntity GeoEntity} and {@link software.bernie.geckolib.animatable.GeoBlockEntity GeoBlockEntity}
- * <p>
- * The expected keyframe data format is one of the below:
- * <pre>{@code
- * namespace:soundid
- * namespace:soundid|volume|pitch
- * }</pre>
- *
- * @param <A> Animatable class type
- */
+/// Built-in helper for a [SoundKeyframeHandler][AnimationController.KeyframeEventHandler] that automatically plays the sound defined in the keyframe data
+///
+/// Due to an inability to determine the position of the sound for all animatables, this handler only supports [GeoEntity][software.bernie.geckolib.animatable.GeoEntity] and [GeoBlockEntity][software.bernie.geckolib.animatable.GeoBlockEntity]
+///
+/// The expected keyframe data format is one of the below:
+/// <pre>
+/// `namespace:soundidnamespace:soundid|volume|pitch`</pre>
+///
+/// @param <A> Animatable class type
 public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements AnimationController.KeyframeEventHandler<A, SoundKeyframeData> {
     @Override
     public void handle(KeyFrameEvent<A, SoundKeyframeData> event) {

@@ -8,13 +8,9 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.network.packet.blockentity.StatelessBlockEntityPlayAnimPacket;
 import software.bernie.geckolib.network.packet.blockentity.StatelessBlockEntityStopAnimPacket;
 
-/**
- * Extension of {@link StatelessAnimatable} for {@link GeoBlockEntity} animatables
- */
+/// Extension of [StatelessAnimatable] for [GeoBlockEntity] animatables
 public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable, GeoBlockEntity {
-    /**
-     * Start or continue a pre-defined animation
-     */
+    /// Start or continue a pre-defined animation
     @Override
     default void playAnimation(RawAnimation animation) {
         if (!(this instanceof BlockEntity self))
@@ -28,9 +24,7 @@ public non-sealed interface StatelessGeoBlockEntity extends StatelessAnimatable,
         }
     }
 
-    /**
-     * Stop an already-playing animation
-     */
+    /// Stop an already-playing animation
     @Override
     default void stopAnimation(String animation) {
         if (!(this instanceof BlockEntity self))

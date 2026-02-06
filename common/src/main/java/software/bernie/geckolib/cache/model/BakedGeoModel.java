@@ -14,40 +14,32 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-/**
- * Baked model object for GeckoLib models
- *
- * @param topLevelBones The root bone(s) for this model, as defined in the model .json
- * @param properties The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
- * @param boneLookup A deferred lookup cache of every bone by its name for quick-retrieval
- */
+/// Baked model object for GeckoLib models
+///
+/// @param topLevelBones The root bone(s) for this model, as defined in the model .json
+/// @param properties The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
+/// @param boneLookup A deferred lookup cache of every bone by its name for quick-retrieval
 public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
 	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties) {
 		this(topLevelBones, properties, createBoneMap(topLevelBones));
 	}
 
-	/**
-	 * Gets a bone from this model by name
-	 *
-	 * @param name The name of the bone
-	 * @return An {@link Optional} containing the {@link GeoBone} if one matches, otherwise an empty Optional
-	 */
+	/// Gets a bone from this model by name
+	///
+	/// @param name The name of the bone
+	/// @return An [Optional] containing the [GeoBone] if one matches, otherwise an empty Optional
 	public Optional<GeoBone> getBone(String name) {
 		return Optional.ofNullable(this.boneLookup.get().get(name));
 	}
 
-    /**
-     * Render this model
-     */
+    /// Render this model
     public <R extends GeoRenderState> void render(RenderPassInfo<R> renderPassInfo, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
         for (GeoBone bone : topLevelBones()) {
 			bone.positionAndRender(renderPassInfo, vertexConsumer, packedLight, packedOverlay, renderColor);
         }
     }
 
-	/**
-	 * Create the bone map for this model, memoizing it as most models won't need it at all
-	 */
+	/// Create the bone map for this model, memoizing it as most models won't need it at all
 	private static Supplier<Map<String, GeoBone>> createBoneMap(GeoBone[] topLevelBones) {
 		return Suppliers.memoize(() -> {
 			Object2ReferenceMap<String, GeoBone> boneMap = new Object2ReferenceOpenHashMap<>();
@@ -64,9 +56,7 @@ public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties,
 		});
 	}
 
-	/**
-	 * Recursively collect all child bones of a bone
-	 */
+	/// Recursively collect all child bones of a bone
 	private static List<GeoBone> collectChildBones(GeoBone bone) {
 		List<GeoBone> bones = new ObjectArrayList<>();
 

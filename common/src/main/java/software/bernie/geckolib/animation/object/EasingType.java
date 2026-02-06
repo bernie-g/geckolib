@@ -14,14 +14,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * Functional interface defining an easing function
- * <p>
- * {@code value} is the easing value provided from the keyframe's {@link Keyframe#easingArgs()}
- *
- * @see <a href="https://easings.net/">Easings.net</a>
- * @see <a href="https://cubic-bezier.com">Cubic-Bezier.com</a>
- */
+/// Functional interface defining an easing function
+///
+/// `value` is the easing value provided from the keyframe's [Keyframe#easingArgs()]
+///
+/// @see <a href="https://easings.net/">Easings.net</a>
+/// @see <a href="https://cubic-bezier.com">Cubic-Bezier.com</a>
 @FunctionalInterface
 public interface EasingType {
 	Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
@@ -82,29 +80,25 @@ public interface EasingType {
 		return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), easingState.fromValue(), easingState.toValue());
 	}
 
-	/**
-	 * Register an {@code EasingType} with Geckolib for handling animation transitions and value curves
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 * <p>
-	 * It is recommended you don't call this directly, and instead call it via {@code GeckoLibUtil#addCustomEasingType}
-	 *
-	 * @param name The name of the easing type
-	 * @param easingType The {@code EasingType} to associate with the given name
-	 * @return The {@code EasingType} you registered
-	 */
+	/// Register an `EasingType` with Geckolib for handling animation transitions and value curves
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// It is recommended you don't call this directly, and instead call it via `GeckoLibUtil#addCustomEasingType`
+	///
+	/// @param name The name of the easing type
+	/// @param easingType The `EasingType` to associate with the given name
+	/// @return The `EasingType` you registered
 	static EasingType register(String name, EasingType easingType) {
 		EASING_TYPES.putIfAbsent(name, easingType);
 
 		return easingType;
 	}
 
-	/**
-	 * Retrieve an {@code EasingType} instance based on a {@link JsonElement}. Returns one of the default {@code EasingTypes} if the name matches, or any other registered {@code EasingType} with a matching name
-	 *
-	 * @param json The {@code easing} {@link JsonElement} to attempt to parse.
-	 * @return A usable {@code EasingType} instance
-	 */
+	/// Retrieve an `EasingType` instance based on a [JsonElement]. Returns one of the default `EasingTypes` if the name matches, or any other registered `EasingType` with a matching name
+	///
+	/// @param json The `easing` [JsonElement] to attempt to parse.
+	/// @return A usable `EasingType` instance
 	static EasingType fromJson(JsonElement json) {
 		if (!(json instanceof JsonPrimitive primitive) || !primitive.isString())
 			return LINEAR;
@@ -112,55 +106,43 @@ public interface EasingType {
 		return fromString(primitive.getAsString().toLowerCase(Locale.ROOT));
 	}
 
-	/**
-	 * Get an existing {@code EasingType} from a given string, matching the string to its name
-	 *
-	 * @param name The name of the easing function
-	 * @return The relevant {@code EasingType}, or {@link EasingType#LINEAR} if none match
-	 */
+	/// Get an existing `EasingType` from a given string, matching the string to its name
+	///
+	/// @param name The name of the easing function
+	/// @return The relevant `EasingType`, or [EasingType#LINEAR] if none match
 	static EasingType fromString(String name) {
 		return EASING_TYPES.getOrDefault(name, EasingType.LINEAR);
 	}
 
 	// ---> Easing Transition Type Functions <--- //
 
-	/**
-	 * Returns an easing function running linearly. Functionally equivalent to no easing
-	 */
+	/// Returns an easing function running linearly. Functionally equivalent to no easing
 	static Double2DoubleFunction linear(Double2DoubleFunction function) {
 		return function;
 	}
 
-	/**
-	 * Performs an approximation of Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
-	 * <p>
-	 * Given that by necessity, this only accepts a single argument, making this only technically a spline interpolation for n=1
-	 * <p>
-	 * <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
-	 */
+	/// Performs an approximation of Catmull-Rom interpolation, used to get smooth interpolated motion between keyframes
+	///
+	/// Given that by necessity, this only accepts a single argument, making this only technically a spline interpolation for n=1
+	///
+	/// <a href="https://pub.dev/documentation/latlong2/latest/spline/CatmullRom-class.html">CatmullRom#position</a>
 	static double catmullRom(double n) {
 		return 0.5d * (2d * (n + 1d) + 2d
 					   + (2d * n - 5d * (n + 1d) + 4d * (n + 2d) - (n + 3d))
 					   + (3d * (n + 1d) - n - 3d * (n + 2d) + (n + 3d)));
 	}
 
-	/**
-	 * Returns an easing function running forward in time
-	 */
+	/// Returns an easing function running forward in time
 	static Double2DoubleFunction easeIn(Double2DoubleFunction function) {
 		return function;
 	}
 
-	/**
-	 * Returns an easing function running backwards in time
-	 */
+	/// Returns an easing function running backwards in time
 	static Double2DoubleFunction easeOut(Double2DoubleFunction function) {
 		return time -> 1 - function.apply(1 - time);
 	}
 
-	/**
-	 * Returns an easing function that runs equally both forwards and backwards in time based on the halfway point, generating a symmetrical curve
-	 */
+	/// Returns an easing function that runs equally both forwards and backwards in time based on the halfway point, generating a symmetrical curve
 	static Double2DoubleFunction easeInOut(Double2DoubleFunction function) {
 		return time -> {
 			if (time < 0.5d)
@@ -172,112 +154,92 @@ public interface EasingType {
 
 	// ---> Stepping Functions <--- //
 
-	/**
-	 * Returns a stepping function that returns 1 for any input value greater than 0, or otherwise returning 0
-	 */
+	/// Returns a stepping function that returns 1 for any input value greater than 0, or otherwise returning 0
 	static Double2DoubleFunction stepPositive(Double2DoubleFunction function) {
 		return n -> n > 0 ? 1 : 0;
 	}
 
-	/**
-	 * Returns a stepping function that returns 1 for any input value greater than or equal to 0, or otherwise returning 0
-	 */
+	/// Returns a stepping function that returns 1 for any input value greater than or equal to 0, or otherwise returning 0
 	static Double2DoubleFunction stepNonNegative(Double2DoubleFunction function) {
 		return n -> n >= 0 ? 1 : 0;
 	}
 
 	// ---> Mathematical Functions <--- //
 
-	/**
-	 * A linear function, equivalent to a null-operation
-	 * <p>
-	 * {@code f(n) = n}
-	 */
+	/// A linear function, equivalent to a null-operation
+	///
+	/// `f(n) = n`
 	static double linear(double n) {
 		return n;
 	}
 
-	/**
-	 * A quadratic function, equivalent to the square (<i>n</i>^2) of elapsed time
-	 * <p>
-	 * {@code f(n) = n^2}
-	 * <p>
-	 * <a href="http://easings.net/#easeInQuad">Easings.net#easeInQuad</a>
-	 */
+	/// A quadratic function, equivalent to the square (_n_^2) of elapsed time
+	///
+	/// `f(n) = n^2`
+	///
+	/// <a href="http://easings.net/#easeInQuad">Easings.net#easeInQuad</a>
 	static double quadratic(double n) {
 		return n * n;
 	}
 
-	/**
-	 * A cubic function, equivalent to cube (<i>n</i>^3) of elapsed time
-	 * <p>
-	 * {@code f(n) = n^3}
-	 * <p>
-	 * <a href="http://easings.net/#easeInCubic">Easings.net#easeInCubic</a>
-	 */
+	/// A cubic function, equivalent to cube (_n_^3) of elapsed time
+	///
+	/// `f(n) = n^3`
+	///
+	/// <a href="http://easings.net/#easeInCubic">Easings.net#easeInCubic</a>
 	static double cubic(double n) {
 		return n * n * n;
 	}
 
-	/**
-	 * A sinusoidal function, equivalent to a sine curve output
-	 * <p>
-	 * {@code f(n) = 1 - cos(n * π / 2)}
-	 * <p>
-	 * <a href="http://easings.net/#easeInSine">Easings.net#easeInSine</a>
-	 */
+	/// A sinusoidal function, equivalent to a sine curve output
+	///
+	/// `f(n) = 1 - cos(n * π / 2)`
+	///
+	/// <a href="http://easings.net/#easeInSine">Easings.net#easeInSine</a>
 	static double sine(double n) {
 		return 1 - Math.cos(n * Math.PI / 2f);
 	}
 
-	/**
-	 * A circular function, equivalent to a normally symmetrical curve
-	 * <p>
-	 * {@code f(n) = 1 - sqrt(1 - n^2)}
-	 * <p>
-	 * <a href="http://easings.net/#easeInCirc">Easings.net#easeInCirc</a>
-	 */
+	/// A circular function, equivalent to a normally symmetrical curve
+	///
+	/// `f(n) = 1 - sqrt(1 - n^2)`
+	///
+	/// <a href="http://easings.net/#easeInCirc">Easings.net#easeInCirc</a>
 	static double circle(double n) {
 		return 1 - Math.sqrt(1 - n * n);
 	}
 
-	/**
-	 * An exponential function, equivalent to an exponential curve
-	 * <p>
-	 * {@code f(n) = 2^(10 * (n - 1))}
-	 * <p>
-	 * <a href="http://easings.net/#easeInExpo">Easings.net#easeInExpo</a>
-	 */
+	/// An exponential function, equivalent to an exponential curve
+	///
+	/// `f(n) = 2^(10 * (n - 1))`
+	///
+	/// <a href="http://easings.net/#easeInExpo">Easings.net#easeInExpo</a>
 	static double exp(double n) {
 		return Math.pow(2, 10 * (n - 1));
 	}
 
 	// ---> Easing Curve Functions <--- //
 
-	/**
-	 * An elastic function, equivalent to an oscillating curve
-	 * <p>
-	 * <i>n</i> defines the elasticity of the output
-	 * <p>
-	 * {@code f(t) = 1 - (cos(t * π) / 2))^3 * cos(t * n * π)}
-	 * <p>
-	 * <a href="http://easings.net/#easeInElastic">Easings.net#easeInElastic</a>
-	 */
+	/// An elastic function, equivalent to an oscillating curve
+	///
+	/// _n_ defines the elasticity of the output
+	///
+	/// `f(t) = 1 - (cos(t * π) / 2))^3 * cos(t * n * π)`
+	///
+	/// <a href="http://easings.net/#easeInElastic">Easings.net#easeInElastic</a>
 	static Double2DoubleFunction elastic(@Nullable Double n) {
 		double n2 = n == null ? 1 : n;
 
 		return t -> 1 - Math.pow(Math.cos(t * Math.PI / 2f), 3) * Math.cos(t * n2 * Math.PI);
 	}
 
-	/**
-	 * A bouncing function, equivalent to a bouncing ball curve
-	 * <p>
-	 * <i>n</i> defines the bounciness of the output
-	 * <p>
-	 * Thanks to <b>Waterded#6455</b> for making the bounce adjustable, and <b>GiantLuigi4#6616</b> for additional cleanup
-	 * <p>
-	 * <a href="http://easings.net/#easeInBounce">Easings.net#easeInBounce</a>
-	 */
+	/// A bouncing function, equivalent to a bouncing ball curve
+	///
+	/// _n_ defines the bounciness of the output
+	///
+	/// Thanks to **Waterded#6455** for making the bounce adjustable, and **GiantLuigi4#6616** for additional cleanup
+	///
+	/// <a href="http://easings.net/#easeInBounce">Easings.net#easeInBounce</a>
 	static Double2DoubleFunction bounce(@Nullable Double n) {
 		final double n2 = n == null ? 0.5d : n;
 
@@ -289,57 +251,56 @@ public interface EasingType {
 		return t -> Math.min(Math.min(one.apply(t), two.apply(t)), Math.min(three.apply(t), four.apply(t)));
 	}
 
-	/**
-	 * A negative elastic function, equivalent to inverting briefly before increasing
-	 * <p>
-	 * {@code f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)}
-	 * <p>
-	 * <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
-	 */
+	/// A negative elastic function, equivalent to inverting briefly before increasing
+	///
+	/// `f(t) = t^2 * ((n * 1.70158 + 1) * t - n * 1.70158)`
+	///
+	/// <a href="https://easings.net/#easeInBack">Easings.net#easeInBack</a>
 	static Double2DoubleFunction back(@Nullable Double n) {
 		final double n2 = n == null ? 1.70158d : n * 1.70158d;
 
 		return t -> t * t * ((n2 + 1) * t - n2);
 	}
 
-	/**
-	 * An exponential function, equivalent to an exponential curve to the {@code n} root
-	 * <p>
-	 * {@code f(t) = t^n}
-	 *
-	 * @param n The exponent
-	 */
+	/// An exponential function, equivalent to an exponential curve to the `n` root
+	///
+	/// `f(t) = t^n`
+	///
+	/// @param n The exponent
 	static Double2DoubleFunction pow(double n) {
 		return t -> Math.pow(t, n);
 	}
 
 	// The MIT license notice below applies to the function step
-	/**
-	 * The MIT License (MIT)
-	 *<br><br>
-	 * Copyright (c) 2015 Boris Chumichev
-	 *<br><br>
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is
-	 * furnished to do so, subject to the following conditions:
-	 *<br><br>
-	 * The above copyright notice and this permission notice shall be included in
-	 * all copies or substantial portions of the Software.
-	 *<br><br>
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	 * SOFTWARE.
-	 * <br><br>
-	 * Returns a stepped value based on the nearest step to the input value.<br>
-	 * The size (grade) of the steps depends on the provided value of {@code n}
-	 **/
+	/// The MIT License (MIT)
+	///
+	///
+	/// Copyright (c) 2015 Boris Chumichev
+	///
+	///
+	/// Permission is hereby granted, free of charge, to any person obtaining a copy
+	/// of this software and associated documentation files (the "Software"), to deal
+	/// in the Software without restriction, including without limitation the rights
+	/// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	/// copies of the Software, and to permit persons to whom the Software is
+	/// furnished to do so, subject to the following conditions:
+	///
+	///
+	/// The above copyright notice and this permission notice shall be included in
+	/// all copies or substantial portions of the Software.
+	///
+	///
+	/// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	/// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	/// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	/// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	/// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	/// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	/// SOFTWARE.
+	///
+	///
+	/// Returns a stepped value based on the nearest step to the input value.
+	/// The size (grade) of the steps depends on the provided value of `n`
 	static Double2DoubleFunction step(@Nullable Double n) {
 		double n2 = n == null ? 2 : n;
 
@@ -378,21 +339,17 @@ public interface EasingType {
 		};
 	}
 
-	/**
-	 * Custom EasingType implementation required for special-handling of spline-based interpolation
-	 */
+	/// Custom EasingType implementation required for special-handling of spline-based interpolation
 	class CatmullRomEasing implements EasingType {
-		/**
-		 * Generates a value from a given Catmull-Rom spline range with Centripetal parameterization (alpha=0.5)
-		 * <p>
-		 * Per standard implementation, this generates a spline curve over control points p1-p2, with p0 and p3
-		 * acting as curve anchors.<br>
-		 * We then apply the delta to determine the point on the generated spline to return.
-		 * <p>
-		 * Functionally equivalent to {@link Mth#catmullrom(float, float, float, float, float)}
-		 *
-		 * @see <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline">Wikipedia</a>
-		 */
+		/// Generates a value from a given Catmull-Rom spline range with Centripetal parameterization (alpha=0.5)
+		///
+		/// Per standard implementation, this generates a spline curve over control points p1-p2, with p0 and p3
+		/// acting as curve anchors.
+		/// We then apply the delta to determine the point on the generated spline to return.
+		///
+		/// Functionally equivalent to [Mth#catmullrom(float, float, float, float, float)]
+		///
+		/// @see <a href="https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline">Wikipedia</a>
 		public static double getPointOnSpline(double delta, double p0, double p1, double p2, double p3) {
 			return 0.5d * (2d * p1 + (p2 - p0) * delta +
 						   (2d * p0 - 5d * p1 + 4d * p2 - p3) * delta * delta +

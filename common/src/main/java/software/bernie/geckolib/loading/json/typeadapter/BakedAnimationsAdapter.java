@@ -29,24 +29,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 
-/**
- * {@link Gson} {@link JsonDeserializer} for {@link BakedAnimations}.<br>
- * Acts as the deserialization interface for {@code BakedAnimations}
- */
+/// [Gson] [JsonDeserializer] for [BakedAnimations].
+/// Acts as the deserialization interface for `BakedAnimations`
 @ApiStatus.Internal
 public final class BakedAnimationsAdapter {
 	public static @Nullable ConcurrentMap<Double, Constant> COMPRESSION_CACHE = null;
 
-	/**
-	 * Create a GSON {@link JsonDeserializer} for {@link BakedAnimations}
-	 */
+	/// Create a GSON [JsonDeserializer] for [BakedAnimations]
 	public static JsonDeserializer<BakedAnimations> deserializer() throws JsonParseException {
 		return BakedAnimationsAdapter::fromJson;
 	}
 
-	/**
-	 * Deserialize a {@link BakedAnimations} from a {@link JsonElement}.
-	 */
+	/// Deserialize a [BakedAnimations] from a [JsonElement].
 	public static BakedAnimations fromJson(JsonElement json, Type type, JsonDeserializationContext context) {
 		JsonObject obj = json.getAsJsonObject();
 		Map<String, Animation> animations = new Object2ObjectOpenHashMap<>(obj.size());

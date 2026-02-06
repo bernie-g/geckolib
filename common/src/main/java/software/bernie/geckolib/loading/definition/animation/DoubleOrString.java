@@ -7,33 +7,23 @@ import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import org.jetbrains.annotations.ApiStatus;
 
-/**
- * A primitive-supporting {@link Either} for either a {@code double} or {@code String} value
- */
+/// A primitive-supporting [Either] for either a `double` or `String` value
 @ApiStatus.Internal
 public sealed interface DoubleOrString permits DoubleOrString.DoubleValue, DoubleOrString.StringValue {
-    /**
-     * @return If this instance contains a {@code double} can safely call {@link #doubleValue()}
-     */
+    /// @return If this instance contains a `double` can safely call [#doubleValue()]
     boolean isDouble();
 
-    /**
-     * @return The {@code double} value for this instance
-     * @throws IllegalStateException If attempting to call for a value that doesn't exist. Use
-     * {@link #isDouble}
-     */
+    /// @return The `double` value for this instance
+    /// @throws IllegalStateException If attempting to call for a value that doesn't exist. Use
+    /// [#isDouble]
     double doubleValue();
 
-    /**
-     * @return The {@code String} value for this instance
-     * @throws IllegalStateException If attempting to call for a value that doesn't exist. Use
-     * {@link #isDouble}
-     */
+    /// @return The `String` value for this instance
+    /// @throws IllegalStateException If attempting to call for a value that doesn't exist. Use
+    /// [#isDouble]
     String stringValue();
 
-    /**
-     * Parse an DoubleOrString instance from raw .json input via {@link Gson}
-     */
+    /// Parse an DoubleOrString instance from raw .json input via [Gson]
     static JsonDeserializer<DoubleOrString> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             if (!(json instanceof JsonPrimitive primitive))

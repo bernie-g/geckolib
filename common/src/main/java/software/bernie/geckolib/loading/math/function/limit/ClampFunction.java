@@ -5,14 +5,11 @@ import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
-/**
- * {@link MathFunction} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Returns the first input value if is larger than the second input value and less than the third input value; or else returns the nearest of the second two input values
- */
+/// [MathFunction] value supplier
+///
+/// **Contract:**
+///
+/// Returns the first input value if is larger than the second input value and less than the third input value; or else returns the nearest of the second two input values
 public final class ClampFunction extends MathFunction {
     private final MathValue value;
     private final MathValue min;

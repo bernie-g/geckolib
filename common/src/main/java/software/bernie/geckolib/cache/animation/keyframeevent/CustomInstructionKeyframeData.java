@@ -4,9 +4,7 @@ import software.bernie.geckolib.cache.animation.Keyframe;
 
 import java.util.Objects;
 
-/**
- * Custom instruction {@link Keyframe} instruction holder
- */
+/// Custom instruction [Keyframe] instruction holder
 public class CustomInstructionKeyframeData extends KeyFrameData {
 	private final String instructions;
 
@@ -16,9 +14,7 @@ public class CustomInstructionKeyframeData extends KeyFrameData {
 		this.instructions = instructions;
 	}
 
-	/**
-	 * Gets the instructions string given by the {@link Keyframe} instruction from the {@code animation.json}
-	 */
+	/// Gets the instructions string given by the [Keyframe] instruction from the `animation.json`
 	public String getInstructions() {
 		return this.instructions;
 	}

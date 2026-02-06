@@ -7,9 +7,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.function.Supplier;
 
-/**
- * Service holder class for access to the various SPI platforms that GeckoLib uses
- */
+/// Service holder class for access to the various SPI platforms that GeckoLib uses
 public final class GeckoLibServices {
     public static final GeckoLibPlatform PLATFORM = load(GeckoLibPlatform.class);
     public static final GeckoLibNetworking NETWORK = load(GeckoLibNetworking.class);

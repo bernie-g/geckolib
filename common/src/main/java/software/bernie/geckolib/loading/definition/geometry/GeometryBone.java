@@ -9,32 +9,28 @@ import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.Map;
 
-/**
- * Container class for a single geometry bone, only used for intermediary steps between .json deserialization and GeckoLib object creation
- *
- * @param name The name of this bone
- * @param parent The parent bone of this bone, if any
- * @param pivot The pivot point for this bone, or null if not defined
- * @param rotation The rotation of this bone, in degrees, or null if not defined
- * @param debug An optional debug marker for this bone. Not used by GeckoLib
- * @param mirror An optional mirror toggle for this bone
- * @param inflate An optional inflation value for this bone
- * @param renderGroupId The numerical group index this bone belongs to. Not used by GeckoLib
- * @param cubes The array of cube definitions for this bone
- * @param binding An optional binding for this bone, defining its parental relationship. Not used by GeckoLib
- * @param locators An optional map of locator markers for this bone
- * @param polyMesh An optional poly mesh definition for this bone. Not used by GeckoLib
- * @param textureMeshes An optional array of texture mesh definitions for this bone. Not used by GeckoLib
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
- */
+/// Container class for a single geometry bone, only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// @param name The name of this bone
+/// @param parent The parent bone of this bone, if any
+/// @param pivot The pivot point for this bone, or null if not defined
+/// @param rotation The rotation of this bone, in degrees, or null if not defined
+/// @param debug An optional debug marker for this bone. Not used by GeckoLib
+/// @param mirror An optional mirror toggle for this bone
+/// @param inflate An optional inflation value for this bone
+/// @param renderGroupId The numerical group index this bone belongs to. Not used by GeckoLib
+/// @param cubes The array of cube definitions for this bone
+/// @param binding An optional binding for this bone, defining its parental relationship. Not used by GeckoLib
+/// @param locators An optional map of locator markers for this bone
+/// @param polyMesh An optional poly mesh definition for this bone. Not used by GeckoLib
+/// @param textureMeshes An optional array of texture mesh definitions for this bone. Not used by GeckoLib
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
 public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 pivot, @Nullable Vec3 rotation, boolean debug,
                            boolean mirror, float inflate, int renderGroupId, GeometryCube @Nullable [] cubes,
                            @Nullable String binding, @Nullable Map<String, GeometryLocator> locators, @Nullable GeometryPolyMesh polyMesh,
                            GeometryTextureMesh @Nullable[] textureMeshes) {
-    /**
-     * Parse a GeometryBone instance from raw .json input via {@link Gson}
-     */
+    /// Parse a GeometryBone instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryBone> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             final JsonObject obj = json.getAsJsonObject();

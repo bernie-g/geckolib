@@ -1,6 +1,4 @@
-/**
- * Keyframe marker data holder classes
- */
+/// Keyframe marker data holder classes
 @NullMarked
 package software.bernie.geckolib.cache.animation.keyframeevent;
 

@@ -20,18 +20,14 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 @Mixin(value = EntityRenderer.class, priority = 5000)
 public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> {
-    /**
-     * Override the maximum distance a GeckoLib entity's nameplate can render at, since vanilla caps it at 64 blocks
-     */
+    /// Override the maximum distance a GeckoLib entity's nameplate can render at, since vanilla caps it at 64 blocks
     @ModifyConstant(method = "extractRenderState", constant = @Constant(doubleValue = 4096.0F), require = 0)
     public double modifyMaxNameplateDistance(double constant) {
         return (Object)this instanceof GeoEntityRenderer<?, ?> ? 256 * 256 : constant;
     }
 
-    /**
-     * Injection mixin to allow for capture of data for {@link GeoRenderState}s for {@link GeoArmorRenderer}s,
-     * given that they never normally receive the entity context
-     */
+    /// Injection mixin to allow for capture of data for [GeoRenderState]s for [GeoArmorRenderer]s,
+    /// given that they never normally receive the entity context
     @SuppressWarnings({"ConstantValue", "rawtypes", "unchecked"})
     @WrapMethod(method = "createRenderState(Lnet/minecraft/world/entity/Entity;F)Lnet/minecraft/client/renderer/entity/state/EntityRenderState;")
     public S geckolib$captureDataForArmorLayer(T entity, float partialTick, Operation<S> original) {
@@ -52,9 +48,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
         return renderState;
     }
 
-    /**
-     * Sugar method for blind-casting RenderStates to GeckoLib-supported generic types
-     */
+    /// Sugar method for blind-casting RenderStates to GeckoLib-supported generic types
     @SuppressWarnings("unchecked")
     @Unique
     private static <R extends HumanoidRenderState & GeoRenderState> R geckolib$castRenderState(EntityRenderState renderState) {

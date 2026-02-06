@@ -19,29 +19,23 @@ import software.bernie.geckolib.loading.object.BakedModelFactory;
 
 import java.util.Objects;
 
-/**
- * Helper class for various GeckoLib-specific functions.
- */
+/// Helper class for various GeckoLib-specific functions.
 public final class GeckoLibUtil {
-	/**
-	 * Creates a new AnimatableInstanceCache for the given animatable object
-	 *
-	 * @param animatable The animatable object
-	 */
+	/// Creates a new AnimatableInstanceCache for the given animatable object
+	///
+	/// @param animatable The animatable object
 	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable) {
 		AnimatableInstanceCache cache = animatable.animatableCacheOverride();
 
 		return cache != null ? cache : createInstanceCache(animatable, !(animatable instanceof Entity) && !(animatable instanceof BlockEntity));
 	}
 
-	/**
-	 * Creates a new AnimatableInstanceCache for the given animatable object
-	 * <p>
-	 * Recommended to use {@link GeckoLibUtil#createInstanceCache(GeoAnimatable)} unless you know what you're doing
-	 *
-	 * @param animatable The animatable object
-	 * @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
-	 */
+	/// Creates a new AnimatableInstanceCache for the given animatable object
+	///
+	/// Recommended to use [GeckoLibUtil#createInstanceCache(GeoAnimatable)] unless you know what you're doing
+	///
+	/// @param animatable The animatable object
+	/// @param singletonObject Whether the object is a singleton/flyweight object, and uses ints to differentiate animatable instances
 	public static AnimatableInstanceCache createInstanceCache(GeoAnimatable animatable, boolean singletonObject) {
 		AnimatableInstanceCache cache = animatable.animatableCacheOverride();
 
@@ -51,62 +45,52 @@ public final class GeckoLibUtil {
 		return singletonObject ? new SingletonAnimatableInstanceCache(animatable) : new InstancedAnimatableInstanceCache(animatable);
 	}
 
-	/**
-	 * Register a custom {@link LoopType} with GeckoLib, allowing for dynamic handling of post-animation looping
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 *
-	 * @param name The name of the {@code LoopType} handler
-	 * @param loopType The {@code LoopType} implementation to use for the given name
-	 */
+	/// Register a custom [LoopType] with GeckoLib, allowing for dynamic handling of post-animation looping
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param name The name of the `LoopType` handler
+	/// @param loopType The `LoopType` implementation to use for the given name
 	synchronized public static LoopType addCustomLoopType(String name, LoopType loopType) {
 		return LoopType.register(name, loopType);
 	}
 
-	/**
-	 * Register a custom {@link EasingType} with GeckoLib allowing for dynamic handling of animation transitions and curves
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 *
-	 * @param name The name of the {@code EasingType} handler
-	 * @param easingType The {@code EasingType} implementation to use for the given name
-	 */
+	/// Register a custom [EasingType] with GeckoLib allowing for dynamic handling of animation transitions and curves
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param name The name of the `EasingType` handler
+	/// @param easingType The `EasingType` implementation to use for the given name
 	synchronized public static EasingType addCustomEasingType(String name, EasingType easingType) {
 		return EasingType.register(name, easingType);
 	}
 
-	/**
-	 * Register a custom {@link BakedModelFactory} with GeckoLib, allowing for dynamic handling of geo model loading
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 *
-	 * @param namespace The namespace (modid) to register the factory for
-	 * @param factory The factory responsible for model loading under the given namespace
-	 */
+	/// Register a custom [BakedModelFactory] with GeckoLib, allowing for dynamic handling of geo model loading
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param namespace The namespace (modid) to register the factory for
+	/// @param factory The factory responsible for model loading under the given namespace
 	synchronized public static void addCustomBakedModelFactory(String namespace, BakedModelFactory factory) {
 		BakedModelFactory.register(namespace, factory);
 	}
 
-	/**
-	 * Register a custom {@link SerializableDataTicket} with GeckoLib for handling custom data transmission
-	 * <p>
-	 * NOTE: You do not need to register non-serializable {@link DataTicket DataTickets}.
-	 * <p>
-	 * <b><u>MUST be called during mod construct</u></b>
-	 *
-	 * @param dataTicket The SerializableDataTicket to register
-	 * @return The dataTicket you passed in
-	 */
+	/// Register a custom [SerializableDataTicket] with GeckoLib for handling custom data transmission
+	///
+	/// NOTE: You do not need to register non-serializable [DataTickets][DataTicket].
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param dataTicket The SerializableDataTicket to register
+	/// @return The dataTicket you passed in
 	synchronized public static <D> SerializableDataTicket<D> addDataTicket(SerializableDataTicket<D> dataTicket) {
 		return DataTickets.registerSerializable(dataTicket);
 	}
 
-	/**
-	 * Perform an {@link Object#equals(Object)} check on two {@link PatchedDataComponentMap}s,
-	 * ignoring any GeckoLib stack ids that may be present.
-	 * <p>
-	 * This is typically only called by an internal mixin
-	 */
+	/// Perform an [Object#equals(Object)] check on two [PatchedDataComponentMap]s,
+	/// ignoring any GeckoLib stack ids that may be present.
+	///
+	/// This is typically only called by an internal mixin
 	@ApiStatus.Internal
 	public static boolean areComponentsMatchingIgnoringGeckoLibId(PatchedDataComponentMap map1, PatchedDataComponentMap map2) {
 		final DataComponentType<Long> stackId = GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get();

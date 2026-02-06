@@ -10,28 +10,22 @@ import software.bernie.geckolib.GeckoLibConstants;
 import java.util.Arrays;
 import java.util.Map;
 
-/**
- * Container class for a single actor animation's bone animation data for a specific transformation type,
- * only used for intermediary steps between .json deserialization and GeckoLib object creation
- * <p>
- * This object represents a three-way 'Either' implementation, reduced to nullable values to reduce code footprint
- *
- * @param soleKeyframe A singular keyframe with no associated timestamp, representing a persistent state keyframe for the entire animation. {@code null} if {@link #keyframes} is present
- * @param keyframes The map of keyframes to their timestamps. {@code null} if {@link #soleKeyframe} is present
- * @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
- */
+/// Container class for a single actor animation's bone animation data for a specific transformation type,
+/// only used for intermediary steps between .json deserialization and GeckoLib object creation
+///
+/// This object represents a three-way 'Either' implementation, reduced to nullable values to reduce code footprint
+///
+/// @param soleKeyframe A singular keyframe with no associated timestamp, representing a persistent state keyframe for the entire animation. `null` if [#keyframes] is present
+/// @param keyframes The map of keyframes to their timestamps. `null` if [#soleKeyframe] is present
+/// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
 @ApiStatus.Internal
 public record ActorBoneAnimationEntry(@Nullable ActorBoneAnimationKeyframe soleKeyframe, @Nullable Double2ObjectArrayMap<ActorBoneAnimationKeyframe> keyframes) {
-    /**
-     * @return Whether this entry is a singular keyframe with no timestamp, representing a persistent state keyframe
-     */
+    /// @return Whether this entry is a singular keyframe with no timestamp, representing a persistent state keyframe
     public boolean isSingleKeyframe() {
         return this.soleKeyframe != null;
     }
 
-    /**
-     * @return The number of keyframes in this entry
-     */
+    /// @return The number of keyframes in this entry
     public int size() {
         if (isSingleKeyframe())
             return 1;
@@ -42,9 +36,7 @@ public record ActorBoneAnimationEntry(@Nullable ActorBoneAnimationKeyframe soleK
         throw new IllegalStateException("ActorBoneAnimationEntry has neither a singular keyframe or a keyframe map. This should never happen!");
     }
 
-    /**
-     * Map the contents of this bone animation entry to a singular type result, regardless of contents
-     */
+    /// Map the contents of this bone animation entry to a singular type result, regardless of contents
     public <T> T mapBoth(Function<ActorBoneAnimationKeyframe, T> soleKeyframeFunction, Function<Double2ObjectArrayMap<ActorBoneAnimationKeyframe>, T> keyframeListFunction) {
         if (isSingleKeyframe())
             return  soleKeyframeFunction.apply(this.soleKeyframe);
@@ -55,9 +47,7 @@ public record ActorBoneAnimationEntry(@Nullable ActorBoneAnimationKeyframe soleK
         throw new IllegalStateException("ActorBoneAnimationEntry has neither a singular keyframe or a keyframe map. This should never happen!");
     }
 
-    /**
-     * Parse an ActorBoneAnimationEntry instance from raw .json input via {@link Gson}
-     */
+    /// Parse an ActorBoneAnimationEntry instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimationEntry> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
             if (json.isJsonObject()) {

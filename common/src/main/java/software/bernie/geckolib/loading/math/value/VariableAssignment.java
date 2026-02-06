@@ -5,14 +5,11 @@ import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.Set;
 
-/**
- * {@link MathValue} value supplier
- *
- * <p>
- * <b>Contract:</b>
- * <br>
- * Assigns a variable to the given value, then returns 0
- */
+/// [MathValue] value supplier
+///
+/// **Contract:**
+///
+/// Assigns a variable to the given value, then returns 0
 public record VariableAssignment(Variable variable, MathValue value) implements MathValue {
     @Override
     public double get(ControllerState controllerState) {
