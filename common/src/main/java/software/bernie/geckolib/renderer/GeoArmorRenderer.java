@@ -352,7 +352,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /// This is typically only called by an internal mixin
     ///
     /// @return true if the armor piece was a GeckoLib armor piece and was rendered
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     @ApiStatus.Internal
     public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
             BiFunction<R, EquipmentSlot, A> modelFunction, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
@@ -362,7 +362,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         if (stackForRender == null)
             return false;
 
-        if ((perSlotData = entityRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA)) == null || !perSlotData.containsKey(slot))
+        if ((perSlotData = (EnumMap)entityRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA)) == null || !perSlotData.containsKey(slot))
             return false;
 
         R perSlotRenderState = perSlotData.get(slot);

@@ -15,13 +15,11 @@ public class DataTicket<D> {
 	static final Map<Pair<Type, String>, DataTicket<?>> IDENTITY_CACHE = new Object2ObjectOpenHashMap<>();
 
 	private final String id;
-	private final Class<? extends D> objectType;
 	private final Type dataType;
 
 	/// @see #create(String, Class)
-	DataTicket(String id, Class<? extends D> objectType, Type dataType) {
+	DataTicket(String id, Type dataType) {
 		this.id = id;
-		this.objectType = objectType;
 		this.dataType = dataType;
 	}
 
@@ -30,27 +28,19 @@ public class DataTicket<D> {
 	/// This DataTicket should then be stored statically somewhere and re-used.
 	@SuppressWarnings({"unchecked", "rawtypes"})
     public static <D> DataTicket<D> create(String id, Class<? extends D> objectType) {
-		return create(id, objectType, (TypeToken)TypeToken.of(objectType));
+		return create(id, (TypeToken)TypeToken.of(objectType));
 	}
 
 	/// Create a new DataTicket for a given name and object type
 	///
 	/// This DataTicket should then be stored statically somewhere and re-used.
 	@SuppressWarnings("unchecked")
-    public static <D> DataTicket<D> create(String id, Class<? super D> objectType, TypeToken<D> token) {
-		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(token.getType(), id), pair -> new DataTicket<>(id, objectType, token.getType()));
+    public static <D> DataTicket<D> create(String id, TypeToken<D> token) {
+		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(token.getType(), id), pair -> new DataTicket<>(id, token.getType()));
 	}
 
 	public String id() {
 		return this.id;
-	}
-
-	/// Get the object class that this DataTicket's data is for
-	///
-	/// @deprecated Use [#dataType()] instead
-	@Deprecated(forRemoval = true)
-	public Class<? extends D> objectType() {
-		return this.objectType;
 	}
 
 	/// Get the java object type that this DataTicket's data is for
@@ -60,7 +50,7 @@ public class DataTicket<D> {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.id, this.objectType);
+		return Objects.hash(this.id, this.dataType);
 	}
 
 	@Override
@@ -71,11 +61,11 @@ public class DataTicket<D> {
 		if (!(obj instanceof DataTicket<?> other))
 			return false;
 
-		return this.objectType == other.objectType && this.id.equals(other.id);
+		return this.dataType == other.dataType && this.id.equals(other.id);
 	}
 
 	@Override
 	public String toString() {
-		return "DataTicket{" + this.id + ": " + this.objectType.getName() + "}";
+		return "DataTicket{" + this.id + ": " + this.dataType.getTypeName() + "}";
 	}
 }

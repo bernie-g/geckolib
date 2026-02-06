@@ -165,7 +165,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
     /// @see #scaleModelForRender
     /// @see #adjustRenderPose
     /// @see #adjustModelBonesForRender
-    @SuppressWarnings({"unchecked", "DataFlowIssue"})
+    @SuppressWarnings({"DataFlowIssue"})
     @Override
     public void preRenderPass(RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector renderTasks) {
         final GeoRenderState renderState = renderPassInfo.renderState();

@@ -54,6 +54,7 @@ import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
@@ -157,13 +158,13 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
         equipment.put(EquipmentSlot.FEET, headRenderState.feetEquipment = animatable.getItemBySlot(EquipmentSlot.FEET));
 
         GeoArmorRenderer.captureRenderStates(headRenderState, animatable, partialTick,
-                                             (renderState, slot) -> (A)GeckoLibClient.HUMANOID_ARMOR_MODEL.get().get(slot),
+                                             (_, slot) -> (A)GeckoLibClient.HUMANOID_ARMOR_MODEL.get().get(slot),
                                              slot -> slot == EquipmentSlot.HEAD ? headRenderState : getOrCreateHumanoidRenderState(baseRenderState, true));
 
         baseRenderState.addGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, equipment);
 
         if (headRenderState != baseRenderState && headRenderState.hasGeckolibData(DataTickets.PER_SLOT_RENDER_DATA))
-            baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, headRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA));
+            baseRenderState.addGeckolibData(DataTickets.PER_SLOT_RENDER_DATA, Objects.requireNonNull(headRenderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA)));
     }
 
 	/// Register per-bone render operations, to be rendered after the main model is done.
@@ -205,7 +206,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
             renderSkullAsArmor(renderPassInfo, bone, equipmentStack, skullBlock, renderTasks);
 		}
         else if (RenderUtil.getGeckoLibArmorRenderer(equipmentStack, slot) instanceof GeoArmorRenderer geoArmorRenderer) {
-            EnumMap<EquipmentSlot, R> perSlotData = renderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA);
+            EnumMap<EquipmentSlot, R> perSlotData = (EnumMap)renderState.getGeckolibData(DataTickets.PER_SLOT_RENDER_DATA);
 
             if (perSlotData != null) {
                 R slotRenderState = perSlotData.get(slot);

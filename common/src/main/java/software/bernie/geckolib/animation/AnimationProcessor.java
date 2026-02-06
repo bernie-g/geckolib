@@ -22,8 +22,8 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.BoneSnapshots;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.Collection;
@@ -40,9 +40,9 @@ public class AnimationProcessor {
     ///
     /// @param animatable The animatable relevant to the upcoming render pass
     /// @param renderState The [GeoRenderState] being built for the upcoming render pass
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static <T extends GeoAnimatable> void extractControllerStates(T animatable, GeoRenderState renderState, GeoModel<T> geoModel) {
-        final AnimatableManager<T> manager = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER));
+        final AnimatableManager<T> manager = (AnimatableManager) Objects.requireNonNull(renderState.getGeckolibData(DataTickets.ANIMATABLE_MANAGER));
         final Collection<AnimationController<T>> controllers = manager.getAnimationControllers().values();
         final double tick = renderState.getAnimatableAge();
         final List<ControllerState> controllerStates = new ObjectArrayList<>(controllers.size());

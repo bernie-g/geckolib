@@ -38,7 +38,7 @@ public class AutoPlayingSoundKeyframeHandler<A extends GeoAnimatable> implements
         BuiltInRegistries.SOUND_EVENT.get(Identifier.read(segments[0]).getOrThrow()).ifPresent(sound -> {
             Vec3 position = event.renderState().getOrDefaultGeckolibData(DataTickets.POSITION, event.renderState() instanceof EntityRenderState entityState ?
                                                                                           new Vec3(entityState.x, entityState.y, entityState.z) : null);
-            Class<?> animatableClass = event.renderState().getOrDefaultGeckolibData(DataTickets.ANIMATABLE_CLASS, Object.class);
+            Class<? extends GeoAnimatable> animatableClass = event.renderState().getOrDefaultGeckolibData(DataTickets.ANIMATABLE_CLASS, GeoAnimatable.class);
 
             if (position != null) {
                 float volume = segments.length > 1 ? Float.parseFloat(segments[1]) : 1;

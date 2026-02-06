@@ -23,6 +23,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 /// Built-in GeoLayer for rendering the item in a [LivingEntity]'s hands.
@@ -78,7 +79,7 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
             default -> ItemDisplayContext.NONE;
         };
 
-        return new RenderData<>(boneName, context, (bone, renderState2) -> Either.left((ItemStack)renderState2.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT).get(slot)));
+        return new RenderData<>(boneName, context, (bone, renderState2) -> Either.left(Objects.requireNonNull(renderState2.getGeckolibData(DataTickets.EQUIPMENT_BY_SLOT)).get(slot)));
     }
 
     /// Override to add any custom [DataTicket]s you need to capture for rendering.
@@ -91,10 +92,9 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
     ///                         (E.G., ItemStack for GeoItemRenderer, entity instance for GeoReplacedEntityRenderer).
     /// @param renderState The GeckoLib RenderState to add data to, will be passed through the rest of rendering
     /// @param partialTick The fraction of a tick that has elapsed as of the current render pass
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
     public void addRenderData(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
-        EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, (Supplier<EnumMap>)() -> new EnumMap<>(EquipmentSlot.class));
+        EnumMap<EquipmentSlot, ItemStack> equipment = renderState.getOrDefaultGeckolibData(DataTickets.EQUIPMENT_BY_SLOT, (Supplier<EnumMap<EquipmentSlot, ItemStack>>)() -> new EnumMap<>(EquipmentSlot.class));
 
         //noinspection DataFlowIssue
         equipment.put(EquipmentSlot.MAINHAND, animatable.getMainHandItem());
