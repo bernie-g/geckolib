@@ -56,7 +56,7 @@ import java.util.function.Function;
 ///
 /// @param <T> Entity animatable class type
 /// @param <R> RenderState class type
-public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<T, R> implements GeoRenderer<T, Void, R> {
+public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends EntityRenderState> extends EntityRenderer<T, R> implements GeoRenderer<T, Void, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 	protected final ItemModelResolver itemModelResolver;

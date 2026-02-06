@@ -22,7 +22,7 @@ import software.bernie.geckolib.renderer.base.RenderPassInfo;
 /// Automatically handles transforms for the entity based on its current rotation.
 ///
 /// **<u>NOTE:</u>** This renderer assumes your model is laying flat, pointing directly north
-public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends GeoEntityRenderer<T, R> {
+public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable, R extends EntityRenderState> extends GeoEntityRenderer<T, R> {
     /// Creates a new defaulted renderer instance, using the entity's registered id as the file name for its assets
     public DirectionalProjectileRenderer(EntityRendererProvider.Context context, EntityType<? extends T> entityType) {
         this(context, new DefaultedEntityGeoModel<>(BuiltInRegistries.ENTITY_TYPE.getKey(entityType)));

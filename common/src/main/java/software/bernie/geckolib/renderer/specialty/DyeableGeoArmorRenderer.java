@@ -16,7 +16,6 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.base.BoneSnapshots;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.Set;
 /// A shallow-level dyeable armour renderer for GeckoLib armor models
 ///
 /// This approach avoids needing to change the JSON object format to natively support dyes, which is a whole can of worms
-public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoArmorRenderer<T, R> {
+public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState> extends GeoArmorRenderer<T, R> {
     protected final Set<GeoBone> dyeableBones = new ReferenceOpenHashSet<>();
     protected @Nullable BakedGeoModel lastModel = null;
 

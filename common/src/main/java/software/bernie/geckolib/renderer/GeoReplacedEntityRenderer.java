@@ -53,7 +53,7 @@ import java.util.function.Function;
 /// @param <T> Entity animatable class type. This is the animatable being rendered
 /// @param <E> Entity class type. This is the entity being replaced
 /// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
-public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> extends EntityRenderer<E, R> implements GeoRenderer<T, E, R> {
+public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState> extends EntityRenderer<E, R> implements GeoRenderer<T, E, R> {
 	protected final GeoRenderLayersContainer<T, E, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 	protected final ItemModelResolver itemModelResolver;

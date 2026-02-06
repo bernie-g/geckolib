@@ -50,7 +50,7 @@ import java.util.function.UnaryOperator;
 /// @param <T> Item animatable class type
 /// @param <R> RenderState class type. GeckoLib armor rendering requires [HumanoidRenderState] as the minimum class type
 /// @see GeoItem
-public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
+public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
     protected static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	protected final GeoRenderLayersContainer<T, GeoArmorRenderer.RenderData, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;

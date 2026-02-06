@@ -38,7 +38,7 @@ import java.util.function.Function;
 ///
 /// @param <T> BlockEntity animatable class type
 /// @param <R> RenderState class type
-public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
+public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
