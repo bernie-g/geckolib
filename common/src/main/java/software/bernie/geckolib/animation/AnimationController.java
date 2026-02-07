@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
 import net.minecraft.util.Mth;
-import org.apache.logging.log4j.util.InternalApi;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -400,7 +400,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /// Extract the necessary data for this controller to play its animations during an upcoming render pass.
     ///
     /// If the controller has no animation handling for this render pass, returns null.
-    @InternalApi
+    @ApiStatus.Internal
     public @Nullable ControllerState extractControllerState(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, MolangQueries.Actor<T> actor, GeoModel<T> geoModel) {
         if (!checkControllerState(animatable, renderState, manager, geoModel))
             return null;
@@ -418,7 +418,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /// This is the primary 'logic' point of the controller
     ///
     /// @return true if the controller is actively animating, false if it should do nothing
-    @InternalApi
+    @ApiStatus.Internal
     protected boolean checkControllerState(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, GeoModel<T> geoModel) {
         final boolean wasStopped = this.playState == PlayState.STOP;
         final int transitionTicks = this.transitionTicks;
@@ -453,7 +453,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /// Attempt to initialize the animation state of a new animation for this controller, assuming an animation has been set to play
     ///
     /// Establishes the [AnimationTimeline] and [AnimationPoint] instances for animating
-    @InternalApi
+    @ApiStatus.Internal
     protected void initializeNewAnimation(T animatable, GeoRenderState renderState, GeoModel<T> geoModel, double prevAnimSpeed, int prevTransitionTicks) {
         if (this.currentRawAnimation == null)
             return;
@@ -477,7 +477,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /// Update the [AnimationPoint], trigger animation keyframe markers, and any other maintenance required when traversing the timeline
     ///
     /// This method assumes relevant checks have already been performed to ensure that traversal should occur
-    @InternalApi
+    @ApiStatus.Internal
     protected void progressExistingAnimation(T animatable, GeoRenderState renderState, double prevTimelineTime, double timeAdvanced) {
         if (timeAdvanced == 0 || this.animationPoint == null || this.timeline == null)
             return;
@@ -526,7 +526,7 @@ public class AnimationController<T extends GeoAnimatable> {
     }
 
     /// Compile a set of the [Variable]s that this controller is or could be using for the upcoming render pass
-    @InternalApi
+    @ApiStatus.Internal
     public Set<Variable> getUsedVariables() {
         if (this.animationPoint == null)
             return Set.of();
@@ -543,13 +543,13 @@ public class AnimationController<T extends GeoAnimatable> {
     /// on this controller.
     ///
     /// @param animName The name matching the name the triggered animation was registered with
-    @InternalApi
+    @ApiStatus.Internal
     public boolean isTriggeredAnimation(String animName) {
         return this.currentRawAnimation != null && this.currentRawAnimation.equals(this.triggerableAnimations.get().get(animName));
     }
 
     /// Validates the existence of keyframe handlers on this controller when finding keyframe markers on a given animation
-    @InternalApi
+    @ApiStatus.Internal
     private void validateKeyframeListeners(T animatable) {
         if (this.timeline == null)
             return;
@@ -575,7 +575,7 @@ public class AnimationController<T extends GeoAnimatable> {
     }
 
     /// Because Minecraft sometimes _goes backwards_ one tick, we have to safety check and adjust to avoid invalid backtracking
-    @InternalApi
+    @ApiStatus.Internal
     private double safetyCheckTickLinearity(double currentTick, double compareTo) {
         if (currentTick > compareTo)
             return currentTick;
