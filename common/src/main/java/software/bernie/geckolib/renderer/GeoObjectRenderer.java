@@ -60,13 +60,13 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
     /// The [GeoRenderState] should have already been filled by this stage.
     ///
     /// All GeckoLib renderers should immediately defer their respective default `submit` calls to this, for consistent handling
-    /// @see #performRenderPass(GeoAnimatable, Object, PoseStack, SubmitNodeCollector, CameraRenderState, int, int, RenderPassInfo.BoneUpdater)
-    public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick) {
+    /// @see #performRenderPass(GeoAnimatable, Object, PoseStack, SubmitNodeCollector, CameraRenderState, int, float, RenderPassInfo.BoneUpdater)
+    public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, float partialTick) {
         performRenderPass(animatable, relatedObject, poseStack, renderTasks, cameraState, packedLight, partialTick, null);
     }
 
     /// Initial access point for performing a single render pass, with an optional pre-defined [RenderPassInfo.BoneUpdater] to allow for pre-positioning models from outside the renderer
-    public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, int partialTick,
+    public void performRenderPass(T animatable, O relatedObject, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, int packedLight, float partialTick,
                                   RenderPassInfo.@Nullable BoneUpdater<R> boneUpdater) {
 		R renderState = fillRenderState(animatable, relatedObject, createRenderState(animatable, null), partialTick);
 
