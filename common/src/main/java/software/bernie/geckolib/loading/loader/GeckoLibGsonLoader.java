@@ -71,7 +71,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// Bake a [Geometry] from its [JsonObject] serialized form
     protected static Geometry bakeJsonModel(Identifier path, JsonObject json) throws RuntimeException {
         if (path.getPath().endsWith(".animation.json"))
-            throw new RuntimeException("Found animation file found in models folder! '" + path + "'");
+            throw new IllegalStateException("Found animation file found in models folder! '" + path + "'");
 
         final Geometry geometry = Geometry.GSON.fromJson(json, Geometry.class);
         final ModelFormatVersion matchedVersion = ModelFormatVersion.match(geometry.formatVersion());
@@ -89,7 +89,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// Bake the [ActorAnimations] from a [JsonObject] serialized form
     protected static ActorAnimations bakeJsonAnimations(Identifier path, JsonObject json) throws RuntimeException {
         if (path.getPath().endsWith(".geo.json"))
-            throw new RuntimeException("Found model file in animations folder! '" + path + "'");
+            throw new IllegalStateException("Found model file in animations folder! '" + path + "'");
 
         try {
             return ActorAnimations.GSON.fromJson(json, ActorAnimations.class);
