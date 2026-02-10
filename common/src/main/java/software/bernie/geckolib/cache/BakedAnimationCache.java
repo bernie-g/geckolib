@@ -13,6 +13,11 @@ import java.util.Map;
 ///
 /// @param cache The baked animations map as loaded from the resource files
 public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
+    /// @return The size of the animation cache
+    public int size() {
+        return this.cache.size();
+    }
+
     /// Get a baked [Animation] from the animation cache by its file id and animation name
     ///
     /// @param animationFile The file identifier of the animations file - (E.G. `mymod:entity/my_mob`)
@@ -53,7 +58,7 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
     }
 
     /// Strips out unnecessary prefix/suffix components of an animation resource path.
-    /// Typically these are leftovers from previous versions of GeckoLib.
+    /// Typically, these are leftovers from previous versions of GeckoLib.
     ///
     /// @deprecated To be removed once a sufficient time has passed to allow devs to fix their paths
     @ApiStatus.Internal
