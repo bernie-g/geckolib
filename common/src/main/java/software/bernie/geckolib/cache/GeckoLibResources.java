@@ -14,6 +14,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
+import software.bernie.geckolib.loading.loader.GeckoLibGsonLoader;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.service.GeckoLibLoader;
@@ -42,7 +43,7 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	public static final Pattern PREFIX_STRIPPER = Pattern.compile("^(geckolib/)((animations/)|(models/))?");
 	public static final PreparableReloadListener.StateKey<PendingResources> STATE_KEY = new PreparableReloadListener.StateKey<>();
 	@SuppressWarnings("unchecked")
-    private static Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>>[] LOADERS = new Pair[1];
+    private static Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>>[] LOADERS = new Pair[] {Pair.<GeckoLibLoader.Predicate, GeckoLibLoader<?>>of((_, _) -> true, new GeckoLibGsonLoader())};
 
 	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
 	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
@@ -71,6 +72,8 @@ public final class GeckoLibResources implements PreparableReloadListener {
 		ArrayUtils.reverse(copy);
 
 		LOADERS = copy;
+
+		GeckoLibConstants.LOGGER.info("Added custom resource loader {}", loader.getClass().getSimpleName());
 	}
 
 	@Override
