@@ -15,13 +15,35 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /// Baked model object for GeckoLib models
-///
-/// @param topLevelBones The root bone(s) for this model, as defined in the model .json
-/// @param properties The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
-/// @param boneLookup A deferred lookup cache of every bone by its name for quick-retrieval
-public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
+@SuppressWarnings("ClassCanBeRecord")
+public class BakedGeoModel {
+	protected final GeoBone[] topLevelBones;
+	protected final ModelProperties properties;
+	protected final Supplier<Map<String, GeoBone>> boneLookup;
+
+	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
+		this.topLevelBones = topLevelBones;
+		this.properties = properties;
+		this.boneLookup = boneLookup;
+	}
+
 	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties) {
 		this(topLevelBones, properties, createBoneMap(topLevelBones));
+	}
+
+	/// @return The root bone(s) for this model, as defined in the model .json
+	public GeoBone[] topLevelBones() {
+		return this.topLevelBones;
+	}
+
+	/// @return The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
+	public ModelProperties properties() {
+		return this.properties;
+	}
+
+	/// @return A deferred lookup cache of every bone by its name for quick-retrieval
+	public Supplier<Map<String, GeoBone>> boneLookup() {
+		return this.boneLookup;
 	}
 
 	/// Gets a bone from this model by name
@@ -40,7 +62,7 @@ public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties,
     }
 
 	/// Create the bone map for this model, memoizing it as most models won't need it at all
-	private static Supplier<Map<String, GeoBone>> createBoneMap(GeoBone[] topLevelBones) {
+	protected static Supplier<Map<String, GeoBone>> createBoneMap(GeoBone[] topLevelBones) {
 		return Suppliers.memoize(() -> {
 			Object2ReferenceMap<String, GeoBone> boneMap = new Object2ReferenceOpenHashMap<>();
 
@@ -57,7 +79,7 @@ public record BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties,
 	}
 
 	/// Recursively collect all child bones of a bone
-	private static List<GeoBone> collectChildBones(GeoBone bone) {
+	protected static List<GeoBone> collectChildBones(GeoBone bone) {
 		List<GeoBone> bones = new ObjectArrayList<>();
 
 		for (GeoBone child : bone.children()) {

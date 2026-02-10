@@ -16,14 +16,54 @@ import java.util.Set;
 /// A compiled animation instance for use by the [AnimationController]
 ///
 /// Modifications or extensions of a compiled Animation are not supported, and therefore an instance of `Animation` is considered final and immutable
-///
-/// @param name The name of the animation, as defined in the animation .json
-/// @param length The length of the animation (in seconds)
-/// @param loopType The default loop type of this animation
-/// @param boneAnimations The keyframes of this animation, organized by bone groups
-/// @param usedVariables The [Variable]s used by this animation
-/// @param keyframeMarkers The keyframe instruction markers for this animation, as defined in the animation .json
-public record Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Set<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
+@SuppressWarnings("ClassCanBeRecord")
+public class Animation {
+	protected final String name;
+	protected final double length;
+	protected final LoopType loopType;
+	protected final BoneAnimation[] boneAnimations;
+	protected final Set<Variable> usedVariables;
+	protected final KeyframeMarkers keyframeMarkers;
+
+	public Animation(String name, double length, LoopType loopType, BoneAnimation[] boneAnimations, Set<Variable> usedVariables, KeyframeMarkers keyframeMarkers) {
+		this.name = name;
+		this.length = length;
+		this.loopType = loopType;
+		this.boneAnimations = boneAnimations;
+		this.usedVariables = usedVariables;
+		this.keyframeMarkers = keyframeMarkers;
+	}
+
+	/// @return The name of the animation, as defined in the animation .json
+	public String name() {
+		return this.name;
+	}
+
+	/// @return The length of the animation (in seconds)
+	public double length() {
+		return this.length;
+	}
+
+	/// @return The default loop type of this animation
+	public LoopType loopType() {
+		return this.loopType;
+	}
+
+	/// @return The keyframes of this animation, organized by bone groups
+	public BoneAnimation[] boneAnimations() {
+		return this.boneAnimations;
+	}
+
+	/// @return The [Variable]s used by this animation
+	public Set<Variable> usedVariables() {
+		return this.usedVariables;
+	}
+
+	/// @return The keyframe instruction markers for this animation, as defined in the animation .json
+	public KeyframeMarkers keyframeMarkers() {
+		return this.keyframeMarkers;
+	}
+
 	/// Create a new Animation instance from the given values, automatically compiling the [#usedVariables] list
 	///
 	/// @param name The name of the animation
