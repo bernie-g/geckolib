@@ -1,7 +1,10 @@
 package software.bernie.geckolib.util;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
+
+import java.util.Collection;
 
 /// Helper class for miscellaneous functions that don't fit into the other util classes
 public final class MiscUtil {
@@ -36,6 +39,32 @@ public final class MiscUtil {
         end = diff > 180 || diff < -180 ? start + Math.copySign(360 - Math.abs(diff), diff) : end;
 
         return Mth.lerp(delta, start, end);
+    }
+
+    /// Combine one or more collections into a new collection holding all elements from all collections
+    ///
+    /// Retains iteration order of inserted elements if the provided collections are ordered
+    @SafeVarargs
+    public static <E, C extends Collection<E>> C mergeCollections(Int2ObjectFunction<C> factory, C... collections) {
+        return switch (collections.length) {
+            case 0 -> factory.apply(0);
+            case 1 -> collections[0];
+            default -> {
+                int size = 0;
+
+                for (C collection : collections) {
+                    size += collection.size();
+                }
+
+                C merged = factory.apply(size);
+
+                for (C collection : collections) {
+                    merged.addAll(collection);
+                }
+
+                yield merged;
+            }
+        };
     }
 
     private MiscUtil() {}
