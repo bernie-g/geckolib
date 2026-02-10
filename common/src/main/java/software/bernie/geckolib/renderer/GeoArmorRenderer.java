@@ -26,6 +26,7 @@ import software.bernie.geckolib.GeckoLibClientServices;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.model.DefaultedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
@@ -267,6 +268,13 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         final int renderColor = renderPassInfo.renderColor();
         final R renderState = renderPassInfo.renderState();
         final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+        final BakedGeoModel model = renderPassInfo.model();
+
+        if (model.isMissingno()) {
+            submitMissingModelRender(renderPassInfo, renderTasks);
+
+            return;
+        }
 
         renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack = renderPassInfo.poseStack();

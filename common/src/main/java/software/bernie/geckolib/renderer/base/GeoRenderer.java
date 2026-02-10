@@ -13,6 +13,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.state.AnimationTest;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.value.Variable;
@@ -169,6 +170,13 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
         final int packedLight = renderPassInfo.packedLight();
         final int packedOverlay = renderPassInfo.packedOverlay();
         final int renderColor = renderPassInfo.renderColor();
+		final BakedGeoModel model = renderPassInfo.model();
+
+		if (model.isMissingno()) {
+			submitMissingModelRender(renderPassInfo, renderTasks);
+
+			return;
+		}
 
         renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, vertexConsumer) -> {
             final PoseStack poseStack = renderPassInfo.poseStack();

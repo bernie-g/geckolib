@@ -1,16 +1,28 @@
 package software.bernie.geckolib.cache;
 
+import com.google.common.base.Suppliers;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoQuad;
+import software.bernie.geckolib.cache.model.GeoVertex;
+import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
+import software.bernie.geckolib.cache.model.cuboid.GeoCube;
+import software.bernie.geckolib.loading.json.raw.ModelProperties;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 /// Container record for GeckoLib's baked model cache
 ///
 /// @param cache The baked models map as loaded from the resource files
 public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
+    public static final Supplier<BakedGeoModel> MISSINGNO = createMissingModel();
+
     /// @return The size of the model cache
     public int size() {
         return this.cache.size();
@@ -31,8 +43,11 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
                 model = this.cache.get(strippedPath);
             }
 
-            if (model == null)
-                throw new IllegalArgumentException("Unable to find model file: " + modelFile);
+            if (model == null) {
+                GeckoLibConstants.LOGGER.error("Unable to find model: {}", modelFile);
+
+                return MISSINGNO.get();
+            }
         }
 
         return model;
@@ -60,5 +75,33 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
             path = path.substring(0, path.length() - 4);
 
         return !path.equals(legacyPath.getPath()) ? legacyPath.withPath(path) : legacyPath;
+    }
+
+    /// Create the "missingno" cube model for rendering when a model is not found
+    private static Supplier<BakedGeoModel> createMissingModel() {
+        return Suppliers.memoize(() -> {
+            final GeoVertex[] vertices = new GeoVertex[] {
+                    new GeoVertex(-0.5f, 1f, 0.5f, 1f, 0f),
+                    new GeoVertex(-0.5f, 1f, -0.5f, 0, 0f),
+                    new GeoVertex(-0.5f, 0, -0.5f, 0, 1f),
+                    new GeoVertex(-0.5f, 0, 0.5f, 1f, 1f),
+            };
+            final GeoQuad[] quads = new GeoQuad[] {
+                    new GeoQuad(vertices, -1, 0, 0, Direction.WEST),
+                    new GeoQuad(vertices, 1, 0, 0, Direction.EAST),
+                    new GeoQuad(vertices, 0, 0, -1, Direction.NORTH),
+                    new GeoQuad(vertices, 0, 0, 1, Direction.SOUTH),
+                    new GeoQuad(vertices, 0, 1, 0, Direction.UP),
+                    new GeoQuad(vertices, 0, -1, 0, Direction.DOWN),
+            };
+            final GeoBone[] topLevelBones = new GeoBone[] {
+                    new CuboidGeoBone(null, "Main", new GeoBone[0], new GeoCube[] {
+                            new GeoCube(quads, Vec3.ZERO, Vec3.ZERO, new Vec3(16, 16, 16))
+                    }, 0, 0, 0, 0, 0, 0)
+            };
+            final ModelProperties modelProperties = new ModelProperties("geometry.unknown", 2.5f, 2.5f, new Vec3(0, 0.75f, 0), 16, 16);
+
+            return new BakedGeoModel(topLevelBones, modelProperties);
+        });
     }
 }

@@ -1,7 +1,10 @@
 package software.bernie.geckolib.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
@@ -176,6 +179,20 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
                 poseStack.popPose();
             }
 
+            poseStack.popPose();
+        });
+    }
+
+    /// Render the 'missing model' cube
+    ///
+    /// Should be called when a valid cannot be found for a GeckoLib render pass, to represent a missing model
+    default void submitMissingModelRender(RenderPassInfo<R> renderPassInfo, OrderedSubmitNodeCollector renderTasks) {
+        renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), RenderTypes.entityCutout(MissingTextureAtlasSprite.getLocation()), (pose, vertexConsumer) -> {
+            final PoseStack poseStack = renderPassInfo.poseStack();
+
+            poseStack.pushPose();
+            poseStack.last().set(pose);
+            renderPassInfo.renderPosed(() -> renderPassInfo.model().render(renderPassInfo, vertexConsumer, renderPassInfo.packedLight(), renderPassInfo.packedOverlay(), renderPassInfo.renderColor()));
             poseStack.popPose();
         });
     }

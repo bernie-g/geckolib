@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import software.bernie.geckolib.cache.BakedModelCache;
 import software.bernie.geckolib.loading.json.raw.ModelProperties;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
@@ -44,6 +45,11 @@ public class BakedGeoModel {
 	/// @return A deferred lookup cache of every bone by its name for quick-retrieval
 	public Supplier<Map<String, GeoBone>> boneLookup() {
 		return this.boneLookup;
+	}
+
+	/// @return true if this model is the 'missing model', or false if it is a normal GeckoLib model
+	public boolean isMissingno() {
+		return this == BakedModelCache.MISSINGNO.get();
 	}
 
 	/// Gets a bone from this model by name
