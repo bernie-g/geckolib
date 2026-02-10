@@ -12,10 +12,12 @@ import software.bernie.geckolib.animatable.instance.InstancedAnimatableInstanceC
 import software.bernie.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import software.bernie.geckolib.animation.object.EasingType;
 import software.bernie.geckolib.animation.object.LoopType;
+import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
+import software.bernie.geckolib.service.GeckoLibLoader;
 
 import java.util.Objects;
 
@@ -85,6 +87,15 @@ public final class GeckoLibUtil {
 	/// @return The dataTicket you passed in
 	synchronized public static <D> SerializableDataTicket<D> addDataTicket(SerializableDataTicket<D> dataTicket) {
 		return DataTickets.registerSerializable(dataTicket);
+	}
+
+	/// Register a custom [GeckoLibLoader] with GeckoLib for handling custom resource loading
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param predicate A predicate that determines whether the given resource should be handled by the associated loader
+	synchronized public static void addResourceLoader(GeckoLibLoader.Predicate predicate, GeckoLibLoader<?> loader) {
+		GeckoLibResources.addLoader(predicate, loader);
 	}
 
 	/// Perform an [Object#equals(Object)] check on two [PatchedDataComponentMap]s,
