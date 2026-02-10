@@ -124,7 +124,6 @@ tasks.withType<Wrapper>().configureEach {
 tasks.withType<JavaCompile>().configureEach {
     this.options.encoding = "UTF-8"
     this.options.release.set(java.toolchain.languageVersion.get().asInt())
-
 }
 
 tasks.withType<Test>().configureEach {
