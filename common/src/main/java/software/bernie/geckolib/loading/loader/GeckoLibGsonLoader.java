@@ -24,7 +24,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param resource The resource reference to load
     /// @return An instance of type `T` ready for baking
     @Override
-    public JsonObject deserializeGeckoLibModelFile(Identifier id, Resource resource) {
+    public JsonObject deserializeGeckoLibModelFile(Identifier id, Resource resource) throws RuntimeException {
         return readResourceAsJson(id, resource);
     }
 
@@ -34,7 +34,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param resource The resource reference to load
     /// @return An instance of type `T` ready for baking
     @Override
-    public JsonObject deserializeGeckoLibAnimationFile(Identifier id, Resource resource) {
+    public JsonObject deserializeGeckoLibAnimationFile(Identifier id, Resource resource) throws RuntimeException {
         return readResourceAsJson(id, resource);
     }
 
@@ -44,8 +44,8 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param id The resource path of the animations file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibModelFile]
     @Override
-    public BakedGeoModel bakeGeckoLibModelFile(Identifier id, JsonObject raw) {
-        return bakeJsonModel(id, raw).defaultBake(id);
+    public BakedGeoModel bakeGeckoLibModelFile(Identifier id, JsonObject raw) throws RuntimeException {
+        return bakeJsonModel(id, raw).bake(id);
     }
 
     /// Bake a GeckoLib animations file into its final [BakedAnimations] form from the raw `T` type instance
@@ -54,8 +54,8 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param id The resource path of the model file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibAnimationFile]
     @Override
-    public BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, JsonObject raw) {
-        return bakeJsonAnimations(id, raw).defaultBake(id);
+    public BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, JsonObject raw) throws RuntimeException {
+        return bakeJsonAnimations(id, raw).bake(id);
     }
 
     /// Read a single resource into its [JsonObject] form

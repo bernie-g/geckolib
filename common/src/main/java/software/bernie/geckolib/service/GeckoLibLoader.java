@@ -19,28 +19,28 @@ public interface GeckoLibLoader<T> {
     /// @param id The resource path of the resource to load
     /// @param resource The resource reference to load
     /// @return An instance of type `T` ready for baking
-    T deserializeGeckoLibModelFile(Identifier id, Resource resource);
+    T deserializeGeckoLibModelFile(Identifier id, Resource resource) throws RuntimeException;
 
     /// Read a GeckoLib animations resource from disk into memory, deserializing it into type `T`
     ///
     /// @param id The resource path of the resource to load
     /// @param resource The resource reference to load
     /// @return An instance of type `T` ready for baking
-    T deserializeGeckoLibAnimationFile(Identifier id, Resource resource);
+    T deserializeGeckoLibAnimationFile(Identifier id, Resource resource) throws RuntimeException;
 
     /// Bake a GeckoLib model file into its final [BakedGeoModel] form from the raw `T` type instance
     /// read into memory in [#deserializeGeckoLibModelFile]
     ///
     /// @param id The resource path of the animations file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibModelFile]
-    BakedGeoModel bakeGeckoLibModelFile(Identifier id, T raw);
+    BakedGeoModel bakeGeckoLibModelFile(Identifier id, T raw) throws RuntimeException;
 
     /// Bake a GeckoLib animations file into its final [BakedAnimations] form from the raw `T` type instance
     /// read into memory in [#deserializeGeckoLibAnimationFile]
     ///
     /// @param id The resource path of the model file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibAnimationFile]
-    BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, T raw);
+    BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, T raw) throws RuntimeException;
 
     /// Predicate interface for determining whether a given [GeckoLibLoader] should handle a specific resource
     @FunctionalInterface
