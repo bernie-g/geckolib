@@ -23,8 +23,7 @@ import software.bernie.geckolib.util.JsonUtil;
 /// @param textureHeight The height of the texture for this model. Technically optional, but GeckoLib requires it
 /// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
-public record GeometryDescription(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset,
-								  int textureWidth, int textureHeight) {
+public record GeometryDescription(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset, int textureWidth, int textureHeight) {
 	/// Parse a GeometryDescription instance from raw .json input via [Gson]
 	public static JsonDeserializer<GeometryDescription> gsonDeserializer() throws JsonParseException {
 		return (json, type, context) -> {
@@ -40,8 +39,7 @@ public record GeometryDescription(String identifier, @Nullable Float visibleBoun
 				GeckoLibConstants.LOGGER.warn("GeckoLib model {} does not have texture dimensions specified, likely an invalid geometry json!", identifier);
 
 			return new GeometryDescription(identifier == null ? String.valueOf(obj.hashCode()) : identifier,
-										   visibleBoundsWidth, visibleBoundsHeight, visibleBoundsOffset,
-										   textureWidth, textureHeight);
+										   visibleBoundsWidth, visibleBoundsHeight, visibleBoundsOffset, textureWidth, textureHeight);
 		};
 	}
 }
