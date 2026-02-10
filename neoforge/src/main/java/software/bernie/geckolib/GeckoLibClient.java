@@ -13,6 +13,6 @@ import software.bernie.geckolib.cache.GeckoLibResources;
 public final class GeckoLibClient {
     @SubscribeEvent
     public static void registerReloadListeners(final AddClientReloadListenersEvent ev) {
-        ev.addListener(GeckoLibResources.RELOAD_LISTENER_ID, GeckoLibResources::reload);
+        ev.addListener(GeckoLibResources.RELOAD_LISTENER_ID, new GeckoLibResources());
     }
 }

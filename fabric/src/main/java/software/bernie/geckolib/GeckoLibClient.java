@@ -15,7 +15,7 @@ import software.bernie.geckolib.network.packet.MultiloaderPacket;
 public class GeckoLibClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(GeckoLibResources.RELOAD_LISTENER_ID, GeckoLibResources::reload);
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(GeckoLibResources.RELOAD_LISTENER_ID, new GeckoLibResources());
     }
 
     @ApiStatus.Internal
