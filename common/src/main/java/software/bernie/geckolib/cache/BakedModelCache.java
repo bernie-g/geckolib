@@ -11,6 +11,11 @@ import java.util.Map;
 ///
 /// @param cache The baked models map as loaded from the resource files
 public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
+    /// @return The size of the model cache
+    public int size() {
+        return this.cache.size();
+    }
+
     /// Get a [BakedGeoModel] from the model cache by its file id
     ///
     /// @param modelFile The file identifier of the animations file - (E.G. `mymod:entity/my_mob`)
