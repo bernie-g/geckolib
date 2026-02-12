@@ -2,13 +2,10 @@ package software.bernie.geckolib.cache.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-import org.joml.Matrix4f;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 import software.bernie.geckolib.util.MiscUtil;
@@ -27,6 +24,7 @@ public abstract class GeoBone {
 	protected final String name;
 
     protected final GeoBone[] children;
+    protected final GeoLocator[] locators;
 
     protected final float pivotX;
     protected final float pivotY;
@@ -41,10 +39,12 @@ public abstract class GeoBone {
     @ApiStatus.Internal
     public RenderPassInfo.BonePositionListener @Nullable[] positionListeners = null;
 
-    protected GeoBone(@Nullable GeoBone parent, String name, GeoBone[] children, float pivotX, float pivotY, float pivotZ, float rotX, float rotY, float rotZ) {
+    protected GeoBone(@Nullable GeoBone parent, String name, GeoBone[] children, GeoLocator[] locators,
+                      float pivotX, float pivotY, float pivotZ, float rotX, float rotY, float rotZ) {
         this.parent = parent;
         this.name = name;
         this.children = children;
+        this.locators = locators;
         this.pivotX = pivotX;
         this.pivotY = pivotY;
         this.pivotZ = pivotZ;
@@ -122,8 +122,7 @@ public abstract class GeoBone {
         final PoseStack poseStack = renderPassInfo.poseStack();
 
         poseStack.pushPose();
-        RenderUtil.prepMatrixForBone(poseStack, this);
-        updateBonePositionListeners(poseStack, renderPassInfo);
+        RenderUtil.prepMatrixForBoneAndUpdateListeners(poseStack, this, renderPassInfo);
 
         render(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
         renderChildren(renderPassInfo, poseStack, vertexConsumer, packedLight, packedOverlay, renderColor);
@@ -144,19 +143,11 @@ public abstract class GeoBone {
     /// Pass the current render position to any applied [RenderPassInfo.BonePositionListener]s
     @ApiStatus.Internal
     public void updateBonePositionListeners(PoseStack poseStack, RenderPassInfo<?> renderPassInfo) {
-        if (this.positionListeners != null) {
-            final Matrix4f bonePose = new Matrix4f(poseStack.last().pose());
-            final Matrix4f localPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getPreRenderMatrixState());
-            final Matrix4f modelPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getModelRenderMatrixState());
-            final Vec3 position = renderPassInfo.renderState().getGeckolibData(DataTickets.POSITION);
-            final Matrix4f worldPose = position == null ? null : RenderUtil.addPosToMatrix(new Matrix4f(localPose), position);
-            final Vec3 localPos = RenderUtil.renderPoseToPosition(localPose, 1, 1, 1);
-            final Vec3 modelPos = RenderUtil.renderPoseToPosition(modelPose, -16, 16, 16);
-            final Vec3 worldPos = worldPose == null ? null : RenderUtil.renderPoseToPosition(worldPose, 1, 1, 1);
+        if (this.positionListeners != null)
+            RenderUtil.providePositionsToListeners(poseStack, renderPassInfo, this.positionListeners);
 
-            for (int i = 0; i < this.positionListeners.length; i++) {
-                this.positionListeners[i].accept(worldPos, modelPos, localPos);
-            }
+        for (GeoLocator locator : this.locators) {
+            locator.updatePositionListeners(poseStack, renderPassInfo);
         }
     }
 

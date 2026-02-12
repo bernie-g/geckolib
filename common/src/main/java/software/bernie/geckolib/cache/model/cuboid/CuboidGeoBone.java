@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
 
@@ -11,8 +12,8 @@ import software.bernie.geckolib.renderer.base.RenderPassInfo;
 public final class CuboidGeoBone extends GeoBone {
     public final GeoCube[] cubes;
 
-    public CuboidGeoBone(@Nullable GeoBone parent, String name, GeoBone[] children, GeoCube[] cubes, float pivotX, float pivotY, float pivotZ, float rotX, float rotY, float rotZ) {
-        super(parent, name, children, pivotX, pivotY, pivotZ, rotX, rotY, rotZ);
+    public CuboidGeoBone(@Nullable GeoBone parent, String name, GeoBone[] children, GeoCube[] cubes, GeoLocator[] locators, float pivotX, float pivotY, float pivotZ, float rotX, float rotY, float rotZ) {
+        super(parent, name, children, locators, pivotX, pivotY, pivotZ, rotX, rotY, rotZ);
 
         this.cubes = cubes;
     }

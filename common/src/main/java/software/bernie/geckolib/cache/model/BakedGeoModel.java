@@ -19,17 +19,19 @@ import java.util.function.Supplier;
 @SuppressWarnings("ClassCanBeRecord")
 public class BakedGeoModel {
 	protected final GeoBone[] topLevelBones;
+	protected final Map<String, GeoLocator> locators;
 	protected final ModelProperties properties;
 	protected final Supplier<Map<String, GeoBone>> boneLookup;
 
-	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
+	public BakedGeoModel(GeoBone[] topLevelBones, Map<String, GeoLocator> locators, ModelProperties properties, Supplier<Map<String, GeoBone>> boneLookup) {
 		this.topLevelBones = topLevelBones;
+		this.locators = locators;
 		this.properties = properties;
 		this.boneLookup = boneLookup;
 	}
 
-	public BakedGeoModel(GeoBone[] topLevelBones, ModelProperties properties) {
-		this(topLevelBones, properties, createBoneMap(topLevelBones));
+	public BakedGeoModel(GeoBone[] topLevelBones, Map<String, GeoLocator> locators, ModelProperties properties) {
+		this(topLevelBones, locators, properties, createBoneMap(topLevelBones));
 	}
 
 	/// @return The root bone(s) for this model, as defined in the model .json
@@ -58,6 +60,14 @@ public class BakedGeoModel {
 	/// @return An [Optional] containing the [GeoBone] if one matches, otherwise an empty Optional
 	public Optional<GeoBone> getBone(String name) {
 		return Optional.ofNullable(this.boneLookup.get().get(name));
+	}
+
+	/// Gets a locator from this model by name
+	///
+	/// @param name The name of the locator
+	/// @return An [Optional] containing the [GeoLocator] if one matches, otherwise an empty Optional
+	public Optional<GeoLocator> getLocator(String name) {
+		return Optional.ofNullable(this.locators.get(name));
 	}
 
     /// Render this model

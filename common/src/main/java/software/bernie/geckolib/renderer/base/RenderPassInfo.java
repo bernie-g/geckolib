@@ -14,6 +14,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.model.GeoModel;
@@ -48,6 +49,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
     protected final DeferredCache<List<BoneUpdater<R>>, BoneSnapshot[]> boneUpdates = new DeferredCache<>(new ObjectArrayList<>(), this::compileBoneUpdates);
     protected final Map<GeoBone, List<PerBoneRender<R>>> boneRenderTasks = new Reference2ObjectArrayMap<>();
     protected final Map<GeoBone, List<BonePositionListener>> bonePositionListeners = new Reference2ObjectArrayMap<>();
+    protected final Map<GeoLocator, List<BonePositionListener>> locatorPositionListeners = new Reference2ObjectArrayMap<>();
 
     /// @see #create
     /// @param renderer The GeoRenderer instance this instance is for
@@ -179,20 +181,35 @@ public class RenderPassInfo<R extends GeoRenderState> {
         this.bonePositionListeners.computeIfAbsent(bone, key -> new ObjectArrayList<>()).add(listener);
     }
 
+    /// Add a BonePositionListener for a [GeoLocator] for this render pass
+    ///
+    /// Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
+    public void addLocatorPositionListener(String boneName, BonePositionListener listener) {
+        this.model.getLocator(boneName)
+                .ifPresent(locator -> this.locatorPositionListeners
+                        .computeIfAbsent(locator, _ -> new ObjectArrayList<>())
+                        .add(listener));
+    }
+
     /// Wrap a render task, posing the model using this RenderPassInfo's bone updates
     ///
     /// All bone
-    @SuppressWarnings("ForLoopReplaceableByForEach")
     public void renderPosed(Runnable renderTask) {
         final BoneSnapshot[] updates = this.boneUpdates.compute();
 
-        for (int i = 0; i < updates.length; i++) {
-            updates[i].apply();
+        for (BoneSnapshot update : updates) {
+            update.apply();
         }
 
         if (!this.bonePositionListeners.isEmpty()) {
             for (Map.Entry<GeoBone, List<BonePositionListener>> boneListeners : this.bonePositionListeners.entrySet()) {
                 boneListeners.getKey().positionListeners = boneListeners.getValue().toArray(new BonePositionListener[0]);
+            }
+        }
+
+        if (!this.locatorPositionListeners.isEmpty()) {
+            for (Map.Entry<GeoLocator, List<BonePositionListener>> locatorListeners : this.locatorPositionListeners.entrySet()) {
+                locatorListeners.getKey().positionListeners = locatorListeners.getValue().toArray(new BonePositionListener[0]);
             }
         }
 
@@ -203,13 +220,19 @@ public class RenderPassInfo<R extends GeoRenderState> {
             GeckoLibConstants.LOGGER.error("Error while rendering GeckoLib model", ex);
         }
         finally {
-            for (int i = 0; i < updates.length; i++) {
-                updates[i].cleanup();
+            for (BoneSnapshot snapshot : updates) {
+                snapshot.cleanup();
             }
 
             if (!this.bonePositionListeners.isEmpty()) {
                 for (GeoBone bone : this.bonePositionListeners.keySet()) {
                     bone.positionListeners = null;
+                }
+            }
+
+            if (!this.locatorPositionListeners.isEmpty()) {
+                for (GeoLocator locator : this.locatorPositionListeners.keySet()) {
+                    locator.positionListeners = null;
                 }
             }
         }
