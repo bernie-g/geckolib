@@ -8,9 +8,6 @@ import java.util.Collection;
 
 /// Helper class for miscellaneous functions that don't fit into the other util classes
 public final class MiscUtil {
-    public static final float WORLD_TO_MODEL_SIZE = 1 / 16f;
-    public static final float MODEL_TO_WORLD_SIZE = 16f;
-
     /// Converts a [Direction] to a rotational float for rotation purposes
     public static float getDirectionAngle(Direction direction) {
         return switch(direction) {
