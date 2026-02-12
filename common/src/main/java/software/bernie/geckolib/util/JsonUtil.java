@@ -19,15 +19,15 @@ public final class JsonUtil {
     /// Convert the given 'world units' value to its equivalent 'model units' value
     ///
     /// 1 block = 16 model units across
-    public double worldToModelUnits(double value) {
-        return value * 16;
+    public static double worldToModelUnits(double value) {
+        return value * 16d;
     }
 
     /// Convert the given 'model units' value to its equivalent 'world units' value
     ///
     /// 1 block = 16 model units across
-    public double modelToWorldUnits(double value) {
-        return value / 16;
+    public static double modelToWorldUnits(double value) {
+        return value / 16d;
     }
 
     /// Parse an Either instance from a [JsonObject], throwing an exception if neither predicate matches
