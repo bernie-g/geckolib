@@ -25,8 +25,10 @@ import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.cache.model.GeoQuad;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.*;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.RenderPassInfo;
@@ -124,6 +126,25 @@ public final class RenderUtil {
                 .m32(baseMatrix.m32() + (float)pos.z);
 
         return baseMatrix;
+    }
+
+    /// Extract the local, model, and world positions from the given [RenderPassInfo] and [PoseStack] to provide to
+    /// any listening [RenderPassInfo.BonePositionListener]s
+    ///
+    /// Used for both [GeoBone]s and [GeoLocator]s
+    public static void providePositionsToListeners(PoseStack poseStack, RenderPassInfo<?> renderPassInfo, RenderPassInfo.BonePositionListener[] listeners) {
+        final Matrix4f bonePose = new Matrix4f(poseStack.last().pose());
+        final Matrix4f localPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getPreRenderMatrixState());
+        final Matrix4f modelPose = RenderUtil.extractPoseFromRoot(bonePose, renderPassInfo.getModelRenderMatrixState());
+        final Vec3 position = renderPassInfo.renderState().getGeckolibData(DataTickets.POSITION);
+        final Matrix4f worldPose = position == null ? null : RenderUtil.addPosToMatrix(new Matrix4f(localPose), position);
+        final Vec3 localPos = RenderUtil.renderPoseToPosition(localPose, 1, 1, 1);
+        final Vec3 modelPos = RenderUtil.renderPoseToPosition(modelPose, -16, 16, 16);
+        final Vec3 worldPos = worldPose == null ? null : RenderUtil.renderPoseToPosition(worldPose, 1, 1, 1);
+
+        for (RenderPassInfo.BonePositionListener positionListener : listeners) {
+            positionListener.accept(worldPos, modelPos, localPos);
+        }
     }
 	
 	/// Translates the provided [PoseStack] to face towards the given [Entity]'s rotation
