@@ -39,6 +39,11 @@ public class BakedGeoModel {
 		return this.topLevelBones;
 	}
 
+	/// @return The locators in this model, mapped to their name
+	public Map<String, GeoLocator> locators() {
+		return this.locators;
+	}
+
 	/// @return The additional properties collection for the model. These aren't typically used by GeckoLib itself, and are just here for end-users if needed
 	public ModelProperties properties() {
 		return this.properties;
@@ -47,11 +52,6 @@ public class BakedGeoModel {
 	/// @return A deferred lookup cache of every bone by its name for quick-retrieval
 	public Supplier<Map<String, GeoBone>> boneLookup() {
 		return this.boneLookup;
-	}
-
-	/// @return true if this model is the 'missing model', or false if it is a normal GeckoLib model
-	public boolean isMissingno() {
-		return this == BakedModelCache.MISSINGNO.get();
 	}
 
 	/// Gets a bone from this model by name
@@ -68,6 +68,13 @@ public class BakedGeoModel {
 	/// @return An [Optional] containing the [GeoLocator] if one matches, otherwise an empty Optional
 	public Optional<GeoLocator> getLocator(String name) {
 		return Optional.ofNullable(this.locators.get(name));
+	}
+
+	//<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
+
+	/// @return true if this model is the 'missing model', or false if it is a normal GeckoLib model
+	public boolean isMissingno() {
+		return this == BakedModelCache.MISSINGNO.get();
 	}
 
     /// Render this model
@@ -105,4 +112,5 @@ public class BakedGeoModel {
 
 		return bones;
 	}
+	//</editor-fold>
 }

@@ -76,6 +76,8 @@ public class GeoLocator {
         return this.rotZ;
     }
 
+    //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
+
     /// Pass the current render position to any applied [RenderPassInfo.BonePositionListener]s
     @ApiStatus.Internal
     public void updatePositionListeners(PoseStack poseStack, RenderPassInfo<?> renderPassInfo) {
@@ -98,4 +100,5 @@ public class GeoLocator {
             poseStack.popPose();
         }
     }
+    //</editor-fold>
 }

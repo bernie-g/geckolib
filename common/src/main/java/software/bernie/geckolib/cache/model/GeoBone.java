@@ -68,6 +68,11 @@ public abstract class GeoBone {
         return this.children;
     }
 
+    /// @return The locators on this bone
+    public GeoLocator[] locators() {
+        return this.locators;
+    }
+
     /// @return The pivot x coordinate of this bone, relative to its parent bone
     public float pivotX() {
         return this.pivotX;
@@ -97,6 +102,8 @@ public abstract class GeoBone {
     public float baseRotZ() {
         return this.baseRotZ;
     }
+
+    //<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
 
     /// Render this GeoBone using the provided [RenderPassInfo]
     public abstract <R extends GeoRenderState> void render(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor);
@@ -179,4 +186,5 @@ public abstract class GeoBone {
 	public int hashCode() {
 		return Objects.hash(this.parent == null ? "" : this.parent, this.name, Arrays.hashCode(this.children), this.pivotX, this.pivotY, this.pivotZ);
 	}
+    //</editor-fold>
 }
