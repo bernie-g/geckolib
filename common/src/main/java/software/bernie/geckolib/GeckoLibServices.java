@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 public final class GeckoLibServices {
     public static final GeckoLibPlatform PLATFORM = load(GeckoLibPlatform.class);
     public static final GeckoLibNetworking NETWORK = load(GeckoLibNetworking.class);
-    //private static final GeckoLibLoader LOADER = load(GeckoLibLoader.class, null);
 
     private static <T> T load(Class<T> clazz) {
         return load(clazz, null);
