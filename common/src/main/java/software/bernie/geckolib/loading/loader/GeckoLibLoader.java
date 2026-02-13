@@ -1,4 +1,4 @@
-package software.bernie.geckolib.service;
+package software.bernie.geckolib.loading.loader;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -9,9 +9,8 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.util.function.BiPredicate;
 
-/// Replaceable SPI for alternate deserialization schemes, replacing GeckoLib's default [Gson] handling
+/// GeckoLib interface for alternate deserialization schemes, replacing GeckoLib's default [Gson] handling
 ///
-/// Not currently used by GeckoLib
 /// @param <T> The raw object type this loader uses in memory. E.G. [GSON][JsonObject]
 public interface GeckoLibLoader<T> {
     /// Read a GeckoLib model resource from disk into memory, deserializing it into type `T`
