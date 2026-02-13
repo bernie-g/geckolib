@@ -15,9 +15,9 @@ import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
 import software.bernie.geckolib.loading.loader.GeckoLibGsonLoader;
+import software.bernie.geckolib.loading.loader.GeckoLibLoader;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.service.GeckoLibLoader;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Collections;
