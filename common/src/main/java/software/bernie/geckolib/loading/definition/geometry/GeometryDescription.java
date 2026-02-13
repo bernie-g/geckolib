@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.loading.json.raw.ModelProperties;
 import software.bernie.geckolib.util.JsonUtil;
 
 /// Container class for geometry properties, only used for intermediary steps between .json deserialization and GeckoLib object creation
@@ -24,6 +26,8 @@ import software.bernie.geckolib.util.JsonUtil;
 /// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
 public record GeometryDescription(String identifier, @Nullable Float visibleBoundsWidth, @Nullable Float visibleBoundsHeight, @Nullable Vec3 visibleBoundsOffset, int textureWidth, int textureHeight) {
+	public static final GeometryDescription EMPTY = new GeometryDescription("geometry.unknown", null, null, null, 16, 16);
+
 	/// Parse a GeometryDescription instance from raw .json input via [Gson]
 	public static JsonDeserializer<GeometryDescription> gsonDeserializer() throws JsonParseException {
 		return (json, type, context) -> {
@@ -41,5 +45,10 @@ public record GeometryDescription(String identifier, @Nullable Float visibleBoun
 			return new GeometryDescription(identifier == null ? String.valueOf(obj.hashCode()) : identifier,
 										   visibleBoundsWidth, visibleBoundsHeight, visibleBoundsOffset, textureWidth, textureHeight);
 		};
+	}
+
+	/// Bake this Geometry instance into the final `ModelProperties` instance that GeckoLib uses for rendering
+	public ModelProperties bake(Identifier resourcePath) {
+		return new ModelProperties(resourcePath, this.identifier, this.visibleBoundsWidth, this.visibleBoundsHeight, this.visibleBoundsOffset, this.textureWidth, this.textureHeight);
 	}
 }

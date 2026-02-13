@@ -1,9 +1,21 @@
 package software.bernie.geckolib.loading.definition.geometry;
 
 import com.google.gson.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
+import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.cache.model.BakedGeoModel;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.util.JsonUtil;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
 
 /// Container class for a full geometry file definition, only used for intermediary steps between .json deserialization and GeckoLib object creation
 ///
@@ -46,5 +58,75 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
 
             return new Geometry(version, debug, definitions);
         };
+    }
+
+    /// Bake this `Geometry` instance into the final `BakedGeoModel` instance that GeckoLib uses for rendering
+    public BakedGeoModel bake(Identifier resourcePath) throws RuntimeException {
+        final GeometryDefinition geometryDefinition = this.definitions[0];
+        final GeometryDescription description = geometryDefinition.description();
+        final Map<String, GeoLocator> locators = new Object2ReferenceOpenHashMap<>();
+        final GeoBone[] topLevelBones = bakeTopLevelBones(geometryDefinition, locators);
+
+        return new BakedGeoModel(topLevelBones, locators, (description == null ? GeometryDescription.EMPTY : description).bake(resourcePath));
+    }
+
+    /// Bake the [GeometryBone]s into [GeoBone]s for this `GeometryDefinition`
+    private GeoBone[] bakeTopLevelBones(GeometryDefinition definition, Map<String, GeoLocator> locators) {
+        if (definition.bones() == null)
+            return new GeoBone[0];
+
+        final GeometryDescription geometryDescription = definition.description() == null ? GeometryDescription.EMPTY : definition.description();
+        final GeometryTree geometryTree = sortBones(definition.bones());
+        final GeoBone[] topLevelBones = new GeoBone[geometryTree.size()];
+        final BiConsumer<GeoBone, GeoLocator> locatorConsumer = (bone, locator) -> {
+            if (locators.put(locator.name(), locator) != null)
+                GeckoLibConstants.LOGGER.error("Duplicate locator name found in bone '{}': '{}'", bone.name(), locator.name());
+        };
+
+        for (int i = 0; i < topLevelBones.length; i++) {
+            GeometryBone geometryBone = geometryTree.getBone(i);
+            GeoBone bone = geometryBone.bake(null, geometryDescription, geometryTree.childBonesMap(), locatorConsumer);
+
+            topLevelBones[i] = bone;
+
+            for (GeoLocator locator : bone.locators()) {
+                locatorConsumer.accept(bone, locator);
+            }
+        }
+
+        return topLevelBones;
+    }
+
+    /// Create sorted collections of GeometryBones to build them into their structured hierarchy
+    private GeometryTree sortBones(GeometryBone[] bones) {
+        final List<GeometryBone> topLevelBones = new ObjectArrayList<>();
+        final Map<String, List<GeometryBone>> childBones = new Object2ObjectOpenHashMap<>();
+
+        for (GeometryBone bone : bones) {
+            if (bone.parent() == null) {
+                topLevelBones.add(bone);
+            }
+            else {
+                childBones.computeIfAbsent(bone.parent(), _ -> new ObjectArrayList<>())
+                        .add(bone);
+            }
+        }
+
+        return new GeometryTree(topLevelBones, childBones);
+    }
+
+    /// Holder object to work with a sorted bone map
+    ///
+    /// Mostly just to make the code more legible
+    private record GeometryTree(List<GeometryBone> bones, Map<String, List<GeometryBone>> childBonesMap) {
+        /// @return The GeometryBone at the given index
+        public GeometryBone getBone(int index) {
+            return this.bones.get(index);
+        }
+
+        /// @return The size of the bones collection
+        public int size() {
+            return this.bones.size();
+        }
     }
 }

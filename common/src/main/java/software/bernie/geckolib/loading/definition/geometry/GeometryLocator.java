@@ -4,9 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.util.JsonUtil;
 
 /// Container class for a single geometry bone locator, only used for intermediary steps between .json deserialization and GeckoLib object creation
@@ -27,5 +30,15 @@ public record GeometryLocator(@Nullable Vec3 offset, @Nullable Vec3 rotation) {
 
             return new GeometryLocator(offset, rotation);
         };
+
+    }
+
+    /// Bake this `GeometryLocator` instance into the final `GeoLocator` instance that GeckoLib uses for position listeners
+    public GeoLocator bake(String name, GeoBone parentBone) {
+        final Vec3 offset = this.offset == null ? Vec3.ZERO : this.offset;
+        final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation.multiply(-Mth.DEG_TO_RAD, -Mth.DEG_TO_RAD, Mth.DEG_TO_RAD);
+
+        // TODO check value inversions
+        return new GeoLocator(parentBone, name, (float)-offset.x, (float)offset.y, (float)offset.z, (float)rotation.x, (float)rotation.y, (float)rotation.z);
     }
 }

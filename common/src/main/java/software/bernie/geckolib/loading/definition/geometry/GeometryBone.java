@@ -5,9 +5,15 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.cache.model.GeoBone;
+import software.bernie.geckolib.cache.model.GeoLocator;
+import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
+import software.bernie.geckolib.cache.model.cuboid.GeoCube;
 import software.bernie.geckolib.util.JsonUtil;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 
 /// Container class for a single geometry bone, only used for intermediary steps between .json deserialization and GeckoLib object creation
 ///
@@ -27,7 +33,7 @@ import java.util.Map;
 /// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_geometry_1.21.0?view=minecraft-bedrock-experimental">Bedrock Geometry Spec 1.21.0</a>
 @ApiStatus.Internal
 public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 pivot, @Nullable Vec3 rotation, boolean debug,
-                           boolean mirror, float inflate, int renderGroupId, GeometryCube @Nullable [] cubes,
+                           @Nullable Boolean mirror, @Nullable Float inflate, int renderGroupId, GeometryCube @Nullable [] cubes,
                            @Nullable String binding, @Nullable Map<String, GeometryLocator> locators, @Nullable GeometryPolyMesh polyMesh,
                            GeometryTextureMesh @Nullable[] textureMeshes) {
     /// Parse a GeometryBone instance from raw .json input via [Gson]
@@ -39,8 +45,8 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
             final Vec3 pivot = JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(obj, "pivot", null));
             final Vec3 rotation = JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(obj, "rotation", null));
             final boolean debug = GsonHelper.getAsBoolean(obj, "debug", false);
-            final boolean mirror = GsonHelper.getAsBoolean(obj, "mirror", false);
-            final float inflate = GsonHelper.getAsFloat(obj, "inflate", 0f);
+            final Boolean mirror = JsonUtil.getOptionalBoolean(obj, "mirror");
+            final Float inflate = JsonUtil.getOptionalFloat(obj, "inflate");
             final int renderGroupId = GsonHelper.getAsInt(obj, "render_group_id", 0);
             final GeometryCube[] cubes = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "cubes", new JsonArray()), context, GeometryCube.class);
             final String binding = GsonHelper.getAsString(obj, "binding", null);
@@ -50,5 +56,58 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
 
             return new GeometryBone(name, parent, pivot, rotation, debug, mirror, inflate, renderGroupId, cubes, binding, locators, polyMesh, textureMeshes);
         };
+    }
+
+    /// Bake this `GeometryBone` instance into the final `GeoBone` instance that GeckoLib uses for rendering
+    public GeoBone bake(@Nullable GeoBone parentBone, GeometryDescription geometryDescription, Map<String, List<GeometryBone>> childBonesMap, BiConsumer<GeoBone, GeoLocator> locatorConsumer) {
+        final Vec3 pivot = this.pivot == null ? Vec3.ZERO : this.pivot;
+        final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation;
+        final List<GeometryBone> children = childBonesMap.getOrDefault(this.name, List.of());
+        final GeoBone[] childBones = new GeoBone[children.size()];
+        final GeoCube[] cubes = new GeoCube[this.cubes == null ? 0 : this.cubes.length];
+        final GeoLocator[] locators = new GeoLocator[this.locators == null ? 0 : this.locators.size()];
+        final GeoBone bone = new CuboidGeoBone(parentBone, this.name, childBones, cubes, locators, (float)-pivot.x, (float)pivot.y, (float)pivot.z,
+                                            (float)Math.toRadians(-rotation.x), (float)Math.toRadians(-rotation.y), (float)Math.toRadians(rotation.z));
+
+        fillLocators(bone, locators, locatorConsumer);
+        fillCubes(cubes, geometryDescription);
+        fillChildBones(bone, geometryDescription, children, childBonesMap, childBones, locatorConsumer);
+
+        return bone;
+    }
+
+    /// Bake the [GeometryLocator]s on this bone into their [GeoLocator] equivalents and fill the locators array
+    private void fillLocators(GeoBone bone, GeoLocator[] locatorsArray, BiConsumer<GeoBone, GeoLocator> locatorConsumer) {
+        if (this.locators == null || locatorsArray.length == 0)
+            return;
+
+        int locatorIndex = 0;
+
+        for (Map.Entry<String, GeometryLocator> locatorEntry : this.locators.entrySet()) {
+            GeoLocator locator = locatorEntry.getValue().bake(locatorEntry.getKey(), bone);
+            locatorsArray[locatorIndex++] = locator;
+
+            locatorConsumer.accept(bone, locator);
+        }
+    }
+
+    /// Bake the [GeometryCube]s on this bone into their [GeoCube] equivalents and fill the cubes array
+    private void fillCubes(GeoCube[] cubesArray, GeometryDescription geometryDescription) {
+        if (this.cubes == null || cubesArray.length == 0)
+            return;
+
+        for (int i = 0; i < cubesArray.length && i < this.cubes.length; i++) {
+            cubesArray[i] = this.cubes[i].bake(this, geometryDescription);
+        }
+    }
+
+    /// Bake the [GeometryBone] children on this bone into their [GeoBone] equivalents and fill the child bones array
+    private void fillChildBones(GeoBone bone, GeometryDescription geometryDescription, List<GeometryBone> children,
+                                Map<String, List<GeometryBone>> childBonesMap, GeoBone[] childBones, BiConsumer<GeoBone, GeoLocator> locatorConsumer) {
+        int i = 0;
+
+        for (GeometryBone child : children) {
+            childBones[i++] = child.bake(bone, geometryDescription, childBonesMap, locatorConsumer);
+        }
     }
 }
