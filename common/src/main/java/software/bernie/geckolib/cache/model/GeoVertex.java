@@ -13,7 +13,10 @@ public record GeoVertex(float posX, float posY, float posZ, float texU, float te
 	}
 
     /// Create a copy of this vertex with new UV coordinates
-    public GeoVertex withUVs(float texU, float texV) {
-		return new GeoVertex(this.posX, this.posY, this.posZ, texU, texV);
+    public GeoVertex withUVs(double texU, double texV) {
+		if (texU == this.texU && texV == this.texV)
+			return this;
+
+		return new GeoVertex(this.posX, this.posY, this.posZ, (float)texU, (float)texV);
 	}
 }
