@@ -16,8 +16,8 @@ import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
+import software.bernie.geckolib.loading.loader.GeckoLibLoader;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
-import software.bernie.geckolib.service.GeckoLibLoader;
 
 import java.util.Objects;
 
