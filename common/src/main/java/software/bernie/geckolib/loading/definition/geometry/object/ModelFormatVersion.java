@@ -1,4 +1,4 @@
-package software.bernie.geckolib.loading.json;
+package software.bernie.geckolib.loading.definition.geometry.object;
 
 import com.google.common.base.Suppliers;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -37,18 +37,24 @@ public enum ModelFormatVersion {
 		this.errorMessage = errorMessage;
 	}
 
+	/// The version string this version is typically represented as in geometry JSON files
 	public String getSerializedName() {
 		return this.serializedName;
 	}
 
+	/// @return true if the model format version is supported
 	public boolean isSupported() {
 		return this.supported;
 	}
 
+	/// @return The error message for incompatibility for this version, or null if it's compatible
 	public @Nullable String getErrorMessage() {
 		return this.errorMessage;
 	}
 
+	/// Get a `ModelFormatVersion` enum value from a string value
+	///
+	/// @return The matching `ModelFormatVersion`, or null if no match exists
 	public static @Nullable ModelFormatVersion match(String version) {
 		return LOOKUP.get().get(version);
 	}
