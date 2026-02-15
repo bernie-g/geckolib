@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.definition.geometry;
 
+import com.google.common.base.Joiner;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
@@ -13,8 +14,10 @@ import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.cache.model.GeoLocator;
 import software.bernie.geckolib.util.JsonUtil;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 /// Container class for a full geometry file definition, only used for intermediary steps between .json deserialization and GeckoLib object creation
@@ -112,7 +115,32 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             }
         }
 
+        validateBoneStructure(bones, childBones);
+
         return new GeometryTree(topLevelBones, childBones);
+    }
+
+    /// Validate the compiled bone structure to check for orphan bones and recursive references
+    private void validateBoneStructure(GeometryBone[] allBones, Map<String, List<GeometryBone>> childBones) throws IllegalArgumentException {
+        final Set<String> bones = new HashSet<>(allBones.length);
+
+        for (Map.Entry<String, List<GeometryBone>> entry : childBones.entrySet()) {
+            final String parent = entry.getKey();
+
+            for (GeometryBone bone : entry.getValue()) {
+                if (parent.equals(bone.parent()))
+                    throw new IllegalArgumentException("Invalid model definition. Bone has defined itself as its own parent: " + bone.name());
+            }
+        }
+
+        for (GeometryBone bone : allBones) {
+            bones.add(bone.name());
+        }
+
+        for (String parentBone : childBones.keySet()) {
+            if (!bones.contains(parentBone))
+                throw new IllegalArgumentException("Invalid model definition. Found bone with undefined parent (children -> parent): " + Joiner.on(',').join(childBones.get(parentBone)) + " -> " + parentBone);
+        }
     }
 
     /// Holder object to work with a sorted bone map
