@@ -79,16 +79,16 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             return new GeoBone[0];
 
         final GeometryDescription geometryDescription = definition.description() == null ? GeometryDescription.EMPTY : definition.description();
-        final GeometryTree geometryTree = sortBones(definition.bones());
-        final GeoBone[] topLevelBones = new GeoBone[geometryTree.size()];
+        final BonesCollection bonesCollection = sortBones(definition.bones());
+        final GeoBone[] topLevelBones = new GeoBone[bonesCollection.size()];
         final BiConsumer<GeoBone, GeoLocator> locatorConsumer = (bone, locator) -> {
             if (locators.put(locator.name(), locator) != null)
                 GeckoLibConstants.LOGGER.error("Duplicate locator name found in bone '{}': '{}'", bone.name(), locator.name());
         };
 
         for (int i = 0; i < topLevelBones.length; i++) {
-            GeometryBone geometryBone = geometryTree.getBone(i);
-            GeoBone bone = geometryBone.bake(null, geometryDescription, geometryTree.childBonesMap(), locatorConsumer);
+            GeometryBone geometryBone = bonesCollection.getBone(i);
+            GeoBone bone = geometryBone.bake(null, geometryDescription, bonesCollection.childBonesMap(), locatorConsumer);
 
             topLevelBones[i] = bone;
 
@@ -101,7 +101,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
     }
 
     /// Create sorted collections of GeometryBones to build them into their structured hierarchy
-    private GeometryTree sortBones(GeometryBone[] bones) {
+    private BonesCollection sortBones(GeometryBone[] bones) {
         final List<GeometryBone> topLevelBones = new ObjectArrayList<>();
         final Map<String, List<GeometryBone>> childBones = new Object2ObjectOpenHashMap<>();
 
@@ -115,46 +115,48 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             }
         }
 
-        validateBoneStructure(bones, childBones);
-
-        return new GeometryTree(topLevelBones, childBones);
-    }
-
-    /// Validate the compiled bone structure to check for orphan bones and recursive references
-    private void validateBoneStructure(GeometryBone[] allBones, Map<String, List<GeometryBone>> childBones) throws IllegalArgumentException {
-        final Set<String> bones = new HashSet<>(allBones.length);
-
-        for (Map.Entry<String, List<GeometryBone>> entry : childBones.entrySet()) {
-            final String parent = entry.getKey();
-
-            for (GeometryBone bone : entry.getValue()) {
-                if (parent.equals(bone.parent()))
-                    throw new IllegalArgumentException("Invalid model definition. Bone has defined itself as its own parent: " + bone.name());
-            }
-        }
-
-        for (GeometryBone bone : allBones) {
-            bones.add(bone.name());
-        }
-
-        for (String parentBone : childBones.keySet()) {
-            if (!bones.contains(parentBone))
-                throw new IllegalArgumentException("Invalid model definition. Found bone with undefined parent (children -> parent): " + Joiner.on(',').join(childBones.get(parentBone)) + " -> " + parentBone);
-        }
+        return new BonesCollection(bones, topLevelBones, childBones);
     }
 
     /// Holder object to work with a sorted bone map
     ///
     /// Mostly just to make the code more legible
-    private record GeometryTree(List<GeometryBone> bones, Map<String, List<GeometryBone>> childBonesMap) {
+    private record BonesCollection(GeometryBone[] allBones, List<GeometryBone> topLevelBones, Map<String, List<GeometryBone>> childBonesMap) {
+        BonesCollection {
+            validateBoneStructure(allBones, childBonesMap);
+        }
+
         /// @return The GeometryBone at the given index
         public GeometryBone getBone(int index) {
-            return this.bones.get(index);
+            return this.topLevelBones.get(index);
         }
 
         /// @return The size of the bones collection
         public int size() {
-            return this.bones.size();
+            return this.topLevelBones.size();
+        }
+
+        /// Validate the compiled bone structure to check for orphan bones and recursive references
+        private void validateBoneStructure(GeometryBone[] allBones, Map<String, List<GeometryBone>> childBones) throws IllegalArgumentException {
+            final Set<String> bones = new HashSet<>(allBones.length);
+
+            for (Map.Entry<String, List<GeometryBone>> entry : childBones.entrySet()) {
+                final String parent = entry.getKey();
+
+                for (GeometryBone bone : entry.getValue()) {
+                    if (parent.equals(bone.parent()))
+                        throw new IllegalArgumentException("Invalid model definition. Bone has defined itself as its own parent: " + bone.name());
+                }
+            }
+
+            for (GeometryBone bone : allBones) {
+                bones.add(bone.name());
+            }
+
+            for (String parentBone : childBones.keySet()) {
+                if (!bones.contains(parentBone))
+                    throw new IllegalArgumentException("Invalid model definition. Found bone with undefined parent (children -> parent): " + Joiner.on(',').join(childBones.get(parentBone)) + " -> " + parentBone);
+            }
         }
     }
 }
