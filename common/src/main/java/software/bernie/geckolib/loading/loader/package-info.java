@@ -1,4 +1,4 @@
-/// Contains [loader][software.bernie.geckolib.service.GeckoLibLoader] implementations for resource loading
+/// Contains [loader][software.bernie.geckolib.loading.loader.GeckoLibLoader] implementations for resource loading
 @NullMarked
 package software.bernie.geckolib.loading.loader;
 

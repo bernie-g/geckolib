@@ -91,7 +91,7 @@ public interface EasingType {
 	///
 	/// **<u>MUST be called during mod construct</u>**
 	///
-	/// It is recommended you don't call this directly and instead call it via [GeckoLibUtil#addCustomEasingType(String, Double2DoubleFunction)]
+	/// It is recommended you don't call this directly and instead call it via [GeckoLibUtil#addCustomSimpleEasingType(String, Double2DoubleFunction)]
 	///
 	/// @param name The name of the easing type
 	/// @param function The interpolation function for this easing type

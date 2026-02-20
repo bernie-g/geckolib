@@ -62,13 +62,13 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
 
 	/// Gets the [RenderType] to render the current render pass with
 	///
-	/// Uses the [RenderTypes#entityCutoutNoCull] `RenderType` by default
+	/// Uses the [RenderTypes#entityCutout] `RenderType` by default
 	///
 	/// Override this to change the way a model will render (such as translucent models, etc.)
 	///
 	/// @return Return the RenderType to use, or null to prevent the model rendering. Returning null will not prevent animation functions from taking place
 	default @Nullable RenderType getRenderType(R renderState, Identifier texture) {
-		return RenderTypes.entityCutoutNoCull(texture);
+		return RenderTypes.entityCutout(texture);
 	}
 
 	/// Override to add any custom [DataTicket]s you need to capture for rendering.

@@ -89,7 +89,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		boolean invisible = entityRenderState.isInvisible;
 
 		if (invisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
-			return RenderTypes.itemEntityTranslucentCull(texture);
+			return RenderTypes.entityTranslucentCullItemTarget(texture);
 
 		if (entityRenderState.appearsGlowing()) {
 			if (invisible)
@@ -135,7 +135,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 					.withBlend(BlendFunction.TRANSLUCENT)
 					.withDepthWrite(false)
 					.withCull(false)
-					.withVertexFormat(DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS)
+					.withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
 					.build();
 		}
 

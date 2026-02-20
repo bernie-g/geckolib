@@ -252,7 +252,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
     /// Gets the [RenderType] to render the current render pass with
     ///
-    /// Uses the [RenderTypes#entityCutoutNoCull] `RenderType` by default
+    /// Uses the [RenderTypes#entityCutout] `RenderType` by default
     ///
     /// Override this to change the way a model will render (such as translucent models, etc.)
     ///
@@ -260,7 +260,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     @Override
     public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         if (renderState.isInvisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
-            return RenderTypes.itemEntityTranslucentCull(texture);
+            return RenderTypes.entityTranslucentCullItemTarget(texture);
 
         if (!renderState.isInvisible)
             return GeoRenderer.super.getRenderType(renderState, texture);
