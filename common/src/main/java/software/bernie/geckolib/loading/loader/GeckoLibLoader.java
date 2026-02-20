@@ -5,7 +5,8 @@ import com.google.gson.JsonObject;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
 
 import java.util.function.BiPredicate;
 
@@ -13,6 +14,9 @@ import java.util.function.BiPredicate;
 ///
 /// @param <T> The raw object type this loader uses in memory. E.G. [GSON][JsonObject]
 public interface GeckoLibLoader<T> {
+    /// @return An array of file type extensions that this loader supports
+    String[] supportedExtensions();
+
     /// Read a GeckoLib model resource from disk into memory, deserializing it into type `T`
     ///
     /// @param id The resource path of the resource to load
@@ -39,7 +43,8 @@ public interface GeckoLibLoader<T> {
     ///
     /// @param id The resource path of the model file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibAnimationFile]
-    BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, T raw) throws RuntimeException;
+    /// @param mathParser The [MathParser] instance to use for this bake operation
+    BakedAnimations bakeGeckoLibAnimationsFile(Identifier id, T raw, MathParser mathParser) throws RuntimeException;
 
     /// Predicate interface for determining whether a given [GeckoLibLoader] should handle a specific resource
     @FunctionalInterface

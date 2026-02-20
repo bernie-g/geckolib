@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.function.round;
 
 import net.minecraft.util.Mth;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -29,7 +30,7 @@ public final class LerpFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         return Mth.lerp(this.delta.get(controllerState), this.min.get(controllerState), this.max.get(controllerState));
     }
 

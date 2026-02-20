@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
 import software.bernie.geckolib.loading.definition.geometry.GeometryLocator;
 import software.bernie.geckolib.util.JsonUtil;
 
@@ -15,11 +16,11 @@ import software.bernie.geckolib.util.JsonUtil;
 ///
 /// Note that the timestamp for this effect isn't contained here, but instead in the [ActorAnimation#soundEffects()] map
 ///
-/// The Bedrock specification does not explicitly support anything other than the effect string, however Blockbench itself supports
+/// The Bedrock specification does not explicitly support anything other than the effect string, however, Blockbench itself supports
 /// the other parameters, and so GeckoLib does too
 ///
 /// @param effect The name of the effect; typically the id of the sound, but can be anything
-/// @param locator An optional [GeometryLocator] name to position this effect at. Not used by GeckoLib
+/// @param locator An optional [GeometryLocator] name to position this effect at
 /// @param preEffectScript An optional Molang expression to run immediately prior to this effect being called. Not used by GeckoLib
 /// @param bindToActor An optional Boolean override to force the effect to run in world-space, rather than bound to the actor. Not used by GeckoLib
 /// @see <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/schemasreference/schemas/minecraftschema_actor_animation_1.8.0?view=minecraft-bedrock-stable">Bedrock Actor Animation Spec 1.8.0</a>
@@ -36,5 +37,10 @@ public record ActorAnimationSoundEffect(String effect, @Nullable String locator,
 
             return new ActorAnimationSoundEffect(effect, locator, preEffect, bindToActor);
         };
+    }
+
+    /// Bake this `ActorAnimationSoundEffect` instance into the final [SoundKeyframeData] instance that GeckoLib uses for animating
+    public SoundKeyframeData bake(double timestamp) {
+        return new SoundKeyframeData(timestamp, this.effect, this.locator);
     }
 }

@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
@@ -18,12 +19,25 @@ public record CompoundValue(MathValue[] subValues, Set<Variable> usedVariables) 
     }
 
     @Override
-    public double get(ControllerState controllerState) {
+    public double get(@Nullable ControllerState controllerState) {
         for (int i = 0; i < this.subValues.length - 1; i++) {
             this.subValues[i].get(controllerState);
         }
 
         return this.subValues[this.subValues.length - 1].get(controllerState);
+    }
+
+    @Override
+    public boolean isMutable() {
+        if (!this.usedVariables.isEmpty())
+            return true;
+
+        for (MathValue subValue : this.subValues) {
+            if (subValue.isMutable())
+                return true;
+        }
+
+        return false;
     }
 
     @Override

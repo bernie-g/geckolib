@@ -28,7 +28,7 @@ public record GeometryUvPair(double u, double v) {
         };
     }
 
-    /// Bake this uv information into a `GeoQuad` for the given direction
+    /// Bake this uv information into a [GeoQuad] for the given direction
     public GeoQuad bakeQuad(VertexSet vertices, Vec3 cubeSize, Direction direction, boolean mirror, int textureWidth, int textureHeight) {
         final Vec3 uvSize = new Vec3(Mth.floor(cubeSize.x), Mth.floor(cubeSize.y), Mth.floor(cubeSize.z));
         final GeometryQuadUvs uvData = GeometryQuadUvs.ofBoxUv(direction, this.u, this.v, uvSize);

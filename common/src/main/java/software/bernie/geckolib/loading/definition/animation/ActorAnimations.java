@@ -1,9 +1,15 @@
 package software.bernie.geckolib.loading.definition.animation;
 
 import com.google.gson.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
+import software.bernie.geckolib.cache.animation.Animation;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
+import software.bernie.geckolib.object.CompoundException;
 import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.Map;
@@ -45,5 +51,31 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
 
             return new ActorAnimations(formatVersion, animations);
         };
+    }
+
+    /// Bake this `ActorAnimations` instance into the final [BakedAnimations] instance that GeckoLib uses for animating
+    public BakedAnimations bake(Identifier resourcePath, MathParser mathParser) throws RuntimeException {
+        final Map<String, Animation> animations = new Object2ObjectOpenHashMap<>(this.animations.size());
+
+        for (Map.Entry<String, ActorAnimation> entry : this.animations.entrySet()) {
+            final String animationName = entry.getKey();
+
+            try {
+                animations.put(animationName, entry.getValue().bake(animationName, mathParser));
+            }
+            catch (Exception ex) {
+                if (ex instanceof CompoundException compoundEx) {
+                    compoundEx.withMessage("Unable to parse animation: " + animationName);
+                }
+                else {
+                    GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", animationName);
+                }
+
+                //noinspection CallToPrintStackTrace
+                ex.printStackTrace();
+            }
+        }
+
+        return new BakedAnimations(animations);
     }
 }

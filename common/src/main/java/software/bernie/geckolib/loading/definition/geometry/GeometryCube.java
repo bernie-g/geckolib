@@ -43,7 +43,7 @@ public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable
         };
     }
 
-    /// Bake this `GeometryCube` instance into the final `GeoCube` instance that GeckoLib uses for rendering
+    /// Bake this `GeometryCube` instance into the final [GeoCube] instance that GeckoLib uses for rendering
     public GeoCube bake(GeometryBone geometryBone, GeometryDescription geometryDescription) {
         final boolean mirror = this.mirror != null ? this.mirror : geometryBone.mirror() == Boolean.TRUE;
         final float inflate = (float)JsonUtil.modelToWorldUnits(this.inflate != null ? this.inflate : geometryBone.inflate() != null ? geometryBone.inflate() : 0);

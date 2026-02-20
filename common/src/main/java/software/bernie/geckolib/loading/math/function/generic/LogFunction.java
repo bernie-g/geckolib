@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -24,7 +25,7 @@ public final class LogFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         return Math.log((float)this.value.get(controllerState));
     }
 

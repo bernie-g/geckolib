@@ -144,48 +144,48 @@ public class AnimationProcessor {
                    findResetPointValue(boneSnapshot, controllerState, animation, boneIndex, transform, axis, easingOverride);
         }
 
-        Keyframe fromKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
-        Keyframe toKeyframe;
+        final Keyframe fromKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
+        final Keyframe toKeyframe;
 
         if (fromKeyframe == null || (toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis)) == null)
             return transform.defaultValue;
 
-        double from = fromKeyframe.endValue().get(controllerState);
-        double to = toKeyframe.endValue().get(controllerState);
-        double delta = toKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
-        EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
+        final double from = fromKeyframe.endValue().get(controllerState);
+        final double to = toKeyframe.endValue().get(controllerState);
+        final double delta = toKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
+        final EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
-        return (float)EasingType.lerpWithOverride(easingState, controllerState);
+        return (float)easingState.interpolate(controllerState);
     }
 
     /// Compute the effective animation point value from the provided [AnimationPoint]s, transitioning to the next animation
     private static float findTransitionPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation, AnimationPoint prevAnimation,
                                                   int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
-        Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
-        int prevBoneIndex;
+        final Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
+        final int prevBoneIndex;
 
         if (toKeyframe == null || (prevBoneIndex = prevAnimation.findBoneIndex(boneSnapshot.getBone())) < 0)
             return transform.defaultValue;
 
-        double from = wrapRotation(findAnimationPointValue(boneSnapshot, controllerState, prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
-        double to = toKeyframe.startValue().get(controllerState);
-        double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / (float)controllerState.transitionTicks());
-        EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
+        final double from = wrapRotation(findAnimationPointValue(boneSnapshot, controllerState, prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
+        final double to = toKeyframe.startValue().get(controllerState);
+        final double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / (float)controllerState.transitionTicks());
+        final EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
-        return (float)EasingType.lerpWithOverride(easingState, controllerState);
+        return (float)easingState.interpolate(controllerState);
     }
 
     /// Compute the effective animation point value from the provided [AnimationPoint]s, resetting back to the base bone state
     private static float findResetPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation,
                                              int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
-        ControllerState previousState = new ControllerState(controllerState.animationPoint(), null, -1, 0,
+        final ControllerState previousState = new ControllerState(controllerState.animationPoint(), null, -1, 0,
                                                             controllerState.additive(), controllerState.easingOverride(), controllerState.renderState(), controllerState.queryValues());
-        double delta = Math.min(1, controllerState.transitionTime() / (double)controllerState.transitionTicks());
-        double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
-        double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
-        EasingState easingState = new EasingState(easingOverride == null ? EasingType.LINEAR : easingOverride, new MathValue[0], delta, from, to);
+        final double delta = Math.min(1, controllerState.transitionTime() / (double)controllerState.transitionTicks());
+        final double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
+        final double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
+        final EasingState easingState = new EasingState(easingOverride == null ? EasingType.LINEAR : easingOverride, new MathValue[0], delta, from, to);
 
-        return (float)EasingType.lerpWithOverride(easingState, controllerState);
+        return (float)easingState.interpolate(controllerState);
     }
 
     /// Get the base snapshot value to return to when resetting from an animation

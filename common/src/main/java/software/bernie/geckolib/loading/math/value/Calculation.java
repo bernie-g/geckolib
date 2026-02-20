@@ -1,6 +1,7 @@
 package software.bernie.geckolib.loading.math.value;
 
 import org.apache.commons.lang3.mutable.MutableDouble;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.Operator;
@@ -18,7 +19,7 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
     }
 
     @Override
-    public double get(ControllerState controllerState) {
+    public double get(@Nullable ControllerState controllerState) {
         if (this.isMutable)
             return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
 

@@ -119,9 +119,7 @@ public record AnimationTimeline(Stage[] stages) {
         double minTime = Math.min(fromTime, toTime);
         double maxTime = Math.max(fromTime, toTime);
 
-        for (int i = 0; i < this.stages.length; i++) {
-            Stage stage = this.stages[i];
-
+        for (Stage stage : this.stages) {
             if (stage.startTime > maxTime)
                 break;
 

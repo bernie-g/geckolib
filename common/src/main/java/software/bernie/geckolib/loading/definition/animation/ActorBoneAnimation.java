@@ -7,6 +7,10 @@ import com.google.gson.JsonParseException;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.animation.state.AnimationPoint;
+import software.bernie.geckolib.cache.animation.BoneAnimation;
+import software.bernie.geckolib.cache.animation.KeyframeStack;
+import software.bernie.geckolib.loading.math.MathParser;
 
 /// Container class for a single actor animation's bone animation data,
 /// only used for intermediary steps between .json deserialization and GeckoLib object creation
@@ -21,6 +25,15 @@ import org.jspecify.annotations.Nullable;
 @ApiStatus.Internal
 public record ActorBoneAnimation(@Nullable String relativeTo,
                                  @Nullable ActorBoneAnimationEntry positionKeyframes, @Nullable ActorBoneAnimationEntry rotationKeyframes, @Nullable ActorBoneAnimationEntry scaleKeyframes) {
+    /// @return The total length of the animation (in seconds)
+    public double getAnimationLength() {
+        double positionKeyframesLength = this.positionKeyframes == null ? 0 : this.positionKeyframes.getAnimationLength();
+        double rotationKeyframesLength = this.rotationKeyframes == null ? 0 : this.rotationKeyframes.getAnimationLength();
+        double scaleKeyframesLength = this.scaleKeyframes == null ? 0 : this.scaleKeyframes.getAnimationLength();
+
+        return Math.max(positionKeyframesLength, Math.max(rotationKeyframesLength, scaleKeyframesLength));
+    }
+
     /// Parse an ActorBoneAnimation instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimation> gsonDeserializer() throws JsonParseException {
         return (json, type, context) -> {
@@ -32,5 +45,14 @@ public record ActorBoneAnimation(@Nullable String relativeTo,
 
             return new ActorBoneAnimation(relativeTo, positionKeyframes, rotationKeyframes, scaleKeyframes);
         };
+    }
+
+    /// Bake this `ActorBoneAnimation` instance into the final [BoneAnimation] instance that GeckoLib uses for animating
+    public BoneAnimation bake(String boneName, MathParser mathParser) {
+        final KeyframeStack rotationFrames = this.rotationKeyframes == null ? KeyframeStack.EMPTY : this.rotationKeyframes.bake(AnimationPoint.Transform.ROTATION, mathParser);
+        final KeyframeStack positionFrames = this.positionKeyframes == null ? KeyframeStack.EMPTY : this.positionKeyframes.bake(AnimationPoint.Transform.TRANSLATION, mathParser);
+        final KeyframeStack scaleFrames = this.scaleKeyframes == null ? KeyframeStack.EMPTY : this.scaleKeyframes.bake(AnimationPoint.Transform.SCALE, mathParser);
+
+        return new BoneAnimation(boneName, rotationFrames, positionFrames, scaleFrames);
     }
 }

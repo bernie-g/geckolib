@@ -38,7 +38,7 @@ public final class RandomFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         double result;
         double valueA = this.valueA.get(controllerState);
 

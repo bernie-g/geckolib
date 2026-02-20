@@ -9,7 +9,7 @@ public class CustomInstructionKeyframeData extends KeyFrameData {
 	private final String instructions;
 
 	public CustomInstructionKeyframeData(double time, String instructions) {
-		super(time);
+		super(time, null);
 
 		this.instructions = instructions;
 	}

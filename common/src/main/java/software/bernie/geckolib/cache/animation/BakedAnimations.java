@@ -1,7 +1,6 @@
-package software.bernie.geckolib.loading.object;
+package software.bernie.geckolib.cache.animation;
 
 import org.jspecify.annotations.Nullable;
-import software.bernie.geckolib.cache.animation.Animation;
 
 import java.util.Map;
 

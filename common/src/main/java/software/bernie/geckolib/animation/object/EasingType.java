@@ -1,16 +1,16 @@
 package software.bernie.geckolib.animation.object;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.animation.state.EasingState;
 import software.bernie.geckolib.cache.animation.Keyframe;
-import software.bernie.geckolib.animation.state.ControllerState;
+import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.loading.math.MathValue;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -24,86 +24,80 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface EasingType {
 	Map<String, EasingType> EASING_TYPES = new ConcurrentHashMap<>(64);
 
-	EasingType LINEAR = register("linear", register("none", value -> easeIn(EasingType::linear)));
-	EasingType STEP = register("step", value -> easeIn(step(value)));
-	EasingType EASE_IN_SINE = register("easeinsine", value -> easeIn(EasingType::sine));
-	EasingType EASE_OUT_SINE = register("easeoutsine", value -> easeOut(EasingType::sine));
-	EasingType EASE_IN_OUT_SINE = register("easeinoutsine", value -> easeInOut(EasingType::sine));
-	EasingType EASE_IN_QUAD = register("easeinquad", value -> easeIn(EasingType::quadratic));
-	EasingType EASE_OUT_QUAD = register("easeoutquad", value -> easeOut(EasingType::quadratic));
-	EasingType EASE_IN_OUT_QUAD = register("easeinoutquad", value -> easeInOut(EasingType::quadratic));
-	EasingType EASE_IN_CUBIC = register("easeincubic", value -> easeIn(EasingType::cubic));
-	EasingType EASE_OUT_CUBIC = register("easeoutcubic", value -> easeOut(EasingType::cubic));
-	EasingType EASE_IN_OUT_CUBIC = register("easeinoutcubic", value -> easeInOut(EasingType::cubic));
-	EasingType EASE_IN_QUART = register("easeinquart", value -> easeIn(pow(4)));
-	EasingType EASE_OUT_QUART = register("easeoutquart", value -> easeOut(pow(4)));
-	EasingType EASE_IN_OUT_QUART = register("easeinoutquart", value -> easeInOut(pow(4)));
-	EasingType EASE_IN_QUINT = register("easeinquint", value -> easeIn(pow(4)));
-	EasingType EASE_OUT_QUINT = register("easeoutquint", value -> easeOut(pow(5)));
-	EasingType EASE_IN_OUT_QUINT = register("easeinoutquint", value -> easeInOut(pow(5)));
-	EasingType EASE_IN_EXPO = register("easeinexpo", value -> easeIn(EasingType::exp));
-	EasingType EASE_OUT_EXPO = register("easeoutexpo", value -> easeOut(EasingType::exp));
-	EasingType EASE_IN_OUT_EXPO = register("easeinoutexpo", value -> easeInOut(EasingType::exp));
-	EasingType EASE_IN_CIRC = register("easeincirc", value -> easeIn(EasingType::circle));
-	EasingType EASE_OUT_CIRC = register("easeoutcirc", value -> easeOut(EasingType::circle));
-	EasingType EASE_IN_OUT_CIRC = register("easeinoutcirc", value -> easeInOut(EasingType::circle));
-	EasingType EASE_IN_BACK = register("easeinback", value -> easeIn(back(value)));
-	EasingType EASE_OUT_BACK = register("easeoutback", value -> easeOut(back(value)));
-	EasingType EASE_IN_OUT_BACK = register("easeinoutback", value -> easeInOut(back(value)));
-	EasingType EASE_IN_ELASTIC = register("easeinelastic", value -> easeIn(elastic(value)));
-	EasingType EASE_OUT_ELASTIC = register("easeoutelastic", value -> easeOut(elastic(value)));
-	EasingType EASE_IN_OUT_ELASTIC = register("easeinoutelastic", value -> easeInOut(elastic(value)));
-	EasingType EASE_IN_BOUNCE = register("easeinbounce", value -> easeIn(bounce(value)));
-	EasingType EASE_OUT_BOUNCE = register("easeoutbounce", value -> easeOut(bounce(value)));
-	EasingType EASE_IN_OUT_BOUNCE = register("easeinoutbounce", value -> easeInOut(bounce(value)));
-	EasingType CATMULLROM = register("catmullrom", new CatmullRomEasing());
+	EasingType LINEAR				= register("linear", registerSimple("none", EasingType::linear));
+	EasingType STEP					= register("step", EasingType::step);
+	EasingType EASE_IN_SINE			= registerSimple("easeinsine", EasingType::sine);
+	EasingType EASE_OUT_SINE		= registerSimple("easeoutsine", easeOut(EasingType::sine));
+	EasingType EASE_IN_OUT_SINE		= registerSimple("easeinoutsine", easeInOut(EasingType::sine));
+	EasingType EASE_IN_QUAD			= registerSimple("easeinquad", EasingType::quadratic);
+	EasingType EASE_OUT_QUAD		= registerSimple("easeoutquad", easeOut(EasingType::quadratic));
+	EasingType EASE_IN_OUT_QUAD		= registerSimple("easeinoutquad", easeInOut(EasingType::quadratic));
+	EasingType EASE_IN_CUBIC		= registerSimple("easeincubic", EasingType::cubic);
+	EasingType EASE_OUT_CUBIC		= registerSimple("easeoutcubic", easeOut(EasingType::cubic));
+	EasingType EASE_IN_OUT_CUBIC	= registerSimple("easeinoutcubic", easeInOut(EasingType::cubic));
+	EasingType EASE_IN_QUART		= registerSimple("easeinquart", pow(4));
+	EasingType EASE_OUT_QUART		= registerSimple("easeoutquart", easeOut(pow(4)));
+	EasingType EASE_IN_OUT_QUART	= registerSimple("easeinoutquart", easeInOut(pow(4)));
+	EasingType EASE_IN_QUINT		= registerSimple("easeinquint", pow(4));
+	EasingType EASE_OUT_QUINT		= registerSimple("easeoutquint", easeOut(pow(5)));
+	EasingType EASE_IN_OUT_QUINT	= registerSimple("easeinoutquint", easeInOut(pow(5)));
+	EasingType EASE_IN_EXPO			= registerSimple("easeinexpo", EasingType::exp);
+	EasingType EASE_OUT_EXPO		= registerSimple("easeoutexpo", easeOut(EasingType::exp));
+	EasingType EASE_IN_OUT_EXPO		= registerSimple("easeinoutexpo", easeInOut(EasingType::exp));
+	EasingType EASE_IN_CIRC			= registerSimple("easeincirc", EasingType::circle);
+	EasingType EASE_OUT_CIRC		= registerSimple("easeoutcirc", easeOut(EasingType::circle));
+	EasingType EASE_IN_OUT_CIRC		= registerSimple("easeinoutcirc", easeInOut(EasingType::circle));
+	EasingType EASE_IN_BACK			= register("easeinback", EasingType::back);
+	EasingType EASE_OUT_BACK		= register("easeoutback", arg -> easeOut(back(arg)));
+	EasingType EASE_IN_OUT_BACK		= register("easeinoutback", arg -> easeInOut(back(arg)));
+	EasingType EASE_IN_ELASTIC		= register("easeinelastic", EasingType::elastic);
+	EasingType EASE_OUT_ELASTIC		= register("easeoutelastic", arg -> easeOut(elastic(arg)));
+	EasingType EASE_IN_OUT_ELASTIC	= register("easeinoutelastic", arg -> easeInOut(elastic(arg)));
+	EasingType EASE_IN_BOUNCE		= register("easeinbounce", EasingType::bounce);
+	EasingType EASE_OUT_BOUNCE		= register("easeoutbounce", arg -> easeOut(bounce(arg)));
+	EasingType EASE_IN_OUT_BOUNCE	= register("easeinoutbounce", arg -> easeInOut(bounce(arg)));
+	CatmullRomEasing CATMULLROM		= register("catmullrom", new CatmullRomEasing());
 
-	Double2DoubleFunction buildTransformer(@Nullable Double value);
+	/// Construct an interpolation function for this `EasingType`, optionally using an additional easing argument, provided from the animation JSON
+	Double2DoubleFunction buildTransformer(@Nullable Double easingArg);
 
-	static double lerpWithOverride(EasingState easingState, ControllerState controllerState) {
-		return easingState.easingType().apply(easingState, controllerState);
-	}
-
+	/// Calculate the interpolated value for the provided [EasingState] and [ControllerState]
 	default double apply(EasingState easingState, ControllerState controllerState) {
-		Double easingVariable = null;
-
-		if (easingState.easingArgs().length != 0)
-			easingVariable = easingState.easingArgs()[0].get(controllerState);
-
-		return apply(easingState, easingVariable, easingState.delta(), controllerState);
-	}
-
-	default double apply(EasingState easingState, @Nullable Double easingValue, double lerpValue, ControllerState controllerState) {
 		if (easingState.delta() >= 1)
 			return easingState.toValue();
 
-		return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), easingState.fromValue(), easingState.toValue());
+		return Mth.lerp(buildTransformer(easingState.getFirstEasingArg(controllerState)).apply(easingState.delta()), easingState.fromValue(), easingState.toValue());
 	}
 
-	/// Register an `EasingType` with Geckolib for handling animation transitions and value curves
+	/// Modify the baked [Keyframe] array if necessary to apply keyframe changes for this `EasingType`
+	default void modifyKeyframes(Keyframe[] keyframes, int currentFrameIndex, MathParser mathParser) {}
+
+	/// Register an `EasingType` with GeckoLib for handling animation transitions and value curves
 	///
 	/// **<u>MUST be called during mod construct</u>**
 	///
-	/// It is recommended you don't call this directly, and instead call it via `GeckoLibUtil#addCustomEasingType`
+	/// It is recommended you don't call this directly and instead call it via [GeckoLibUtil#addCustomEasingType(String, EasingType)]
 	///
 	/// @param name The name of the easing type
 	/// @param easingType The `EasingType` to associate with the given name
 	/// @return The `EasingType` you registered
-	static EasingType register(String name, EasingType easingType) {
+	static <T extends EasingType> T register(String name, T easingType) {
 		EASING_TYPES.putIfAbsent(name, easingType);
 
 		return easingType;
 	}
 
-	/// Retrieve an `EasingType` instance based on a [JsonElement]. Returns one of the default `EasingTypes` if the name matches, or any other registered `EasingType` with a matching name
+	/// Register a zero-parameter `EasingType` with GeckoLib for handling animation transitions and value curves
 	///
-	/// @param json The `easing` [JsonElement] to attempt to parse.
-	/// @return A usable `EasingType` instance
-	static EasingType fromJson(JsonElement json) {
-		if (!(json instanceof JsonPrimitive primitive) || !primitive.isString())
-			return LINEAR;
-
-		return fromString(primitive.getAsString().toLowerCase(Locale.ROOT));
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// It is recommended you don't call this directly and instead call it via [GeckoLibUtil#addCustomEasingType(String, Double2DoubleFunction)]
+	///
+	/// @param name The name of the easing type
+	/// @param function The interpolation function for this easing type
+	/// @return The `EasingType` you registered
+	static EasingType registerSimple(String name, Double2DoubleFunction function) {
+		return register(name, (EasingType)_ -> function);
 	}
 
 	/// Get an existing `EasingType` from a given string, matching the string to its name
@@ -114,7 +108,7 @@ public interface EasingType {
 		return EASING_TYPES.getOrDefault(name, EasingType.LINEAR);
 	}
 
-	// ---> Easing Transition Type Functions <--- //
+	//<editor-fold defaultstate="collapsed" desc="<Internal Implementation>">
 
 	/// Returns an easing function running linearly. Functionally equivalent to no easing
 	static Double2DoubleFunction linear(Double2DoubleFunction function) {
@@ -130,11 +124,6 @@ public interface EasingType {
 		return 0.5d * (2d * (n + 1d) + 2d
 					   + (2d * n - 5d * (n + 1d) + 4d * (n + 2d) - (n + 3d))
 					   + (3d * (n + 1d) - n - 3d * (n + 2d) + (n + 3d)));
-	}
-
-	/// Returns an easing function running forward in time
-	static Double2DoubleFunction easeIn(Double2DoubleFunction function) {
-		return function;
 	}
 
 	/// Returns an easing function running backwards in time
@@ -271,7 +260,7 @@ public interface EasingType {
 		return t -> Math.pow(t, n);
 	}
 
-	// The MIT license notice below applies to the function step
+	// The MIT licence notice below applies to the function step
 	/// The MIT License (MIT)
 	///
 	///
@@ -356,22 +345,36 @@ public interface EasingType {
 						   (3d * p1 - p0 - 3d * p2 + p3) * delta * delta * delta);
 		}
 
+		/// Modify the baked [Keyframe] array if necessary to apply keyframe changes for this `EasingType`
 		@Override
-		public Double2DoubleFunction buildTransformer(@Nullable Double value) {
+		public void modifyKeyframes(Keyframe[] keyframes, int currentFrameIndex, MathParser mathParser) {
+			final Keyframe currentFrame = keyframes[currentFrameIndex];
+
+			keyframes[currentFrameIndex] = new Keyframe(currentFrame.startTime(), currentFrame.length(), currentFrame.startValue(), currentFrame.endValue(), currentFrame.easingType(),
+														ObjectArrayList.of(
+																currentFrameIndex == 0 ? currentFrame.startValue() : keyframes[currentFrameIndex - 1].endValue(),
+																currentFrameIndex + 1 >= keyframes.length ? currentFrame.endValue() : keyframes[currentFrameIndex + 1].endValue()));
+		}
+
+		/// Construct an interpolation function for this `EasingType`, optionally using an additional easing argument, provided from the animation JSON
+		@Override
+		public Double2DoubleFunction buildTransformer(@Nullable Double easingArg) {
 			return easeInOut(EasingType::catmullRom);
 		}
 
+		/// Calculate the interpolated value for the provided [EasingState] and [ControllerState]
 		@Override
-		public double apply(EasingState easingState, @Nullable Double easingValue, double lerpValue, ControllerState controllerState) {
+		public double apply(EasingState easingState, ControllerState controllerState) {
 			if (easingState.delta() >= 1)
 				return easingState.toValue();
 
-			MathValue[] easingArgs = easingState.easingArgs();
+			final MathValue[] easingArgs = easingState.easingArgs();
 
 			if (easingArgs.length < 2)
-				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), easingState.fromValue(), easingState.toValue());
+				return Mth.lerp(buildTransformer(easingState.getFirstEasingArg(controllerState)).apply(easingState.delta()), easingState.fromValue(), easingState.toValue());
 
-			return getPointOnSpline(lerpValue, easingArgs[0].get(controllerState), easingState.fromValue(), easingState.toValue(), easingArgs[1].get(controllerState));
+			return getPointOnSpline(easingState.delta(), easingArgs[0].get(controllerState), easingState.fromValue(), easingState.toValue(), easingArgs[1].get(controllerState));
 		}
 	}
+	//</editor-fold>
 }

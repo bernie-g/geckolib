@@ -6,13 +6,9 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.cache.model.BakedGeoModel;
-import software.bernie.geckolib.cache.model.GeoBone;
-import software.bernie.geckolib.cache.model.GeoQuad;
-import software.bernie.geckolib.cache.model.GeoVertex;
+import software.bernie.geckolib.cache.model.*;
 import software.bernie.geckolib.cache.model.cuboid.CuboidGeoBone;
 import software.bernie.geckolib.cache.model.cuboid.GeoCube;
-import software.bernie.geckolib.loading.json.raw.ModelProperties;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -97,11 +93,11 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
             final GeoBone[] topLevelBones = new GeoBone[] {
                     new CuboidGeoBone(null, "Main", new GeoBone[0], new GeoCube[] {
                             new GeoCube(quads, Vec3.ZERO, Vec3.ZERO, new Vec3(16, 16, 16))
-                    }, 0, 0, 0, 0, 0, 0)
+                    }, new GeoLocator[0], 0, 0, 0, 0, 0, 0)
             };
-            final ModelProperties modelProperties = new ModelProperties("geometry.unknown", 2.5f, 2.5f, new Vec3(0, 0.75f, 0), 16, 16);
+            final ModelProperties modelProperties = new ModelProperties(GeckoLibConstants.id("internal/missingno"), "geometry.unknown", 2.5f, 2.5f, new Vec3(0, 0.75f, 0), 16, 16);
 
-            return new BakedGeoModel(topLevelBones, modelProperties);
+            return new BakedGeoModel(topLevelBones, Map.of(), modelProperties);
         });
     }
 }

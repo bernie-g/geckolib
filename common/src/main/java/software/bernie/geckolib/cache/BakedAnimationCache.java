@@ -5,7 +5,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
 
 import java.util.Map;
 

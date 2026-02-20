@@ -10,7 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
-import software.bernie.geckolib.loading.json.raw.ModelProperties;
+import software.bernie.geckolib.cache.model.ModelProperties;
 import software.bernie.geckolib.util.JsonUtil;
 
 /// Container class for geometry properties, only used for intermediary steps between .json deserialization and GeckoLib object creation
@@ -47,7 +47,7 @@ public record GeometryDescription(String identifier, @Nullable Float visibleBoun
 		};
 	}
 
-	/// Bake this Geometry instance into the final `ModelProperties` instance that GeckoLib uses for rendering
+	/// Bake this Geometry instance into the final [ModelProperties] instance that GeckoLib uses for rendering
 	public ModelProperties bake(Identifier resourcePath) {
 		return new ModelProperties(resourcePath, this.identifier, this.visibleBoundsWidth, this.visibleBoundsHeight, this.visibleBoundsOffset, this.textureWidth, this.textureHeight);
 	}

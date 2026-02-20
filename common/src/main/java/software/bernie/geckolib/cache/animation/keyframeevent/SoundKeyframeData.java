@@ -1,5 +1,6 @@
 package software.bernie.geckolib.cache.animation.keyframeevent;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.cache.animation.Keyframe;
 
 import java.util.Objects;
@@ -8,8 +9,8 @@ import java.util.Objects;
 public class SoundKeyframeData extends KeyFrameData {
 	private final String sound;
 
-	public SoundKeyframeData(double time, String sound) {
-		super(time);
+	public SoundKeyframeData(double time, String sound, @Nullable String locator) {
+		super(time, locator);
 
 		this.sound = sound;
 	}

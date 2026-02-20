@@ -1,7 +1,5 @@
 package software.bernie.geckolib.loading.math;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.Util;
@@ -9,6 +7,7 @@ import org.apache.logging.log4j.Level;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animation.state.ControllerState;
+import software.bernie.geckolib.loading.definition.animation.DoubleOrString;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 import software.bernie.geckolib.loading.math.function.generic.*;
 import software.bernie.geckolib.loading.math.function.limit.ClampFunction;
@@ -32,6 +31,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 
 /// Mathematical expression parser that breaks down String-expressions into tokenized objects that can be used for automated computation.
@@ -44,7 +44,6 @@ public class MathParser {
     private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:.,()]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
-    private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
     private static final String MOLANG_RETURN = "return ";
     private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
@@ -79,9 +78,24 @@ public class MathParser {
         map.put("math.trunc", TruncateFunction::new);
     });
 
-    /// @return Whether a [MathFunction] has been registered under the given expression name
-    public static boolean isFunctionRegistered(String name) {
-        return FUNCTION_FACTORIES.containsKey(name);
+    protected final UnaryOperator<MathValue> deduplicator;
+
+    protected MathParser() {
+        this(null);
+    }
+
+    protected MathParser(@Nullable UnaryOperator<MathValue> deduplicator) {
+        this.deduplicator = deduplicator == null ? UnaryOperator.identity() : deduplicator;
+    }
+
+    /// Create a new [MathParser] instance with no deduplication schema
+    public static MathParser create() {
+        return new MathParser();
+    }
+
+    /// Create a new [MathParser] instance with a native deduplication schema
+    public static MathParser createWithDeduplication() {
+        return new MathParser(createDeduplicator());
     }
 
     /// Register a new [MathFunction] to be handled by GeckoLib for parsing and internal use.
@@ -97,19 +111,6 @@ public class MathParser {
         GeckoLibConstants.LOGGER.log(Level.DEBUG, "Registered MathFunction '{}'", name);
     }
 
-    /// Construct a [MathFunction] from the given symbol and values
-    ///
-    /// @param name The expression name of the function
-    /// @param values The input values for the function
-    /// @return A new instance of the MathFunction
-    @SuppressWarnings("unchecked")
-    public static <T extends MathFunction> Optional<T> buildFunction(String name, MathValue... values) {
-        if (!FUNCTION_FACTORIES.containsKey(name))
-            return Optional.empty();
-
-        return Optional.of((T)FUNCTION_FACTORIES.get(name).create(values));
-    }
-
     /// Register a new [Variable] with the math parsing system
     ///
     /// Technically supports overriding by matching keys, though you should try to update the existing variable instances instead if possible
@@ -117,10 +118,7 @@ public class MathParser {
         MolangQueries.registerVariable(variable);
     }
 
-    /// @return The registered [Variable] instance for the given name
-    public static Variable getVariableFor(String name) {
-        return MolangQueries.getVariableFor(name);
-    }
+    //<editor-fold defaultstate="collapsed" desc="<Implementation>">
 
     /// Set the value of a [Variable] in the Molang parser, creating a new Variable instance as needed
     ///
@@ -130,31 +128,46 @@ public class MathParser {
         getVariableFor(name).set(value);
     }
 
-    /// Parse a JsonElement into a compiled [MathValue] instance, ready for use
-    public static MathValue parseJson(JsonElement element) {
-        if (!(element instanceof JsonPrimitive primitive) || primitive.isBoolean())
-            throw new CompoundException("Bad formatting on Molang expression, expected single value, received: " + element.getClass().getSimpleName());
+    /// @return The registered [Variable] instance for the given name
+    public static Variable getVariableFor(String name) {
+        return MolangQueries.getVariableFor(name);
+    }
 
-        if (primitive.isNumber())
-            return new Constant(primitive.getAsDouble());
+    /// @return Whether a [MathFunction] has been registered under the given expression name
+    public static boolean isFunctionRegistered(String name) {
+        return FUNCTION_FACTORIES.containsKey(name);
+    }
 
-        if (primitive.isString()) {
-            String value = primitive.getAsString();
+    /// Create a default deduplicator instance
+    protected static UnaryOperator<MathValue> createDeduplicator() {
+        return new UnaryOperator<>() {
+            final ConcurrentHashMap<Double, MathValue> cache = new ConcurrentHashMap<>();
 
-            if (VALID_DOUBLE.matcher(value).matches())
-                return new Constant(Double.parseDouble(value));
+            @Override
+            public MathValue apply(MathValue mathValue) {
+                if (mathValue.isMutable())
+                    return mathValue;
 
-            return compileMolang(value);
-        }
+                return this.cache.computeIfAbsent(mathValue.get(null), Constant::new);
+            }
+        };
+    }
 
-        return new Constant(0);
+    /// Compile a provided [DoubleOrString] value into a [MathValue], utilising a deduplicator if present
+    public MathValue compileDoubleOrString(DoubleOrString value) {
+        return value.isDouble() ? compileConstant(value.doubleValue()) : compileMolang(value.stringValue());
+    }
+
+    /// Compile a provided value into a [Constant], utilising a deduplicator if present
+    public MathValue compileConstant(double value) {
+        return deduplicate(new Constant(value));
     }
 
     /// A wrapper around the expression parsing system to optionally support Molang-specific handling for things like compound expressions
     ///
     /// @param expression The math and/or Molang expression to be parsed
     /// @return A compiled [MathValue], ready for use
-    public static MathValue compileMolang(String expression) {
+    public MathValue compileMolang(String expression) {
         if (expression.startsWith(MOLANG_RETURN)) {
             expression = expression.substring(MOLANG_RETURN.length());
 
@@ -177,14 +190,26 @@ public class MathParser {
                     break;
             }
 
-            return new CompoundValue(subValues.toArray(new MathValue[0]));
+            return deduplicate(new CompoundValue(subValues.toArray(new MathValue[0])));
         }
 
         return compileExpression(expression);
     }
 
+    /// Construct a [MathFunction] from the given symbol and values
+    ///
+    /// @param name The expression name of the function
+    /// @param values The input values for the function
+    /// @return A new instance of the MathFunction
+    protected Optional<MathValue> buildFunction(String name, MathValue... values) {
+        if (!FUNCTION_FACTORIES.containsKey(name))
+            return Optional.empty();
+
+        return Optional.of(deduplicate(FUNCTION_FACTORIES.get(name).create(values)));
+    }
+
     /// Parse and compile a full expression into a single [MathValue] object
-    public static MathValue compileExpression(String expression) {
+    protected MathValue compileExpression(String expression) {
         try {
             return parseSymbols(compileSymbols(decomposeExpression(expression)));
         }
@@ -194,7 +219,7 @@ public class MathParser {
     }
 
     /// Break down an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
-    public static char[] decomposeExpression(String expression) throws CompoundException {
+    protected char[] decomposeExpression(String expression) throws CompoundException {
         if (expression.isEmpty())
             return new char[] {0};
 
@@ -225,7 +250,7 @@ public class MathParser {
     /// Attempt to construct the most relevant operator given the input character array and start index
     ///
     /// This allows for arbitrary-length operators and best-matching for partially-colliding operators
-    protected static @Nullable String tryMergeOperativeSymbols(char[] chars, int index) {
+    protected @Nullable String tryMergeOperativeSymbols(char[] chars, int index) {
         char ch = chars[index];
 
         if (!Operator.isOperativeSymbol(ch))
@@ -256,7 +281,7 @@ public class MathParser {
     ///   - A pre-compiled [MathValue] representing an expression group
     ///   - A [MathFunction] name immediately followed by a pre-compiled [MathValue] argument group
     ///
-    public static List<Either<String, List<MathValue>>> compileSymbols(char[] chars) {
+    protected List<Either<String, List<MathValue>>> compileSymbols(char[] chars) {
         final List<Either<String, List<MathValue>>> symbols = new ObjectArrayList<>();
         final StringBuilder buffer = new StringBuilder();
         int lastSymbolIndex = -1;
@@ -335,10 +360,10 @@ public class MathParser {
         return symbols;
     }
 
-    /// Compiles a given raw list of [symbols][#compileSymbols(char[])] into a singular [MathValue], ready for use
+    /// Compiles a given raw list of [symbols](#compileSymbols(char[])) into a singular [MathValue], ready for use
     ///
     /// @throws CompoundException If the given symbols list cannot be compiled down into a MathValue
-    public static MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+    protected MathValue parseSymbols(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 2) {
             Optional<String> prefix = symbols.getFirst().left().filter(left -> left.startsWith("-") || left.startsWith("!") || isFunctionRegistered(left));
             Optional<List<MathValue>> group = symbols.get(1).right();
@@ -353,15 +378,15 @@ public class MathParser {
         return compileValue(symbols).orElseThrow(() -> new CompoundException("Unable to parse compiled symbols from expression: " + symbols));
     }
 
-    /// Compile the given [symbols][#compileSymbols(char[])] down into a singular [MathValue], ready for use
+    /// Compile the given [symbols](#compileSymbols(char[])) down into a singular [MathValue], ready for use
     ///
     /// @return A compiled MathValue instance, or null if not applicable
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
-    protected static Optional<? extends MathValue> compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+    protected Optional<? extends MathValue> compileValue(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
-        Optional<Ternary> ternary = compileTernary(symbols);
+        Optional<MathValue> ternary = compileTernary(symbols);
 
         if (ternary.isPresent())
             return ternary;
@@ -373,17 +398,16 @@ public class MathParser {
     ///
     /// @return A compiled MathValue value, or null if not applicable
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
-    protected static Optional<MathValue> compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
+    protected Optional<MathValue> compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
         if (symbol.right().isPresent())
-            return Optional.of(new Group(symbol.right().get().getFirst()));
+            return deduplicateOptional(new Group(symbol.right().get().getFirst()));
 
-        //noinspection NullableProblems
         return symbol.left().map(string -> {
             if (string.startsWith("!"))
-                return compileSingleValue(Either.left(string.substring(1))).map(BooleanNegate::new).orElse(null);
+                return deduplicate(compileSingleValue(Either.left(string.substring(1))), BooleanNegate::new).orElse(null);
 
             if (isNumeric(string))
-                return new Constant(Double.parseDouble(string));
+                return compileConstant(Double.parseDouble(string));
 
             if (isLikelyVariable(string)) {
                 if (string.startsWith("-"))
@@ -403,7 +427,7 @@ public class MathParser {
     ///
     /// @return A compiled [Calculation] or [VariableAssignment] value, or empty if a calculation is not applicable to the provided symbols
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
-    protected static Optional<MathValue> compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected Optional<MathValue> compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
         int operatorIndex = -1;
         Operator lastOperator = null;
@@ -411,7 +435,7 @@ public class MathParser {
         for (int i = 1; i < symbolCount; i++) {
             Operator operator = symbols.get(i).left()
                     .filter(Operator::isOperator)
-                    .map(MathParser::getOperatorFor).orElse(null);
+                    .map(this::getOperatorFor).orElse(null);
 
             if (operator == null)
                 continue;
@@ -432,14 +456,15 @@ public class MathParser {
             }
         }
 
-        return lastOperator == null ? Optional.empty() : Optional.of(new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount))));
+        return lastOperator == null ? Optional.empty() :
+               deduplicateOptional(new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount))));
     }
 
     /// Compile a [Ternary] value instance from the given symbols list, if applicable
     ///
     /// @return A compiled Ternary value, or empty if a ternary does not apply to the provided symbols
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
-    protected static Optional<Ternary> compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
+    protected Optional<MathValue> compileTernary(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
         final int symbolCount = symbols.size();
 
         if (symbolCount < 3)
@@ -475,7 +500,7 @@ public class MathParser {
         }
 
         if (ternaryState == 0 && condition != null && ifTrue != null && lastColon < symbolCount - 1)
-            return Optional.of(new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(lastColon + 1, symbolCount))));
+            return deduplicateOptional(new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(lastColon + 1, symbolCount))));
 
         return Optional.empty();
     }
@@ -488,19 +513,19 @@ public class MathParser {
     /// @param args The symbols list for the value
     /// @return A compiled MathValue, or empty if not function is registered by the given name
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
-    protected static Optional<? extends MathValue> compileFunction(String name, List<MathValue> args) throws CompoundException {
+    protected Optional<? extends MathValue> compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
             if (name.length() == 1)
-                return Optional.of(new BooleanNegate(args.getFirst()));
+                return deduplicateOptional(new BooleanNegate(args.getFirst()));
 
-            return compileFunction(name.substring(1), args).map(BooleanNegate::new);
+            return deduplicate(compileFunction(name.substring(1), args), BooleanNegate::new);
         }
 
         if (name.startsWith("-")) {
             if (name.length() == 1)
                 return Optional.of(new Negative(args.getFirst()));
 
-            return compileFunction(name.substring(1), args).map(Negative::new);
+            return deduplicate(compileFunction(name.substring(1), args), Negative::new);
         }
 
         if (!isFunctionRegistered(name))
@@ -509,25 +534,70 @@ public class MathParser {
         return buildFunction(name, args.toArray(new MathValue[0]));
     }
 
+    /// Wrap an existing [MathValue] in
+    @SafeVarargs
+    public final MathValue wrap(MathValue mathValue, UnaryOperator<MathValue> transform, UnaryOperator<MathValue>... additionalTransforms) {
+        return deduplicate(deduplicate(mathValue, transform), additionalTransforms);
+    }
+
+    /// Apply this parser instance's deduplication schema to a [MathValue]
+    ///
+    /// Optionally apply transformations to the `MathValue`, applying the deduplicator to each, in order
+    @SafeVarargs
+    protected final MathValue deduplicate(MathValue value, UnaryOperator<MathValue>... transforms) {
+        for (UnaryOperator<MathValue> transform : transforms) {
+            value = this.deduplicator.apply(transform.apply(value));
+        }
+
+        if (transforms.length == 0)
+            value = this.deduplicator.apply(value);
+
+        return value;
+    }
+
+    /// Apply this parser instance's deduplication schema to a [MathValue]
+    @SafeVarargs
+    protected final Optional<MathValue> deduplicateOptional(@Nullable MathValue value, UnaryOperator<MathValue>... transforms) {
+        if (value == null)
+            return Optional.empty();
+
+        for (UnaryOperator<MathValue> transform : transforms) {
+            value = this.deduplicator.apply(transform.apply(value));
+        }
+
+        if (transforms.length == 0)
+            value = this.deduplicator.apply(value);
+
+        return Optional.of(value);
+    }
+
+    /// Apply this parser instance's deduplication schema to an [Optional] wrapping a [MathValue]
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    @SafeVarargs
+    protected final Optional<MathValue> deduplicate(Optional<? extends MathValue> optional, UnaryOperator<MathValue>... transforms) {
+        return optional.map(value -> deduplicate(value, transforms));
+    }
+
     /// Determine if the given string can be considered numeric, supporting both negative values and decimal values, but not strings omitting a preceding digit before a decimal point
     ///
     /// @return Whether the string is numeric
-    public static boolean isNumeric(String string) {
+    protected boolean isNumeric(String string) {
         return NUMERIC.matcher(string).matches();
     }
 
     /// Get an [Operator] for a given operator string, throwing an exception if one does not exist
-    protected static Operator getOperatorFor(String op) throws CompoundException {
+    protected Operator getOperatorFor(String op) throws CompoundException {
         return Operator.getOperatorFor(op).orElseThrow(() -> new CompoundException("Unknown operator symbol '" + op + "'"));
     }
 
     /// Determine if the given string is likely to be an existing or new variable declaration
     ///
     /// Functionally, this is just a confirmation-by-elimination check since names don't really have a defined form
-    protected static boolean isLikelyVariable(String string) {
+    protected boolean isLikelyVariable(String string) {
         if (MolangQueries.isExistingVariable(string))
             return true;
 
         return !isNumeric(string) && !isFunctionRegistered(string) && !Operator.isOperator(string) && !string.equals("?") && !string.equals(":");
     }
+    //</editor-fold>
 }

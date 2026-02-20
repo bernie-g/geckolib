@@ -15,6 +15,12 @@ public class CompoundException extends RuntimeException {
         this.messages.add(message);
     }
 
+    public CompoundException(String message, Throwable cause) {
+        super(cause);
+
+        this.messages.add(message);
+    }
+
     /// Add a message to the stack.
     /// The message will be given its own line in the log, displayed <u>before</u> any lines already added
     ///
@@ -24,6 +30,11 @@ public class CompoundException extends RuntimeException {
         this.messages.add(message);
 
         return this;
+    }
+
+    @Override
+    public void printStackTrace() {
+        super.printStackTrace();
     }
 
     @Override

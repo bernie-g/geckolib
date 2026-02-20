@@ -63,7 +63,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
         };
     }
 
-    /// Bake this `Geometry` instance into the final `BakedGeoModel` instance that GeckoLib uses for rendering
+    /// Bake this `Geometry` instance into the final [BakedGeoModel] instance that GeckoLib uses for rendering
     public BakedGeoModel bake(Identifier resourcePath) throws RuntimeException {
         final GeometryDefinition geometryDefinition = this.definitions[0];
         final GeometryDescription description = geometryDefinition.description();

@@ -39,7 +39,7 @@ public final class RandomIntegerFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         int result;
         int valueA = (int)Math.round(this.valueA.get(controllerState));
         Random random;

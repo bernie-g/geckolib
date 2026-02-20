@@ -9,7 +9,8 @@ import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.loading.definition.animation.ActorAnimations;
 import software.bernie.geckolib.loading.definition.geometry.Geometry;
 import software.bernie.geckolib.loading.definition.geometry.object.ModelFormatVersion;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
 import software.bernie.geckolib.object.CompoundException;
 
 import java.io.IOException;
@@ -17,6 +18,12 @@ import java.io.Reader;
 
 /// [GeckoLib resource loader][GeckoLibLoader] using a [Gson][com.google.gson.Gson] implementation
 public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
+    /// @return An array of file type extensions that this loader supports
+    @Override
+    public String[] supportedExtensions() {
+        return new String[] {"json"};
+    }
+
     /// Read a GeckoLib model resource from disk into memory, deserializing it into type `T`
     ///
     /// @param resourcePath The resource path of the resource to load
@@ -52,9 +59,10 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     ///
     /// @param resourcePath The resource path of the model file that was loaded
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibAnimationFile]
+    /// @param mathParser The [MathParser] instance to use for this bake operation
     @Override
-    public BakedAnimations bakeGeckoLibAnimationsFile(Identifier resourcePath, JsonObject raw) throws RuntimeException {
-        return bakeJsonAnimations(resourcePath, raw).bake(resourcePath);
+    public BakedAnimations bakeGeckoLibAnimationsFile(Identifier resourcePath, JsonObject raw, MathParser mathParser) throws RuntimeException {
+        return bakeJsonAnimations(resourcePath, raw).bake(resourcePath, mathParser);
     }
 
     /// Read a single resource into its [JsonObject] form

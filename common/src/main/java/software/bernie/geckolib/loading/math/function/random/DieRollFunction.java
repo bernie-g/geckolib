@@ -40,7 +40,7 @@ public final class DieRollFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         final int rolls = (int)(Math.floor(this.rolls.get(controllerState)));
         final double min = this.min.get(controllerState);
         final double max = this.max.get(controllerState);

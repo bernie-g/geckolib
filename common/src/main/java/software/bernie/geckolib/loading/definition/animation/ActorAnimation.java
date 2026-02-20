@@ -5,9 +5,19 @@ import com.mojang.datafixers.util.Either;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
+import software.bernie.geckolib.animation.object.LoopType;
+import software.bernie.geckolib.cache.animation.Animation;
+import software.bernie.geckolib.cache.animation.BoneAnimation;
+import software.bernie.geckolib.cache.animation.keyframeevent.CustomInstructionKeyframeData;
+import software.bernie.geckolib.cache.animation.keyframeevent.KeyFrameData;
+import software.bernie.geckolib.cache.animation.keyframeevent.ParticleKeyframeData;
+import software.bernie.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
+import software.bernie.geckolib.loading.math.MathParser;
+import software.bernie.geckolib.object.CompoundException;
 import software.bernie.geckolib.util.JsonUtil;
 
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /// Container class for a single actor animation, only used for intermediary steps between .json deserialization and GeckoLib object creation
 ///
@@ -49,5 +59,83 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
 
             return new ActorAnimation(animLength, loop, startDelay, loopDelay, animTimeUpdate, blendWeight, overridePrevAnimation, boneAnimations, particleEffects, soundEffects, timeline);
         };
+    }
+
+    /// Bake this `ActorAnimation` instance into the final [Animation] instance that GeckoLib uses for animating
+    public Animation bake(String name, MathParser mathParser) {
+        final double length = this.animLength != null ? this.animLength : calculateUnknownAnimationLength();
+        final LoopType loopType = this.loop == null ? LoopType.PLAY_ONCE : this.loop.map(val -> val ? LoopType.LOOP : LoopType.PLAY_ONCE, LoopType::fromString);
+        final BoneAnimation[] boneAnimations = bakeBoneAnimations(mathParser);
+        final Animation.KeyframeMarkers keyframeMarkers = bakeKeyframeMarkers();
+
+        return Animation.create(name, length, loopType, boneAnimations, keyframeMarkers);
+    }
+
+    /// Bake the [#boneAnimations] map into an array of [BoneAnimation] instances that GeckoLib can use for animating
+    private BoneAnimation[] bakeBoneAnimations(MathParser mathParser) {
+        if (this.boneAnimations == null)
+            return new BoneAnimation[0];
+
+        final BoneAnimation[] animations = new BoneAnimation[this.boneAnimations.size()];
+        int index = 0;
+
+        for (Map.Entry<String, ActorBoneAnimation> entry : this.boneAnimations.entrySet()) {
+            animations[index++] = entry.getValue().bake(entry.getKey(), mathParser);
+        }
+
+        return animations;
+    }
+
+    /// Bake the keyframe markers on this `ActorAnimation` instance into the final `Animation.KeyframeMarkers` instance that GeckoLib uses for animating
+    private Animation.KeyframeMarkers bakeKeyframeMarkers() {
+        if (this.particleEffects == null && this.soundEffects == null && this.timeline == null)
+            return Animation.KeyframeMarkers.EMPTY;
+
+        final SoundKeyframeData[] soundKeyframes = bakeKeyframeMap(this.soundEffects, ActorAnimationSoundEffect::bake);
+        final ParticleKeyframeData[] particleKeyframes = bakeKeyframeMap(this.particleEffects, ActorAnimationParticleEffect::bake);
+        final CustomInstructionKeyframeData[] timelineKeyframes = bakeKeyframeMap(this.timeline, (instructions, timestamp) -> new CustomInstructionKeyframeData(timestamp, instructions));
+
+        return new Animation.KeyframeMarkers(soundKeyframes, particleKeyframes, timelineKeyframes);
+    }
+
+    /// Bake the map of keyframes and their timestamps into their final [KeyFrameData] instance
+    @SuppressWarnings("unchecked")
+    private <R, T> T[] bakeKeyframeMap(@Nullable Map<String, R> map, BiFunction<R, Double, T> bakery) {
+        if (map == null)
+            return (T[])new Object[0];
+
+        final T[] array = (T[])new Object[map.size()];
+        int index = 0;
+
+        for (Map.Entry<String, R> entry : map.entrySet()) {
+            array[index++] = bakery.apply(entry.getValue(), parseTimestamp(entry.getKey()));
+        }
+
+        return array;
+    }
+
+    /// Calculate the expected length of an animation (in seconds) based on the animation keyframes
+    ///
+    /// If the animation returns with no length, it is presumed to be infinite and so returns [Double#MAX_VALUE]
+    private double calculateUnknownAnimationLength() {
+        double length = 0;
+
+        if (this.boneAnimations != null) {
+            for (ActorBoneAnimation boneAnimation : this.boneAnimations.values()) {
+                length = Math.max(length, boneAnimation.getAnimationLength());
+            }
+        }
+
+        return length == 0 ? Double.MAX_VALUE : length;
+    }
+
+    /// Parse a timestamp value from a raw `String`
+    private double parseTimestamp(String timestamp) throws RuntimeException {
+        try {
+            return Double.parseDouble(timestamp);
+        }
+        catch (NumberFormatException ex) {
+            throw new CompoundException("Invalid timestamp, must be a numerical value: " + timestamp);
+        }
     }
 }

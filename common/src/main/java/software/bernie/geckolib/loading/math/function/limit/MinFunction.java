@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.limit;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -26,7 +27,7 @@ public final class MinFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         return Math.min(this.valueA.get(controllerState), this.valueB.get(controllerState));
     }
 

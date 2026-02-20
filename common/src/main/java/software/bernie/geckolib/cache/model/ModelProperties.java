@@ -1,4 +1,4 @@
-package software.bernie.geckolib.loading.json.raw;
+package software.bernie.geckolib.cache.model;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;

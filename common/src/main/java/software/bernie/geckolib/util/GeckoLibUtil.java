@@ -1,5 +1,6 @@
 package software.bernie.geckolib.util;
 
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.PatchedDataComponentMap;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +18,6 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.loading.loader.GeckoLibLoader;
-import software.bernie.geckolib.loading.object.BakedModelFactory;
 
 import java.util.Objects;
 
@@ -67,14 +67,23 @@ public final class GeckoLibUtil {
 		return EasingType.register(name, easingType);
 	}
 
-	/// Register a custom [BakedModelFactory] with GeckoLib, allowing for dynamic handling of geo model loading
+	/// Register a zero-parameter [EasingType] with GeckoLib for handling animation transitions and value curves
 	///
 	/// **<u>MUST be called during mod construct</u>**
 	///
-	/// @param namespace The namespace (modid) to register the factory for
-	/// @param factory The factory responsible for model loading under the given namespace
-	synchronized public static void addCustomBakedModelFactory(String namespace, BakedModelFactory factory) {
-		BakedModelFactory.register(namespace, factory);
+	/// @param name The name of the `EasingType` handler
+	/// @param function The interpolation function for this easing type
+	synchronized public static EasingType addCustomSimpleEasingType(String name, Double2DoubleFunction function) {
+		return EasingType.registerSimple(name, function);
+	}
+
+	/// Register a custom [GeckoLibLoader] with GeckoLib for handling custom resource loading
+	///
+	/// **<u>MUST be called during mod construct</u>**
+	///
+	/// @param predicate A predicate that determines whether the given resource should be handled by the associated loader
+	synchronized public static void addResourceLoader(GeckoLibLoader.Predicate predicate, GeckoLibLoader<?> loader) {
+		GeckoLibResources.addLoader(predicate, loader);
 	}
 
 	/// Register a custom [SerializableDataTicket] with GeckoLib for handling custom data transmission
@@ -87,15 +96,6 @@ public final class GeckoLibUtil {
 	/// @return The dataTicket you passed in
 	synchronized public static <D> SerializableDataTicket<D> addDataTicket(SerializableDataTicket<D> dataTicket) {
 		return DataTickets.registerSerializable(dataTicket);
-	}
-
-	/// Register a custom [GeckoLibLoader] with GeckoLib for handling custom resource loading
-	///
-	/// **<u>MUST be called during mod construct</u>**
-	///
-	/// @param predicate A predicate that determines whether the given resource should be handled by the associated loader
-	synchronized public static void addResourceLoader(GeckoLibLoader.Predicate predicate, GeckoLibLoader<?> loader) {
-		GeckoLibResources.addLoader(predicate, loader);
 	}
 
 	/// Perform an [Object#equals(Object)] check on two [PatchedDataComponentMap]s,

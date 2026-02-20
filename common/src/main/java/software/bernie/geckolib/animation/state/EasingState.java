@@ -1,5 +1,6 @@
 package software.bernie.geckolib.animation.state;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.object.EasingType;
 import software.bernie.geckolib.loading.math.MathValue;
 
@@ -13,6 +14,16 @@ import java.util.Arrays;
 /// @param fromValue The start value to ease from
 /// @param toValue The end value to ease to
 public record EasingState(EasingType easingType, MathValue[] easingArgs, double delta, double fromValue, double toValue) {
+	/// Calculate the interpolated value for this `EasingState` using the provided [ControllerState]
+	public double interpolate(ControllerState controllerState) {
+		return this.easingType.apply(this, controllerState);
+	}
+
+	/// @return The first easing argument from the [#easingArgs] array for the given [ControllerState], or null if not present
+	public @Nullable Double getFirstEasingArg(ControllerState controllerState) {
+		return this.easingArgs.length == 0 ? null : this.easingArgs[0].get(controllerState);
+	}
+
 	@Override
 	public String toString() {
         return "EasingType: " + this.easingType +

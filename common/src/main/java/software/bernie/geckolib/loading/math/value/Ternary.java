@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
@@ -17,7 +18,7 @@ public record Ternary(MathValue condition, MathValue trueValue, MathValue falseV
     }
 
     @Override
-    public double get(ControllerState controllerState) {
+    public double get(@Nullable ControllerState controllerState) {
         return this.condition.get(controllerState) != 0 ? this.trueValue.get(controllerState) : this.falseValue.get(controllerState);
     }
 

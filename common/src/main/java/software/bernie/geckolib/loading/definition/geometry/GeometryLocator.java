@@ -33,7 +33,7 @@ public record GeometryLocator(@Nullable Vec3 offset, @Nullable Vec3 rotation) {
 
     }
 
-    /// Bake this `GeometryLocator` instance into the final `GeoLocator` instance that GeckoLib uses for position listeners
+    /// Bake this `GeometryLocator` instance into the final [GeoLocator] instance that GeckoLib uses for position listeners
     public GeoLocator bake(String name, GeoBone parentBone) {
         final Vec3 offset = this.offset == null ? Vec3.ZERO : this.offset;
         final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation.multiply(-Mth.DEG_TO_RAD, -Mth.DEG_TO_RAD, Mth.DEG_TO_RAD);

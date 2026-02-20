@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.value.Variable;
@@ -29,7 +30,7 @@ public abstract class MathFunction implements MathValue {
     public abstract String getName();
 
     @Override
-    public final double get(ControllerState controllerState) {
+    public final double get(@Nullable ControllerState controllerState) {
         if (this.isMutable)
             return compute(controllerState);
 
@@ -40,7 +41,7 @@ public abstract class MathFunction implements MathValue {
     }
 
     /// Compute the result of this function from its stored arguments
-    public abstract double compute(ControllerState controllerState);
+    public abstract double compute(@Nullable ControllerState controllerState);
 
     /// @return Whether this function should be considered mutable; the value could change
     ///

@@ -8,7 +8,7 @@ import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;

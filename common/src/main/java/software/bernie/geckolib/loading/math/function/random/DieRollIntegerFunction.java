@@ -41,7 +41,7 @@ public final class DieRollIntegerFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         final int rolls = (int)(Math.floor(this.rolls.get(controllerState)));
         final int min = Mth.floor(this.min.get(controllerState));
         final int max = Mth.ceil(this.max.get(controllerState));

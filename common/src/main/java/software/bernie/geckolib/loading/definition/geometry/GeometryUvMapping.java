@@ -45,7 +45,7 @@ public record GeometryUvMapping(EnumMap<Direction, GeometryUvMappingDetails> uvF
         };
     }
 
-    /// Bake this UV map into a `GeoQuad` for the given direction
+    /// Bake this UV map into a [GeoQuad] for the given direction
     public @Nullable GeoQuad bakeQuad(VertexSet vertices, Vec3 cubeSize, Direction direction, boolean mirror, int textureWidth, int textureHeight) {
         final GeometryUvMappingDetails faceUV = fromDirection(direction);
 

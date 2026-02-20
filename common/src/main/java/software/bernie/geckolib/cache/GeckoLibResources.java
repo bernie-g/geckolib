@@ -2,6 +2,7 @@ package software.bernie.geckolib.cache;
 
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
@@ -12,20 +13,16 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.cache.animation.Animation;
+import software.bernie.geckolib.cache.animation.BakedAnimations;
 import software.bernie.geckolib.cache.model.BakedGeoModel;
-import software.bernie.geckolib.loading.json.typeadapter.BakedAnimationsAdapter;
 import software.bernie.geckolib.loading.loader.GeckoLibGsonLoader;
 import software.bernie.geckolib.loading.loader.GeckoLibLoader;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -44,6 +41,7 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	public static final PreparableReloadListener.StateKey<PendingResources> STATE_KEY = new PreparableReloadListener.StateKey<>();
 	@SuppressWarnings("unchecked")
     private static Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>>[] LOADERS = new Pair[] {Pair.<GeckoLibLoader.Predicate, GeckoLibLoader<?>>of((_, _) -> true, new GeckoLibGsonLoader())};
+	private static final Set<String> SUPPORTED_FILE_TYPES = new ObjectArraySet<>(1);
 
 	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
 	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
@@ -73,6 +71,8 @@ public final class GeckoLibResources implements PreparableReloadListener {
 
 		LOADERS = copy;
 
+        Collections.addAll(SUPPORTED_FILE_TYPES, loader.supportedExtensions());
+
 		GeckoLibConstants.LOGGER.info("Added custom resource loader {}", loader.getClass().getSimpleName());
 	}
 
@@ -86,36 +86,34 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	public CompletableFuture<Void> reload(PreparableReloadListener.SharedState sharedState, Executor prepExecutor, PreparationBarrier preparationBarrier, Executor applicationExecutor) {
 		final ResourceManager resourceManager = sharedState.resourceManager();
 		final PendingResources pending = sharedState.get(STATE_KEY);
+		final MathParser mathParser = MathParser.createWithDeduplication();
 
-		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), prepExecutor)
-				.thenComposeAsync(_ -> CompletableFuture.allOf(loadModels(prepExecutor, resourceManager, pending),
-															   loadAnimations(prepExecutor, resourceManager, pending))
-						.thenCompose(preparationBarrier::wait)
-						.thenRunAsync(() -> applyResources(pending), applicationExecutor)
-						.thenRun(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = null));
+		return CompletableFuture.runAsync(() -> CompletableFuture.allOf(loadModels(prepExecutor, resourceManager, pending),
+																		loadAnimations(prepExecutor, resourceManager, pending, mathParser)), prepExecutor)
+				.thenCompose(preparationBarrier::wait)
+				.thenRunAsync(() -> applyResources(pending), applicationExecutor);
 	}
 
 	/// Provide a [Future] for retrieving and baking all animation JSONs from the [#ANIMATIONS_PATH]
-	private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor executor, ResourceManager resourceManager, PendingResources pendingResources) {
-		return bakeAllResources(executor, resourceManager, ANIMATIONS_PATH.getPath(), "json", GeckoLibLoader::deserializeGeckoLibAnimationFile, GeckoLibLoader::bakeGeckoLibAnimationsFile, () -> null)
+	private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor executor, ResourceManager resourceManager, PendingResources pendingResources, MathParser mathParser) {
+		return bakeAllResources(executor, resourceManager, ANIMATIONS_PATH.getPath(), GeckoLibLoader::deserializeGeckoLibAnimationFile,
+								(loader, resourcePath, raw) -> loader.bakeGeckoLibAnimationsFile(resourcePath, raw, mathParser), () -> null)
 				.whenComplete((map, err) -> pendingResources.complete(map, err, PendingResources::animations));
 	}
 
 	/// Provide a [Future] for retrieving and baking all geo model JSONs from the [#MODELS_PATH]
 	private static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor executor, ResourceManager resourceManager, PendingResources pendingResources) {
-		return bakeAllResources(executor, resourceManager, MODELS_PATH.getPath(), "json", GeckoLibLoader::deserializeGeckoLibModelFile, GeckoLibLoader::bakeGeckoLibModelFile, () -> null)
+		return bakeAllResources(executor, resourceManager, MODELS_PATH.getPath(), GeckoLibLoader::deserializeGeckoLibModelFile, GeckoLibLoader::bakeGeckoLibModelFile, () -> null)
 				.whenComplete((map, err) -> pendingResources.complete(map, err, PendingResources::models));
 	}
 
 	/// Provide a [Future] for retrieving and baking all asset JSON files for a given type into a compiled map
 	@SuppressWarnings("SameParameterValue")
-    private static <UNBAKED, BAKED> CompletableFuture<Map<Identifier, BAKED>> bakeAllResources(Executor executor, ResourceManager resourceManager, String rootPath, String fileType,
+    private static <UNBAKED, BAKED> CompletableFuture<Map<Identifier, BAKED>> bakeAllResources(Executor executor, ResourceManager resourceManager, String rootPath,
                                                                                                TriFunction<GeckoLibLoader<UNBAKED>, Identifier, Resource, UNBAKED> deserializer,
                                                                                                TriFunction<GeckoLibLoader<UNBAKED>, Identifier, UNBAKED, BAKED> bakery,
                                                                                                Supplier<@Nullable BAKED> onException) {
-		final String fileTypeSuffix = "." + fileType;
-
-		return CompletableFuture.supplyAsync(() -> resourceManager.listResources(rootPath, fileName -> fileName.getPath().endsWith(fileTypeSuffix)), executor)
+		return CompletableFuture.supplyAsync(() -> resourceManager.listResources(rootPath, GeckoLibResources::isFileTypeSupported), executor)
 				.thenCompose(resources -> {
 					final List<CompletableFuture<@Nullable Pair<Identifier, BAKED>>> tasks = new ObjectArrayList<>(resources.size());
 
@@ -150,7 +148,9 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	private static GeckoLibLoader<?> findLoaderForFile(Identifier id, Resource resource) {
 		if (LOADERS.length > 1) {
 			for (Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>> entry : LOADERS) {
-				if (entry.first().shouldHandle(id, resource))
+				final GeckoLibLoader<?> loader = entry.second();
+
+				if (anyExtensionMatches(id.getPath(), Arrays.asList(loader.supportedExtensions())) && entry.first().shouldHandle(id, resource))
 					return entry.second();
 			}
 		}
@@ -177,6 +177,26 @@ public final class GeckoLibResources implements PreparableReloadListener {
 		ANIMATIONS = new BakedAnimationCache(resources.animations.join());
 
 		GeckoLibConstants.LOGGER.info("Loaded {} models and {} animations from resources", MODELS.size(), ANIMATIONS.size());
+	}
+
+	/// @return Whether the given resource file is supported by the currently registered loaders
+	private static boolean isFileTypeSupported(Identifier resourcePath) {
+		final String path = resourcePath.getPath();
+
+		if (SUPPORTED_FILE_TYPES.size() <= 3)
+			return anyExtensionMatches(path, SUPPORTED_FILE_TYPES);
+
+		return SUPPORTED_FILE_TYPES.contains(path.substring(path.lastIndexOf('.') + 1));
+	}
+
+	/// @return Whether the provided resource path matches any of the file type extensions in the provided [Iterable]
+	private static boolean anyExtensionMatches(String path, Iterable<String> extensions) {
+		for (String extension : extensions) {
+			if (path.endsWith("." + extension))
+				return true;
+		}
+
+		return false;
 	}
 
 	/// Resource-loading state holder object to pair with the associated [PreparableReloadListener.StateKey] for resource loading

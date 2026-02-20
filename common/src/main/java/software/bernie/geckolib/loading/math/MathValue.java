@@ -2,6 +2,7 @@ package software.bernie.geckolib.loading.math;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -17,7 +18,8 @@ public interface MathValue extends ToDoubleFunction<ControllerState> {
     /// Get computed or stored value based on the current AnimationState
     ///
     /// If this MathValue uses the `controllerState`, it should return `true` from [#isMutable()]
-    double get(ControllerState controllerState);
+    /// @param controllerState The ControllerState for the current render pass. May be `null` if [#isMutable()] returns false
+    double get(@Nullable ControllerState controllerState);
 
     /// Return whether this type of MathValue should be considered mutable; its value could change.
     /// This is used to cache calculated values, optimising computational work

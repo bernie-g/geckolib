@@ -81,7 +81,10 @@ public class Animation {
 		return new Animation(name, length, loopType, boneAnimations, new ReferenceArraySet<>(usedVariables), keyframeMarkers);
 	}
 
+	/// Container record for the various keyframe marker types for an animation
 	public record KeyframeMarkers(SoundKeyframeData[] sounds, ParticleKeyframeData[] particles, CustomInstructionKeyframeData[] customInstructions) {
+		public static final KeyframeMarkers EMPTY = new KeyframeMarkers(new SoundKeyframeData[0], new ParticleKeyframeData[0], new CustomInstructionKeyframeData[0]);
+
         /// @return Whether there are any keyframe markers of any type
         public boolean isEmpty() {
             return this.sounds.length == 0 && this.particles.length == 0 && this.customInstructions.length == 0;

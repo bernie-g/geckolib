@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.value;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 /// Assigns a variable to the given value, then returns 0
 public record VariableAssignment(Variable variable, MathValue value) implements MathValue {
     @Override
-    public double get(ControllerState controllerState) {
+    public double get(@Nullable ControllerState controllerState) {
         this.variable.set(this.value.get(controllerState));
 
         return 0;

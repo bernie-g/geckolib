@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function.misc;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
@@ -21,7 +22,7 @@ public final class PiFunction extends MathFunction {
     }
 
     @Override
-    public double compute(ControllerState controllerState) {
+    public double compute(@Nullable ControllerState controllerState) {
         return Math.PI;
     }
 

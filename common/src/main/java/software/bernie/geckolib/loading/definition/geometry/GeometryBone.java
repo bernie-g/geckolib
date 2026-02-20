@@ -58,7 +58,7 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
         };
     }
 
-    /// Bake this `GeometryBone` instance into the final `GeoBone` instance that GeckoLib uses for rendering
+    /// Bake this `GeometryBone` instance into the final [GeoBone] instance that GeckoLib uses for rendering
     public GeoBone bake(@Nullable GeoBone parentBone, GeometryDescription geometryDescription, Map<String, List<GeometryBone>> childBonesMap, BiConsumer<GeoBone, GeoLocator> locatorConsumer) {
         final Vec3 pivot = this.pivot == null ? Vec3.ZERO : this.pivot;
         final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation;

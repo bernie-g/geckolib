@@ -1,5 +1,6 @@
 package software.bernie.geckolib.cache.animation.keyframeevent;
 
+import org.jspecify.annotations.Nullable;
 import software.bernie.geckolib.cache.animation.Keyframe;
 
 import java.util.Objects;
@@ -10,14 +11,23 @@ import java.util.Objects;
 /// @see SoundKeyframeData
 public abstract class KeyFrameData {
 	private final double animationTime;
+	private final @Nullable String locatorName;
 
-	public KeyFrameData(double time) {
+	public KeyFrameData(double time, @Nullable String locatorName) {
 		this.animationTime = time;
+		this.locatorName = locatorName;
 	}
 
-	/// Gets the time position (in seconds) of the keyframe instruction in its animation
+	/// @return The time position (in seconds) of the keyframe instruction in its animation
 	public double getTime() {
 		return this.animationTime;
+	}
+
+	/// Gets the name of the locator this keyframe instruction targets, if any
+	///
+	/// @return The name of the locator, or null if not targeted at anything
+	public @Nullable String getLocatorName() {
+		return this.locatorName;
 	}
 
 	@Override
