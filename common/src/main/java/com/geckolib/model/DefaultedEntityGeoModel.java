@@ -1,8 +1,7 @@
 package com.geckolib.model;
 
-import net.minecraft.resources.Identifier;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoAnimatable;
+import net.minecraft.resources.Identifier;
 
 /// [DefaultedGeoModel] specific to [Entities][net.minecraft.world.entity.Entity]
 ///
@@ -10,30 +9,14 @@ import com.geckolib.animatable.GeoAnimatable;
 ///
 /// Additionally it can automatically handle head-turning if the entity has a "head" bone
 public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
-    protected final @Nullable String headBone;
-
 	/// Create a new instance of this model class
 	///
 	/// The asset path should be the truncated relative path from the base folder
 	///
 	/// E.G.
-	/// <pre>
-	/// `new Identifier("myMod", "animals/red_fish")`</pre>
+	/// <pre>`new Identifier("myMod", "animals/red_fish")`</pre>
 	public DefaultedEntityGeoModel(Identifier assetSubpath) {
-		this(assetSubpath, null);
-	}
-
-    /// Create a new instance of this model class, preconfigured to automatically handle head-turning for bone matching the provided name
-    ///
-    /// The asset path should be the truncated relative path from the base folder
-    ///
-    /// E.G.
-    /// <pre>
-    /// `new Identifier("myMod", "animals/red_fish")`</pre>
-    public DefaultedEntityGeoModel(Identifier assetSubpath, @Nullable String headBone) {
 		super(assetSubpath);
-
-        this.headBone = headBone;
 	}
 
 	/// Returns the subtype string for this type of model
