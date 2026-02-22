@@ -4,6 +4,7 @@
 
 ### Changes
 #### API
+* Refactored the base packages of GeckoLib from `software.bernie.geckolib` to `com.geckolib`
 * Added `GeoLocator` - A object implementation for locators. They are only used for listening to render positions
   * Added `BakedGeoModel#getLocator` and `BakedGeoModel#locators`
   * Added `GeoBone#locators`
@@ -64,6 +65,7 @@
   * `GeoReplacedEntityRenderer`
 * Moved `ModelFormatVersion` to `com.geckolib.loading.definition.geometry.object`
 * Renamed `Rotation` to `UvFaceRotation` and moved to `com.geckolib.loading.definition.geometry.object`
+* Removed `headBone` and its associated constructor in `DefaultedEntityGeoModel` since it's no longer used
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
