@@ -15,7 +15,7 @@ import com.geckolib.network.packet.MultiloaderPacket;
 public class GeckoLibClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
-        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloader(GeckoLibResources.RELOAD_LISTENER_ID, new GeckoLibResources());
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener(GeckoLibResources.RELOAD_LISTENER_ID, new GeckoLibResources());
     }
 
     @ApiStatus.Internal

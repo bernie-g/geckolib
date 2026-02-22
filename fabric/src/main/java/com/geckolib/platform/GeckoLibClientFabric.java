@@ -1,15 +1,14 @@
 package com.geckolib.platform;
 
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.service.GeckoLibClient;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.DyedItemColor;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.service.GeckoLibClient;
 
 /**
  * Fabric service implementation for clientside functionalities
@@ -32,6 +31,6 @@ public class GeckoLibClientFabric implements GeckoLibClient {
      */
     @Override
     public int getDyedItemColor(ItemStack itemStack, int defaultColor) {
-        return itemStack.is(ItemTags.DYEABLE) ? DyedItemColor.getOrDefault(itemStack, defaultColor) : defaultColor;
+        return DyedItemColor.getOrDefault(itemStack, defaultColor);
     }
 }
