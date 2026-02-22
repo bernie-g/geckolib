@@ -1,12 +1,23 @@
 package com.geckolib.model;
 
-import net.minecraft.resources.Identifier;
 import com.geckolib.animatable.GeoAnimatable;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+
+import java.util.Objects;
 
 /// [DefaultedGeoModel] specific to [Blocks][net.minecraft.world.level.block.Block]
 ///
 /// Using this class pre-sorts provided asset paths into the "block" subdirectory
 public class DefaultedBlockGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
+	/// Create a new instance of this model class with no asset subpath
+	///
+	/// The resultant asset id will be named from your [BlockEntityType]'s registered id<br/>
+	public <B extends BlockEntity & GeoAnimatable> DefaultedBlockGeoModel(BlockEntityType<B> blockEntityType) {
+		this(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType)));
+	}
 	/// Create a new instance of this model class
 	///
 	/// The asset path should be the truncated relative path from the base folder

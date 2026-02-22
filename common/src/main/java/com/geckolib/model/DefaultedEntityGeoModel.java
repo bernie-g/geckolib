@@ -1,7 +1,10 @@
 package com.geckolib.model;
 
 import com.geckolib.animatable.GeoAnimatable;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 
 /// [DefaultedGeoModel] specific to [Entities][net.minecraft.world.entity.Entity]
 ///
@@ -9,12 +12,18 @@ import net.minecraft.resources.Identifier;
 ///
 /// Additionally it can automatically handle head-turning if the entity has a "head" bone
 public class DefaultedEntityGeoModel<T extends GeoAnimatable> extends DefaultedGeoModel<T> {
+	/// Create a new instance of this model class with no asset subpath
+	///
+	/// The resultant asset id will be named from your [EntityType]'s registered id<br/>
+	public <E extends Entity & GeoAnimatable> DefaultedEntityGeoModel(EntityType<E> entityType) {
+		this(BuiltInRegistries.ENTITY_TYPE.getKey(entityType));
+	}
+
 	/// Create a new instance of this model class
 	///
 	/// The asset path should be the truncated relative path from the base folder
 	///
-	/// E.G.
-	/// <pre>`new Identifier("myMod", "animals/red_fish")`</pre>
+	/// E.G. <pre>`new Identifier("myMod", "animals/red_fish")`</pre>
 	public DefaultedEntityGeoModel(Identifier assetSubpath) {
 		super(assetSubpath);
 	}
