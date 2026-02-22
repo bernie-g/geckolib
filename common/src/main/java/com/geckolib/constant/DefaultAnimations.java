@@ -1,22 +1,19 @@
 package com.geckolib.constant;
 
-import com.geckolib.animatable.GeoBlockEntity;
-import com.geckolib.animatable.GeoEntity;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.GeoReplacedEntity;
+import com.geckolib.animatable.*;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.GeoRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.RawAnimation;
-import com.geckolib.animation.object.PlayState;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.renderer.base.BoneSnapshots;
-import com.geckolib.renderer.base.RenderPassInfo;
 
 import java.util.function.Function;
 
@@ -207,6 +204,8 @@ public final class DefaultAnimations {
 	}
 
     /// Hardcoded head rotation to look towards an entity's facing direction.
+	///
+	/// You would typically call this in [GeoRenderer#adjustModelBonesForRender]
     ///
     /// Consider replacing this with an `AnimationController` animation using the below values:
     ///
