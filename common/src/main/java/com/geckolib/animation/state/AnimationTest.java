@@ -1,0 +1,107 @@
+package com.geckolib.animation.state;
+
+import org.jetbrains.annotations.Contract;
+import org.jspecify.annotations.Nullable;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.RawAnimation;
+import com.geckolib.animation.object.PlayState;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.renderer.base.GeoRenderState;
+
+import java.util.Objects;
+
+/// Animation pass handler for end-users animatables
+///
+/// This is where users would set their selected animation to play,
+/// stop the controller, or any number of other animation-related actions.
+///
+/// @param <T> The type of animatable this handler is for
+/// @param animatable The animatable instance to handle animations for
+/// @param renderState The GeoRenderState for the upcoming render pass
+/// @param manager The AnimatableManager instance for the animatable
+/// @param controller The AnimationController instance for this animation test
+public record AnimationTest<T extends GeoAnimatable>(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, AnimationController<T> controller) {
+    /// Gets whether the current [GeoAnimatable] is considered to be moving for animation purposes
+    ///
+    /// Note that this is a best-case approximation of movement, and you should ideally be using Molang
+    public boolean isMoving() {
+        return this.renderState.getOrDefaultGeckolibData(DataTickets.IS_MOVING, false);
+    }
+
+    /// Sets the animation for the controller to start/continue playing
+    ///
+    /// Basically just a shortcut for <pre>`controller().setAnimation()`</pre>
+    ///
+    /// @param animation The animation to play
+    public void setAnimation(RawAnimation animation) {
+        this.controller.setAnimation(animation);
+    }
+
+    /// Helper method to set an animation to start/continue playing, and return [PlayState#CONTINUE]
+    public PlayState setAndContinue(RawAnimation animation) {
+        this.controller.setAnimation(animation);
+
+        return PlayState.CONTINUE;
+    }
+
+    /// Checks whether the current [AnimationController]'s last animation was the one provided
+    ///
+    /// This allows for multi-stage animation shifting where the next animation to play may depend on the previous one
+    ///
+    /// @param animation The animation to check
+    /// @return Whether the controller's last animation is the one provided
+    public boolean isCurrentAnimation(RawAnimation animation) {
+        return Objects.equals(this.controller.getCurrentRawAnimation(), animation);
+    }
+
+    /// Similar to [#isCurrentAnimation], but additionally checks the current stage of the animation by name
+    ///
+    /// This can be used to check if a multi-stage animation has reached a given stage (if it is running at all)
+    ///
+    /// Note that this will still return true even if the animation has finished, matching with the last animation stage in the [RawAnimation] last provided
+    ///
+    /// @param name The name of the animation stage to check (I.E. "move.walk")
+    /// @return Whether the controller's current stage is the one provided
+    public boolean isCurrentAnimationStage(String name) {
+        return this.controller.getCurrentAnimationPoint() != null && this.controller.getCurrentAnimationPoint().animation().name().equals(name);
+    }
+
+    /// Helper method for [AnimationController#setAnimationSpeed]
+    ///
+    /// @param speed The speed modifier for the controller (2 = twice as fast, 0.5 = half as fast, etc.)
+    public void setControllerSpeed(float speed) {
+        this.controller.setAnimationSpeed(speed);
+    }
+
+    /// @return Whether the RenderState has data associated with the given [DataTicket]
+    public boolean hasData(DataTicket<?> dataTicket) {
+        return this.renderState.hasGeckolibData(dataTicket);
+    }
+
+    /// Get previously set data on the RenderState by its associated [DataTicket].
+    ///
+    /// Note that you should **<u>NOT</u>** be attempting to retrieve data you don't know exists.
+    /// Use [#hasData(DataTicket)] if unsure
+    ///
+    /// @param dataTicket The DataTicket associated with the data
+    /// @return The data contained on this RenderState, null if the data doesn't exist
+    public <D> @Nullable D getData(DataTicket<D> dataTicket) {
+        return this.renderState.getGeckolibData(dataTicket);
+    }
+
+    /// Get previously set data on the RenderState by its associated [DataTicket],
+    /// or a default value if the data does not exist
+    ///
+    /// @param dataTicket The DataTicket associated with the data
+    /// @param defaultValue The fallback value if no data has been set for the given DataTicket
+    /// @return The data contained on this RenderState or `defaultValue` if not present
+    @Contract("_,null->null;_,!null->!null")
+    public <D> @Nullable D getDataOrDefault(DataTicket<D> dataTicket, @Nullable D defaultValue) {
+        D data = getData(dataTicket);
+
+        return data != null || this.renderState.hasGeckolibData(dataTicket) ? data : defaultValue;
+    }
+}

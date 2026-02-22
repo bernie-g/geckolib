@@ -1,0 +1,72 @@
+package com.geckolib.renderer.layer.builtin;
+
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.GeoRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
+
+import java.util.function.Function;
+
+/// Built-in GeoLayer for quickly performing another render pass for the same model after the main render pass has completed.
+///
+/// This should only be used if the additional render pass isn't specific to any bones, as this re-renders the entire model.
+/// If you are using this to use custom textures/rendertypes on specific bones, use [CustomBoneTextureGeoLayer] instead.
+///
+/// @param <T> Animatable class type. Inherited from the renderer this layer is attached to
+/// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
+/// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
+public class TextureLayerGeoLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+    protected final Identifier texture;
+    protected final @Nullable Function<Identifier, RenderType> renderType;
+
+    TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer) {
+        this(renderer, MissingTextureAtlasSprite.getLocation(), null);
+    }
+
+    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture) {
+        this(renderer, texture, null);
+    }
+
+    public TextureLayerGeoLayer(GeoRenderer<T, O, R> renderer, Identifier texture, @Nullable Function<Identifier, RenderType> renderTypeFunction) {
+        super(renderer);
+
+        this.texture = texture;
+        this.renderType = renderTypeFunction;
+    }
+
+    /// Get the texture resource path for the given [GeoRenderState]
+    @Override
+    protected Identifier getTextureResource(R renderState) {
+        return this.texture;
+    }
+
+    /// Get the render type for the render pass
+    protected @Nullable RenderType getRenderType(R renderState) {
+        final Identifier texture = getTextureResource(renderState);
+
+        if (this.renderType == null)
+            return this.renderer.getRenderType(renderState, texture);
+
+        return this.renderType.apply(texture);
+    }
+
+    /// This is the method that is actually called by the render for your render layer to function
+    ///
+    /// This is called _after_ the animatable has been submitted for rendering, but before supplementary rendering submissions like nametags
+    @Override
+    public void submitRenderTask(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
+        if (!renderPassInfo.willRender())
+            return;
+
+        RenderType renderType = getRenderType(renderPassInfo.renderState());
+
+        if (renderType != null)
+            this.renderer.submitRenderTasks(renderPassInfo, renderTasks.order(1), renderType);
+    }
+}

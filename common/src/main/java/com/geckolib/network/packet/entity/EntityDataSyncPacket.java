@@ -1,0 +1,59 @@
+package com.geckolib.network.packet.entity;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import org.jspecify.annotations.Nullable;
+import com.geckolib.GeckoLibConstants;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.GeoReplacedEntity;
+import com.geckolib.constant.dataticket.SerializableDataTicket;
+import com.geckolib.network.packet.MultiloaderPacket;
+import com.geckolib.util.ClientUtil;
+import com.geckolib.util.RenderUtil;
+
+import java.util.function.Consumer;
+
+public record EntityDataSyncPacket<D>(int entityId, boolean isReplacedEntity, SerializableDataTicket<D> dataTicket, D data) implements MultiloaderPacket {
+    public static final CustomPacketPayload.Type<EntityDataSyncPacket<?>> TYPE = new Type<>(GeckoLibConstants.id("entity_data_sync"));
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static final StreamCodec<RegistryFriendlyByteBuf, EntityDataSyncPacket<?>> CODEC = StreamCodec.of((buf, packet) -> {
+        SerializableDataTicket.STREAM_CODEC.encode(buf, packet.dataTicket);
+        buf.writeVarInt(packet.entityId);
+        buf.writeBoolean(packet.isReplacedEntity);
+        ((StreamCodec)packet.dataTicket.streamCodec()).encode(buf, packet.data);
+    }, buf -> {
+        final SerializableDataTicket dataTicket = SerializableDataTicket.STREAM_CODEC.decode(buf);
+
+        return new EntityDataSyncPacket<>(buf.readVarInt(), buf.readBoolean(), dataTicket, dataTicket.streamCodec().decode(buf));
+    });
+
+    @Override
+    public Type<? extends CustomPacketPayload> type() {
+        return TYPE;
+    }
+
+    @Override
+    public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
+        workQueue.accept(() -> {
+            final Level level = ClientUtil.getLevel();
+            final Entity entity;
+
+            if (level == null || (entity = level.getEntity(this.entityId)) == null)
+                return;
+
+            if (!this.isReplacedEntity) {
+                if (entity instanceof GeoEntity geoEntity)
+                    geoEntity.setAnimData(this.dataTicket, this.data);
+
+                return;
+            }
+
+            if (RenderUtil.getReplacedAnimatable(entity.getType()) instanceof GeoReplacedEntity replacedEntity)
+                replacedEntity.setAnimData(entity, this.dataTicket, this.data);
+        });
+    }
+}

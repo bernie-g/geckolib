@@ -62,8 +62,8 @@
   * `GeoBlockRenderer`
   * `GeoEntityRenderer`
   * `GeoReplacedEntityRenderer`
-* Moved `ModelFormatVersion` to `software.bernie.geckolib.loading.definition.geometry.object`
-* Renamed `Rotation` to `UvFaceRotation` and moved to `software.bernie.geckolib.loading.definition.geometry.object`
+* Moved `ModelFormatVersion` to `com.geckolib.loading.definition.geometry.object`
+* Renamed `Rotation` to `UvFaceRotation` and moved to `com.geckolib.loading.definition.geometry.object`
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions

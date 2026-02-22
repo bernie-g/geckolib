@@ -39,14 +39,14 @@ repositories {
     mavenLocal {
         name = "GeckoLib Examples MavenLocal"
         content {
-            includeModuleByRegex("software.bernie.geckolib", "geckolib-examples.*?")
+            includeModuleByRegex("com.geckolib.geckolib", "geckolib-examples.*?")
         }
     }
     maven {
         name = "GeckoLib Examples Cloudsmith"
         url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
         content {
-            includeModuleByRegex("software.bernie.geckolib", "geckolib-examples.*?")
+            includeModuleByRegex("com.geckolib.geckolib", "geckolib-examples.*?")
         }
     }
     exclusiveContent {

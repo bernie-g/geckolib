@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "software.bernie.geckolib.mixin",
+  "package": "com.geckolib.mixin",
   "compatibilityLevel": "JAVA_17",
   "refmap": "geckolib.refmap.json",
   "minVersion": "0.8",
@@ -8,19 +8,19 @@
     "defaultRequire": 1
   },
   "mixins": [
-    "common.AbstractContainerMenuMixin",
-    "common.HashedStackMixin",
-    "common.ItemStackMixin",
-    "common.LivingEntityMixin",
-    "common.SynchronizedRemoteSlotMixin"
+    "com.geckolib.mixin.common.AbstractContainerMenuMixin",
+    "com.geckolib.mixin.common.HashedStackMixin",
+    "com.geckolib.mixin.common.ItemStackMixin",
+    "com.geckolib.mixin.common.LivingEntityMixin",
+    "com.geckolib.mixin.common.SynchronizedRemoteSlotMixin"
   ],
   "client": [
-    "client.BlockEntityRenderStateMixin",
-    "client.EntityRendererMixin",
-    "client.EntityRenderStateMixin",
-    "client.HumanoidArmorLayerMixin",
-    "client.SpecialModelRenderersMixin",
-    "client.SpecialModelWrapperMixin",
-    "client.TextureManagerMixin"
+    "com.geckolib.mixin.client.BlockEntityRenderStateMixin",
+    "com.geckolib.mixin.client.EntityRendererMixin",
+    "com.geckolib.mixin.client.EntityRenderStateMixin",
+    "com.geckolib.mixin.client.HumanoidArmorLayerMixin",
+    "com.geckolib.mixin.client.SpecialModelRenderersMixin",
+    "com.geckolib.mixin.client.SpecialModelWrapperMixin",
+    "com.geckolib.mixin.client.TextureManagerMixin"
   ]
 }

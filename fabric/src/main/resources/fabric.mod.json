@@ -20,10 +20,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"software.bernie.geckolib.GeckoLib"
+          "com.geckolib.GeckoLib"
 		],
 		"client": [
-			"software.bernie.geckolib.GeckoLibClient"
+          "com.geckolib.GeckoLibClient"
 		]
 	},
 	"mixins": [
