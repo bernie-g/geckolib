@@ -66,6 +66,7 @@
 * Moved `ModelFormatVersion` to `com.geckolib.loading.definition.geometry.object`
 * Renamed `Rotation` to `UvFaceRotation` and moved to `com.geckolib.loading.definition.geometry.object`
 * Removed `headBone` and its associated constructor in `DefaultedEntityGeoModel` since it's no longer used
+* Added direct-object constructors for `DefaultedBlockGeoModel`, `DefaultedEntityGeoModel`, and `DefaultedItemGeoModel`
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
