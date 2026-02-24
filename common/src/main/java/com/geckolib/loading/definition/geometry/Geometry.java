@@ -144,7 +144,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
                 final String parent = entry.getKey();
 
                 for (GeometryBone bone : entry.getValue()) {
-                    if (parent.equals(bone.parent()))
+                    if (parent.equals(bone.name()))
                         throw new IllegalArgumentException("Invalid model definition. Bone has defined itself as its own parent: " + bone.name());
                 }
             }
