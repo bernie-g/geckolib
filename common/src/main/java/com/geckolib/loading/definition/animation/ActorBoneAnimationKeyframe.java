@@ -121,8 +121,6 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
             easingArgs[i] = mathParser.compileDoubleOrString(this.easingArgs[i]);
         }
 
-        return new KeyframeTriplet(new Keyframe(timestamp, keyframeLength, lastTriplet != null ? lastTriplet.x().endValue() : xValue, xValue, easingType, easingArgs),
-                                   new Keyframe(timestamp, keyframeLength, lastTriplet != null ? lastTriplet.y().endValue() : yValue, yValue, easingType, easingArgs),
-                                   new Keyframe(timestamp, keyframeLength, lastTriplet != null ? lastTriplet.z().endValue() : zValue, zValue, easingType, easingArgs));
+        return new KeyframeTriplet(timestamp, keyframeLength, lastTriplet, xValue, yValue, zValue, easingType, easingArgs);
     }
 }
