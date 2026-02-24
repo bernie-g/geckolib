@@ -1,16 +1,15 @@
 package com.geckolib.loading.definition.animation;
 
+import com.geckolib.cache.animation.Animation;
+import com.geckolib.cache.animation.BakedAnimations;
+import com.geckolib.loading.math.MathParser;
+import com.geckolib.object.CompoundException;
+import com.geckolib.util.JsonUtil;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
-import com.geckolib.GeckoLibConstants;
-import com.geckolib.cache.animation.Animation;
-import com.geckolib.loading.math.MathParser;
-import com.geckolib.cache.animation.BakedAnimations;
-import com.geckolib.object.CompoundException;
-import com.geckolib.util.JsonUtil;
 
 import java.util.Map;
 
@@ -47,7 +46,7 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
                 throw new JsonParseException("Animations map missing from animations json!");
 
             if (animations.isEmpty())
-                GeckoLibConstants.LOGGER.warn("No animation definitions found in animation file!");
+                throw new JsonParseException("No animation definitions found in animation file!");
 
             return new ActorAnimations(formatVersion, animations);
         };
