@@ -1,5 +1,6 @@
 package com.geckolib.loading.definition.animation;
 
+import com.geckolib.GeckoLibServices;
 import com.geckolib.cache.animation.Animation;
 import com.geckolib.cache.animation.BakedAnimations;
 import com.geckolib.loading.math.MathParser;
@@ -45,7 +46,7 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
             if (animations == null)
                 throw new JsonParseException("Animations map missing from animations json!");
 
-            if (animations.isEmpty())
+            if (animations.isEmpty() && GeckoLibServices.PLATFORM.isDevelopmentEnvironment())
                 throw new JsonParseException("No animation definitions found in animation file!");
 
             return new ActorAnimations(formatVersion, animations);
