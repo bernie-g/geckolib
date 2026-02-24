@@ -1,17 +1,18 @@
 package com.geckolib.loading.loader;
 
-import com.google.gson.JsonObject;
-import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.Resource;
-import net.minecraft.util.GsonHelper;
 import com.geckolib.GeckoLibConstants;
+import com.geckolib.cache.animation.BakedAnimations;
 import com.geckolib.cache.model.BakedGeoModel;
 import com.geckolib.loading.definition.animation.ActorAnimations;
 import com.geckolib.loading.definition.geometry.Geometry;
 import com.geckolib.loading.definition.geometry.object.ModelFormatVersion;
 import com.geckolib.loading.math.MathParser;
-import com.geckolib.cache.animation.BakedAnimations;
 import com.geckolib.object.CompoundException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.GsonHelper;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -103,6 +104,9 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
         }
         catch (CompoundException ex) {
             throw ex.withMessage(resourcePath + ": Error building animations from JSON");
+        }
+        catch (JsonParseException ex) {
+            throw new CompoundException(resourcePath + ": Error building animations from JSON", ex);
         }
         catch (Exception ex) {
             throw GeckoLibConstants.exception(resourcePath, "Error building animations from JSON", ex);
