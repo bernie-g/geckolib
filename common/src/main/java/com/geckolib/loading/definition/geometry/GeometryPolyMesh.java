@@ -25,8 +25,8 @@ public record GeometryPolyMesh(boolean normalizedUvs, Vec3 @Nullable[] positions
         return (json, type, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final boolean normalizedUvs = GsonHelper.getAsBoolean(obj, "normalized_uvs", true);
-            final Vec3[] positions = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "positions", null), JsonUtil::jsonToVec3);
-            final Vec3[] normals = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "normals", null), JsonUtil::jsonToVec3);
+            final Vec3[] positions = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "positions", null), Vec3[]::new, JsonUtil::jsonToVec3);
+            final Vec3[] normals = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "normals", null), Vec3[]::new, JsonUtil::jsonToVec3);
             final GeometryUv[] uvs = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "uvs", null), context, GeometryUv.class);
             final GeometryPolyIndices polys = GsonHelper.getAsObject(obj, "polys", context, GeometryPolyIndices.class);
             final String polysFormat = GsonHelper.getAsString(obj, "polys_format", "polys");

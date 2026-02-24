@@ -64,15 +64,17 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
                 animations.put(animationName, entry.getValue().bake(animationName, mathParser));
             }
             catch (Exception ex) {
+                Exception exception;
+
                 if (ex instanceof CompoundException compoundEx) {
-                    compoundEx.withMessage("Unable to parse animation: " + animationName);
+                    exception = compoundEx.withMessage("Unable to bake ActorAnimation '" + animationName + "' in animation json: " + resourcePath);
                 }
                 else {
-                    GeckoLibConstants.LOGGER.error("Unable to parse animation: {}", animationName);
+                    exception = new CompoundException("Unable to bake Actor Animation '" + animationName + "' in animation json: " + resourcePath, ex);
                 }
 
                 //noinspection CallToPrintStackTrace
-                ex.printStackTrace();
+                exception.printStackTrace();
             }
         }
 

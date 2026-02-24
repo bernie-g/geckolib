@@ -2,6 +2,7 @@ package com.geckolib.util;
 
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
@@ -114,15 +115,14 @@ public final class JsonUtil {
     ///
     /// @param array The array containing the objects to be converted
     /// @param mappingFunction The function to map a .json element to an object of the intended type
-    @SuppressWarnings("unchecked")
-    public static <T> T @Nullable[] jsonArrayToObjectArray(@Nullable JsonArray array, Function<JsonElement, @Nullable T> mappingFunction) {
+    public static <T> T @Nullable[] jsonArrayToObjectArray(@Nullable JsonArray array, Int2ObjectFunction<T[]> arrayFactory, Function<JsonElement, @Nullable T> mappingFunction) {
         if (array == null)
             return null;
 
-        T[] objArray = (T[])new Object[array.size()];
+        final T[] objArray = arrayFactory.apply(array.size());
 
         for (int i = 0; i < array.size(); i++) {
-            T object = mappingFunction.apply(array.get(i));
+            final T object = mappingFunction.apply(array.get(i));
 
             if (object != null)
                 objArray[i] = object;

@@ -2,6 +2,7 @@ package com.geckolib.loading.definition.animation;
 
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
 import net.minecraft.util.GsonHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
@@ -91,20 +92,19 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
         if (this.particleEffects == null && this.soundEffects == null && this.timeline == null)
             return Animation.KeyframeMarkers.EMPTY;
 
-        final SoundKeyframeData[] soundKeyframes = bakeKeyframeMap(this.soundEffects, ActorAnimationSoundEffect::bake);
-        final ParticleKeyframeData[] particleKeyframes = bakeKeyframeMap(this.particleEffects, ActorAnimationParticleEffect::bake);
-        final CustomInstructionKeyframeData[] timelineKeyframes = bakeKeyframeMap(this.timeline, (instructions, timestamp) -> new CustomInstructionKeyframeData(timestamp, instructions));
+        final SoundKeyframeData[] soundKeyframes = bakeKeyframeMap(this.soundEffects, SoundKeyframeData[]::new, ActorAnimationSoundEffect::bake);
+        final ParticleKeyframeData[] particleKeyframes = bakeKeyframeMap(this.particleEffects, ParticleKeyframeData[]::new, ActorAnimationParticleEffect::bake);
+        final CustomInstructionKeyframeData[] timelineKeyframes = bakeKeyframeMap(this.timeline, CustomInstructionKeyframeData[]::new, (instructions, timestamp) -> new CustomInstructionKeyframeData(timestamp, instructions));
 
         return new Animation.KeyframeMarkers(soundKeyframes, particleKeyframes, timelineKeyframes);
     }
 
     /// Bake the map of keyframes and their timestamps into their final [KeyFrameData] instance
-    @SuppressWarnings("unchecked")
-    private <R, T> T[] bakeKeyframeMap(@Nullable Map<String, R> map, BiFunction<R, Double, T> bakery) {
+    private <R, T> T[] bakeKeyframeMap(@Nullable Map<String, R> map, Int2ObjectFunction<T[]> arrayFactory, BiFunction<R, Double, T> bakery) {
         if (map == null)
-            return (T[])new Object[0];
+            return arrayFactory.apply(0);
 
-        final T[] array = (T[])new Object[map.size()];
+        final T[] array = arrayFactory.apply(map.size());
         int index = 0;
 
         for (Map.Entry<String, R> entry : map.entrySet()) {
