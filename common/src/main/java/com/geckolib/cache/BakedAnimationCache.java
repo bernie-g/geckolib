@@ -49,8 +49,11 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
             }
         }
 
-        if (animations == null)
-            throw new IllegalArgumentException("Unable to find animation file '" + animationFile + "'");
+        if (animations == null) {
+            GeckoLibConstants.LOGGER.error("Unable to find animation file '{}'", animationFile);
+
+            return null;
+        }
 
         GeckoLibConstants.LOGGER.error("Unable to find animation: '{}' in animation file '{}'", animationName, animationFile);
 
