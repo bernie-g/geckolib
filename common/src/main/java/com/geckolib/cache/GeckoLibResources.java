@@ -1,5 +1,14 @@
 package com.geckolib.cache;
 
+import com.geckolib.GeckoLibConstants;
+import com.geckolib.cache.animation.Animation;
+import com.geckolib.cache.animation.BakedAnimations;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.loading.loader.GeckoLibGsonLoader;
+import com.geckolib.loading.loader.GeckoLibLoader;
+import com.geckolib.loading.math.MathParser;
+import com.geckolib.model.GeoModel;
+import com.geckolib.util.GeckoLibUtil;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
@@ -11,18 +20,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibConstants;
-import com.geckolib.cache.animation.Animation;
-import com.geckolib.cache.animation.BakedAnimations;
-import com.geckolib.cache.model.BakedGeoModel;
-import com.geckolib.loading.loader.GeckoLibGsonLoader;
-import com.geckolib.loading.loader.GeckoLibLoader;
-import com.geckolib.loading.math.MathParser;
-import com.geckolib.model.GeoModel;
-import com.geckolib.util.GeckoLibUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 import java.util.function.Function;
@@ -133,9 +134,10 @@ public final class GeckoLibResources implements PreparableReloadListener {
 		return CompletableFuture.supplyAsync(() -> (GeckoLibLoader<UNBAKED>)findLoaderForFile(path, resource), executor)
 				.thenApply(loader -> Pair.of(stripPrefixAndSuffix(path), bakery.apply(loader, path, deserializer.apply(loader, path, resource))))
 				.exceptionally(ex -> {
-                    GeckoLibConstants.LOGGER.error("Error loading resource: {}", path, ex);
+					final BAKED replacement = onException.get();
+					ex = ex instanceof CompletionException completionException && completionException.getCause() != null ? completionException.getCause() : ex;
 
-					BAKED replacement = onException.get();
+                    GeckoLibConstants.LOGGER.error("Error loading resource: {}", path, ex);
 
 					return replacement == null ? null : Pair.of(stripPrefixAndSuffix(path), replacement);
 				});
