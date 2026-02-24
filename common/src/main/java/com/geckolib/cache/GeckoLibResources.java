@@ -41,7 +41,7 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	public static final PreparableReloadListener.StateKey<PendingResources> STATE_KEY = new PreparableReloadListener.StateKey<>();
 	@SuppressWarnings("unchecked")
     private static Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>>[] LOADERS = new Pair[] {Pair.<GeckoLibLoader.Predicate, GeckoLibLoader<?>>of((_, _) -> true, new GeckoLibGsonLoader())};
-	private static final Set<String> SUPPORTED_FILE_TYPES = new ObjectArraySet<>(1);
+	private static final Set<String> SUPPORTED_FILE_TYPES = ObjectArraySet.of("json");
 
 	private static BakedAnimationCache ANIMATIONS = new BakedAnimationCache(Collections.emptyMap());
 	private static BakedModelCache MODELS = new BakedModelCache(Collections.emptyMap());
