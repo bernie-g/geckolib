@@ -26,7 +26,7 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
     /// Publicly accessible GSON parser for GeckoLib animation .json files
     public static final Gson GSON = new GsonBuilder().setStrictness(Strictness.LENIENT)
             .registerTypeAdapter(ActorAnimations.class, gsonDeserializer())
-            .registerTypeAdapter(ActorAnimation.class, ActorAnimations.gsonDeserializer())
+            .registerTypeAdapter(ActorAnimation.class, ActorAnimation.gsonDeserializer())
             .registerTypeAdapter(ActorAnimationParticleEffect.class, ActorAnimationParticleEffect.gsonDeserializer())
             .registerTypeAdapter(ActorAnimationSoundEffect.class, ActorAnimationSoundEffect.gsonDeserializer())
             .registerTypeAdapter(ActorBoneAnimation.class, ActorBoneAnimation.gsonDeserializer())
