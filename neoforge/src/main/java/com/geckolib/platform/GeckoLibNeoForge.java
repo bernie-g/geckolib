@@ -1,13 +1,11 @@
 package com.geckolib.platform;
 
+import com.geckolib.GeckoLib;
+import com.geckolib.service.GeckoLibPlatform;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.fml.loading.FMLPaths;
-import com.geckolib.GeckoLib;
-import com.geckolib.service.GeckoLibPlatform;
 
-import java.nio.file.Path;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -21,14 +19,6 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
     @Override
     public boolean isDevelopmentEnvironment() {
         return !FMLEnvironment.isProduction();
-    }
-
-    /**
-     * @return The root game directory (./run)
-     */
-    @Override
-    public Path getGameDir() {
-        return FMLPaths.GAMEDIR.get();
     }
 
     /**

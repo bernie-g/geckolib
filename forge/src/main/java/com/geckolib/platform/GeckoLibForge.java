@@ -24,14 +24,6 @@ public class GeckoLibForge implements GeckoLibPlatform {
     }
 
     /**
-     * @return The root game directory (./run)
-     */
-    @Override
-    public Path getGameDir() {
-        return FMLPaths.GAMEDIR.get();
-    }
-
-    /**
      * @return Whether the current runtime is on the client side regardless of logical context
      */
     @Override

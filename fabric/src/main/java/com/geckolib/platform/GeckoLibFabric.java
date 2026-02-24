@@ -1,14 +1,13 @@
 package com.geckolib.platform;
 
+import com.geckolib.GeckoLibConstants;
+import com.geckolib.service.GeckoLibPlatform;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import com.geckolib.GeckoLibConstants;
-import com.geckolib.service.GeckoLibPlatform;
 
-import java.nio.file.Path;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -22,14 +21,6 @@ public final class GeckoLibFabric implements GeckoLibPlatform {
     @Override
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
-    }
-
-    /**
-     * @return The root game directory (./run)
-     */
-    @Override
-    public Path getGameDir() {
-        return FabricLoader.getInstance().getGameDir();
     }
 
     /**
