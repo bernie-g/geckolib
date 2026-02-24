@@ -1,5 +1,6 @@
 package com.geckolib.loading.definition.animation;
 
+import com.geckolib.loading.math.value.Constant;
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
@@ -106,9 +107,14 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
         MathValue zValue = mathParser.compileDoubleOrString(values.zValue());
 
         if (transformType == AnimationPoint.Transform.ROTATION) {
-            xValue = mathParser.wrap(xValue, ToRadFunction::new, Negative::new);
-            yValue = mathParser.wrap(yValue, ToRadFunction::new, Negative::new);
-            zValue = mathParser.wrap(zValue, ToRadFunction::new);
+            if (xValue instanceof Constant)
+                xValue = mathParser.wrap(xValue, ToRadFunction::new, Negative::new);
+
+            if (yValue instanceof Constant)
+                yValue = mathParser.wrap(yValue, ToRadFunction::new, Negative::new);
+
+            if (zValue instanceof Constant)
+                zValue = mathParser.wrap(zValue, ToRadFunction::new);
         }
 
         for (int i = 0; i < easingArgs.length; i++) {
