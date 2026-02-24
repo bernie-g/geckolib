@@ -51,7 +51,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param raw The raw `T` type object read in [#deserializeGeckoLibModelFile]
     @Override
     public BakedGeoModel bakeGeckoLibModelFile(Identifier resourcePath, JsonObject raw) throws RuntimeException {
-        return bakeJsonModel(resourcePath, raw).bake(resourcePath);
+        return deserializeJsonModel(resourcePath, raw).bake(resourcePath);
     }
 
     /// Bake a GeckoLib animations file into its final [BakedAnimations] form from the raw `T` type instance
@@ -62,7 +62,7 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
     /// @param mathParser The [MathParser] instance to use for this bake operation
     @Override
     public BakedAnimations bakeGeckoLibAnimationsFile(Identifier resourcePath, JsonObject raw, MathParser mathParser) throws RuntimeException {
-        return bakeJsonAnimations(resourcePath, raw).bake(resourcePath, mathParser);
+        return deserializeJsonAnimations(resourcePath, raw).bake(resourcePath, mathParser);
     }
 
     /// Read a single resource into its [JsonObject] form
@@ -75,8 +75,8 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
         }
     }
 
-    /// Bake a [Geometry] from its [JsonObject] serialized form
-    protected static Geometry bakeJsonModel(Identifier resourcePath, JsonObject json) throws RuntimeException {
+    /// Deserialize the GeckoLib model [JsonObject] into the intermediary [Geometry] instance
+    protected static Geometry deserializeJsonModel(Identifier resourcePath, JsonObject json) throws RuntimeException {
         if (resourcePath.getPath().endsWith(".animation.json"))
             throw new IllegalStateException("Found animation file found in models folder! '" + resourcePath + "'");
 
@@ -93,8 +93,8 @@ public class GeckoLibGsonLoader implements GeckoLibLoader<JsonObject> {
         return geometry;
     }
 
-    /// Bake the [ActorAnimations] from a [JsonObject] serialized form
-    protected static ActorAnimations bakeJsonAnimations(Identifier resourcePath, JsonObject json) throws RuntimeException {
+    /// Deserialize the GeckoLib animations [JsonObject] into the intermediary [ActorAnimations] instance
+    protected static ActorAnimations deserializeJsonAnimations(Identifier resourcePath, JsonObject json) throws RuntimeException {
         if (resourcePath.getPath().endsWith(".geo.json"))
             throw new IllegalStateException("Found model file in animations folder! '" + resourcePath + "'");
 
