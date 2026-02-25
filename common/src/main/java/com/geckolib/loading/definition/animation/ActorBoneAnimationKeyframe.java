@@ -107,10 +107,10 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
 
         if (transformType == AnimationPoint.Transform.ROTATION) {
             if (values.xValue().isDouble())
-                xValue = mathParser.wrap(xValue, ToRadFunction::new, Negative::new);
+                xValue = mathParser.wrap(xValue, Negative::new, ToRadFunction::new);
 
             if (values.yValue().isDouble())
-                yValue = mathParser.wrap(yValue, ToRadFunction::new, Negative::new);
+                yValue = mathParser.wrap(yValue, Negative::new, ToRadFunction::new);
 
             if (values.zValue().isDouble())
                 zValue = mathParser.wrap(zValue, ToRadFunction::new);
