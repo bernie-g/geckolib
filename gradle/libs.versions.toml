@@ -3,7 +3,7 @@
     geckolib = "5.5"
 
 # Common
-    minecraft = { strictly = "[26.1,)", prefer = "26.1-snapshot-7" }
+    minecraft = { strictly = "[26.1-snapshot-7,)", prefer = "26.1-snapshot-7" }
     loom-mc = "26.1-snapshot-7"
     neoform = "26.1-snapshot-7-1"
     java = "25"
@@ -21,7 +21,7 @@
 
 # Neoforge
     neoforge-loader = { strictly = "[5,)", prefer = "5" }
-    neoforge = { strictly = "[26.1.0.0,)", prefer = "26.1.0.0-alpha.12+snapshot-7" }
+    neoforge = { strictly = "[26.1.0.0-alpha.12+snapshot-7,)", prefer = "26.1.0.0-alpha.12+snapshot-7" }
 
 # Dependencies
     mixin = "0.8.7"

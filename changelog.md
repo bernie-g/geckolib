@@ -67,6 +67,7 @@
 * Renamed `Rotation` to `UvFaceRotation` and moved to `com.geckolib.loading.definition.geometry.object`
 * Removed `headBone` and its associated constructor in `DefaultedEntityGeoModel` since it's no longer used
 * Added direct-object constructors for `DefaultedBlockGeoModel`, `DefaultedEntityGeoModel`, and `DefaultedItemGeoModel`
+* Removed `GeckoLibPlatform#getGameDir` as it is no longer used
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
@@ -80,3 +81,4 @@
 * Fixed top-level bones not always providing the correct position to `BonePositionListeners` 
 * Fixed GeckoLib model bones not rendering in the correct order when nested under parent bones
 * Fixed GeckoLib model loading not respecting `mirror` and `inflate` values properly
+* Reduced backface z-fighting on 0-depth cubes. Stop making your cubes 0-thickness!
