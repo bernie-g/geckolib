@@ -1,15 +1,5 @@
 package com.geckolib.loading.definition.animation;
 
-import com.geckolib.loading.math.value.Constant;
-import com.google.gson.Gson;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animation.object.EasingType;
 import com.geckolib.animation.state.AnimationPoint;
@@ -20,6 +10,15 @@ import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.function.misc.ToRadFunction;
 import com.geckolib.loading.math.value.Negative;
 import com.geckolib.util.JsonUtil;
+import com.google.gson.Gson;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -107,13 +106,13 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
         MathValue zValue = mathParser.compileDoubleOrString(values.zValue());
 
         if (transformType == AnimationPoint.Transform.ROTATION) {
-            if (xValue instanceof Constant)
+            if (values.xValue().isDouble())
                 xValue = mathParser.wrap(xValue, ToRadFunction::new, Negative::new);
 
-            if (yValue instanceof Constant)
+            if (values.yValue().isDouble())
                 yValue = mathParser.wrap(yValue, ToRadFunction::new, Negative::new);
 
-            if (zValue instanceof Constant)
+            if (values.zValue().isDouble())
                 zValue = mathParser.wrap(zValue, ToRadFunction::new);
         }
 
