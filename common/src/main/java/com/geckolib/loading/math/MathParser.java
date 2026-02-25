@@ -1,13 +1,5 @@
 package com.geckolib.loading.math;
 
-import com.geckolib.loading.math.function.generic.*;
-import com.geckolib.loading.math.function.round.*;
-import com.geckolib.loading.math.value.*;
-import com.mojang.datafixers.util.Either;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.util.Util;
-import org.apache.logging.log4j.Level;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.definition.animation.DoubleOrString;
@@ -26,12 +18,18 @@ import com.geckolib.loading.math.function.random.RandomIntegerFunction;
 import com.geckolib.loading.math.function.round.*;
 import com.geckolib.loading.math.value.*;
 import com.geckolib.object.CompoundException;
+import com.mojang.datafixers.util.Either;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.Util;
+import org.apache.logging.log4j.Level;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.ToDoubleFunction;
 import java.util.function.UnaryOperator;
@@ -81,14 +79,14 @@ public class MathParser {
         map.put("math.trunc", TruncateFunction::new);
     });
 
-    protected final UnaryOperator<MathValue> deduplicator;
+    protected final Deduplicator deduplicator;
 
     protected MathParser() {
-        this(null);
+        this(Deduplicator.NONE);
     }
 
-    protected MathParser(@Nullable UnaryOperator<MathValue> deduplicator) {
-        this.deduplicator = deduplicator == null ? UnaryOperator.identity() : deduplicator;
+    protected MathParser(Deduplicator deduplicator) {
+        this.deduplicator = deduplicator;
     }
 
     /// Create a new [MathParser] instance with no deduplication schema
@@ -98,7 +96,7 @@ public class MathParser {
 
     /// Create a new [MathParser] instance with a native deduplication schema
     public static MathParser createWithDeduplication() {
-        return new MathParser(createDeduplicator());
+        return new MathParser(Deduplicator.defaultImpl());
     }
 
     /// Register a new [MathFunction] to be handled by GeckoLib for parsing and internal use.
@@ -141,21 +139,6 @@ public class MathParser {
         return FUNCTION_FACTORIES.containsKey(name);
     }
 
-    /// Create a default deduplicator instance
-    protected static UnaryOperator<MathValue> createDeduplicator() {
-        return new UnaryOperator<>() {
-            final ConcurrentHashMap<Double, MathValue> cache = new ConcurrentHashMap<>();
-
-            @Override
-            public MathValue apply(MathValue mathValue) {
-                if (mathValue.isMutable())
-                    return mathValue;
-
-                return this.cache.computeIfAbsent(mathValue.get(null), Constant::new);
-            }
-        };
-    }
-
     /// Compile a provided [DoubleOrString] value into a [MathValue], utilising a deduplicator if present
     public MathValue compileDoubleOrString(DoubleOrString value) {
         return value.isDouble() ? compileConstant(value.doubleValue()) : compileMolang(value.stringValue());
@@ -163,7 +146,7 @@ public class MathParser {
 
     /// Compile a provided value into a [Constant], utilising a deduplicator if present
     public MathValue compileConstant(double value) {
-        return deduplicate(new Constant(value));
+        return this.deduplicator.apply(value);
     }
 
     /// A wrapper around the expression parsing system to optionally support Molang-specific handling for things like compound expressions
@@ -171,32 +154,34 @@ public class MathParser {
     /// @param expression The math and/or Molang expression to be parsed
     /// @return A compiled [MathValue], ready for use
     public MathValue compileMolang(String expression) {
-        if (expression.startsWith(MOLANG_RETURN)) {
-            expression = expression.substring(MOLANG_RETURN.length());
+        return this.deduplicator.apply(expression, str -> {
+            if (str.startsWith(MOLANG_RETURN)) {
+                str = str.substring(MOLANG_RETURN.length());
 
-            if (expression.contains(STATEMENT_DELIMITER))
-                expression = expression.substring(0, expression.indexOf(STATEMENT_DELIMITER));
-        }
-        else if (expression.contains(STATEMENT_DELIMITER)) {
-            final String[] subExpressions = expression.split(STATEMENT_DELIMITER);
-            final List<MathValue> subValues = new ObjectArrayList<>(subExpressions.length);
+                if (str.contains(STATEMENT_DELIMITER))
+                    str = str.substring(0, str.indexOf(STATEMENT_DELIMITER));
+            }
+            else if (str.contains(STATEMENT_DELIMITER)) {
+                final String[] subExpressions = str.split(STATEMENT_DELIMITER);
+                final List<MathValue> subValues = new ObjectArrayList<>(subExpressions.length);
 
-            for (String subExpression : subExpressions) {
-                boolean isReturn = subExpression.startsWith(MOLANG_RETURN);
+                for (String subExpression : subExpressions) {
+                    boolean isReturn = subExpression.startsWith(MOLANG_RETURN);
 
-                if (isReturn)
-                    subExpression = subExpression.substring(MOLANG_RETURN.length());
+                    if (isReturn)
+                        subExpression = subExpression.substring(MOLANG_RETURN.length());
 
-                subValues.add(compileExpression(subExpression));
+                    subValues.add(compileExpression(subExpression));
 
-                if (isReturn)
-                    break;
+                    if (isReturn)
+                        break;
+                }
+
+                return deduplicate(new CompoundValue(subValues.toArray(new MathValue[0])));
             }
 
-            return deduplicate(new CompoundValue(subValues.toArray(new MathValue[0])));
-        }
-
-        return compileExpression(expression);
+            return compileExpression(str);
+        });
     }
 
     /// Construct a [MathFunction] from the given symbol and values
@@ -601,6 +586,57 @@ public class MathParser {
             return true;
 
         return !isNumeric(string) && !isFunctionRegistered(string) && !Operator.isOperator(string) && !string.equals("?") && !string.equals(":");
+    }
+
+    /// Deduplicator factory for [MathParser] to facilitate runtime memory compression of [MathValue]s
+    public interface Deduplicator {
+        MathValue apply(MathValue value);
+        MathValue apply(double constant);
+        MathValue apply(String expression, Function<String, MathValue> parser);
+
+        /// Default, no-action [Deduplicator] instance
+        Deduplicator NONE = new Deduplicator() {
+            @Override
+            public MathValue apply(MathValue value) {
+                return value;
+            }
+
+            @Override
+            public MathValue apply(double constant) {
+                return new Constant(constant);
+            }
+
+            @Override
+            public MathValue apply(String expression, Function<String, MathValue> parser) {
+                return parser.apply(expression);
+            }
+        };
+
+        /// Return a new default-implementation [Deduplicator] instance
+        static Deduplicator defaultImpl() {
+            return new Deduplicator() {
+                final ConcurrentHashMap<Double, MathValue> valueCache = new ConcurrentHashMap<>();
+                final ConcurrentHashMap<String, MathValue> expressionCache = new ConcurrentHashMap<>();
+
+                @Override
+                public MathValue apply(MathValue value) {
+                    if (value.isMutable())
+                        return value;
+
+                    return apply(value.get(null));
+                }
+
+                @Override
+                public MathValue apply(double constant) {
+                    return this.valueCache.computeIfAbsent(constant, Constant::new);
+                }
+
+                @Override
+                public MathValue apply(String expression, Function<String, MathValue> parser) {
+                    return this.expressionCache.computeIfAbsent(expression, parser);
+                }
+            };
+        }
     }
     //</editor-fold>
 }
