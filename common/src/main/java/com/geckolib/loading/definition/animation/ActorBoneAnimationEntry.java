@@ -66,7 +66,7 @@ public record ActorBoneAnimationEntry(Either<ActorBoneAnimationKeyframe, Double2
                 if (jsonArray.isEmpty())
                     throw new JsonParseException("ActorBoneAnimationEntry has an empty keyframes list. This is an invalid animation json");
 
-                return new ActorBoneAnimationEntry(Either.left(context.deserialize(jsonArray.get(0), ActorBoneAnimationKeyframe.class)));
+                return new ActorBoneAnimationEntry(Either.left(context.deserialize(jsonArray, ActorBoneAnimationKeyframe.class)));
             }
 
             if (json.isJsonObject()) {
