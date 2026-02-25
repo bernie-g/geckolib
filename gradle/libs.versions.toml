@@ -5,43 +5,43 @@
 # Common
     minecraft-range = "[1.21.11,)"
     minecraft = "1.21.11"
-    parchment-minecraft = "1.21.10"
-    parchment = "2025.10.12"
+    parchment-minecraft = "1.21.11"
+    parchment = "2025.12.20"
     neoform = "1.21.11-20251209.172050"
     jopt-simple = "5.0.4"
 
 # Fabric
     fabric = "0.18.4"
     fabric-range = "0.18"
-    fabric-api = "0.141.1+1.21.11"
+    fabric-api = "0.141.3+1.21.11"
     fabric-api-range = "0.139.4+1.21.11"
 
 # Forge
     forge-fml-range = "[61,)"
     forge-range = "[61.0.0,)"
-    forge = "61.0.6"
-    forge-mc = "1.21.11-61.0.6"
+    forge = "61.1.1"
+    forge-mc = "1.21.11-61.1.1"
     forge-eventbusvalidator = "7.0-beta.10"
 
 # Neoforge
     neoforge-loader-range = "[5,)"
     neoforge-range = "[21.11.0-beta,)"
-    neoforge = "21.11.34-beta"
+    neoforge = "21.11.38-beta"
 
 # Dependencies
     mixin = "0.8.7"
-    mixinextras = "0.5.0"
+    mixinextras = "0.5.3"
     mixinextras-range = "[0.5.0,)"
     examplemod = "1.0.0"
 
 # Plugins
-    plugin-moddevgradle = "2.0.123"
+    plugin-moddevgradle = "2.0.140"
     plugin-minotaur = "2.8.10"
     plugin-curseforge-gradle = "1.1.28"
-    plugin-idea-ext = "1.3"
+    plugin-idea-ext = "1.4.1"
     plugin-forge-gradle = "[7.0.0-rc.2,)"
     plugin-forge-at = "[5.0.1,)"
-    plugin-loom = "1.14-SNAPSHOT"
+    plugin-loom = "1.15-SNAPSHOT"
 
 [libraries]
 # Mixin
