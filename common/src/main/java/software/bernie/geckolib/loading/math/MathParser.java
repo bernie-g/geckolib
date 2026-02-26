@@ -409,7 +409,6 @@ public class MathParser {
         if (symbol.right().isPresent())
             return Optional.of(new Group(symbol.right().get().getFirst()));
 
-        //noinspection NullableProblems
         return symbol.left().map(string -> {
             if (string.startsWith("!"))
                 return compileSingleValue(Either.left(string.substring(1))).map(BooleanNegate::new).orElse(null);
@@ -438,12 +437,16 @@ public class MathParser {
      * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
      */
     protected static Optional<MathValue> compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
-        final int symbolCount = symbols.size();
-        int operatorIndex = -1;
-        Operator lastOperator = null;
+        if (symbols.size() < 3)
+            return Optional.empty();
 
-        for (int i = 1; i < symbolCount; i++) {
-            Operator operator = symbols.get(i).left()
+        final int symbolCount = symbols.size();
+        final List<Operator> operators = new ObjectArrayList<>(symbolCount / 2);
+        final List<MathValue> components = new ObjectArrayList<>(symbolCount / 2 + 1);
+        int lastOperatorIndex = -1;
+
+        for (int i = 0; i < symbolCount; i++) {
+            final Operator operator = symbols.get(i).left()
                     .filter(Operator::isOperator)
                     .map(MathParser::getOperatorFor).orElse(null);
 
@@ -457,16 +460,43 @@ public class MathParser {
                 return Optional.of(new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount))));
             }
 
-            if (lastOperator == null || !operator.takesPrecedenceOver(lastOperator)) {
-                operatorIndex = i;
-                lastOperator = operator;
-            }
-            else {
-                break;
-            }
+            components.add(parseSymbols(symbols.subList(lastOperatorIndex + 1, i)));
+            operators.add(operator);
+            lastOperatorIndex = i;
         }
 
-        return lastOperator == null ? Optional.empty() : Optional.of(new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount))));
+        if (components.isEmpty())
+            return Optional.empty();
+
+        components.add(parseSymbols(symbols.subList(lastOperatorIndex + 1, symbolCount)));
+
+        do {
+            Operator lastOperator = null;
+            int highestOperatorIndex = -1;
+
+            for (int i = 0; i < operators.size(); i++) {
+                Operator operator = operators.get(i);
+
+                if (lastOperator == null || operator.takesPrecedenceOver(lastOperator)) {
+                    lastOperator = operator;
+                    highestOperatorIndex = i;
+                }
+            }
+
+            if (highestOperatorIndex == -1)
+                break;
+
+            components.add(highestOperatorIndex, new Calculation(lastOperator, components.get(highestOperatorIndex), components.get(highestOperatorIndex + 1)));
+            operators.remove(highestOperatorIndex);
+            components.remove(highestOperatorIndex + 1);
+            components.remove(highestOperatorIndex + 1);
+        }
+        while (true);
+
+        if (components.size() != 1)
+            throw new CompoundException("Invalidly formatted expression: " + symbols);
+
+        return Optional.of(components.getFirst());
     }
 
     /**
