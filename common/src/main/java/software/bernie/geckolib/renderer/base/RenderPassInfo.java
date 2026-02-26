@@ -44,8 +44,8 @@ public class RenderPassInfo<R extends GeoRenderState> {
     protected final BakedGeoModel model;
     protected final CameraRenderState cameraState;
     protected final boolean willRender;
-    protected final Matrix4f objectRenderPose;
-    protected final Matrix4f modelRenderPose;
+    protected final PoseStack.Pose objectRenderPose;
+    protected final PoseStack.Pose modelRenderPose;
 
     protected final DeferredCache<List<BoneUpdater<R>>, BoneSnapshot[]> boneUpdates = new DeferredCache<>(new ObjectArrayList<>(), this::compileBoneUpdates);
     protected final Map<GeoBone, List<PerBoneRender<R>>> boneRenderTasks = new Reference2ObjectArrayMap<>();
@@ -68,8 +68,10 @@ public class RenderPassInfo<R extends GeoRenderState> {
         this.model = model;
         this.cameraState = cameraState;
         this.willRender = willRender;
-        this.objectRenderPose = new Matrix4f(poseStack.last().pose());
-        this.modelRenderPose = new Matrix4f();
+        this.objectRenderPose = new PoseStack.Pose();
+        this.modelRenderPose = new PoseStack.Pose();
+
+        this.objectRenderPose.set(poseStack.last());
     }
 
     /**
@@ -155,11 +157,27 @@ public class RenderPassInfo<R extends GeoRenderState> {
     }
 
     /**
-     * Get the {@link PoseStack.Pose#pose()} for the current render pass representing
-     * the state of the PoseStack prior to any renderer-specific manipulations
+     * Get the {@link PoseStack.Pose} for the current render pass representing the state
+     * of the PoseStack prior to any renderer-specific manipulations
+     */
+    public PoseStack.Pose getPreRenderMatrixPose() {
+        return this.objectRenderPose;
+    }
+
+    /**
+     * Get the {@link Matrix4f} for the current render pass representing
+     * the state of the {@link PoseStack} prior to any renderer-specific manipulations
      */
     public Matrix4f getPreRenderMatrixState() {
-        return this.objectRenderPose;
+        return this.objectRenderPose.pose();
+    }
+
+    /**
+     * Get the {@link PoseStack.Pose} for the current render pass representing the state
+     * of the PoseStack prior to any renderer-specific manipulations
+     */
+    public PoseStack.Pose getModelRenderMatrixPose() {
+        return this.modelRenderPose;
     }
 
     /**
@@ -169,10 +187,10 @@ public class RenderPassInfo<R extends GeoRenderState> {
      * <b><u>NOTE:</u></b> Must not be called prior to {@link GeoRenderer#submitRenderTasks}
      */
     public Matrix4f getModelRenderMatrixState() {
-        if ((this.modelRenderPose.properties() & Matrix4fc.PROPERTY_IDENTITY) != 0)
+        if ((this.modelRenderPose.pose().properties() & Matrix4fc.PROPERTY_IDENTITY) != 0)
             throw new IllegalStateException("Attempting to access model render matrix state before it has been set");
 
-        return this.modelRenderPose;
+        return this.modelRenderPose.pose();
     }
 
     /**
@@ -335,7 +353,7 @@ public class RenderPassInfo<R extends GeoRenderState> {
      */
     @ApiStatus.Internal
     public void captureModelRenderPose() {
-        this.modelRenderPose.set(this.poseStack.last().pose());
+        this.modelRenderPose.set(this.poseStack.last());
     }
 
     //</editor-fold>
