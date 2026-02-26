@@ -2,6 +2,8 @@ package software.bernie.geckolib.constant;
 
 import com.google.common.reflect.TypeToken;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
@@ -17,6 +19,7 @@ import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animation.state.ControllerState;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
+import software.bernie.geckolib.constant.dataticket.OverridingDataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 
 import java.util.EnumMap;
@@ -27,6 +30,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Stores the default (builtin) {@link DataTicket DataTickets} used in GeckoLib
  * <p>
  * Additionally handles registration of {@link SerializableDataTicket SerializableDataTickets}
+ * <p>
+ * This class should only be used on the client side
  */
 public final class DataTickets {
 	private static final Map<String, SerializableDataTicket<?>> SERIALIZABLE_TICKETS = new ConcurrentHashMap<>();
@@ -34,20 +39,13 @@ public final class DataTickets {
 	// TODO 26.1 - drop class and properly generify the constants
 	// Builtin tickets
 	// These tickets are used by GeckoLib by default, usually added in by the GeoRenderer for use in animations
-	public static final DataTicket<Double> TICK = DataTicket.create("tick", Double.class, new TypeToken<>() {});
 	public static final DataTicket<Class> ANIMATABLE_CLASS = DataTicket.create("animatable_class", Class.class, new TypeToken<>() {});
 	public static final DataTicket<Float> PARTIAL_TICK = DataTicket.create("partial_tick", Float.class, new TypeToken<>() {});
 	public static final DataTicket<Integer> RENDER_COLOR = DataTicket.create("render_color", Integer.class, new TypeToken<>() {});
 	public static final DataTicket<Long> ANIMATABLE_INSTANCE_ID = DataTicket.create("animatable_instance_id", Long.class, new TypeToken<>() {});
-	public static final DataTicket<Boolean> INVISIBLE_TO_PLAYER = DataTicket.create("invisible_to_player", Boolean.class, new TypeToken<>() {});
 	public static final DataTicket<Integer> PACKED_OVERLAY = DataTicket.create("packed_overlay", Integer.class, new TypeToken<>() {});
 	public static final DataTicket<Integer> PACKED_LIGHT = DataTicket.create("packed_light", Integer.class, new TypeToken<>() {});
 	public static final DataTicket<Integer> GLOW_COLOUR = DataTicket.create("glow_colour", Integer.class, new TypeToken<>() {});
-	public static final DataTicket<Boolean> IS_SHAKING = DataTicket.create("is_shaking", Boolean.class, new TypeToken<>() {});
-	public static final DataTicket<Pose> ENTITY_POSE = DataTicket.create("entity_pose", Pose.class, new TypeToken<>() {});
-	public static final DataTicket<Float> ENTITY_PITCH = DataTicket.create("entity_pitch", Float.class, new TypeToken<>() {});
-	public static final DataTicket<Float> ENTITY_YAW = DataTicket.create("entity_yaw", Float.class, new TypeToken<>() {});
-	public static final DataTicket<Float> ENTITY_BODY_YAW = DataTicket.create("entity_body_yaw", Float.class, new TypeToken<>() {});
 	public static final DataTicket<Vec3> VELOCITY = DataTicket.create("velocity", Vec3.class, new TypeToken<>() {});
 	public static final DataTicket<Boolean> IS_MOVING = DataTicket.create("is_moving", Boolean.class, new TypeToken<>() {});
 	public static final DataTicket<BlockState> BLOCKSTATE = DataTicket.create("blockstate", BlockState.class, new TypeToken<>() {});
@@ -73,6 +71,15 @@ public final class DataTickets {
 	public static final DataTicket<Boolean> IS_LEFT_HANDED = DataTicket.create("is_left_handed", Boolean.class, new TypeToken<>() {});
 	public static final DataTicket<Boolean> IS_CROUCHING = DataTicket.create("is_crouching", Boolean.class, new TypeToken<>() {});
 	public static final DataTicket<Vec3> ELYTRA_ROTATION = DataTicket.create("elytra_rotation", Vec3.class, new TypeToken<>() {});
+
+	// Default-value overriding DataTickets
+	public static final OverridingDataTicket<Double, EntityRenderState> TICK = OverridingDataTicket.create("tick", Double.class, new TypeToken<>() {}, EntityRenderState.class, state -> (double)state.ageInTicks);
+	public static final OverridingDataTicket<Boolean, LivingEntityRenderState> INVISIBLE_TO_PLAYER = OverridingDataTicket.create("invisible_to_player", Boolean.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.isInvisibleToPlayer);
+	public static final OverridingDataTicket<Boolean, LivingEntityRenderState> IS_SHAKING = OverridingDataTicket.create("is_shaking", Boolean.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.isFullyFrozen);
+	public static final OverridingDataTicket<Pose, LivingEntityRenderState> ENTITY_POSE = OverridingDataTicket.create("entity_pose", Pose.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.pose);
+	public static final OverridingDataTicket<Float, LivingEntityRenderState> ENTITY_PITCH = OverridingDataTicket.create("entity_pitch", Float.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.xRot);
+	public static final OverridingDataTicket<Float, LivingEntityRenderState> ENTITY_YAW = OverridingDataTicket.create("entity_yaw", Float.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.yRot);
+	public static final OverridingDataTicket<Float, LivingEntityRenderState> ENTITY_BODY_YAW = OverridingDataTicket.create("entity_body_yaw", Float.class, new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.bodyRot);
 
 	@ApiStatus.Internal
 	public static final DataTicket<EnumMap> PER_SLOT_RENDER_DATA = DataTicket.create("per_slot_render_data", EnumMap.class, new TypeToken<>() {});

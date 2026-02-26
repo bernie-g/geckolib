@@ -218,18 +218,15 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /**
      * Internal method for capturing the common RenderState data for all animatable objects
      */
-    
     @ApiStatus.Internal
     @Override
     public void captureDefaultRenderState(T animatable, @SuppressWarnings("NullableProblems") RenderData renderData, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
 
-        renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
         renderState.addGeckolibData(DataTickets.POSITION, renderData.entity().position());
         renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
         renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
         renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, renderState.isInvisibleToPlayer);
         renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
     }
 

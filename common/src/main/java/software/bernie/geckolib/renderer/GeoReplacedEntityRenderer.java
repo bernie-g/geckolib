@@ -312,15 +312,6 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     public final void captureDefaultRenderState(T animatable, E replacedEntity, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, replacedEntity, renderState, partialTick);
 
-        LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
-
-        renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : replacedEntity.isInvisible() && (ClientUtil.getClientPlayer() == null || replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer())));
-        renderState.addGeckolibData(DataTickets.IS_SHAKING, livingRenderState != null ? livingRenderState.isFullyFrozen : replacedEntity.isFullyFrozen());
-        renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : replacedEntity.getPose());
-        renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : replacedEntity.getXRot(partialTick));
-        renderState.addGeckolibData(DataTickets.ENTITY_YAW, livingRenderState != null ? livingRenderState.yRot : calculateYRot(replacedEntity, 0, partialTick));
-        renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, livingRenderState != null ? livingRenderState.bodyRot : renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
         renderState.addGeckolibData(DataTickets.VELOCITY, replacedEntity.getDeltaMovement());
         renderState.addGeckolibData(DataTickets.BLOCKPOS, replacedEntity.blockPosition());
         renderState.addGeckolibData(DataTickets.SPRINTING, replacedEntity.isSprinting());
@@ -330,6 +321,15 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         if (replacedEntity instanceof LivingEntity livingEntity) {
             renderState.addGeckolibData(DataTickets.SWINGING_ARM, livingEntity.swinging);
             renderState.addGeckolibData(DataTickets.IS_DEAD_OR_DYING, livingEntity.isDeadOrDying());
+        }
+
+        if (!(renderState instanceof LivingEntityRenderState)) {
+            renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, replacedEntity.isInvisible() && (ClientUtil.getClientPlayer() == null || replacedEntity.isInvisibleTo(ClientUtil.getClientPlayer())));
+            renderState.addGeckolibData(DataTickets.IS_SHAKING, replacedEntity.isFullyFrozen());
+            renderState.addGeckolibData(DataTickets.ENTITY_POSE, replacedEntity.getPose());
+            renderState.addGeckolibData(DataTickets.ENTITY_PITCH, replacedEntity.getXRot(partialTick));
+            renderState.addGeckolibData(DataTickets.ENTITY_YAW, calculateYRot(replacedEntity, 0, partialTick));
+            renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
         }
     }
 

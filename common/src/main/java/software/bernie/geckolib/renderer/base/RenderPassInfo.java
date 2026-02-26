@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.jspecify.annotations.Nullable;
@@ -152,7 +153,8 @@ public class RenderPassInfo<R extends GeoRenderState> {
      *
      * @see #renderState()
      */
-    public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D fallback) {
+    @Contract("_,null->null;_,!null->!null")
+    public <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D fallback) {
         return this.renderState().getOrDefaultGeckolibData(dataTicket, fallback);
     }
 

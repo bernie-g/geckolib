@@ -3,9 +3,11 @@ package software.bernie.geckolib.constant.dataticket;
 import com.google.common.reflect.TypeToken;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.constant.DataTickets;
@@ -18,7 +20,9 @@ import java.lang.reflect.Type;
  * Used for sending data from {@code server -> client} in an easy manner
  *
  * @param <D> Data type for this ticket
+ * @deprecated These are not considered safe to use since they do not maintain state tracking and will cause client desync. Use {@link SynchedEntityData} or {@link DataComponents} instead
  */
+@Deprecated(forRemoval = true)
 public final class SerializableDataTicket<D> extends DataTicket<D> {
 	public static final StreamCodec<RegistryFriendlyByteBuf, SerializableDataTicket<?>> STREAM_CODEC = StreamCodec.composite(
 			Identifier.STREAM_CODEC,
@@ -33,13 +37,6 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
 
 		this.streamCodec = streamCodec;
 		this.registeredId = id;
-	}
-
-	/**
-	 * Get the registered ID for this ticket
-	 */
-	public Identifier getRegisteredId() {
-		return this.registeredId;
 	}
 
 	/**
@@ -65,6 +62,13 @@ public final class SerializableDataTicket<D> extends DataTicket<D> {
     public static <D> SerializableDataTicket<D> create(Identifier id, Class<? extends D> objectType, TypeToken<D> typeToken, StreamCodec<? super RegistryFriendlyByteBuf, D> streamCodec) {
 		return (SerializableDataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(objectType, id.toString()), pair ->
 				DataTickets.registerSerializable(new SerializableDataTicket<>(id, objectType, typeToken.getType(), streamCodec)));
+	}
+
+	/**
+	 * Get the registered ID for this ticket
+	 */
+	public Identifier getRegisteredId() {
+		return this.registeredId;
 	}
 
 	/**

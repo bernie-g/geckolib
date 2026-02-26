@@ -86,7 +86,6 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
     default void captureDefaultRenderState(T animatable, @Nullable O relatedObject, R renderState, float partialTick) {
         long instanceId = getInstanceId(animatable, relatedObject);
 
-        renderState.addGeckolibData(DataTickets.TICK, ClientUtil.getCurrentTick());
         renderState.addGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, instanceId);
         renderState.addGeckolibData(DataTickets.ANIMATABLE_MANAGER, animatable.getAnimatableInstanceCache().getManagerForId(instanceId));
         renderState.addGeckolibData(DataTickets.PARTIAL_TICK, partialTick);
@@ -94,6 +93,9 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
         renderState.addGeckolibData(DataTickets.PACKED_OVERLAY, getPackedOverlay(animatable, relatedObject, 0, partialTick));
         renderState.addGeckolibData(DataTickets.IS_MOVING, false);
         renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
+
+        if (!DataTickets.TICK.canExtractFrom(renderState))
+            renderState.addGeckolibData(DataTickets.TICK, ClientUtil.getCurrentTick());
     }
 
     /**
