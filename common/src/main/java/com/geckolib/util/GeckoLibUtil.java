@@ -1,11 +1,5 @@
 package com.geckolib.util;
 
-import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
-import net.minecraft.core.component.DataComponentType;
-import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import org.jetbrains.annotations.ApiStatus;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -14,10 +8,13 @@ import com.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
 import com.geckolib.animation.object.EasingType;
 import com.geckolib.animation.object.LoopType;
 import com.geckolib.cache.GeckoLibResources;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.constant.dataticket.SerializableDataTicket;
 import com.geckolib.loading.loader.GeckoLibLoader;
+import it.unimi.dsi.fastutil.doubles.Double2DoubleFunction;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Objects;
 
@@ -84,18 +81,6 @@ public final class GeckoLibUtil {
 	/// @param predicate A predicate that determines whether the given resource should be handled by the associated loader
 	synchronized public static void addResourceLoader(GeckoLibLoader.Predicate predicate, GeckoLibLoader<?> loader) {
 		GeckoLibResources.addLoader(predicate, loader);
-	}
-
-	/// Register a custom [SerializableDataTicket] with GeckoLib for handling custom data transmission
-	///
-	/// NOTE: You do not need to register non-serializable [DataTickets][DataTicket].
-	///
-	/// **<u>MUST be called during mod construct</u>**
-	///
-	/// @param dataTicket The SerializableDataTicket to register
-	/// @return The dataTicket you passed in
-	synchronized public static <D> SerializableDataTicket<D> addDataTicket(SerializableDataTicket<D> dataTicket) {
-		return DataTickets.registerSerializable(dataTicket);
 	}
 
 	/// Perform an [Object#equals(Object)] check on two [PatchedDataComponentMap]s,

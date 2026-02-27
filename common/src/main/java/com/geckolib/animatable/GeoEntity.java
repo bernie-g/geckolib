@@ -1,13 +1,12 @@
 package com.geckolib.animatable;
 
+import com.geckolib.GeckoLibServices;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.animation.AnimationController;
 import com.geckolib.renderer.GeoReplacedEntityRenderer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibServices;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.constant.dataticket.SerializableDataTicket;
 
 /// The [GeoAnimatable] interface specific to [Entities][net.minecraft.world.entity.Entity]
 ///
@@ -18,37 +17,6 @@ import com.geckolib.constant.dataticket.SerializableDataTicket;
 ///
 /// @see <a href="https://github.com/bernie-g/geckolib/wiki/Entity-Animations">GeckoLib Wiki - Entity Animations</a>
 public interface GeoEntity extends GeoAnimatable {
-	/// Get server-synced animation data via its relevant [SerializableDataTicket]
-	///
-	/// Should only be used on the <u>client-side</u>
-	///
-	/// **<u>DO NOT OVERRIDE</u>**
-	///
-	/// @param dataTicket The data ticket for the data to retrieve
-	/// @return The synced data, or null if no data of that type has been synced
-	@ApiStatus.NonExtendable
-	default <D> @Nullable D getAnimData(SerializableDataTicket<D> dataTicket) {
-		return getAnimatableInstanceCache().getManagerForId(((Entity)this).getId()).getAnimatableData(dataTicket);
-	}
-
-    /// Saves an arbitrary syncable piece of data to this animatable's [AnimatableManager]
-    ///
-    /// **<u>DO NOT OVERRIDE</u>**
-    ///
-    /// @param dataTicket The DataTicket to sync the data for
-    /// @param data The data to sync
-    @ApiStatus.NonExtendable
-	default <D> void setAnimData(SerializableDataTicket<D> dataTicket, D data) {
-		Entity entity = (Entity)this;
-
-		if (entity.level().isClientSide()) {
-			getAnimatableInstanceCache().getManagerForId(entity.getId()).setAnimatableData(dataTicket, data);
-		}
-		else {
-			GeckoLibServices.NETWORK.syncEntityAnimData(entity, false, dataTicket, data);
-		}
-	}
-
 	/// Trigger an animation for this Entity, based on the controller name and animation name
 	///
 	/// This can be fired from either the client or the server, but optimally you would call it from the server
@@ -61,7 +29,8 @@ public interface GeoEntity extends GeoAnimatable {
 	default void triggerAnim(@Nullable String controllerName, String animName) {
 		Entity entity = (Entity)this;
 
-		if (entity.level().isClientSide()) {
+        //noinspection resource
+        if (entity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
 
 			if (controllerName != null) {
@@ -88,7 +57,8 @@ public interface GeoEntity extends GeoAnimatable {
 	default void stopTriggeredAnim(@Nullable String controllerName, @Nullable String animName) {
 		Entity entity = (Entity)this;
 
-		if (entity.level().isClientSide()) {
+        //noinspection resource
+        if (entity.level().isClientSide()) {
 			AnimatableManager<GeoAnimatable> animatableManager = getAnimatableInstanceCache().getManagerForId(entity.getId());
 
 			if (controllerName != null) {

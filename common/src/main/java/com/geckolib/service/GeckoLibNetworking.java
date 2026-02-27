@@ -1,10 +1,23 @@
 package com.geckolib.service;
 
+import com.geckolib.GeckoLibServices;
 import com.geckolib.animatable.GeoBlockEntity;
 import com.geckolib.animatable.GeoEntity;
-import com.geckolib.network.packet.blockentity.*;
-import com.geckolib.network.packet.entity.*;
-import com.geckolib.network.packet.singleton.*;
+import com.geckolib.animatable.SingletonGeoAnimatable;
+import com.geckolib.cache.SyncedSingletonAnimatableCache;
+import com.geckolib.network.packet.MultiloaderPacket;
+import com.geckolib.network.packet.blockentity.BlockEntityAnimTriggerPacket;
+import com.geckolib.network.packet.blockentity.StatelessBlockEntityPlayAnimPacket;
+import com.geckolib.network.packet.blockentity.StatelessBlockEntityStopAnimPacket;
+import com.geckolib.network.packet.blockentity.StopTriggeredBlockEntityAnimPacket;
+import com.geckolib.network.packet.entity.EntityAnimTriggerPacket;
+import com.geckolib.network.packet.entity.StatelessEntityPlayAnimPacket;
+import com.geckolib.network.packet.entity.StatelessEntityStopAnimPacket;
+import com.geckolib.network.packet.entity.StopTriggeredEntityAnimPacket;
+import com.geckolib.network.packet.singleton.SingletonAnimTriggerPacket;
+import com.geckolib.network.packet.singleton.StatelessSingletonPlayAnimPacket;
+import com.geckolib.network.packet.singleton.StatelessSingletonStopAnimPacket;
+import com.geckolib.network.packet.singleton.StopTriggeredSingletonAnimPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -14,24 +27,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibServices;
-import com.geckolib.animatable.SingletonGeoAnimatable;
-import com.geckolib.cache.SyncedSingletonAnimatableCache;
-import com.geckolib.constant.dataticket.SerializableDataTicket;
-import com.geckolib.network.packet.MultiloaderPacket;
-import com.geckolib.network.packet.blockentity.*;
-import com.geckolib.network.packet.entity.*;
-import com.geckolib.network.packet.singleton.*;
 
 import java.util.Optional;
 
 /// Loader-agnostic service interface for GeckoLib's networking functionalities
 public interface GeckoLibNetworking {
     static void init() {
-        registerPacket(BlockEntityDataSyncPacket.TYPE, BlockEntityDataSyncPacket.CODEC, true);
-        registerPacket(EntityDataSyncPacket.TYPE, EntityDataSyncPacket.CODEC, true);
-        registerPacket(SingletonDataSyncPacket.TYPE, SingletonDataSyncPacket.CODEC, true);
-
         registerPacket(BlockEntityAnimTriggerPacket.TYPE, BlockEntityAnimTriggerPacket.CODEC, true);
         registerPacket(SingletonAnimTriggerPacket.TYPE, SingletonAnimTriggerPacket.CODEC, true);
         registerPacket(EntityAnimTriggerPacket.TYPE, EntityAnimTriggerPacket.CODEC, true);
@@ -73,21 +74,6 @@ public interface GeckoLibNetworking {
 
     /// Send a packet to the given player
     void sendToPlayer(MultiloaderPacket packet, ServerPlayer player);
-
-    /// Sync a [SerializableDataTicket] from server to clientside for the given block
-    default <D> void syncBlockEntityAnimData(BlockPos pos, SerializableDataTicket<D> dataTicket, D data, ServerLevel level) {
-        sendToAllPlayersTrackingBlock(new BlockEntityDataSyncPacket<>(pos, dataTicket, data), level, pos);
-    }
-
-    /// Sync a [SerializableDataTicket] from server to clientside for the given entity
-    default <D> void syncEntityAnimData(Entity entity, boolean isReplacedEntity, SerializableDataTicket<D> dataTicket, D data) {
-        sendToAllPlayersTrackingEntity(new EntityDataSyncPacket<>(entity.getId(), isReplacedEntity, dataTicket, data), entity);
-    }
-
-    /// Sync a [SerializableDataTicket] from server to clientside for the given [SingletonGeoAnimatable][SingletonGeoAnimatable]
-    default <D> void syncSingletonAnimData(SingletonGeoAnimatable animatable, long instanceId, SerializableDataTicket<D> dataTicket, D data, Entity entityToTrack) {
-        sendToAllPlayersTrackingEntity(new SingletonDataSyncPacket<>(SyncedSingletonAnimatableCache.getOrCreateId(animatable), instanceId, dataTicket, data), entityToTrack);
-    }
 
     /// [Trigger][GeoBlockEntity#triggerAnim(String, String)] an animation for the
     /// given [GeoBlockEntity][GeoBlockEntity]
