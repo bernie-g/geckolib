@@ -54,6 +54,8 @@ public final class RenderUtil {
         for (GeoBone bone2 : boneQueue.reversed()) {
             prepMatrixForBone(poseStack, bone2);
         }
+
+        bone.translateToPivotPoint(poseStack);
     }
 
 	public static void translateAndRotateMatrixForBone(PoseStack poseStack, GeoBone bone) {
