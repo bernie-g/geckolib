@@ -37,7 +37,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	/// or [Long#MAX_VALUE] if one hasn't been assigned
 	static long getId(ItemStack stack) {
 		return Optional.ofNullable(stack.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
-				.orElse(Long.MAX_VALUE);
+				.orElse((long)stack.hashCode());
 	}
 
 	/// Gets the unique identifying number from this ItemStack's [NBT][Tag]
@@ -45,7 +45,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	/// If no ID has been reserved for this stack yet, it will reserve a new id and assign it
 	static long getOrAssignId(ItemStack stack, ServerLevel level) {
 		if (!(stack.getComponents() instanceof PatchedDataComponentMap components))
-			return Long.MAX_VALUE;
+			return stack.hashCode();
 
 		Long id = components.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
 
