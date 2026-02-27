@@ -523,7 +523,8 @@ public class AnimationController<T extends GeoAnimatable> {
             }
         }
         else if (!wasStopped) {
-            this.timelineTime = this.timeline == null ? NOT_ANIMATING : this.timeline.lastAnimationEndTime();
+            if (this.timelineTime >= 0)
+                this.timelineTime = this.timeline == null ? NOT_ANIMATING : this.timeline.lastAnimationEndTime();
         }
         else if (this.animationPoint != null && this.timeline != null && (this.timelineTime >= 0 || ((timeDelta < 0) == (this.timelineTime == FINISHED_ANIMATING)))) {
             progressExistingAnimation(animatable, renderState, prevTimelineTime, timeDelta);
