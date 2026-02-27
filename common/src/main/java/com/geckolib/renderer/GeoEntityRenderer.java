@@ -224,6 +224,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     ///
     /// Normally only called for non-[LivingEntities][LivingEntity], and shouldn't be considered a safe place to modify rotation
     /// Do that in [GeoRendererInternals#addRenderData(GeoAnimatable, Object, GeoRenderState, float)] instead
+    @SuppressWarnings("SameParameterValue")
     protected float calculateYRot(T animatable, float yHeadRot, float partialTick) {
         if (!(animatable.getVehicle() instanceof LivingEntity vehicle))
             return animatable instanceof LivingEntity livingEntity ? Mth.rotLerp(partialTick, livingEntity.yBodyRotO, livingEntity.yBodyRot) : animatable.getVisualRotationYInDegrees();
@@ -262,15 +263,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     public void captureDefaultRenderState(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
 
-        LivingEntityRenderState livingRenderState = renderState instanceof LivingEntityRenderState state ? state : null;
-
-        renderState.addGeckolibData(DataTickets.TICK, (double)renderState.ageInTicks);
-        renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, livingRenderState != null ? livingRenderState.isInvisibleToPlayer : animatable.isInvisible() && (ClientUtil.getClientPlayer() == null || animatable.isInvisibleTo(ClientUtil.getClientPlayer())));
-        renderState.addGeckolibData(DataTickets.IS_SHAKING, livingRenderState != null ? livingRenderState.isFullyFrozen : animatable.isFullyFrozen());
-        renderState.addGeckolibData(DataTickets.ENTITY_POSE, livingRenderState != null ? livingRenderState.pose : animatable.getPose());
-        renderState.addGeckolibData(DataTickets.ENTITY_PITCH, livingRenderState != null ? livingRenderState.xRot : animatable.getXRot(partialTick));
-        renderState.addGeckolibData(DataTickets.ENTITY_YAW, livingRenderState != null ? livingRenderState.yRot : calculateYRot(animatable, 0, partialTick));
-        renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, livingRenderState != null ? livingRenderState.bodyRot : renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
         renderState.addGeckolibData(DataTickets.VELOCITY, animatable.getDeltaMovement());
         renderState.addGeckolibData(DataTickets.BLOCKPOS, animatable.blockPosition());
         renderState.addGeckolibData(DataTickets.SPRINTING, animatable.isSprinting());
@@ -281,6 +273,15 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
         if (animatable instanceof LivingEntity livingEntity) {
             renderState.addGeckolibData(DataTickets.SWINGING_ARM, livingEntity.swinging);
             renderState.addGeckolibData(DataTickets.IS_DEAD_OR_DYING, livingEntity.isDeadOrDying());
+        }
+
+        if (!(renderState instanceof LivingEntityRenderState)) {
+            renderState.addGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, animatable.isInvisible() && (ClientUtil.getClientPlayer() == null || animatable.isInvisibleTo(ClientUtil.getClientPlayer())));
+            renderState.addGeckolibData(DataTickets.IS_SHAKING, animatable.isFullyFrozen());
+            renderState.addGeckolibData(DataTickets.ENTITY_POSE, animatable.getPose());
+            renderState.addGeckolibData(DataTickets.ENTITY_PITCH, animatable.getXRot(partialTick));
+            renderState.addGeckolibData(DataTickets.ENTITY_YAW, calculateYRot(animatable, 0, partialTick));
+            renderState.addGeckolibData(DataTickets.ENTITY_BODY_YAW, renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
         }
     }
 

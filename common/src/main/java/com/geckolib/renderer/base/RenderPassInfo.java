@@ -1,15 +1,5 @@
 package com.geckolib.renderer.base;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animation.state.BoneSnapshot;
 import com.geckolib.cache.model.BakedGeoModel;
@@ -20,6 +10,17 @@ import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
 import com.geckolib.object.DeferredCache;
 import com.geckolib.renderer.layer.GeoRenderLayer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,8 @@ public class RenderPassInfo<R extends GeoRenderState> {
     /// Shortcut method for retrieving render data from the [GeoRenderState]
     ///
     /// @see #renderState()
-    public <D> D getOrDefaultGeckolibData(DataTicket<D> dataTicket, D fallback) {
+    @Contract("_,null->null;_,!null->!null")
+    public <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D fallback) {
         return this.renderState().getOrDefaultGeckolibData(dataTicket, fallback);
     }
 

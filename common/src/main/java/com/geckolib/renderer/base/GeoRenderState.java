@@ -1,5 +1,10 @@
 package com.geckolib.renderer.base;
 
+import com.geckolib.GeckoLibConstants;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.constant.dataticket.OverridingDataTicket;
+import com.geckolib.renderer.GeoEntityRenderer;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -7,10 +12,6 @@ import net.minecraft.util.LightCoordsUtil;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibConstants;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.renderer.GeoEntityRenderer;
 
 import java.util.Map;
 import java.util.function.Supplier;
@@ -38,12 +39,19 @@ public interface GeoRenderState {
     ///
     /// @param dataTicket The DataTicket associated with the data
     /// @return The data contained on this RenderState, null if the data doesn't exist
+    @SuppressWarnings({"unchecked", "rawtypes", "DataFlowIssue"})
     default <D> @Nullable D getGeckolibData(DataTicket<D> dataTicket) {
         Object data = getDataMap().get(dataTicket);
 
         try {
-            //noinspection unchecked
-            return (D)data;
+            if (data != null)
+                //noinspection unchecked
+                return (D)data;
+
+            if (dataTicket instanceof OverridingDataTicket overridingTicket && overridingTicket.canExtractFrom(this))
+                return (D)overridingTicket.extractFrom(overridingTicket.getOverriddenClass().cast(this));
+
+            return null;
         }
         catch (ClassCastException ex) {
             GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
@@ -58,11 +66,18 @@ public interface GeoRenderState {
     /// @param dataTicket The DataTicket associated with the data
     /// @param defaultValue The fallback value if no data has been set for the given DataTicket
     /// @return The data contained on this RenderState, or `defaultValue` if not present
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Contract("_,null->null;_,!null->!null")
     default <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, @Nullable D defaultValue) {
         D data = getGeckolibData(dataTicket);
 
-        return data != null ? data : defaultValue;
+        if (data != null)
+            return data;
+
+        if (dataTicket instanceof OverridingDataTicket overridingTicket && overridingTicket.canExtractFrom(this))
+            return (D)overridingTicket.extractFrom(overridingTicket.getOverriddenClass().cast(this));
+
+        return defaultValue;
     }
 
     /// Get previously set data on the RenderState by its associated [DataTicket],
@@ -71,10 +86,17 @@ public interface GeoRenderState {
     /// @param dataTicket The DataTicket associated with the data
     /// @param defaultValue A supplier for the fallback value if no data has been set for the given DataTicket
     /// @return The data contained on this RenderState, or `defaultValue` if not present
+    @SuppressWarnings({"rawtypes", "unchecked"})
     default <D> @Nullable D getOrDefaultGeckolibData(DataTicket<D> dataTicket, Supplier<@Nullable D> defaultValue) {
         D data = getGeckolibData(dataTicket);
 
-        return data != null ? data : defaultValue.get();
+        if (data != null)
+            return data;
+
+        if (dataTicket instanceof OverridingDataTicket overridingTicket && overridingTicket.canExtractFrom(this))
+            return (D)overridingTicket.extractFrom(overridingTicket.getOverriddenClass().cast(this));
+
+        return defaultValue.get();
     }
 
     /// Helper method for returning the 'packed' light coordinates value for this render pass
