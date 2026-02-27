@@ -174,8 +174,8 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
     default void applyAnimationControllers(RenderPassInfo<R> renderPassInfo, BoneSnapshots boneSnapshots) {
         ControllerState[] controllerStates = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES, new ControllerState[0]);
 
-        for (int i = 0; i < controllerStates.length; i++) {
-            AnimationProcessor.createBoneSnapshots(controllerStates[i], boneSnapshots);
+        for (ControllerState controllerState : controllerStates) {
+            AnimationProcessor.createBoneSnapshots(controllerState, boneSnapshots);
         }
     }
 

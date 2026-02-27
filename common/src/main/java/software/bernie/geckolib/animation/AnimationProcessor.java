@@ -1,6 +1,7 @@
 package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -22,13 +23,14 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.BoneSnapshots;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.util.ClientUtil;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Internal class for handling the processing of animations and animation-related functionality.
@@ -83,14 +85,38 @@ public class AnimationProcessor {
         final EasingType easingOverride = controllerState.easingOverride();
         final boolean additive = controllerState.additive();
         final BoneAnimation[] boneAnimations = animation.animation().boneAnimations();
+        final Set<String> transitionedBones = controllerState.transitionTime() >= 0 ? new ObjectOpenHashSet<>(boneAnimations.length) : null;
 
         for (int boneIndex = 0; boneIndex < boneAnimations.length; boneIndex++) {
-            BoneSnapshot snapshot = snapshots.get(boneAnimations[boneIndex].boneName()).orElse(null);
+            final String boneName = boneAnimations[boneIndex].boneName();
+            final BoneSnapshot snapshot = snapshots.get(boneName).orElse(null);
 
             if (snapshot != null) {
+                if (transitionedBones != null)
+                    transitionedBones.add(boneName);
+
                 setSnapshotScale(snapshot, boneIndex, controllerState, additive, animation, prevAnimation, easingOverride);
                 setSnapshotRotation(snapshot, boneIndex, controllerState, additive, animation, prevAnimation, easingOverride);
                 setSnapshotTranslation(snapshot, boneIndex, controllerState, additive, animation, prevAnimation, easingOverride);
+            }
+        }
+
+        if (prevAnimation != null && transitionedBones != null) {
+            final ControllerState resetState = createTransitionControllerState(prevAnimation, controllerState, controllerState.transitionTime());
+            final BoneAnimation[] transitionBoneAnimations = prevAnimation.animation().boneAnimations();
+
+            for (int boneIndex = 0; boneIndex < transitionBoneAnimations.length; boneIndex++) {
+                final String boneName = transitionBoneAnimations[boneIndex].boneName();
+
+                if (!transitionedBones.contains(boneName)) {
+                    BoneSnapshot snapshot = snapshots.get(boneName).orElse(null);
+
+                    if (snapshot != null) {
+                        setSnapshotScale(snapshot, boneIndex, resetState, additive, prevAnimation, null, easingOverride);
+                        setSnapshotRotation(snapshot, boneIndex, resetState, additive, prevAnimation, null, easingOverride);
+                        setSnapshotTranslation(snapshot, boneIndex, resetState, additive, prevAnimation, null, easingOverride);
+                    }
+                }
             }
         }
     }
@@ -171,18 +197,28 @@ public class AnimationProcessor {
      */
     private static float findTransitionPointValue(BoneSnapshot boneSnapshot, ControllerState controllerState, AnimationPoint animation, AnimationPoint prevAnimation,
                                                   int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
-        Keyframe toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis);
-        int prevBoneIndex;
+        Keyframe toKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
 
-        if (toKeyframe == null || (prevBoneIndex = prevAnimation.findBoneIndex(boneSnapshot.getBone())) < 0)
+        if (toKeyframe == null)
             return transform.defaultValue;
 
-        double from = wrapRotation(findAnimationPointValue(boneSnapshot, controllerState, prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
+        int prevBoneIndex = prevAnimation.findBoneIndex(boneSnapshot.getBone());
+        double from = prevBoneIndex < 0 ? transform.defaultValue :
+                      wrapRotation(findAnimationPointValue(boneSnapshot, createTransitionControllerState(prevAnimation, controllerState, -1),
+                                                           prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
         double to = toKeyframe.startValue().get(controllerState);
-        double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / (float)controllerState.transitionTicks());
+        double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / ((float)controllerState.transitionTicks() / 20d));
         EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
 
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
+    }
+
+    /**
+     * Create a new {@link ControllerState} instance based off the current state, but from the perspective of an animation being transitioned from
+     */
+    private static ControllerState createTransitionControllerState(AnimationPoint prevAnimation, ControllerState controllerState, double transitionTime) {
+        return new ControllerState(prevAnimation, null, transitionTime, controllerState.transitionTicks(), controllerState.additive(), controllerState.easingOverride(),
+                                   controllerState.renderState(), controllerState.queryValues());
     }
 
     /**
@@ -192,7 +228,7 @@ public class AnimationProcessor {
                                              int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
         ControllerState previousState = new ControllerState(controllerState.animationPoint(), null, -1, 0,
                                                             controllerState.additive(), controllerState.easingOverride(), controllerState.renderState(), controllerState.queryValues());
-        double delta = Math.min(1, controllerState.transitionTime() / (double)controllerState.transitionTicks());
+        double delta = Math.min(1, controllerState.transitionTime() / ((double)controllerState.transitionTicks() / 20d));
         double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
         double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
         EasingState easingState = new EasingState(easingOverride == null ? EasingType.LINEAR : easingOverride, new MathValue[0], delta, from, to);

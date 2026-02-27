@@ -66,7 +66,7 @@ public record AnimationTimeline(Stage[] stages) {
      * Return the transition ticks value used to construct this timeline
      */
     public int getTransitionLength() {
-        return this.stages[0].isTransition ? Mth.ceil(this.stages[0].endTime) : 0;
+        return this.stages[0].isTransition ? Mth.ceil(this.stages[0].endTime * 20) : 0;
     }
 
     /**
@@ -108,18 +108,20 @@ public record AnimationTimeline(Stage[] stages) {
      */
     public AnimationPoint createAnimationPoint(double timelineTime, @Nullable AnimationPoint existingPoint, @Nullable EasingType easingOverride) {
         final int stageIndex = getStageIndex(timelineTime);
+        final double transitionTimeOffset = getTransitionLength() / 20d;
         Stage stage = this.stages[stageIndex];
         double time = timelineTime - stage.startTime;
 
         if (stage.isTransition) {
             boolean isReset = stageIndex >= this.stages.length - 1;
             stage = this.stages[isReset ? stageIndex - 1 : stageIndex + 1];
-            time = isReset ? stage.endTime : stage.startTime;
+            time = (isReset ? stage.endTime : stage.startTime - transitionTimeOffset);
         }
 
         double existingTime = existingPoint == null ? 0 : stage.startTime + existingPoint.animTime();
 
         if (existingPoint == null || existingPoint.animation() != stage.animation || totalTime() - existingTime < existingTime)
+            //noinspection DataFlowIssue
             return AnimationPoint.createFor(stage.animation, easingOverride, stage.loopType(), time);
 
         return existingPoint.createNext(time);
@@ -141,14 +143,13 @@ public record AnimationTimeline(Stage[] stages) {
         double minTime = Math.min(fromTime, toTime);
         double maxTime = Math.max(fromTime, toTime);
 
-        for (int i = 0; i < this.stages.length; i++) {
-            Stage stage = this.stages[i];
-
+        for (Stage stage : this.stages) {
             if (stage.startTime > maxTime)
                 break;
 
             if (stage.endTime > minTime && !stage.isTransition) {
                 double animFromTime = Math.max(0, minTime - stage.startTime);
+                @SuppressWarnings("DataFlowIssue")
                 double animToTime = Math.min(stage.animation.length(), maxTime - stage.startTime);
 
                 if (soundHandler != null)
@@ -164,18 +165,21 @@ public record AnimationTimeline(Stage[] stages) {
 
         if (!soundMarkers.isEmpty()) {
             for (SoundKeyframeData soundData : toTime < fromTime ? soundMarkers.reversed() : soundMarkers) {
+                //noinspection DataFlowIssue
                 soundHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, soundData));
             }
         }
 
         if (!particleMarkers.isEmpty()) {
             for (ParticleKeyframeData particleData : toTime < fromTime ? particleMarkers.reversed() : particleMarkers) {
+                //noinspection DataFlowIssue
                 particleHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, particleData));
             }
         }
 
         if (!customInstructionMarkers.isEmpty()) {
             for (CustomInstructionKeyframeData customData : toTime < fromTime ? customInstructionMarkers.reversed() : customInstructionMarkers) {
+                //noinspection DataFlowIssue
                 customInstructionHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, customData));
             }
         }
@@ -187,9 +191,7 @@ public record AnimationTimeline(Stage[] stages) {
     private <M extends KeyFrameData> List<M> getKeyframesForAnimation(double startTime, double endTime, M[] markers) {
         final List<M> validMarkers = new ObjectArrayList<>();
 
-        for (int i = 0; i < markers.length; i++) {
-            final M marker = markers[i];
-
+        for (final M marker : markers) {
             if (marker.getTime() > endTime)
                 break;
 
@@ -224,6 +226,7 @@ public record AnimationTimeline(Stage[] stages) {
         }
 
         if (transitionTime > 0)
+            //noinspection DataFlowIssue
             stages.add(Stage.transition(currentTime, transitionTime, stages.getLast().animation()));
 
         if (stages.isEmpty())
