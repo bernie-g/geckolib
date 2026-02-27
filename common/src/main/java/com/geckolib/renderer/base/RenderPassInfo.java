@@ -200,8 +200,8 @@ public class RenderPassInfo<R extends GeoRenderState> {
     /// Add a BonePositionListener for a [GeoLocator] for this render pass
     ///
     /// Use this to capture bone matrix positions at the time of render, which is the only time they actually have a position of any kind
-    public void addLocatorPositionListener(String boneName, BonePositionListener listener) {
-        this.model.getLocator(boneName)
+    public void addLocatorPositionListener(String locatorName, BonePositionListener listener) {
+        this.model.getLocator(locatorName)
                 .ifPresent(locator -> this.locatorPositionListeners
                         .computeIfAbsent(locator, _ -> new ObjectArrayList<>())
                         .add(listener));
