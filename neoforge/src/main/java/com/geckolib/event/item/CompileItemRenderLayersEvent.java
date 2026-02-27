@@ -6,16 +6,14 @@ import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoItemRenderer;
 
-/**
- * One-time event for a {@link GeoItemRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see CompileRenderLayers
- */
+/// One-time event for a [GeoItemRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see CompileRenderLayers
 public class CompileItemRenderLayersEvent<T extends Item & GeoAnimatable> extends Event implements GeoRenderEvent.Item.CompileRenderLayers<T> {
     private final GeoItemRenderer<T> renderer;
 

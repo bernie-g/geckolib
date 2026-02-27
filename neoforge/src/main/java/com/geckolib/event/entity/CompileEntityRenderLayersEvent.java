@@ -8,16 +8,14 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoEntityRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see CompileRenderLayers
- */
+/// One-time event for a [GeoEntityRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see CompileRenderLayers
 public class CompileEntityRenderLayersEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Entity.CompileRenderLayers<T, R> {
     private final GeoEntityRenderer<T, R> renderer;
 

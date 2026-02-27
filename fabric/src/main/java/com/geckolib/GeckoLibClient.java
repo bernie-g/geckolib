@@ -9,9 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 import com.geckolib.cache.GeckoLibResources;
 import com.geckolib.network.packet.MultiloaderPacket;
 
-/**
- * Main GeckoLib client entrypoint
- */
+/// Main GeckoLib client entrypoint
 public class GeckoLibClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {

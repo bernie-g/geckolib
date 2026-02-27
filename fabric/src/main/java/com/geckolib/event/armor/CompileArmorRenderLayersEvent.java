@@ -10,18 +10,16 @@ import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.GeoBlockRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoBlockRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Item animatable class type
- * @param <R> RenderState class type. GeckoLib armor rendering requires {@link HumanoidRenderState} as the minimum class type
- * @see GeoRenderEvent
- * @see CompileRenderLayers
- */
+/// One-time event for a [GeoBlockRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Item animatable class type
+/// @param <R> RenderState class type. GeckoLib armor rendering requires [HumanoidRenderState] as the minimum class type
+/// @see GeoRenderEvent
+/// @see CompileRenderLayers
 public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -40,12 +38,10 @@ public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends H
         return this.renderer;
     }
 
-    /**
-     * Event listener interface for the {@link Armor.CompileRenderLayers} GeoRenderEvent
-     *
-     * @param <T> Item animatable class type
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Armor.CompileRenderLayers] GeoRenderEvent
+    ///
+    /// @param <T> Item animatable class type
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
         void handle(CompileArmorRenderLayersEvent<T, R> event);

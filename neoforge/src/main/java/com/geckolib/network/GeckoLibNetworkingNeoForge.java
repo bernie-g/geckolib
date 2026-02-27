@@ -16,9 +16,7 @@ import com.geckolib.GeckoLibConstants;
 import com.geckolib.network.packet.MultiloaderPacket;
 import com.geckolib.service.GeckoLibNetworking;
 
-/**
- * NeoForge service implementation for GeckoLib's networking functionalities
- */
+/// NeoForge service implementation for GeckoLib's networking functionalities
 public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
     private static PayloadRegistrar registrar = null;
 
@@ -30,11 +28,9 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
         });
     }
 
-    /**
-     * Register a GeckoLib packet for use
-     * <p>
-     * <b><u>FOR GECKOLIB USE ONLY</u></b>
-     */
+    /// Register a GeckoLib packet for use
+    ///
+    /// **<u>FOR GECKOLIB USE ONLY</u>**
     @SuppressWarnings("unchecked")
     @Override
     public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
@@ -46,29 +42,23 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
         }
     }
 
-    /**
-     * Send a packet to all players currently tracking a given entity
-     * <p>
-     * Good as a shortcut for sending a packet to all players that may have an interest in a given entity or its dealings
-     * <p>
-     * Will also send the packet to the entity itself if the entity is also a player
-     */
+    /// Send a packet to all players currently tracking a given entity
+    ///
+    /// Good as a shortcut for sending a packet to all players that may have an interest in a given entity or its dealings
+    ///
+    /// Will also send the packet to the entity itself if the entity is also a player
     @Override
     public void sendToAllPlayersTrackingEntity(MultiloaderPacket packet, Entity trackingEntity) {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(trackingEntity, packet);
     }
 
-    /**
-     * Send a packet to all players tracking a given block position
-     */
+    /// Send a packet to all players tracking a given block position
     @Override
     public void sendToAllPlayersTrackingBlock(MultiloaderPacket packet, ServerLevel level, BlockPos pos) {
         PacketDistributor.sendToPlayersTrackingChunk(level, ChunkPos.containing(pos), packet);
     }
 
-    /**
-     * Send a packet to the given player
-     */
+    /// Send a packet to the given player
     @Override
     public void sendToPlayer(MultiloaderPacket packet, ServerPlayer player) {
         PacketDistributor.sendToPlayer(player, packet);

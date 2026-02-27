@@ -15,20 +15,18 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Pre-render event for items being rendered by {@link GeoItemRenderer}
- * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
- * <p>
- * This event is cancellable.<br>
- * If the event is cancelled, the entity will not be rendered.
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Item animatable class type
- * @see GeoRenderEvent
- * @see Pre
- */
+/// Pre-render event for items being rendered by [GeoItemRenderer]
+///
+/// This event is called before rendering, but after [GeoRenderer#preRenderPass]
+///
+/// This event is cancellable.
+/// If the event is cancelled, the entity will not be rendered.
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Item animatable class type
+/// @see GeoRenderEvent
+/// @see Pre
 public class GeoItemPreRenderEvent<T extends Item & GeoAnimatable> implements GeoRenderEvent.Item.Pre<T> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?> listener : listeners) {
@@ -82,13 +80,11 @@ public class GeoItemPreRenderEvent<T extends Item & GeoAnimatable> implements Ge
         return this.renderPassInfo.cameraState();
     }
 
-    /**
-     * Event listener interface for the {@link Item.Pre} GeoRenderEvent
-     * <p>
-     * Return false to cancel the render pass
-     *
-     * @param <T> Item animatable class type
-     */
+    /// Event listener interface for the [Item.Pre] GeoRenderEvent
+    ///
+    /// Return false to cancel the render pass
+    ///
+    /// @param <T> Item animatable class type
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.item.Item & GeoAnimatable> {
         boolean handle(GeoItemPreRenderEvent<T> event);

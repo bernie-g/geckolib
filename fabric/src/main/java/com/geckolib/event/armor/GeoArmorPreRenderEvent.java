@@ -16,21 +16,19 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}
- * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
- * <p>
- * This event is cancellable.<br>
- * If the event is cancelled, the armor piece will not be rendered.
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Item animatable class type
- * @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires {@link HumanoidRenderState} as a minimum
- * @see GeoRenderEvent
- * @see Pre
- */
+/// Pre-render event for armor pieces being rendered by [GeoArmorRenderer]
+///
+/// This event is called before rendering, but after [GeoRenderer#preRenderPass]
+///
+/// This event is cancellable.
+/// If the event is cancelled, the armor piece will not be rendered.
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Item animatable class type
+/// @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires [HumanoidRenderState] as a minimum
+/// @see GeoRenderEvent
+/// @see Pre
 public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Pre<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -84,14 +82,12 @@ public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends Humanoid
         return this.renderPassInfo.cameraState();
     }
 
-    /**
-     * Event listener interface for the {@link Armor.Pre} GeoRenderEvent
-     * <p>
-     * Return false to cancel the render pass
-     *
-     * @param <T> Item animatable class type
-     * @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires {@link HumanoidRenderState} as a minimum
-     */
+    /// Event listener interface for the [Armor.Pre] GeoRenderEvent
+    ///
+    /// Return false to cancel the render pass
+    ///
+    /// @param <T> Item animatable class type
+    /// @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires [HumanoidRenderState] as a minimum
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
         boolean handle(GeoArmorPreRenderEvent<T, R> event);

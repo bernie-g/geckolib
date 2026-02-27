@@ -9,18 +9,16 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoEntityRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Entity animatable class type
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see CompileRenderLayers
- */
+/// One-time event for a [GeoEntityRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Entity animatable class type
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see CompileRenderLayers
 public class CompileEntityRenderLayersEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> implements GeoRenderEvent.Entity.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -38,12 +36,10 @@ public class CompileEntityRenderLayersEvent<T extends Entity & GeoAnimatable, R 
         return this.renderer;
     }
 
-    /**
-     * Event listener interface for the {@link Entity.CompileRenderLayers} GeoRenderEvent
-     *
-     * @param <T> Entity animatable class type
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Entity.CompileRenderLayers] GeoRenderEvent
+    ///
+    /// @param <T> Entity animatable class type
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> {
         void handle(CompileEntityRenderLayersEvent<T, R> event);

@@ -1,6 +1,4 @@
-/**
- * Fabric-specific platform functionality
- */
+/// Fabric-specific platform functionality
 @NullMarked
 package com.geckolib.platform;
 

@@ -15,15 +15,11 @@ import com.geckolib.GeckoLibServices;
 import com.geckolib.network.packet.MultiloaderPacket;
 import com.geckolib.service.GeckoLibNetworking;
 
-/**
- * Fabric service implementation for GeckoLib's networking functionalities
- */
+/// Fabric service implementation for GeckoLib's networking functionalities
 public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
-    /**
-     * Register a GeckoLib packet for use
-     * <p>
-     * <b><u>FOR GECKOLIB USE ONLY</u></b>
-     */
+    /// Register a GeckoLib packet for use
+    ///
+    /// **<u>FOR GECKOLIB USE ONLY</u>**
     @SuppressWarnings("unchecked")
     @Override
     public <B extends FriendlyByteBuf, P extends MultiloaderPacket> void registerPacketInternal(CustomPacketPayload.Type<P> payloadType, StreamCodec<B, P> codec, boolean isClientBound) {
@@ -39,13 +35,11 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
         }
     }
 
-    /**
-     * Send a packet to all players currently tracking a given entity
-     * <p>
-     * Good as a shortcut for sending a packet to all players that may have an interest in a given entity or its dealings
-     * <p>
-     * Will also send the packet to the entity itself if the entity is also a player
-     */
+    /// Send a packet to all players currently tracking a given entity
+    ///
+    /// Good as a shortcut for sending a packet to all players that may have an interest in a given entity or its dealings
+    ///
+    /// Will also send the packet to the entity itself if the entity is also a player
     @Override
     public void sendToAllPlayersTrackingEntity(MultiloaderPacket packet, Entity trackingEntity) {
         if (trackingEntity instanceof ServerPlayer pl)
@@ -56,9 +50,7 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
         }
     }
 
-    /**
-     * Send a packet to all players tracking a given block position
-     */
+    /// Send a packet to all players tracking a given block position
     @Override
     public void sendToAllPlayersTrackingBlock(MultiloaderPacket packet, ServerLevel level, BlockPos pos) {
         for (ServerPlayer player : PlayerLookup.tracking(level, pos)) {
@@ -66,9 +58,7 @@ public final class GeckoLibNetworkingFabric implements GeckoLibNetworking {
         }
     }
 
-    /**
-     * Send a packet to the given player
-     */
+    /// Send a packet to the given player
     @Override
     public void sendToPlayer(MultiloaderPacket packet, ServerPlayer player) {
         ServerPlayNetworking.send(player, packet);

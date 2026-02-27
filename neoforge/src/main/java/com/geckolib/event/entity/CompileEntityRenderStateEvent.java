@@ -9,18 +9,16 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoEntityRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * Pre-render event for entities being rendered by {@link GeoEntityRenderer}
- * <p>
- * This event is called in preparation for rendering, when the renderer is gathering data to pass through
- * <p>
- * Use this event to add data that you may need in a later {@link Entity} event, or to override/replace data used in rendering
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see CompileRenderState
- */
+/// Pre-render event for entities being rendered by [GeoEntityRenderer]
+///
+/// This event is called in preparation for rendering, when the renderer is gathering data to pass through
+///
+/// Use this event to add data that you may need in a later [Entity] event, or to override/replace data used in rendering
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see CompileRenderState
 public class CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Entity.CompileRenderState<T, R> {
     private final GeoEntityRenderer<T, R> renderer;
     private final R renderState;

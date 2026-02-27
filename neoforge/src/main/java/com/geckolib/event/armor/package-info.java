@@ -1,6 +1,4 @@
-/**
- * Event classes related to GeckoLib armor rendering
- */
+/// Event classes related to GeckoLib armor rendering
 @NullMarked
 package com.geckolib.event.armor;
 

@@ -7,19 +7,17 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoObjectRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoObjectRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Object animatable class type
- * @param <E> Associated object class type, or {@link Void} if none
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see CompileRenderLayers
- */
+/// One-time event for a [GeoObjectRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Object animatable class type
+/// @param <E> Associated object class type, or [Void] if none
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see CompileRenderLayers
 public class CompileObjectRenderLayersEvent<T extends GeoAnimatable, E, R extends GeoRenderState> implements GeoRenderEvent.Object.CompileRenderLayers<T, E, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?, ?> listener : listeners) {
@@ -37,13 +35,11 @@ public class CompileObjectRenderLayersEvent<T extends GeoAnimatable, E, R extend
         return this.renderer;
     }
 
-    /**
-     * Event listener interface for the {@link Object.CompileRenderLayers} GeoRenderEvent
-     *
-     * @param <T> Object animatable class type
-     * @param <E> Associated object class type, or {@link Void} if none
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Object.CompileRenderLayers] GeoRenderEvent
+    ///
+    /// @param <T> Object animatable class type
+    /// @param <E> Associated object class type, or [Void] if none
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends GeoAnimatable, E, R extends GeoRenderState> {
         void handle(CompileObjectRenderLayersEvent<T, E, R> event);

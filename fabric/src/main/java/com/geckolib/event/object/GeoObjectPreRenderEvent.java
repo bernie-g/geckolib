@@ -14,22 +14,20 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
- * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
- * <p>
- * This event is cancellable.<br>
- * If the event is cancelled, the entity will not be rendered.
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> Object animatable class type
- * @param <E> Associated object class type, or {@link Void} if none
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see Pre
- */
+/// Pre-render event for miscellaneous animatables being rendered by [GeoObjectRenderer]
+///
+/// This event is called before rendering, but after [GeoRenderer#preRenderPass]
+///
+/// This event is cancellable.
+/// If the event is cancelled, the entity will not be rendered.
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> Object animatable class type
+/// @param <E> Associated object class type, or [Void] if none
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see Pre
 public class GeoObjectPreRenderEvent<T extends GeoAnimatable, E, R extends GeoRenderState> implements GeoRenderEvent.Object.Pre<T, E, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?, ?> listener : listeners) {
@@ -83,15 +81,13 @@ public class GeoObjectPreRenderEvent<T extends GeoAnimatable, E, R extends GeoRe
         return this.renderPassInfo.cameraState();
     }
 
-    /**
-     * Event listener interface for the {@link Object.Pre} GeoRenderEvent
-     * <p>
-     * Return false to cancel the render pass
-     *
-     * @param <T> Object animatable class type
-     * @param <E> Associated object class type, or {@link Void} if none
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Object.Pre] GeoRenderEvent
+    ///
+    /// Return false to cancel the render pass
+    ///
+    /// @param <T> Object animatable class type
+    /// @param <E> Associated object class type, or [Void] if none
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends GeoAnimatable, E, R extends GeoRenderState> {
         boolean handle(GeoObjectPreRenderEvent<T, E, R> event);

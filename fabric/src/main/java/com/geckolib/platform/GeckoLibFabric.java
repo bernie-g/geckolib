@@ -11,31 +11,23 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-/**
- * Fabric service for general loader-specific functions
- */
+/// Fabric service for general loader-specific functions
 public final class GeckoLibFabric implements GeckoLibPlatform {
-    /**
-     * @return Whether the current runtime is an in-dev (non-production) environment, for running debug-only tasks
-     */
+    /// @return Whether the current runtime is an in-dev (non-production) environment, for running debug-only tasks
     @Override
     public boolean isDevelopmentEnvironment() {
         return FabricLoader.getInstance().isDevelopmentEnvironment();
     }
 
-    /**
-     * @return Whether the current runtime is on the client side regardless of logical context
-     */
+    /// @return Whether the current runtime is on the client side regardless of logical context
     @Override
     public boolean isPhysicalClient() {
         return FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT;
     }
 
-    /**
-     * Register a {@link DataComponentType}
-     * <p>
-     * This is mostly just used for storing the animatable ID on ItemStacks
-     */
+    /// Register a [DataComponentType]
+    ///
+    /// This is mostly just used for storing the animatable ID on ItemStacks
     @Override
     public <T> Supplier<DataComponentType<T>> registerDataComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builder) {
         final DataComponentType<T> componentType = Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, GeckoLibConstants.id(id).toString(), builder.apply(DataComponentType.builder()).build());

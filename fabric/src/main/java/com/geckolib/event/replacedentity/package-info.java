@@ -1,6 +1,4 @@
-/**
- * Event classes related to GeckoLib replaced-entity rendering
- */
+/// Event classes related to GeckoLib replaced-entity rendering
 @NullMarked
 package com.geckolib.event.replacedentity;
 

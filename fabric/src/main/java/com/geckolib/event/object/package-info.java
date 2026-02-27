@@ -1,6 +1,4 @@
-/**
- * Event classes related to GeckoLib miscellaneous object rendering
- */
+/// Event classes related to GeckoLib miscellaneous object rendering
 @NullMarked
 package com.geckolib.event.object;
 

@@ -16,21 +16,19 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Pre-render event for block entities being rendered by {@link GeoBlockRenderer}
- * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
- * <p>
- * This event is cancellable.<br>
- * If the event is cancelled, the block entity will not be rendered.
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> BlockEntity animatable class type
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see Pre
- */
+/// Pre-render event for block entities being rendered by [GeoBlockRenderer]
+///
+/// This event is called before rendering, but after [GeoRenderer#preRenderPass]
+///
+/// This event is cancellable.
+/// If the event is cancelled, the block entity will not be rendered.
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> BlockEntity animatable class type
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see Pre
 public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderEvent.Block.Pre<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -84,14 +82,12 @@ public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R ext
         return this.renderPassInfo.cameraState();
     }
 
-    /**
-     * Event listener interface for the {@link Block.Pre} GeoRenderEvent
-     * <p>
-     * Return false to cancel the render pass
-     *
-     * @param <T> BlockEntity animatable class type
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Block.Pre] GeoRenderEvent
+    ///
+    /// Return false to cancel the render pass
+    ///
+    /// @param <T> BlockEntity animatable class type
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {
         boolean handle(GeoBlockPreRenderEvent<T, R> event);

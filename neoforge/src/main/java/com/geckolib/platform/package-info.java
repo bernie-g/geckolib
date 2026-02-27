@@ -1,6 +1,4 @@
-/**
- * NeoForge-specific platform functionality
- */
+/// NeoForge-specific platform functionality
 @NullMarked
 package com.geckolib.platform;
 

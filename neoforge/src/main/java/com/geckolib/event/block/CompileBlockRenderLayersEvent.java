@@ -9,16 +9,14 @@ import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.GeoBlockRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoArmorRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see GeoRenderEvent.Armor.CompileRenderLayers
- */
+/// One-time event for a [GeoArmorRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see GeoRenderEvent.Armor.CompileRenderLayers
 public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Block.CompileRenderLayers<T, R> {
     private final GeoBlockRenderer<T, R> renderer;
 

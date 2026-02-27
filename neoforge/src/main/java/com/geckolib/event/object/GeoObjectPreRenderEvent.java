@@ -14,19 +14,17 @@ import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 
-/**
- * Pre-render event for miscellaneous animatables being rendered by {@link GeoObjectRenderer}
- * <p>
- * This event is called before rendering, but after {@link GeoRenderer#preRenderPass}
- * <p>
- * This event is {@link ICancellableEvent cancellable}.<br>
- * If the event is cancelled, the entity will not be rendered.
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see Pre
- */
+/// Pre-render event for miscellaneous animatables being rendered by [GeoObjectRenderer]
+///
+/// This event is called before rendering, but after [GeoRenderer#preRenderPass]
+///
+/// This event is [cancellable][ICancellableEvent].
+/// If the event is cancelled, the entity will not be rendered.
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see Pre
 public class GeoObjectPreRenderEvent<T extends GeoAnimatable, E, R extends GeoRenderState> extends Event implements GeoRenderEvent.Object.Pre<T, E, R>, ICancellableEvent {
     private final RenderPassInfo<R> renderPassInfo;
     private final SubmitNodeCollector renderTasks;

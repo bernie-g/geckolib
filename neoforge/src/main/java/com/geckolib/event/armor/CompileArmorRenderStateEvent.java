@@ -9,18 +9,16 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * Pre-render event for armor pieces being rendered by {@link GeoArmorRenderer}
- * <p>
- * This event is called in preparation for rendering, when the renderer is gathering data to pass through
- * <p>
- * Use this event to add data that you may need in a later {@link Armor} event, or to override/replace data used in rendering
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @see GeoRenderEvent
- * @see CompileRenderState
- */
+/// Pre-render event for armor pieces being rendered by [GeoArmorRenderer]
+///
+/// This event is called in preparation for rendering, when the renderer is gathering data to pass through
+///
+/// Use this event to add data that you may need in a later [Armor] event, or to override/replace data used in rendering
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @see GeoRenderEvent
+/// @see CompileRenderState
 public class CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.CompileRenderState<T, R> {
     private final GeoArmorRenderer<T, R> renderer;
     private final R renderState;

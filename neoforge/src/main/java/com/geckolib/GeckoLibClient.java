@@ -6,9 +6,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
 import com.geckolib.cache.GeckoLibResources;
 
-/**
- * Main GeckoLib client entrypoint
- */
+/// Main GeckoLib client entrypoint
 @EventBusSubscriber(value = Dist.CLIENT, modid = GeckoLibConstants.MODID)
 public final class GeckoLibClient {
     @SubscribeEvent

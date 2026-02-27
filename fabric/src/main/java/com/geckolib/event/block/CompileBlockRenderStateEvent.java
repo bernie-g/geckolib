@@ -10,20 +10,18 @@ import com.geckolib.event.GeoRenderEvent;
 import com.geckolib.renderer.GeoBlockRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * Pre-render event for blocks being rendered by {@link GeoBlockRenderer}
- * <p>
- * This event is called in preparation for rendering, when the renderer is gathering data to pass through
- * <p>
- * Use this event to add data that you may need in a later {@link Block} event, or to override/replace data used in rendering
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> BlockEntity animatable class type
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see CompileRenderState
- */
+/// Pre-render event for blocks being rendered by [GeoBlockRenderer]
+///
+/// This event is called in preparation for rendering, when the renderer is gathering data to pass through
+///
+/// Use this event to add data that you may need in a later [Block] event, or to override/replace data used in rendering
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> BlockEntity animatable class type
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see CompileRenderState
 public class CompileBlockRenderStateEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderEvent.Block.CompileRenderState<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -56,12 +54,10 @@ public class CompileBlockRenderStateEvent<T extends BlockEntity & GeoAnimatable,
         return this.renderState;
     }
 
-    /**
-     * Event listener interface for the {@link Block.CompileRenderState} GeoRenderEvent
-     *
-     * @param <T> BlockEntity animatable class type
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [Block.CompileRenderState] GeoRenderEvent
+    ///
+    /// @param <T> BlockEntity animatable class type
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {
         void handle(CompileBlockRenderStateEvent<T, R> event);

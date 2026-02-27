@@ -10,18 +10,16 @@ import com.geckolib.renderer.GeoArmorRenderer;
 import com.geckolib.renderer.GeoBlockRenderer;
 import com.geckolib.renderer.base.GeoRenderState;
 
-/**
- * One-time event for a {@link GeoArmorRenderer} called on first initialisation
- * <p>
- * Use this event to add render layers to the renderer as needed
- * <p>
- * <b><u>NOTE:</u></b> Some methods on this event are not overridden in this class. Check {@link GeoRenderEvent}
- *
- * @param <T> BlockEntity animatable class type
- * @param <R> RenderState class type
- * @see GeoRenderEvent
- * @see Armor.CompileRenderLayers
- */
+/// One-time event for a [GeoArmorRenderer] called on first initialisation
+///
+/// Use this event to add render layers to the renderer as needed
+///
+/// **<u>NOTE:</u>** Some methods on this event are not overridden in this class. Check [GeoRenderEvent]
+///
+/// @param <T> BlockEntity animatable class type
+/// @param <R> RenderState class type
+/// @see GeoRenderEvent
+/// @see Armor.CompileRenderLayers
 public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderEvent.Block.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
@@ -39,12 +37,10 @@ public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable
         return this.renderer;
     }
 
-    /**
-     * Event listener interface for the {@link CompileBlockRenderLayersEvent} GeoRenderEvent
-     *
-     * @param <T> BlockEntity animatable class type
-     * @param <R> RenderState class type
-     */
+    /// Event listener interface for the [CompileBlockRenderLayersEvent] GeoRenderEvent
+    ///
+    /// @param <T> BlockEntity animatable class type
+    /// @param <R> RenderState class type
     @FunctionalInterface
     public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {
         void handle(CompileBlockRenderLayersEvent<T, R> event);

@@ -1,6 +1,4 @@
-/**
- * Event classes related to GeckoLib entity rendering
- */
+/// Event classes related to GeckoLib entity rendering
 @NullMarked
 package com.geckolib.event.entity;
 
