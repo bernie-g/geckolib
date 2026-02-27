@@ -44,7 +44,7 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		return Optional.ofNullable(stack.getComponentsPatch().get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
 				.filter(Optional::isPresent)
 				.<Long>map(Optional::get)
-				.orElse(Long.MAX_VALUE);
+				.orElse((long)stack.hashCode());
 	}
 
 	/**
