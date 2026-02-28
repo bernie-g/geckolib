@@ -43,6 +43,8 @@ accessible field net/minecraft/client/renderer/entity/LivingEntityRenderer layer
 
 # ItemArmorGeoLayer
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
+accessible field net/minecraft/client/renderer/entity/layers/CustomHeadLayer ITEM_SCALE F
+accessible field net/minecraft/client/renderer/entity/layers/CustomHeadLayer SKULL_SCALE F
 
 # Synced GeoAnimatable ItemStack Stackability
 accessible field net/minecraft/core/component/PatchedDataComponentMap copyOnWrite Z
