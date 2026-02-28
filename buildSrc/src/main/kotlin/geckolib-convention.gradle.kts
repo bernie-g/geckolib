@@ -9,7 +9,7 @@ val geckolib = extensions.create(
     "geckolib",
     GeckoLibBuildPlugin::class.java,
     project
-)!!
+)
 
 project.version = geckolib.modVersion
 project.base.archivesName = "geckolib-${project.name}-${geckolib.mcVersion}"
@@ -39,14 +39,14 @@ repositories {
     mavenLocal {
         name = "GeckoLib Examples MavenLocal"
         content {
-            includeModuleByRegex("com.geckolib.geckolib", "geckolib-examples.*?")
+            includeGroupAndSubgroups("com.geckolib")
         }
     }
     maven {
         name = "GeckoLib Examples Cloudsmith"
         url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/")
         content {
-            includeModuleByRegex("com.geckolib.geckolib", "geckolib-examples.*?")
+            includeGroupAndSubgroups("com.geckolib")
         }
     }
     exclusiveContent {
@@ -166,5 +166,5 @@ publishing {
 
 fun withCommonSource(consumer: (SourceSet) -> Unit) {
     if (project.name != "common")
-        project(":common").sourceSets.getByName("main")?.let { consumer(it) }
+        project(":common").sourceSets.getByName("main").let { consumer(it) }
 }
