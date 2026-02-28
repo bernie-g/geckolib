@@ -10,6 +10,7 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
+val localRuntimeOnly by configurations.creating
 
 minecraft {
     mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
@@ -54,6 +55,8 @@ repositories {
     mavenCentral()
 }
 
+configurations.runtimeClasspath { extendsFrom(localRuntimeOnly) }
+
 dependencies {
     compileOnly(project(":common"))
     implementation(minecraft.dependency(libs.forge))
@@ -62,7 +65,7 @@ dependencies {
 
     // Only enable for testing as needed
     // Disable before publishing
-    //implementation(libs.examplemod.forge.get())
+    //localRuntimeOnly(minecraft.dependency(libs.examplemod.forge.get()))
 }
 
 tasks.withType<ProcessResources>().configureEach {

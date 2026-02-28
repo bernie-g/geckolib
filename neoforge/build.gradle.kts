@@ -9,6 +9,7 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
+val localRuntimeOnly by configurations.creating
 
 neoForge {
     version = geckolib.neoforgeVersion.version()
@@ -44,12 +45,14 @@ neoForge {
     }
 }
 
+configurations.runtimeClasspath { extendsFrom(localRuntimeOnly) }
+
 dependencies {
     compileOnly(project(":common"))
 
     // Only enable for testing as needed
     // Disable before publishing
-    //runtimeOnly(libs.examplemod.neoforge)
+    //localRuntimeOnly(libs.examplemod.neoforge)
 }
 
 modrinth {

@@ -10,6 +10,9 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
+val localRuntimeOnly by configurations.creating
+
+configurations.runtimeClasspath { extendsFrom(localRuntimeOnly) }
 
 dependencies {
     minecraft(libs.loom.minecraft)
@@ -18,7 +21,7 @@ dependencies {
     compileOnly(project(":common"))
 
     // ExampleMod
-    //modLocalRuntime(libs.examplemod.fabric)
+    //localRuntimeOnly(libs.examplemod.fabric)
 }
 
 loom {
