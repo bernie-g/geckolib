@@ -322,8 +322,16 @@ public class MathParser {
                     }
 
                     if (groupState == 0) {
-                        if (!buffer.isEmpty())
-                            subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
+                        if (!buffer.isEmpty()) {
+                            if (!symbols.isEmpty() && symbols.getLast().left().filter("-"::equals).isPresent() &&
+                                (symbols.size() == 1 || symbols.get(symbols.size() - 2).left().filter(Operator::isOperator).isPresent())) {
+                                symbols.removeLast();
+                                subValues.add(deduplicate(parseSymbols(compileSymbols(buffer.toString().toCharArray())), Negative::new));
+                            }
+                            else {
+                                subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
+                            }
+                        }
 
                         i = j;
 
@@ -374,7 +382,7 @@ public class MathParser {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
-        Optional<MathValue> ternary = compileTernary(symbols);
+        final Optional<MathValue> ternary = compileTernary(symbols);
 
         if (ternary.isPresent())
             return ternary;
