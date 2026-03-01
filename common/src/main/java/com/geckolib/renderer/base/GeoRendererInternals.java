@@ -1,14 +1,5 @@
 package com.geckolib.renderer.base;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.resources.Identifier;
-import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.AnimationProcessor;
@@ -22,6 +13,14 @@ import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.geckolib.util.ClientUtil;
 import com.geckolib.util.RenderUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
+import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
@@ -160,11 +159,10 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
             return;
 
         renderPassInfo.renderPosed(() -> {
-            final Matrix4f pose = renderPassInfo.getModelRenderMatrixState();
             final PoseStack poseStack = renderPassInfo.poseStack();
 
             poseStack.pushPose();
-            poseStack.last().pose().set(pose);
+            poseStack.last().set(renderPassInfo.getModelRenderMatrixPose());
 
             for (Map.Entry<GeoBone, List<PerBoneRender<R>>> boneTasks : perBoneRenders.entrySet()) {
                 final GeoBone bone = boneTasks.getKey();

@@ -67,7 +67,7 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
     @Override
     public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         if (renderPassInfo.willRender()) {
-            renderPassInfo.addBoneUpdater((renderPassInfo1, snapshots) -> snapshots.get(CustomBoneTextureGeoLayer.this.boneName)
+            renderPassInfo.addBoneUpdater((_, snapshots) -> snapshots.get(CustomBoneTextureGeoLayer.this.boneName)
                     .ifPresent(bone -> {
                         bone.skipRender(true);
                         bone.skipChildrenRender(false);
@@ -107,12 +107,11 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
 
         if (renderType != null) {
             renderTasks.submitCustomGeometry(renderPassInfo.poseStack(), renderType, (pose, buffer) -> {
-                PoseStack poseStack = new PoseStack();
+                PoseStack poseStack = renderPassInfo.poseStack();
 
-                poseStack.last().set(pose);
                 poseStack.pushPose();
-                RenderUtil.prepMatrixForBone(poseStack, bone);
-                bone.updateBonePositionListeners(poseStack, renderPassInfo);
+                poseStack.last().set(pose);
+                bone.translateAwayFromPivotPoint(poseStack);
 
                 for (GeoCube cube : ((CuboidGeoBone)bone).cubes) {
                     renderCube(cube, poseStack, buffer, packedLight, packedOverlay, renderColor, widthRatio, heightRatio);
