@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "5.4.4"
+    geckolib = "5.4.5"
 
 # Common
     minecraft-range = "[1.21.11,)"
