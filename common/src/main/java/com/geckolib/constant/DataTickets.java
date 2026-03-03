@@ -5,8 +5,10 @@ import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.constant.dataticket.OverridingDataTicket;
+import com.geckolib.object.VanillaModelModifier;
 import com.google.common.reflect.TypeToken;
 import net.minecraft.client.model.HumanoidModel;
+import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -22,6 +24,8 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 /// Stores the default (builtin) [DataTickets][DataTicket] used in GeckoLib
 ///
@@ -59,6 +63,7 @@ public final class DataTickets {
 	public static final DataTicket<Boolean> IS_LEFT_HANDED = DataTicket.create("is_left_handed", new TypeToken<>() {});
 	public static final DataTicket<Boolean> IS_CROUCHING = DataTicket.create("is_crouching", new TypeToken<>() {});
 	public static final DataTicket<Vec3> ELYTRA_ROTATION = DataTicket.create("elytra_rotation", new TypeToken<>() {});
+	public static final DataTicket<Map<? extends Model<?>, List<VanillaModelModifier<?, ?>>>> VANILLA_MODEL_MODIFIERS = DataTicket.create("vanilla_model_modifiers", new TypeToken<>() {});
 
 	public static final OverridingDataTicket<Double, EntityRenderState> TICK = OverridingDataTicket.create("tick", new TypeToken<>() {}, EntityRenderState.class, state -> (double)state.ageInTicks);
 	public static final OverridingDataTicket<Boolean, LivingEntityRenderState> INVISIBLE_TO_PLAYER = OverridingDataTicket.create("invisible_to_player", new TypeToken<>() {}, LivingEntityRenderState.class, state -> state.isInvisibleToPlayer);

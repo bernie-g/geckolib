@@ -18,6 +18,8 @@
     "client.EntityRendererMixin",
     "client.EntityRenderStateMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.ModelFeatureRendererMixin",
+    "client.ModelMixin",
     "client.SpecialModelRenderersMixin",
     "client.SpecialModelWrapperMixin",
     "client.TextureManagerMixin"
