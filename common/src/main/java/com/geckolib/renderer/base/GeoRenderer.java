@@ -97,20 +97,23 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
     /// The [GeoRenderState] should have already been filled by this stage.
     ///
     /// All GeckoLib renderers should immediately defer their respective default `submit` calls to this, for consistent handling
-    /// @see #performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState, RenderPassInfo.BoneUpdater)
+    /// @see #performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState, RenderPassInfo.BoneUpdater[])
     default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         performRenderPass(renderState, poseStack, renderTasks, cameraState, null);
     }
 
 	/// Initial access point for performing a single render pass, with an optional pre-defined [RenderPassInfo.BoneUpdater] to allow for pre-positioning models from outside the renderer
-	default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, RenderPassInfo.@Nullable BoneUpdater<R> boneUpdater) {
+	default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, RenderPassInfo.BoneUpdater<R> @Nullable [] boneUpdaters) {
 		poseStack.pushPose();
 
         final RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
         final RenderPassInfo<R> renderPassInfo = RenderPassInfo.create(this, renderState, poseStack, cameraState, renderType != null);
 
-        if (boneUpdater != null)
-            renderPassInfo.addBoneUpdater(boneUpdater);
+        if (boneUpdaters != null) {
+			for (RenderPassInfo.BoneUpdater<R> boneUpdater : boneUpdaters) {
+				renderPassInfo.addBoneUpdater(boneUpdater);
+			}
+		}
 
 		if (firePreRenderEvent(renderPassInfo, renderTasks)) {
             preRenderPass(renderPassInfo, renderTasks);
