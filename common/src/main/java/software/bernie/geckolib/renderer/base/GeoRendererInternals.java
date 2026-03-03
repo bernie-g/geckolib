@@ -193,7 +193,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
             final PoseStack poseStack = renderPassInfo.poseStack();
 
             poseStack.pushPose();
-            poseStack.last().pose().set(pose);
+            poseStack.last().set(renderPassInfo.getModelRenderMatrixPose());
 
             for (Map.Entry<GeoBone, List<PerBoneRender<R>>> boneTasks : perBoneRenders.entrySet()) {
                 final GeoBone bone = boneTasks.getKey();
