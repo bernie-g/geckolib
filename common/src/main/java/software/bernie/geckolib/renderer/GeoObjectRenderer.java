@@ -28,6 +28,7 @@ import java.util.function.Function;
  * @param <O> Associated object class type, or {@link Void} if none
  * @param <R> RenderState class type
  */
+@SuppressWarnings("UnusedReturnValue")
 public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderState> implements GeoRenderer<T, O, R> {
 	protected final GeoRenderLayersContainer<T, O, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
