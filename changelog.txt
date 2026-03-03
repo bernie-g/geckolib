@@ -1,4 +1,5 @@
-v4.8.3
+v4.8.4
 
-- Added a safety check for mods attempting to render GeckoLib armor without using GeoRenderProvider. (#755, #804, etc)
-- Marked GeckoAnimFix as an incompatible mod since they refuse to stop breaking GeckoLib with their download-farming mod.
+- Prevent crashing from an empty molang string
+- Fixed Molang calculations sometimes parsing math incorrectly (#820)
+- Fixed MathParser not parsing group negatives properly (#820)
