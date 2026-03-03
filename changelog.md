@@ -68,6 +68,10 @@
 * Removed `headBone` and its associated constructor in `DefaultedEntityGeoModel` since it's no longer used
 * Added direct-object constructors for `DefaultedBlockGeoModel`, `DefaultedEntityGeoModel`, and `DefaultedItemGeoModel`
 * Removed `GeckoLibPlatform#getGameDir` as it is no longer used
+* Removed `SerializableDataTickets`. They haven't had a place in GeckoLib since early 1.21.x versions, and they've always had unresolvable implementation issues.
+* Added `VanillaModelModifier` - This is mostly an internal implementation class to bridge a gap that vanilla's implementation left us
+* Fixed and renabled `ItemArmorGeoLayer`, added support for non-`Equippable` items 
+* `GeoRenderer#performRenderPass` now supports multiple pre-made `BoneUpdaters` when starting a render pass
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
