@@ -11,6 +11,7 @@ import software.bernie.geckolib.cache.model.GeoBone;
  * This is typically computed immediately prior to rendering the associated model
  * and should be considered invalid if accessed at any time other than that immediate render frame.
  */
+@SuppressWarnings("UnusedReturnValue")
 public class BoneSnapshot {
 	private final GeoBone bone;
 
