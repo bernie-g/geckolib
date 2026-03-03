@@ -214,9 +214,12 @@ public class MathParser {
     }
 
     /**
-     * Breakdown an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
+     * Break down an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
      */
     public static char[] decomposeExpression(String expression) throws CompoundException {
+        if (expression.isEmpty())
+            return new char[] {0};
+
         if (!EXPRESSION_FORMAT.matcher(expression).matches())
             throw new CompoundException("Invalid characters found in expression: '" + expression + "'");
 
@@ -333,8 +336,16 @@ public class MathParser {
                     }
 
                     if (groupState == 0) {
-                        if (!buffer.isEmpty())
-                            subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
+                        if (!buffer.isEmpty()) {
+                            if (!symbols.isEmpty() && symbols.getLast().left().filter("-"::equals).isPresent() &&
+                                (symbols.size() == 1 || symbols.get(symbols.size() - 2).left().filter(Operator::isOperator).isPresent())) {
+                                symbols.removeLast();
+                                subValues.add(new Negative(parseSymbols(compileSymbols(buffer.toString().toCharArray()))));
+                            }
+                            else {
+                                subValues.add(parseSymbols(compileSymbols(buffer.toString().toCharArray())));
+                            }
+                        }
 
                         i = j;
 
@@ -440,12 +451,16 @@ public class MathParser {
      */
     @Nullable
     protected static MathValue compileCalculation(List<Either<String, List<MathValue>>> symbols) throws CompoundException  {
-        final int symbolCount = symbols.size();
-        int operatorIndex = -1;
-        Operator lastOperator = null;
+        if (symbols.size() < 3)
+            return null;
 
-        for (int i = 1; i < symbolCount; i++) {
-            Operator operator = symbols.get(i).left()
+        final int symbolCount = symbols.size();
+        final List<Operator> operators = new ObjectArrayList<>(symbolCount / 2);
+        final List<MathValue> components = new ObjectArrayList<>(symbolCount / 2 + 1);
+        int lastOperatorIndex = -1;
+
+        for (int i = 0; i < symbolCount; i++) {
+            final Operator operator = symbols.get(i).left()
                     .filter(Operator::isOperator)
                     .map(MathParser::getOperatorFor).orElse(null);
 
@@ -459,16 +474,43 @@ public class MathParser {
                 return new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount)));
             }
 
-            if (lastOperator == null || !operator.takesPrecedenceOver(lastOperator)) {
-                operatorIndex = i;
-                lastOperator = operator;
-            }
-            else {
-                break;
-            }
+            components.add(parseSymbols(symbols.subList(lastOperatorIndex + 1, i)));
+            operators.add(operator);
+            lastOperatorIndex = i;
         }
 
-        return lastOperator == null ? null : new Calculation(lastOperator, parseSymbols(symbols.subList(0, operatorIndex)), parseSymbols(symbols.subList(operatorIndex + 1, symbolCount)));
+        if (components.isEmpty())
+            return null;
+
+        components.add(parseSymbols(symbols.subList(lastOperatorIndex + 1, symbolCount)));
+
+        do {
+            Operator lastOperator = null;
+            int highestOperatorIndex = -1;
+
+            for (int i = 0; i < operators.size(); i++) {
+                Operator operator = operators.get(i);
+
+                if (lastOperator == null || operator.takesPrecedenceOver(lastOperator)) {
+                    lastOperator = operator;
+                    highestOperatorIndex = i;
+                }
+            }
+
+            if (highestOperatorIndex == -1)
+                break;
+
+            components.add(highestOperatorIndex, new Calculation(lastOperator, components.get(highestOperatorIndex), components.get(highestOperatorIndex + 1)));
+            operators.remove(highestOperatorIndex);
+            components.remove(highestOperatorIndex + 1);
+            components.remove(highestOperatorIndex + 1);
+        }
+        while (true);
+
+        if (components.size() != 1)
+            throw new CompoundException("Invalidly formatted expression: " + symbols);
+
+        return components.getFirst();
     }
 
     /**
