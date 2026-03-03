@@ -1,7 +1,14 @@
 package com.geckolib.renderer.base;
 
+import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.GeoBlockEntity;
 import com.geckolib.animatable.GeoItem;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.loading.math.MathParser;
+import com.geckolib.loading.math.value.Variable;
+import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -13,14 +20,8 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.WalkAnimationState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.animation.state.AnimationTest;
-import com.geckolib.cache.model.BakedGeoModel;
-import com.geckolib.constant.dataticket.DataTicket;
-import com.geckolib.loading.math.MathParser;
-import com.geckolib.loading.math.value.Variable;
-import com.geckolib.renderer.layer.GeoRenderLayer;
 
+import java.util.List;
 import java.util.function.ToDoubleFunction;
 
 /// Base interface for all GeckoLib renderers.
@@ -97,13 +98,13 @@ public non-sealed interface GeoRenderer<T extends GeoAnimatable, O, R extends Ge
     /// The [GeoRenderState] should have already been filled by this stage.
     ///
     /// All GeckoLib renderers should immediately defer their respective default `submit` calls to this, for consistent handling
-    /// @see #performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState, RenderPassInfo.BoneUpdater[])
+    /// @see #performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState, List)
     default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState) {
         performRenderPass(renderState, poseStack, renderTasks, cameraState, null);
     }
 
 	/// Initial access point for performing a single render pass, with an optional pre-defined [RenderPassInfo.BoneUpdater] to allow for pre-positioning models from outside the renderer
-	default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, RenderPassInfo.BoneUpdater<R> @Nullable [] boneUpdaters) {
+	default void performRenderPass(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable List<RenderPassInfo.BoneUpdater<R>> boneUpdaters) {
 		poseStack.pushPose();
 
         final RenderType renderType = getRenderType(renderState, getTextureLocation(renderState));
