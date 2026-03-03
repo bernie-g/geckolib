@@ -26,6 +26,7 @@ import java.util.function.Function;
 /// @param <T> Animatable class type
 /// @param <O> Associated object class type, or [Void] if none
 /// @param <R> RenderState class type
+@SuppressWarnings("UnusedReturnValue")
 public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderState> implements GeoRenderer<T, O, R> {
 	protected final GeoRenderLayersContainer<T, O, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -71,7 +72,7 @@ public class GeoObjectRenderer<T extends GeoAnimatable, O, R extends GeoRenderSt
 		R renderState = fillRenderState(animatable, relatedObject, createRenderState(animatable, null), partialTick);
 
 		renderState.addGeckolibData(DataTickets.PACKED_LIGHT, packedLight);
-		GeoRenderer.super.performRenderPass(renderState, poseStack, renderTasks, cameraState, boneUpdater);
+        GeoRenderer.super.performRenderPass(renderState, poseStack, renderTasks, cameraState, boneUpdater == null ? null : List.of(boneUpdater));
 	}
 
     /// Called to create the [GeoRenderState] for this render pass
