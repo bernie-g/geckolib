@@ -511,7 +511,7 @@ public class AnimationController<T extends GeoAnimatable> {
                 }
                 return;
             }
-            else if (prevTimelineTime < currentAnimStage.endTime()) {
+            else if (prevTimelineTime < currentAnimStage.endTime() && this.timelineTime < this.timeline.lastAnimationEndTime()) {
                 this.transitionFromPoint = prevTimelineTime < this.timelineTime ?
                                            this.animationPoint :
                                            this.timeline.createAnimationPoint(currentAnimStage.endTime(), null, this.easingOverride);
