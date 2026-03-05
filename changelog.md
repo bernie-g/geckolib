@@ -72,6 +72,16 @@
 * Added `VanillaModelModifier` - This is mostly an internal implementation class to bridge a gap that vanilla's implementation left us
 * Fixed and renabled `ItemArmorGeoLayer`, added support for non-`Equippable` items 
 * `GeoRenderer#performRenderPass` now supports multiple pre-made `BoneUpdaters` when starting a render pass
+* Converted all `BlockState` and `ItemStack` references in rendering to `ItemStackRenderState` and `BlockModelRenderState` per Minecraft standards
+  * Added `RenderUtil#createRenderStateForItem`
+  * Added `RenderUtil#createRenderStateForBlock`
+* Added `DataTickets#create` as a shortcut/helper method for creating DataTickets
+* Changed `DataTicket.GLOW_COLOUR` to `DataTicket.OUTLINE_COLOR`
+* Moved `DataTicket.BLOCK_FACING` to `GeoBlockRenderer.DIRECTION_FACING`
+* Moved `DataTicket.ITEM` to `GeoItemRenderer.CURRENT_ITEM`
+* Moved `DataTicket.EQUIPMENT_SLOT` to `GeoArmorRenderer.CURRENT_SLOT`
+* Moved `DataTicket.IS_GECKOLIB_WEARER` to `GeoArmorRenderer.IS_GECKOLIB_WEARER`
+* Moved `DataTicket.HUMANOID_MODEL` to `GeoArmorRenderer.BASE_MODEL`
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
