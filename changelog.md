@@ -82,6 +82,7 @@
 * Moved `DataTicket.EQUIPMENT_SLOT` to `GeoArmorRenderer.CURRENT_SLOT`
 * Moved `DataTicket.IS_GECKOLIB_WEARER` to `GeoArmorRenderer.IS_GECKOLIB_WEARER`
 * Moved `DataTicket.HUMANOID_MODEL` to `GeoArmorRenderer.BASE_MODEL`
+* Added `BlockEntityRendererProvider.Context` to the constructor of `GeoBlockRenderer`
 
 #### Other
 * Added `1.16.0` and `1.19.30` to the known geometry model definitions
