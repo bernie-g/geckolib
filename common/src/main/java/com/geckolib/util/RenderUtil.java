@@ -1,28 +1,5 @@
 package com.geckolib.util;
 
-import com.geckolib.renderer.*;
-import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.resources.Identifier;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.Equippable;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.cache.model.GeoBone;
@@ -31,8 +8,39 @@ import com.geckolib.cache.model.GeoQuad;
 import com.geckolib.cache.model.cuboid.GeoCube;
 import com.geckolib.constant.DataTickets;
 import com.geckolib.renderer.*;
+import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
+import com.mojang.blaze3d.textures.GpuTexture;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import it.unimi.dsi.fastutil.ints.IntIntPair;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.BlockModelRenderState;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.block.model.BlockDisplayContext;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.equipment.Equippable;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fc;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -189,6 +197,50 @@ public final class RenderUtil {
 		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
 			normal.mul(1, 1, -1);
 	}
+
+    /// Create and populate an [ItemStackRenderState] for a given [ItemStack] for rendering
+    ///
+    /// Should typically be called during [GeoRenderState] extraction prior to render submission
+    public static ItemStackRenderState createRenderStateForItem(ItemStack itemStack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext) {
+        return createRenderStateForItem(itemStack, itemModelResolver, displayContext, null);
+    }
+
+    /// Create and populate an [ItemStackRenderState] for a given [ItemStack] and [Entity] context for rendering
+    ///
+    /// Should typically be called during [GeoRenderState] extraction prior to render submission
+    public static ItemStackRenderState createRenderStateForItem(ItemStack stack, ItemModelResolver itemModelResolver, ItemDisplayContext displayContext, @Nullable Entity owner) {
+        final ItemStackRenderState renderState = new ItemStackRenderState();
+
+        if (owner instanceof LivingEntity livingEntity) {
+            itemModelResolver.updateForLiving(renderState, stack, displayContext, livingEntity);
+        }
+        else if (owner != null) {
+            itemModelResolver.updateForNonLiving(renderState, stack, displayContext, owner);
+        }
+        else {
+            itemModelResolver.updateForTopItem(renderState, stack, displayContext, null, null, 0);
+        }
+
+        return renderState;
+    }
+
+    /// Create and populate a [BlockModelRenderState] for a given [BlockState] for rendering
+    ///
+    /// Should typically be called during [GeoRenderState] extraction prior to render submission
+    public static BlockModelRenderState createRenderStateForBlock(BlockState blockState, BlockModelResolver blockModelResolver) {
+        return createRenderStateForBlock(blockState, blockModelResolver, BlockDisplayContext.create());
+    }
+
+    /// Create and populate a [BlockModelRenderState] for a given [BlockState] for rendering
+    ///
+    /// Should typically be called during [GeoRenderState] extraction prior to render submission
+    public static BlockModelRenderState createRenderStateForBlock(BlockState blockState, BlockModelResolver blockModelResolver, BlockDisplayContext displayContext) {
+        final BlockModelRenderState renderState = new BlockModelRenderState();
+
+        blockModelResolver.update(renderState, blockState, displayContext);
+
+        return renderState;
+    }
 
 	/// Helper method to create the glowmask resource location for a given input texture
 	public static Identifier getEmissiveResource(Identifier textureLocation) {
