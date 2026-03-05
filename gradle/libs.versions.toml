@@ -30,7 +30,7 @@
 
 # Plugins
     plugin-moddevgradle = "2.0.140"
-    plugin-minotaur = "2.8.10-tslat"
+    plugin-minotaur = "2.8.10"
     plugin-curseforge-gradle = "1.1.28"
     plugin-forge-gradle = "[7.0.0,)"
     plugin-forge-at = "[5.0.1,)"
@@ -55,10 +55,10 @@
     neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
 
 # Testing
-    examplemod-common = { group = "com.geckolib.example", name = "examplemod-common-26.1-snapshot-7", version.ref = "examplemod" }
-    examplemod-fabric = { group = "com.geckolib.example", name = "examplemod-fabric-26.1-snapshot-7", version.ref = "examplemod" }
-    examplemod-forge = { group = "com.geckolib.example", name = "examplemod-forge-26.1-snapshot-7", version.ref = "examplemod" }
-    examplemod-neoforge = { group = "com.geckolib.example", name = "examplemod-neoforge-26.1-snapshot-7", version.ref = "examplemod" }
+    examplemod-common = { group = "com.geckolib.example", name = "examplemod-common-26.1-snapshot-11", version.ref = "examplemod" }
+    examplemod-fabric = { group = "com.geckolib.example", name = "examplemod-fabric-26.1-snapshot-11", version.ref = "examplemod" }
+    examplemod-forge = { group = "com.geckolib.example", name = "examplemod-forge-26.1-snapshot-11", version.ref = "examplemod" }
+    examplemod-neoforge = { group = "com.geckolib.example", name = "examplemod-neoforge-26.1-snapshot-11", version.ref = "examplemod" }
 
 [plugins]
 # Publishing
