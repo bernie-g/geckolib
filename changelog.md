@@ -1,4 +1,4 @@
-## GeckoLib v5.4.4
+## GeckoLib v5.5
 
 * Port to 26.1
 
@@ -72,7 +72,8 @@
 * Added `VanillaModelModifier` - This is mostly an internal implementation class to bridge a gap that vanilla's implementation left us
 * Fixed and renabled `ItemArmorGeoLayer`, added support for non-`Equippable` items 
 * `GeoRenderer#performRenderPass` now supports multiple pre-made `BoneUpdaters` when starting a render pass
-* Converted all `BlockState` and `ItemStack` references in rendering to `ItemStackRenderState` and `BlockModelRenderState` per Minecraft standards
+* Converted some `BlockState` and `ItemStack` references in rendering to `ItemStackRenderState` and `BlockModelRenderState` per Minecraft standards
+  * Vanilla hasn't yet set the systems in place for this to be everywhere, so I'm just doing it where I can
   * Added `RenderUtil#createRenderStateForItem`
   * Added `RenderUtil#createRenderStateForBlock`
 * Added `DataTickets#create` as a shortcut/helper method for creating DataTickets
