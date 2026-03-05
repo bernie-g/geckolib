@@ -1,7 +1,10 @@
 package com.geckolib.renderer.layer.builtin;
 
 import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -132,8 +135,8 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 					.withShaderDefine("NO_OVERLAY")
 					.withShaderDefine("NO_CARDINAL_LIGHTING")
 					.withSampler("Sampler0")
-					.withBlend(BlendFunction.TRANSLUCENT)
-					.withDepthWrite(false)
+					.withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+					.withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
 					.withCull(false)
 					.withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
 					.build();
