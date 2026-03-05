@@ -170,7 +170,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 
 	/// Collect the base data this [GeoRenderLayer] uses to function
     protected <S extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<S>> void collectArmorData(
-            R baseRenderState, T animatable, float partialTick, EnumMap<EquipmentSlot, ItemStack> equipment) {
+			R baseRenderState, T animatable, float partialTick, EnumMap<EquipmentSlot, ItemStack> equipment) {
         S headRenderState = getOrCreateHumanoidRenderState(baseRenderState, false);
 
         equipment.put(EquipmentSlot.HEAD, headRenderState.headEquipment = animatable.getItemBySlot(EquipmentSlot.HEAD));
@@ -257,7 +257,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		RenderUtil.transformToBone(poseStack, bone);
 		poseStack.scale(CustomHeadLayer.SKULL_SCALE, CustomHeadLayer.SKULL_SCALE, CustomHeadLayer.SKULL_SCALE);
 		poseStack.translate(-0.5f, 0, -0.5f);
-		SkullBlockRenderer.submitSkull(null, 0, 0, poseStack, renderTasks, renderPassInfo.packedLight(), skullModel, renderType, renderPassInfo.renderState().outlineColor, null);
+		SkullBlockRenderer.submitSkull(0, poseStack, renderTasks, renderPassInfo.packedLight(), skullModel, renderType, renderPassInfo.renderState().outlineColor, null);
 		poseStack.popPose();
 	}
 

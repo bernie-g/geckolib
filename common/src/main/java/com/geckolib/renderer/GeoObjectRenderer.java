@@ -2,7 +2,7 @@ package com.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibClientServices;
 import com.geckolib.animatable.GeoAnimatable;

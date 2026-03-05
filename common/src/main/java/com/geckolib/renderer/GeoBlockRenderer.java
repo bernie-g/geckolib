@@ -1,22 +1,5 @@
 package com.geckolib.renderer;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibClientServices;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.constant.DataTickets;
@@ -27,6 +10,25 @@ import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.geckolib.renderer.layer.GeoRenderLayersContainer;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.block.BlockModelResolver;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,17 +43,19 @@ import java.util.function.Function;
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
+    protected final BlockModelResolver blockModelResolver;
 
 	protected float scaleWidth = 1;
 	protected float scaleHeight = 1;
 
     /// Creates a new defaulted renderer instance, using the BlockEntity's registered id as the file name for its assets
-    public GeoBlockRenderer(BlockEntityType<? extends T> blockEntityType) {
-        this(new DefaultedBlockGeoModel<>(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType))));
+    public GeoBlockRenderer(BlockEntityRendererProvider.Context context, BlockEntityType<? extends T> blockEntityType) {
+        this(context, new DefaultedBlockGeoModel<>(Objects.requireNonNull(BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntityType))));
     }
 
-	public GeoBlockRenderer(GeoModel<T> model) {
+	public GeoBlockRenderer(BlockEntityRendererProvider.Context context, GeoModel<T> model) {
 		this.model = model;
+        this.blockModelResolver = context.blockModelResolver();
 	}
 
     /// Attempt to extract a direction from the block so that the model can be oriented correctly
@@ -135,7 +139,6 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     public void captureDefaultRenderState(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
 
-        renderState.addGeckolibData(DataTickets.BLOCKSTATE, animatable.getBlockState());
         renderState.addGeckolibData(DataTickets.POSITION, Vec3.atCenterOf(animatable.getBlockPos()));
         renderState.addGeckolibData(DataTickets.BLOCK_FACING, getBlockStateDirection(animatable));
     }

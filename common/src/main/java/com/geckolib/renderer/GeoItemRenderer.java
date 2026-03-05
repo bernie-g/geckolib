@@ -200,7 +200,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
     /// @param outlineColor The rendering outline color this render pass should apply (as if glowing)
     public void submit(GeoRenderState renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, int outlineColor) {
         renderState.addGeckolibData(DataTickets.GLOW_COLOUR, outlineColor);
-        performRenderPass(renderState, poseStack, renderTasks, Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState, null);
+        performRenderPass(renderState, poseStack, renderTasks, Minecraft.getInstance().levelRenderer.levelRenderState.cameraRenderState, null);
     }
 
     /// Called to create the [GeoRenderState] for this render pass
