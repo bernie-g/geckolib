@@ -157,6 +157,8 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
         renderState.addGeckolibData(DataTickets.MAX_USE_DURATION, ClientUtil.getClientPlayer() != null ? stack.getUseDuration(ClientUtil.getClientPlayer()) : 72000);
         renderState.addGeckolibData(DataTickets.MAX_DURABILITY, stack.getMaxDamage());
         renderState.addGeckolibData(DataTickets.REMAINING_DURABILITY, stack.isDamageableItem() ? stack.getMaxDamage() - stack.getDamageValue() : 1);
+        animatable.getAnimatableInstanceCache().getManagerForId(renderState.getOrDefaultGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID, -1L))
+                .setAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderData.renderPerspective);
     }
 
     /// Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.
