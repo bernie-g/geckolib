@@ -3,6 +3,7 @@ package com.geckolib.renderer;
 import com.geckolib.GeckoLibClientServices;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.constant.DataTickets;
+import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.DefaultedBlockGeoModel;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
@@ -10,6 +11,7 @@ import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.renderer.layer.GeoRenderLayer;
 import com.geckolib.renderer.layer.GeoRenderLayersContainer;
+import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -41,6 +43,7 @@ import java.util.function.Function;
 /// @param <T> BlockEntity animatable class type
 /// @param <R> RenderState class type
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
+    public static final DataTicket<Direction> DIRECTION_FACING = DataTicket.create("geoblockrenderer_direction_facing", new TypeToken<>() {});
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
     protected final BlockModelResolver blockModelResolver;
@@ -73,7 +76,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 
     /// Rotate the [PoseStack] based on the determined [Direction] the block is facing
     protected void tryRotateByBlockstate(RenderPassInfo<R> renderPassInfo, PoseStack poseStack) {
-        final Direction facing = renderPassInfo.getOrDefaultGeckolibData(DataTickets.BLOCK_FACING, Direction.NORTH);
+        final Direction facing = renderPassInfo.getOrDefaultGeckolibData(DIRECTION_FACING, Direction.NORTH);
 
         switch (facing) {
             case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180));
@@ -139,8 +142,8 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
     public void captureDefaultRenderState(T animatable, @Nullable Void relatedObject, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, relatedObject, renderState, partialTick);
 
+        renderState.addGeckolibData(DIRECTION_FACING, getBlockStateDirection(animatable));
         renderState.addGeckolibData(DataTickets.POSITION, Vec3.atCenterOf(animatable.getBlockPos()));
-        renderState.addGeckolibData(DataTickets.BLOCK_FACING, getBlockStateDirection(animatable));
     }
 
     /// Called at the start of the render compilation pass. PoseState manipulations have not yet taken place and typically should not be made here.

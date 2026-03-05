@@ -1,5 +1,7 @@
 package com.geckolib.renderer;
 
+import com.geckolib.constant.dataticket.DataTicket;
+import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -37,6 +39,7 @@ import java.util.function.Function;
 ///
 /// @param <T> Item animatable class type
 public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRenderer<T, GeoItemRenderer.RenderData, GeoRenderState> {
+    public static final DataTicket<Item> CURRENT_ITEM = DataTicket.create("geoitemrenderer_current_item", new TypeToken<>() {});
 	protected final GeoRenderLayersContainer<T, RenderData, GeoRenderState> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
 
@@ -147,7 +150,7 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
 
         ItemStack stack = renderData.itemStack;
 
-        renderState.addGeckolibData(DataTickets.ITEM, animatable);
+        renderState.addGeckolibData(CURRENT_ITEM, animatable);
         renderState.addGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE, renderData.renderPerspective);
         renderState.addGeckolibData(DataTickets.IS_ENCHANTED, stack.isEnchanted());
         renderState.addGeckolibData(DataTickets.IS_STACKABLE, stack.isStackable());

@@ -298,7 +298,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 			return;
 
 		final HumanoidRenderState humanoidRenderState = getOrCreateHumanoidRenderState(slotRenderState, false);
-		final HumanoidModel<?> humanoidModel = humanoidRenderState.getGeckolibData(DataTickets.HUMANOID_MODEL);
+		final HumanoidModel<?> humanoidModel = humanoidRenderState.getGeckolibData(GeoArmorRenderer.BASE_MODEL);
 
 		if (humanoidModel == null)
 			return;

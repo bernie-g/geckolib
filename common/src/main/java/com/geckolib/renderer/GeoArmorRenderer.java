@@ -1,5 +1,7 @@
 package com.geckolib.renderer;
 
+import com.geckolib.constant.dataticket.DataTicket;
+import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
@@ -52,6 +54,9 @@ import java.util.function.UnaryOperator;
 /// @param <R> RenderState class type. GeckoLib armor rendering requires [HumanoidRenderState] as the minimum class type
 /// @see GeoItem
 public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRenderState> implements GeoRenderer<T, GeoArmorRenderer.RenderData, R> {
+    public static final DataTicket<Boolean> IS_GECKOLIB_WEARER = DataTicket.create("geoarmorrenderer_is_geckolib_wearer", new TypeToken<>() {});
+    public static final DataTicket<HumanoidModel<? extends HumanoidRenderState>> BASE_MODEL = DataTicket.create("geoarmorrenderer_base_model", new TypeToken<>() {});
+    public static final DataTicket<EquipmentSlot> CURRENT_SLOT = DataTicket.create("geoarmorrenderer_current_slot", new TypeToken<>() {});
     protected static final EquipmentSlot[] ARMOR_SLOTS = new EquipmentSlot[] {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
 	protected final GeoRenderLayersContainer<T, GeoArmorRenderer.RenderData, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -194,11 +199,11 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     public void captureDefaultRenderState(T animatable, @SuppressWarnings("NullableProblems") RenderData renderData, R renderState, float partialTick) {
         GeoRenderer.super.captureDefaultRenderState(animatable, renderData, renderState, partialTick);
 
+        renderState.addGeckolibData(CURRENT_SLOT, renderData.slot());
+        renderState.addGeckolibData(BASE_MODEL, renderData.baseModel);
+        renderState.addGeckolibData(IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
         renderState.addGeckolibData(DataTickets.POSITION, renderData.entity().position());
-        renderState.addGeckolibData(DataTickets.IS_GECKOLIB_WEARER, renderData.entity() instanceof GeoAnimatable);
-        renderState.addGeckolibData(DataTickets.EQUIPMENT_SLOT, renderData.slot());
         renderState.addGeckolibData(DataTickets.HAS_GLINT, renderData.itemStack().hasFoil());
-        renderState.addGeckolibData(DataTickets.HUMANOID_MODEL, renderData.baseModel);
     }
 
     /// Scales the [PoseStack] in preparation for rendering the model, excluding when re-rendering the model as part of a [GeoRenderLayer] or external render call
@@ -228,8 +233,8 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     @Override
     public void adjustModelBonesForRender(RenderPassInfo<R> renderPassInfo, BoneSnapshots snapshots) {
         final R renderState = renderPassInfo.renderState();
-        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
-        final HumanoidModel baseModel = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.HUMANOID_MODEL));
+        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(CURRENT_SLOT));
+        final HumanoidModel baseModel = Objects.requireNonNull(renderState.getGeckolibData(BASE_MODEL));
         final List<ArmorSegment> segments = getSegmentsForSlot(renderState, slot);
 
         if (!segments.isEmpty()) {
@@ -265,7 +270,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         final int packedOverlay = renderPassInfo.packedOverlay();
         final int renderColor = renderPassInfo.renderColor();
         final R renderState = renderPassInfo.renderState();
-        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(DataTickets.EQUIPMENT_SLOT));
+        final EquipmentSlot slot = Objects.requireNonNull(renderState.getGeckolibData(CURRENT_SLOT));
         final BakedGeoModel model = renderPassInfo.model();
 
         if (model.isMissingno()) {
