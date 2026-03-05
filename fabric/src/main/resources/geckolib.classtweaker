@@ -1,5 +1,8 @@
 classTweaker v1 official
 
+# General Rendering
+accessible field net/minecraft/client/renderer/LevelRenderer levelRenderState Lnet/minecraft/client/renderer/state/level/LevelRenderState;
+
 # GeoRenderState
 transitive-inject-interface net/minecraft/client/renderer/entity/state/EntityRenderState com/geckolib/renderer/base/GeoRenderState
 transitive-inject-interface net/minecraft/client/renderer/blockentity/state/BlockEntityRenderState com/geckolib/renderer/base/GeoRenderState
@@ -14,9 +17,6 @@ accessible method com/mojang/blaze3d/vertex/PoseStack$Pose set (Lcom/mojang/blaz
 
 # Direct RenderBuffer Access Because Iris Bad Patch
 accessible field net/minecraft/client/renderer/LevelRenderer renderBuffers Lnet/minecraft/client/renderer/RenderBuffers;
-
-# ACTOR_COUNT Molang Query
-accessible field net/minecraft/client/renderer/LevelRenderer levelRenderState Lnet/minecraft/client/renderer/state/LevelRenderState;
 
 # Entity Rendering
 accessible field net/minecraft/client/renderer/entity/EntityRenderDispatcher renderers Ljava/util/Map;
