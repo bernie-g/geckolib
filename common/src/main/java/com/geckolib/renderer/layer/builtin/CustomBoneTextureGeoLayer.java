@@ -114,7 +114,9 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
                 bone.translateAwayFromPivotPoint(poseStack);
 
                 for (GeoCube cube : ((CuboidGeoBone)bone).cubes) {
+                    poseStack.pushPose();
                     renderCube(cube, poseStack, buffer, packedLight, packedOverlay, renderColor, widthRatio, heightRatio);
+                    poseStack.popPose();
                 }
 
                 poseStack.popPose();
