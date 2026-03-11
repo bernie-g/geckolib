@@ -28,7 +28,7 @@ public final class GeckoLibNeoForge implements GeckoLibPlatform {
     /// @return Whether the entity is in a swimmable fluid or not
     @Override
     public boolean isInSwimmableFluid(Entity entity) {
-        return GeckoLibPlatform.super.isInSwimmableFluid(entity) || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType));
+        return entity.canSwimInFluidType(entity.level().getFluidState(entity.blockPosition()).getFluidType());
     }
 
     /// Register a [DataComponentType]
