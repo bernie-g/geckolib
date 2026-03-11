@@ -18,7 +18,7 @@ import com.geckolib.renderer.internal.GeckolibItemSpecialRenderer;
 public class SpecialModelRenderersMixin {
     @Shadow
     @Final
-    private static ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends SpecialModelRenderer.Unbaked>> ID_MAPPER;
+    private static ExtraCodecs.LateBoundIdMapper<Identifier, MapCodec<? extends SpecialModelRenderer.Unbaked<?>>> ID_MAPPER;
 
     /// Inject GeckoLib's custom item model renderer into the vanilla map of special renderers
     @Inject(method = "bootstrap", at = @At("TAIL"))

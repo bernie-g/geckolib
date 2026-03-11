@@ -29,8 +29,7 @@ import java.util.function.Consumer;
 @ApiStatus.Internal
 public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> implements SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> {
     @Override
-    public void submit(GeckolibItemSpecialRenderer.@Nullable RenderData<T> renderData, ItemDisplayContext itemDisplayContext, PoseStack poseStack, SubmitNodeCollector renderTasks,
-                       int packedLight, int packedOverlay, boolean hasGlint, int outlineColor) {
+    public void submit(GeckolibItemSpecialRenderer.@Nullable RenderData<T> renderData, PoseStack poseStack, SubmitNodeCollector renderTasks, int packedLight, int packedOverlay, boolean hasGlint, int outlineColor) {
         if (renderData == null)
             return;
 
@@ -83,17 +82,18 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
                                         Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
     }
 
-    public static class Unbaked implements SpecialModelRenderer.Unbaked {
-        public static final MapCodec<GeckolibItemSpecialRenderer.Unbaked> MAP_CODEC = MapCodec.unit(Unbaked::new);
+    public static class Unbaked<T extends Item & GeoAnimatable> implements SpecialModelRenderer.Unbaked<RenderData<T>> {
+        public static final MapCodec<GeckolibItemSpecialRenderer.Unbaked<?>> MAP_CODEC = MapCodec.unit(Unbaked::new);
 
         @Override
-        public @Nullable SpecialModelRenderer<?> bake(BakingContext context) {
+        public @Nullable SpecialModelRenderer<GeckolibItemSpecialRenderer.RenderData<T>> bake(BakingContext context) {
             return new GeckolibItemSpecialRenderer<>();
         }
 
+        @SuppressWarnings({"unchecked", "rawtypes"})
         @Override
-        public MapCodec<? extends SpecialModelRenderer.Unbaked> type() {
-            return MAP_CODEC;
+        public MapCodec<? extends SpecialModelRenderer.Unbaked<RenderData<T>>> type() {
+            return (MapCodec)MAP_CODEC;
         }
     }
 
