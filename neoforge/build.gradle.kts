@@ -77,7 +77,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     mainFile.displayName = "NeoForge $version"
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
-    mainFile.addGameVersion(geckolib.mcVersion)
+    mainFile.addGameVersion(geckolib.mcVersion.version())
     mainFile.addJavaVersion("Java ${geckolib.javaVersion}")
     mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.md").readText(Charsets.UTF_8)
