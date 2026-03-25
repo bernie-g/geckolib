@@ -47,6 +47,13 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
         this.texture = texture;
     }
 
+    /// Return whether the bone should render
+    ///
+    /// You may need to override this and return false if you are conditionally hiding the bone this layer uses for other reasons
+    public boolean shouldRenderBone(R renderState) {
+        return true;
+    }
+
     /// Get the texture resource path for the given [GeoRenderState].
     @Override
     protected Identifier getTextureResource(R renderState) {
@@ -68,9 +75,12 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
     public void preRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         if (renderPassInfo.willRender()) {
             renderPassInfo.addBoneUpdater((_, snapshots) -> snapshots.get(CustomBoneTextureGeoLayer.this.boneName)
-                    .ifPresent(bone -> {
-                        bone.skipRender(true);
-                        bone.skipChildrenRender(false);
+                    .filter(snapshot -> snapshot.getBone() instanceof CuboidGeoBone && shouldRenderBone(renderPassInfo.renderState()))
+                    .ifPresent(snapshot -> {
+                        boolean skipChildren = snapshot.areChildrenHidden();
+
+                        snapshot.skipRender(true);
+                        snapshot.skipChildrenRender(skipChildren);
                     }));
         }
     }
@@ -84,7 +94,7 @@ public class CustomBoneTextureGeoLayer<T extends GeoAnimatable, O, R extends Geo
     /// @param consumer The registrar to accept the per-bone render tasks
     @Override
     public void addPerBoneRender(RenderPassInfo<R> renderPassInfo, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        if (renderPassInfo.willRender()) {
+        if (renderPassInfo.willRender() && shouldRenderBone(renderPassInfo.renderState())) {
             renderPassInfo.model().getBone(this.boneName).filter(CuboidGeoBone.class::isInstance)
                     .ifPresentOrElse(bone -> consumer.accept(bone, this::renderBone),
                                      () -> GeckoLibConstants.LOGGER.error("Unable to find bone for CustomBoneTextureGeoLayer: {}, skipping", this.boneName));
