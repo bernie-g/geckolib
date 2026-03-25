@@ -15,9 +15,10 @@
     fabric-api-range = ">=0.144.0+26.1"
 
 # Forge
-    forge-fml = { strictly = "[61,)", prefer = "61" }
-    forge = { strictly = "[61.0.0,)", prefer = "61.0.6" }
-    forge-eventbusvalidator = "7.0-beta.10"
+    forge-fml = { strictly = "[62,)", prefer = "62" }
+    forge = { strictly = "[62.0.1,)", prefer = "62.0.1" }
+    forge-mc = "26.1-62.0.1"
+    forge-eventbusvalidator = "7.0-beta.15"
 
 # Neoforge
     neoforge-loader = { strictly = "[5,)", prefer = "5" }
@@ -29,11 +30,11 @@
     examplemod = "1.0.0"
 
 # Plugins
-    plugin-moddevgradle = "2.0.140"
+    plugin-moddevgradle = "2.0.141"
     plugin-minotaur = "2.9.0"
     plugin-curseforge-gradle = "1.1.28"
-    plugin-forge-gradle = "[7.0.0,)"
-    plugin-forge-at = "[5.0.1,)"
+    plugin-forge-gradle = "[7.0.17,)"
+    plugin-forge-at = "[5.0.3,)"
     plugin-loom = "1.15-SNAPSHOT"
 
 [libraries]
@@ -48,7 +49,7 @@
     fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
 
 # Forge
-    forge = { group = "net.minecraftforge", name = "forge-26.1", version.ref = "forge" }
+    forge = { group = "net.minecraftforge", name = "forge", version.ref = "forge-mc" }
     forge-eventbusvalidator = { group = "net.minecraftforge", name = "eventbus-validator", version.ref = "forge-eventbusvalidator" }
 
 # NeoForge

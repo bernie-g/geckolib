@@ -13,8 +13,6 @@ val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
 val localRuntimeOnly by configurations.creating
 
 minecraft {
-    mappings("parchment", "${parchmentMcVersion}-${parchmentVersion}")
-
     accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
 
     runs {
