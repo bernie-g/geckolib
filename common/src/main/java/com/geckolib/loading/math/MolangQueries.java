@@ -322,7 +322,7 @@ public final class MolangQueries {
 		MolangQueries.<LivingEntity>setActorVariable(IS_SLEEPING, actor -> actor.animatable.isSleeping() ? 1 : 0);
 		MolangQueries.<LivingEntity>setActorVariable(IS_USING_ITEM, actor -> actor.animatable.isUsingItem() ? 1 : 0);
 		MolangQueries.<LivingEntity>setActorVariable(IS_WALL_CLIMBING, actor -> actor.animatable.onClimbable() ? 1 : 0);
-		MolangQueries.<LivingEntity>setActorVariable(LIMB_SWING, actor -> actor.animatable.walkAnimation.position());
+		MolangQueries.<LivingEntity>setActorVariable(LIMB_SWING, actor -> actor.animatable.walkAnimation.position(actor.partialTick()));
 		MolangQueries.<LivingEntity>setActorVariable(LIMB_SWING_AMOUNT, actor -> actor.animatable.walkAnimation.speed(actor.partialTick()));
 		MolangQueries.<LivingEntity>setActorVariable(MAIN_HAND_ITEM_MAX_DURATION, actor -> actor.animatable.getMainHandItem().getUseDuration(actor.animatable));
 		MolangQueries.<LivingEntity>setActorVariable(MAIN_HAND_ITEM_USE_DURATION, actor -> actor.animatable.getUsedItemHand() == InteractionHand.MAIN_HAND ? actor.animatable.getTicksUsingItem() / 20d + actor.partialTick : 0);
