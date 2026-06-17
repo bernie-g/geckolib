@@ -322,6 +322,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
     }
 
     /// Initial access point for vanilla's [GeoEntityRenderer] class
+    ///
     /// Immediately defers to [GeoRenderer#performRenderPass(GeoRenderState, PoseStack, SubmitNodeCollector, CameraRenderState)]
     @ApiStatus.Internal
     @Override
