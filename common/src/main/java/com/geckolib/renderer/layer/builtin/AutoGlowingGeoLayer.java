@@ -141,6 +141,7 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 			                     .withVertexBinding(0, DefaultVertexFormat.ENTITY)
 			                     .withPrimitiveTopology(PrimitiveTopology.QUADS)
 			                     .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, false))
+			                     .withCull(false)
 			                     .build();
 		}
 
