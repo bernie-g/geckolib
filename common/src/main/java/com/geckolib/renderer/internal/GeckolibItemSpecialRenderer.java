@@ -79,7 +79,7 @@ public class GeckolibItemSpecialRenderer<T extends Item & GeoAnimatable> impleme
         final GeoItemRenderer.RenderData renderData = new GeoItemRenderer.RenderData(itemStack, renderState, context, level, itemOwner);
 
         return renderer.fillRenderState(animatable, renderData, renderer.createRenderState(animatable, renderData),
-                                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true));
+                                        Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
     }
 
     public static class Unbaked<T extends Item & GeoAnimatable> implements SpecialModelRenderer.Unbaked<RenderData<T>> {
