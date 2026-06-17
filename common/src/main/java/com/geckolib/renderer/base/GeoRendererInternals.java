@@ -81,7 +81,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
         renderState.addGeckolibData(DataTickets.ANIMATABLE_CLASS, animatable.getClass());
 
         if (!DataTickets.TICK.canExtractFrom(renderState))
-            renderState.addGeckolibData(DataTickets.TICK, ClientUtil.getCurrentTick());
+            renderState.addGeckolibData(DataTickets.TICK, ClientUtil.getCurrentTick(partialTick));
     }
 
     /// Called to create the [GeoRenderState] for this render pass
