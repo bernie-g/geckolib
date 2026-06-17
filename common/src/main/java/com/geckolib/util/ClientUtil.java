@@ -47,14 +47,24 @@ public final class ClientUtil {
 	}
 
     /// Get the game time for the client world, or a global game time if no world is loaded
+    ///
     /// Returned value is in ticks
     ///
     /// Note that due to vanilla desync issues, the level will occasionally go backwards 1 tick
     public static double getCurrentTick() {
+        return getCurrentTick(null);
+    }
+
+    /// Get the game time for the client world, or a global game time if no world is loaded
+    ///
+    /// Returned value is in ticks
+    ///
+    /// Note that due to vanilla desync issues, the level will occasionally go backwards 1 tick
+    public static double getCurrentTick(@Nullable Float partialTick) {
         final Minecraft mc = Minecraft.getInstance();
 
         return mc.level != null ?
-               mc.level.getGameTime() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) :
+               mc.level.getGameTime() + (partialTick != null ? partialTick : mc.getDeltaTracker().getGameTimeDeltaPartialTick(false)) :
                Blaze3D.getTime() * 20d;
     }
 
