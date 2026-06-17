@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
+import org.apache.commons.lang3.SystemUtils;
 import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
@@ -144,6 +145,9 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 
 		/// Create GeckoLib's custom [RenderType] for emissive rendering since `EYES` isn't quite right
 		private static RenderType buildNewInstance(Entry entry) {
+			if (!SystemUtils.IS_OS_WINDOWS)
+				return RenderTypes.eyes(entry.texture);
+			
 			final RenderSetup.RenderSetupBuilder builder = RenderSetup.builder(RENDER_PIPELINE)
 					.withTexture("Sampler0", entry.texture)
 					.setLayeringTransform(entry.zOffset ? LayeringTransform.VIEW_OFFSET_Z_LAYERING : LayeringTransform.NO_LAYERING)
