@@ -23,7 +23,7 @@ public record GeometryUv(Either<GeometryUvPair, GeometryUvMapping> uvData) {
 
     /// Parse a GeometryUv instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryUv> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final Either<GeometryUvPair, GeometryUvMapping> pair = json.isJsonArray() ?
                                                    Either.left(context.deserialize(json, GeometryUvPair.class)) :
                                                    Either.right(context.deserialize(json, GeometryUvMapping.class));

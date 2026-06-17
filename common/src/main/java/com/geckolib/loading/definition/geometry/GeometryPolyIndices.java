@@ -30,7 +30,7 @@ public record GeometryPolyIndices(Either<GeometryPolyIndex[], GeometryPolyIndex[
 
     /// Parse a GeometryPolyIndices instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryPolyIndices> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonArray array = json.getAsJsonArray();
             final GeometryPolyIndex[] indices = JsonUtil.jsonArrayToObjectArray(array, context, GeometryPolyIndex.class);
             final Either<GeometryPolyIndex[], GeometryPolyIndex[]> trisOrQuads = array.isEmpty() || array.get(0).getAsJsonArray().size() == 3 ?

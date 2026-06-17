@@ -18,7 +18,7 @@ import org.jetbrains.annotations.ApiStatus;
 public record GeometryPolyIndex(float position, float normal, float scale) {
     /// Parse a GeometryPolyIndex instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryPolyIndex> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, _) -> {
             final JsonArray array = json.getAsJsonArray();
             final float position = array.get(0).getAsFloat();
             final float normal = array.get(1).getAsFloat();

@@ -25,7 +25,7 @@ public sealed interface DoubleOrString permits DoubleOrString.DoubleValue, Doubl
 
     /// Parse an DoubleOrString instance from raw .json input via [Gson]
     static JsonDeserializer<DoubleOrString> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             if (!(json instanceof JsonPrimitive primitive))
                 throw new JsonParseException("DoubleOrString encountered invalid format, expected either String or double: " + json);
 

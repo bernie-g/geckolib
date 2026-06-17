@@ -50,7 +50,7 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
 
     /// Parse a Geometry instance from raw .json input via [Gson]
     public static JsonDeserializer<Geometry> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final String version = GsonHelper.getAsString(obj, "format_version");
             final boolean debug = GsonHelper.getAsBoolean(obj, "debug", false);

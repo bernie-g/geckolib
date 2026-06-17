@@ -36,7 +36,7 @@ public record ActorBoneAnimation(@Nullable String relativeTo,
 
     /// Parse an ActorBoneAnimation instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimation> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final String relativeTo = GsonHelper.getAsString(obj, "relative_to", null);
             final ActorBoneAnimationEntry positionKeyframes = GsonHelper.getAsObject(obj, "position", null, context, ActorBoneAnimationEntry.class);

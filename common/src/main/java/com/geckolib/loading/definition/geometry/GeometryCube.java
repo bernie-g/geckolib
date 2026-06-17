@@ -29,7 +29,7 @@ import com.geckolib.util.JsonUtil;
 public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable Vec3 rotation, @Nullable Vec3 pivot, @Nullable Float inflate, @Nullable Boolean mirror, GeometryUv uv) {
     /// Parse a GeometryBone instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryCube> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final Vec3 origin = JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(obj, "origin", null));
             final Vec3 size = JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(obj, "size", null));

@@ -38,7 +38,7 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
                                          @Nullable ActorBoneAnimationKeyframe preKeyframe, @Nullable ActorBoneAnimationKeyframe postKeyframe) {
     /// Parse an ActorBoneAnimationKeyframe instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimationKeyframe> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             if (json.isJsonObject()) {
                 final JsonObject obj = json.getAsJsonObject();
                 final ActorBoneAnimationKeyframeValues values = GsonHelper.getAsObject(obj, "vector", null, context, ActorBoneAnimationKeyframeValues.class);
