@@ -109,7 +109,8 @@ public final class GeckoLibCache {
 						case V_1_14_0 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.14.0 for model {}. This model may not appear as expected", resource);
 						case V_1_21_0 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.21.0 for model {}. Supported versions: 1.12.0. Remove any rotated face UVs and re-export the model to fix", resource);
 						case V_1_21_2 -> GeckoLib.LOGGER.warn("Unsupported geometry json version: 1.21.2 for model {}. Supported versions: 1.12.0. Remove any rotated face UVs and re-export the model to fix", resource);
-						default -> GeckoLib.LOGGER.warn("Unsupported geometry json version for model {}. Supported versions: 1.12.0", resource);
+						default -> GeckoLib.LOGGER.warn("Unsupported geometry json version {} for model {}. Supported versions: 1.12.0",
+								model.formatVersion(), resource);
 					}
 				}
 
