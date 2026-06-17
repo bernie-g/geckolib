@@ -22,7 +22,7 @@ import com.geckolib.util.JsonUtil;
 public record GeometryTextureMesh(Identifier texture, @Nullable Vec3 position, @Nullable Vec3 localPivot, @Nullable Vec3 rotation, @Nullable Vec3 scale) {
     /// Parse a GeometryTextureMesh instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryTextureMesh> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, _) -> {
             final JsonObject obj = json.getAsJsonObject();
             final Identifier texture = Identifier.parse(GsonHelper.getAsString(obj, "texture"));
             final JsonArray position = GsonHelper.getAsJsonArray(obj, "position", null);

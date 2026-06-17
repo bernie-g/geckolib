@@ -19,7 +19,7 @@ import com.geckolib.loading.definition.geometry.object.VertexSet;
 public record GeometryUvPair(double u, double v) {
     /// Parse a GeometryUvPair instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryUvPair> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, _) -> {
             final JsonArray uv = json.getAsJsonArray();
             final double u = uv.get(0).getAsDouble();
             final double v = uv.get(1).getAsDouble();

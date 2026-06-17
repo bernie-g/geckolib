@@ -19,7 +19,7 @@ import com.geckolib.util.JsonUtil;
 public record GeometryDefinition(@Nullable GeometryDescription description, @Nullable String cape, GeometryBone @Nullable [] bones) {
     /// Parse a GeometryDefinition instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryDefinition> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final GeometryDescription description = GsonHelper.getAsObject(obj, "description", null, context, GeometryDescription.class);
             final String cape = GsonHelper.getAsString(obj, "cape", null);

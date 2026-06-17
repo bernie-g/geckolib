@@ -28,7 +28,7 @@ import com.geckolib.util.JsonUtil;
 public record ActorAnimationSoundEffect(String effect, @Nullable String locator, @Nullable String preEffectScript, @Nullable Boolean bindToActor) {
     /// Parse an ActorAnimationSoundEffect instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorAnimationSoundEffect> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, _) -> {
             final JsonObject obj = json.getAsJsonObject();
             final String effect = GsonHelper.getAsString(obj, "effect");
             final String locator = GsonHelper.getAsString(obj, "locator", null);

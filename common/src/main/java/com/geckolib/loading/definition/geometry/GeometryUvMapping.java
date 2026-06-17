@@ -28,7 +28,7 @@ public record GeometryUvMapping(EnumMap<Direction, GeometryUvMappingDetails> uvF
 
     /// Parse a GeometryUvMapping instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryUvMapping> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final EnumMap<Direction, GeometryUvMappingDetails> uvFaces = new EnumMap<>(Direction.class);
 

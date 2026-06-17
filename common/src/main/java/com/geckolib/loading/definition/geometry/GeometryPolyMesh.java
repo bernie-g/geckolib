@@ -22,7 +22,7 @@ import com.geckolib.util.JsonUtil;
 public record GeometryPolyMesh(boolean normalizedUvs, Vec3 @Nullable[] positions, Vec3 @Nullable[] normals, GeometryUv @Nullable [] uvs, GeometryPolyIndices polys, String polysFormat) {
     /// Parse a GeometryTextureMesh instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryPolyMesh> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final boolean normalizedUvs = GsonHelper.getAsBoolean(obj, "normalized_uvs", true);
             final Vec3[] positions = JsonUtil.jsonArrayToObjectArray(GsonHelper.getAsJsonArray(obj, "positions", null), Vec3[]::new, JsonUtil::jsonToVec3);

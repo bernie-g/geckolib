@@ -30,7 +30,7 @@ public record GeometryDescription(String identifier, @Nullable Float visibleBoun
 
 	/// Parse a GeometryDescription instance from raw .json input via [Gson]
 	public static JsonDeserializer<GeometryDescription> gsonDeserializer() throws JsonParseException {
-		return (json, type, context) -> {
+		return (json, _, _) -> {
 			final JsonObject obj = json.getAsJsonObject();
 			final String identifier = GsonHelper.getAsString(obj, "identifier", null);
 			final Float visibleBoundsWidth = JsonUtil.getOptionalFloat(obj, "visible_bounds_width");

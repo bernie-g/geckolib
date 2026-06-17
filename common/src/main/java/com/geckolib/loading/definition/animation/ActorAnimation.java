@@ -42,7 +42,7 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
                              @Nullable Map<String, ActorAnimationParticleEffect> particleEffects, @Nullable Map<String, ActorAnimationSoundEffect> soundEffects, @Nullable Map<String, String> timeline) {
     /// Parse an ActorAnimation instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorAnimation> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final Float animLength = JsonUtil.getOptionalFloat(obj, "animation_length");
             final Either<Boolean, String> loop = !obj.has("loop") || !(obj.get("loop") instanceof JsonPrimitive primitive) ? null : primitive.isBoolean() ?

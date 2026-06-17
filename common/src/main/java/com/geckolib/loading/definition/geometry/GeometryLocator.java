@@ -23,7 +23,7 @@ import com.geckolib.util.JsonUtil;
 public record GeometryLocator(@Nullable Vec3 offset, @Nullable Vec3 rotation) {
     /// Parse a GeometryLocators instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryLocator> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, _) -> {
             final boolean isArray = json.isJsonArray();
             final Vec3 offset = JsonUtil.jsonToVec3(isArray ? json.getAsJsonArray() : GsonHelper.getAsJsonArray(json.getAsJsonObject(), "offset"));
             final Vec3 rotation = isArray ? null : JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(json.getAsJsonObject(), "rotation"));

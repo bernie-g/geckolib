@@ -38,7 +38,7 @@ public record GeometryBone(String name, @Nullable String parent, @Nullable Vec3 
                            GeometryTextureMesh @Nullable[] textureMeshes) {
     /// Parse a GeometryBone instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryBone> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final String name = GsonHelper.getAsString(obj, "name");
             final String parent = GsonHelper.getAsString(obj, "parent", null);

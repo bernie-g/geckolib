@@ -14,7 +14,7 @@ import org.jetbrains.annotations.ApiStatus;
 public record ActorBoneAnimationKeyframeValues(DoubleOrString xValue, DoubleOrString yValue, DoubleOrString zValue) {
     /// Parse an ActorBoneAnimationKeyframeValues instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimationKeyframeValues> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             if (json instanceof JsonArray array) {
                 if (array.isEmpty())
                     throw new JsonParseException("ActorBoneAnimationKeyframeValues has an empty keyframe, must contain some value!");

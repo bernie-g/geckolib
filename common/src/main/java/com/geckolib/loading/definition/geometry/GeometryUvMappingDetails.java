@@ -18,7 +18,7 @@ import com.geckolib.loading.definition.geometry.object.UvFaceRotation;
 public record GeometryUvMappingDetails(GeometryUvPair uv, @Nullable GeometryUvPair uvSize, UvFaceRotation uvRotation, @Nullable String materialInstance) {
     /// Parse a GeometryUvMappingDetails instance from raw .json input via [Gson]
     public static JsonDeserializer<GeometryUvMappingDetails> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final GeometryUvPair uv = GsonHelper.getAsObject(obj, "uv", context, GeometryUvPair.class);
             final GeometryUvPair uvSize = GsonHelper.getAsObject(obj, "uv_size", context, GeometryUvPair.class);

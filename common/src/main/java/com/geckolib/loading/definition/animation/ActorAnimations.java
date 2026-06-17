@@ -38,7 +38,7 @@ public record ActorAnimations(String formatVersion, Map<String, ActorAnimation> 
 
     /// Parse an ActorAnimations instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorAnimations> gsonDeserializer() throws JsonParseException {
-        return (json, type, context) -> {
+        return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
             final String formatVersion = GsonHelper.getAsString(obj, "format_version");
             final Map<String, ActorAnimation> animations = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "animations"), context, ActorAnimation.class);
