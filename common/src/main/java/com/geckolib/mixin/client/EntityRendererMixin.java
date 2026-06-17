@@ -1,5 +1,7 @@
 package com.geckolib.mixin.client;
 
+import com.geckolib.renderer.GeoArmorRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -12,20 +14,9 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.Constant;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import com.geckolib.renderer.GeoArmorRenderer;
-import com.geckolib.renderer.GeoEntityRenderer;
-import com.geckolib.renderer.base.GeoRenderState;
 
 @Mixin(value = EntityRenderer.class, priority = 5000)
 public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> {
-    /// Override the maximum distance a GeckoLib entity's nameplate can render at, since vanilla caps it at 64 blocks
-    @ModifyConstant(method = "extractRenderState", constant = @Constant(doubleValue = 4096.0F), require = 0)
-    public double modifyMaxNameplateDistance(double constant) {
-        return (Object)this instanceof GeoEntityRenderer<?, ?> ? 256 * 256 : constant;
-    }
-
     /// Injection mixin to allow for capture of data for [GeoRenderState]s for [GeoArmorRenderer]s,
     /// given that they never normally receive the entity context
     @SuppressWarnings({"ConstantValue", "rawtypes", "unchecked"})

@@ -1,13 +1,23 @@
 package com.geckolib.renderer.layer.builtin;
 
+import com.geckolib.GeckoLibConstants;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.renderer.GeoArmorRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.GeoRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
+import com.geckolib.util.RenderUtil;
+import com.mojang.blaze3d.PrimitiveTopology;
 import com.mojang.blaze3d.pipeline.BlendFunction;
 import com.mojang.blaze3d.pipeline.ColorTargetState;
 import com.mojang.blaze3d.pipeline.DepthStencilState;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.VertexFormat;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import net.minecraft.client.renderer.BindGroupLayouts;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -18,15 +28,6 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.LightCoordsUtil;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibConstants;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.renderer.GeoArmorRenderer;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.renderer.base.GeoRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
-import com.geckolib.util.RenderUtil;
 
 import java.util.Map;
 import java.util.Objects;
@@ -128,18 +129,18 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable, O, R extends GeoRender
 		/// Create GeckoLib's custom [RenderPipeline] for emissive rendering since `EYES` isn't quite right
 		private static RenderPipeline createRenderPipeline() {
 			return RenderPipeline.builder(RenderPipelines.MATRICES_FOG_LIGHT_DIR_SNIPPET)
-					.withLocation(GeckoLibConstants.id("pipeline/emissive"))
-					.withVertexShader("core/entity")
-					.withFragmentShader("core/entity")
-					.withShaderDefine("EMISSIVE")
-					.withShaderDefine("NO_OVERLAY")
-					.withShaderDefine("NO_CARDINAL_LIGHTING")
-					.withSampler("Sampler0")
-					.withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
-					.withDepthStencilState(new DepthStencilState(CompareOp.LESS_THAN_OR_EQUAL, false))
-					.withCull(false)
-					.withVertexFormat(DefaultVertexFormat.ENTITY, VertexFormat.Mode.QUADS)
-					.build();
+			                     .withLocation(GeckoLibConstants.id("pipeline/emissive"))
+			                     .withVertexShader("core/entity")
+			                     .withFragmentShader("core/entity")
+			                     .withShaderDefine("EMISSIVE")
+			                     .withShaderDefine("NO_OVERLAY")
+			                     .withShaderDefine("NO_CARDINAL_LIGHTING")
+			                     .withBindGroupLayout(BindGroupLayouts.SAMPLER0)
+			                     .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT))
+			                     .withVertexBinding(0, DefaultVertexFormat.ENTITY)
+			                     .withPrimitiveTopology(PrimitiveTopology.QUADS)
+			                     .withDepthStencilState(new DepthStencilState(CompareOp.GREATER_THAN_OR_EQUAL, false))
+			                     .build();
 		}
 
 		/// Create GeckoLib's custom [RenderType] for emissive rendering since `EYES` isn't quite right

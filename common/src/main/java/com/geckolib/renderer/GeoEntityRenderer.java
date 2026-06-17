@@ -208,7 +208,7 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable, R extends Entit
         Team entityTeam = animatable.getTeam();
 
         if (player == null || entityTeam == null)
-            return Minecraft.renderNames() && animatable != minecraft.getCameraEntity() && visibleToClient && !animatable.isVehicle();
+            return !Minecraft.getInstance().gui.hud.isHidden() && animatable != minecraft.getCameraEntity() && visibleToClient && !animatable.isVehicle();
 
         Team playerTeam = ClientUtil.getClientPlayer().getTeam();
 

@@ -1,12 +1,13 @@
 package com.geckolib.renderer.texture;
 
+import com.geckolib.GeckoLibConstants;
+import com.mojang.blaze3d.GpuFormat;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.textures.TextureFormat;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -20,7 +21,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.ARGB;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibConstants;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -84,7 +84,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
 
         Objects.requireNonNull(textureId);
 
-        this.texture = gpuDevice.createTexture(textureId::toString, 5, TextureFormat.RGBA8, this.frameWidth, this.frameHeight, 1, 1);
+        this.texture = gpuDevice.createTexture(textureId::toString, 5, GpuFormat.RGBA8_UNORM, this.frameWidth, this.frameHeight, 1, 1);
         this.textureView = gpuDevice.createTextureView(this.texture);
 
         uploadFrame(gpuDevice, image, 0, 0, this.texture);
@@ -157,7 +157,7 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
 
     /// Upload the given [NativeImage] to the in-memory texture buffer, with an optional offset for non-interpolated frames
     protected void uploadFrame(GpuDevice gpuDevice, NativeImage image, int x, int y, GpuTexture gpuTexture) {
-        gpuDevice.createCommandEncoder().writeToTexture(gpuTexture, image, 0, 0, x, y, this.frameWidth, this.frameHeight, 0, 0);
+        gpuDevice.createCommandEncoder().writeToTexture(gpuTexture, image.getPixelBytes(), 0, 0, x, y, this.frameWidth, this.frameHeight);
     }
 
     /// Called by [TextureManager] every tick to allow the texture to update itself as necessary.

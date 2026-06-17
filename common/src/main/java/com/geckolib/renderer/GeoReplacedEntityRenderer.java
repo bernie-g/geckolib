@@ -220,7 +220,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         Team entityTeam = entity.getTeam();
 
         if (player == null || entityTeam == null)
-            return Minecraft.renderNames() && entity != minecraft.getCameraEntity() && visibleToClient && !entity.isVehicle();
+            return !Minecraft.getInstance().gui.hud.isHidden() && entity != minecraft.getCameraEntity() && visibleToClient && !entity.isVehicle();
 
         Team playerTeam = player.getTeam();
 

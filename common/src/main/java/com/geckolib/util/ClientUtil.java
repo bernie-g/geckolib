@@ -31,7 +31,7 @@ public final class ClientUtil {
 
 	/// Get the current camera position
 	public static Vec3 getCameraPos() {
-		return Minecraft.getInstance().gameRenderer.getMainCamera().position();
+		return Minecraft.getInstance().gameRenderer.mainCamera().position();
 	}
 
 	/// Helper method to check for first-person camera mode

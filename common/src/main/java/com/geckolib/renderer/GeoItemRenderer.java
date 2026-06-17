@@ -75,10 +75,10 @@ public class GeoItemRenderer<T extends Item & GeoAnimatable> implements GeoRende
     /// Only used for [ItemDisplayContext#GUI] rendering
     public void setupLightingForGuiRender() {
 		if (this.useEntityGuiLighting) {
-			Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+			Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
 		}
 		else {
-			Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ITEMS_3D);
+			Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D);
 		}
 	}
 
