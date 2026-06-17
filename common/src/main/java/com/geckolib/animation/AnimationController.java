@@ -1,15 +1,5 @@
 package com.geckolib.animation;
 
-import com.geckolib.animation.state.*;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
-import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
-import net.minecraft.util.Mth;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.manager.AnimatableManager;
@@ -26,6 +16,16 @@ import com.geckolib.loading.math.value.Variable;
 import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.util.ClientUtil;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Mth;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Map;
 import java.util.Objects;
@@ -426,9 +426,13 @@ public class AnimationController<T extends GeoAnimatable> {
         final RawAnimation prevRawAnimation = this.currentRawAnimation;
         final double prevAnimationSpeed = this.animationSpeed;
         final double prevTimelineTime = this.timelineTime;
-        final double timeDelta = this.playState == PlayState.PAUSE ? 0 : (safetyCheckTickLinearity(renderState.getAnimatableAge(), this.lastAnimatableAge) - this.lastAnimatableAge) / 20f * prevAnimationSpeed;
+        final double currentAge = renderState.getAnimatableAge();
+        final float partialTick = renderState.getPartialTick();
+        final double timeDelta = this.playState == PlayState.PAUSE || partialTick == 1 ? 0 : (safetyCheckTickLinearity(currentAge, this.lastAnimatableAge) - this.lastAnimatableAge) / 20f * prevAnimationSpeed;
         this.timelineTime = this.timeline == null ? NOT_ANIMATING : this.timelineTime < 0 ? this.timelineTime : Mth.clamp(this.timelineTime + timeDelta, 0, this.timeline.totalTime());
-        this.lastAnimatableAge = renderState.getAnimatableAge();
+        
+        if (partialTick != 1 || Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false) == 1)
+            this.lastAnimatableAge = currentAge;
 
         if (this.triggeredAnimTime == NOT_TRIGGERED || this.handlesTriggeredAnimations)
             this.playState = this.stateHandler.handle(new AnimationTest<>(animatable, renderState, manager, this));
@@ -575,7 +579,7 @@ public class AnimationController<T extends GeoAnimatable> {
             }
         }
     }
-
+    
     /// Because Minecraft sometimes _goes backwards_ one tick, we have to safety check and adjust to avoid invalid backtracking
     @ApiStatus.Internal
     private double safetyCheckTickLinearity(double currentTick, double compareTo) {
