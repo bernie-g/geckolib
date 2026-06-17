@@ -52,9 +52,9 @@ public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable
         final Vec3 origin = this.origin == null ? Vec3.ZERO : this.origin.add(size.x, 0, 0).multiply(-modelScale, modelScale, modelScale);
         final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation.multiply(-Mth.DEG_TO_RAD, -Mth.DEG_TO_RAD, Mth.DEG_TO_RAD);
         final Vec3 pivot = this.pivot == null ? Vec3.ZERO : this.pivot.multiply(-1, 1, 1);
-        final Vec3 vertSize = fixZeroSizeCube(size.scale(modelScale));
+        final Vec3 vertSize = size.scale(modelScale);
 
-        final @Nullable GeoQuad[] quads = bakeQuads(origin, fixZeroSizeCube(size), vertSize, inflate, mirror, geometryDescription.textureWidth(), geometryDescription.textureHeight());
+        final @Nullable GeoQuad[] quads = bakeQuads(origin, size, vertSize, inflate, mirror, geometryDescription.textureWidth(), geometryDescription.textureHeight());
 
         return new GeoCube(quads, pivot, rotation, size);
     }
@@ -76,21 +76,24 @@ public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable
 
     /// Build an individual quad
     private @Nullable GeoQuad buildQuad(VertexSet vertices, Vec3 cubeSize, int textureWidth, int textureHeight, boolean mirror, Direction direction) {
+        if (isZeroSizeFace(cubeSize, direction))
+            return null;
+        
         return this.uv.uvData().map(uvPair -> uvPair.bakeQuad(vertices, cubeSize, direction, mirror, textureWidth, textureHeight),
                                     uvMapping -> uvMapping.bakeQuad(vertices, cubeSize, direction, mirror, textureWidth, textureHeight));
     }
-
-    /// Establish a minimum-size depth for cubes to reduce backface z-fighting
-    private Vec3 fixZeroSizeCube(Vec3 size) {
+    
+    /// Determine whether the provided UV face should be discarded because its render size is 0
+    private boolean isZeroSizeFace(Vec3 size, Direction direction) {
         if (size.x == 0)
-            size = size.add(0.01d, 0, 0);
-
+            return direction.getAxis() != Direction.Axis.X;
+        
         if (size.y == 0)
-            size = size.add(0, 0.01d, 0);
-
+            return direction.getAxis() != Direction.Axis.Y;
+        
         if (size.z == 0)
-            size = size.add(0, 0, 0.01d);
-
-        return size;
+            return direction.getAxis() != Direction.Axis.Z;
+        
+        return false;
     }
 }
