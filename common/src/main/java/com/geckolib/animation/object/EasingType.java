@@ -11,6 +11,7 @@ import com.geckolib.loading.math.MathParser;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.util.GeckoLibUtil;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -105,7 +106,7 @@ public interface EasingType {
 	/// @param name The name of the easing function
 	/// @return The relevant `EasingType`, or [EasingType#LINEAR] if none match
 	static EasingType fromString(String name) {
-		return EASING_TYPES.getOrDefault(name, EasingType.LINEAR);
+		return EASING_TYPES.getOrDefault(name.toLowerCase(Locale.ROOT), EasingType.LINEAR);
 	}
 
 	//<editor-fold defaultstate="collapsed" desc="<Internal Implementation>">
