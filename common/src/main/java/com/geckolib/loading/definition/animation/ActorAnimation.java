@@ -17,6 +17,8 @@ import com.geckolib.loading.math.MathParser;
 import com.geckolib.object.CompoundException;
 import com.geckolib.util.JsonUtil;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.function.BiFunction;
 
@@ -100,7 +102,7 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
     }
 
     /// Bake the map of keyframes and their timestamps into their final [KeyFrameData] instance
-    private <R, T> T[] bakeKeyframeMap(@Nullable Map<String, R> map, Int2ObjectFunction<T[]> arrayFactory, BiFunction<R, Double, T> bakery) {
+    private <R, T extends KeyFrameData> T[] bakeKeyframeMap(@Nullable Map<String, R> map, Int2ObjectFunction<T[]> arrayFactory, BiFunction<R, Double, T> bakery) {
         if (map == null)
             return arrayFactory.apply(0);
 
@@ -110,6 +112,8 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
         for (Map.Entry<String, R> entry : map.entrySet()) {
             array[index++] = bakery.apply(entry.getValue(), parseTimestamp(entry.getKey()));
         }
+        
+        Arrays.sort(array, Comparator.comparingDouble(KeyFrameData::getTime));
 
         return array;
     }
