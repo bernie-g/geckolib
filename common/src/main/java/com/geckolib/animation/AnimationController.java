@@ -4,6 +4,7 @@ import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animation.object.EasingType;
+import com.geckolib.animation.object.LoopType;
 import com.geckolib.animation.object.PlayState;
 import com.geckolib.animation.state.*;
 import com.geckolib.cache.animation.Animation;
@@ -344,6 +345,7 @@ public class AnimationController<T extends GeoAnimatable> {
         }
         else {
             this.timelineTime = this.timeline.lastAnimationEndTime();
+            this.animationPoint = new AnimationPoint(this.animationPoint.animation(), this.animationPoint.easingOverride(), LoopType.PLAY_ONCE, this.animationPoint.animTime(), this.animationPoint.keyFramePoints());
         }
 
         return true;
