@@ -13,7 +13,8 @@ val localRuntimeOnly by configurations.creating
 
 minecraft {
     accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
-
+    facade = files("src/main/resources/${geckolib.modId}.facade.cfg")
+    
     runs {
         configureEach {
             workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
