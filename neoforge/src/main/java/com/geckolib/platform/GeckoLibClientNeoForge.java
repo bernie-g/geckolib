@@ -16,7 +16,7 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
     ///
     /// If no custom model applies to this item, the `defaultModel` is returned
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return IClientItemExtensions.of(stack).getGenericArmorModel(stack, type, defaultModel);
     }
 

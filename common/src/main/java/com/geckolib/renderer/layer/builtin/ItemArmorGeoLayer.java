@@ -76,7 +76,7 @@ import java.util.function.Function;
 /// @param <O> Associated object class type, or [Void] if none. Inherited from the renderer this layer is attached to
 /// @param <R> RenderState class type. Inherited from the renderer this layer is attached to
 @SuppressWarnings({"rawtypes", "unchecked"})
-public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends EntityRenderState & GeoRenderState> extends GeoRenderLayer<T, O, R> {
+public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, O, R extends EntityRenderState> extends GeoRenderLayer<T, O, R> {
 	@SuppressWarnings("DataFlowIssue")
     protected static final Function<SkullBlock.Type, @Nullable SkullModelBase> SKULL_MODELS = Util.memoize(type -> SkullBlockRenderer.createModel(Minecraft.getInstance().getEntityModels(), type));
 	protected final EquipmentLayerRenderer equipmentRenderer;
@@ -169,7 +169,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
 	/// Collect the base data this [GeoRenderLayer] uses to function
-    protected <S extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<S>> void collectArmorData(
+    protected <S extends HumanoidRenderState, A extends HumanoidModel<S>> void collectArmorData(
 			R baseRenderState, T animatable, float partialTick, EnumMap<EquipmentSlot, ItemStack> equipment) {
         S headRenderState = getOrCreateHumanoidRenderState(baseRenderState, false);
 
@@ -453,7 +453,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 											renderPassInfo.packedLight(), cleanRenderState.outlineColor);
 	}
 	///  Get the [Model] instance to render for a given [Equippable] [ItemStack]
-	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getEquippableModel(RenderPassInfo<R> renderPassInfo, RenderData renderData, GeoBone bone, ItemStack stack) {
+	protected <S extends HumanoidRenderState> Model<?> getEquippableModel(RenderPassInfo<R> renderPassInfo, RenderData renderData, GeoBone bone, ItemStack stack) {
 		final S humanoidRenderState = renderPassInfo.renderState() instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
 		final EquipmentSlot slot = renderData.armorSegment.equipmentSlot;
 		final EquipmentClientInfo.LayerType layerType = slot == EquipmentSlot.LEGS ? EquipmentClientInfo.LayerType.HUMANOID_LEGGINGS : EquipmentClientInfo.LayerType.HUMANOID;
@@ -525,7 +525,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	}
 
     /// Convert an existing RenderState to a HumanoidRenderState, either by casting or creating a new one, for the purposes of RenderState filling
-    protected <S extends HumanoidRenderState & GeoRenderState> S getOrCreateHumanoidRenderState(R renderState, boolean forceNew) {
+    protected <S extends HumanoidRenderState> S getOrCreateHumanoidRenderState(R renderState, boolean forceNew) {
         S newState = (S)(!forceNew && renderState instanceof HumanoidRenderState state ? state : new HumanoidRenderState());
 
         if (newState != renderState)

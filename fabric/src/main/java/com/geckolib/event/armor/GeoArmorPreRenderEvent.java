@@ -29,7 +29,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 /// @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires [HumanoidRenderState] as a minimum
 /// @see GeoRenderEvent
 /// @see Pre
-public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.Pre<T, R> {
+public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState> implements GeoRenderEvent.Armor.Pre<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             if (!listener.handle(event))
@@ -89,7 +89,7 @@ public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends Humanoid
     /// @param <T> Item animatable class type
     /// @param <R> RenderState class type - GeckoLib armor is based on Humanoid rendering and requires [HumanoidRenderState] as a minimum
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> {
         boolean handle(GeoArmorPreRenderEvent<T, R> event);
     }
 }

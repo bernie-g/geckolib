@@ -16,7 +16,7 @@ public class GeckoLibClientFabric implements GeckoLibClient {
     ///
     /// If no custom model applies to this item, the `defaultModel` is returned
     @Override
-    public <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
+    public <S extends HumanoidRenderState> Model<?> getArmorModelForItem(S renderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel) {
         return defaultModel;
     }
 

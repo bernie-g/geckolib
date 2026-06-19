@@ -106,7 +106,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 	/// @param renderState The base GeoRenderState to cast
 	/// @return The GeoRenderState cast _additively_ as a LivingEntityRenderState
 	@SuppressWarnings("unchecked")
-    protected <S extends LivingEntityRenderState & GeoRenderState> S convertRenderStateToLiving(GeoRenderState renderState) {
+    protected <S extends LivingEntityRenderState> S convertRenderStateToLiving(GeoRenderState renderState) {
 		return (S)renderState;
 	}
 

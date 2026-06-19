@@ -86,7 +86,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	///
 	/// @param <T> BlockEntity animatable class type
 	/// @param <R> RenderState class type
-	interface Block<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends GeoRenderEvent<T, Void, R> {
+	interface Block<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> extends GeoRenderEvent<T, Void, R> {
         /// Returns the renderer for this event
         @Override
         GeoBlockRenderer<T, R> getRenderer();
@@ -97,7 +97,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> BlockEntity animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderLayers<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
+		interface CompileRenderLayers<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> extends Block<T, R> {
 			@ApiStatus.Internal
 			@Override
 			default R getRenderState() {
@@ -127,7 +127,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> BlockEntity animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderState<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
+		interface CompileRenderState<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> extends Block<T, R> {
 			/// Get the GeoAnimatable instance relevant to the [GeoRenderState] being compiled
 			T getAnimatable();
 
@@ -149,7 +149,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> BlockEntity animatable class type
 		/// @param <R> RenderState class type
-		interface Pre<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Block<T, R> {
+		interface Pre<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> extends Block<T, R> {
             /// Returns the render pass info for the current render pass for this animatable
             RenderPassInfo<R> getRenderPassInfo();
 
@@ -172,7 +172,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	///
 	/// @param <T> Item animatable class type
 	/// @param <R> RenderState class type
-	interface Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
+	interface Armor<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> extends GeoRenderEvent<T, GeoArmorRenderer.RenderData, R> {
         /// Returns the renderer for this event
         @Override
         GeoArmorRenderer<T, R> getRenderer();
@@ -183,7 +183,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Item animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface CompileRenderLayers<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> extends Armor<T, R> {
 			@ApiStatus.Internal
 			@Override
 			default R getRenderState() {
@@ -213,7 +213,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Item animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface CompileRenderState<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> extends Armor<T, R> {
 			/// Get the GeoAnimatable instance relevant to the [GeoRenderState] being compiled
 			T getAnimatable();
 
@@ -238,7 +238,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Item animatable class type
 		/// @param <R> RenderState class type
-		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Armor<T, R> {
+		interface Pre<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> extends Armor<T, R> {
             /// Returns the render pass info for the current render pass for this animatable
             RenderPassInfo<R> getRenderPassInfo();
 
@@ -261,7 +261,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	///
 	/// @param <T> Entity animatable class type
 	/// @param <R> RenderState class type
-	interface Entity<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends GeoRenderEvent<T, Void, R> {
+	interface Entity<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState> extends GeoRenderEvent<T, Void, R> {
         /// Returns the renderer for this event
         @Override
         GeoEntityRenderer<T, R> getRenderer();
@@ -272,7 +272,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Entity animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderLayers<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+		interface CompileRenderLayers<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState> extends Entity<T, R> {
 			@ApiStatus.Internal
 			@Override
 			default R getRenderState() {
@@ -302,7 +302,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Entity animatable class type
 		/// @param <R> RenderState class type
-		interface CompileRenderState<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+		interface CompileRenderState<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState> extends Entity<T, R> {
 			/// Get the GeoAnimatable instance relevant to the [GeoRenderState] being compiled
 			T getAnimatable();
 
@@ -324,7 +324,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		///
 		/// @param <T> Entity animatable class type
 		/// @param <R> RenderState class type
-		interface Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Entity<T, R> {
+		interface Pre<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState> extends Entity<T, R> {
             /// Returns the render pass info for the current render pass for this animatable
             RenderPassInfo<R> getRenderPassInfo();
 
@@ -348,7 +348,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 	/// @param <T> Entity animatable class type. This is the animatable being rendered
 	/// @param <E> Entity class type. This is the entity being replaced
 	/// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
-	interface ReplacedEntity<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends GeoRenderEvent<T, E, R> {
+	interface ReplacedEntity<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState> extends GeoRenderEvent<T, E, R> {
         /// Returns the renderer for this event
         @Override
         GeoReplacedEntityRenderer<T, E, R> getRenderer();
@@ -360,7 +360,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/// @param <T> Entity animatable class type. This is the animatable being rendered
 		/// @param <E> Entity class type. This is the entity being replaced
 		/// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
-		interface CompileRenderLayers<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+		interface CompileRenderLayers<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState> extends ReplacedEntity<T, E, R> {
 			@ApiStatus.Internal
 			@Override
 			default R getRenderState() {
@@ -391,7 +391,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/// @param <T> Entity animatable class type. This is the animatable being rendered
 		/// @param <E> Entity class type. This is the entity being replaced
 		/// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
-		interface CompileRenderState<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+		interface CompileRenderState<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState> extends ReplacedEntity<T, E, R> {
 			/// Get the GeoAnimatable instance relevant to the [GeoRenderState] being compiled
 			GeoAnimatable getAnimatable();
 
@@ -417,7 +417,7 @@ public interface GeoRenderEvent<T extends GeoAnimatable, O, R extends GeoRenderS
 		/// @param <T> Entity animatable class type. This is the animatable being rendered
 		/// @param <E> Entity class type. This is the entity being replaced
 		/// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
-		interface Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> extends ReplacedEntity<T, E, R> {
+		interface Pre<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState> extends ReplacedEntity<T, E, R> {
             /// Returns the render pass info for the current render pass for this animatable
             RenderPassInfo<R> getRenderPassInfo();
 

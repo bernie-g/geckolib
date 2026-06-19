@@ -23,7 +23,7 @@ public interface GeckoLibClient {
     /// Helper method for retrieving an (ideally) cached instance of the armor model for a given Item
     ///
     /// If no custom model applies to this item, the `defaultModel` is returned
-    <S extends HumanoidRenderState & GeoRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
+    <S extends HumanoidRenderState> Model<?> getArmorModelForItem(S entityRenderState, ItemStack stack, EquipmentSlot slot, EquipmentClientInfo.LayerType type, HumanoidModel<S> defaultModel);
 
     /// Return the dye value for a given ItemStack, or the default value if not present.
     ///

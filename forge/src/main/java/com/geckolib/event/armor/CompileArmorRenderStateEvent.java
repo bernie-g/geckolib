@@ -22,7 +22,7 @@ import com.geckolib.renderer.base.GeoRenderState;
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
-public record CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+public record CompileArmorRenderStateEvent<T extends Item & GeoItem, R extends HumanoidRenderState>
         (GeoArmorRenderer<T, R> renderer, R renderState, T animatable, GeoArmorRenderer.RenderData renderData)
         implements GeoRenderEvent.Armor.CompileRenderState<T, R>, RecordEvent {
     public static final EventBus<CompileArmorRenderStateEvent> BUS = EventBus.create(CompileArmorRenderStateEvent.class);

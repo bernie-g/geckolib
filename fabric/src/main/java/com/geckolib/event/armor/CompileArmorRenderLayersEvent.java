@@ -20,7 +20,7 @@ import com.geckolib.renderer.base.GeoRenderState;
 /// @param <R> RenderState class type. GeckoLib armor rendering requires [HumanoidRenderState] as the minimum class type
 /// @see GeoRenderEvent
 /// @see CompileRenderLayers
-public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
+public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends HumanoidRenderState> implements GeoRenderEvent.Armor.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             listener.handle(event);
@@ -43,7 +43,7 @@ public class CompileArmorRenderLayersEvent<T extends Item & GeoItem, R extends H
     /// @param <T> Item animatable class type
     /// @param <R> RenderState class type
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.item.Item & GeoItem, R extends HumanoidRenderState> {
         void handle(CompileArmorRenderLayersEvent<T, R> event);
     }
 }

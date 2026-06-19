@@ -365,7 +365,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
     /// @return true if the armor piece was a GeckoLib armor piece and was rendered
     @SuppressWarnings({"unchecked", "rawtypes"})
     @ApiStatus.Internal
-    public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
+    public static <R extends HumanoidRenderState, A extends HumanoidModel<R>> boolean tryRenderGeoArmorPiece(
             BiFunction<R, EquipmentSlot, A> modelFunction, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, R entityRenderState) {
         final StackForRender stackForRender = StackForRender.find(stack, slot, entityRenderState, modelFunction);
         EnumMap<EquipmentSlot, R> perSlotData;
@@ -387,7 +387,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 	/// Called internally by a mixin
 	@SuppressWarnings("unchecked")
     @ApiStatus.Internal
-	public static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> void captureRenderStates(
+	public static <R extends HumanoidRenderState, A extends HumanoidModel<R>> void captureRenderStates(
             R baseRenderState, LivingEntity entity, float partialTick, BiFunction<R, EquipmentSlot, A> modelFunction, Function<EquipmentSlot, R> renderStateSupplier) {
 		final List<StackForRender> relevantSlots = getRelevantSlotsForRendering(entity, baseRenderState, modelFunction);
 
@@ -409,7 +409,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
 
     /// Compile an array of GeckoLib-relevant equipment pieces for rendering
     @ApiStatus.Internal
-	private static <R extends HumanoidRenderState & GeoRenderState, A extends HumanoidModel<R>> @Nullable List<StackForRender> getRelevantSlotsForRendering(
+	private static <R extends HumanoidRenderState, A extends HumanoidModel<R>> @Nullable List<StackForRender> getRelevantSlotsForRendering(
             LivingEntity entity, R entityRenderState, BiFunction<R, EquipmentSlot, A> modelFunction) {
 		List<StackForRender> relevantSlots = null;
 

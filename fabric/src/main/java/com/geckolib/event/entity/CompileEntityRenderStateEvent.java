@@ -22,7 +22,7 @@ import com.geckolib.renderer.base.GeoRenderState;
 /// @param <R> RenderState class type
 /// @see GeoRenderEvent
 /// @see CompileRenderState
-public class CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> implements GeoRenderEvent.Entity.CompileRenderState<T, R> {
+public class CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState> implements GeoRenderEvent.Entity.CompileRenderState<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             listener.handle(event);
@@ -59,7 +59,7 @@ public class CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R e
     /// @param <T> Entity animatable class type
     /// @param <R> RenderState class type
     @FunctionalInterface
-    public interface Listener<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> {
+    public interface Listener<T extends net.minecraft.world.entity.Entity & GeoAnimatable, R extends EntityRenderState> {
         void handle(CompileEntityRenderStateEvent<T, R> event);
     }
 }

@@ -27,7 +27,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 ///
 /// @see GeoRenderEvent
 /// @see Pre
-public class GeoEntityPreRenderEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Entity.Pre<T, R>, ICancellableEvent {
+public class GeoEntityPreRenderEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState> extends Event implements GeoRenderEvent.Entity.Pre<T, R>, ICancellableEvent {
     private final RenderPassInfo<R> renderPassInfo;
     private final SubmitNodeCollector renderTasks;
 

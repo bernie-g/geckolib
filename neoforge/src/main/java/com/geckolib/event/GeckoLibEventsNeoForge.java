@@ -39,84 +39,84 @@ import com.geckolib.service.GeckoLibEvents;
 public class GeckoLibEventsNeoForge implements GeckoLibEvents {
     /// Fire the [GeoRenderEvent.Block.CompileRenderLayers] event
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     void fireCompileBlockRenderLayers(GeoBlockRenderer<T, R> renderer) {
         NeoForge.EVENT_BUS.post(new CompileBlockRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Block.CompileRenderState] event
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     void fireCompileBlockRenderState(GeoBlockRenderer<T, R> renderer, R renderState, T animatable) {
         NeoForge.EVENT_BUS.post(new CompileBlockRenderStateEvent<>(renderer, renderState, animatable));
     }
 
     /// Fire the [GeoRenderEvent.Block.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     boolean fireBlockPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return !NeoForge.EVENT_BUS.post(new GeoBlockPreRenderEvent<>(renderPassInfo, renderTasks)).isCanceled();
     }
 
     /// Fire the [GeoRenderEvent.Armor.CompileRenderLayers] event
     @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, R extends HumanoidRenderState>
     void fireCompileArmorRenderLayers(GeoArmorRenderer<T, R> renderer) {
         NeoForge.EVENT_BUS.post(new CompileArmorRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Armor.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState>
     void fireCompileArmorRenderState(GeoArmorRenderer<T, R> renderer, R renderState, T animatable, O renderData) {
         NeoForge.EVENT_BUS.post(new CompileArmorRenderStateEvent<>(renderer, renderState, animatable, renderData));
     }
 
     /// Fire the [GeoRenderEvent.Armor.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, R extends HumanoidRenderState>
     boolean fireArmorPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return !NeoForge.EVENT_BUS.post(new GeoArmorPreRenderEvent<>(renderPassInfo, renderTasks)).isCanceled();
     }
 
     /// Fire the [GeoRenderEvent.Entity.CompileRenderLayers] event
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     void fireCompileEntityRenderLayers(GeoEntityRenderer<T, R> renderer) {
         NeoForge.EVENT_BUS.post(new CompileEntityRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Entity.CompileRenderState] event
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     void fireCompileEntityRenderState(GeoEntityRenderer<T, R> renderer, R renderState, T animatable) {
         NeoForge.EVENT_BUS.post(new CompileEntityRenderStateEvent<>(renderer, renderState, animatable));
     }
 
     /// Fire the [GeoRenderEvent.Entity.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     boolean fireEntityPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return !NeoForge.EVENT_BUS.post(new GeoEntityPreRenderEvent<>(renderPassInfo, renderTasks)).isCanceled();
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.CompileRenderLayers] event
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     void fireCompileReplacedEntityRenderLayers(GeoReplacedEntityRenderer<T, E, R> renderer) {
         NeoForge.EVENT_BUS.post(new CompileReplacedEntityRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.CompileRenderState] event
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     void fireCompileReplacedEntityRenderState(GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, T animatable, E entity) {
         NeoForge.EVENT_BUS.post(new CompileReplacedEntityRenderStateEvent<>(renderer, renderState, animatable, entity));
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     boolean fireReplacedEntityPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return !NeoForge.EVENT_BUS.post(new GeoReplacedEntityPreRenderEvent<>(renderPassInfo, renderTasks)).isCanceled();
     }

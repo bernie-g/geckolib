@@ -30,7 +30,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 /// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
 /// @see GeoRenderEvent
 /// @see Pre
-public class GeoReplacedEntityPreRenderEvent<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState> implements GeoRenderEvent.ReplacedEntity.Pre<T, E, R> {
+public class GeoReplacedEntityPreRenderEvent<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState> implements GeoRenderEvent.ReplacedEntity.Pre<T, E, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?, ?> listener : listeners) {
             if (!listener.handle(event))
@@ -91,7 +91,7 @@ public class GeoReplacedEntityPreRenderEvent<T extends GeoAnimatable, E extends 
     /// @param <E> Entity class type. This is the entity being replaced
     /// @param <R> RenderState class type. Typically, this would match the RenderState class the replaced entity uses in their renderer
     @FunctionalInterface
-    public interface Listener<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState & GeoRenderState> {
+    public interface Listener<T extends GeoAnimatable, E extends net.minecraft.world.entity.Entity, R extends EntityRenderState> {
         boolean handle(GeoReplacedEntityPreRenderEvent<T, E, R> event);
     }
 }

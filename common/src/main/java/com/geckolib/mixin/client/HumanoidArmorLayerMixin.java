@@ -32,6 +32,6 @@ public abstract class HumanoidArmorLayerMixin<S extends HumanoidRenderState, M e
     public boolean geckolib$wrapArmorPieceRender(HumanoidArmorLayer<S, M, A> layer, PoseStack poseStack, SubmitNodeCollector renderTasks, ItemStack stack, EquipmentSlot slot, int packedLight, S entityRenderState) {
         return entityRenderState instanceof HumanoidRenderState && !GeoArmorRenderer.tryRenderGeoArmorPiece(
                 (renderState, equipmentSlot) -> (HumanoidModel)layer.getArmorModel((S)renderState, equipmentSlot),
-                poseStack, renderTasks, stack, slot, packedLight, (HumanoidRenderState & GeoRenderState)entityRenderState);
+                poseStack, renderTasks, stack, slot, packedLight, (HumanoidRenderState)entityRenderState);
     }
 }

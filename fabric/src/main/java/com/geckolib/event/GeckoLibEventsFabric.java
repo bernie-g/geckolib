@@ -39,83 +39,83 @@ import com.geckolib.service.GeckoLibEvents;
 public class GeckoLibEventsFabric implements GeckoLibEvents {
     /// Fire the [GeoRenderEvent.Block.CompileRenderLayers] event
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     void fireCompileBlockRenderLayers(GeoBlockRenderer<T, R> renderer) {
         CompileBlockRenderLayersEvent.EVENT.invoker().handle(new CompileBlockRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Block.CompileRenderState] event
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     void fireCompileBlockRenderState(GeoBlockRenderer<T, R> renderer, R renderState, T animatable) {
         CompileBlockRenderStateEvent.EVENT.invoker().handle(new CompileBlockRenderStateEvent<>(renderer, renderState, animatable));
     }
 
     @Override
-    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState>
+    public <T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState>
     boolean fireBlockPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeoBlockPreRenderEvent.EVENT.invoker().handle(new GeoBlockPreRenderEvent<>(renderPassInfo, renderTasks));
     }
 
     /// Fire the [GeoRenderEvent.Armor.CompileRenderLayers] event
     @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, R extends HumanoidRenderState>
     void fireCompileArmorRenderLayers(GeoArmorRenderer<T, R> renderer) {
         CompileArmorRenderLayersEvent.EVENT.invoker().handle(new CompileArmorRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Armor.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, O extends GeoArmorRenderer.RenderData, R extends HumanoidRenderState>
     void fireCompileArmorRenderState(GeoArmorRenderer<T, R> renderer, R renderState, T animatable, O renderData) {
         CompileArmorRenderStateEvent.EVENT.invoker().handle(new CompileArmorRenderStateEvent<>(renderer, renderState, animatable, renderData));
     }
 
     /// Fire the [GeoRenderEvent.Armor.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState>
+    public <T extends Item & GeoItem, R extends HumanoidRenderState>
     boolean fireArmorPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeoArmorPreRenderEvent.EVENT.invoker().handle(new GeoArmorPreRenderEvent<>(renderPassInfo, renderTasks));
     }
 
     /// Fire the [GeoRenderEvent.Entity.CompileRenderLayers] event
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     void fireCompileEntityRenderLayers(GeoEntityRenderer<T, R> renderer) {
         CompileEntityRenderLayersEvent.EVENT.invoker().handle(new CompileEntityRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.Entity.CompileRenderState] event
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     void fireCompileEntityRenderState(GeoEntityRenderer<T, R> renderer, R renderState, T animatable) {
         CompileEntityRenderStateEvent.EVENT.invoker().handle(new CompileEntityRenderStateEvent<>(renderer, renderState, animatable));
     }
 
     /// Fire the [GeoRenderEvent.Entity.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+    public <T extends Entity & GeoAnimatable, R extends EntityRenderState>
     boolean fireEntityPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeoEntityPreRenderEvent.EVENT.invoker().handle(new GeoEntityPreRenderEvent<>(renderPassInfo, renderTasks));
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.CompileRenderLayers] event
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     void fireCompileReplacedEntityRenderLayers(GeoReplacedEntityRenderer<T, E, R> renderer) {
         CompileReplacedEntityRenderLayersEvent.EVENT.invoker().handle(new CompileReplacedEntityRenderLayersEvent<>(renderer));
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.CompileRenderState] event
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     void fireCompileReplacedEntityRenderState(GeoReplacedEntityRenderer<T, E, R> renderer, R renderState, T animatable, E entity) {
         CompileReplacedEntityRenderStateEvent.EVENT.invoker().handle(new CompileReplacedEntityRenderStateEvent<>(renderer, renderState, animatable, entity));
     }
 
     /// Fire the [GeoRenderEvent.ReplacedEntity.Pre] event, returning true if the event was not cancelled
     @Override
-    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+    public <T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
     boolean fireReplacedEntityPreRender(RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks) {
         return GeoReplacedEntityPreRenderEvent.EVENT.invoker().handle(new GeoReplacedEntityPreRenderEvent<>(renderPassInfo, renderTasks));
     }

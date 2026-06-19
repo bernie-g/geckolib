@@ -30,7 +30,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
  * @see GeoRenderEvent
  * @see Pre
  */
-public record GeoReplacedEntityPreRenderEvent<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState & GeoRenderState>
+public record GeoReplacedEntityPreRenderEvent<T extends GeoAnimatable, E extends Entity, R extends EntityRenderState>
         (RenderPassInfo<R> renderPassInfo, SubmitNodeCollector renderTasks)
         implements GeoRenderEvent.ReplacedEntity.Pre<T, E, R>, RecordEvent, Cancellable {
     public static final CancellableEventBus<GeoReplacedEntityPreRenderEvent> BUS = CancellableEventBus.create(GeoReplacedEntityPreRenderEvent.class);

@@ -22,7 +22,7 @@ import com.geckolib.renderer.base.GeoRenderState;
  * @see GeoRenderEvent
  * @see CompileRenderState
  */
-public record CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState & GeoRenderState>
+public record CompileEntityRenderStateEvent<T extends Entity & GeoAnimatable, R extends EntityRenderState>
         (GeoEntityRenderer<T, R> renderer, R renderState, T animatable)
     implements GeoRenderEvent.Entity.CompileRenderState<T, R>, RecordEvent {
     public static final EventBus<CompileEntityRenderStateEvent> BUS = EventBus.create(CompileEntityRenderStateEvent.class);

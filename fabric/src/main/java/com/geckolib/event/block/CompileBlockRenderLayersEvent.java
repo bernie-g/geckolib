@@ -20,7 +20,7 @@ import com.geckolib.renderer.base.GeoRenderState;
 /// @param <R> RenderState class type
 /// @see GeoRenderEvent
 /// @see Armor.CompileRenderLayers
-public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderEvent.Block.CompileRenderLayers<T, R> {
+public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderEvent.Block.CompileRenderLayers<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, post -> {}, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             listener.handle(event);
@@ -42,7 +42,7 @@ public class CompileBlockRenderLayersEvent<T extends BlockEntity & GeoAnimatable
     /// @param <T> BlockEntity animatable class type
     /// @param <R> RenderState class type
     @FunctionalInterface
-    public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {
+    public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> {
         void handle(CompileBlockRenderLayersEvent<T, R> event);
     }
 }

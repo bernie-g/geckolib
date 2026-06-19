@@ -27,7 +27,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 ///
 /// @see GeoRenderEvent
 /// @see Pre
-public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Armor.Pre<T, R>, ICancellableEvent {
+public class GeoArmorPreRenderEvent<T extends Item & GeoItem, R extends HumanoidRenderState> extends Event implements GeoRenderEvent.Armor.Pre<T, R>, ICancellableEvent {
     private final RenderPassInfo<R> renderPassInfo;
     private final SubmitNodeCollector renderTasks;
 

@@ -29,7 +29,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 /// @param <R> RenderState class type
 /// @see GeoRenderEvent
 /// @see Pre
-public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> implements GeoRenderEvent.Block.Pre<T, R> {
+public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderEvent.Block.Pre<T, R> {
     public static final Event<Listener> EVENT = EventFactory.createArrayBacked(Listener.class, event -> true, listeners -> event -> {
         for (Listener<?, ?> listener : listeners) {
             if (!listener.handle(event))
@@ -89,7 +89,7 @@ public class GeoBlockPreRenderEvent<T extends BlockEntity & GeoAnimatable, R ext
     /// @param <T> BlockEntity animatable class type
     /// @param <R> RenderState class type
     @FunctionalInterface
-    public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> {
+    public interface Listener<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> {
         boolean handle(GeoBlockPreRenderEvent<T, R> event);
     }
 }

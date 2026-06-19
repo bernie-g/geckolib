@@ -19,7 +19,7 @@ import com.geckolib.renderer.base.GeoRenderState;
 ///
 /// @see GeoRenderEvent
 /// @see CompileRenderState
-public class CompileBlockRenderStateEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState & GeoRenderState> extends Event implements GeoRenderEvent.Block.CompileRenderState<T, R> {
+public class CompileBlockRenderStateEvent<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> extends Event implements GeoRenderEvent.Block.CompileRenderState<T, R> {
     private final GeoBlockRenderer<T, R> renderer;
     private final R renderState;
     private final T animatable;
