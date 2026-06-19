@@ -6,7 +6,13 @@
   "injectors": {
 	"defaultRequire": 1
   },
-  "mixins": ["common.AbstractContainerMenuMixin", "common.HashedStackMixin", "common.ItemStackMixin", "common.LivingEntityMixin", "common.SlotMixin", "common.SynchronizedRemoteSlotMixin"],
+  "mixins": [
+	"common.AbstractContainerMenuMixin",
+	"common.HashedStackMixin",
+	"common.ItemStackMixin",
+	"common.LivingEntityMixin",
+	"common.SlotMixin",
+	"common.SynchronizedRemoteSlotMixin"],
   "client": [
 	"client.BlockEntityRenderStateMixin",
 	"client.EntityRendererMixin",
