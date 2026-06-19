@@ -42,7 +42,7 @@ public class EntityRendererMixin<T extends Entity, S extends EntityRenderState> 
     /// Sugar method for blind-casting RenderStates to GeckoLib-supported generic types
     @SuppressWarnings("unchecked")
     @Unique
-    private static <R extends HumanoidRenderState & GeoRenderState> R geckolib$castRenderState(EntityRenderState renderState) {
+    private static <R extends HumanoidRenderState> R geckolib$castRenderState(EntityRenderState renderState) {
         return (R)renderState;
     }
 }
