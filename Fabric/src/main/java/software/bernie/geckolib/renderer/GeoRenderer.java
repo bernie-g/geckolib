@@ -76,6 +76,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 * white tint when exploding.
 	 * @deprecated Use {@link GeoRenderer#getPackedOverlay(GeoAnimatable, float, float)}
 	 */
+	@Deprecated(forRemoval = true)
 	default int getPackedOverlay(T animatable, float u) {
 		return OverlayTexture.NO_OVERLAY;
 	}
