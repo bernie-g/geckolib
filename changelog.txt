@@ -1,4 +1,7 @@
-v4.8.3
+v4.8.4
 
-- Fix GeckoLib not knowing what `math.pi` is and breaking animations (??? How has no-one told me about this until now)
-- Add incompatibility with geckoanimfix since the author refuses to remove the mod even though it breaks Geckolib and actually does nothing at all
+- Updated the logo
+- Remove error logging for some versions since GeckoLib does actually support face UV rotation
+- Added some nullability markers to GeoCubes
+- Changed the error message for GeckoLib Oculus Compat to maybe be more clear
+- Adjusted the deprecation on GeoRenderer#getPackedOverlay to not be as dramatic
