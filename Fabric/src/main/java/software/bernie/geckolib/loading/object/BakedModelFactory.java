@@ -46,7 +46,7 @@ public interface BakedModelFactory {
 	 * Builtin method to construct the quad list from the various vertices and related data, to make it easier.<br>
 	 * Vertices have already been mirrored here if {@code mirror} is true
 	 */
-	default GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
+	default @Nullable GeoQuad[] buildQuads(UVUnion uvUnion, VertexSet vertices, Cube cube, float textureWidth, float textureHeight, boolean mirror) {
 		GeoQuad[] quads = new GeoQuad[6];
 
 		quads[0] = buildQuad(vertices, cube, uvUnion, textureWidth, textureHeight, mirror, Direction.WEST);
@@ -62,7 +62,7 @@ public interface BakedModelFactory {
 	/**
 	 * Build an individual quad
 	 */
-	default GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
+	default @Nullable GeoQuad buildQuad(VertexSet vertices, Cube cube, UVUnion uvUnion, float textureWidth, float textureHeight, boolean mirror, Direction direction) {
 		if (!uvUnion.isBoxUV()) {
 			FaceUV faceUV = uvUnion.faceUV().fromDirection(direction);
 
