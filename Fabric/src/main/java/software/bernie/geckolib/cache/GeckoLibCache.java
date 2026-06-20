@@ -97,24 +97,18 @@ public final class GeckoLibCache {
 				Model model = FileLoader.loadModelFile(resource, resourceManager);
 
 				if (model.formatVersion() == null) {
-					GeckoLib.LOGGER.warn("Unknown geometry json version found for model {}." +
-							" Last known version: 1.12.0. Some features may not work as expected.", resource);
+					GeckoLib.LOGGER.warn("Unknown geometry json version found for model {}. Last known version: 1.12.0. Some features may not work as expected.", resource);
 				}
 				else {
 					switch (model.formatVersion()) {
 						case V_1_12_0 -> {}
 						case V_1_14_0 ->
-								GeckoLib.LOGGER.warn("More recent geometry json version found: 1.14.0 for model {}. This model " +
-								"may not appear as expected", resource);
+								GeckoLib.LOGGER.warn("More recent geometry json version found: 1.14.0 for model {}. This model may not appear as expected", resource);
 						case V_1_21_0 ->
-								GeckoLib.LOGGER.warn("More recent geometry json version found: 1.21.0 for model {}. Last known " +
-								"version: 1.12.0. Remove any rotated face UVs or item display transforms, as GeckoLib does not support them.", resource);
+								GeckoLib.LOGGER.warn("More recent geometry json version found: 1.21.0 for model {}. Last known version: 1.12.0. Remove any rotated face UVs or item display transforms, as GeckoLib does not support them.", resource);
 						case V_1_21_2, V_1_21_20 ->
-								GeckoLib.LOGGER.warn("More recent geometry json version found: {} for model {}. Last " +
-								"known version: 1.12.0. Remove any rotated face UVs or item display transforms, as GeckoLib does not " +
-								"support them.", model.formatVersion(), resource);
-						default -> GeckoLib.LOGGER.warn("Unknown geometry json version found: {} for model {}." +
-								" Last known version: 1.12.0. Some features may not work as expected.", model.formatVersion(), resource);
+								GeckoLib.LOGGER.warn("More recent geometry json version found: {} for model {}. Last known version: 1.12.0. Remove any rotated face UVs or item display transforms, as GeckoLib does not support them.", model.formatVersion(), resource);
+						default -> GeckoLib.LOGGER.warn("Unknown geometry json version found: {} for model {}. Last known version: 1.12.0. Some features may not work as expected.", model.formatVersion(), resource);
 					}
 				}
 
