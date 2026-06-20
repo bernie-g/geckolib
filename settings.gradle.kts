@@ -44,5 +44,5 @@ rootProject.name = "geckolib"
 
 include("common")
 include("fabric")
-//include("forge")
+include("forge")
 include("neoforge")
