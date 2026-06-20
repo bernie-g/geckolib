@@ -55,9 +55,8 @@ public final class GeckoLibCache {
 	public static void registerReloadListener() {
 		Minecraft mc = Minecraft.getInstance();
 
-		if (mc == null) {
+		if (mc == null)
 			return;
-		}
 
 		if (!(mc.getResourceManager() instanceof ReloadableResourceManager resourceManager))
 			throw new RuntimeException("GeckoLib was initialized too early!");
