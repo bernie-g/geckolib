@@ -30,6 +30,6 @@ ${mod_description}
 [[dependencies.geckolib]]
     modId="geckoanimfix"
     mandatory=false
-    versionRange="[9.thismodbreaksgeckolibremoveit,)"
+    versionRange="[9.removeoculusgeckolibcompat,)"
     ordering="NONE"
     side="BOTH"
