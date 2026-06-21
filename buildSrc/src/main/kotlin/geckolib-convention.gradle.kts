@@ -87,7 +87,31 @@ tasks.withType<Jar>().configureEach {
 
 tasks.withType<JavaCompile>().configureEach {
     this.options.encoding = "UTF-8"
-    this.options.getRelease().set(21)
+    this.options.release.set(java.toolchain.languageVersion.get().asInt())
+}
+
+tasks.withType<Test>().configureEach {
+    failOnNoDiscoveredTests = false
+}
+
+tasks.named<JavaCompile>("compileJava") {
+    if (project != project(":common"))
+        source(project(":common").sourceSets.main.get().allSource)
+}
+
+tasks.named<Jar>("sourcesJar") {
+    if (project != project(":common"))
+        from(project(":common").sourceSets.main.get().allSource)
+}
+
+tasks.withType<Javadoc>().configureEach {
+    if (project != project(":common"))
+        source(project(":common").sourceSets.main.get().allJava)
+}
+
+tasks.withType<ProcessResources>().configureEach {
+    if (project != project(":common"))
+        from(project(":common").sourceSets.main.get().resources)
 }
 
 tasks.withType<ProcessResources>().configureEach {

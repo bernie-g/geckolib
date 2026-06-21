@@ -1,3 +1,4 @@
+import net.darkhax.curseforgegradle.Constants
 import net.fabricmc.loom.task.RemapJarTask
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
@@ -62,81 +63,77 @@ loom {
 
     runs {
         named("client") {
-            configName = "Fabric Client"
+            displayName = "Fabric Client"
 
             client()
-            ideConfigGenerated(true)
-            runDir("runs/" + name)
-            programArg("--username=Dev")
+            generateRunConfig = true
+            runDirectory = project.file("runs/$name")
+            programArguments.add("--username=Dev")
         }
 
         named("server") {
-            configName = "Fabric Server"
+            displayName = "Fabric Server"
 
             server()
-            ideConfigGenerated(true)
-            runDir("runs/" + name)
+            generateRunConfig = true
+            runDirectory = project.file("runs/$name")
         }
     }
 }
 
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
 tasks.withType<ProcessResources>().configureEach {
-   from(project(":common").sourceSets.getByName("main").resources)
     exclude("**/accesstransformer-nf.cfg")
 }
 
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    projectId = "8BmcQJ2H"
-    versionNumber.set(project.version.toString())
-    versionName = "Fabric ${mcVersion}"
+    
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
-    changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
-    gameVersions.set(listOf(mcVersion))
+    projectId.set(properties["modrinthProjectId"] as String)
+    versionName = "Fabric $mcVersion"
     versionType = "release"
     loaders.set(listOf("fabric"))
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(mcVersion))
+    
     dependencies {
         required.project("fabric-api")
     }
+    
+    if (rootProject.file("changelog.txt").exists())
+        changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 
-    //debugMode = true
+    debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
 
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
-
-    val mainFile = upload(388172, tasks.remapJar)
+    
+    val mainFile = upload(properties["curseforgeProjectId"], tasks.remapJar)
+    mainFile.displayName = "${properties["modDisplayName"]} Fabric $mcVersion ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 21")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    mainFile.addJavaVersion("Java ${libs.versions.java.get()}")
+    mainFile.addRelation("fabric-api", Constants.RELATION_REQUIRED)
+    mainFile.addEnvironment("Client", "Server")
+    
+    if (rootProject.file("changelog.txt").exists())
+        mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
 
-    //debugMode = true
+    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
-    publishing {
-        publications {
-            create<MavenPublication>("geckolib") {
-                from(components["java"])
-                artifactId = base.archivesName.get()
-            }
+publishing {
+    publications {
+        create<MavenPublication>("geckolib") {
+            from(components["java"])
+            artifactId = base.archivesName.get()
         }
+    }
 }
 
 tasks.named<DefaultTask>("publish").configure {

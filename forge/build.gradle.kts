@@ -1,5 +1,5 @@
+import net.minecraftforge.jarjar.gradle.JarJar
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
-import net.minecraftforge.gradle.userdev.tasks.JarJar
 
 plugins {
     id("geckolib-convention")
@@ -7,8 +7,7 @@ plugins {
     alias(libs.plugins.minotaur)
     alias(libs.plugins.curseforgegradle)
     alias(libs.plugins.forgegradle)
-    alias(libs.plugins.mixin)
-    alias(libs.plugins.parchmentforgegradle)
+    alias(libs.plugins.forge.jarjar)
 }
 
 val modId: String by project
@@ -23,67 +22,38 @@ base {
     archivesName = "geckolib-forge-${mcVersion}"
 }
 
-jarJar.enable()
+jarJar.register {
+    archiveClassifier = null
+}
 
 minecraft {
-    mappings("parchment", "${mappingsMcVersion}-${parchmentVersion}-${mcVersion}")
-    accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
-
-    reobf = false
-    copyIdeResources = true
-
+    useDefaultAccessTransformer()
+    
     runs {
-        create("client") {
-            workingDirectory(project.file("runs/" + name))
-            ideaModule("${rootProject.name}.${project.name}.main")
-            isSingleInstance = true
-            taskName("geckolibClient")
+        configureEach {
+            workingDir.convention(layout.projectDirectory.dir("runs/${name}"))
+            systemProperty("forge.logging.console.level", "debug")
+        }
+        
+        register("client") {
             args("--username", "Dev")
-
-            property("forge.logging.console.level", "debug")
-            property("mixin.env.remapRefMap", "true")
-
-            property("mixin.env.refMapRemappingFile", "${project.projectDir}/build/createSrgToMcp/output.srg")
-            args("-mixin.config=${modId}.mixins.json")
-
-            mods {
-                create(modId) {
-                    source(sourceSets.getByName("main"))
-                    source(project(":common").sourceSets.getByName("main"))
-                }
-            }
         }
-
-        create("client2") {
-            parent(minecraft.runs.named("client").get())
-            workingDirectory(project.file("runs/"+ name))
-            taskName("geckolibClient2")
+        
+        register("client2") {
             args("--username", "Dev2")
-            args("-mixin.config=${modId}.mixins.json")
         }
-
-        create("server") {
-            workingDirectory(project.file("runs/"+ name))
-            ideaModule("${rootProject.name}.${project.name}.main")
-            isSingleInstance = true
-            taskName("GeckoLib-Server")
-
-            property("forge.logging.console.level", "debug")
-            property("mixin.env.remapRefMap", "true")
-            property("mixin.env.refMapRemappingFile", "${project.projectDir}/build/createSrgToMcp/output.srg")
-            args("-mixin.config=${modId}.mixins.json")
-
-            mods {
-                create(modId) {
-                    source(project(":common").sourceSets.main.get())
-                    source(sourceSets.main.get())
-                }
-            }
-        }
+        
+        register("server")
     }
 }
 
 repositories {
+    @Suppress("DEPRECATION")
+    minecraft.mavenizer(this@repositories)
+    maven(fg.forgeMaven)
+    maven(fg.minecraftLibsMaven)
+    mavenCentral()
+    
     exclusiveContent {
         forRepository {
             maven {
@@ -98,26 +68,23 @@ repositories {
 }
 
 dependencies {
-    minecraft(libs.forge)
+    implementation(minecraft.dependency(libs.forge))
     compileOnly(project(":common"))
-
-    if (System.getProperty("idea.sync.active") != "true")
-        annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
-
+    
     compileOnly(libs.mixinextras.common)
-    annotationProcessor(libs.mixinextras.common)
     testCompileOnly(libs.mixinextras.common)
-
     runtimeOnly(libs.mixinextras.forge)
-    jarJar(libs.mixinextras.forge) {
-        jarJar.ranged(this, libs.versions.mixinextras.range.get())
-    }
-
     implementation(libs.jopt.simple)
+    
+    annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
+    annotationProcessor(libs.mixinextras.common)
+    annotationProcessor(libs.forge.eventbusvalidator)
+    
+    "jarJar"(libs.mixinextras.forge)
 
     // Only enable for testing as needed
     // Disable before publishing
-    //implementation(fg.deobf(libs.examplemod.forge.get()))
+    //implementation(libs.examplemod.forge.get())
 }
 
 //Make the result of the jarJar task the one with no classifier instead of no classifier and "all"
@@ -125,69 +92,51 @@ tasks.named<Jar>("jar").configure {
     archiveClassifier.set("slim")
 }
 
-tasks.named<JarJar>("jarJar").configure {
-    archiveClassifier.set("")
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<DefaultTask>("assemble").configure {
-    dependsOn("jarJar")
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
+tasks.withType<ProcessResources>() {
     exclude("**/accesstransformer-nf.cfg")
 }
 
-mixin {
-    add(sourceSets.getByName("main"), "${modId}.refmap.json")
-    config("${modId}.mixins.json")
-}
-
 modrinth {
-		token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-		projectId = "8BmcQJ2H"
-		versionNumber.set(project.version.toString())
-		versionName = "Forge ${mcVersion}"
-		uploadFile.set(tasks.jarJar)
-		changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
-		gameVersions.set(listOf(mcVersion))
-		loaders.set(listOf("forge"))
-
-        //https://github.com/modrinth/minotaur#available-properties
+    token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
+    
+    uploadFile.set(tasks.named<JarJar>("jarJar"))
+    projectId.set(properties["modrinthProjectId"] as String)
+    versionName = "Forge $mcVersion"
+    loaders.set(listOf("forge"))
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(mcVersion))
+    
+    if (rootProject.file("changelog.txt").exists())
+        changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
+    
+    debugMode = true
+    //https://github.com/modrinth/minotaur#available-properties
 }
 
 tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.jarJar)
+    val mainFile = upload(properties["curseforgeProjectId"], tasks.named<JarJar>("jarJar"))
+    mainFile.displayName = "${properties["modDisplayName"]} Forge $mcVersion ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 17")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-
+    mainFile.addJavaVersion("Java ${libs.versions.java.get()}")
+    mainFile.addEnvironment("Client", "Server")
+    
+    if (rootProject.file("changelog.txt").exists())
+        mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    
+    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("geckolib") {
-                from(components["java"])
-                jarJar.component(this)
+            create<MavenPublication>(modId) {
+                from(components["jarJar"])
                 artifactId = base.archivesName.get()
             }
         }

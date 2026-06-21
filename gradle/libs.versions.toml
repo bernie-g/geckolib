@@ -9,6 +9,7 @@
     parchment                       = "2024.11.17"
     neoform                         = "1.21.1-20240808.144430"
     jopt-simple                     = "5.0.4"
+    java                            = "21"
 
 # Fabric
     fabric                          = "0.19.3"
@@ -41,8 +42,8 @@
     plugin-curseforge-gradle        = "1.3.32"
     plugin-idea-ext                 = "1.4.1"
     plugin-forge-gradle             = "[7.0.29,8.0)"
+    plugin-forge-jarjar             = "[0.2.3,)"
     plugin-mixin                    = "0.7.+"
-    plugin-parchment-forge-gradle   = "1.+"
     plugin-loom                     = "1.17-SNAPSHOT"
 
 [libraries]
@@ -77,8 +78,8 @@
 # Platform
     moddevgradle            = { id = "net.neoforged.moddev",                    version.ref = "plugin-moddevgradle" }
     forgegradle             = { id = "net.minecraftforge.gradle",               version.ref = "plugin-forge-gradle" }
+    forge-jarjar            = { id = "net.minecraftforge.jarjar",               version.ref = "plugin-forge-jarjar" }
     loom                    = { id = "fabric-loom",                             version.ref = "plugin-loom" }
-    parchmentforgegradle    = { id = "org.parchmentmc.librarian.forgegradle",   version.ref = "plugin-parchment-forge-gradle" }
 
 # Misc
     ideaext                 = { id = "org.jetbrains.gradle.plugin.idea-ext",    version.ref = "plugin-idea-ext" }

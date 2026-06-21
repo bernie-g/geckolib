@@ -67,37 +67,21 @@ dependencies {
     //implementation(libs.examplemod.neoforge)
 }
 
-tasks.withType<Test>().configureEach {
-    enabled = false;
-}
-
-tasks.named<JavaCompile>("compileJava").configure {
-    source(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.named<Jar>("sourcesJar").configure {
-    from(project(":common").sourceSets.getByName("main").allSource)
-}
-
-tasks.withType<Javadoc>().configureEach {
-    source(project(":common").sourceSets.getByName("main").allJava)
-}
-
-tasks.withType<ProcessResources>().configureEach {
-    from(project(":common").sourceSets.getByName("main").resources)
-}
-
 modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
-    projectId = "8BmcQJ2H"
-    versionNumber.set(project.version.toString())
-    versionName = "NeoForge ${mcVersion}"
+    
     uploadFile.set(tasks.named<Jar>("jar"))
-    changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
-    gameVersions.set(listOf(mcVersion))
+    projectId.set(properties["modrinthProjectId"] as String)
+    versionName = "NeoForge $mcVersion"
+    versionType = "release"
     loaders.set(listOf("neoforge"))
+    versionNumber.set(project.version.toString())
+    gameVersions.set(listOf(mcVersion))
+    
+    if (rootProject.file("changelog.txt").exists())
+        changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
 
-    //debugMode = true
+    debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -105,21 +89,25 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
-    val mainFile = upload(388172, tasks.jar)
+    val mainFile = upload(properties["curseforgeProjectId"], tasks.jar)
+    mainFile.displayName = "${properties["modDisplayName"]} NeoForge $mcVersion ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("NeoForge")
     mainFile.addGameVersion(mcVersion)
-    mainFile.addJavaVersion("Java 21")
-    mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
+    mainFile.addJavaVersion("Java ${libs.versions.java.get()}")
+    mainFile.addEnvironment("Client", "Server")
+    
+    if (rootProject.file("changelog.txt").exists())
+        mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
 
-    //debugMode = true
+    debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
 publishing {
     publishing {
         publications {
-            create<MavenPublication>("geckolib") {
+            create<MavenPublication>(modId) {
                 from(components["java"])
                 artifactId = base.archivesName.get()
             }
