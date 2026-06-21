@@ -154,8 +154,11 @@ public class AnimatableTexture extends SimpleTexture {
 					index++;
 				}
 
-				if (!unusedFrames.isEmpty())
+				if (!unusedFrames.isEmpty()) {
 					GeckoLibConstants.LOGGER.warn("Unused frames in sprite {}: {}", AnimatableTexture.this.location, Arrays.toString(unusedFrames.toArray()));
+					
+					return null;
+				}
 			}
 
 			return frames.size() <= 1 ? null : new Texture(image, frames.toArray(new Frame[0]), columns, animMeta.isInterpolatedFrames());
