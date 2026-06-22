@@ -14,6 +14,7 @@ authors="${mod_authors}"
 description='''
 ${mod_description}
 '''
+accessTransformers = ["META-INF/accesstransformer.cfg"]
 
 [[dependencies.geckolib]]
     modId="forge"
