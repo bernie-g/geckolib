@@ -109,7 +109,7 @@ modrinth {
     if (rootProject.file("changelog.txt").exists())
         changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))
     
-    debugMode = true
+    //debugMode = true
     //https://github.com/modrinth/minotaur#available-properties
 }
 
@@ -118,7 +118,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
 
     val mainFile = upload(properties["curseforgeProjectId"], tasks.named<JarJar>("jarJar"))
-    mainFile.displayName = "${properties["modDisplayName"]} Forge $mcVersion ${project.version}"
+    mainFile.displayName = "Forge $mcVersion ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Forge")
     mainFile.addGameVersion(mcVersion)
@@ -128,7 +128,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     if (rootProject.file("changelog.txt").exists())
         mainFile.changelog = rootProject.file("changelog.txt").readText(Charsets.UTF_8)
     
-    debugMode = true
+    //debugMode = true
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
 }
 
