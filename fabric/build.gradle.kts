@@ -59,8 +59,6 @@ dependencies {
 loom {
 	accessWidenerPath = file("src/main/resources/geckolib.accesswidener")
 
-    mixin.defaultRefmapName.set("${modId}.refmap.json")
-
     runs {
         named("client") {
             displayName = "Fabric Client"
