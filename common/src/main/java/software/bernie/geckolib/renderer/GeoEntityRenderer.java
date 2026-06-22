@@ -356,7 +356,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 			applyRenderLayersForBone(poseStack, animatable, bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 
 		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
-
 		poseStack.popPose();
 	}
 

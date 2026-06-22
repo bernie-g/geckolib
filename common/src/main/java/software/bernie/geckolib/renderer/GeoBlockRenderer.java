@@ -188,6 +188,12 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	@Override
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, int colour) {
+		poseStack.pushPose();
+		RenderUtil.translateMatrixToBone(poseStack, bone);
+		RenderUtil.translateToPivotPoint(poseStack, bone);
+		RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+		RenderUtil.scaleMatrixForBone(poseStack, bone);
+		
 		if (bone.isTrackingMatrices()) {
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.blockRenderTranslations);
@@ -198,9 +204,18 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			bone.setLocalSpaceMatrix(localMatrix);
 			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
-
-		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay,
-				colour);
+		
+		RenderUtil.prepMatrixForBone(poseStack, bone);
+		
+		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
+		
+		renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, colour);
+		
+		if (!isReRender)
+			applyRenderLayersForBone(poseStack, getAnimatable(), bone, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+		
+		renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+		poseStack.popPose();
 	}
 
 	/**
