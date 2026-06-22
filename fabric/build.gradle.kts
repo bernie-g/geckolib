@@ -80,7 +80,7 @@ loom {
 }
 
 tasks.withType<ProcessResources>().configureEach {
-    exclude("**/accesstransformer-nf.cfg")
+    exclude("**/accesstransformer.cfg")
 }
 
 modrinth {

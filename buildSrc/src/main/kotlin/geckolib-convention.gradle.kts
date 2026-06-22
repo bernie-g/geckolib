@@ -74,10 +74,6 @@ val neoforgeVersionRange = libs.get().findVersion("neoforge.range").get()
 val neoforgeLoaderVersionRange = libs.get().findVersion("neoforge.loader.range").get()
 
 tasks.withType<Jar>().configureEach {
-    from(rootProject.file("LICENSE")) {
-        rename { "${it}_${modDisplayName}" }
-    }
-
     manifest {
         attributes(mapOf(
                 "Specification-Title"     to modDisplayName,

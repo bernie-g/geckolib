@@ -27,7 +27,9 @@ jarJar.register {
 }
 
 minecraft {
-    useDefaultAccessTransformer()
+    rootProject.file("common/src/main/resources/META-INF/accesstransformer.cfg").takeIf { it.exists() }?.let {
+        accessTransformers.setFrom(it)
+    }
     
     runs {
         configureEach {
@@ -76,9 +78,9 @@ dependencies {
     runtimeOnly(libs.mixinextras.forge)
     implementation(libs.jopt.simple)
     
-    annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
+    //annotationProcessor(variantOf(libs.mixin) { classifier("processor") })
     annotationProcessor(libs.mixinextras.common)
-    annotationProcessor(libs.forge.eventbusvalidator)
+    //annotationProcessor(libs.forge.eventbusvalidator)
     
     "jarJar"(libs.mixinextras.forge)
 
@@ -90,10 +92,6 @@ dependencies {
 //Make the result of the jarJar task the one with no classifier instead of no classifier and "all"
 tasks.named<Jar>("jar").configure {
     archiveClassifier.set("slim")
-}
-
-tasks.withType<ProcessResources>() {
-    exclude("**/accesstransformer-nf.cfg")
 }
 
 modrinth {

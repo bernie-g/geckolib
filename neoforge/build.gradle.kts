@@ -23,7 +23,7 @@ base {
 neoForge {
     version = neoforgeVersion
 
-    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer-nf.cfg"))
+    accessTransformers.files.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))
     parchment.minecraftVersion.set(parchmentMcVersion)
     parchment.mappingsVersion.set(parchmentVersion)
 
