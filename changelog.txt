@@ -1,5 +1,5 @@
-v4.8.4
+v4.9
 
-- Prevent crashing from an empty molang string
-- Fixed Molang calculations sometimes parsing math incorrectly (#820)
-- Fixed MathParser not parsing group negatives properly (#820)
+- Added `AttachedAnimatableRenderLayer` and a handful of subclasses to make rendering GeckoLib objects on vanilla models (such as players) a lot easier
+- Fixed GeoBlockEntities not having correct bone positions (#841)
+- Prevent invalid animation mcmetas being loaded by GeckoLib
