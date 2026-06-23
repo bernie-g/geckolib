@@ -205,7 +205,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 		
-		RenderUtil.prepMatrixForBone(poseStack, bone);
+		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 		
 		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 		
