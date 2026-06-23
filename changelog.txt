@@ -1,5 +1,3 @@
-v4.9
+v4.9.1
 
-- Added `AttachedAnimatableRenderLayer` and a handful of subclasses to make rendering GeckoLib objects on vanilla models (such as players) a lot easier
-- Fixed GeoBlockEntities not having correct bone positions (#841)
-- Prevent invalid animation mcmetas being loaded by GeckoLib
+- Fixed GeckoLib blocks being completely broken (#869)
