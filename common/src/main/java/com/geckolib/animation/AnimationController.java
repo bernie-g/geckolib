@@ -434,16 +434,22 @@ public class AnimationController<T extends GeoAnimatable> {
             this.playState = this.stateHandler.handle(new AnimationTest<>(animatable, renderState, manager, this));
 
         if (this.playState != PlayState.STOP) {
-            if (this.animationPoint == null || !Objects.equals(prevRawAnimation, this.currentRawAnimation)) {
+            if (this.animationPoint == null || this.timeline == null || !Objects.equals(prevRawAnimation, this.currentRawAnimation)) {
                 initializeNewAnimation(animatable, renderState, geoModel, prevAnimationSpeed, transitionTicks);
             }
             else if (this.timelineTime >= 0 || ((timeDelta < 0) == (this.timelineTime == FINISHED_ANIMATING))) {
                 progressExistingAnimation(animatable, renderState, prevTimelineTime, timeDelta);
             }
+            else if (wasStopped && Objects.equals(prevRawAnimation, this.currentRawAnimation)) {
+                this.timelineTime = 0;
+                this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
+            }
         }
         else if (!wasStopped) {
-            if (this.timelineTime >= 0)
+            if (this.timelineTime >= 0) {
                 this.timelineTime = this.timeline == null ? NOT_ANIMATING : this.timeline.lastAnimationEndTime();
+                this.animationPoint = this.timeline == null ? null : this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
+            }
         }
         else if (this.animationPoint != null && this.timeline != null && (this.timelineTime >= 0 || ((timeDelta < 0) == (this.timelineTime == FINISHED_ANIMATING)))) {
             progressExistingAnimation(animatable, renderState, prevTimelineTime, timeDelta);
@@ -498,7 +504,7 @@ public class AnimationController<T extends GeoAnimatable> {
         if (prevAnimStage != currentAnimStage || this.timelineTime >= currentAnimStage.endTime()) {
             final double preLoopTimelineTime = this.timelineTime;
 
-            if (!isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
+            if (this.playState != PlayState.STOP && !isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevTimelineTime, prevAnimStage.endTime(), this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
 
