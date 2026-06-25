@@ -148,8 +148,11 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
 
             int[] unusedFrames = IntStream.range(0, frames).filter(frame -> !validFrames.contains(frame)).toArray();
 
-            if (unusedFrames.length > 0)
+            if (unusedFrames.length > 0) {
                 GeckoLibConstants.LOGGER.warn("Unused frames in sprite {}: {}", resourceId(), Arrays.toString(unusedFrames));
+                
+                return null;
+            }
         }
 
         return new AnimationInfo(List.copyOf(frameList), frameColumns, animMeta.interpolatedFrames());
