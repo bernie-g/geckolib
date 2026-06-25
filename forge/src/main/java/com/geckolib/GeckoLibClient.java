@@ -10,6 +10,6 @@ import com.geckolib.cache.GeckoLibResources;
 public class GeckoLibClient {
     @SubscribeEvent
     public static void registerReloadListeners(final RegisterClientReloadListenersEvent ev) {
-        ev.registerReloadListener(GeckoLibResources::reload);
+        ev.registerReloadListener(new GeckoLibResources());
     }
 }
