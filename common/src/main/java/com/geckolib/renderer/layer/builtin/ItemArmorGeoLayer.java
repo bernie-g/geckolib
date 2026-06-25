@@ -417,8 +417,6 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		final Vec3 relativeScale = getScaleFactorForBone(bone, modelPart);
 
 		poseStack.pushPose();
-		RenderUtil.transformToBone(poseStack, bone);
-		bone.translateAwayFromPivotPoint(poseStack);
 		poseStack.scale(-1, -1, 1);
 		poseStack.scale((float)relativeScale.x, (float)relativeScale.y, (float)relativeScale.z);
 		renderVanillaEquippable(renderPassInfo, renderTasks, renderData, bone, stack, poseStack, equippedModel, modelPart, assetId);
