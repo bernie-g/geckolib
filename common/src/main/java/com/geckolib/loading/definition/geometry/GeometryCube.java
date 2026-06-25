@@ -53,7 +53,6 @@ public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable
         final Vec3 rotation = this.rotation == null ? Vec3.ZERO : this.rotation.multiply(-Mth.DEG_TO_RAD, -Mth.DEG_TO_RAD, Mth.DEG_TO_RAD);
         final Vec3 pivot = this.pivot == null ? Vec3.ZERO : this.pivot.multiply(-1, 1, 1);
         final Vec3 vertSize = size.scale(modelScale);
-
         final @Nullable GeoQuad[] quads = bakeQuads(origin, size, vertSize, inflate, mirror, geometryDescription.textureWidth(), geometryDescription.textureHeight());
 
         return new GeoCube(quads, pivot, rotation, size);
