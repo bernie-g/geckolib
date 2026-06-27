@@ -29,14 +29,14 @@ loom {
 
     runs {
         configureEach {
-            configName = "Fabric ${name.capitalized()}"
-            runDir("runs/$name")
-            ideConfigGenerated(true)
+            displayName = "Fabric ${name.capitalized()}"
+            runDirectory = project.file("runs/$name")
+            generateRunConfig = true
         }
 
         named("client") {
             client()
-            programArg("--username=Dev")
+            programArguments.add("--username=Dev")
         }
 
         named("server") {
