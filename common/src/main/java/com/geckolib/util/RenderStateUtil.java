@@ -1,7 +1,6 @@
 package com.geckolib.util;
 
 import net.minecraft.client.renderer.entity.state.*;
-import com.geckolib.renderer.base.GeoRenderState;
 
 /// Helper class for RenderState-related functionality.
 ///
@@ -39,7 +38,7 @@ public final class RenderStateUtil {
         newRenderState.shadowRadius = oldRenderState.shadowRadius;
 
         newRenderState.shadowPieces.addAll(oldRenderState.shadowPieces);
-        ((GeoRenderState)newRenderState).getDataMap().putAll(((GeoRenderState)oldRenderState).getDataMap());
+        newRenderState.getDataMap().putAll(oldRenderState.getDataMap());
     }
 
     /// Create a fully cloned copy of an existing [LivingEntityRenderState].
@@ -178,7 +177,7 @@ public final class RenderStateUtil {
     ///
     /// If you are doing custom modeling and a data point here is missing and causing you issues, let me know in Discord and I'll add it
     public static HumanoidRenderState makeMinimalArmorRenderingClone(final HumanoidRenderState newRenderState, final EntityRenderState oldRenderState) {
-        ((GeoRenderState)newRenderState).getDataMap().putAll(((GeoRenderState)oldRenderState).getDataMap());
+        newRenderState.getDataMap().putAll(oldRenderState.getDataMap());
 
         newRenderState.entityType = oldRenderState.entityType; // Optional
         newRenderState.x = oldRenderState.x; // Optional
