@@ -417,6 +417,8 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		final Vec3 relativeScale = getScaleFactorForBone(bone, modelPart);
 
 		poseStack.pushPose();
+		RenderUtil.transformToBone(poseStack, bone);
+		bone.translateAwayFromPivotPoint(poseStack);
 		poseStack.scale(-1, -1, 1);
 		poseStack.scale((float)relativeScale.x, (float)relativeScale.y, (float)relativeScale.z);
 		renderVanillaEquippable(renderPassInfo, renderTasks, renderData, bone, stack, poseStack, equippedModel, modelPart, assetId);
@@ -441,6 +443,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 
 			VanillaModelModifier.addModifierToState(cleanRenderState, humanoidModel, setUnusedModelPartVisibility(modelPart, humanoidModel));
 			VanillaModelModifier.addModifierToState(cleanRenderState, humanoidModel, VanillaModelModifier.ofSetupOnly(_ -> {
+				modelPart.resetPose();
 				modelPart.setPos(-(bone.pivotX() - ((bone.pivotX() * (float)relativeScale.x) - bone.pivotX()) / (float)relativeScale.x),
 								 -(bone.pivotY() - ((bone.pivotY() * (float)relativeScale.y) - bone.pivotY()) / (float)relativeScale.y),
 								 (bone.pivotZ() - ((bone.pivotZ() * (float)relativeScale.z) - bone.pivotZ()) / (float)relativeScale.z));
@@ -450,6 +453,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		this.equipmentRenderer.renderLayers(layerType, assetId, (Model)equippedModel, cleanRenderState, stack, poseStack, renderTasks,
 											renderPassInfo.packedLight(), cleanRenderState.outlineColor);
 	}
+	
 	///  Get the [Model] instance to render for a given [Equippable] [ItemStack]
 	protected <S extends HumanoidRenderState & GeoRenderState> Model<?> getEquippableModel(RenderPassInfo<R> renderPassInfo, RenderData renderData, GeoBone bone, ItemStack stack) {
 		final S humanoidRenderState = renderPassInfo.renderState() instanceof HumanoidRenderState humanoidRenderState1 ? (S)humanoidRenderState1 : (S)new HumanoidRenderState();
