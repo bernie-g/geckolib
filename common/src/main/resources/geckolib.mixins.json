@@ -4,22 +4,24 @@
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
   "injectors": {
-    "defaultRequire": 1
+	"defaultRequire": 1
   },
   "mixins": [
-    "common.AbstractContainerMenuMixin",
-    "common.HashedStackMixin",
-    "common.ItemStackMixin",
-    "common.LivingEntityMixin",
-    "common.SynchronizedRemoteSlotMixin"
+	"common.AbstractContainerMenuMixin",
+	"common.HashedStackMixin",
+	"common.ItemStackMixin",
+	"common.LivingEntityMixin",
+	"common.SynchronizedRemoteSlotMixin"
   ],
   "client": [
     "client.BlockEntityRenderStateMixin",
     "client.EntityRendererMixin",
     "client.EntityRenderStateMixin",
     "client.HumanoidArmorLayerMixin",
+    "client.HumanoidModelMixin",
     "client.ModelFeatureRendererMixin",
     "client.ModelMixin",
+    "client.PlayerModelMixin",
     "client.SpecialModelRenderersMixin",
     "client.SpecialModelWrapperMixin",
     "client.TextureManagerMixin"
