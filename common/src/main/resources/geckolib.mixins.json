@@ -12,16 +12,19 @@
 	"common.ItemStackMixin",
 	"common.LivingEntityMixin",
 	"common.SlotMixin",
-	"common.SynchronizedRemoteSlotMixin"],
+	"common.SynchronizedRemoteSlotMixin"
+  ],
   "client": [
-	"client.BlockEntityRenderStateMixin",
-	"client.EntityRendererMixin",
-	"client.EntityRenderStateMixin",
-	"client.HumanoidArmorLayerMixin",
-	"client.ModelFeatureRendererMixin",
-	"client.ModelMixin",
-	"client.SpecialModelRenderersMixin",
-	"client.SpecialModelWrapperMixin",
-	"client.TextureManagerMixin"
+    "client.BlockEntityRenderStateMixin",
+    "client.EntityRendererMixin",
+    "client.EntityRenderStateMixin",
+    "client.HumanoidArmorLayerMixin",
+    "client.HumanoidModelMixin",
+    "client.ModelFeatureRendererMixin",
+    "client.ModelMixin",
+    "client.PlayerModelMixin",
+    "client.SpecialModelRenderersMixin",
+    "client.SpecialModelWrapperMixin",
+    "client.TextureManagerMixin"
   ]
 }

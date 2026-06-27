@@ -8,6 +8,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.client.model.Model;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Map;
@@ -61,5 +62,27 @@ public interface VanillaModelModifier<S, T extends Model<? super S>> {
 
         //noinspection DataFlowIssue
         modifiers.computeIfAbsent(model, _ -> new ObjectArrayList<>()).add(modifier);
+    }
+    
+    /// Run the [VanillaModelModifier#setupAnim(net.minecraft.client.model.Model)] call for a given model setup pass for a given model for any registered modifiers
+    @ApiStatus.Internal
+    static <S extends GeoRenderState, M extends Model<? super S>> void runModifierSetup(M model, S renderState) {
+        //noinspection unchecked,rawtypes
+        final List<VanillaModelModifier<S, M>> callbacks = (List)renderState.getOrDefaultGeckolibData(DataTickets.VANILLA_MODEL_MODIFIERS, Map.of()).getOrDefault(model, List.of());
+        
+        for (VanillaModelModifier<S, M> runnable : callbacks) {
+            runnable.setupAnim(model);
+        }
+    }
+    
+    /// Run the [VanillaModelModifier#postRenderReset(Model)] call for a given model setup pass for a given model for any registered modifiers
+    @ApiStatus.Internal
+    static <S extends GeoRenderState, M extends Model<? super S>> void runModifierCleanup(M model, S renderState) {
+        //noinspection unchecked,rawtypes
+        final List<VanillaModelModifier<S, M>> callbacks = (List)renderState.getOrDefaultGeckolibData(DataTickets.VANILLA_MODEL_MODIFIERS, Map.of()).getOrDefault(model, List.of());
+        
+        for (VanillaModelModifier<S, M> runnable : callbacks) {
+            runnable.postRenderReset(model);
+        }
     }
 }
