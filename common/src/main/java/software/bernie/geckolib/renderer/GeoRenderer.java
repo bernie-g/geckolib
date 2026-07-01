@@ -140,7 +140,7 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 		preRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
 
 		if (firePreRenderEvent(poseStack, model, bufferSource, partialTick, packedLight)) {
-			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, packedLight, packedLight, packedOverlay);
+			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 			actuallyRender(poseStack, animatable, model, renderType,
 					bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
 			applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
