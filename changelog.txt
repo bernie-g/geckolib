@@ -1,3 +1,3 @@
-v4.9.1
+v4.9.2
 
-- Fixed GeckoLib blocks being completely broken (#869)
+- Fixed GeckoLib passing the wrong partialTick to GeoRenderLayer#preRender (#877)
