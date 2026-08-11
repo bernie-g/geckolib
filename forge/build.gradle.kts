@@ -41,10 +41,6 @@ minecraft {
             args("--username", "Dev")
         }
         
-        register("client2") {
-            args("--username", "Dev2")
-        }
-        
         register("server")
     }
 }
@@ -152,4 +148,3 @@ sourceSets.forEach {
     it.output.setResourcesDir(dir)
     it.java.destinationDirectory = dir
 }
-

@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -33,6 +34,8 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
+
+import java.lang.reflect.Method;
 
 /**
  * Helper class for various methods and functions useful while rendering
@@ -343,5 +346,27 @@ public final class RenderUtil {
 	@Nullable
 	public static GeoModel<?> getGeoModelForArmor(ItemStack stack) {
 		return GeckoLibServices.Client.ITEM_RENDERING.getGeoModelForArmor(stack);
+	}
+
+	/**
+	 * Gets the armor glint render type, allowing Quark's Color Runes module to supply its item-specific glint when present.
+	 */
+	public static RenderType getArmorGlintRenderType(ItemStack stack) {
+        try {
+            Method setTargetStack = Class.forName("org.violetmoon.quark.content.tools.module.ColorRunesModule").getMethod("setTargetStack", ItemStack.class);
+            Method getArmorEntityGlint = Class.forName("org.violetmoon.quark.content.tools.module.ColorRunesModule$Client").getMethod("getArmorEntityGlint");
+
+            if (setTargetStack == null || getArmorEntityGlint == null)
+                return RenderType.armorEntityGlint();
+
+            try {
+                setTargetStack.invoke(null, stack);
+                return (RenderType)getArmorEntityGlint.invoke(null);
+            } catch (ReflectiveOperationException | LinkageError ignored) {
+                return RenderType.armorEntityGlint();
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException e) {
+            return RenderType.armorEntityGlint();
+        }
 	}
 }

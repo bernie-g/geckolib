@@ -201,7 +201,7 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 */
 	protected VertexConsumer getVanillaArmorBuffer(MultiBufferSource bufferSource, T animatable, ItemStack stack, EquipmentSlot slot, GeoBone bone, @Nullable ArmorMaterial.Layer layer, int packedLight, int packedOverlay, boolean forGlint) {
 		if (forGlint)
-			return bufferSource.getBuffer(RenderType.armorEntityGlint());
+			return bufferSource.getBuffer(RenderUtil.getArmorGlintRenderType(stack));
 
 		return bufferSource.getBuffer(RenderType.armorCutoutNoCull(layer.texture(slot == EquipmentSlot.LEGS)));
 	}

@@ -2,13 +2,13 @@ package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.blaze3d.vertex.VertexMultiConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -343,7 +343,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 
 		float partialTick = mc.getTimer().getGameTimeDeltaPartialTick(true);
 		RenderType renderType = getRenderType(this.animatable, getTextureLocation(this.animatable), bufferSource, partialTick);
-		buffer = ItemRenderer.getArmorFoilBuffer(bufferSource, renderType, this.currentStack.hasFoil());
+		buffer = this.currentStack.hasFoil() ? VertexMultiConsumer.create(bufferSource.getBuffer(RenderUtil.getArmorGlintRenderType(this.currentStack)), bufferSource.getBuffer(renderType)) : bufferSource.getBuffer(renderType);
 
 		defaultRender(poseStack, this.animatable, bufferSource, null, buffer,
 				0, partialTick, packedLight);

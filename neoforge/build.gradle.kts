@@ -36,6 +36,13 @@ neoForge {
 
         create("client") {
             client()
+            systemProperty("neoforge.enabledGameTestNamespaces", modId)
+        }
+
+        create("client2") {
+            client()
+            programArgument("--username=Dev-2")
+            systemProperty("neoforge.enabledGameTestNamespaces", modId)
         }
 
         create("server") {
@@ -120,3 +127,6 @@ tasks.named<DefaultTask>("publish").configure {
     finalizedBy("publishToCurseForge")
 }
 
+tasks.named<JavaExec>("runServer") {
+    standardInput = System.`in`
+}
