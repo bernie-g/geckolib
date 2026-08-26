@@ -56,7 +56,7 @@ public class AnimationProcessor {
             final Level level = ClientUtil.getLevel();
             final Player player = ClientUtil.getClientPlayer();
             final Vec3 cameraPos = ClientUtil.getCameraPos();
-            final double renderTime = manager.getFirstRenderTick() - tick;
+            final double renderTime = tick - manager.getFirstRenderTick();
 
             if (level != null && player != null) {
                 for (AnimationController<T> controller : controllers) {
