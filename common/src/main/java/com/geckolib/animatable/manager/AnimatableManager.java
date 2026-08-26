@@ -114,7 +114,7 @@ public class AnimatableManager<T extends GeoAnimatable> {
 
     /// Tell this AnimatableManager instance that it was used to render its Animatable at the given tick
     public void markRenderedAt(double animatableTick) {
-        if (animatableTick > this.firstRenderTick)
+        if (animatableTick < this.firstRenderTick)
             this.firstRenderTick = animatableTick;
     }
 
