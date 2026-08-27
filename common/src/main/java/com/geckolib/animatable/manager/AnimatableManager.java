@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 public class AnimatableManager<T extends GeoAnimatable> {
 	protected final Map<String, AnimationController<T>> animationControllers;
 	protected final Supplier<Map<DataTicket<?>, Object>> animatableInstanceData = Suppliers.memoize(Reference2ObjectOpenHashMap::new);
-    protected double firstRenderTick = 0;
+    protected double firstRenderTick = Double.MAX_VALUE;
 
 	/// Instantiates a new AnimatableManager for the given animatable, calling [GeoAnimatable#registerControllers] to define its controllers
 	public AnimatableManager(GeoAnimatable animatable) {
