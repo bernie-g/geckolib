@@ -199,12 +199,12 @@ public record AnimationTimeline(Stage[] stages) {
             }
         }
 
+        if (stages.isEmpty())
+            return null;
+
         if (transitionTime > 0)
             //noinspection DataFlowIssue
             stages.add(Stage.transition(currentTime, transitionTime, stages.getLast().animation()));
-
-        if (stages.isEmpty())
-            return null;
 
         return new AnimationTimeline(stages.toArray(new Stage[0]));
     }
