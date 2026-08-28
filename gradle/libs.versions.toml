@@ -22,7 +22,7 @@
 
 # Neoforge
     neoforge-loader = { strictly = "[5,)", prefer = "5" }
-    neoforge = { strictly = "[26.2.0.1-beta,)", prefer = "26.2.0.7-beta" }
+    neoforge = { strictly = "[26.2.0.50-beta,)", prefer = "26.2.0.67" }
 
 # Dependencies
     mixin = "0.8.7"
