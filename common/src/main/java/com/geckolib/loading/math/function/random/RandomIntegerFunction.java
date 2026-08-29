@@ -60,7 +60,9 @@ public final class RandomIntegerFunction extends MathFunction {
             result = min + random.nextInt(max + 1 - min);
         }
         else {
-            result = random.nextInt(0, valueA + 1);
+            int max = Math.max(valueA + 1, 0);
+            int min = Math.min(valueA + 1, 0);
+            result = random.nextInt(min, max);
         }
 
         return result;

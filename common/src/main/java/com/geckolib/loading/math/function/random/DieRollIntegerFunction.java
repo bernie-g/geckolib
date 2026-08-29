@@ -43,8 +43,10 @@ public final class DieRollIntegerFunction extends MathFunction {
     @Override
     public double compute(@Nullable ControllerState controllerState) {
         final int rolls = (int)(Math.floor(this.rolls.get(controllerState)));
-        final int min = Mth.floor(this.min.get(controllerState));
-        final int max = Mth.ceil(this.max.get(controllerState));
+        final int minValue = Mth.floor(this.min.get(controllerState));
+        final int maxValue = Mth.ceil(this.max.get(controllerState));
+        final int min = Math.min(minValue, maxValue);
+        final int max = Math.max(minValue, maxValue);
         int sum = 0;
         Random random;
 
