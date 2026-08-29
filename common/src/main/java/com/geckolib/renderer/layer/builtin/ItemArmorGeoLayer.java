@@ -512,7 +512,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 	//<editor-fold defaultstate="collapsed" desc="<Internal Methods>">
 	/// Determine the scale factor for a worn item on the target [GeoBone], based on its size relative to a standard player
 	protected Vec3 getScaleFactorForBone(GeoBone targetBone, ModelPart modelPart) {
-		if (!(targetBone instanceof CuboidGeoBone cuboidBone) || modelPart.cubes.isEmpty())
+		if (!(targetBone instanceof CuboidGeoBone cuboidBone) || modelPart.cubes.isEmpty() || cuboidBone.cubes.length == 0)
 			return new Vec3(1, 1, 1);
 
 		final Cube armorCube = modelPart.cubes.getFirst();
