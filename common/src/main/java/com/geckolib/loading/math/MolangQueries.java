@@ -22,10 +22,7 @@ import com.geckolib.loading.math.value.Variable;
 import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.util.ClientUtil;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.ToDoubleFunction;
 
 /// Helper class for the builtin <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> query string constants for the [MathParser].
@@ -135,14 +132,14 @@ public final class MolangQueries {
 	///
 	/// @see MathParser#registerVariable(Variable)
 	static void registerVariable(Variable variable) {
-		VARIABLES.put(variable.name(), variable);
+		VARIABLES.put(variable.name().toLowerCase(Locale.ROOT), variable);
 	}
 
 	/// @return The registered [Variable] instance for the given name
 	///
 	/// @see MathParser#getVariableFor(String)
 	static Variable getVariableFor(String name) {
-		return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
+		return VARIABLES.computeIfAbsent(applyPrefixAliases(name.toLowerCase(Locale.ROOT), "query.", "q."), key -> new Variable(key, 0));
 	}
 
 	/// Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
@@ -171,7 +168,7 @@ public final class MolangQueries {
 	/// @param valueFunction The function that generates the variable value based on the animatable and render state
 	@SuppressWarnings({"rawtypes", "unchecked"})
     public static <T> void setActorVariable(String name, ToDoubleFunction<Actor<T>> valueFunction) {
-		Variable variable = getVariableFor(name);
+		Variable variable = getVariableFor(name.toLowerCase(Locale.ROOT));
 
 		ACTOR_VARIABLES.put(variable, (ToDoubleFunction)valueFunction);
         variable.set(state -> state.getQueryValue(variable));
@@ -183,7 +180,7 @@ public final class MolangQueries {
 	///
 	/// @param valueFunction The value function to set the variable to
 	public static <T extends GeoAnimatable> void setVariableFunction(String name, ToDoubleFunction<ControllerState> valueFunction) {
-		Variable variable = getVariableFor(name);
+		Variable variable = getVariableFor(name.toLowerCase(Locale.ROOT));
 
 		if (ACTOR_VARIABLES.containsKey(variable))
 			throw new IllegalArgumentException("Cannot replace actor variables");
@@ -197,7 +194,7 @@ public final class MolangQueries {
 	///
 	/// @param value The value to set the variable to
 	public static void setVariableValue(String name, double value) {
-		Variable variable = getVariableFor(name);
+		Variable variable = getVariableFor(name.toLowerCase(Locale.ROOT));
 
 		if (ACTOR_VARIABLES.containsKey(variable))
 			throw new IllegalArgumentException("Cannot replace actor variables");
