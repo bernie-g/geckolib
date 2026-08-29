@@ -1,16 +1,15 @@
 package com.geckolib.loading.math.function.generic;
 
-import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.function.MathFunction;
+import org.jspecify.annotations.Nullable;
 
 /// [MathFunction] value supplier
 ///
 /// **Contract:**
 ///
-/// Returns the arc-sine of the input value angle, with the input angle converted to radians
+/// Returns the arc-sine of the input value angle (in radians)
 public final class ASinFunction extends MathFunction {
     private final MathValue value;
 
@@ -27,7 +26,18 @@ public final class ASinFunction extends MathFunction {
 
     @Override
     public double compute(@Nullable ControllerState controllerState) {
-        return Math.asin(this.value.get(controllerState) * Mth.DEG_TO_RAD);
+        final double value = this.value.get(controllerState);
+
+        if (value >= 1)
+            return Math.PI / 2d;
+
+        if (value == 0)
+            return 0;
+
+        if (value <= -1)
+            return -Math.PI / 2d;
+
+        return Math.asin(value);
     }
 
     @Override

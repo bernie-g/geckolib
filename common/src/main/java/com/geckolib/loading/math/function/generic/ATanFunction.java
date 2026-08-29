@@ -1,10 +1,9 @@
 package com.geckolib.loading.math.function.generic;
 
-import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.function.MathFunction;
+import org.jspecify.annotations.Nullable;
 
 /// [MathFunction] value supplier
 ///
@@ -27,7 +26,12 @@ public final class ATanFunction extends MathFunction {
 
     @Override
     public double compute(@Nullable ControllerState controllerState) {
-        return Math.atan(this.value.get(controllerState) * Mth.DEG_TO_RAD);
+        final double value = this.value.get(controllerState);
+
+        if (value == 0)
+            return 0;
+
+        return Math.atan(value);
     }
 
     @Override

@@ -1,16 +1,15 @@
 package com.geckolib.loading.math.function.generic;
 
-import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.function.MathFunction;
+import org.jspecify.annotations.Nullable;
 
 /// [MathFunction] value supplier
 ///
 /// **Contract:**
 ///
-/// Returns the arc-cosine of the input value angle, with the input angle converted to radians
+/// Returns the arc-cosine of the input value angle (in radians)
 public final class ACosFunction extends MathFunction {
     private final MathValue value;
 
@@ -27,7 +26,15 @@ public final class ACosFunction extends MathFunction {
 
     @Override
     public double compute(@Nullable ControllerState controllerState) {
-        return Math.acos((float)this.value.get(controllerState) * Mth.DEG_TO_RAD);
+        final double value = this.value.get(controllerState);
+
+        if (value >= 1)
+            return 0;
+
+        if (value <= -1)
+            return Math.PI;
+
+        return Math.acos(value);
     }
 
     @Override
