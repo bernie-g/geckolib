@@ -408,8 +408,12 @@ public class MathParser {
     /// @return A compiled MathValue value, or null if not applicable
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
     protected Optional<MathValue> compileSingleValue(Either<String, List<MathValue>> symbol) throws CompoundException {
-        if (symbol.right().isPresent())
+        if (symbol.right().isPresent()) {
+            if (symbol.right().get().isEmpty())
+                throw new CompoundException("Found empty expression group");
+
             return deduplicateOptional(new Group(symbol.right().get().getFirst()));
+        }
 
         return symbol.left().map(string -> {
             if (string.startsWith("!"))
