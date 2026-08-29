@@ -154,7 +154,13 @@ public class AnimationController<T extends GeoAnimatable> {
     ///
     /// @return Whether the previous animation finished or not
     public boolean hasAnimationFinished() {
-        return this.animationPoint != null && this.animationPoint.hasFinished() && this.timeline != null && this.timelineTime >= this.timeline.lastAnimationEndTime();
+        if (this.animationPoint == null || this.timeline == null)
+            return false;
+
+        if (!this.animationPoint.hasFinished())
+            return false;
+
+        return this.timelineTime == FINISHED_ANIMATING || this.timelineTime >= this.timeline.lastAnimationEndTime();
     }
 
     /// Similar to [#hasAnimationFinished()], but also includes the reset transition time
