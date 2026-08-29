@@ -76,6 +76,7 @@ public record BakedModelCache(Map<Identifier, BakedGeoModel> cache) {
 
     /// Create the "missingno" cube model for rendering when a model is not found
     private static Supplier<BakedGeoModel> createMissingModel() {
+        //noinspection NullableProblems
         return Suppliers.memoize(() -> {
             final GeoVertex[] vertices = new GeoVertex[] {
                     new GeoVertex(-0.5f, 1f, 0.5f, 1f, 0f),
