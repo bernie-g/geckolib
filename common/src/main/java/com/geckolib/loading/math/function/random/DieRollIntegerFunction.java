@@ -37,7 +37,7 @@ public final class DieRollIntegerFunction extends MathFunction {
 
     @Override
     public String getName() {
-        return "math.die_roll";
+        return "math.die_roll_integer";
     }
 
     @Override
