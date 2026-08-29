@@ -1,11 +1,11 @@
 package com.geckolib.animation;
 
+import com.geckolib.animation.object.LoopType;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.ApiStatus;
-import com.geckolib.animation.object.LoopType;
 
 import java.util.List;
 import java.util.Objects;
@@ -134,7 +134,7 @@ public final class RawAnimation {
 		if (this.animationList.size() != otherAnim.animationList.size())
 			return false;
 
-		return hashCode() == obj.hashCode();
+		return this.animationList.equals(otherAnim.animationList);
 	}
 
 	@Override
