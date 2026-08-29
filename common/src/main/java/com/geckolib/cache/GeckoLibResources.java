@@ -16,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.function.TriFunction;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
@@ -65,10 +64,9 @@ public final class GeckoLibResources implements PreparableReloadListener {
 	@ApiStatus.Internal
 	public static void addLoader(GeckoLibLoader.Predicate predicate, GeckoLibLoader<?> loader) {
 		final Pair<GeckoLibLoader.Predicate, GeckoLibLoader<?>>[] copy = new Pair[LOADERS.length + 1];
-		copy[LOADERS.length] = Pair.of(predicate, loader);
 
-		System.arraycopy(LOADERS, 0, copy, 0, LOADERS.length);
-		ArrayUtils.reverse(copy);
+		copy[0] = Pair.of(predicate, loader);
+		System.arraycopy(LOADERS, 0, copy, 1, LOADERS.length);
 
 		LOADERS = copy;
 
