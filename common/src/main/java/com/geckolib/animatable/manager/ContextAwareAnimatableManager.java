@@ -29,6 +29,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	/// Build the context-manager map for this manager
 	///
 	/// The resulting map <u>MUST</u> contain all possible contexts.
+	// TODO Move to lazily-instantiated context options
 	protected abstract Map<C, AnimatableManager<T>> buildContextOptions(GeoAnimatable animatable);
 
 	/// Get the current context for the manager; to determine which submanager to retrieve

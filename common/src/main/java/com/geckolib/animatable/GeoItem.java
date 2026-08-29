@@ -84,8 +84,8 @@ public interface GeoItem extends SingletonGeoAnimatable {
 		@SuppressWarnings("unchecked")
         @Override
 		public AnimatableManager<GeoItem> getManagerForId(long uniqueId) {
-			if (!this.managers.containsKey(uniqueId))
-				this.managers.put(uniqueId, new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
+			return (AnimatableManager<GeoItem>)this.managers.computeIfAbsent(uniqueId, _ -> {
+				return new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
 					@Override
 					protected Map<ItemDisplayContext, AnimatableManager<GeoItem>> buildContextOptions(GeoAnimatable animatable) {
 						Map<ItemDisplayContext, AnimatableManager<GeoItem>> map = new EnumMap<>(ItemDisplayContext.class);
@@ -103,9 +103,8 @@ public interface GeoItem extends SingletonGeoAnimatable {
 
 						return context == null ? ItemDisplayContext.NONE : context;
 					}
-				});
-
-			return (AnimatableManager<GeoItem>)this.managers.get(uniqueId);
+				};
+			});
 		}
 	}
 }
