@@ -78,33 +78,29 @@ public interface GeoItem extends SingletonGeoAnimatable {
 			super(animatable);
 		}
 
-		/// Gets an [AnimatableManager] instance from this cache, cached under the id provided, or a new one if one doesn't already exist
-		///
-		/// This subclass assumes that all animatable instances will be sharing this cache instance, and so differentiates data by ids
-		@SuppressWarnings("unchecked")
-        @Override
-		public AnimatableManager<GeoItem> getManagerForId(long uniqueId) {
-			return (AnimatableManager<GeoItem>)this.managers.computeIfAbsent(uniqueId, _ -> {
-				return new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
-					@Override
-					protected Map<ItemDisplayContext, AnimatableManager<GeoItem>> buildContextOptions(GeoAnimatable animatable) {
-						Map<ItemDisplayContext, AnimatableManager<GeoItem>> map = new EnumMap<>(ItemDisplayContext.class);
+		/// Create a new [AnimatableManager] instance for the given identifier
+		@Override
+		protected <T extends GeoAnimatable> AnimatableManager<T> createManagerForId(long uniqueId) {
+            //noinspection unchecked
+            return (AnimatableManager<T>)new ContextAwareAnimatableManager<GeoItem, ItemDisplayContext>(this.animatable) {
+				@Override
+				protected Map<ItemDisplayContext, AnimatableManager<GeoItem>> buildContextOptions(GeoAnimatable animatable) {
+					Map<ItemDisplayContext, AnimatableManager<GeoItem>> map = new EnumMap<>(ItemDisplayContext.class);
 
-						for (ItemDisplayContext context : ItemDisplayContext.values()) {
-							map.put(context, new AnimatableManager<>(animatable));
-						}
-
-						return map;
+					for (ItemDisplayContext context : ItemDisplayContext.values()) {
+						map.put(context, new AnimatableManager<>(animatable));
 					}
 
-					@Override
-					public ItemDisplayContext getCurrentContext() {
-						ItemDisplayContext context = getAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE);
+					return map;
+				}
 
-						return context == null ? ItemDisplayContext.NONE : context;
-					}
-				};
-			});
+				@Override
+				public ItemDisplayContext getCurrentContext() {
+					ItemDisplayContext context = getAnimatableData(DataTickets.ITEM_RENDER_PERSPECTIVE);
+
+					return context == null ? ItemDisplayContext.NONE : context;
+				}
+			};
 		}
 	}
 }
