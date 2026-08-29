@@ -1,6 +1,19 @@
 package com.geckolib.renderer;
 
+import com.geckolib.GeckoLibClientServices;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.constant.DataTickets;
 import com.geckolib.constant.dataticket.DataTicket;
+import com.geckolib.model.DefaultedGeoModel;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderer;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
+import com.geckolib.renderer.layer.GeoRenderLayersContainer;
 import com.google.common.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -24,20 +37,6 @@ import net.minecraft.world.item.equipment.Equippable;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibClientServices;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.cache.model.BakedGeoModel;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.model.DefaultedGeoModel;
-import com.geckolib.model.GeoModel;
-import com.geckolib.renderer.base.BoneSnapshots;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.renderer.base.GeoRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
-import com.geckolib.renderer.layer.GeoRenderLayersContainer;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -240,7 +239,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem, R extends HumanoidRender
         if (!segments.isEmpty()) {
             baseModel.setupAnim(renderState);
 
-            for (ArmorSegment segment : getSegmentsForSlot(renderState, slot)) {
+            for (ArmorSegment segment : segments) {
                 snapshots.get(getBoneNameForSegment(renderState, segment)).ifPresent(snapshot -> {
                     final ModelPart modelPart = segment.modelPartGetter.apply(baseModel);
                     final Vector3f bonePos = segment.modelPartMatcher.apply(new Vector3f(modelPart.x, modelPart.y, modelPart.z));
