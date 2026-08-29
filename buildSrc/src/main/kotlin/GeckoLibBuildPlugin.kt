@@ -1,4 +1,4 @@
-import gradle.kotlin.dsl.accessors._13c7bbbc23d2ab41b247cc58dd914463.versionCatalogs
+import gradle.kotlin.dsl.accessors._48b977daac796d01bf1aa29aa51634bf.versionCatalogs
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionConstraint
