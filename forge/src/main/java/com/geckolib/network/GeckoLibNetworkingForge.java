@@ -24,7 +24,7 @@ import java.util.Objects;
  * Forge service implementation for GeckoLib's networking functionalities
  */
 public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
-    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, "main")).networkProtocolVersion(1).optional().payloadChannel().play();
+    public static PayloadProtocol<RegistryFriendlyByteBuf, CustomPacketPayload> NETWORK_CHANNEL_BUILDER = ChannelBuilder.named(Identifier.fromNamespaceAndPath(GeckoLibConstants.MODID, "main")).networkProtocolVersion(1).optionalServer().payloadChannel().play();
     public static Channel<CustomPacketPayload> CHANNEL;
 
     public static void init() {
