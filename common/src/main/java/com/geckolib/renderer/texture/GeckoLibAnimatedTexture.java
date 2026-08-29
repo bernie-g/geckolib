@@ -58,8 +58,14 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
         Resource resource = resourceManager.getResourceOrThrow(resourceId());
 
         try (InputStream stream = resource.open()) {
+            if (this.baseImage != null)
+                this.baseImage.close();
+
             this.baseImage = NativeImage.read(stream);
         }
+
+        if (this.animatedTexture != null)
+            this.animatedTexture.close();
 
         this.animatedTexture = resource.metadata().getSection(AnimationMetadataSection.TYPE).map(this::buildAnimatedTexture).orElse(null);
 
