@@ -2,17 +2,17 @@ package com.geckolib.constant.dataticket;
 
 import com.google.common.reflect.TypeToken;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 /// Ticket object to define a typed data object
 ///
 /// @param <D> Data type for this ticket
 public class DataTicket<D> {
-	static final Map<Pair<Type, String>, DataTicket<?>> IDENTITY_CACHE = new Object2ObjectOpenHashMap<>();
+	static final Map<Pair<Type, String>, DataTicket<?>> IDENTITY_CACHE = new ConcurrentHashMap<>();
 
 	private final String id;
 	private final Type dataType;
@@ -36,7 +36,7 @@ public class DataTicket<D> {
 	/// This DataTicket should then be stored statically somewhere and re-used.
 	@SuppressWarnings("unchecked")
     public static <D> DataTicket<D> create(String id, TypeToken<D> token) {
-		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(token.getType(), id), pair -> new DataTicket<>(id, token.getType()));
+		return (DataTicket<D>)IDENTITY_CACHE.computeIfAbsent(Pair.of(token.getType(), id), _ -> new DataTicket<>(id, token.getType()));
 	}
 
 	public String id() {

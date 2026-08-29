@@ -25,6 +25,6 @@ public class SingletonAnimatableInstanceCache extends AnimatableInstanceCache {
 	@SuppressWarnings("unchecked")
     @Override
 	public <T extends GeoAnimatable> AnimatableManager<T> getManagerForId(long uniqueId) {
-		return (AnimatableManager<T>)this.managers.computeIfAbsent(uniqueId, key -> new AnimatableManager<>(this.animatable));
+		return (AnimatableManager<T>)this.managers.computeIfAbsent(uniqueId, _ -> new AnimatableManager<>(this.animatable));
 	}
 }

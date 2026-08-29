@@ -1,7 +1,14 @@
 package com.geckolib.loading.math;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.animation.AnimationController;
+import com.geckolib.animation.state.ControllerState;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.loading.math.value.Variable;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.util.ClientUtil;
 import it.unimi.dsi.fastutil.objects.Reference2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -14,15 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.phys.Vec3;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.animation.AnimationController;
-import com.geckolib.animation.state.ControllerState;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.loading.math.value.Variable;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.util.ClientUtil;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.ToDoubleFunction;
 
 /// Helper class for the builtin <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> query string constants for the [MathParser].
@@ -114,8 +115,8 @@ public final class MolangQueries {
 	public static final String VERTICAL_SPEED = "query.vertical_speed";
 	public static final String YAW_SPEED = "query.yaw_speed";
 
-	private static final Map<String, Variable> VARIABLES = new Object2ObjectOpenHashMap<>();
-	private static final Map<Variable, ToDoubleFunction<Actor<? extends GeoAnimatable>>> ACTOR_VARIABLES = new Reference2ObjectOpenHashMap<>();
+	private static final Map<String, Variable> VARIABLES = new ConcurrentHashMap<>();
+	private static final Map<Variable, ToDoubleFunction<Actor<? extends GeoAnimatable>>> ACTOR_VARIABLES = Reference2ObjectMaps.synchronize(new Reference2ObjectOpenHashMap<>());
 
 	static {
 		setDefaultQueryValues();
