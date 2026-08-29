@@ -7,11 +7,13 @@ import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.equipment.ElytraModel;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import com.geckolib.renderer.base.GeoRenderState;
 
 import java.util.function.Supplier;
 
@@ -29,4 +31,9 @@ public interface GeckoLibClient {
     ///
     /// This is split off to allow for handling of loader-specific handling for dyed items
     int getDyedItemColor(ItemStack itemStack, int defaultColor);
+
+    /// Handle a newly extracted [EntityRenderState] for data extensions
+    ///
+    /// This is mostly for third-party compatibility reasons
+    default <E extends Entity, S extends EntityRenderState> void handleEntityRenderStateExtraction(EntityRenderer<E, S> renderer, E entity, S renderState) {}
 }

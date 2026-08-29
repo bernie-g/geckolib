@@ -1,14 +1,17 @@
 package com.geckolib.platform;
 
+import com.geckolib.service.GeckoLibClient;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.Model;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.resources.model.EquipmentClientInfo;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.service.GeckoLibClient;
+import net.neoforged.neoforge.client.renderstate.RenderStateExtensions;
 
 /// NeoForge service implementation for clientside functionalities
 public class GeckoLibClientNeoForge implements GeckoLibClient {
@@ -28,5 +31,13 @@ public class GeckoLibClientNeoForge implements GeckoLibClient {
         final int colour = IClientItemExtensions.of(itemStack).getDefaultDyeColor(itemStack);
 
         return colour == 0 ? defaultColor : colour;
+    }
+
+    /// Handle a newly extracted [EntityRenderState] for data extensions
+    ///
+    /// This is mostly for third-party compatibility reasons
+    @Override
+    public <E extends Entity, S extends EntityRenderState> void handleEntityRenderStateExtraction(EntityRenderer<E, S> renderer, E entity, S renderState) {
+        RenderStateExtensions.onUpdateEntityRenderState(renderer, entity, renderState);
     }
 }
