@@ -1,6 +1,17 @@
 package com.geckolib.renderer;
 
+import com.geckolib.GeckoLibClientServices;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.GeoRendererInternals;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.geckolib.renderer.layer.GeoRenderLayer;
+import com.geckolib.renderer.layer.GeoRenderLayersContainer;
+import com.geckolib.util.ClientUtil;
+import com.geckolib.util.MiscUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
@@ -33,17 +44,6 @@ import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.GeckoLibClientServices;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.constant.DataTickets;
-import com.geckolib.model.GeoModel;
-import com.geckolib.renderer.base.GeoRenderState;
-import com.geckolib.renderer.base.GeoRenderer;
-import com.geckolib.renderer.base.RenderPassInfo;
-import com.geckolib.renderer.layer.GeoRenderLayer;
-import com.geckolib.renderer.layer.GeoRenderLayersContainer;
-import com.geckolib.util.ClientUtil;
-import com.geckolib.util.MiscUtil;
 
 import java.util.List;
 import java.util.function.Function;
@@ -408,6 +408,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
 
         extractRenderState(entity, renderState, partialTick);
         finalizeRenderState(entity, renderState);
+        GeckoLibClientServices.ITEM_RENDERING.handleEntityRenderStateExtraction(this, entity, renderState);
 
         return renderState;
     }
