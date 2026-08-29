@@ -1,8 +1,5 @@
 package com.geckolib.animation.object;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.state.AnimationPoint;
@@ -20,16 +17,16 @@ import java.util.concurrent.ConcurrentHashMap;
 public interface LoopType {
     Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
-    LoopType DEFAULT = (animatable, animationPoint, timelineStage, renderState, controller) ->
-            animationPoint.animation().loopType().shouldKeepPlaying(animatable, animationPoint, timelineStage, renderState, controller);
-    LoopType PLAY_ONCE = register("play_once", register("false", (animatable, animationPoint, timelineStage, renderState, controller) ->
+    LoopType DEFAULT = register("default", (animatable, animationPoint, timelineStage, renderState, controller) ->
+            animationPoint.animation().loopType().shouldKeepPlaying(animatable, animationPoint, timelineStage, renderState, controller));
+    LoopType PLAY_ONCE = register("play_once", register("false", (_, _, _, _, _) ->
             false));
-    LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (animatable, animationPoint, timelineStage, renderState, controller) -> {
+    LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (_, _, timelineStage, _, controller) -> {
         controller.setTimelineTime(timelineStage.endTime());
 
         return true;
     });
-    LoopType LOOP = register("loop", register("true", (animatable, animationPoint, timelineStage, renderState, controller) -> {
+    LoopType LOOP = register("loop", register("true", (_, _, timelineStage, _, controller) -> {
         controller.setTimelineTime(timelineStage.startTime() + (controller.getCurrentTimelineTime() - timelineStage.endTime()));
 
         return true;
@@ -48,28 +45,6 @@ public interface LoopType {
     /// @return Whether the animation should play again or stop
     boolean shouldKeepPlaying(GeoAnimatable animatable, AnimationPoint animationPoint, AnimationTimeline.Stage timelineStage,
                               GeoRenderState renderState, AnimationController<? extends GeoAnimatable> controller);
-
-    /// Retrieve a LoopType instance based on a [JsonElement]
-    ///
-    /// Returns either [LoopType#PLAY_ONCE] or [LoopType#LOOP] based on a boolean or string element type,
-    /// or any other registered loop type with a matching type string
-    ///
-    /// @param json The `loop` [JsonElement] to attempt to parse
-    /// @return A usable LoopType instance
-    static LoopType fromJson(@Nullable JsonElement json) {
-        if (json == null || !json.isJsonPrimitive())
-            return PLAY_ONCE;
-
-        JsonPrimitive primitive = json.getAsJsonPrimitive();
-
-        if (primitive.isBoolean())
-            return primitive.getAsBoolean() ? LOOP : PLAY_ONCE;
-
-        if (primitive.isString())
-            return fromString(primitive.getAsString());
-
-        return PLAY_ONCE;
-    }
 
     /// Get the registered name for this LoopType
     ///

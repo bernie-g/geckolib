@@ -67,7 +67,7 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
     /// Bake this `ActorAnimation` instance into the final [Animation] instance that GeckoLib uses for animating
     public Animation bake(String name, MathParser mathParser) {
         final double length = this.animLength != null ? this.animLength : calculateUnknownAnimationLength();
-        final LoopType loopType = this.loop == null ? LoopType.PLAY_ONCE : this.loop.map(val -> val ? LoopType.LOOP : LoopType.PLAY_ONCE, LoopType::fromString);
+        final LoopType loopType = determineLoopType();
         final BoneAnimation[] boneAnimations = bakeBoneAnimations(mathParser);
         final Animation.KeyframeMarkers keyframeMarkers = bakeKeyframeMarkers();
 
@@ -116,6 +116,21 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
         Arrays.sort(array, Comparator.comparingDouble(KeyFrameData::getTime));
 
         return array;
+    }
+
+    /// Determine the [LoopType] to use for this `ActorAnimation`
+    ///
+    /// This is split into its own method because of the potential edge-cases in deserialization
+    private LoopType determineLoopType() {
+        if (this.loop == null)
+            return LoopType.PLAY_ONCE;
+
+        return this.loop.map(loop -> loop ? LoopType.LOOP : LoopType.PLAY_ONCE,
+                             name -> {
+            final LoopType loopType = LoopType.fromString(name);
+
+            return loopType == LoopType.DEFAULT ? LoopType.PLAY_ONCE : loopType;
+        });
     }
 
     /// Calculate the expected length of an animation (in seconds) based on the animation keyframes
