@@ -48,13 +48,17 @@ public interface GeoRenderState {
                 //noinspection unchecked
                 return (D)data;
 
-            if (dataTicket instanceof OverridingDataTicket overridingTicket && overridingTicket.canExtractFrom(this))
-                return (D)overridingTicket.extractFrom(overridingTicket.getOverriddenClass().cast(this));
+            if (dataTicket instanceof OverridingDataTicket overridingTicket && overridingTicket.canExtractFrom(this)) {
+                data = overridingTicket.extractFrom(overridingTicket.getOverriddenClass().cast(this));
+
+                return (D)data;
+            }
 
             return null;
         }
         catch (ClassCastException ex) {
-            GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}", dataTicket, data.getClass().getName(), ex);
+            GeckoLibConstants.LOGGER.error("Attempted to retrieve incorrectly typed data from GeoRenderState. Possibly a mod or DataTicket conflict? Expected: {}, found data type {}",
+                                           dataTicket.dataType().getTypeName(), data.getClass().getName(), ex);
 
             throw ex;
         }
