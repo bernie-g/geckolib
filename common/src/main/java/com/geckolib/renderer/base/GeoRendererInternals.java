@@ -1,5 +1,6 @@
 package com.geckolib.renderer.base;
 
+import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animation.AnimationController;
 import com.geckolib.animation.AnimationProcessor;
@@ -146,8 +147,13 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
     default void applyAnimationControllers(RenderPassInfo<R> renderPassInfo, BoneSnapshots boneSnapshots) {
         ControllerState[] controllerStates = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES, new ControllerState[0]);
 
-        for (ControllerState controllerState : controllerStates) {
-            AnimationProcessor.createBoneSnapshots(controllerState, boneSnapshots);
+        try {
+            for (ControllerState controllerState : controllerStates) {
+                AnimationProcessor.createBoneSnapshots(controllerState, boneSnapshots);
+            }
+        }
+        catch (Exception ex) {
+            GeckoLibConstants.LOGGER.error("Encountered an error while attempting to animate something. This is likely a GeckoLib issue!", ex);
         }
     }
 
