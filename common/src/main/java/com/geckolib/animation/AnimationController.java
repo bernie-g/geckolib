@@ -569,22 +569,20 @@ public class AnimationController<T extends GeoAnimatable> {
             return;
 
         for (AnimationTimeline.Stage stage : this.timeline.stages()) {
-            if (stage.animation() != null) {
-                final Animation animation = stage.animation();
-                final Animation.KeyframeMarkers markers = animation.keyframeMarkers();
+            final Animation animation = stage.animation();
+            final Animation.KeyframeMarkers markers = animation.keyframeMarkers();
 
-                if (markers.customInstructions().length > 0 && this.customKeyframeHandler == null)
-                    GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with custom instruction keyframe markers, but no custom instruction handler has been set!",
-                                                  this.name, animatable.getClass().getName(), animation.name());
+            if (markers.customInstructions().length > 0 && this.customKeyframeHandler == null)
+                GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with custom instruction keyframe markers, but no custom instruction handler has been set!",
+                                              this.name, animatable.getClass().getName(), animation.name());
 
-                if (markers.sounds().length > 0 && this.soundKeyframeHandler == null)
-                    GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with sound instruction keyframe markers, but no sound instruction handler has been set!",
-                                                  this.name, animatable.getClass().getName(), animation.name());
+            if (markers.sounds().length > 0 && this.soundKeyframeHandler == null)
+                GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with sound instruction keyframe markers, but no sound instruction handler has been set!",
+                                              this.name, animatable.getClass().getName(), animation.name());
 
-                if (markers.particles().length > 0 && this.particleKeyframeHandler == null)
-                    GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with particle instruction keyframe markers, but no particle instruction handler has been set!",
-                                                  this.name, animatable.getClass().getName(), animation.name());
-            }
+            if (markers.particles().length > 0 && this.particleKeyframeHandler == null)
+                GeckoLibConstants.LOGGER.warn("AnimationController {} for {} loaded animation {} with particle instruction keyframe markers, but no particle instruction handler has been set!",
+                                              this.name, animatable.getClass().getName(), animation.name());
         }
     }
     

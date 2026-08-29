@@ -88,14 +88,13 @@ public record AnimationTimeline(Stage[] stages) {
     /// Returns `null` if the timeline is empty
     public AnimationPoint createAnimationPoint(double timelineTime, @Nullable AnimationPoint existingPoint, @Nullable EasingType easingOverride) {
         final int stageIndex = getStageIndex(timelineTime);
-        final double transitionTimeOffset = getTransitionLength() / 20d;
         Stage stage = this.stages[stageIndex];
         double time = timelineTime - stage.startTime;
 
         if (stage.isTransition) {
             boolean isReset = stageIndex >= this.stages.length - 1;
             stage = this.stages[isReset ? stageIndex - 1 : stageIndex + 1];
-            time = isReset ? stage.endTime : stage.startTime - transitionTimeOffset;
+            time = isReset ? stage.animation.length() : 0;
         }
 
         double existingTime = existingPoint == null ? 0 : stage.startTime + existingPoint.animTime();
@@ -127,7 +126,6 @@ public record AnimationTimeline(Stage[] stages) {
 
             if (stage.endTime > minTime && !stage.isTransition) {
                 double animFromTime = Math.max(0, minTime - stage.startTime);
-                @SuppressWarnings("DataFlowIssue")
                 double animToTime = Math.min(stage.animation.length(), maxTime - stage.startTime);
 
                 if (soundHandler != null)
@@ -203,7 +201,6 @@ public record AnimationTimeline(Stage[] stages) {
             return null;
 
         if (transitionTime > 0)
-            //noinspection DataFlowIssue
             stages.add(Stage.transition(currentTime, transitionTime, stages.getLast().animation()));
 
         return new AnimationTimeline(stages.toArray(new Stage[0]));
@@ -216,7 +213,7 @@ public record AnimationTimeline(Stage[] stages) {
     /// @param isTransition Whether this is a transition stage
     /// @param animation The animation to be extracting keyframes for animation for this stage. For transition stages, is the animation transitioning to, or from if at the end of the timeline
     /// @param loopType The loop type for this stage as defined by the [RawAnimation] used to construct this timeline
-    public record Stage(double startTime, double endTime, boolean isTransition, @Nullable Animation animation, @Nullable LoopType loopType) {
+    public record Stage(double startTime, double endTime, boolean isTransition, Animation animation, @Nullable LoopType loopType) {
         /// Create a new transition stage
         private static Stage transition(double startTime, double transitionTime, Animation animation) {
             return new Stage(startTime, startTime + transitionTime, true, animation, null);
