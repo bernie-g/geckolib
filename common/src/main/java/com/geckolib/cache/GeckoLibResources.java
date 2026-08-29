@@ -167,7 +167,7 @@ public final class GeckoLibResources implements PreparableReloadListener {
 			}
 		}
 
-		return LOADERS[0].second();
+		return LOADERS[LOADERS.length - 1].second();
 	}
 
 	/// Strip the asset prefix and suffix from the given filepath, returning the stripped location
