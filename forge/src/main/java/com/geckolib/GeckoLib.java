@@ -13,6 +13,7 @@ public final class GeckoLib {
 
     public GeckoLib(FMLJavaModLoadingContext context) {
         DATA_COMPONENTS_REGISTER.register(context.getModBusGroup());
+        GeckoLibConstants.init();
         GeckoLibNetworkingForge.init();
     }
 }
