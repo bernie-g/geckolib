@@ -1,12 +1,5 @@
 package com.geckolib.animatable;
 
-import com.geckolib.util.GeckoLibUtil;
-import net.minecraft.core.component.PatchedDataComponentMap;
-import net.minecraft.nbt.Tag;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.instance.SingletonAnimatableInstanceCache;
@@ -14,10 +7,16 @@ import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.animatable.manager.ContextAwareAnimatableManager;
 import com.geckolib.cache.AnimatableIdCache;
 import com.geckolib.constant.DataTickets;
+import com.geckolib.util.GeckoLibUtil;
+import net.minecraft.core.component.PatchedDataComponentMap;
+import net.minecraft.nbt.Tag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Optional;
 
 /// The [GeoAnimatable][GeoAnimatable] interface specific to [Items][net.minecraft.world.item.Item]
 ///
@@ -34,10 +33,11 @@ public interface GeoItem extends SingletonGeoAnimatable {
 	}
 
 	/// Gets the unique identifying number from this ItemStack's [NBT][Tag],
-	/// or [Long#MAX_VALUE] if one hasn't been assigned
+	/// or an [ItemStack] instance identifier if one hasn't been assigned
 	static long getId(ItemStack stack) {
-		return Optional.ofNullable(stack.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
-				.orElse((long)stack.hashCode());
+		Long id = stack.get(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
+
+		return id == null ? stack.hashCode() : id;
 	}
 
 	/// Gets the unique identifying number from this ItemStack's [NBT][Tag]
