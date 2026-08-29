@@ -22,7 +22,7 @@ public class GeckoLibNetworkingNeoForge implements GeckoLibNetworking {
 
     public static void init(IEventBus modBus) {
         modBus.addListener(RegisterPayloadHandlersEvent.class, event -> {
-            registrar = event.registrar(GeckoLibConstants.MODID);
+            registrar = event.registrar(GeckoLibConstants.MODID).optional();
             GeckoLibNetworking.init();
             registrar = null;
         });
