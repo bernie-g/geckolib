@@ -105,7 +105,7 @@ public record ActorBoneAnimationEntry(Either<ActorBoneAnimationKeyframe, Double2
 
                 if (needsSort) {
                     Double2ObjectArrayMap<ActorBoneAnimationKeyframe> sortedKeyframes = new Double2ObjectArrayMap<>(keyframes.size());
-                    double[] timestamps = sortedKeyframes.keySet().toDoubleArray();
+                    double[] timestamps = keyframes.keySet().toDoubleArray();
 
                     Arrays.sort(timestamps);
 
