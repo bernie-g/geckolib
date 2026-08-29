@@ -1,13 +1,11 @@
 package com.geckolib.platform;
 
+import com.geckolib.GeckoLib;
+import com.geckolib.service.GeckoLibPlatform;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.world.entity.Entity;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
-import com.geckolib.GeckoLib;
-import com.geckolib.service.GeckoLibPlatform;
 
-import java.nio.file.Path;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
@@ -38,7 +36,7 @@ public class GeckoLibForge implements GeckoLibPlatform {
      */
     @Override
     public boolean isInSwimmableFluid(Entity entity) {
-        return GeckoLibPlatform.super.isInSwimmableFluid(entity) || entity.isInFluidType((fluidType, height) -> entity.canSwimInFluidType(fluidType));
+        return GeckoLibPlatform.super.isInSwimmableFluid(entity) || entity.isInFluidType((fluidType, _) -> entity.canSwimInFluidType(fluidType));
     }
 
     /**
