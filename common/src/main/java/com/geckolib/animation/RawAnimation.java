@@ -173,10 +173,12 @@ public final class RawAnimation {
 			if (this == obj)
 				return true;
 
-			if (obj == null || getClass() != obj.getClass())
+			if (!(obj instanceof Stage(String name, LoopType type, int ticks)))
 				return false;
 
-			return hashCode() == obj.hashCode();
+			return name.equals(this.animationName) &&
+                   type == this.loopType &&
+                   ticks == this.waitTicks;
 		}
 
 		@Override
