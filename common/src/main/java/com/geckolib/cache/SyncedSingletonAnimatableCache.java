@@ -33,12 +33,14 @@ public final class SyncedSingletonAnimatableCache {
     /// @param syncedAnimatableId the className
     @ApiStatus.Internal
     public static @Nullable GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
-        GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
+        synchronized (SYNCED_ANIMATABLES) {
+            GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
 
-        if (animatable == null)
-            GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! ({})", syncedAnimatableId);
+            if (animatable == null)
+                GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! ({})", syncedAnimatableId);
 
-        return animatable;
+            return animatable;
+        }
     }
 
     /// Get a synced singleton animatable's id for use with [#SYNCED_ANIMATABLES]
@@ -46,15 +48,17 @@ public final class SyncedSingletonAnimatableCache {
     /// This **<u>MUST</u>** be used when retrieving from [#SYNCED_ANIMATABLES]
     /// as this method eliminates class duplication collisions
     public static String getOrCreateId(SingletonGeoAnimatable animatable) {
-        return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, _ -> {
-            String baseId = animatable.getClass().getName();
-            int i = 0;
+        synchronized (SYNCED_ANIMATABLES) {
+            return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, _ -> {
+                String baseId = animatable.getClass().getName();
+                int i = 0;
 
-            while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
-                i++;
-            }
+                while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
+                    i++;
+                }
 
-            return baseId + i;
-        });
+                return baseId + i;
+            });
+        }
     }
 }
