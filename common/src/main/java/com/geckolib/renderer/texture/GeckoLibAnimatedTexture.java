@@ -177,11 +177,15 @@ public class GeckoLibAnimatedTexture extends SimpleTexture implements TickableTe
 
     @Override
     public void close() {
-        if (this.baseImage != null)
+        if (this.baseImage != null) {
             this.baseImage.close();
+            this.baseImage = null;
+        }
 
-        if (this.animatedTexture != null)
+        if (this.animatedTexture != null) {
             this.animatedTexture.close();
+            this.animatedTexture = null;
+        }
 
         super.close();
     }
