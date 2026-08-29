@@ -521,7 +521,7 @@ public abstract class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable, 
 		final double playerArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
 
 		if (playerArmorSizeX == 0 || playerArmorSizeY == 0 || playerArmorSizeZ == 0)
-			return Vec3.ZERO;
+			return new Vec3(1, 1, 1);
 
 		final double bodyPartSizeX = cuboidBone.cubes[0].size().x();
 		final double bodyPartSizeY = cuboidBone.cubes[0].size().y();
