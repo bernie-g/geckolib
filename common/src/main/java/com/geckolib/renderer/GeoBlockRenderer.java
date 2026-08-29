@@ -43,6 +43,8 @@ import java.util.function.Function;
 /// @param <T> BlockEntity animatable class type
 /// @param <R> RenderState class type
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends BlockEntityRenderState> implements GeoRenderer<T, Void, R>, BlockEntityRenderer<T, R> {
+    @SuppressWarnings("unchecked")
+    private static final EnumProperty<Direction>[] SUPPORTED_DIRECTION_PROPERTIES = new EnumProperty[] {BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.VERTICAL_DIRECTION, BlockStateProperties.FACING_HOPPER };
     public static final DataTicket<Direction> DIRECTION_FACING = DataTicket.create("geoblockrenderer_direction_facing", new TypeToken<>() {});
 	protected final GeoRenderLayersContainer<T, Void, R> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
@@ -62,11 +64,10 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
 	}
 
     /// Attempt to extract a direction from the block so that the model can be oriented correctly
-    @SuppressWarnings("unchecked")
     protected Direction getBlockStateDirection(T blockEntity) {
         BlockState blockState = blockEntity.getBlockState();
 
-        for (EnumProperty<Direction> property : new EnumProperty[] {BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.VERTICAL_DIRECTION , BlockStateProperties.FACING_HOPPER }) {
+        for (EnumProperty<Direction> property : SUPPORTED_DIRECTION_PROPERTIES) {
             if (blockState.hasProperty(property))
                 return blockState.getValue(property);
         }
