@@ -88,8 +88,8 @@ public final class GeckoLibResources implements PreparableReloadListener {
 		final PendingResources pending = sharedState.get(STATE_KEY);
 		final MathParser mathParser = MathParser.createWithDeduplication();
 
-		return CompletableFuture.runAsync(() -> CompletableFuture.allOf(loadModels(prepExecutor, resourceManager, pending),
-																		loadAnimations(prepExecutor, resourceManager, pending, mathParser)), prepExecutor)
+		return CompletableFuture.allOf(loadModels(prepExecutor, resourceManager, pending),
+									   loadAnimations(prepExecutor, resourceManager, pending, mathParser))
 				.thenCompose(preparationBarrier::wait)
 				.thenRunAsync(() -> applyResources(pending), applicationExecutor);
 	}
