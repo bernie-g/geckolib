@@ -177,6 +177,9 @@ public class MathParser {
                 final List<MathValue> subValues = new ObjectArrayList<>(subExpressions.length);
 
                 for (String subExpression : subExpressions) {
+                    if (subExpression.isBlank())
+                        continue;
+
                     boolean isReturn = subExpression.startsWith(MOLANG_RETURN);
 
                     if (isReturn)
@@ -416,6 +419,9 @@ public class MathParser {
         if (symbol.right().isPresent()) {
             if (symbol.right().get().isEmpty())
                 throw new CompoundException("Found empty expression group");
+
+            if (symbol.right().get().size() > 1)
+                throw new CompoundException("Found expression group with more than one variable? '" + symbol.right().get() + "'");
 
             return deduplicateOptional(new Group(symbol.right().get().getFirst()));
         }
