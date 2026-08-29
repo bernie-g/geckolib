@@ -11,18 +11,18 @@
 # Fabric
     fabric = "0.19.3"
     fabric-range = ">=0.19"
-    fabric-api = "0.153.0+26.2"
+    fabric-api = "0.158.0+26.2"
     fabric-api-range = ">=0.152.1+26.2"
 
 # Forge
     forge-fml = { strictly = "[65,)", prefer = "65" }
-    forge = { strictly = "[65.0.0,)", prefer = "65.0.1" }
-    forge-mc = "26.2-65.0.1"
+    forge = { strictly = "[65.0.0,)", prefer = "65.1.3" }
+    forge-mc = "26.2-65.1.3"
     forge-eventbusvalidator = "7.0.4"
 
 # Neoforge
     neoforge-loader = { strictly = "[5,)", prefer = "5" }
-    neoforge = { strictly = "[26.2.0.50-beta,)", prefer = "26.2.0.67" }
+    neoforge = { strictly = "[26.2.0.57,)", prefer = "26.2.0.71" }
 
 # Dependencies
     mixin = "0.8.7"
@@ -30,10 +30,10 @@
     examplemod = "1.0.0"
 
 # Plugins
-    plugin-moddevgradle = "2.0.141"
+    plugin-moddevgradle = "2.0.144"
     plugin-minotaur = "2.9.0"
-    plugin-curseforge-gradle = "1.3.32"
-    plugin-forge-gradle = "[7.0.28,)"
+    plugin-curseforge-gradle = "1.3.33"
+    plugin-forge-gradle = "[7.0.36,)"
     plugin-loom = "1.17-SNAPSHOT"
 
 [libraries]
