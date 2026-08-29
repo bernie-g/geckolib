@@ -44,7 +44,8 @@ import java.util.regex.Pattern;
 public class MathParser {
     private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:;.,(){}]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
-    private static final Pattern NUMERIC = Pattern.compile("^-?(\\d+(\\.\\d+)?|\\.\\d+)$");
+    private static final Pattern NUMERIC_FORMAT = Pattern.compile("^-?(\\d+(\\.\\d+)?|\\.\\d+)$");
+    private static final Pattern VARIABLE_FORMAT = Pattern.compile("^[a-z_]+\\.[\\w+_]+$");
     private static final String MOLANG_RETURN = "return";
     private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
@@ -207,7 +208,12 @@ public class MathParser {
         if (!FUNCTION_FACTORIES.containsKey(name))
             return Optional.empty();
 
-        return Optional.of(deduplicate(FUNCTION_FACTORIES.get(name).create(values)));
+        try {
+            return Optional.of(deduplicate(FUNCTION_FACTORIES.get(name).create(values)));
+        }
+        catch (IllegalArgumentException ex) {
+            throw new CompoundException("Invalid math function arguments provided in Molang expression '" + name + "'", ex);
+        }
     }
 
     /// Parse and compile a full expression into a single [MathValue] object
@@ -433,15 +439,28 @@ public class MathParser {
             if (isNumeric(string))
                 return compileConstant(Double.parseDouble(string));
 
-            if (isLikelyVariable(string)) {
-                if (string.startsWith("-"))
-                    return new Negative(getVariableFor(string.substring(1)));
+            final boolean isNegative = string.startsWith("-");
 
-                return getVariableFor(string);
+            if (isNegative)
+                string = string.substring(1);
+
+            if (isLikelyVariable(string)) {
+                MathValue variable = getVariableFor(string);
+
+                if (isNegative)
+                    variable = new Negative(variable);
+
+                return variable;
             }
 
-            if (isFunctionRegistered(string))
-                return compileFunction(string, List.of()).orElse(null);
+            if (isFunctionRegistered(string)) {
+                MathValue function = compileFunction(string, List.of()).orElse(null);
+
+                if (isNegative && function != null)
+                    function = new Negative(function);
+
+                return function;
+            }
 
             return null;
         });
@@ -581,15 +600,23 @@ public class MathParser {
     /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
     protected Optional<? extends MathValue> compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
-            if (name.length() == 1)
+            if (name.length() == 1) {
+                if (args.isEmpty())
+                    throw new CompoundException("Found empty expression group '!()");
+
                 return deduplicateOptional(new BooleanNegate(args.getFirst()));
+            }
 
             return deduplicate(compileFunction(name.substring(1), args), BooleanNegate::new);
         }
 
         if (name.startsWith("-")) {
-            if (name.length() == 1)
+            if (name.length() == 1) {
+                if (args.isEmpty())
+                    throw new CompoundException("Found empty expression group '-()");
+
                 return Optional.of(new Negative(args.getFirst()));
+            }
 
             return deduplicate(compileFunction(name.substring(1), args), Negative::new);
         }
@@ -648,7 +675,7 @@ public class MathParser {
     ///
     /// @return Whether the string is numeric
     protected boolean isNumeric(String string) {
-        return NUMERIC.matcher(string).matches();
+        return NUMERIC_FORMAT.matcher(string).matches();
     }
 
     /// Get an [Operator] for a given operator string, throwing an exception if one does not exist
@@ -663,7 +690,7 @@ public class MathParser {
         if (MolangQueries.isExistingVariable(string))
             return true;
 
-        return !isNumeric(string) && !isFunctionRegistered(string) && !Operator.isOperator(string) && !string.equals("?") && !string.equals(":");
+        return VARIABLE_FORMAT.matcher(string).matches() && !isFunctionRegistered(string) && !Operator.isOperator(string);
     }
 
     /// Deduplicator factory for [MathParser] to facilitate runtime memory compression of [MathValue]s
