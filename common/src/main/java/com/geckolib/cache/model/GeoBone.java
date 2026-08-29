@@ -34,6 +34,7 @@ public abstract class GeoBone {
     protected final float baseRotY;
     protected final float baseRotZ;
 
+    // TODO: Move away from these since they're not truly thread-safe
     @ApiStatus.Internal
     public @Nullable BoneSnapshot frameSnapshot = null;
     @ApiStatus.Internal
