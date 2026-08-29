@@ -78,7 +78,7 @@ public final class JsonUtil {
     ///
     /// No type checking is done, so if the array contains anything other than doubles, this will throw an exception
     ///
-    /// Ensures a minimum size of 3, as this is the expected usage of this method
+    /// A null input returns a 3-size array, as the typical expected use case is a 3-axis vector array
     public static double[] jsonArrayToDoubleArray(@Nullable JsonArray array) throws JsonParseException{
         if (array == null)
             return new double[3];
