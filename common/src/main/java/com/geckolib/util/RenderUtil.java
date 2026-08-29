@@ -36,10 +36,7 @@ import net.minecraft.world.item.equipment.Equippable;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fc;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
+import org.joml.*;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -79,14 +76,7 @@ public final class RenderUtil {
             zRot += bone.frameSnapshot.getRotZ();
         }
 
-        if (zRot != 0)
-            poseStack.mulPose(Axis.ZP.rotation(zRot));
-
-        if (yRot != 0)
-            poseStack.mulPose(Axis.YP.rotation(yRot));
-
-        if (xRot != 0)
-            poseStack.mulPose(Axis.XP.rotation(xRot));
+        RenderUtil.optionalRotateZYX(poseStack, zRot, yRot, xRot);
 	}
 
     /// Make the necessarily manipulations of the [PoseStack] to position a bone based on its current snapshot and state
@@ -197,6 +187,26 @@ public final class RenderUtil {
 		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
 			normal.mul(1, 1, -1);
 	}
+
+    /// Rotate a [PoseStack] around a given z/y/x axis, reducing the amount of work performed to the minimal required
+    /// for the given values
+    public static void optionalRotateZYX(PoseStack poseStack, double z, double y, double x) {
+        if (z == 0 && y == 0 && x == 0)
+            return;
+
+        final Quaternionf quat = new Quaternionf();
+
+        if (z != 0)
+            quat.rotationZ((float)z);
+
+        if (y != 0)
+            quat.rotationY((float)y);
+
+        if (x != 0)
+            quat.rotationX((float)x);
+
+        poseStack.mulPose(quat);
+    }
 
     /// Create and populate an [ItemStackRenderState] for a given [ItemStack] for rendering
     ///

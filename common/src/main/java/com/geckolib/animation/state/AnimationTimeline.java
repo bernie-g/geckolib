@@ -114,9 +114,9 @@ public record AnimationTimeline(Stage[] stages) {
         if (soundHandler == null && particleHandler == null && customInstructionHandler == null)
             return;
 
-        List<SoundKeyframeData> soundMarkers = new ObjectArrayList<>();
-        List<ParticleKeyframeData> particleMarkers = new ObjectArrayList<>();
-        List<CustomInstructionKeyframeData> customInstructionMarkers = new ObjectArrayList<>();
+        List<SoundKeyframeData> soundMarkers = null;
+        List<ParticleKeyframeData> particleMarkers = null;
+        List<CustomInstructionKeyframeData> customInstructionMarkers = null;
         double minTime = Math.min(fromTime, toTime);
         double maxTime = Math.max(fromTime, toTime);
 
@@ -124,38 +124,47 @@ public record AnimationTimeline(Stage[] stages) {
             if (stage.startTime > maxTime)
                 break;
 
-            if (stage.endTime > minTime && !stage.isTransition) {
+            if (stage.endTime > minTime && !stage.isTransition && !stage.animation.keyframeMarkers().isEmpty()) {
                 double animFromTime = Math.max(0, minTime - stage.startTime);
                 double animToTime = Math.min(stage.animation.length(), maxTime - stage.startTime);
 
-                if (soundHandler != null)
+                if (soundHandler != null && stage.animation.keyframeMarkers().sounds().length > 0) {
+                    if (soundMarkers == null)
+                        soundMarkers = new ObjectArrayList<>();
+
                     soundMarkers.addAll(getKeyframesForAnimation(animFromTime, animToTime, stage.animation.keyframeMarkers().sounds()));
+                }
 
-                if (particleHandler != null)
+                if (particleHandler != null && stage.animation.keyframeMarkers().particles().length > 0) {
+                    if (particleMarkers == null)
+                        particleMarkers = new ObjectArrayList<>();
+
                     particleMarkers.addAll(getKeyframesForAnimation(animFromTime, animToTime, stage.animation.keyframeMarkers().particles()));
+                }
 
-                if (customInstructionHandler != null)
+                if (customInstructionHandler != null && stage.animation.keyframeMarkers().customInstructions().length > 0) {
+                    if (customInstructionMarkers == null)
+                        customInstructionMarkers = new ObjectArrayList<>();
+
                     customInstructionMarkers.addAll(getKeyframesForAnimation(animFromTime, animToTime, stage.animation.keyframeMarkers().customInstructions()));
+                }
             }
         }
 
-        if (!soundMarkers.isEmpty()) {
+        if (soundMarkers != null && !soundMarkers.isEmpty()) {
             for (SoundKeyframeData soundData : toTime < fromTime ? soundMarkers.reversed() : soundMarkers) {
-                //noinspection DataFlowIssue
                 soundHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, soundData));
             }
         }
 
-        if (!particleMarkers.isEmpty()) {
+        if (particleMarkers != null && !particleMarkers.isEmpty()) {
             for (ParticleKeyframeData particleData : toTime < fromTime ? particleMarkers.reversed() : particleMarkers) {
-                //noinspection DataFlowIssue
                 particleHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, particleData));
             }
         }
 
-        if (!customInstructionMarkers.isEmpty()) {
+        if (customInstructionMarkers != null && !customInstructionMarkers.isEmpty()) {
             for (CustomInstructionKeyframeData customData : toTime < fromTime ? customInstructionMarkers.reversed() : customInstructionMarkers) {
-                //noinspection DataFlowIssue
                 customInstructionHandler.handle(new KeyFrameEvent<>(animatable, renderState, controller, customData));
             }
         }

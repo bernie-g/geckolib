@@ -179,9 +179,12 @@ public class AnimationProcessor {
         final double from = fromKeyframe.endValue().get(controllerState);
         final double to = toKeyframe.endValue().get(controllerState);
         final double delta = toKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
-        final EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
+        final EasingType easingType = easingOverride != null ? easingOverride : toKeyframe.easingType();
 
-        return (float)easingState.interpolate(controllerState);
+        if (easingType == EasingType.LINEAR)
+            return (float)Mth.lerp(delta, from, to);
+
+        return (float)new EasingState(easingType, toKeyframe.easingArgs(), delta, from, to).interpolate(controllerState);
     }
 
     /// Compute the effective animation point value from the provided [AnimationPoint]s, transitioning to the next animation
@@ -197,15 +200,19 @@ public class AnimationProcessor {
                       wrapRotation(findAnimationPointValue(boneSnapshot, createTransitionControllerState(prevAnimation, controllerState, -1),
                                                            prevAnimation, null, prevBoneIndex, transform, axis, prevAnimation.easingOverride()), transform);
         final double to = toKeyframe.startValue().get(controllerState);
-        double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / ((float)controllerState.transitionTicks() / 20d));
-        final EasingState easingState = new EasingState(easingOverride != null ? easingOverride : toKeyframe.easingType(), toKeyframe.easingArgs(), delta, from, to);
+        final double delta = controllerState.transitionTicks() == 0 ? 1 : Math.min(1, controllerState.transitionTime() / ((float)controllerState.transitionTicks() / 20d));
+        final EasingType easingType = easingOverride != null ? easingOverride : toKeyframe.easingType();
 
-        return (float)easingState.interpolate(controllerState);
+        if (easingType == EasingType.LINEAR)
+            return (float)Mth.lerp(delta, from, to);
+
+        return (float)new EasingState(easingType, toKeyframe.easingArgs(), delta, from, to).interpolate(controllerState);
     }
 
     /**
      * Create a new {@link ControllerState} instance based off the current state, but from the perspective of an animation being transitioned from
      */
+    // TODO move this to the top of the chain so we only need create one instance where needed
     private static ControllerState createTransitionControllerState(AnimationPoint prevAnimation, ControllerState controllerState, double transitionTime) {
         return new ControllerState(prevAnimation, null, transitionTime, controllerState.transitionTicks(), controllerState.additive(), controllerState.easingOverride(),
                                    controllerState.renderState(), controllerState.queryValues());
@@ -216,12 +223,15 @@ public class AnimationProcessor {
                                              int boneIndex, AnimationPoint.Transform transform, AnimationPoint.Axis axis, @Nullable EasingType easingOverride) {
         final ControllerState previousState = new ControllerState(controllerState.animationPoint(), null, -1, 0,
                                                             controllerState.additive(), controllerState.easingOverride(), controllerState.renderState(), controllerState.queryValues());
-        double delta = Math.min(1, controllerState.transitionTime() / ((double)controllerState.transitionTicks() / 20d));
+        final double delta = Math.min(1, controllerState.transitionTime() / ((double)controllerState.transitionTicks() / 20d));
         final double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
         final double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
-        final EasingState easingState = new EasingState(easingOverride == null ? EasingType.LINEAR : easingOverride, new MathValue[0], delta, from, to);
+        final EasingType easingType = easingOverride == null ? EasingType.LINEAR : easingOverride;
 
-        return (float)easingState.interpolate(controllerState);
+        if (easingType == EasingType.LINEAR)
+            return (float)Mth.lerp(delta, from, to);
+
+        return (float)new EasingState(easingType, new MathValue[0], delta, from, to).interpolate(controllerState);
     }
 
     /// Get the base snapshot value to return to when resetting from an animation

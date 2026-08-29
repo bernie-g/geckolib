@@ -1,11 +1,10 @@
 package com.geckolib.cache.model;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.renderer.base.RenderPassInfo;
 import com.geckolib.util.RenderUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
 /// Implementation of locator markers for [GeoBone]s
 ///
@@ -85,16 +84,7 @@ public class GeoLocator {
             poseStack.pushPose();
             this.parent.translateAwayFromPivotPoint(poseStack);
             poseStack.translate(this.offsetX / 16f, this.offsetY / 16f, this.offsetZ / 16f);
-
-            if (this.rotZ != 0)
-                poseStack.mulPose(Axis.ZP.rotation(this.rotZ));
-
-            if (this.rotY != 0)
-                poseStack.mulPose(Axis.YP.rotation(this.rotY));
-
-            if (this.rotX != 0)
-                poseStack.mulPose(Axis.XP.rotation(this.rotX));
-
+            RenderUtil.optionalRotateZYX(poseStack, this.rotZ, this.rotY, this.rotX);
             RenderUtil.providePositionsToListeners(poseStack, renderPassInfo, this.positionListeners);
 
             poseStack.popPose();

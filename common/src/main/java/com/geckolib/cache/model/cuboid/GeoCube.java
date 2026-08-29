@@ -1,16 +1,15 @@
 package com.geckolib.cache.model.cuboid;
 
+import com.geckolib.cache.model.GeoBone;
+import com.geckolib.cache.model.GeoQuad;
+import com.geckolib.util.RenderUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.Nullable;
-import com.geckolib.cache.model.GeoBone;
-import com.geckolib.cache.model.GeoQuad;
-import com.geckolib.util.RenderUtil;
 
 /// Baked cuboid for a [GeoBone]
 ///
@@ -25,8 +24,8 @@ public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3
         rotate(poseStack);
         translateAwayFromPivotPoint(poseStack);
 
-        Matrix3f normalisedPoseState = poseStack.last().normal();
-        Matrix4f poseState = new Matrix4f(poseStack.last().pose());
+        final Matrix3f normalisedPoseState = poseStack.last().normal();
+        final Matrix4f poseState = poseStack.last().pose();
 
         for (GeoQuad quad : this.quads) {
             if (quad == null)
@@ -42,11 +41,7 @@ public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3
 
     /// Apply a rotation to the provided PoseStack by this cube's rotation values
     public void rotate(PoseStack poseStack) {
-        final Vec3 rotation = rotation();
-
-        poseStack.mulPose(new Quaternionf().rotationXYZ(0, 0, (float)rotation.z()));
-        poseStack.mulPose(new Quaternionf().rotationXYZ(0, (float)rotation.y(), 0));
-        poseStack.mulPose(new Quaternionf().rotationXYZ((float)rotation.x(), 0, 0));
+        RenderUtil.optionalRotateZYX(poseStack, this.rotation.z, this.rotation.y, this.rotation.x);
     }
 
     /// Apply a translation to the provided PoseStack to this cube's pivot point
