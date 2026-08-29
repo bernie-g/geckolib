@@ -12,6 +12,7 @@ import com.geckolib.util.GeckoLibUtil;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.Resource;
@@ -119,7 +120,18 @@ public final class GeckoLibResources implements PreparableReloadListener {
 					resources.forEach((path, resource) -> tasks.add(bakeResource(executor, path, resource, deserializer, bakery, onException)));
 
 					return CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]))
-							.thenApply(_ -> tasks.stream().map(CompletableFuture::join).filter(Objects::nonNull).collect(Collectors.toMap(Pair::left, Pair::right)));
+							.thenApply(_ -> {
+								final Set<Identifier> uniqueResources = new ObjectOpenHashSet<>(tasks.size());
+
+								return tasks.stream().map(CompletableFuture::join).filter(Objects::nonNull).collect(Collectors.filtering(pair -> {
+									if (uniqueResources.add(pair.left()))
+										return true;
+
+									GeckoLibConstants.LOGGER.error("Found duplicate GeckoLib resource in {}: {}", rootPath, pair.left());
+
+									return false;
+								}, Collectors.toUnmodifiableMap(Pair::left, Pair::right)));
+							});
 				});
 	}
 
