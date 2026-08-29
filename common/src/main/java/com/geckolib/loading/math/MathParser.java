@@ -395,6 +395,11 @@ public class MathParser {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
+        final Optional<MathValue> assignment = compileAssignment(symbols);
+
+        if (assignment.isPresent())
+            return assignment;
+
         final Optional<MathValue> ternary = compileTernary(symbols);
 
         if (ternary.isPresent())
@@ -436,6 +441,20 @@ public class MathParser {
         });
     }
 
+    /// Compile a [VariableAssignment] value instance from the given symbols list, if applicable
+    ///
+    /// @return A compiled VariableAssignment value, or empty if an assignment does not apply to the provided symbols
+    /// @throws CompoundException If there is a parsing failure for any of the contents of the symbols
+    protected Optional<MathValue> compileAssignment(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+        if (symbols.size() < 3 || symbols.get(1).left().filter(Operator.ASSIGN_VARIABLE.symbol()::equals).isEmpty())
+            return Optional.empty();
+
+        if (!(parseSymbols(symbols.subList(0, 1)) instanceof Variable variable))
+            throw new CompoundException("Attempted to assign a value to a non-variable");
+
+        return Optional.of(new VariableAssignment(variable, parseSymbols(symbols.subList(2, symbols.size()))));
+    }
+
     /// Compile a MathValue value instance from the given symbols list, if applicable
     ///
     /// @return A compiled [Calculation] or [VariableAssignment] value, or empty if a calculation is not applicable to the provided symbols
@@ -458,10 +477,8 @@ public class MathParser {
                 continue;
 
             if (operator == Operator.ASSIGN_VARIABLE) {
-                if (!(parseSymbols(symbols.subList(0, i)) instanceof Variable variable))
-                    throw new CompoundException("Attempted to assign a value to a non-variable");
-
-                return Optional.of(new VariableAssignment(variable, parseSymbols(symbols.subList(i + 1, symbolCount))));
+                return Optional.of(compileAssignment(symbols).orElseThrow(
+                        () -> new CompoundException("Attempted to assign a value to a non-variable")));
             }
 
             components.add(parseSymbols(symbols.subList(lastOperatorIndex + 1, i)));
