@@ -91,10 +91,6 @@ public record Geometry(String formatVersion, boolean debug, GeometryDefinition[]
             GeoBone bone = geometryBone.bake(null, geometryDescription, bonesCollection.childBonesMap(), locatorConsumer);
 
             topLevelBones[i] = bone;
-
-            for (GeoLocator locator : bone.locators()) {
-                locatorConsumer.accept(bone, locator);
-            }
         }
 
         return topLevelBones;
