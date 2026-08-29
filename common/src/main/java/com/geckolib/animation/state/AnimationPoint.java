@@ -27,6 +27,7 @@ import java.util.function.Function;
 /// @param loopType The loop type for this animation as defined by the [RawAnimation]
 /// @param animTime The current animation-relative time this point is for
 /// @param keyFramePoints The keyframe index array defining the [BoneAnimation] keyframe index for this point
+// TODO: compress keyFramePoints down into a 1d-array and then arraycopy when doing createNext
 public record AnimationPoint(Animation animation, @Nullable EasingType easingOverride, LoopType loopType, double animTime, int[][][] keyFramePoints) {
     public static final int NO_KEYFRAME = -2;
     public static final int BEFORE_FIRST_KEYFRAME = -1;
