@@ -84,7 +84,7 @@ public abstract class DyeableGeoArmorRenderer<T extends Item & GeoItem, R extend
         final PoseStack poseStack = new PoseStack();
 
         poseStack.last().set(pose);
-        bone1.render(renderPassInfo1, new PoseStack(), vertexConsumer, renderPassInfo1.packedLight(), renderPassInfo1.packedOverlay(),
+        bone1.render(renderPassInfo1, poseStack, vertexConsumer, renderPassInfo1.packedLight(), renderPassInfo1.packedOverlay(),
                      ARGB.multiply(renderColor, getColorForBone(renderState, bone1, renderState.getOrDefaultGeckolibData(DataTickets.RENDER_COLOR, -1))));
     }
 
