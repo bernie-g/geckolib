@@ -42,10 +42,10 @@ import java.util.regex.Pattern;
 ///
 /// Overhauled by Tslat for GeckoLib and redesigned specifically for <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> use
 public class MathParser {
-    private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:.,()]+$");
+    private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:;.,()]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
-    private static final String MOLANG_RETURN = "return ";
+    private static final String MOLANG_RETURN = "return";
     private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
         map.put("math.abs", AbsFunction::new);
@@ -154,6 +154,17 @@ public class MathParser {
     /// @param expression The math and/or Molang expression to be parsed
     /// @return A compiled [MathValue], ready for use
     public MathValue compileMolang(String expression) {
+        if (expression.isBlank())
+            return compileConstant(0);
+
+        if (!EXPRESSION_FORMAT.matcher(expression).matches())
+            throw new CompoundException("Invalid characters found in expression: '" + expression + "'");
+
+        expression = WHITESPACE
+                .matcher(expression)
+                .replaceAll("")
+                .toLowerCase(Locale.ROOT);
+
         return this.deduplicator.apply(expression, str -> {
             if (str.startsWith(MOLANG_RETURN)) {
                 str = str.substring(MOLANG_RETURN.length());
@@ -206,31 +217,33 @@ public class MathParser {
         }
     }
 
-    /// Break down an expression into component characters, sanity-checking for invalid characters, stripping out whitespace, and pre-checking group parenthesis balancing
+    /// Break down an expression into component characters, sanity-checking for unbalanced groups
     protected char[] decomposeExpression(String expression) throws CompoundException {
-        if (expression.isEmpty())
-            return new char[] {0};
-
-        if (!EXPRESSION_FORMAT.matcher(expression).matches())
-            throw new CompoundException("Invalid characters found in expression: '" + expression + "'");
-
-        final char[] chars = WHITESPACE.matcher(expression).replaceAll("").toLowerCase(Locale.ROOT).toCharArray();
+        final char[] chars = expression.toCharArray();
         int groupState = 0;
+        int curlyBraceState = 0;
 
         for (char character : chars) {
-            if (character == '(') {
-                groupState++;
+            switch (character) {
+                case '(' -> groupState++;
+                case ')' -> groupState--;
+                case '{' -> curlyBraceState++;
+                case '}' -> curlyBraceState--;
+                default -> {}
             }
-            else if (character == ')') {
-                groupState--;
-            }
-            
+
             if (groupState < 0)
                 throw new CompoundException("Closing parenthesis before opening parenthesis in expression '" + expression + "'");
+
+            if (curlyBraceState < 0)
+                throw new CompoundException("Closing curly brace before opening curly brace in expression '" + expression + "'");
         }
-        
+
         if (groupState != 0)
             throw new CompoundException("Uneven parenthesis in expression, each opening brace must have a pairing close brace '" + expression + "'");
+
+        if (curlyBraceState != 0)
+            throw new CompoundException("Uneven curly braces in expression, each opening brace must have a pairing close brace '" + expression + "'");
 
         return chars;
     }
