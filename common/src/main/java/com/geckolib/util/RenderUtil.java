@@ -196,14 +196,18 @@ public final class RenderUtil {
 
         final Quaternionf quat = new Quaternionf();
 
-        if (z != 0)
+        if (x == 0 && y == 0) {
             quat.rotationZ((float)z);
-
-        if (y != 0)
+        }
+        else if (x == 0 && z == 0) {
             quat.rotationY((float)y);
-
-        if (x != 0)
+        }
+        else if (y == 0 && z == 0) {
             quat.rotationX((float)x);
+        }
+        else {
+            quat.rotationZYX((float)z, (float)y, (float)x);
+        }
 
         poseStack.mulPose(quat);
     }

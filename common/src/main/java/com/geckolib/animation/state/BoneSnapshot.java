@@ -1,9 +1,9 @@
 package com.geckolib.animation.state;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
-import org.jetbrains.annotations.ApiStatus;
 import com.geckolib.cache.model.GeoBone;
+import com.geckolib.util.RenderUtil;
+import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.ApiStatus;
 
 /// A state container for a single [GeoBone]'s animation transformations.
 ///
@@ -231,14 +231,7 @@ public class BoneSnapshot {
 
     /// Apply a rotation to the provided PoseStack to rotate around this snapshot's pivot point
     public void rotate(PoseStack poseStack) {
-        if (getRotZ() != 0)
-            poseStack.mulPose(Axis.ZP.rotation(getRotZ()));
-
-        if (getRotY() != 0)
-            poseStack.mulPose(Axis.YP.rotation(getRotY()));
-
-        if (getRotX() != 0)
-            poseStack.mulPose(Axis.XP.rotation(getRotX()));
+        RenderUtil.optionalRotateZYX(poseStack, getRotZ(), getRotY(), getRotX());
     }
 
     /// Apply a translation to the provided PoseStack by this snapshot's position offset
