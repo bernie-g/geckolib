@@ -1,19 +1,18 @@
 package com.geckolib.cache;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import org.jetbrains.annotations.ApiStatus;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.GeckoLibConstants;
 import com.geckolib.animatable.GeoAnimatable;
 import com.geckolib.animatable.SingletonGeoAnimatable;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import org.jetbrains.annotations.ApiStatus;
+import org.jspecify.annotations.Nullable;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /// Caching class for [SingletonGeoAnimatable]s that have been registered as syncable
 public final class SyncedSingletonAnimatableCache {
-    private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
+    private static final IdentityHashMap<SingletonGeoAnimatable, String> ANIMATABLE_IDENTITIES = new IdentityHashMap<>();
     private static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
     /// Registers a synced [SingletonGeoAnimatable] object for networking support
@@ -47,9 +46,9 @@ public final class SyncedSingletonAnimatableCache {
     /// This **<u>MUST</u>** be used when retrieving from [#SYNCED_ANIMATABLES]
     /// as this method eliminates class duplication collisions
     public static String getOrCreateId(SingletonGeoAnimatable animatable) {
-        return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
+        return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, _ -> {
             String baseId = animatable.getClass().getName();
-            i = 0;
+            int i = 0;
 
             while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
                 i++;
