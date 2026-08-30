@@ -45,7 +45,7 @@ public class MathParser {
     private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:;.,(){}]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern NUMERIC_FORMAT = Pattern.compile("^-?(\\d+(\\.\\d+)?|\\.\\d+)$");
-    private static final Pattern VARIABLE_FORMAT = Pattern.compile("^[a-z_]+\\.[\\w+_]+$");
+    private static final Pattern VARIABLE_FORMAT = Pattern.compile("^[a-z_]+(\\.\\w+)+$");
     private static final String MOLANG_RETURN = "return";
     private static final String STATEMENT_DELIMITER = ";";
     private static final Map<String, MathFunction.Factory<?>> FUNCTION_FACTORIES = Util.make(new ConcurrentHashMap<>(18), map -> {
@@ -191,6 +191,9 @@ public class MathParser {
                     if (isReturn)
                         break;
                 }
+
+                if (subValues.isEmpty())
+                    return compileConstant(0);
 
                 return deduplicate(new CompoundValue(subValues.toArray(new MathValue[0])));
             }
@@ -602,7 +605,7 @@ public class MathParser {
         if (name.startsWith("!")) {
             if (name.length() == 1) {
                 if (args.isEmpty())
-                    throw new CompoundException("Found empty expression group '!()");
+                    throw new CompoundException("Found empty expression group '!()'");
 
                 return deduplicateOptional(new BooleanNegate(args.getFirst()));
             }
@@ -613,7 +616,7 @@ public class MathParser {
         if (name.startsWith("-")) {
             if (name.length() == 1) {
                 if (args.isEmpty())
-                    throw new CompoundException("Found empty expression group '-()");
+                    throw new CompoundException("Found empty expression group '-()'");
 
                 return Optional.of(new Negative(args.getFirst()));
             }
