@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib = "5.5.3"
+    geckolib = "5.5.4"
 
 # Common
     minecraft = { strictly = "[26.2,)", prefer = "26.2" }
