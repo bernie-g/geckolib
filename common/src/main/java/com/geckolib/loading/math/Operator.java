@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.chars.CharOpenHashSet;
 import it.unimi.dsi.fastutil.chars.CharSet;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.Util;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -110,8 +111,12 @@ public record Operator(String symbol, int precedence, Operation operation) imple
     }
 
     /// Determine whether this operator takes mathematical <a href="https://en.wikipedia.org/wiki/Order_of_operations">precedence</a> over the other operator
-    public boolean takesPrecedenceOver(Operator operator) {
-        return compareTo(operator) > 0;
+    public boolean takesPrecedenceOver(@Nullable Operator operator) {
+        if (operator == null || compareTo(operator) > 0)
+            return true;
+
+        // TODO add right-associative handling for null-coalescing, power, inlined variable assignment
+        return false;
     }
 
     @Override
