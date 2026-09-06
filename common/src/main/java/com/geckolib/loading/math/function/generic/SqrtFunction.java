@@ -26,7 +26,15 @@ public final class SqrtFunction extends MathFunction {
 
     @Override
     public double compute(@Nullable ControllerState controllerState) {
-        return Math.sqrt(this.value.get(controllerState));
+        return Math.sqrt(Math.max(0, this.value.get(controllerState)));
+    }
+
+    @Override
+    public void validate(MathValue... inputs) throws IllegalArgumentException {
+        super.validate(inputs);
+
+        if (!this.value.isMutable() && this.value.get(null) < 0)
+            throw new IllegalArgumentException(String.format("Sqrt function %s provided a negative value!", this));
     }
 
     @Override

@@ -1,47 +1,12 @@
-## GeckoLib v5.5.4
+## GeckoLib v5.5.5
+
+### Functionality
+- Added the `math.min_angle` Molang function
+- Add support for Molang's truthy half-ternaries (`cond ? 5`)
+- Fixed invalid value handling in `math.mod`, `math.sqrt`, `math.ln`, `%`, and `/`
 
 ### Bug Fixes
-- Fixed `query.life_time` being negatively inverted
-- Prevented GeckoLib crashing if attempting to animate with an empty animation
-- Fixed GeckoLib crashing on newer NeoForge versions
-- Fixed GeckoLib crashing when attempting to send a default `RawAnimation` over network
-- Fixed GeckoLib not evaluating nested ternary expressions properly
-- Fixed DieRollIntegerFunction giving the wrong name when asked
-- Fixed a crash caused by serverbound GeckoLib packets (we don't have any at the moment anyway, but still)
-- Fixed NeoForge's entity `RenderState` extensions being ignored by GeckoLib
-- Prevent GeckoLib crashing if attempting to retrieve an incorrectly typed `DataTicket`
-- Fixed left-handed GeckoLib entities using first-person render context for third person offhand items
-- Fixed uppercase Molang queries not being recognised by animations
-- Fixed various whitespace issues with Molang expression parsing
-- Fixed single-element vector arrays in Molang expressions erroring out
-- Fixed custom GeckoLib resource loaders disabling themselves
-- Fixed GeckoLib resource loading crashing out if a mod has both a suffixed GeckoLib resource file and a non-suffixed one with the same name
-- Fixed synced singleton animatables (mostly items) colliding with another in very rare occasions
-- Fixed `RawAnimation` not necessarily comparing as equal in very rare occasions
-- Fixed `RawAnimation.Stage` not necessarily comparing as equal in very rare occasions
-- Fixed `KeyFrameData` not necessarily comparing as equal in very rare occasions
-- Fixed the `RawAnimation#thenWait` waiting 20x too long
-- Fixed `easeinquint` not being `quint`
-- Fixed `AnimationController#hasAnimationFinished` not working properly
-- Fixed a potential collision or crash caused by multithreaded handling of animation parsing or modloading
-- Fixed a potential crash from reloading resources with GeckoLib animated textures present
-- Added some safety checks for `ItemArmorGeoLayer` to prevent crashes/errors from invalid setups
-- Fixed `DyeableGeoArmorRenderer` rendering bones at the wrong location
-- Fixed GeckoLib crashing the entire game if a mod attempts to animate something in an invalid way
-- Fixed animations with out-of-order animation keyframes not being sorted when loading in
-- Fixed a potential multi-threading crash or corruption from `SyncedSingletonAnimatableCache`
-- Fixed a potential crash caused by unexpected values in `DieRollIntegerFunction` and `RandomIntegerFunction`
-- Fixed `SyncedSingletonAnimatableCache` acting as a slow-burning memory leak by retaining every id indefinitely
-- Fixed Molang expressions with empty groups '()' erroring out with little information when parsing
-- Fixed top-level bones with locators throwing an error for each one on load
-- Fixed GeckoLib's resource loading incorrectly telling Minecraft to move it on-thread before it's done
-- Fixed multi-stage animations with a transition time not transitioning properly
-- Fixed `math.atan`, `math.acos`, and `math.asin` calculating tiny values and being wrong
-- Some rendering performance improvements
-- Fixed GeckoLib clients requiring NeoForge servers to also have GeckoLib installed
-- Fixed variable assignments in Molang not parsing properly if accompanied by a tenary or sub-expression
-- Added operator symbol aliases for && and || - although the bedrock spec doesn't support this technically
-- Fixed negative math function results not parsing properly in molang
-- Fixed some higher-level molang operators having completely incorrect precedence indexes
-- Fixed some other molang parsing issues
-- Misc cleanup
+- Fixed ternary expressions not evaluating properly at runtime if using entity queries
+- Fixed compound expressions not evaluating properly at runtime if using entity queries
+- Fixed calculations eagerly resolving the right-hand side, even if the left hand side is true
+- Fixed `GeoRenderState` being required on all renderstate classes - will now only throw if set up incorrectly (#894)

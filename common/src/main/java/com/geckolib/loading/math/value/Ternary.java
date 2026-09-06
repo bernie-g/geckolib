@@ -28,6 +28,11 @@ public record Ternary(MathValue condition, MathValue trueValue, MathValue falseV
     }
 
     @Override
+    public Set<Variable> getUsedVariables() {
+        return this.usedVariables;
+    }
+
+    @Override
     public String toString() {
         return this.condition + " ? " + this.trueValue + " : " + this.falseValue;
     }

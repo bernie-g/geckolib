@@ -1,10 +1,10 @@
 package com.geckolib.loading.math.value;
 
-import org.apache.commons.lang3.mutable.MutableDouble;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.Operator;
+import org.apache.commons.lang3.mutable.MutableDouble;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Set;
 
@@ -21,12 +21,23 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
     @Override
     public double get(@Nullable ControllerState controllerState) {
         if (this.isMutable)
-            return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
+            return compute(controllerState);
 
         if (this.cachedValue.doubleValue() == Double.MIN_VALUE)
-            this.cachedValue.setValue(this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState)));
+            this.cachedValue.setValue(compute(controllerState));
 
         return this.cachedValue.doubleValue();
+    }
+
+    private double compute(@Nullable ControllerState controllerState) {
+        if (this.operator == Operator.OR || this.operator == Operator.AND) {
+            if (this.operator.compute(this.argA.get(controllerState), 0) != 0)
+                return 1;
+
+            return this.operator.compute(0, this.argB.get(controllerState)) != 0 ? 1 : 0;
+        }
+
+        return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
     }
 
     @Override

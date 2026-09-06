@@ -67,6 +67,7 @@ public class MathParser {
         map.put("math.ln", LogFunction::new);
         map.put("math.max", MaxFunction::new);
         map.put("math.min", MinFunction::new);
+        map.put("math.min_angle", MinAngleFunction::new);
         map.put("math.mod", ModFunction::new);
         map.put("math.pi", PiFunction::new);
         map.put("math.pow", PowFunction::new);
@@ -587,8 +588,13 @@ public class MathParser {
             }
         }
 
-        if (ternaryState == 0 && condition != null && ifTrue != null && matchingColon < symbolCount - 1)
-            return deduplicateOptional(new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(matchingColon + 1, symbolCount))));
+        if (condition != null) {
+            if (ifTrue != null && matchingColon < symbolCount - 1)
+                return deduplicateOptional(new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(matchingColon + 1, symbolCount))));
+
+            if (ifTrue == null && queryIndex < symbolCount)
+                return deduplicateOptional(new Ternary(condition.get(), parseSymbols(symbols.subList(queryIndex, symbolCount)), compileConstant(0)));
+        }
 
         return Optional.empty();
     }

@@ -16,7 +16,7 @@ import java.util.function.ToDoubleFunction;
 /// Returns the currently stored value, which may be modified at any given time via [#set]. Values may be lazily evaluated to eliminate wasteful usage
 public record Variable(String name, AtomicReference<ToDoubleFunction<ControllerState>> value) implements MathValue {
     public Variable(String name, double value) {
-        this(name, animationState -> value);
+        this(name, _ -> value);
     }
 
     public Variable(String name, ToDoubleFunction<ControllerState> value) {
@@ -41,7 +41,7 @@ public record Variable(String name, AtomicReference<ToDoubleFunction<ControllerS
     }
 
     public void set(final double value) {
-        this.value.set(controllerState -> value);
+        this.value.set(_ -> value);
     }
 
     public void set(final ToDoubleFunction<ControllerState> value) {

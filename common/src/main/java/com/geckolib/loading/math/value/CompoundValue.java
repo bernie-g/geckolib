@@ -41,6 +41,11 @@ public record CompoundValue(MathValue[] subValues, Set<Variable> usedVariables) 
     }
 
     @Override
+    public Set<Variable> getUsedVariables() {
+        return this.usedVariables;
+    }
+
+    @Override
     public String toString() {
         final StringJoiner joiner = new StringJoiner("; ");
 

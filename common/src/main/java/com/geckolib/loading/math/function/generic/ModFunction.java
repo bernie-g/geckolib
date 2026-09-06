@@ -28,7 +28,17 @@ public final class ModFunction extends MathFunction {
 
     @Override
     public double compute(@Nullable ControllerState controllerState) {
-        return this.value.get(controllerState) % this.modulus.get(controllerState);
+        final double modulo = this.modulus.get(controllerState);
+
+        return modulo == 0 ? 0 : this.value.get(controllerState) % modulo;
+    }
+
+    @Override
+    public void validate(MathValue... inputs) throws IllegalArgumentException {
+        super.validate(inputs);
+
+        if (!this.modulus.isMutable() && this.modulus.get(null) == 0)
+            throw new IllegalArgumentException(String.format("Modulo function %s uses an invalid modulus!", this));
     }
 
     @Override

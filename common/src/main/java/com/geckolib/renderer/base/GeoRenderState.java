@@ -128,7 +128,9 @@ public interface GeoRenderState {
     ///
     /// **YOU SHOULD NOT BE USING THIS**
     @ApiStatus.Internal
-    Map<DataTicket<?>, Object> getDataMap();
+    default Map<DataTicket<?>, Object> getDataMap() {
+        throw new IllegalStateException("New GeckoLib RenderState class " + getClass().getSimpleName() + " was implemented without handling #getDataMap!");
+    }
 
     /// Built-in implementation class for GeoRenderState, used for Geo renderers that don't already have one
     ///
