@@ -30,11 +30,14 @@ public record Calculation(Operator operator, MathValue argA, MathValue argB, boo
     }
 
     private double compute(@Nullable ControllerState controllerState) {
-        if (this.operator == Operator.OR || this.operator == Operator.AND) {
-            if (this.operator.compute(this.argA.get(controllerState), 0) != 0)
-                return 1;
+        if (this.operator == Operator.OR) {
+            return this.operator.compute(this.argA.get(controllerState), 0) != 0 ||
+                   this.operator.compute(0, this.argB.get(controllerState)) != 0 ? 1 : 0;
+        }
 
-            return this.operator.compute(0, this.argB.get(controllerState)) != 0 ? 1 : 0;
+        if (this.operator == Operator.AND) {
+            return this.operator.compute(this.argA.get(controllerState), 1) != 0 &&
+                   this.operator.compute(1, this.argB.get(controllerState)) != 0 ? 1 : 0;
         }
 
         return this.operator.compute(this.argA.get(controllerState), this.argB.get(controllerState));
