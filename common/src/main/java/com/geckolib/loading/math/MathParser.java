@@ -213,7 +213,7 @@ public class MathParser {
             return Optional.empty();
 
         try {
-            return Optional.of(deduplicate(FUNCTION_FACTORIES.get(name).create(values)));
+            return Optional.of(deduplicate(FUNCTION_FACTORIES.get(name).createAndValidate(values)));
         }
         catch (IllegalArgumentException ex) {
             throw new CompoundException("Invalid math function arguments provided in Molang expression '" + name + "'", ex);

@@ -1,5 +1,6 @@
 package com.geckolib.loading.math.function;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.state.ControllerState;
 import com.geckolib.loading.math.MathValue;
@@ -19,10 +20,13 @@ public abstract class MathFunction implements MathValue {
     private double cachedValue = Double.MIN_VALUE;
 
     protected MathFunction(MathValue... values) {
-        validate(values);
-
-        this.isMutable = isMutable(values);
-        this.usedVariables = MathValue.collectUsedVariables(values);
+        if (values.length >= getMinArgs()) {
+            this.isMutable = isMutable(values);
+            this.usedVariables = MathValue.collectUsedVariables(values);
+        } else {
+            validate(values);
+            throw new IllegalStateException("This should never happen, someone failed to validate a MathFunction!");
+        }
     }
 
     /// Return the expression name/symbol for this function.
@@ -97,5 +101,14 @@ public abstract class MathFunction implements MathValue {
     public interface Factory<T extends MathFunction> {
         /// Instantiate a new [MathFunction] for the given input values
         T create(MathValue... values);
+
+        @ApiStatus.Internal
+        default T createAndValidate(MathValue... values) {
+            final T function = create(values);
+
+            function.validate(values);
+
+            return function;
+        }
     }
 }
