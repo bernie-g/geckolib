@@ -7,30 +7,30 @@ import org.gradle.kotlin.dsl.provideDelegate
 import java.util.function.Supplier
 
 abstract class GeckoLibBuildPlugin(val project: Project) {
-    val libs = findVersionCatalogue("libs");
+    val libs                    = findVersionCatalogue("libs");
 
-    val modId: String by project
-    val modDisplayName: String by project
-    val modAuthors: String by project
-    val modContributors: String by project
-    val modLicense: String by project
-    val modDescription: String by project
+    val modId                   = project.property("modId") as String
+    val modDisplayName          = project.property("modDisplayName") as String
+    val modAuthors              = project.property("modAuthors") as String
+    val modContributors         = project.property("modContributors") as String
+    val modLicense              = project.property("modLicense") as String
+    val modDescription          = project.property("modDescription") as String
 
-    val modVersion = versionLookup("geckolib")
-    val mcVersion = versionLookup("minecraft")
-    val javaVersion = versionLookup("java")
-    val neoformVersion = versionLookup("neoform")
+    val modVersion              = versionLookup("geckolib")
+    val mcVersion               = versionLookup("minecraft")
+    val javaVersion             = versionLookup("java")
+    val neoformVersion          = versionLookup("neoform")
 
-    val forgeVersion = versionLookup("forge")
-    val fmlVersion = versionLookup("forge.fml")
+    val forgeVersion            = versionLookup("forge")
+    val fmlVersion              = versionLookup("forge.fml")
 
-    val fabricVersion = versionLookup("fabric")
-    val fabricVersionRange = versionLookup("fabric.range")
-    val fabricApiVersion = versionLookup("fabric.api")
-    val fabricApiVersionRange = versionLookup("fabric.api.range")
+    val fabricVersion           = versionLookup("fabric")
+    val fabricVersionRange      = versionLookup("fabric.range")
+    val fabricApiVersion        = versionLookup("fabric.api")
+    val fabricApiVersionRange   = versionLookup("fabric.api.range")
 
-    val neoforgeVersion = versionLookup("neoforge")
-    val neoforgeLoaderVersion = versionLookup("neoforge.loader")
+    val neoforgeVersion         = versionLookup("neoforge")
+    val neoforgeLoaderVersion   = versionLookup("neoforge.loader")
 
     fun versionLookup(id: String): GeoVersionConstraint {
         return GeoVersionConstraint(project.providers.provider {
