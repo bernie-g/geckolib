@@ -1,7 +1,5 @@
 package software.bernie.geckolib.util;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,13 +16,14 @@ import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.constant.dataticket.SerializableDataTicket;
 import software.bernie.geckolib.loading.object.BakedModelFactory;
 
+import java.util.IdentityHashMap;
 import java.util.Map;
 
 /**
  * Helper class for various GeckoLib-specific functions.
  */
 public final class GeckoLibUtil {
-	private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
+	private static final IdentityHashMap<GeoAnimatable, String> ANIMATABLE_IDENTITIES = new IdentityHashMap<>();
 	public static final Map<String, GeoAnimatable> SYNCED_ANIMATABLES = new Object2ObjectOpenHashMap<>();
 
 	/**
@@ -142,9 +141,9 @@ public final class GeckoLibUtil {
 	 * as this method eliminates class duplication collisions
 	 */
 	public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
-		return ANIMATABLE_IDENTITIES.computeIfAbsent(System.identityHashCode(animatable), i -> {
+		return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, key -> {
 			String baseId = animatable.getClass().getName();
-			i = 0;
+			int i = 0;
 
 			while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
 				i++;
