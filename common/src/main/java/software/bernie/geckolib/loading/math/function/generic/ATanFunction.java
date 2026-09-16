@@ -1,6 +1,5 @@
 package software.bernie.geckolib.loading.math.function.generic;
 
-import net.minecraft.util.Mth;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.function.MathFunction;
 
@@ -28,7 +27,12 @@ public final class ATanFunction extends MathFunction {
 
     @Override
     public double compute() {
-        return Math.atan(this.value.get() * Mth.DEG_TO_RAD);
+        final double value = this.value.get();
+
+        if (value == 0)
+            return 0;
+
+        return Math.atan(value);
     }
 
     @Override
