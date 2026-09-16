@@ -40,7 +40,7 @@ public interface EasingType {
 	EasingType EASE_IN_QUART = register("easeinquart", value -> easeIn(pow(4)));
 	EasingType EASE_OUT_QUART = register("easeoutquart", value -> easeOut(pow(4)));
 	EasingType EASE_IN_OUT_QUART = register("easeinoutquart", value -> easeInOut(pow(4)));
-	EasingType EASE_IN_QUINT = register("easeinquint", value -> easeIn(pow(4)));
+	EasingType EASE_IN_QUINT = register("easeinquint", value -> easeIn(pow(5)));
 	EasingType EASE_OUT_QUINT = register("easeoutquint", value -> easeOut(pow(5)));
 	EasingType EASE_IN_OUT_QUINT = register("easeinoutquint", value -> easeInOut(pow(5)));
 	EasingType EASE_IN_EXPO = register("easeinexpo", value -> easeIn(EasingType::exp));
