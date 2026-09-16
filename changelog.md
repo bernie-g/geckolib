@@ -1,12 +1,7 @@
-## GeckoLib v5.5.5
-
-### Functionality
-- Added the `math.min_angle` Molang function
-- Add support for Molang's truthy half-ternaries (`cond ? 5`)
-- Fixed invalid value handling in `math.mod`, `math.sqrt`, `math.ln`, `%`, and `/`
+## GeckoLib v5.5.6
 
 ### Bug Fixes
-- Fixed ternary expressions not evaluating properly at runtime if using entity queries
-- Fixed compound expressions not evaluating properly at runtime if using entity queries
-- Fixed calculations eagerly resolving the right-hand side, even if the left hand side is true
-- Fixed `GeoRenderState` being required on all renderstate classes - will now only throw if set up incorrectly (#894)
+- Fixed another buggy case with using && or || in Molang expressions
+- Fixed some issues where some MathFunctions might cause a failure to load an animation
+- Fixed an issue where easing types would be ignored on pre/post keyframes (#895)
+- Fixed an issue where the start/end of a catmull-rom (smooth) easing would be ignored (#895)

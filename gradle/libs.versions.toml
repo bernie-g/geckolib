@@ -1,58 +1,58 @@
 [versions]
 # GeckoLib
-    geckolib = "5.5.5"
+    geckolib                        = "5.5.6"
 
 # Common
-    minecraft = { strictly = "[26.2,)", prefer = "26.2" }
-    loom-mc = "26.2"
-    neoform = "26.2-1"
-    java = "25"
+    minecraft                       = { strictly = "[26.2,)", prefer = "26.2" }
+    loom-mc                         = "26.2"
+    neoform                         = "26.2-1"
+    java                            = "25"
 
 # Fabric
-    fabric = "0.19.3"
-    fabric-range = ">=0.19"
-    fabric-api = "0.158.0+26.2"
-    fabric-api-range = ">=0.152.1+26.2"
+    fabric                          = "0.19.5"
+    fabric-range                    = ">=0.19"
+    fabric-api                      = "0.160.0+26.2"
+    fabric-api-range                = ">=0.152.1+26.2"
 
 # Forge
-    forge-fml = { strictly = "[65,)", prefer = "65" }
-    forge = { strictly = "[65.0.0,)", prefer = "65.1.3" }
-    forge-mc = "26.2-65.1.3"
-    forge-eventbusvalidator = "7.0.4"
+    forge-fml                       = { strictly = "[65,)", prefer = "65" }
+    forge                           = { strictly = "[65.0.0,)", prefer = "65.1.3" }
+    forge-mc                        = "26.2-65.1.3"
+    forge-eventbusvalidator         = "7.0.4"
 
 # Neoforge
-    neoforge-loader = { strictly = "[5,)", prefer = "5" }
-    neoforge = { strictly = "[26.2.0.57,)", prefer = "26.2.0.71" }
+    neoforge-loader                 = { strictly = "[5,)", prefer = "5" }
+    neoforge                        = { strictly = "[26.2.0.57,)", prefer = "26.2.0.88" }
 
 # Dependencies
-    mixin = "0.8.7"
-    mixinextras = { strictly = "[0.5.4,)", prefer = "0.5.4" }
-    examplemod = "1.0.0"
+    mixin                           = "0.8.7"
+    mixinextras                     = { strictly = "[0.5.4,)", prefer = "0.5.5" }
+    examplemod                      = "1.0.0"
 
 # Plugins
-    plugin-moddevgradle = "2.0.144"
-    plugin-minotaur = "2.9.0"
-    plugin-curseforge-gradle = "1.3.33"
-    plugin-forge-gradle = "[7.0.36,)"
-    plugin-loom = "1.17-SNAPSHOT"
+    plugin-moddevgradle             = "2.0.147"
+    plugin-minotaur                 = "2.9.0"
+    plugin-curseforge-gradle        = "1.3.33"
+    plugin-forge-gradle             = "[7.0.40,)"
+    plugin-loom                     = "1.17-SNAPSHOT"
 
 [libraries]
 # Common
-    minecraft = { group = "com.mojang", name = "minecraft", version.ref = "minecraft" }
-    mixin = { group = "org.spongepowered", name = "mixin", version.ref = "mixin" }
-    mixinextras-common = { group = "io.github.llamalad7", name = "mixinextras-common", version.ref = "mixinextras" }
+    minecraft                   = { group = "com.mojang",               name = "minecraft",                             version.ref = "minecraft" }
+    mixin                       = { group = "org.spongepowered",        name = "mixin",                                 version.ref = "mixin" }
+    mixinextras-common          = { group = "io.github.llamalad7",      name = "mixinextras-common",                    version.ref = "mixinextras" }
 
 # Fabric
-    fabric = { group = "net.fabricmc", name = "fabric-loader", version.ref = "fabric" }
-    loom-minecraft = { group = "com.mojang", name = "minecraft", version.ref = "loom-mc" }
-    fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version.ref = "fabric-api" }
+    fabric                      = { group = "net.fabricmc",             name = "fabric-loader",                         version.ref = "fabric" }
+    fabric-api                  = { group = "net.fabricmc.fabric-api",  name = "fabric-api",                            version.ref = "fabric-api" }
+    loom-minecraft              = { group = "com.mojang",               name = "minecraft",                             version.ref = "loom-mc" }
 
 # Forge
-    forge = { group = "net.minecraftforge", name = "forge", version.ref = "forge-mc" }
-    forge-eventbusvalidator = { group = "net.minecraftforge", name = "eventbus-validator", version.ref = "forge-eventbusvalidator" }
+    forge                       = { group = "net.minecraftforge",       name = "forge",                                 version.ref = "forge-mc" }
+    forge-eventbusvalidator     = { group = "net.minecraftforge",       name = "eventbus-validator",                    version.ref = "forge-eventbusvalidator" }
 
 # NeoForge
-    neoforge = { group = "net.neoforged", name = "neoforge", version.ref = "neoforge" }
+    neoforge                    = { group = "net.neoforged",            name = "neoforge",                              version.ref = "neoforge" }
 
 # Testing
     examplemod-common = { group = "com.geckolib.example", name = "examplemod-common-26.2", version.ref = "examplemod" }
@@ -62,10 +62,10 @@
 
 [plugins]
 # Publishing
-    minotaur = { id = "com.modrinth.minotaur", version.ref = "plugin-minotaur" }
-    curseforgegradle = { id = "net.darkhax.curseforgegradle", version.ref = "plugin-curseforge-gradle" }
+    minotaur                = { id = "com.modrinth.minotaur",                   version.ref = "plugin-minotaur" }
+    curseforgegradle        = { id = "net.darkhax.curseforgegradle",            version.ref = "plugin-curseforge-gradle" }
 
 # Platform
-    moddevgradle = { id = "net.neoforged.moddev", version.ref = "plugin-moddevgradle" }
-    forgegradle = { id = "net.minecraftforge.gradle", version.ref = "plugin-forge-gradle" }
-    loom = { id = "net.fabricmc.fabric-loom", version.ref = "plugin-loom" }
+    moddevgradle            = { id = "net.neoforged.moddev",                    version.ref = "plugin-moddevgradle" }
+    forgegradle             = { id = "net.minecraftforge.gradle",               version.ref = "plugin-forge-gradle" }
+    loom                    = { id = "net.fabricmc.fabric-loom",                version.ref = "plugin-loom" }
