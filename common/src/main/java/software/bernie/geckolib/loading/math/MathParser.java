@@ -115,7 +115,13 @@ public class MathParser {
         if (!FUNCTION_FACTORIES.containsKey(name))
             return null;
 
-        return (T)FUNCTION_FACTORIES.get(name).createAndValidate(values);
+        try {
+            return (T)FUNCTION_FACTORIES.get(name).createAndValidate(values);
+        }
+        catch (IllegalArgumentException ex) {
+            throw new CompoundException("Invalid math function arguments provided in Molang expression '" + name + "'")
+                    .withMessage(ex.getMessage());
+        }
     }
 
     /**
