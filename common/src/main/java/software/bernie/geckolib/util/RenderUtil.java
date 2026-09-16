@@ -196,7 +196,23 @@ public final class RenderUtil {
 	 * Converts a given double array to its {@link Vec3} equivalent
 	 */
 	public static Vec3 arrayToVec(double[] array) {
-		return new Vec3(array[0], array[1], array[2]);
+		final double x;
+		final double y;
+		final double z;
+
+		if (array.length == 1) {
+			x = y = z = array[0];
+		}
+		else {
+			x = array[0];
+			y = array[1];
+			z = array[2];
+		}
+
+		if (x == 0 && y == 0 && z == 0)
+			return Vec3.ZERO;
+
+		return new Vec3(x, y, z);
 	}
 
 	/**
