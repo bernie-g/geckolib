@@ -23,7 +23,6 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
@@ -241,9 +240,6 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
-		if (sourcePart.cubes.isEmpty())
-			return new Vec3(1, 1, 1);
-
 		final GeoCube firstCube = bone.getCubes().getFirst();
 		final Cube armorCube = sourcePart.cubes.isEmpty() ? null : getReferenceCubeForModel(bone, sourcePart);
 		final double armorBoneSizeX = firstCube.size().x();
