@@ -53,11 +53,11 @@ public final class RenderStateUtil {
 
                 if (armedState instanceof HumanoidRenderState humanoidState) {
                     newRenderState.swimAmount = humanoidState.swimAmount;
-                    newRenderState.attackTime = humanoidState.attackTime;
+                    newRenderState.currentSwing = humanoidState.currentSwing;
+                    newRenderState.swingAnimation = humanoidState.swingAnimation;
                     newRenderState.speedValue = humanoidState.speedValue;
                     newRenderState.maxCrossbowChargeDuration = humanoidState.maxCrossbowChargeDuration;
                     newRenderState.ticksUsingItem = humanoidState.ticksUsingItem;
-                    newRenderState.attackArm = humanoidState.attackArm;
                     newRenderState.useItemHand = humanoidState.useItemHand;
                     newRenderState.isCrouching = humanoidState.isCrouching;
                     newRenderState.isFallFlying = humanoidState.isFallFlying;

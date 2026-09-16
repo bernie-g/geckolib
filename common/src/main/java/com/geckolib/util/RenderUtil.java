@@ -11,9 +11,9 @@ import com.geckolib.renderer.*;
 import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.renderer.base.GeoRenderer;
 import com.geckolib.renderer.base.RenderPassInfo;
-import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.mojang.renderpearl.api.textures.GpuTexture;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
@@ -152,8 +152,8 @@ public final class RenderUtil {
 	///
 	/// Usually used for rotating projectiles towards their trajectory, in an [GeoRenderer#preRenderPass] override
 	public static void faceRotation(PoseStack poseStack, Entity animatable, float partialTick) {
-		poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot())));
+		poseStack.rotateDegrees(Axis.YP, Mth.lerp(partialTick, animatable.yRotO, animatable.getYRot()) - 90);
+		poseStack.rotateDegrees(Axis.ZP, Mth.lerp(partialTick, animatable.xRotO, animatable.getXRot()));
 	}
 
 	/// Add a positional vector to a matrix
@@ -209,7 +209,7 @@ public final class RenderUtil {
             quat.rotationZYX((float)z, (float)y, (float)x);
         }
 
-        poseStack.mulPose(quat);
+        poseStack.rotate(quat);
     }
 
     /// Create and populate an [ItemStackRenderState] for a given [ItemStack] for rendering

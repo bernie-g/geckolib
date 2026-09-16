@@ -262,7 +262,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
     @Override
     public @Nullable RenderType getRenderType(R renderState, Identifier texture) {
         if (renderState.isInvisible && !renderState.getOrDefaultGeckolibData(DataTickets.INVISIBLE_TO_PLAYER, false))
-            return RenderTypes.entityTranslucentCullItemTarget(texture);
+            return RenderTypes.entityTranslucentCull(texture);
 
         if (!renderState.isInvisible)
             return GeoRenderer.super.getRenderType(renderState, texture);
@@ -283,7 +283,7 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         renderState.addGeckolibData(DataTickets.IS_MOVING, (replacedEntity instanceof LivingEntity livingEntity ? livingEntity.walkAnimation.speed() : replacedEntity.getDeltaMovement().lengthSqr())  >= getMotionAnimThreshold(this.animatable));
 
         if (replacedEntity instanceof LivingEntity livingEntity) {
-            renderState.addGeckolibData(DataTickets.SWINGING_ARM, livingEntity.swinging);
+            renderState.addGeckolibData(DataTickets.SWINGING_ARM, livingEntity.isSwinging());
             renderState.addGeckolibData(DataTickets.IS_DEAD_OR_DYING, livingEntity.isDeadOrDying());
         }
 
@@ -360,26 +360,26 @@ public class GeoReplacedEntityRenderer<T extends GeoAnimatable, E extends Entity
         boolean sleeping = renderState.getGeckolibData(DataTickets.ENTITY_POSE) == Pose.SLEEPING;
 
         if (!sleeping)
-            poseStack.mulPose(Axis.YP.rotationDegrees(180f - rotationYaw));
+            poseStack.rotateDegrees(Axis.YP, 180f - rotationYaw);
 
         if (renderState instanceof LivingEntityRenderState livingRenderState) {
             if (livingRenderState.deathTime > 0) {
-                poseStack.mulPose(Axis.ZP.rotationDegrees(Math.min(Mth.sqrt((livingRenderState.deathTime - 1f) / 20f * 1.6f), 1) * getDeathMaxRotation(renderState)));
+                poseStack.rotateDegrees(Axis.ZP, Math.min(Mth.sqrt((livingRenderState.deathTime - 1f) / 20f * 1.6f), 1) * getDeathMaxRotation(renderState));
             }
             else if (livingRenderState.isAutoSpinAttack) {
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90f - livingRenderState.xRot));
-                poseStack.mulPose(Axis.YP.rotationDegrees(renderState.ageInTicks * -75f));
+                poseStack.rotateDegrees(Axis.XP, -90f - livingRenderState.xRot);
+                poseStack.rotateDegrees(Axis.YP, renderState.ageInTicks * -75f);
             }
             else if (sleeping) {
                 Direction bedOrientation = livingRenderState.bedOrientation;
 
-                poseStack.mulPose(Axis.YP.rotationDegrees(bedOrientation != null ? MiscUtil.getDirectionAngle(bedOrientation) : rotationYaw));
-                poseStack.mulPose(Axis.ZP.rotationDegrees(getDeathMaxRotation(renderState)));
-                poseStack.mulPose(Axis.YP.rotationDegrees(270f));
+                poseStack.rotateDegrees(Axis.YP, bedOrientation != null ? MiscUtil.getDirectionAngle(bedOrientation) : rotationYaw);
+                poseStack.rotateDegrees(Axis.ZP, getDeathMaxRotation(renderState));
+                poseStack.rotateDegrees(Axis.YP, 270f);
             }
             else if (livingRenderState.isUpsideDown) {
                 poseStack.translate(0, (livingRenderState.boundingBoxHeight + 0.1f) / nativeScale, 0);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
+                poseStack.rotateDegrees(Axis.ZP, 180f);
             }
         }
     }

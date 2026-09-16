@@ -36,8 +36,8 @@ public class DirectionalProjectileRenderer<T extends Projectile & GeoAnimatable,
     /// Applies rotation transformations to the renderer prior to render time to account for various entity states
     @Override
     protected void applyRotations(RenderPassInfo<R> renderPassInfo, PoseStack poseStack, float nativeScale) {
-        poseStack.mulPose(Axis.YP.rotationDegrees(renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f)));
-        poseStack.mulPose(Axis.XP.rotationDegrees(renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_PITCH, 0f)));
+        poseStack.rotateDegrees(Axis.YP, renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, 0f));
+        poseStack.rotateDegrees(Axis.XP, renderPassInfo.getOrDefaultGeckolibData(DataTickets.ENTITY_PITCH, 0f));
     }
 
     /// Calculate the yaw of the given animatable.

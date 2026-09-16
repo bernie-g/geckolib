@@ -315,7 +315,7 @@ public final class MolangQueries {
 		MolangQueries.<LivingEntity>setActorVariable(HEAD_Y_ROTATION, actor -> actor.renderState.getOrDefaultGeckolibData(DataTickets.ENTITY_YAW, actor.animatable.getViewYRot(actor.partialTick)));
 		MolangQueries.<LivingEntity>setActorVariable(HEALTH, actor -> actor.animatable.getHealth());
 		MolangQueries.<LivingEntity>setActorVariable(HURT_TIME, actor -> actor.animatable.hurtTime == 0 ? 0 : actor.animatable.hurtTime - actor.partialTick);
-		MolangQueries.<LivingEntity>setActorVariable(INVULNERABLE_TICKS, actor -> actor.animatable.invulnerableTime == 0 ? 0 : actor.animatable.invulnerableTime - actor.partialTick);
+		MolangQueries.<LivingEntity>setActorVariable(INVULNERABLE_TICKS, actor -> !actor.animatable.isTemporarilyInvulnerable() ? 0 : actor.animatable.getInvulnerableTime() - actor.partialTick);
 		MolangQueries.<LivingEntity>setActorVariable(IS_BABY, actor -> actor.animatable.isBaby() ? 1 : 0);
 		MolangQueries.<LivingEntity>setActorVariable(IS_SLEEPING, actor -> actor.animatable.isSleeping() ? 1 : 0);
 		MolangQueries.<LivingEntity>setActorVariable(IS_USING_ITEM, actor -> actor.animatable.isUsingItem() ? 1 : 0);

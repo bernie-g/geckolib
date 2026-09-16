@@ -129,7 +129,7 @@ public final class DefaultAnimations {
 
 	/// Generic attack controller
 	///
-	/// Plays an attack animation if the animatable is [net.minecraft.world.entity.LivingEntity#swinging]
+	/// Plays an attack animation if the animatable is [LivingEntity#isSwinging()]
 	///
 	/// Resets the animation each time it stops, ready for the next swing
 	///

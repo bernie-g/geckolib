@@ -111,19 +111,19 @@ public class ItemInHandGeoLayer<T extends LivingEntity & GeoAnimatable, O, R ext
         poseStack.pushPose();
 
         if (displayContext == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND) {
-            poseStack.mulPose(Axis.XN.rotationDegrees(90f));
+            poseStack.rotateDegrees(Axis.XN, 90f);
             poseStack.translate(0, 0.125f, -0.0625f);
 
             if (renderState.getOrDefaultGeckolibData(renderState.getOrDefaultGeckolibData(DataTickets.IS_LEFT_HANDED, false) ? OFFHAND_SHIELD : MAINHAND_SHIELD, false))
                 poseStack.translate(0, 0.125, -0.25);
         }
         else if (displayContext == ItemDisplayContext.THIRD_PERSON_LEFT_HAND) {
-            poseStack.mulPose(Axis.XN.rotationDegrees(90f));
+            poseStack.rotateDegrees(Axis.XN, 90f);
             poseStack.translate(0, 0.125f, -0.0625f);
 
             if (renderState.getOrDefaultGeckolibData(renderState.getOrDefaultGeckolibData(DataTickets.IS_LEFT_HANDED, false) ? MAINHAND_SHIELD : OFFHAND_SHIELD, false)) {
                 poseStack.translate(0, 0.125, 0.25);
-                poseStack.mulPose(Axis.YP.rotationDegrees(180));
+                poseStack.rotateDegrees(Axis.YP, 180);
             }
         }
 

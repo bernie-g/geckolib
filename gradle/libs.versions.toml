@@ -3,26 +3,26 @@
     geckolib                        = "5.5.6"
 
 # Common
-    minecraft                       = { strictly = "[26.2,)", prefer = "26.2" }
-    loom-mc                         = "26.2"
-    neoform                         = "26.2-1"
+    minecraft                       = { strictly = "[26.3,)", prefer = "26.3" }
+    loom-mc                         = "26.3"
+    neoform                         = "26.3-1"
     java                            = "25"
 
 # Fabric
     fabric                          = "0.19.5"
     fabric-range                    = ">=0.19"
-    fabric-api                      = "0.160.0+26.2"
-    fabric-api-range                = ">=0.152.1+26.2"
+    fabric-api                      = "0.160.5+26.3"
+    fabric-api-range                = ">=0.160.5+26.3"
 
 # Forge
     forge-fml                       = { strictly = "[65,)", prefer = "65" }
     forge                           = { strictly = "[65.0.0,)", prefer = "65.1.3" }
-    forge-mc                        = "26.2-65.1.3"
+    forge-mc                        = "26.3-65.1.3"
     forge-eventbusvalidator         = "7.0.4"
 
 # Neoforge
     neoforge-loader                 = { strictly = "[5,)", prefer = "5" }
-    neoforge                        = { strictly = "[26.2.0.57,)", prefer = "26.2.0.88" }
+    neoforge                        = { strictly = "[26.3.0.0-beta,)", prefer = "26.3.0.0-beta" }
 
 # Dependencies
     mixin                           = "0.8.7"
@@ -55,10 +55,10 @@
     neoforge                    = { group = "net.neoforged",            name = "neoforge",                              version.ref = "neoforge" }
 
 # Testing
-    examplemod-common = { group = "com.geckolib.example", name = "examplemod-common-26.2", version.ref = "examplemod" }
-    examplemod-fabric = { group = "com.geckolib.example", name = "examplemod-fabric-26.2", version.ref = "examplemod" }
-    examplemod-forge = { group = "com.geckolib.example", name = "examplemod-forge-26.2", version.ref = "examplemod" }
-    examplemod-neoforge = { group = "com.geckolib.example", name = "examplemod-neoforge-26.2", version.ref = "examplemod" }
+    examplemod-common = { group = "com.geckolib.example", name = "examplemod-common-26.3", version.ref = "examplemod" }
+    examplemod-fabric = { group = "com.geckolib.example", name = "examplemod-fabric-26.3", version.ref = "examplemod" }
+    examplemod-forge = { group = "com.geckolib.example", name = "examplemod-forge-26.3", version.ref = "examplemod" }
+    examplemod-neoforge = { group = "com.geckolib.example", name = "examplemod-neoforge-26.3", version.ref = "examplemod" }
 
 [plugins]
 # Publishing

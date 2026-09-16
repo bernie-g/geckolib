@@ -80,11 +80,11 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable, R extends B
         final Direction facing = renderPassInfo.getOrDefaultGeckolibData(DIRECTION_FACING, Direction.NORTH);
 
         switch (facing) {
-            case SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180));
-            case WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90));
-            case EAST -> poseStack.mulPose(Axis.YN.rotationDegrees(90));
-            case UP -> poseStack.mulPose(Axis.XP.rotationDegrees(90));
-            case DOWN -> poseStack.mulPose(Axis.XN.rotationDegrees(90));
+            case SOUTH -> poseStack.rotateDegrees(Axis.YP, 180);
+            case WEST -> poseStack.rotateDegrees(Axis.YP, 90);
+            case EAST -> poseStack.rotateDegrees(Axis.YN, 90);
+            case UP -> poseStack.rotateDegrees(Axis.XP, 90);
+            case DOWN -> poseStack.rotateDegrees(Axis.XN, 90);
             default -> {}
         }
     }
