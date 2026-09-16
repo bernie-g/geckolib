@@ -353,7 +353,7 @@ public interface EasingType {
 
 			keyframes[currentFrameIndex] = new Keyframe(currentFrame.startTime(), currentFrame.length(), currentFrame.startValue(), currentFrame.endValue(), currentFrame.easingType(),
 														ObjectArrayList.of(
-																currentFrameIndex == 0 ? currentFrame.startValue() : keyframes[currentFrameIndex - 1].endValue(),
+																currentFrameIndex < 2 ? currentFrame.startValue() : keyframes[currentFrameIndex - 2].endValue(),
 																currentFrameIndex + 1 >= keyframes.length ? currentFrame.endValue() : keyframes[currentFrameIndex + 1].endValue()));
 		}
 
