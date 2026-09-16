@@ -150,10 +150,13 @@ public final class RawAnimation {
 		if (this == obj)
 			return true;
 
-		if (obj == null || getClass() != obj.getClass())
+		if (!(obj instanceof RawAnimation otherAnim))
 			return false;
 
-		return hashCode() == obj.hashCode();
+		if (this.animationList.size() != otherAnim.animationList.size())
+			return false;
+
+		return this.animationList.equals(otherAnim.animationList);
 	}
 
 	@Override
