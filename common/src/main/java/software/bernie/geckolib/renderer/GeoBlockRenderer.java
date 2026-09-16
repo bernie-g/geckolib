@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements GeoRenderer<T>, BlockEntityRenderer<T> {
 	@SuppressWarnings("unchecked")
-	private static final EnumProperty<Direction>[] SUPPORTED_DIRECTION_PROPERTIES = new EnumProperty[] {BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.VERTICAL_DIRECTION, BlockStateProperties.FACING_HOPPER };
+	protected static final EnumProperty<Direction>[] SUPPORTED_DIRECTION_PROPERTIES = new EnumProperty[] {BlockStateProperties.FACING, BlockStateProperties.HORIZONTAL_FACING, BlockStateProperties.VERTICAL_DIRECTION, BlockStateProperties.FACING_HOPPER };
 
 	protected final GeoRenderLayersContainer<T> renderLayers = new GeoRenderLayersContainer<>(this);
 	protected final GeoModel<T> model;
