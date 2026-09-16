@@ -18,6 +18,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
@@ -36,6 +37,11 @@ import java.util.List;
 @ApiStatus.Internal
 public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeValues values, @Nullable String interpolationType, DoubleOrString @Nullable [] easingArgs,
                                          @Nullable ActorBoneAnimationKeyframe preKeyframe, @Nullable ActorBoneAnimationKeyframe postKeyframe) {
+    public ActorBoneAnimationKeyframe {
+        preKeyframe = inheritParentEasings(interpolationType, easingArgs, preKeyframe);
+        postKeyframe = inheritParentEasings(interpolationType, easingArgs, postKeyframe);
+    }
+
     /// Parse an ActorBoneAnimationKeyframe instance from raw .json input via [Gson]
     public static JsonDeserializer<ActorBoneAnimationKeyframe> gsonDeserializer() throws JsonParseException {
         return (json, _, context) -> {
@@ -116,5 +122,17 @@ public record ActorBoneAnimationKeyframe(@Nullable ActorBoneAnimationKeyframeVal
         }
 
         return new KeyframeTriplet(timestamp, keyframeLength, lastTriplet, xValue, yValue, zValue, easingType, easingArgs);
+    }
+
+    /// Potentially inherit the parent bone keyframe's [EasingType] and easing args
+    ///
+    /// This is specifically for pre/post keyframe handles, where propagation of the easing type is required
+    @Contract("_,_,null->null")
+    private static @Nullable ActorBoneAnimationKeyframe inheritParentEasings(@Nullable String parentInterpolation, DoubleOrString @Nullable [] parentEasingArgs,
+                                                                             @Nullable ActorBoneAnimationKeyframe self) {
+        if (self == null || parentInterpolation == null || self.interpolationType != null)
+            return self;
+
+        return new ActorBoneAnimationKeyframe(self.values, parentInterpolation, parentEasingArgs, self.preKeyframe, self.postKeyframe);
     }
 }
