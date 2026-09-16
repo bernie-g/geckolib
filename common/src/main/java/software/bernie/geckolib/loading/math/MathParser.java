@@ -555,7 +555,7 @@ public class MathParser {
         Supplier<MathValue> condition = null;
         Supplier<MathValue> ifTrue = null;
         int ternaryState = 0;
-        int lastColon = -1;
+        int matchingColon = -1;
         int queryIndex = -1;
 
         for (int i = 0; i < symbolCount; i++) {
@@ -574,15 +574,15 @@ public class MathParser {
                 if (ternaryState == 1 && ifTrue == null && queryIndex > 0) {
                     final int queryIndex2 = queryIndex;
                     ifTrue = () -> parseSymbols(symbols.subList(queryIndex2, i2));
+                    matchingColon = i;
                 }
 
                 ternaryState--;
-                lastColon = i;
             }
         }
 
-        if (ternaryState == 0 && condition != null && ifTrue != null && lastColon < symbolCount - 1)
-            return new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(lastColon + 1, symbolCount)));
+        if (ternaryState == 0 && condition != null && ifTrue != null && matchingColon < symbolCount - 1)
+            return new Ternary(condition.get(), ifTrue.get(), parseSymbols(symbols.subList(matchingColon + 1, symbolCount)));
 
         return null;
     }
