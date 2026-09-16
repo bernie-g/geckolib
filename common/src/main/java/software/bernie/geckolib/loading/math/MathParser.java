@@ -191,6 +191,9 @@ public class MathParser {
             final List<MathValue> subValues = new ObjectArrayList<>(subExpressions.length);
 
             for (String subExpression : subExpressions) {
+                if (subExpression.isBlank())
+                    continue;
+
                 boolean isReturn = subExpression.startsWith(MOLANG_RETURN);
 
                 if (isReturn)
