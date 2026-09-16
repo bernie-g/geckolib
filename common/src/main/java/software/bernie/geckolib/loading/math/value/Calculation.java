@@ -40,13 +40,27 @@ public final class Calculation implements MathValue {
 
     @Override
     public double get() {
-        if (this.isMutable)
-            return this.operator.compute(this.argA.get(), this.argB.get());
+        if (!this.isMutable && this.cachedValue != Double.MIN_VALUE)
+            return this.cachedValue;
 
-        if (this.cachedValue == Double.MIN_VALUE)
-            this.cachedValue = this.operator.compute(this.argA.get(), this.argB.get());
+        double value;
 
-        return this.cachedValue;
+        if (this.operator == Operator.OR) {
+            value = this.operator.compute(this.argA.get(), 0) != 0 ||
+                    this.operator.compute(0, this.argB.get()) != 0 ?
+                    1 : 0;
+        } else if (this.operator == Operator.AND) {
+            value = this.operator.compute(this.argA.get(), 1) != 0 &&
+                    this.operator.compute(1, this.argB.get()) != 0 ?
+                    1 : 0;
+        } else {
+            value = this.operator.compute(this.argA.get(), this.argB.get());
+        }
+
+        if (!this.isMutable)
+            this.cachedValue = value;
+
+        return value;
     }
 
     @Override
