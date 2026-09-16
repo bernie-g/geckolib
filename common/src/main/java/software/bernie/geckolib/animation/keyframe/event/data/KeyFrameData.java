@@ -34,10 +34,10 @@ public abstract class KeyFrameData {
 		if (this == obj)
 			return true;
 
-		if (obj == null || getClass() != obj.getClass())
+		if (!(obj instanceof KeyFrameData other))
 			return false;
 
-		return this.hashCode() == obj.hashCode();
+		return this.startTick == other.startTick;
 	}
 
 	@Override

@@ -24,6 +24,11 @@ public class SoundKeyframeData extends KeyFrameData {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj) && obj instanceof SoundKeyframeData other && this.sound.equals(other.sound);
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(getStartTick(), this.sound);
 	}

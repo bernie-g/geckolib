@@ -42,6 +42,12 @@ public class ParticleKeyframeData extends KeyFrameData {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj) && obj instanceof ParticleKeyframeData other &&
+			   this.effect.equals(other.effect) && this.locator.equals(other.locator) && this.script.equals(other.script);
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(getStartTick(), effect, locator, script);
 	}

@@ -24,6 +24,11 @@ public class CustomInstructionKeyframeData extends KeyFrameData {
 	}
 
 	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj) && obj instanceof CustomInstructionKeyframeData other && this.instructions.equals(other.instructions);
+	}
+
+	@Override
 	public int hashCode() {
 		return Objects.hash(getStartTick(), instructions);
 	}
