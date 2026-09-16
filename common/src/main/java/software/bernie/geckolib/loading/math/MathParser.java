@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
 public class MathParser {
     private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:.,()]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
-    private static final Pattern NUMERIC = Pattern.compile("^-?\\d+(\\.\\d+)?$");
+    private static final Pattern NUMERIC = Pattern.compile("^-?(\\d+(\\.\\d+)?|\\.\\d+)$");
     private static final Pattern VARIABLE_FORMAT = Pattern.compile("^[a-z_]+\\.[\\w+_]+$");
     private static final Pattern VALID_DOUBLE = Pattern.compile("[\\x00-\\x20]*[+-]?(NaN|Infinity|((((\\d+)(\\.)?((\\d+)?)([eE][+-]?(\\d+))?)|(\\.(\\d+)([eE][+-]?(\\d+))?)|(((0[xX](\\p{XDigit}+)(\\.)?)|(0[xX](\\p{XDigit}+)?(\\.)(\\p{XDigit}+)))[pP][+-]?(\\d+)))[fFdD]?))[\\x00-\\x20]*");
     private static final String MOLANG_RETURN = "return ";
