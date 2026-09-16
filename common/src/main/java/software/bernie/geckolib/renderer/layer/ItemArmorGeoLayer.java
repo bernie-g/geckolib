@@ -23,6 +23,7 @@ import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import net.minecraft.world.level.block.AbstractSkullBlock;
 import net.minecraft.world.level.block.SkullBlock;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibServices;
@@ -240,17 +241,20 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
+		if (sourcePart.cubes.isEmpty())
+			return new Vec3(1, 1, 1);
+
 		final GeoCube firstCube = bone.getCubes().getFirst();
-		final Cube armorCube = getReferenceCubeForModel(bone, sourcePart);
+		final Cube armorCube = sourcePart.cubes.isEmpty() ? null : getReferenceCubeForModel(bone, sourcePart);
 		final double armorBoneSizeX = firstCube.size().x();
 		final double armorBoneSizeY = firstCube.size().y();
 		final double armorBoneSizeZ = firstCube.size().z();
-		final double actualArmorSizeX = Math.abs(armorCube.maxX - armorCube.minX);
-		final double actualArmorSizeY = Math.abs(armorCube.maxY - armorCube.minY);
-		final double actualArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
-		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
-		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
-		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
+		final double actualArmorSizeX = armorCube == null ? armorBoneSizeX : Math.abs(armorCube.maxX - armorCube.minX);
+		final double actualArmorSizeY = armorCube == null ? armorBoneSizeY : Math.abs(armorCube.maxY - armorCube.minY);
+		final double actualArmorSizeZ = armorCube == null ? armorBoneSizeZ : Math.abs(armorCube.maxZ - armorCube.minZ);
+		float scaleX = actualArmorSizeX == 0 ? 0 : (float)(armorBoneSizeX / actualArmorSizeX);
+		float scaleY = actualArmorSizeY == 0 ? 0 : (float)(armorBoneSizeY / actualArmorSizeY);
+		float scaleZ = actualArmorSizeZ == 0 ? 0 : (float)(armorBoneSizeZ / actualArmorSizeZ);
 
 		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
 				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
