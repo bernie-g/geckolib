@@ -1,5 +1,6 @@
 package software.bernie.geckolib.loading.math.function;
 
+import org.jetbrains.annotations.ApiStatus;
 import software.bernie.geckolib.loading.math.MathValue;
 
 import java.util.StringJoiner;
