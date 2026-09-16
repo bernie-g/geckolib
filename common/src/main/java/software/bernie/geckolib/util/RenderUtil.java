@@ -43,14 +43,7 @@ public final class RenderUtil {
 	}
 
 	public static void rotateMatrixAroundBone(PoseStack poseStack, GeoBone bone) {
-		if (bone.getRotZ() != 0)
-			poseStack.mulPose(Axis.ZP.rotation(bone.getRotZ()));
-
-		if (bone.getRotY() != 0)
-			poseStack.mulPose(Axis.YP.rotation(bone.getRotY()));
-
-		if (bone.getRotX() != 0)
-			poseStack.mulPose(Axis.XP.rotation(bone.getRotX()));
+		RenderUtil.optionalRotateZYX(poseStack, bone.getRotZ(), bone.getRotY(), bone.getRotX());
 	}
 
 	public static void rotateMatrixAroundCube(PoseStack poseStack, GeoCube cube) {
@@ -239,6 +232,31 @@ public final class RenderUtil {
 
 		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
 			normal.mul(1, 1, -1);
+	}
+
+	/**
+	 * Rotate a [PoseStack] around a given z/y/x axis, reducing the amount of work performed to the minimal required for the given values
+	 */
+	public static void optionalRotateZYX(PoseStack poseStack, double z, double y, double x) {
+		if (z == 0 && y == 0 && x == 0)
+			return;
+
+		final Quaternionf quat = new Quaternionf();
+
+		if (x == 0 && y == 0) {
+			quat.rotationZ((float)z);
+		}
+		else if (x == 0 && z == 0) {
+			quat.rotationY((float)y);
+		}
+		else if (y == 0 && z == 0) {
+			quat.rotationX((float)x);
+		}
+		else {
+			quat.rotationZYX((float)z, (float)y, (float)x);
+		}
+
+		poseStack.mulPose(quat);
 	}
 
 	/**
