@@ -20,6 +20,7 @@ import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.value.Variable;
 import software.bernie.geckolib.util.ClientUtil;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -126,7 +127,7 @@ public final class MolangQueries {
 	 * Returns whether a variable under the given identifier has already been registered, without creating a new instance
 	 */
 	public static boolean isExistingVariable(String name) {
-		return VARIABLES.containsKey(name);
+		return VARIABLES.containsKey(name.toLowerCase(Locale.ROOT));
 	}
 
 	/**
@@ -137,7 +138,7 @@ public final class MolangQueries {
 	 * @see MathParser#registerVariable(Variable)
 	 */
 	static void registerVariable(Variable variable) {
-		VARIABLES.put(variable.name(), variable);
+		VARIABLES.put(variable.name().toLowerCase(Locale.ROOT), variable);
 	}
 
 	/**
@@ -146,7 +147,7 @@ public final class MolangQueries {
 	 * @see MathParser#getVariableFor(String)
 	 */
 	static Variable getVariableFor(String name) {
-		return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
+		return VARIABLES.computeIfAbsent(applyPrefixAliases(name.toLowerCase(Locale.ROOT), "query.", "q."), key -> new Variable(key, 0));
 	}
 
 	/**
@@ -197,7 +198,7 @@ public final class MolangQueries {
 	 * @param <T> The lowest-common type of object your actor needs to be in order to evaluate this variable
 	 */
 	public static <T> void setActorVariable(String name, ToDoubleFunction<Actor<T>> value) {
-		getVariableFor(name).set(() -> value.applyAsDouble((Actor)getActor()));
+		getVariableFor(name.toLowerCase(Locale.ROOT)).set(() -> value.applyAsDouble((Actor)getActor()));
 	}
 
 	private static Actor<?> getActor() {
