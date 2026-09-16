@@ -16,9 +16,12 @@ public abstract class MathFunction implements MathValue {
     private double cachedValue = Double.MIN_VALUE;
 
     protected MathFunction(MathValue... values) {
-        validate(values);
-
-        this.isMutable = isMutable(values);
+        if (values.length >= getMinArgs()) {
+            this.isMutable = isMutable(values);
+        } else {
+            validate(values);
+            throw new IllegalStateException("This should never happen, someone failed to validate a MathFunction!");
+        }
     }
 
     /**
@@ -104,5 +107,14 @@ public abstract class MathFunction implements MathValue {
          * Instantiate a new {@link MathFunction} for the given input values
          */
         T create(MathValue... values);
+
+        @ApiStatus.Internal
+        default T createAndValidate(MathValue... values) {
+            final T function = create(values);
+
+            function.validate(values);
+
+            return function;
+        }
     }
 }

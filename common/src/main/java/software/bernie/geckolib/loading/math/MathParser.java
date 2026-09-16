@@ -115,7 +115,7 @@ public class MathParser {
         if (!FUNCTION_FACTORIES.containsKey(name))
             return null;
 
-        return (T)FUNCTION_FACTORIES.get(name).create(values);
+        return (T)FUNCTION_FACTORIES.get(name).createAndValidate(values);
     }
 
     /**
