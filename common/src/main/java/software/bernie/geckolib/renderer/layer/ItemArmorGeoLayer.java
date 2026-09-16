@@ -248,9 +248,9 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 		final double actualArmorSizeX = armorCube == null ? armorBoneSizeX : Math.abs(armorCube.maxX - armorCube.minX);
 		final double actualArmorSizeY = armorCube == null ? armorBoneSizeY : Math.abs(armorCube.maxY - armorCube.minY);
 		final double actualArmorSizeZ = armorCube == null ? armorBoneSizeZ : Math.abs(armorCube.maxZ - armorCube.minZ);
-		float scaleX = actualArmorSizeX == 0 ? 0 : (float)(armorBoneSizeX / actualArmorSizeX);
-		float scaleY = actualArmorSizeY == 0 ? 0 : (float)(armorBoneSizeY / actualArmorSizeY);
-		float scaleZ = actualArmorSizeZ == 0 ? 0 : (float)(armorBoneSizeZ / actualArmorSizeZ);
+		float scaleX = actualArmorSizeX == 0 ? 1 : (float)(armorBoneSizeX / actualArmorSizeX);
+		float scaleY = actualArmorSizeY == 0 ? 1 : (float)(armorBoneSizeY / actualArmorSizeY);
+		float scaleZ = actualArmorSizeZ == 0 ? 1 : (float)(armorBoneSizeZ / actualArmorSizeZ);
 
 		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
 				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
