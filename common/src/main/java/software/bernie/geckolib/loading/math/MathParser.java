@@ -577,15 +577,23 @@ public class MathParser {
     @Nullable
     protected static MathValue compileFunction(String name, List<MathValue> args) throws CompoundException {
         if (name.startsWith("!")) {
-            if (name.length() == 1)
+            if (name.length() == 1) {
+                if (args.isEmpty())
+                    throw new CompoundException("Found empty expression group '!()'");
+
                 return new BooleanNegate(args.getFirst());
+            }
 
             return new BooleanNegate(compileFunction(name.substring(1), args));
         }
 
         if (name.startsWith("-")) {
-            if (name.length() == 1)
+            if (name.length() == 1) {
+                if (args.isEmpty())
+                    throw new CompoundException("Found empty expression group '-()'");
+
                 return new Negative(args.getFirst());
+            }
 
             return new Negative(compileFunction(name.substring(1), args));
         }
