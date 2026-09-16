@@ -437,6 +437,11 @@ public class MathParser {
         if (symbols.size() == 1)
             return compileSingleValue(symbols.getFirst());
 
+        final MathValue assignment = compileAssignment(symbols);
+
+        if (assignment != null)
+            return assignment;
+
         Ternary ternary = compileTernary(symbols);
 
         if (ternary != null)
@@ -488,6 +493,22 @@ public class MathParser {
 
             return null;
         }).orElse(null);
+    }
+
+    /**
+     * Compile a {@link VariableAssignment} value instance from the given symbols list, if applicable
+     *
+     * @return A compiled VariableAssignment value, or empty if an assignment does not apply to the provided symbols
+     * @throws CompoundException If there is a parsing failure for any of the contents of the symbols
+     */
+    protected static @Nullable MathValue compileAssignment(List<Either<String, List<MathValue>>> symbols) throws CompoundException {
+        if (symbols.size() < 3 || symbols.get(1).left().filter(Operator.ASSIGN_VARIABLE.symbol()::equals).isEmpty())
+            return null;
+
+        if (!(parseSymbols(symbols.subList(0, 1)) instanceof Variable variable))
+            throw new CompoundException("Attempted to assign a value to a non-variable");
+
+        return new VariableAssignment(variable, parseSymbols(symbols.subList(2, symbols.size())));
     }
 
     /**
