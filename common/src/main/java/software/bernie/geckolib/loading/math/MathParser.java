@@ -195,6 +195,9 @@ public class MathParser {
                     break;
             }
 
+            if (subValues.isEmpty())
+                return new Constant(0);
+
             return new CompoundValue(subValues.toArray(new MathValue[0]));
         }
 
