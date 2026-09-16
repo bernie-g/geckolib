@@ -1,3 +1,28 @@
-v4.9.2
+v4.9.3
 
-- Fixed GeckoLib passing the wrong partialTick to GeoRenderLayer#preRender (#877)
+- Fixed an issue where the start/end of a catmull-rom (smooth) easing would be ignored (#895)
+- Fixed incorrectly parsed MathFunctions sometimes causing crashes on load
+- Fixed `OR` and `AND` molang operators eagerly resolving the right-hand side of the operation even if the left-hand side precludes it
+- Added `&` and `|` molang operator aliases for `&&` and `||` respectively
+- Fixed lower-level molang operators not having the correct precedence
+- Fixed empty molang sub-statements resulting in an error
+- Improved error messages for molang parsing
+- Fixed negative variable references in molang sometimes failing to parse
+- Fixed negative functions in molang sometimes failing to parse
+- Fixed some numeric values not being parsed as values in Molang
+- Fixed DieRollIntegerFunction calling itself `die_roll`
+- Fixed nested Ternary expressions in Molang cannibalising themselves
+- Fixed LoopType.DEFAULT not being serializable
+- Fix Serverbound packets (of which we have none currently) crashing on forge dedicated servers
+- Fixed Molang query names being case-sensitive
+- Add support for single-entry vector arrays in models
+- Fixed potentially dodgy `RawAnimation` equality comparisons
+- Fixed `easeinquint` only using a quadruple modifier
+- Fixed some loose optional networking on Forge
+- Prevent some rare crashes from `ItemArmorGeoLayer`
+- Prevent some rare crashes when multiple mods load at the same time and add synced singleton animatables
+- Fixed potentially inversely scaled arguments causing problems for randomizing MathFunctions (DieRollInteger, RandomInteger)
+- Fix asin/acos/atan functions wrongfully reducing inputs to radians, and not accounting for out-of-range edge cases
+- Added support for more direction BlockState properties for GeoBlock rendering
+- Fixed `KeyframeData` and its child classes not handling `equals` properly
+- Fixed assignments with ternaries or calculations not evaluating properly
