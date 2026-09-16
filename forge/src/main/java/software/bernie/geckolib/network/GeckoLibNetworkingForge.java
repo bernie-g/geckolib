@@ -18,6 +18,8 @@ import software.bernie.geckolib.network.packet.MultiloaderPacket;
 import software.bernie.geckolib.service.GeckoLibNetworking;
 import software.bernie.geckolib.util.ClientUtil;
 
+import java.util.Objects;
+
 /**
  * Forge service implementation for GeckoLib's networking functionalities
  */
@@ -46,7 +48,7 @@ public final class GeckoLibNetworkingForge implements GeckoLibNetworking {
         }
         else {
             NETWORK_CHANNEL_BUILDER.serverbound().add(packetType, (StreamCodec<RegistryFriendlyByteBuf, P>)codec, (packet, context) -> {
-                packet.receiveMessage(context.getSender() != null ? context.getSender() : ClientUtil.getClientPlayer(), context::enqueueWork);
+                packet.receiveMessage(Objects.requireNonNull(context.getSender()), context::enqueueWork);
                 context.setPacketHandled(true);
             });
         }
