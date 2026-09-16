@@ -240,11 +240,11 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
-		final GeoCube firstCube = bone.getCubes().getFirst();
+		final GeoCube firstCube = bone.getCubes().isEmpty() ? null : bone.getCubes().getFirst();
 		final Cube armorCube = sourcePart.cubes.isEmpty() ? null : getReferenceCubeForModel(bone, sourcePart);
-		final double armorBoneSizeX = firstCube.size().x();
-		final double armorBoneSizeY = firstCube.size().y();
-		final double armorBoneSizeZ = firstCube.size().z();
+		final double armorBoneSizeX = firstCube == null ? 1 : firstCube.size().x();
+		final double armorBoneSizeY = firstCube == null ? 1 : firstCube.size().y();
+		final double armorBoneSizeZ = firstCube == null ? 1 : firstCube.size().z();
 		final double actualArmorSizeX = armorCube == null ? armorBoneSizeX : Math.abs(armorCube.maxX - armorCube.minX);
 		final double actualArmorSizeY = armorCube == null ? armorBoneSizeY : Math.abs(armorCube.maxY - armorCube.minY);
 		final double actualArmorSizeZ = armorCube == null ? armorBoneSizeZ : Math.abs(armorCube.maxZ - armorCube.minZ);
