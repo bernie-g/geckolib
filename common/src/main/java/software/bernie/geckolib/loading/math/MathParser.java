@@ -438,15 +438,28 @@ public class MathParser {
             if (isNumeric(string))
                 return new Constant(Double.parseDouble(string));
 
-            if (isLikelyVariable(string)) {
-                if (string.startsWith("-"))
-                    return new Negative(getVariableFor(string.substring(1)));
+            final boolean isNegative = string.startsWith("-");
 
-                return getVariableFor(string);
+            if (isNegative)
+                string = string.substring(1);
+
+            if (isLikelyVariable(string)) {
+                final Variable variable = getVariableFor(string);
+
+                if (isNegative)
+                    return new Negative(variable);
+
+                return variable;
             }
 
-            if (isFunctionRegistered(string))
-                return compileFunction(string, List.of());
+            if (isFunctionRegistered(string)) {
+                final MathValue function = compileFunction(string, List.of());
+
+                if (isNegative)
+                    return new Negative(function);
+
+                return function;
+            }
 
             return null;
         }).orElse(null);
