@@ -47,8 +47,10 @@ public final class DieRollIntegerFunction extends MathFunction {
     @Override
     public double compute() {
         final int rolls = (int)(Math.floor(this.rolls.get()));
-        final int min = Mth.floor(this.min.get());
-        final int max = Mth.ceil(this.max.get());
+        final int minValue = Mth.floor(this.min.get());
+        final int maxValue = Mth.ceil(this.max.get());
+        final int min = Math.min(minValue, maxValue);
+        final int max = Math.max(minValue, maxValue);
         int sum = 0;
         Random random;
 
