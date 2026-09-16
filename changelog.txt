@@ -26,3 +26,4 @@ v4.9.3
 - Added support for more direction BlockState properties for GeoBlock rendering
 - Fixed `KeyframeData` and its child classes not handling `equals` properly
 - Fixed assignments with ternaries or calculations not evaluating properly
+- Added the `math.min_angle` molang function
