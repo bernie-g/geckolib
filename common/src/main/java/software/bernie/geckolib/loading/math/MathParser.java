@@ -43,7 +43,7 @@ import java.util.regex.Pattern;
  * Overhauled by Tslat for GeckoLib and redesigned specifically for <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/molangreference/examples/molangconcepts/molangintroduction?view=minecraft-bedrock-stable">Molang</a> use
  */
 public class MathParser {
-    private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:;.,()]+$");
+    private static final Pattern EXPRESSION_FORMAT = Pattern.compile("^[\\w\\s_+-/*%^&|<>=!?:;.,(){}]+$");
     private static final Pattern WHITESPACE = Pattern.compile("\\s");
     private static final Pattern NUMERIC = Pattern.compile("^-?(\\d+(\\.\\d+)?|\\.\\d+)$");
     private static final Pattern VARIABLE_FORMAT = Pattern.compile("^[a-z_]+\\.[\\w+_]+$");
