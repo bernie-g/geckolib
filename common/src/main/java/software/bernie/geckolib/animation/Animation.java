@@ -38,7 +38,7 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 	public interface LoopType {
 		Map<String, LoopType> LOOP_TYPES = new ConcurrentHashMap<>(4);
 
-		LoopType DEFAULT = (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation);
+		LoopType DEFAULT = register("default", (animatable, controller, currentAnimation) -> currentAnimation.loopType().shouldPlayAgain(animatable, controller, currentAnimation));
 		LoopType PLAY_ONCE = register("play_once", register("false", (animatable, controller, currentAnimation) -> false));
 		LoopType HOLD_ON_LAST_FRAME = register("hold_on_last_frame", (animatable, controller, currentAnimation) -> {
 			controller.animationState = AnimationController.State.PAUSED;
