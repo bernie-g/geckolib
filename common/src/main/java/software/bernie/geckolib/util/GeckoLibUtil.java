@@ -110,10 +110,12 @@ public final class GeckoLibUtil {
 	 * It is recommended that you don't call this directly, instead implementing and calling {@link software.bernie.geckolib.animatable.SingletonGeoAnimatable#registerSyncedAnimatable}
 	 */
 	synchronized public static void registerSyncedAnimatable(GeoAnimatable animatable) {
-		GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
+		synchronized (SYNCED_ANIMATABLES) {
+			GeoAnimatable existing = SYNCED_ANIMATABLES.put(getSyncedSingletonAnimatableId(animatable), animatable);
 
-		if (existing == null)
-			GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for " + animatable.getClass());
+			if (existing == null)
+				GeckoLibConstants.LOGGER.debug("Registered SyncedAnimatable for {}", animatable.getClass());
+		}
 	}
 
 	/**
@@ -126,12 +128,14 @@ public final class GeckoLibUtil {
 	 */
 	@Nullable
 	public static GeoAnimatable getSyncedAnimatable(String syncedAnimatableId) {
-		GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
+		synchronized (SYNCED_ANIMATABLES) {
+			GeoAnimatable animatable = SYNCED_ANIMATABLES.get(syncedAnimatableId);
 
-		if (animatable == null)
-			GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! (" + syncedAnimatableId + ")");
+			if (animatable == null)
+				GeckoLibConstants.LOGGER.error("Attempting to retrieve unregistered synced animatable! ({})", syncedAnimatableId);
 
-		return animatable;
+			return animatable;
+		}
 	}
 
 	/**
@@ -141,15 +145,17 @@ public final class GeckoLibUtil {
 	 * as this method eliminates class duplication collisions
 	 */
 	public static String getSyncedSingletonAnimatableId(GeoAnimatable animatable) {
-		return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, key -> {
-			String baseId = animatable.getClass().getName();
-			int i = 0;
+		synchronized (SYNCED_ANIMATABLES) {
+			return ANIMATABLE_IDENTITIES.computeIfAbsent(animatable, key -> {
+				String baseId = animatable.getClass().getName();
+				int i = 0;
 
-			while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
-				i++;
-			}
+				while (SYNCED_ANIMATABLES.containsKey(baseId + i)) {
+					i++;
+				}
 
-			return baseId + i;
-		});
+				return baseId + i;
+			});
+		}
 	}
 }
