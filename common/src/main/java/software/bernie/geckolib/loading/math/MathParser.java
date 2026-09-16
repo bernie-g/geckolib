@@ -69,6 +69,7 @@ public class MathParser {
         map.put("math.ln", LogFunction::new);
         map.put("math.max", MaxFunction::new);
         map.put("math.min", MinFunction::new);
+        map.put("math.min_angle", MinAngleFunction::new);
         map.put("math.mod", ModFunction::new);
         map.put("math.pi", PiFunction::new);
         map.put("math.pow", PowFunction::new);
