@@ -38,12 +38,13 @@ public record ActorBoneAnimation(@Nullable String relativeTo,
     public static JsonDeserializer<ActorBoneAnimation> gsonDeserializer() throws JsonParseException {
         return (json, _, context) -> {
             final JsonObject obj = json.getAsJsonObject();
-            final String relativeTo = GsonHelper.getAsString(obj, "relative_to", null);
+            final JsonObject relativeTo = GsonHelper.getAsJsonObject(obj, "relative_to", null);
+            final String relativeToString = relativeTo == null ? null : GsonHelper.getAsString(relativeTo, "relative_to", null);
             final ActorBoneAnimationEntry positionKeyframes = GsonHelper.getAsObject(obj, "position", null, context, ActorBoneAnimationEntry.class);
             final ActorBoneAnimationEntry rotationKeyframes = GsonHelper.getAsObject(obj, "rotation", null, context, ActorBoneAnimationEntry.class);
             final ActorBoneAnimationEntry scaleKeyframes = GsonHelper.getAsObject(obj, "scale", null, context, ActorBoneAnimationEntry.class);
 
-            return new ActorBoneAnimation(relativeTo, positionKeyframes, rotationKeyframes, scaleKeyframes);
+            return new ActorBoneAnimation(relativeToString, positionKeyframes, rotationKeyframes, scaleKeyframes);
         };
     }
 
