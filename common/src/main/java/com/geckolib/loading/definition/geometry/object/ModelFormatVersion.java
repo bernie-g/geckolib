@@ -14,7 +14,8 @@ public enum ModelFormatVersion {
 	V_1_14_0("1.14.0"),
 	V_1_16_0("1.16.0"),
 	V_1_19_30("1.19.30"),
-	V_1_21_0("1.21.0");
+	V_1_21_0("1.21.0"),
+	V_1_21_20("1.21.20");
 
 	private static final Supplier<Map<String, ModelFormatVersion>> LOOKUP = Suppliers.memoize(() -> Util.make(new Object2ObjectOpenHashMap<>(), map -> {
 		for (ModelFormatVersion formatVersion : values()) {
