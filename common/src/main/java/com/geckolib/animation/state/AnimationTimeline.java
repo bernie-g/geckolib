@@ -97,9 +97,7 @@ public record AnimationTimeline(Stage[] stages) {
             time = isReset ? stage.animation.length() : 0;
         }
 
-        double existingTime = existingPoint == null ? 0 : stage.startTime + existingPoint.animTime();
-
-        if (existingPoint == null || existingPoint.animation() != stage.animation || totalTime() - existingTime < existingTime)
+        if (existingPoint == null || existingPoint.animation() != stage.animation || time * 2 < existingPoint.animTime())
             //noinspection DataFlowIssue
             return AnimationPoint.createFor(stage.animation, easingOverride, stage.loopType(), time);
 
