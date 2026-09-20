@@ -91,12 +91,12 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     }
 
     /// Create a new AnimationPoint representing the same animation, but at a different time
-    public AnimationPoint createNext(double animTime) {
+    public AnimationPoint createNext(double animTime, @Nullable EasingType easingOverride) {
         if (MiscUtil.areFloatsEqual(animTime, this.animTime))
             return this;
 
         animTime = Mth.clamp(animTime, 0, animation.length());
-        final AnimationPoint animationPoint = new AnimationPoint(this.animation, this.easingOverride, this.loopType, animTime, this.keyFramePoints);
+        final AnimationPoint animationPoint = new AnimationPoint(this.animation, easingOverride, this.loopType, animTime, this.keyFramePoints);
         final boolean reverse = animTime < this.animTime;
 
         for (int i = 0; i < this.keyFramePoints.length; i++) {

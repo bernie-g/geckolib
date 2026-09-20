@@ -101,7 +101,7 @@ public record AnimationTimeline(Stage[] stages) {
             //noinspection DataFlowIssue
             return AnimationPoint.createFor(stage.animation, easingOverride, stage.loopType(), time);
 
-        return existingPoint.createNext(time);
+        return existingPoint.createNext(time, easingOverride);
     }
 
     /// Run through any [KeyFrameData] between the given times, calling the appropriate handlers for each
