@@ -32,6 +32,9 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     public static final int NO_KEYFRAME = -2;
     public static final int BEFORE_FIRST_KEYFRAME = -1;
 
+    private static final Transform[] TRANSFORMS = Transform.values();
+    private static final Axis[] AXES = Axis.values();
+
     /// Return whether this AnimationPoint has reached the end of its animation
     public boolean hasFinished() {
         return MiscUtil.areFloatsEqual(this.animTime, this.animation.length());
@@ -93,7 +96,7 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     /// Create a new AnimationPoint representing the same animation, but at a different time
     public AnimationPoint createNext(double animTime, @Nullable EasingType easingOverride) {
         if (MiscUtil.areFloatsEqual(animTime, this.animTime))
-            return this;
+            return new AnimationPoint(this.animation, easingOverride, this.loopType, this.animTime, this.keyFramePoints);
 
         animTime = Mth.clamp(animTime, 0, animation.length());
         final AnimationPoint animationPoint = new AnimationPoint(this.animation, easingOverride, this.loopType, animTime, this.keyFramePoints);
