@@ -32,9 +32,6 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     public static final int NO_KEYFRAME = -2;
     public static final int BEFORE_FIRST_KEYFRAME = -1;
 
-    private static final Transform[] TRANSFORMS = Transform.values();
-    private static final Axis[] AXES = Axis.values();
-
     /// Return whether this AnimationPoint has reached the end of its animation
     public boolean hasFinished() {
         return MiscUtil.areFloatsEqual(this.animTime, this.animation.length());
