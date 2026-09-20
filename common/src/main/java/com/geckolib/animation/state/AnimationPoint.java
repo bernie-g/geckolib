@@ -180,9 +180,9 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         if (keyframes.length == 0)
             return NO_KEYFRAME;
 
-        for (int i = Math.min(startingIndex, keyframes.length - 1); i >= 0; i--) {
-            if (i - 1 >= 0 && keyframes[i - 1].startTime() <= animTime)
-                return i - 1;
+        for (int i = Mth.clamp(startingIndex, 0, keyframes.length - 1); i >= 0; i--) {
+            if (keyframes[i].startTime() <= animTime)
+                return i;
         }
 
         return BEFORE_FIRST_KEYFRAME;
