@@ -195,6 +195,7 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
 
         public final int index;
         public final float defaultValue;
+        // TODO: Remove
         public final Function<BoneAnimation, KeyframeStack> stackFunction;
 
         Transform(int index, float defaultValue, Function<BoneAnimation, KeyframeStack> stackFunction) {
@@ -204,7 +205,11 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         }
 
         public KeyframeStack keyframeStack(BoneAnimation boneAnimation) {
-            return this.stackFunction.apply(boneAnimation);
+            return switch (this) {
+                case SCALE -> boneAnimation.scaleKeyFrames();
+                case ROTATION -> boneAnimation.rotationKeyFrames();
+                case TRANSLATION -> boneAnimation.positionKeyFrames();
+            };
         }
     }
 
