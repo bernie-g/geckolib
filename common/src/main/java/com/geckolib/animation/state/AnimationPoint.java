@@ -214,6 +214,7 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         Z(2, KeyframeStack::zKeyframes);
 
         public final int index;
+        // TODO: Remove
         public final Function<KeyframeStack, Keyframe[]> framesFunction;
 
         Axis(int index, Function<KeyframeStack, Keyframe[]> framesFunction) {
@@ -222,7 +223,11 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         }
 
         public Keyframe[] keyframes(KeyframeStack stack) {
-            return this.framesFunction.apply(stack);
+            return switch (this) {
+                case X -> stack.xKeyframes();
+                case Y -> stack.yKeyframes();
+                case Z -> stack.zKeyframes();
+            };
         }
     }
     //</editor-fold>
