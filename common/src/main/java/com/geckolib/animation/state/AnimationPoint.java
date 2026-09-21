@@ -1,7 +1,5 @@
 package com.geckolib.animation.state;
 
-import net.minecraft.util.Mth;
-import org.jspecify.annotations.Nullable;
 import com.geckolib.animation.RawAnimation;
 import com.geckolib.animation.object.EasingType;
 import com.geckolib.animation.object.LoopType;
@@ -11,8 +9,8 @@ import com.geckolib.cache.animation.Keyframe;
 import com.geckolib.cache.animation.KeyframeStack;
 import com.geckolib.cache.model.GeoBone;
 import com.geckolib.util.MiscUtil;
-
-import java.util.function.Function;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.Nullable;
 
 /// Container representing a point in time for a given animation
 ///
@@ -189,19 +187,16 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     }
 
     public enum Transform {
-        SCALE(0, 1f, BoneAnimation::scaleKeyFrames),
-        ROTATION(1, 0f, BoneAnimation::rotationKeyFrames),
-        TRANSLATION(2, 0f, BoneAnimation::positionKeyFrames);
+        SCALE(0, 1f),
+        ROTATION(1, 0f),
+        TRANSLATION(2, 0f);
 
         public final int index;
         public final float defaultValue;
-        // TODO: Remove
-        public final Function<BoneAnimation, KeyframeStack> stackFunction;
 
-        Transform(int index, float defaultValue, Function<BoneAnimation, KeyframeStack> stackFunction) {
+        Transform(int index, float defaultValue) {
             this.index = index;
             this.defaultValue = defaultValue;
-            this.stackFunction = stackFunction;
         }
 
         public KeyframeStack keyframeStack(BoneAnimation boneAnimation) {
@@ -214,17 +209,14 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
     }
 
     public enum Axis {
-        X(0, KeyframeStack::xKeyframes),
-        Y(1, KeyframeStack::yKeyframes),
-        Z(2, KeyframeStack::zKeyframes);
+        X(0),
+        Y(1),
+        Z(2);
 
         public final int index;
-        // TODO: Remove
-        public final Function<KeyframeStack, Keyframe[]> framesFunction;
 
-        Axis(int index, Function<KeyframeStack, Keyframe[]> framesFunction) {
+        Axis(int index) {
             this.index = index;
-            this.framesFunction = framesFunction;
         }
 
         public Keyframe[] keyframes(KeyframeStack stack) {
