@@ -9,6 +9,7 @@ import com.geckolib.cache.animation.Keyframe;
 import com.geckolib.cache.animation.KeyframeStack;
 import com.geckolib.cache.model.GeoBone;
 import com.geckolib.util.MiscUtil;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.util.Mth;
 import org.jspecify.annotations.Nullable;
 
@@ -86,6 +87,27 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         final int keyframeIndex = this.keyFramePoints[boneAnimationIndex][transformationType.index][axis.index];
 
         return keyframes.length == 0 || keyframeIndex == NO_KEYFRAME ? null : keyframes[Mth.clamp(keyframeIndex + keyframeOffset, 0, keyframes.length - 1)];
+    }
+
+    /// Get the keyframe associated with this AnimationPoint for the given bone, transformation type, and axis, paired
+    /// with the next keyframe in the series
+    ///
+    /// Returns `null` if no keyframe exists for that combination
+    public @Nullable Pair<Keyframe, Keyframe> getCurrentAndNextKeyframe(int boneAnimationIndex,
+                                                                        Transform transformationType,
+                                                                        Axis axis,
+                                                                        int keyframeOffset) {
+        final BoneAnimation boneAnimation = this.animation.boneAnimations()[boneAnimationIndex];
+        final Keyframe[] keyframes = axis.keyframes(transformationType.keyframeStack(boneAnimation));
+        final int keyframeIndex = this.keyFramePoints[boneAnimationIndex][transformationType.index][axis.index];
+
+        if (keyframes.length == 0 || keyframeIndex == NO_KEYFRAME)
+            return null;
+
+        final int lastKeyframe = keyframes.length - 1;
+        final int index = Mth.clamp(keyframeIndex + keyframeOffset, 0, lastKeyframe);
+
+        return Pair.of(keyframes[index], keyframes[Mth.clamp(index + 1, 0, lastKeyframe)]);
     }
 
     /// Create a new AnimationPoint representing the same animation, but at a different time

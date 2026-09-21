@@ -18,6 +18,7 @@ import com.geckolib.model.GeoModel;
 import com.geckolib.renderer.base.BoneSnapshots;
 import com.geckolib.renderer.base.GeoRenderState;
 import com.geckolib.util.ClientUtil;
+import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.util.Mth;
@@ -170,10 +171,11 @@ public class AnimationProcessor {
                    findResetPointValue(boneSnapshot, controllerState, animation, boneIndex, transform, axis, easingOverride);
         }
 
-        final Keyframe fromKeyframe = animation.getCurrentKeyframe(boneIndex, transform, axis);
-        final Keyframe toKeyframe;
+        final Pair<Keyframe, Keyframe> keyframes = animation.getCurrentAndNextKeyframe(boneIndex, transform, axis, 0);
+        final Keyframe fromKeyframe = keyframes == null ? null : keyframes.getFirst();
+        final Keyframe toKeyframe = fromKeyframe == null ? null : keyframes.getSecond();
 
-        if (fromKeyframe == null || (toKeyframe = animation.getNextKeyframe(boneIndex, transform, axis)) == null)
+        if (toKeyframe == null)
             return transform.defaultValue;
 
         final double from = fromKeyframe.endValue().get(controllerState);
