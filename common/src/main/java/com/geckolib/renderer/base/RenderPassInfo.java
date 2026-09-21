@@ -24,7 +24,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /// Container class holding all the common information relevant for a single render pass in GeckoLib.
 ///
@@ -293,20 +292,10 @@ public class RenderPassInfo<R extends GeoRenderState> {
     @ApiStatus.Internal
     protected BoneSnapshot[] compileBoneUpdates(List<BoneUpdater<R>> boneUpdaters) {
         final List<BoneSnapshot> snapshots = new ObjectArrayList<>(boneUpdaters.size());
-        final Map<String, GeoBone> boneLookup = boneUpdaters.isEmpty() ? null : this.model.boneLookup().get();
+        final BoneSnapshots boneSnapshots = BoneSnapshots.createForModel(this.model, snapshots);
 
         for (BoneUpdater<R> updater : boneUpdaters) {
-            updater.run(this, boneName -> {
-                final GeoBone bone = boneLookup.getOrDefault(boneName, null);
-
-                if (bone == null)
-                    return Optional.empty();
-
-                if (bone.frameSnapshot == null)
-                    snapshots.add(bone.frameSnapshot = BoneSnapshot.create(bone));
-
-                return Optional.of(bone.frameSnapshot);
-            });
+            updater.run(this, boneSnapshots);
         }
 
         final BoneSnapshot[] array = snapshots.toArray(new BoneSnapshot[0]);
