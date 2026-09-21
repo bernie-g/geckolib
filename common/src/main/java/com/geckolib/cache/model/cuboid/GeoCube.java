@@ -17,7 +17,12 @@ import org.jspecify.annotations.Nullable;
 /// @param pivot The pivot point of this cube
 /// @param rotation The baked rotation value of this cube
 /// @param size The x/y/z dimensions of this cube
-public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
+/// @param hasRotation  Whether this cube has a baked rotation
+public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size, boolean hasRotation) {
+    public GeoCube(GeoBone parent, @Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
+        this(quads, pivot, rotation, size, rotation.x != 0 || rotation.y != 0 || rotation.z != 0);
+    }
+
     /// Submit this cuboid's quads to the vertex consumer
     public void render(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int renderColor) {
         translateToPivotPoint(poseStack);
