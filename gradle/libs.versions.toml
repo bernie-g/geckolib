@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib                        = "5.5.6"
+    geckolib                        = "5.5.7"
 
 # Common
     minecraft                       = { strictly = "[26.3,)", prefer = "26.3" }
@@ -15,14 +15,14 @@
     fabric-api-range                = ">=0.160.5+26.3"
 
 # Forge
-    forge-fml                       = { strictly = "[65,)", prefer = "65" }
-    forge                           = { strictly = "[65.0.0,)", prefer = "65.1.3" }
-    forge-mc                        = "26.3-65.1.3"
+    forge-fml                       = { strictly = "[66,)", prefer = "66" }
+    forge                           = { strictly = "[66.0.0,)", prefer = "66.0.2" }
+    forge-mc                        = "26.3-66.0.2"
     forge-eventbusvalidator         = "7.0.4"
 
 # Neoforge
     neoforge-loader                 = { strictly = "[5,)", prefer = "5" }
-    neoforge                        = { strictly = "[26.3.0.0-beta,)", prefer = "26.3.0.0-beta" }
+    neoforge                        = { strictly = "[26.3.0.7-beta,)", prefer = "26.3.0.0-beta" }
 
 # Dependencies
     mixin                           = "0.8.7"
