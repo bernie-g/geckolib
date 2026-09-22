@@ -19,7 +19,7 @@ import org.jspecify.annotations.Nullable;
 /// @param size The x/y/z dimensions of this cube
 /// @param hasRotation  Whether this cube has a baked rotation
 public record GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size, boolean hasRotation) {
-    public GeoCube(GeoBone parent, @Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
+    public GeoCube(@Nullable GeoQuad[] quads, Vec3 pivot, Vec3 rotation, Vec3 size) {
         this(quads, pivot, rotation, size, rotation.x != 0 || rotation.y != 0 || rotation.z != 0);
     }
 
