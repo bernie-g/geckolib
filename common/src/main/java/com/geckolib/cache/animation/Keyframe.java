@@ -1,15 +1,13 @@
 package com.geckolib.cache.animation;
 
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import com.geckolib.animation.object.EasingType;
 import com.geckolib.loading.math.MathValue;
+import com.geckolib.loading.math.baked.BakedMathValue;
 import com.geckolib.loading.math.value.Variable;
 import com.geckolib.util.MiscUtil;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 /// Animation keyframe data
 ///
@@ -19,17 +17,21 @@ import java.util.Set;
 /// @param endValue The value to end the keyframe's transformation with
 /// @param easingType The `EasingType` to use for transformations
 /// @param easingArgs The arguments to provide to the easing calculation
-public record Keyframe(double startTime, double length, MathValue startValue, MathValue endValue, EasingType easingType, MathValue[] easingArgs) {
+public record Keyframe(double startTime, double length, BakedMathValue startValue, BakedMathValue endValue, EasingType easingType, MathValue[] easingArgs) {
 	public Keyframe(double startTime, double length, MathValue startValue, MathValue endValue) {
 		this(startTime, length, startValue, endValue, EasingType.LINEAR);
 	}
 
 	public Keyframe(double startTime, double length, MathValue startValue, MathValue endValue, EasingType easingType) {
-		this(startTime, length, startValue, endValue, easingType, new MathValue[0]);
+		this(startTime, length, startValue, endValue, easingType, Collections.emptyList());
 	}
 
 	public Keyframe(double startTime, double length, MathValue startValue, MathValue endValue, EasingType easingType, List<MathValue> easingArgs) {
 		this(startTime, length, startValue, endValue, easingType, easingArgs.toArray(new MathValue[0]));
+	}
+
+	public Keyframe(double startTime, double length, MathValue startValue, MathValue endValue, EasingType easingType, MathValue[] easingArgs) {
+		this(startTime, length, BakedMathValue.create(startValue), BakedMathValue.create(endValue), easingType, easingArgs);
 	}
 
 	/// Extract and collect all [Variable]s used in this keyframe
