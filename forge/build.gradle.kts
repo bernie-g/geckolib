@@ -77,6 +77,7 @@ modrinth {
     versionName = "Forge ${geckolib.mcVersion}-${geckolib.modVersion}"
     versionType = "release"
     loaders.set(listOf("forge"))
+    environment.set("client_only_server_optional")
     versionNumber.set(geckolib.modVersion.version())
     gameVersions.set(listOf(geckolib.mcVersion.version()))
     changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
