@@ -447,7 +447,7 @@ public class AnimationController<T extends GeoAnimatable> {
 
         if (this.playState != PlayState.STOP) {
             if (this.animationPoint == null || !Objects.equals(prevRawAnimation, this.currentRawAnimation)) {
-                initializeNewAnimation(animatable, renderState, geoModel, prevAnimationSpeed, transitionTicks);
+                initializeNewAnimation(animatable, renderState, manager, geoModel, prevAnimationSpeed, transitionTicks);
             }
             else if (this.timelineTime >= 0 || ((timeDelta < 0) == (this.timelineTime == FINISHED_ANIMATING))) {
                 progressExistingAnimation(animatable, renderState, prevTimelineTime, timeDelta);
@@ -468,7 +468,7 @@ public class AnimationController<T extends GeoAnimatable> {
     ///
     /// Establishes the [AnimationTimeline] and [AnimationPoint] instances for animating
     @ApiStatus.Internal
-    protected void initializeNewAnimation(T animatable, GeoRenderState renderState, GeoModel<T> geoModel, double prevAnimSpeed, int prevTransitionTicks) {
+    protected void initializeNewAnimation(T animatable, GeoRenderState renderState, AnimatableManager<T> manager, GeoModel<T> geoModel, double prevAnimSpeed, int prevTransitionTicks) {
         if (this.currentRawAnimation == null)
             return;
 
@@ -478,11 +478,18 @@ public class AnimationController<T extends GeoAnimatable> {
         if (this.timeline == null)
             return;
 
+        double firstAnimationOffset = 0;
+
+        if (renderState.getAnimatableAge() == manager.getFirstRenderTick()) {
+            firstAnimationOffset = this.timeline.getAnimationStage(0).startTime();
+            startTimeOffset = Math.max(firstAnimationOffset, startTimeOffset);
+        }
+
         this.timelineTime = startTimeOffset;
         this.animationPoint = this.timeline.createAnimationPoint(this.timelineTime, this.animationPoint, this.easingOverride);
 
-        if (startTimeOffset > 0)
-            this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, 0, startTimeOffset, this,
+        if (startTimeOffset > firstAnimationOffset)
+            this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, firstAnimationOffset, startTimeOffset, this,
                                                         this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
 
         validateKeyframeListeners(animatable);
