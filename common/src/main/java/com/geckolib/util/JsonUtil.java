@@ -3,7 +3,7 @@ package com.geckolib.util;
 import com.google.gson.*;
 import com.mojang.datafixers.util.Either;
 import it.unimi.dsi.fastutil.ints.Int2ObjectFunction;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
@@ -157,7 +157,7 @@ public final class JsonUtil {
         if (obj == null)
             return null;
 
-        Map<String, T> map = new Object2ObjectOpenHashMap<>(obj.size());
+        Map<String, T> map = new Object2ObjectArrayMap<>(obj.size());
 
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
             map.put(entry.getKey(), context.deserialize(entry.getValue(), objectType));
@@ -175,7 +175,7 @@ public final class JsonUtil {
         if (obj == null)
             return null;
 
-        Map<String, T> map = new Object2ObjectOpenHashMap<>(obj.size());
+        Map<String, T> map = new Object2ObjectArrayMap<>(obj.size());
 
         for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
             map.put(entry.getKey(), mappingFunction.apply(entry.getValue()));
