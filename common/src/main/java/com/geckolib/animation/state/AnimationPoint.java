@@ -104,8 +104,13 @@ public record AnimationPoint(Animation animation, @Nullable EasingType easingOve
         if (keyframes.length == 0 || keyframeIndex == NO_KEYFRAME)
             return null;
 
+        int index = keyframeIndex + keyframeOffset;
+
+        if (index < 0)
+            return Pair.of(keyframes[0], keyframes[0]);
+
         final int lastKeyframe = keyframes.length - 1;
-        final int index = Mth.clamp(keyframeIndex + keyframeOffset, 0, lastKeyframe);
+        index = Mth.clamp(index, 0, lastKeyframe);
 
         return Pair.of(keyframes[index], keyframes[Mth.clamp(index + 1, 0, lastKeyframe)]);
     }
