@@ -179,6 +179,10 @@ public class AnimationProcessor {
             return transform.defaultValue;
 
         final double from = fromKeyframe.endValue().get(controllerState);
+
+        if (fromKeyframe == toKeyframe)
+            return (float)from;
+
         final double to = toKeyframe.endValue().get(controllerState);
         final double delta = toKeyframe.length() == 0 ? 0 : (animation.animTime() - fromKeyframe.startTime()) / toKeyframe.length();
         final EasingType easingType = easingOverride != null ? easingOverride : toKeyframe.easingType();
