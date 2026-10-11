@@ -56,6 +56,7 @@ public record ActorAnimation(@Nullable Float animLength, @Nullable Either<Boolea
             final String blendWeight = GsonHelper.getAsString(obj, "blend_weight", null);
             final Boolean overridePrevAnimation = JsonUtil.getOptionalBoolean(obj, "override_previous_animation");
             final Map<String, ActorBoneAnimation> boneAnimations = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "bones", null), context, ActorBoneAnimation.class);
+            // TODO these can be arrays of strings as well =/
             final Map<String, ActorAnimationParticleEffect> particleEffects = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "particle_effects", null), context, ActorAnimationParticleEffect.class);
             final Map<String, ActorAnimationSoundEffect> soundEffects = JsonUtil.jsonObjToMap(GsonHelper.getAsJsonObject(obj, "sound_effects", null), context, ActorAnimationSoundEffect.class);
             final Map<String, String> timeline = JsonUtil.jsonObjToPrimitiveMap(GsonHelper.getAsJsonObject(obj, "timeline", null), context, JsonElement::getAsString);

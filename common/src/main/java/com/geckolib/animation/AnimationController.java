@@ -144,7 +144,7 @@ public class AnimationController<T extends GeoAnimatable> {
     /// [#triggerableAnim]
     /// Used for custom handling if [#receiveTriggeredAnimations()] was marked
     public boolean isPlayingTriggeredAnimation() {
-        return this.triggeredAnimTime >= 0 && isAnimatingBones();
+        return this.triggeredAnimTime >= 0 && this.animationPoint != null && this.timeline != null && this.timelineTime >= 0;
     }
 
     /// Checks whether the last animation playing on this controller has finished or not
@@ -167,7 +167,11 @@ public class AnimationController<T extends GeoAnimatable> {
     ///
     /// If this method returns false, this controller is performing no actions during the render pass
     public boolean isAnimatingBones() {
-        return this.animationPoint != null && this.timeline != null && this.timelineTime >= 0;
+        if (this.animationPoint == null || this.timeline == null || this.timelineTime < 0)
+            return false;
+
+        return this.animationPoint.animation().boneAnimations().length > 0 ||
+               (this.transitionFromPoint != null && this.transitionFromPoint.animation().boneAnimations().length > 0);
     }
 
     /// Returns whether the controller is currently transitioning into, between, or out of an animation
