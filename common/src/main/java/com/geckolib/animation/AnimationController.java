@@ -287,7 +287,8 @@ public class AnimationController<T extends GeoAnimatable> {
             return;
         }
 
-        if (rawAnimation.equals(this.currentRawAnimation))
+        //noinspection DataFlowIssue
+        if (rawAnimation.equals(this.currentRawAnimation) && this.playState != PlayState.STOP)
             return;
 
         this.currentRawAnimation = rawAnimation;
