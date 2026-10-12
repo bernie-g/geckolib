@@ -170,6 +170,9 @@ public class AnimationController<T extends GeoAnimatable> {
         if (this.animationPoint == null || this.timeline == null || this.timelineTime < 0)
             return false;
 
+        if (this.playState == PlayState.STOP && this.timeline.getTransitionLength() == 0)
+            return false;
+
         return this.animationPoint.animation().boneAnimations().length > 0 ||
                (this.transitionFromPoint != null && this.transitionFromPoint.animation().boneAnimations().length > 0);
     }
