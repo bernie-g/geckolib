@@ -84,7 +84,9 @@ public final class GeckoLibCache {
 											  return new BakedAnimations(new Object2ObjectOpenHashMap<>());
 										  }
 										  catch (Exception ex) {
-											  throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
+											  GeckoLibConstants.LOGGER.error("{}: Error loading animation file, skipping it", resource, ex);
+
+											  return new BakedAnimations(new Object2ObjectOpenHashMap<>());
 										  }
 									  }, elementConsumer))
 				.thenRunAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = null);
