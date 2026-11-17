@@ -23,6 +23,7 @@ import java.util.List;
 /// Timeline holder for a given [RawAnimation] in combination with a [AnimationController]'s [AnimationController#getTransitionTicks()]
 ///
 /// @param stages The array of stages this timeline represents, based on an interleaving of transition periods and Animations
+// TODO rework keyframe markers to get rid of double-call on boundaries
 @ApiStatus.Internal
 public record AnimationTimeline(Stage[] stages) {
     /// Return the time in seconds at which the last animation in the timeline ends

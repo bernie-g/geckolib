@@ -143,6 +143,7 @@ public sealed interface GeoRendererInternals<T extends GeoAnimatable, O, R exten
         }
     }
 
+    // TODO prioritise non-resetting
     /// Apply the animation modifications from the relevant [AnimationController]s for this render pass
     default void applyAnimationControllers(RenderPassInfo<R> renderPassInfo, BoneSnapshots boneSnapshots) {
         ControllerState[] controllerStates = renderPassInfo.getOrDefaultGeckolibData(DataTickets.ANIMATION_CONTROLLER_STATES, new ControllerState[0]);
