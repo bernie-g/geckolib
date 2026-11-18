@@ -3,14 +3,20 @@ package software.bernie.geckolib.loading.json.typeadapter;
 import com.google.gson.*;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.keyframe.event.data.CustomInstructionKeyframeData;
+import software.bernie.geckolib.core.keyframe.event.data.KeyFrameData;
 import software.bernie.geckolib.core.keyframe.event.data.ParticleKeyframeData;
 import software.bernie.geckolib.core.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.util.JsonUtil;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.IntFunction;
 
 /**
  * {@link Gson} {@link JsonDeserializer} for {@link Animation.Keyframes}.<br>
@@ -28,34 +34,21 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {
 	}
 
 	private static SoundKeyframeData[] buildSoundFrameData(JsonObject rootObj) {
-		JsonObject soundsObj = GsonHelper.getAsJsonObject(rootObj, "sound_effects", new JsonObject());
-		SoundKeyframeData[] sounds = new SoundKeyframeData[soundsObj.size()];
-		int index = 0;
+		return extractKeyframes(GsonHelper.getAsJsonObject(rootObj, "sound_effects", new JsonObject()), SoundKeyframeData[]::new, (timestamp, obj) -> {
+			String effect = GsonHelper.getAsString(obj, "effect", "");
 
-		for (Map.Entry<String, JsonElement> entry : soundsObj.entrySet()) {
-			sounds[index] = new SoundKeyframeData(Double.parseDouble(entry.getKey()) * 20d, GsonHelper.getAsString(entry.getValue().getAsJsonObject(), "effect"));
-			index++;
-		}
-
-		return sounds;
+			return effect.isEmpty() ? null : new SoundKeyframeData(Double.parseDouble(timestamp) * 20d, effect);
+		});
 	}
 
 	private static ParticleKeyframeData[] buildParticleFrameData(JsonObject rootObj) {
-		JsonObject particlesObj = GsonHelper.getAsJsonObject(rootObj, "particle_effects", new JsonObject());
-		ParticleKeyframeData[] particles = new ParticleKeyframeData[particlesObj.size()];
-		int index = 0;
-
-		for (Map.Entry<String, JsonElement> entry : particlesObj.entrySet()) {
-			JsonObject obj = entry.getValue().getAsJsonObject();
+		return extractKeyframes(GsonHelper.getAsJsonObject(rootObj, "particle_effects", new JsonObject()), ParticleKeyframeData[]::new, (timestamp, obj) -> {
 			String effect = GsonHelper.getAsString(obj, "effect", "");
 			String locator = GsonHelper.getAsString(obj, "locator", "");
 			String script = GsonHelper.getAsString(obj, "pre_effect_script", "");
 
-			particles[index] = new ParticleKeyframeData(Double.parseDouble(entry.getKey()) * 20d, effect, locator, script);
-			index++;
-		}
-
-		return particles;
+			return new ParticleKeyframeData(Double.parseDouble(timestamp) * 20d, effect, locator, script);
+		});
 	}
 
 	private static CustomInstructionKeyframeData[] buildCustomFrameData(JsonObject rootObj) {
@@ -78,5 +71,30 @@ public class KeyFramesAdapter implements JsonDeserializer<Animation.Keyframes> {
 		}
 
 		return customInstructions;
+	}
+
+	private static <T extends KeyFrameData> T[] extractKeyframes(JsonObject section, IntFunction<T[]> arrayFactory, BiFunction<String, JsonObject, @Nullable T> bakery) {
+		final List<T> keyframes = new ArrayList<>(section.size());
+
+		for (Map.Entry<String, JsonElement> entry : section.entrySet()) {
+			if (entry.getValue() instanceof JsonArray array) {
+				for (JsonElement element : array) {
+					if (element instanceof JsonObject object) {
+						T keyframe = bakery.apply(entry.getKey(), object);
+
+						if (keyframe != null)
+							keyframes.add(keyframe);
+					}
+				}
+			}
+			else if (entry.getValue() instanceof JsonObject object) {
+				T keyframe = bakery.apply(entry.getKey(), object);
+
+				if (keyframe != null)
+					keyframes.add(keyframe);
+			}
+		}
+
+		return keyframes.toArray(arrayFactory);
 	}
 }
