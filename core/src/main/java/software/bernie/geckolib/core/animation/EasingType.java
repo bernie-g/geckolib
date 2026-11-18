@@ -413,7 +413,7 @@ public interface EasingType {
 			if (animationPoint.currentTick() >= animationPoint.transitionLength())
 				return animationPoint.animationEndValue();
 
-			List<? extends IValue> easingArgs = animationPoint.keyFrame().easingArgs();
+			List<? extends IValue> easingArgs = animationPoint.keyFrame() == null ? List.of() : animationPoint.keyFrame().easingArgs();
 
 			if (easingArgs.size() < 2)
 				return Interpolations.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
