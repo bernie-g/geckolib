@@ -7,6 +7,7 @@ import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.GeoReplacedEntity;
 import software.bernie.geckolib.constant.DataTickets;
@@ -56,12 +57,17 @@ public class EntityAnimDataSyncPacket<D> extends AbstractPacket {
 	}
 
 	public static <D> void receive(Minecraft client, ClientPacketListener handler, FriendlyByteBuf buffer, PacketSender responseSender) {
-		final int entityId = buffer.readVarInt();
-		final boolean isReplacedEntity = buffer.readBoolean();
-		final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buffer.readUtf());
-		final D data = dataTicket.decode(buffer);
+		try {
+			final int entityId = buffer.readVarInt();
+			final boolean isReplacedEntity = buffer.readBoolean();
+			final SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>) DataTickets.byName(buffer.readUtf());
+			final D data = dataTicket.decode(buffer);
 
-		client.execute(() -> runOnThread(entityId, isReplacedEntity, dataTicket, data));
+			client.execute(() -> runOnThread(entityId, isReplacedEntity, dataTicket, data));
+		}
+		catch (Exception ex) {
+			GeckoLib.LOGGER.error("Server attempted to send GeckoLib packet but client is outdated. Update your GeckoLib version!");
+		}
 	}
 
 	private static <D> void runOnThread(int entityId, boolean isReplacedEntity, SerializableDataTicket<D> dataTicket, D data) {

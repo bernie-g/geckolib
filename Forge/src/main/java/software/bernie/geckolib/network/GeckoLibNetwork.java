@@ -19,7 +19,7 @@ import java.util.Map;
  * Handles packet registration and some networking functions
  */
 public final class GeckoLibNetwork {
-	private static final String VER = "1";
+	private static final String VER = "2";
 	private static final SimpleChannel PACKET_CHANNEL = NetworkRegistry.newSimpleChannel(new ResourceLocation(GeckoLib.MOD_ID, "main"), () -> VER, clientVer -> true, VER::equals);
 
 	private static final Int2ObjectMap<String> ANIMATABLE_IDENTITIES = new Int2ObjectOpenHashMap<>();
