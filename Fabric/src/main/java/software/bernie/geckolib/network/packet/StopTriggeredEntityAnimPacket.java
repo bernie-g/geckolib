@@ -71,7 +71,7 @@ public class StopTriggeredEntityAnimPacket extends AbstractPacket {
 
         if (!isReplacedEntity) {
             if (entity instanceof GeoEntity geoEntity)
-                geoEntity.stopTriggeredAnimation(controllerName.isEmpty() ? null : controllerName, animName);
+                geoEntity.stopTriggeredAnimation(controllerName.isEmpty() ? null : controllerName, animName.isEmpty() ? null : animName);
 
             return;
         }
