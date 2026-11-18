@@ -169,14 +169,6 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 		poseStack.pushPose();
 
 		LivingEntity livingEntity = this.currentEntity instanceof LivingEntity entity ? entity : null;
-
-		if (this.currentEntity instanceof Mob mob && !isReRender) {
-			Entity leashHolder = mob.getLeashHolder();
-
-			if (leashHolder != null)
-				renderLeash(mob, partialTick, poseStack, bufferSource, leashHolder);
-		}
-
 		boolean shouldSit = this.currentEntity.isPassenger() && (this.currentEntity.getVehicle() != null);
 		float lerpBodyRot = livingEntity == null ? 0 : Mth.rotLerp(partialTick, livingEntity.yBodyRotO, livingEntity.yBodyRot);
 		float lerpHeadRot = livingEntity == null ? 0 : Mth.rotLerp(partialTick, livingEntity.yHeadRotO, livingEntity.yHeadRot);
