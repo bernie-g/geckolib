@@ -31,7 +31,7 @@ public record Bone(double[] bindPoseRotation, Cube[] cubes, @Nullable Boolean de
 			String name = GsonHelper.getAsString(obj, "name", null);
 			Boolean neverRender = JsonUtil.getOptionalBoolean(obj, "neverRender");
 			String parent = GsonHelper.getAsString(obj, "parent", null);
-			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", new JsonArray(0)));
+			double[] pivot = JsonUtil.jsonArrayToDoubleArray(GsonHelper.getAsJsonArray(obj, "pivot", null));
 			PolyMesh polyMesh = GsonHelper.getAsObject(obj, "poly_mesh", null, context, PolyMesh.class);
 			Long renderGroupId = JsonUtil.getOptionalLong(obj, "render_group_id");
 			Boolean reset = JsonUtil.getOptionalBoolean(obj, "reset");
