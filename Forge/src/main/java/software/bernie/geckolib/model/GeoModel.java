@@ -246,7 +246,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 					return Mth.sqrt((float) ((velocity.x * velocity.x) + (velocity.z * velocity.z)));
 				});
-				parser.setMemoizedValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot((float)animTime - livingEntity.getViewYRot((float)animTime - 0.1f)));
+				parser.setMemoizedValue(MolangQueries.YAW_SPEED, () -> livingEntity.getViewYRot(mc.getPartialTick()));
 			}
 		}
 	}
