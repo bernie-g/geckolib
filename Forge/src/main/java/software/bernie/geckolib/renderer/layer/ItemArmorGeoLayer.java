@@ -283,21 +283,21 @@ public class ItemArmorGeoLayer<T extends LivingEntity & GeoAnimatable> extends G
 	 * @param sourcePart The ModelPart to translate
 	 */
 	protected void prepModelPartForRender(PoseStack poseStack, GeoBone bone, ModelPart sourcePart) {
-		final GeoCube firstCube = bone.getCubes().get(0);
-		final Cube armorCube = getReferenceCubeForModel(bone, sourcePart);
-		final double armorBoneSizeX = firstCube.size().x();
-		final double armorBoneSizeY = firstCube.size().y();
-		final double armorBoneSizeZ = firstCube.size().z();
-		final double actualArmorSizeX = Math.abs(armorCube.maxX - armorCube.minX);
-		final double actualArmorSizeY = Math.abs(armorCube.maxY - armorCube.minY);
-		final double actualArmorSizeZ = Math.abs(armorCube.maxZ - armorCube.minZ);
-		float scaleX = (float)(armorBoneSizeX / actualArmorSizeX);
-		float scaleY = (float)(armorBoneSizeY / actualArmorSizeY);
-		float scaleZ = (float)(armorBoneSizeZ / actualArmorSizeZ);
+		final GeoCube firstCube = bone.getCubes().isEmpty() ? null : bone.getCubes().get(0);
+		final Cube armorCube = sourcePart.cubes.isEmpty() ? null : getReferenceCubeForModel(bone, sourcePart);
+		final double armorBoneSizeX = firstCube == null ? 1 : firstCube.size().x();
+		final double armorBoneSizeY = firstCube == null ? 1 : firstCube.size().y();
+		final double armorBoneSizeZ = firstCube == null ? 1 : firstCube.size().z();
+		final double actualArmorSizeX = armorCube == null ? armorBoneSizeX : Math.abs(armorCube.maxX - armorCube.minX);
+		final double actualArmorSizeY = armorCube == null ? armorBoneSizeY : Math.abs(armorCube.maxY - armorCube.minY);
+		final double actualArmorSizeZ = armorCube == null ? armorBoneSizeZ : Math.abs(armorCube.maxZ - armorCube.minZ);
+		float scaleX = actualArmorSizeX == 0 ? 1 : (float)(armorBoneSizeX / actualArmorSizeX);
+		float scaleY = actualArmorSizeY == 0 ? 1 : (float)(armorBoneSizeY / actualArmorSizeY);
+		float scaleZ = actualArmorSizeZ == 0 ? 1 : (float)(armorBoneSizeZ / actualArmorSizeZ);
 
 		sourcePart.setPos(-(bone.getPivotX() - ((bone.getPivotX() * scaleX) - bone.getPivotX()) / scaleX),
-				-(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
-				(bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
+						  -(bone.getPivotY() - ((bone.getPivotY() * scaleY) - bone.getPivotY()) / scaleY),
+						  (bone.getPivotZ() - ((bone.getPivotZ() * scaleZ) - bone.getPivotZ()) / scaleZ));
 
 		sourcePart.xRot = -bone.getRotX();
 		sourcePart.yRot = -bone.getRotY();
