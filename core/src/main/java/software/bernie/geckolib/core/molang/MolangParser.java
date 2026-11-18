@@ -231,7 +231,7 @@ public class MolangParser extends MathBuilder {
 				symbols = symbols.subList(2, symbols.size());
 				LazyVariable variable;
 
-				if (!VARIABLES.containsKey(name) && !currentStatement.locals.containsKey(name)) {
+				if (!VARIABLES.containsKey(name) && currentStatement != null && !currentStatement.locals.containsKey(name)) {
 					currentStatement.locals.put(name, (variable = new LazyVariable(name, 0)));
 				}
 				else {
