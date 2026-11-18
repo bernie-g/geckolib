@@ -228,7 +228,7 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 
 		parser.setMemoizedValue(MolangQueries.LIFE_TIME, () -> animTime / 20d);
 		parser.setMemoizedValue(MolangQueries.ACTOR_COUNT, mc.level::getEntityCount);
-		parser.setMemoizedValue(MolangQueries.TIME_OF_DAY, () -> mc.level.getDayTime() / 24000f);
+		parser.setMemoizedValue(MolangQueries.TIME_OF_DAY, () -> (mc.level.getDayTime() % 24000L) / 24000f);
 		parser.setMemoizedValue(MolangQueries.MOON_PHASE, mc.level::getMoonPhase);
 
 		if (animatable instanceof Entity entity) {
