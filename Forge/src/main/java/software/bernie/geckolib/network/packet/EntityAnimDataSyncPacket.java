@@ -42,9 +42,11 @@ public class EntityAnimDataSyncPacket<D> {
 
 	public static <D> EntityAnimDataSyncPacket<D> decode(FriendlyByteBuf buffer) {
 		int entityId = buffer.readVarInt();
+		boolean isReplacedEntity = buffer.readBoolean();
 		SerializableDataTicket<D> dataTicket = (SerializableDataTicket<D>)DataTickets.byName(buffer.readUtf());
+		D data = dataTicket.decode(buffer);
 
-		return new EntityAnimDataSyncPacket<>(entityId, buffer.readBoolean(), dataTicket, dataTicket.decode(buffer));
+		return new EntityAnimDataSyncPacket<>(entityId, isReplacedEntity, dataTicket, data);
 	}
 
 	public void receivePacket(Supplier<NetworkEvent.Context> context) {
