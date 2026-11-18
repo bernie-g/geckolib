@@ -99,7 +99,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 		ResourceLocation texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;
 		RenderType renderTypeOverride = getRenderTypeOverrideForBone(bone, this.animatable, texture, bufferSource, partialTick);
 
-		if (texture != null && renderTypeOverride == null)
+		if (this.textureOverride != null && renderTypeOverride == null)
 			renderTypeOverride = getRenderType(this.animatable, texture, bufferSource, partialTick);
 
 		if (renderTypeOverride != null)
