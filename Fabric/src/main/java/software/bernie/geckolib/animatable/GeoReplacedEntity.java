@@ -52,7 +52,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data), relatedEntity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), true, dataTicket, data), relatedEntity);
 		}
 	}
 
@@ -68,7 +68,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimTriggerPacket(relatedEntity.getId(), controllerName, animName), relatedEntity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new EntityAnimTriggerPacket(relatedEntity.getId(), true, controllerName, animName), relatedEntity);
 		}
 	}
 
@@ -99,7 +99,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			}
 		}
 		else {
-			GeckoLibNetwork.sendToTrackingEntityAndSelf(new StopTriggeredEntityAnimPacket(relatedEntity.getId(), controllerName, animName), relatedEntity);
+			GeckoLibNetwork.sendToTrackingEntityAndSelf(new StopTriggeredEntityAnimPacket(relatedEntity.getId(), true, controllerName, animName), relatedEntity);
 		}
 	}
 	

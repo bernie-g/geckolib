@@ -51,7 +51,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).setData(dataTicket, data);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			GeckoLibNetwork.send(new EntityAnimDataSyncPacket<>(relatedEntity.getId(), true, dataTicket, data), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
 		}
 	}
 
@@ -67,7 +67,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			getAnimatableInstanceCache().getManagerForId(relatedEntity.getId()).tryTriggerAnimation(controllerName, animName);
 		}
 		else {
-			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(relatedEntity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			GeckoLibNetwork.send(new EntityAnimTriggerPacket<>(relatedEntity.getId(), true, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
 		}
 	}
 
@@ -98,7 +98,7 @@ public interface GeoReplacedEntity extends SingletonGeoAnimatable {
 			}
 		}
 		else {
-			GeckoLibNetwork.send(new StopTriggeredEntityAnimPacket(relatedEntity.getId(), controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
+			GeckoLibNetwork.send(new StopTriggeredEntityAnimPacket(relatedEntity.getId(), true, controllerName, animName), PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> relatedEntity));
 		}
 	}
 
