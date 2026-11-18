@@ -45,5 +45,6 @@ public class StatelessSingletonStopAnimPacket {
             if (animatable instanceof StatelessGeoSingletonAnimatable statelessAnimatable)
                 statelessAnimatable.handleClientAnimationStop(animatable, instanceId, animation);
         });
+        handler.setPacketHandled(true);
     }
 }

@@ -42,5 +42,6 @@ public class StatelessBlockEntityPlayAnimPacket {
             if (ClientUtils.getLevel().getBlockEntity(blockPos) instanceof GeoBlockEntity blockEntity && blockEntity instanceof StatelessGeoBlockEntity statelessAnimatable)
                 statelessAnimatable.handleClientAnimationPlay(blockEntity, 0, animation);
         });
+        handler.setPacketHandled(true);
     }
 }

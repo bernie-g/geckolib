@@ -62,5 +62,6 @@ public class StatelessEntityStopAnimPacket {
             if (animatable instanceof StatelessAnimatable statelessAnimatable)
                 statelessAnimatable.handleClientAnimationStop(animatable, entityId, animation);
         });
+        handler.setPacketHandled(true);
     }
 }

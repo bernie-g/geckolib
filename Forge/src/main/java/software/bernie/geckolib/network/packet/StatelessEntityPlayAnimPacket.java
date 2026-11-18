@@ -65,5 +65,6 @@ public class StatelessEntityPlayAnimPacket {
             if (animatable instanceof StatelessAnimatable statelessAnimatable)
                 statelessAnimatable.handleClientAnimationPlay(animatable, entityId, animation);
         });
+        handler.setPacketHandled(true);
     }
 }

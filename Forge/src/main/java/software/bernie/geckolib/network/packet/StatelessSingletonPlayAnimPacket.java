@@ -47,5 +47,6 @@ public class StatelessSingletonPlayAnimPacket {
             if (animatable instanceof StatelessGeoSingletonAnimatable statelessAnimatable)
                 statelessAnimatable.handleClientAnimationPlay(animatable, instanceId, animation);
         });
+        handler.setPacketHandled(true);
     }
 }
