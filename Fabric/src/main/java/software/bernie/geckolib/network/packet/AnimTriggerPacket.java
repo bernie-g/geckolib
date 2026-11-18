@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.AbstractPacket;
@@ -56,12 +57,18 @@ public class AnimTriggerPacket extends AbstractPacket {
     }
 
     private static <D> void runOnThread(String syncableId, long instanceId, String controllerName, String animName) {
-        GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(syncableId);
+        if (GeckoLibNetwork.getSyncedAnimatable(syncableId) instanceof SingletonGeoAnimatable animatable) {
+            AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 
-        if (animatable != null) {
-            AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
+            if (animatableManager == null)
+                return;
 
-            manager.tryTriggerAnimation(controllerName, animName);
+            if (!controllerName.isEmpty()) {
+                animatableManager.tryTriggerAnimation(controllerName, animName);
+            }
+            else {
+                animatableManager.tryTriggerAnimation(animName);
+            }
         }
     }
 }

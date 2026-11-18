@@ -2,6 +2,7 @@ package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
+import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
@@ -18,11 +19,11 @@ public class StopTriggeredSingletonAnimPacket {
 	private final String controllerName;
 	private final String animName;
 
-	public StopTriggeredSingletonAnimPacket(String syncableId, long instanceId, @Nullable String controllerName, String animName) {
+	public StopTriggeredSingletonAnimPacket(String syncableId, long instanceId, @Nullable String controllerName, @Nullable String animName) {
 		this.syncableId = syncableId;
 		this.instanceId = instanceId;
 		this.controllerName = controllerName == null ? "" : controllerName;
-		this.animName = animName;
+		this.animName = animName == null ? "" : animName;
 	}
 
 	public void encode(FriendlyByteBuf buffer) {
@@ -40,13 +41,18 @@ public class StopTriggeredSingletonAnimPacket {
 		NetworkEvent.Context handler = context.get();
 
 		handler.enqueueWork(() -> {
-			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+			if (GeckoLibNetwork.getSyncedAnimatable(this.syncableId) instanceof SingletonGeoAnimatable animatable) {
+				AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 
-			if (animatable != null) {
-				AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
+				if (animatableManager == null)
+					return;
 
-				if (manager != null)
-					manager.stopTriggeredAnimation(this.controllerName, this.animName);
+				if (!this.controllerName.isEmpty()) {
+					animatableManager.stopTriggeredAnimation(this.controllerName, this.animName.isEmpty() ? null : this.animName);
+				}
+				else {
+					animatableManager.stopTriggeredAnimation(this.animName.isEmpty() ? null : this.animName);
+				}
 			}
 		});
 		handler.setPacketHandled(true);

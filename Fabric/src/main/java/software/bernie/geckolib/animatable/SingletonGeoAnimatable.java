@@ -88,7 +88,12 @@ public interface SingletonGeoAnimatable extends GeoAnimatable {
      */
     default <D> void triggerAnim(Entity relatedEntity, long instanceId, @Nullable String controllerName, String animName) {
         if (relatedEntity.level().isClientSide()) {
-            getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
+            if (controllerName == null) {
+                getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(animName);
+            }
+            else {
+                getAnimatableInstanceCache().getManagerForId(instanceId).tryTriggerAnimation(controllerName, animName);
+            }
         }
         else {
             GeckoLibNetwork.sendToTrackingEntityAndSelf(new AnimTriggerPacket(GeckoLibNetwork.getSyncedSingletonAnimatableId(this), instanceId, controllerName, animName), relatedEntity);

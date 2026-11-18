@@ -2,6 +2,7 @@ package software.bernie.geckolib.network.packet;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.network.NetworkEvent;
+import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.network.GeckoLibNetwork;
@@ -40,12 +41,18 @@ public class AnimTriggerPacket<D> {
 		NetworkEvent.Context handler = context.get();
 
 		handler.enqueueWork(() -> {
-			GeoAnimatable animatable = GeckoLibNetwork.getSyncedAnimatable(this.syncableId);
+			if (GeckoLibNetwork.getSyncedAnimatable(this.syncableId) instanceof SingletonGeoAnimatable animatable) {
+				AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
 
-			if (animatable != null) {
-				AnimatableManager<?> manager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
+				if (animatableManager == null)
+					return;
 
-				manager.tryTriggerAnimation(this.controllerName, this.animName);
+				if (!this.controllerName.isEmpty()) {
+					animatableManager.stopTriggeredAnimation(this.controllerName, this.animName);
+				}
+				else {
+					animatableManager.stopTriggeredAnimation(this.animName);
+				}
 			}
 		});
 		handler.setPacketHandled(true);
