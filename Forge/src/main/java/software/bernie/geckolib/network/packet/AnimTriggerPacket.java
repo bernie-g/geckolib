@@ -48,10 +48,10 @@ public class AnimTriggerPacket<D> {
 					return;
 
 				if (!this.controllerName.isEmpty()) {
-					animatableManager.stopTriggeredAnimation(this.controllerName, this.animName);
+					animatableManager.tryTriggerAnimation(this.controllerName, this.animName);
 				}
 				else {
-					animatableManager.stopTriggeredAnimation(this.animName);
+					animatableManager.tryTriggerAnimation(this.animName);
 				}
 			}
 		});
