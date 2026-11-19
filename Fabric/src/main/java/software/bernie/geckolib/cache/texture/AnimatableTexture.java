@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.util.RenderUtils;
 
@@ -23,12 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Wrapper for {@link net.minecraft.client.renderer.texture.SimpleTexture SimpleTexture} implementation allowing for casual use of animated non-atlas textures
  */
 public class AnimatableTexture extends SimpleTexture {
-	protected AnimationContents animationContents = null;
+	protected @Nullable AnimationContents animationContents = null;
 	protected boolean isAnimated = false;
 
 	public AnimatableTexture(final ResourceLocation location) {
@@ -37,24 +39,25 @@ public class AnimatableTexture extends SimpleTexture {
 
 	@Override
 	public void load(ResourceManager manager) throws IOException {
-		Resource resource = manager.getResourceOrThrow(this.location);
+		reset();
+
+		final Resource resource = manager.getResourceOrThrow(this.location);
 
 		try {
+			final Optional<AnimationMetadataSection> animatedMeta = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER);
+
+			if (animatedMeta.isEmpty())
+				return;
+
 			NativeImage nativeImage;
 
 			try (InputStream inputstream = resource.open()) {
 				nativeImage = NativeImage.read(inputstream);
 			}
 
-			this.animationContents = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER).map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
+			this.animationContents = animatedMeta.map(animMeta -> new AnimationContents(nativeImage, animMeta)).orElse(null);
 
-			if (this.animationContents != null) {
-				if (!this.animationContents.isValid()) {
-					nativeImage.close();
-
-					return;
-				}
-
+			if (this.animationContents.isValid()) {
 				this.isAnimated = true;
 
 				onRenderThread(() -> {
@@ -62,9 +65,28 @@ public class AnimatableTexture extends SimpleTexture {
 					nativeImage.upload(0, 0, 0, 0, 0, this.animationContents.frameSize.width(), this.animationContents.frameSize.height(), false, false);
 				});
 			}
+			else {
+				nativeImage.close();
+			}
 		}
 		catch (RuntimeException exception) {
 			GeckoLib.LOGGER.warn("Failed reading metadata of: {}", this.location, exception);
+		}
+	}
+
+	@Override
+	public void releaseId() {
+		super.releaseId();
+		reset();
+	}
+
+	protected void reset() {
+		if (this.animationContents != null) {
+			if (this.animationContents.animatedTexture != null)
+				this.animationContents.animatedTexture.close();
+
+			this.animationContents = null;
+			this.isAnimated = false;
 		}
 	}
 
@@ -110,7 +132,7 @@ public class AnimatableTexture extends SimpleTexture {
 
 	protected class AnimationContents {
 		protected final FrameSize frameSize;
-		protected final Texture animatedTexture;
+		protected final @Nullable Texture animatedTexture;
 
 		private AnimationContents(NativeImage image, AnimationMetadataSection animMeta) {
 			this.frameSize = animMeta.calculateFrameSize(image.getWidth(), image.getHeight());
@@ -121,7 +143,7 @@ public class AnimatableTexture extends SimpleTexture {
 			return this.animatedTexture != null;
 		}
 
-		private Texture generateAnimatedTexture(NativeImage image, AnimationMetadataSection animMeta) {
+		private @Nullable Texture generateAnimatedTexture(NativeImage image, AnimationMetadataSection animMeta) {
 			if (!Mth.isMultipleOf(image.getWidth(), this.frameSize.width()) || !Mth.isMultipleOf(image.getHeight(), this.frameSize.height())) {
 				GeckoLib.LOGGER.error("Image {} size {},{} is not multiple of frame size {},{}", AnimatableTexture.this.location, image.getWidth(), image.getHeight(), this.frameSize.width(), this.frameSize.height());
 
