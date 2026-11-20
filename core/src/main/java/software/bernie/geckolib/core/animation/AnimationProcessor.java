@@ -10,12 +10,11 @@ import software.bernie.geckolib.core.keyframe.AnimationPoint;
 import software.bernie.geckolib.core.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.core.state.BoneSnapshot;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AnimationProcessor<T extends GeoAnimatable> {
+	private static final Set<String> MISSING_ANIMATION_ERRORS = ConcurrentHashMap.newKeySet();
 	private final Map<String, CoreGeoBone> bones = new Object2ObjectOpenHashMap<>();
 	private final CoreGeoModel<T> model;
 
@@ -42,13 +41,29 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				animation = Animation.generateWaitAnimation(stage.additionalTicks());
 			}
 			else {
-				animation = this.model.getAnimation(animatable, stage.animationName());
+				try {
+					animation = this.model.getAnimation(animatable, stage.animationName());
+				}
+				catch (Exception ex) {
+					String errorMsg = ex.getMessage() == null ? "Unable to get animation for " + animatable.getClass().getSimpleName() : ex.getMessage();
+
+					if (MISSING_ANIMATION_ERRORS.add(errorMsg)) {
+						System.out.println(errorMsg);
+						ex.printStackTrace();
+					}
+
+					error = true;
+
+					continue;
+				}
 			}
 
 			if (animation == null) {
-				System.out.println("Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
-
+				final String errorMsg = "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName();
 				error = true;
+
+				if (MISSING_ANIMATION_ERRORS.add(errorMsg))
+					System.out.println(errorMsg);
 			}
 			else {
 				animations.add(new QueuedAnimation(animation, stage.loopType()));
