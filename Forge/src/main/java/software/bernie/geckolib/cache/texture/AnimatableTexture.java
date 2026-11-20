@@ -254,7 +254,7 @@ public class AnimatableTexture extends SimpleTexture {
 					}
 				}
 
-				if (this.currentFrame != lastFrame && this.currentSubframe == 0) {
+				if (this.currentFrame != lastFrame) {
 					onRenderThread(() -> {
 						TextureUtil.prepareImage(getId(), 0, AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height());
 						this.baseImage.upload(0, 0, 0, getFrameX(this.currentFrame) * AnimationContents.this.frameSize.width(), getFrameY(this.currentFrame) * AnimationContents.this.frameSize.height(), AnimationContents.this.frameSize.width(), AnimationContents.this.frameSize.height(), false, false);
