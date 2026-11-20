@@ -17,12 +17,12 @@ import net.minecraft.client.resources.metadata.texture.TextureMetadataSection;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
@@ -82,75 +82,130 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	@Nullable
 	@Override
 	protected RenderCall loadTexture(ResourceManager resourceManager, Minecraft mc) throws IOException {
-		AbstractTexture originalTexture;
+		final AbstractTexture baseTexture;
 
 		try {
-			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(this.textureBase)).get();
+			baseTexture = mc.submit(() -> mc.getTextureManager().getTexture(this.textureBase)).get();
 		}
-		catch (InterruptedException | ExecutionException e) {
-			throw new IOException("Failed to load original texture: " + this.textureBase, e);
+		catch (InterruptedException | ExecutionException ex) {
+			GeckoLib.LOGGER.error("Minecraft failed to create base texture for AutoGlowingTexture: {}", this.textureBase, ex);
+
+			return null;
 		}
 
-		Resource textureBaseResource = resourceManager.getResource(this.textureBase).get();
-		NativeImage baseImage = originalTexture instanceof DynamicTexture dynamicTexture ?
-				dynamicTexture.getPixels() : NativeImage.read(textureBaseResource.open());
+		final Optional<Resource> baseTextureResource = resourceManager.getResource(this.textureBase);
+		final NativeImage baseImage;
+
+		if (baseTexture instanceof DynamicTexture dynamicTexture) {
+			baseImage = dynamicTexture.getPixels();
+		}
+		else if (baseTextureResource.isPresent()) {
+			try (InputStream in = baseTextureResource.get().open()) {
+				baseImage = NativeImage.read(in);
+			}
+			catch (IOException ex) {
+				GeckoLib.LOGGER.error("Unable to load base texture for AutoGlowingTexture: {}", this.textureBase, ex);
+
+				return null;
+			}
+		}
+		else {
+			baseImage = null;
+		}
+
+		if (baseImage == null) {
+			GeckoLib.LOGGER.error("Unable to find base texture '{}' for AutoGlowingTexture creation", this.textureBase);
+
+			return null;
+		}
+
+		final Optional<Resource> glowLayerResource = resourceManager.getResource(this.glowLayer);
 		NativeImage glowImage = null;
-		Optional<TextureMetadataSection> textureBaseMeta = textureBaseResource.metadata().getSection(TextureMetadataSection.SERIALIZER);
-		boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
-		boolean clamp = textureBaseMeta.isPresent() && textureBaseMeta.get().isClamp();
+		GeoGlowingTextureMeta glowLayerMeta = null;
 
-		try {
-			Optional<Resource> glowLayerResource = resourceManager.getResource(this.glowLayer);
-			GeoGlowingTextureMeta glowLayerMeta = null;
-
-			if (glowLayerResource.isPresent()) {
-				glowImage = NativeImage.read(glowLayerResource.get().open());
+		if (glowLayerResource.isPresent()) {
+			try (InputStream in = glowLayerResource.get().open()) {
+				glowImage = NativeImage.read(in);
 				glowLayerMeta = GeoGlowingTextureMeta.fromExistingImage(glowImage);
 
-				if (baseImage != null && (glowImage.getWidth() != baseImage.getWidth() || glowImage.getHeight() != baseImage.getHeight()))
-					throw new IllegalStateException(String.format("Glowmask texture dimensions do not match base texture dimensions! Mask: %s, Base: %s", this.glowLayer, this.textureBase));
-			}
-			else {
-				Optional<GeoGlowingTextureMeta> meta = textureBaseResource.metadata().getSection(GeoGlowingTextureMeta.DESERIALIZER);
+				if (glowImage.getWidth() != baseImage.getWidth() || glowImage.getHeight() != baseImage.getHeight()) {
+					GeckoLib.LOGGER.error("Glowmask texture dimensions do not match base texture dimensions! Mask: {}, Base: {}", this.glowLayer, this.textureBase);
 
-				if (meta.isPresent()) {
-					glowLayerMeta = meta.get();
+					if (!(baseTexture instanceof DynamicTexture))
+						baseImage.close();
+
+					glowImage.close();
+
+					return null;
+				}
+			}
+			catch (IOException | RuntimeException ex) {
+				GeckoLib.LOGGER.error("Failed to load glowmask resources for AutoGlowingTexture: {}", this.glowLayer, ex);
+
+				if (!(baseTexture instanceof DynamicTexture))
+					baseImage.close();
+
+				if (glowImage != null)
+					glowImage.close();
+
+				return null;
+			}
+		}
+		else if (baseTextureResource.isPresent()) {
+			final Optional<GeoGlowingTextureMeta> autoGlowMeta = baseTextureResource.flatMap(resource -> {
+				try {
+					return resource.metadata().getSection(GeoGlowingTextureMeta.DESERIALIZER);
+				}
+				catch (Exception ignored) {
+					return Optional.empty();
+				}
+			});
+
+			if (autoGlowMeta.isPresent()) {
+				try {
+					glowLayerMeta = autoGlowMeta.get();
 					glowImage = new NativeImage(baseImage.getWidth(), baseImage.getHeight(), true);
 				}
-			}
-
-			if (glowLayerMeta != null) {
-				glowLayerMeta.createImageMask(baseImage, glowImage);
-
-				if (!FMLEnvironment.production) {
-					printDebugImageToDisk(this.textureBase, baseImage);
-					printDebugImageToDisk(this.glowLayer, glowImage);
+				catch (IllegalArgumentException ex) {
+					GeckoLib.LOGGER.error("Texture '{}' for AutoGlowingTexture is empty", this.textureBase);
 				}
 			}
 		}
-		catch (IOException e) {
-			GeckoLib.LOGGER.warn("Resource failed to open for glowlayer meta: {}", this.glowLayer, e);
+
+		if (glowLayerMeta == null || glowImage == null) {
+			if (!(baseTexture instanceof DynamicTexture))
+				baseImage.close();
+
+			return null;
 		}
 
-		NativeImage mask = glowImage;
+		glowLayerMeta.createImageMask(baseImage, glowImage);
 
-		if (mask == null)
-			return null;
-
-		boolean animated = originalTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
+		final Optional<TextureMetadataSection> textureBaseMeta = baseTextureResource.flatMap(resource -> {
+			try {
+				return resource.metadata().getSection(TextureMetadataSection.SERIALIZER);
+			}
+			catch (Exception ignored) {
+				return Optional.empty();
+			}
+		});
+		final boolean blur = textureBaseMeta.isPresent() && textureBaseMeta.get().isBlur();
+		final boolean clamp = textureBaseMeta.isPresent() && textureBaseMeta.get().isClamp();
+		final NativeImage mask = glowImage;
+		final boolean animated = baseTexture instanceof AnimatableTexture animatableTexture && animatableTexture.isAnimated();
 
 		if (animated)
-			((AnimatableTexture)originalTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, mask);
+			((AnimatableTexture)baseTexture).animationContents.animatedTexture.setGlowMaskTexture(this, baseImage, mask);
 
 		return () -> {
 			if (!animated)
 				uploadSimple(getId(), mask, blur, clamp);
 
-			if (originalTexture instanceof DynamicTexture dynamicTexture) {
+			if (baseTexture instanceof DynamicTexture dynamicTexture) {
 				dynamicTexture.upload();
 			}
 			else {
-				uploadSimple(originalTexture.getId(), baseImage, blur, clamp);
+				uploadSimple(baseTexture.getId(), baseImage, blur, clamp);
 			}
 		};
 	}
