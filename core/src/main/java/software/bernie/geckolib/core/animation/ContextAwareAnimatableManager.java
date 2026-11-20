@@ -127,7 +127,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	@Override
 	public void stopTriggeredAnimation(String animNameOrNull) {
 		for (AnimatableManager<T> manager : this.managers.values()) {
-			manager.tryTriggerAnimation(animNameOrNull);
+			manager.stopTriggeredAnimation(animNameOrNull);
 		}
 	}
 
@@ -140,7 +140,7 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	@Override
 	public void stopTriggeredAnimation(String controllerName, String animNameOrNull) {
 		for (AnimatableManager<T> manager : this.managers.values()) {
-			manager.tryTriggerAnimation(controllerName, animNameOrNull);
+			manager.stopTriggeredAnimation(controllerName, animNameOrNull);
 		}
 	}
 
