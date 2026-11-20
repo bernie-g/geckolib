@@ -2,6 +2,7 @@ package software.bernie.geckolib.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,6 +27,7 @@ import java.util.Map;
  * and consider whether the benefits are worth the cost for your needs.
  */
 public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable> extends GeoEntityRenderer<T> {
+	protected static final IntIntPair NO_SIZE = IntIntImmutablePair.of(0, 0);
 	protected static Map<ResourceLocation, IntIntPair> TEXTURE_DIMENSIONS_CACHE = new Object2ObjectOpenHashMap<>();
 
 	protected ResourceLocation textureOverride = null;
@@ -146,7 +148,7 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 		IntIntPair boneTextureSize = computeTextureSize(this.textureOverride);
 		IntIntPair entityTextureSize = computeTextureSize(getTextureLocation(this.animatable));
 
-		if (boneTextureSize == null || entityTextureSize == null) {
+		if (boneTextureSize == NO_SIZE || entityTextureSize == NO_SIZE) {
 			super.createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green,
 					blue, alpha);
 
@@ -169,6 +171,10 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 	 * This is inefficient however, and should only be used where required.
 	 */
 	protected IntIntPair computeTextureSize(ResourceLocation texture) {
-		return TEXTURE_DIMENSIONS_CACHE.computeIfAbsent(texture, RenderUtils::getTextureDimensions);
+		return TEXTURE_DIMENSIONS_CACHE.computeIfAbsent(texture, id -> {
+			final IntIntPair dimensions = RenderUtils.getTextureDimensions(id);
+
+			return dimensions == null ? NO_SIZE : dimensions;
+		});
 	}
 }
