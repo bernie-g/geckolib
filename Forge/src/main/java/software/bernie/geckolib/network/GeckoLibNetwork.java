@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -13,6 +14,7 @@ import software.bernie.geckolib.network.packet.*;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Network handling class for GeckoLib.<br>
@@ -28,22 +30,22 @@ public final class GeckoLibNetwork {
 	public static void init() {
 		int id = 0;
 
-		PACKET_CHANNEL.registerMessage(id++, AnimDataSyncPacket.class, AnimDataSyncPacket::encode, AnimDataSyncPacket::decode, AnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, AnimTriggerPacket.class, AnimTriggerPacket::encode, AnimTriggerPacket::decode, AnimTriggerPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, StopTriggeredSingletonAnimPacket.class, StopTriggeredSingletonAnimPacket::encode, StopTriggeredSingletonAnimPacket::decode, StopTriggeredSingletonAnimPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, EntityAnimDataSyncPacket.class, EntityAnimDataSyncPacket::encode, EntityAnimDataSyncPacket::decode, EntityAnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, EntityAnimTriggerPacket.class, EntityAnimTriggerPacket::encode, EntityAnimTriggerPacket::decode, EntityAnimTriggerPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, StopTriggeredEntityAnimPacket.class, StopTriggeredEntityAnimPacket::encode, StopTriggeredEntityAnimPacket::decode, StopTriggeredEntityAnimPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimDataSyncPacket.class, BlockEntityAnimDataSyncPacket::encode, BlockEntityAnimDataSyncPacket::decode, BlockEntityAnimDataSyncPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::encode, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket);
-		PACKET_CHANNEL.registerMessage(id++, StopTriggeredBlockEntityAnimPacket.class, StopTriggeredBlockEntityAnimPacket::encode, StopTriggeredBlockEntityAnimPacket::decode, StopTriggeredBlockEntityAnimPacket::receivePacket);
+		PACKET_CHANNEL.registerMessage(id++, AnimDataSyncPacket.class, AnimDataSyncPacket::encode, AnimDataSyncPacket::decode, AnimDataSyncPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, AnimTriggerPacket.class, AnimTriggerPacket::encode, AnimTriggerPacket::decode, AnimTriggerPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredSingletonAnimPacket.class, StopTriggeredSingletonAnimPacket::encode, StopTriggeredSingletonAnimPacket::decode, StopTriggeredSingletonAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, EntityAnimDataSyncPacket.class, EntityAnimDataSyncPacket::encode, EntityAnimDataSyncPacket::decode, EntityAnimDataSyncPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, EntityAnimTriggerPacket.class, EntityAnimTriggerPacket::encode, EntityAnimTriggerPacket::decode, EntityAnimTriggerPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredEntityAnimPacket.class, StopTriggeredEntityAnimPacket::encode, StopTriggeredEntityAnimPacket::decode, StopTriggeredEntityAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimDataSyncPacket.class, BlockEntityAnimDataSyncPacket::encode, BlockEntityAnimDataSyncPacket::decode, BlockEntityAnimDataSyncPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, BlockEntityAnimTriggerPacket.class, BlockEntityAnimTriggerPacket::encode, BlockEntityAnimTriggerPacket::decode, BlockEntityAnimTriggerPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+		PACKET_CHANNEL.registerMessage(id++, StopTriggeredBlockEntityAnimPacket.class, StopTriggeredBlockEntityAnimPacket::encode, StopTriggeredBlockEntityAnimPacket::decode, StopTriggeredBlockEntityAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 
-        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonPlayAnimPacket.class, StatelessSingletonPlayAnimPacket::encode, StatelessSingletonPlayAnimPacket::decode, StatelessSingletonPlayAnimPacket::receivePacket);
-        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonStopAnimPacket.class, StatelessSingletonStopAnimPacket::encode, StatelessSingletonStopAnimPacket::decode, StatelessSingletonStopAnimPacket::receivePacket);
-        PACKET_CHANNEL.registerMessage(id++, StatelessEntityPlayAnimPacket.class, StatelessEntityPlayAnimPacket::encode, StatelessEntityPlayAnimPacket::decode, StatelessEntityPlayAnimPacket::receivePacket);
-        PACKET_CHANNEL.registerMessage(id++, StatelessEntityStopAnimPacket.class, StatelessEntityStopAnimPacket::encode, StatelessEntityStopAnimPacket::decode, StatelessEntityStopAnimPacket::receivePacket);
-        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityPlayAnimPacket.class, StatelessBlockEntityPlayAnimPacket::encode, StatelessBlockEntityPlayAnimPacket::decode, StatelessBlockEntityPlayAnimPacket::receivePacket);
-        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityStopAnimPacket.class, StatelessBlockEntityStopAnimPacket::encode, StatelessBlockEntityStopAnimPacket::decode, StatelessBlockEntityStopAnimPacket::receivePacket);
+        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonPlayAnimPacket.class, StatelessSingletonPlayAnimPacket::encode, StatelessSingletonPlayAnimPacket::decode, StatelessSingletonPlayAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        PACKET_CHANNEL.registerMessage(id++, StatelessSingletonStopAnimPacket.class, StatelessSingletonStopAnimPacket::encode, StatelessSingletonStopAnimPacket::decode, StatelessSingletonStopAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        PACKET_CHANNEL.registerMessage(id++, StatelessEntityPlayAnimPacket.class, StatelessEntityPlayAnimPacket::encode, StatelessEntityPlayAnimPacket::decode, StatelessEntityPlayAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        PACKET_CHANNEL.registerMessage(id++, StatelessEntityStopAnimPacket.class, StatelessEntityStopAnimPacket::encode, StatelessEntityStopAnimPacket::decode, StatelessEntityStopAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityPlayAnimPacket.class, StatelessBlockEntityPlayAnimPacket::encode, StatelessBlockEntityPlayAnimPacket::decode, StatelessBlockEntityPlayAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+        PACKET_CHANNEL.registerMessage(id++, StatelessBlockEntityStopAnimPacket.class, StatelessBlockEntityStopAnimPacket::encode, StatelessBlockEntityStopAnimPacket::decode, StatelessBlockEntityStopAnimPacket::receivePacket, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
 	}
 
 	/**
