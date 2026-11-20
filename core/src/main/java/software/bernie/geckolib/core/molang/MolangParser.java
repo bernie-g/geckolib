@@ -6,7 +6,6 @@ import com.eliotlash.mclib.math.MathBuilder;
 import com.eliotlash.mclib.math.Variable;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import software.bernie.geckolib.core.molang.expressions.MolangCompoundValue;
 import software.bernie.geckolib.core.molang.expressions.MolangValue;
 import software.bernie.geckolib.core.molang.expressions.MolangVariableHolder;
@@ -15,6 +14,7 @@ import software.bernie.geckolib.core.molang.functions.SinDegrees;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.DoubleSupplier;
 
 /**
@@ -23,7 +23,7 @@ import java.util.function.DoubleSupplier;
  */
 public class MolangParser extends MathBuilder {
 	// Replace base variables map
-	public static final Map<String, LazyVariable> VARIABLES = new Object2ObjectOpenHashMap<>();
+	public static final Map<String, LazyVariable> VARIABLES = new ConcurrentHashMap<>();
 	public static final MolangVariableHolder ZERO = new MolangVariableHolder(null, new Constant(0));
 	public static final MolangVariableHolder ONE = new MolangVariableHolder(null, new Constant(1));
 	public static final String RETURN = "return ";
