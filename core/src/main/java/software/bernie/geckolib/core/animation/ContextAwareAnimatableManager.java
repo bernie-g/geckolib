@@ -120,6 +120,31 @@ public abstract class ContextAwareAnimatableManager<T extends GeoAnimatable, C> 
 	}
 
 	/**
+	 * Stop a triggered animation, or all triggered animations, depending on the current state of animations and the passed argument
+	 *
+	 * @param animNameOrNull The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	@Override
+	public void stopTriggeredAnimation(String animNameOrNull) {
+		for (AnimatableManager<T> manager : this.managers.values()) {
+			manager.tryTriggerAnimation(animNameOrNull);
+		}
+	}
+
+	/**
+	 * Stop a triggered animation or all triggered animations on a given controller, depending on the current state of animations and the passed arguments
+	 *
+	 * @param controllerName The name of the controller the triggered animation belongs to
+	 * @param animNameOrNull The trigger name of the animation to stop, or null to stop any triggered animation
+	 */
+	@Override
+	public void stopTriggeredAnimation(String controllerName, String animNameOrNull) {
+		for (AnimatableManager<T> manager : this.managers.values()) {
+			manager.tryTriggerAnimation(controllerName, animNameOrNull);
+		}
+	}
+
+	/**
 	 * Set a custom data point to be used later.<br>
 	 * Sub-managers do not have their data set, and instead it is all kept in this parent manager
 	 * @param dataTicket The DataTicket for the data point
