@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
@@ -109,7 +110,7 @@ public final class GeckoLibCache {
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String path, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
-				() -> resourceManager.listResources(path, fileName -> fileName.toString().endsWith(".json")), executor)
+				() -> resourceManager.listResources(path, fileName -> !EXCLUDED_NAMESPACES.contains(fileName.getNamespace().toLowerCase(Locale.ROOT)) && fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
@@ -121,9 +122,12 @@ public final class GeckoLibCache {
 				}, executor)
 				.thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
-						// Skip known namespaces that use an "animation" folder as well
-						if (!EXCLUDED_NAMESPACES.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
+						try {
 							map.accept(entry.getKey(), entry.getValue().join());
+						}
+						catch (CompletionException ex) {
+							GeckoLib.LOGGER.error("Failed to load {}", entry.getKey(), ex.getCause());
+						}
 					}
 				}, executor);
 	}
