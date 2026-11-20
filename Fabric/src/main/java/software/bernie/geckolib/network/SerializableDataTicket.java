@@ -127,7 +127,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 		return new SerializableDataTicket<>(id.toString(), enumClass) {
 			@Override
 			public void encode(E data, FriendlyByteBuf buffer) {
-				buffer.writeUtf(data.toString());
+				buffer.writeUtf(data.name());
 			}
 
 			@Override
