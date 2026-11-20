@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -35,6 +36,8 @@ import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
 
 import javax.annotation.Nullable;
+import java.io.InputStream;
+import java.util.Optional;
 
 /**
  * Helper class for various methods and functions useful while rendering
@@ -132,36 +135,46 @@ public final class RenderUtils {
 	 * @return The dimensions (width x height) of the texture, or null if unable to find or read the file
 	 */
 	@Nullable
-	public static IntIntPair getTextureDimensions(ResourceLocation texture) {
+	public static IntIntPair getTextureDimensions(@Nullable ResourceLocation texture) {
 		if (texture == null)
 			return null;
 
-		AbstractTexture originalTexture = null;
-		Minecraft mc = Minecraft.getInstance();
+		final AbstractTexture originalTexture;
+		final Minecraft mc = Minecraft.getInstance();
+		final NativeImage image;
 
 		try {
 			originalTexture = mc.submit(() -> mc.getTextureManager().getTexture(texture)).get();
-		}
-		catch (Exception e) {
-			GeckoLib.LOGGER.warn("Failed to load image for id {}", texture);
-			e.printStackTrace();
-		}
 
-		if (originalTexture == null)
+			if (originalTexture instanceof DynamicTexture dynamicTexture) {
+				image = dynamicTexture.getPixels();
+
+				if (image == null)
+					return null;
+			}
+			else {
+				final Optional<Resource> resource = mc.getResourceManager().getResource(texture);
+
+				if (resource.isEmpty())
+					return null;
+
+				try (InputStream inputStream = resource.get().open()) {
+					image = NativeImage.read(inputStream);
+				}
+			}
+		}
+		catch (Exception ex) {
+			GeckoLib.LOGGER.warn("Failed to load image for id {}", texture, ex);
+
 			return null;
-
-		NativeImage image = null;
-
-		try {
-			image = originalTexture instanceof DynamicTexture dynamicTexture ? dynamicTexture.getPixels()
-					: NativeImage.read(mc.getResourceManager().getResource(texture).get().open());
-		}
-		catch (Exception e) {
-			GeckoLib.LOGGER.error("Failed to read image for id {}", texture);
-			e.printStackTrace();
 		}
 
-		return image == null ? null : IntIntImmutablePair.of(image.getWidth(), image.getHeight());
+		final IntIntImmutablePair dimensions = IntIntImmutablePair.of(image.getWidth(), image.getHeight());
+
+		if (!(originalTexture instanceof DynamicTexture))
+			image.close();
+
+		return dimensions;
 	}
 
 	public static double getCurrentSystemTick() {
