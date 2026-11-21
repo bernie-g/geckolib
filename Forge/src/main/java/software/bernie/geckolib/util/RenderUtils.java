@@ -254,16 +254,6 @@ public final class RenderUtils {
 		return normal.dot(position) <= 0;
 	}
 
-	/// Whether the cube has a quad facing the given direction
-	public static boolean hasQuadFacing(GeoCube cube, Direction direction) {
-		for (GeoQuad quad : cube.quads()) {
-			if (quad != null && quad.direction() == direction)
-				return true;
-		}
-
-		return false;
-	}
-
 	/**
 	 * Converts a {@link Direction} to a rotational float for rotation purposes
 	 */
