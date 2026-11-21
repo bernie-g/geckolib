@@ -10,6 +10,7 @@
   "mixins": [
   ],
   "client": [
+    "client.LevelRendererMixin",
     "client.TextureManagerMixin"
   ]
 }

@@ -34,6 +34,7 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.GeoReplacedEntityRenderer;
+import software.bernie.geckolib.util.helper.LevelRendererGeckoLibAccess;
 
 import javax.annotation.Nullable;
 import java.io.InputStream;
@@ -43,6 +44,10 @@ import java.util.Optional;
  * Helper class for various methods and functions useful while rendering
  */
 public final class RenderUtils {
+	public static boolean isRenderingInWorld() {
+		return Minecraft.getInstance().levelRenderer instanceof LevelRendererGeckoLibAccess access && access.geckolib$isRenderingInWorld();
+	}
+
 	public static void translateMatrixToBone(PoseStack poseStack, CoreGeoBone bone) {
 		poseStack.translate(-bone.getPosX() / 16f, bone.getPosY() / 16f, bone.getPosZ() / 16f);
 	}

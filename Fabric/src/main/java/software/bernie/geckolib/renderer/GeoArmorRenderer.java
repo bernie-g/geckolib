@@ -289,7 +289,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 		Minecraft mc = Minecraft.getInstance();
 		MultiBufferSource bufferSource =  mc.levelRenderer.renderBuffers.bufferSource();
 
-		if (mc.levelRenderer.shouldShowEntityOutlines() && mc.shouldEntityAppearGlowing(this.currentEntity))
+		if (RenderUtils.isRenderingInWorld() && mc.levelRenderer.shouldShowEntityOutlines() && mc.shouldEntityAppearGlowing(this.currentEntity))
 			bufferSource =  mc.levelRenderer.renderBuffers.outlineBufferSource();
 
 		float partialTick = mc.getFrameTime();

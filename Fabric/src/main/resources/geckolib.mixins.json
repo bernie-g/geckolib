@@ -12,6 +12,7 @@
   ],
   "client": [
     "ItemRendererAccessor",
+    "LevelRendererMixin",
     "MixinHumanoidArmorLayer",
     "MixinItemRenderer",
     "TextureManagerMixin"
