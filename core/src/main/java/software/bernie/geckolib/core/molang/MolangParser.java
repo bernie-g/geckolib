@@ -100,7 +100,7 @@ public class MolangParser extends MathBuilder {
 		if (!(variable instanceof LazyVariable))
 			variable = LazyVariable.from(variable);
 
-		VARIABLES.put(variable.getName(), (LazyVariable)variable);
+		VARIABLES.put(expandShorthandQueryPrefix(variable.getName()), (LazyVariable)variable);
 	}
 
 	/**
@@ -147,10 +147,34 @@ public class MolangParser extends MathBuilder {
 	 */
 	@Override
 	public LazyVariable getVariable(String name) {
-		return VARIABLES.computeIfAbsent(name, key -> new LazyVariable(key, 0));
+		return VARIABLES.computeIfAbsent(expandShorthandQueryPrefix(name), key -> new LazyVariable(key, 0));
+	}
+
+	private static boolean hasVariable(String name) {
+		return VARIABLES.containsKey(expandShorthandQueryPrefix(name));
+	}
+
+	private static String expandShorthandQueryPrefix(String name) {
+		if (name.length() < 2 || name.charAt(1) != '.')
+			return name;
+
+		if (name.startsWith("q."))
+			return "query." + name.substring(2);
+
+		if (name.startsWith("v."))
+			return "variable." + name.substring(2);
+
+		if (name.startsWith("c."))
+			return "context." + name.substring(2);
+
+		if (name.startsWith("t."))
+			return "temp." + name.substring(2);
+
+		return name;
 	}
 
 	public LazyVariable getVariable(String name, MolangCompoundValue currentStatement) {
+		name = expandShorthandQueryPrefix(name);
 		LazyVariable variable;
 
 		if (currentStatement != null) {
@@ -231,8 +255,9 @@ public class MolangParser extends MathBuilder {
 			if (symbols.size() >= 3 && symbols.get(0) instanceof String name && INSTANCE.isVariable(symbols.get(0)) && symbols.get(1).equals("=")) {
 				symbols = symbols.subList(2, symbols.size());
 				LazyVariable variable;
+				name = expandShorthandQueryPrefix(name);
 
-				if (!VARIABLES.containsKey(name) && currentStatement != null && !currentStatement.locals.containsKey(name)) {
+				if (!hasVariable(name) && currentStatement != null && !currentStatement.locals.containsKey(name)) {
 					currentStatement.locals.put(name, (variable = new LazyVariable(name, 0)));
 				}
 				else {
