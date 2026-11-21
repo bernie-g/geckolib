@@ -184,6 +184,7 @@ task publishToCurseForge(type:  net.darkhax.curseforgegradle.TaskPublishCurseFor
     mainFile.addModLoader("Fabric")
     mainFile.addGameVersion(minecraft_version)
     mainFile.addJavaVersion("Java 17")
+    mainFile.addEnvironment("Client", "Server")
     mainFile.changelog = rootProject.file("changelog.txt").text
 
     //https://github.com/Darkhax/CurseForgeGradle#available-properties
