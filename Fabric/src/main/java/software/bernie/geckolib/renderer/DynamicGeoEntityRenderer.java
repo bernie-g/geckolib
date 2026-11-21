@@ -85,12 +85,12 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 			Matrix4f localMatrix = RenderUtils.invertAndMultiplyMatrices(poseState, this.entityRenderTranslations);
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
-			localMatrix.translate(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
+			localMatrix.translateLocal(new Vector3f(getRenderOffset(this.animatable, 1).toVector3f()));
 			bone.setLocalSpaceMatrix(localMatrix);
 
 			Matrix4f worldState = new Matrix4f(localMatrix);;
 
-			worldState.translate(new Vector3f(this.animatable.position().toVector3f()));
+			worldState.translateLocal(new Vector3f(this.animatable.position().toVector3f()));
 			bone.setWorldSpaceMatrix(worldState);
 		}
 

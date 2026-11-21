@@ -188,7 +188,7 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 
 			bone.setModelSpaceMatrix(RenderUtils.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			bone.setLocalSpaceMatrix(localMatrix);
-			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
+			bone.setWorldSpaceMatrix(worldState.translateLocal(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 
 		GeoRenderer.super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue,
