@@ -2,7 +2,9 @@ package software.bernie.geckolib.util;
 
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexSorting;
 import com.mojang.math.Axis;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
 import it.unimi.dsi.fastutil.ints.IntIntPair;
@@ -28,6 +30,7 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 import software.bernie.geckolib.cache.object.GeoCube;
+import software.bernie.geckolib.cache.object.GeoQuad;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
@@ -235,6 +238,29 @@ public final class RenderUtils {
 
 		if (normal.z() < 0 && cube.size().z() == 0)
 			normal.mul(1, 1, -1);
+	}
+
+	/// @return `true` if the given quad is the face of a 0-thickness cube
+	public static boolean isFlatQuad(GeoCube cube, GeoQuad quad) {
+		return cube.size().get(quad.direction().getAxis()) == 0;
+	}
+
+	/// `true` if the given normal is facing towards the camera (or forwards, if in GUI rendering)
+	public static boolean isFacingCamera(Vector3f normal, Vector3f position) {
+		if (RenderSystem.getVertexSorting() == VertexSorting.ORTHOGRAPHIC_Z)
+			return normal.z() >= 0;
+
+		return normal.dot(position) <= 0;
+	}
+
+	/// Whether the cube has a quad facing the given direction
+	public static boolean hasQuadFacing(GeoCube cube, Direction direction) {
+		for (GeoQuad quad : cube.quads()) {
+			if (quad != null && quad.direction() == direction)
+				return true;
+		}
+
+		return false;
 	}
 
 	/**

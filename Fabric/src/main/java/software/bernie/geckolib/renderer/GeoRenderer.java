@@ -302,11 +302,14 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			if (quad == null)
 				continue;
 
-			Vector3f normal = new Vector3f(quad.normal());
+			final Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
 
-			RenderUtils.fixInvertedFlatCube(cube, normal);
+			if (RenderUtils.isFlatQuad(cube, quad) && !RenderUtils.isFacingCamera(normal, poseState.transformPosition(new Vector3f(quad.vertices()[0].position())))) {
+				if (RenderUtils.hasQuadFacing(cube, quad.direction().getOpposite()))
+					continue;
 
-			normal = normalisedPoseState.transform(normal);
+				normal.negate();
+			}
 
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, red, green, blue, alpha);
 		}
