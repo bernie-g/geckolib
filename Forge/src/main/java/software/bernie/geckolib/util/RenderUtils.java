@@ -228,13 +228,13 @@ public final class RenderUtils {
 	 * This performs a pseudo-ABS function to help resolve some of those issues.
 	 */
 	public static void fixInvertedFlatCube(GeoCube cube, Vector3f normal) {
-		if (normal.x() < 0 && (cube.size().y() == 0 || cube.size().z() == 0))
+		if (normal.x() < 0 && cube.size().x() == 0)
 			normal.mul(-1, 1, 1);
 
-		if (normal.y() < 0 && (cube.size().x() == 0 || cube.size().z() == 0))
+		if (normal.y() < 0 && cube.size().y() == 0)
 			normal.mul(1, -1, 1);
 
-		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
+		if (normal.z() < 0 && cube.size().z() == 0)
 			normal.mul(1, 1, -1);
 	}
 
