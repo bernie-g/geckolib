@@ -40,8 +40,6 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
-	private double animTime;
-	private double lastGameTickTime;
 	private long lastRenderedInstance = -1;
 
 	/**
@@ -184,8 +182,8 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 	@ApiStatus.Internal
 	@Override
 	public void handleAnimations(T animatable, long instanceId, AnimationState<T> animationState) {
-		Minecraft mc = Minecraft.getInstance();
-		AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
+		final Minecraft mc = Minecraft.getInstance();
+		final AnimatableManager<T> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(instanceId);
 		Double currentTick = animationState.getData(DataTickets.TICK);
 
 		if (currentTick == null)
@@ -194,29 +192,24 @@ public abstract class GeoModel<T extends GeoAnimatable> implements CoreGeoModel<
 		if (animatableManager.getFirstTickTime() == -1)
 			animatableManager.startedAt(currentTick + mc.getFrameTime());
 
-		double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
-		boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
+		final double currentFrameTime = animatable instanceof Entity || animatable instanceof GeoReplacedEntity ? currentTick + mc.getFrameTime() : currentTick - animatableManager.getFirstTickTime();
+		final boolean isReRender = !animatableManager.isFirstTick() && currentFrameTime == animatableManager.getLastUpdateTime();
 
 		if (isReRender && instanceId == this.lastRenderedInstance)
 			return;
 
-		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
+		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused())
 			animatableManager.updatedAt(currentFrameTime);
 
-			double lastUpdateTime = animatableManager.getLastUpdateTime();
-			this.animTime += lastUpdateTime - this.lastGameTickTime;
-			this.lastGameTickTime = lastUpdateTime;
-		}
-
-		animationState.animationTick = this.animTime;
+		final AnimationProcessor<T> processor = getAnimationProcessor();
+		final double animTick = animationState.animationTick = animatableManager.getLastUpdateTime();
 		this.lastRenderedInstance = instanceId;
-		AnimationProcessor<T> processor = getAnimationProcessor();
 
 		MolangParser.INSTANCE.setValue(MolangQueries.CONTROLLER_SPEED, () -> animationState.getController().getAnimationSpeed());
-		processor.preAnimationSetup(animationState.getAnimatable(), this.animTime);
+		processor.preAnimationSetup(animationState.getAnimatable(), animTick);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animatableManager, animTick, animationState, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationState);
 	}
