@@ -41,7 +41,12 @@ public class AnimatableTexture extends SimpleTexture {
 	public void load(ResourceManager manager) throws IOException {
 		reset();
 
-		final Resource resource = manager.getResourceOrThrow(this.location);
+		final Optional<Resource> optionalResource = manager.getResource(this.location);
+
+		if (optionalResource.isEmpty())
+			return;
+
+		final Resource resource = optionalResource.get();
 
 		try {
 			final Optional<AnimationMetadataSection> animatedMeta = resource.metadata().getSection(AnimationMetadataSection.SERIALIZER);
