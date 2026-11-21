@@ -49,7 +49,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 										 .setShaderState(SHADER_STATE)
 										 .setTextureState(textureState)
 										 .setTransparencyState(TRANSPARENCY_STATE)
-										 .setWriteMaskState(WRITE_MASK).createCompositeState(false));
+										 .setWriteMaskState(WRITE_MASK).createCompositeState(true));
 	});
 	private static final String APPENDIX = "_glowmask";
 
