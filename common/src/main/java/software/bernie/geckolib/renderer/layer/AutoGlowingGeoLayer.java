@@ -46,23 +46,24 @@ public class AutoGlowingGeoLayer<T extends GeoAnimatable> extends GeoRenderLayer
 	 */
 	@Nullable
 	protected RenderType getRenderType(T animatable, @Nullable MultiBufferSource bufferSource) {
-		if (!(animatable instanceof Entity entity))
-			return AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+		final ResourceLocation baseTexture = getTextureResource(animatable);
 
-		boolean invisible = entity.isInvisible();
-		ResourceLocation texture = AutoGlowingTexture.getEmissiveResource(getTextureResource(animatable));
+		if (!(animatable instanceof Entity entity))
+			return AutoGlowingTexture.getRenderType(baseTexture);
+
+		final boolean invisible = entity.isInvisible();
 
 		if (invisible && !entity.isInvisibleTo(ClientUtil.getClientPlayer()))
-			return RenderType.itemEntityTranslucentCull(texture);
+			return RenderType.itemEntityTranslucentCull(AutoGlowingTexture.getEmissiveResource(baseTexture));
 
 		if (Minecraft.getInstance().shouldEntityAppearGlowing(entity)) {
 			if (invisible)
-				return RenderType.outline(texture);
+				return RenderType.outline(AutoGlowingTexture.getEmissiveResource(baseTexture));
 
-			return AutoGlowingTexture.getOutlineRenderType(getTextureResource(animatable));
+			return AutoGlowingTexture.getOutlineRenderType(baseTexture);
 		}
 
-		return invisible ? null : AutoGlowingTexture.getRenderType(getTextureResource(animatable));
+		return invisible ? null : AutoGlowingTexture.getRenderType(baseTexture);
 	}
 
 	/**
