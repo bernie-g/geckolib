@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.function.BiConsumer;
@@ -73,20 +74,19 @@ public final class GeckoLibCache {
 
 	private static CompletableFuture<Void> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager, BiConsumer<ResourceLocation, BakedAnimations> elementConsumer) {
 		return CompletableFuture.runAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = new ConcurrentHashMap<>(), backgroundExecutor)
-				.thenRunAsync(() ->
-									  loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
-										  try {
-											  return FileLoader.loadAnimationsFile(resource, resourceManager);
-										  }
-										  catch (CompoundException ex) {
-											  ex.withMessage(resource.toString() + ": Error loading animation file").printStackTrace();
+				.thenComposeAsync(empty -> loadResources(backgroundExecutor, resourceManager, "animations", resource -> {
+					try {
+						return FileLoader.loadAnimationsFile(resource, resourceManager);
+					}
+					catch (CompoundException ex) {
+						ex.withMessage(resource.toString() + ": Error loading animation file").printStackTrace();
 
-											  return new BakedAnimations(new Object2ObjectOpenHashMap<>());
-										  }
-										  catch (Exception ex) {
-											  throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
-										  }
-									  }, elementConsumer))
+						return new BakedAnimations(new Object2ObjectOpenHashMap<>());
+					}
+					catch (Exception ex) {
+						throw GeckoLibConstants.exception(resource, "Error loading animation file", ex);
+					}
+				}, elementConsumer), backgroundExecutor)
 				.thenRunAsync(() -> BakedAnimationsAdapter.COMPRESSION_CACHE = null);
 	}
 
@@ -113,7 +113,8 @@ public final class GeckoLibCache {
 	private static <T> CompletableFuture<Void> loadResources(Executor executor, ResourceManager resourceManager,
 			String path, Function<ResourceLocation, T> loader, BiConsumer<ResourceLocation, T> map) {
 		return CompletableFuture.supplyAsync(
-				() -> resourceManager.listResources(path, fileName -> fileName.toString().endsWith(".json")), executor)
+				() -> resourceManager.listResources(path, fileName -> !EXCLUDED_NAMESPACES.contains(fileName.getNamespace().toLowerCase(Locale.ROOT)) &&
+																	  fileName.toString().endsWith(".json")), executor)
 				.thenApplyAsync(resources -> {
 					Map<ResourceLocation, CompletableFuture<T>> tasks = new Object2ObjectOpenHashMap<>();
 
@@ -125,9 +126,12 @@ public final class GeckoLibCache {
 				}, executor)
 				.thenAcceptAsync(tasks -> {
 					for (Entry<ResourceLocation, CompletableFuture<T>> entry : tasks.entrySet()) {
-						// Skip known namespaces that use an "animation" or "geo" folder as well
-						if (!EXCLUDED_NAMESPACES.contains(entry.getKey().getNamespace().toLowerCase(Locale.ROOT)))
+						try {
 							map.accept(entry.getKey(), entry.getValue().join());
+						}
+						catch (CompletionException ex) {
+							GeckoLibConstants.LOGGER.error("Failed to load {}", entry.getKey(), ex.getCause());
+						}
 					}
 				}, executor);
 	}
