@@ -239,6 +239,15 @@ public final class RenderUtil {
 	}
 
 	/**
+	 * Scale a {@link GeoBone} to match a provided {@link ModelPart}'s scale
+	 * <p>
+	 * Usually used for items or armor rendering to match the scale of other non-geo model parts
+	 */
+	public static void matchModelPartScale(ModelPart from, GeoBone to) {
+		to.updateScale(from.xScale, from.yScale, from.zScale);
+	}
+
+	/**
 	 * If a {@link GeoCube} is a 2d plane the {@link software.bernie.geckolib.cache.object.GeoQuad Quad's}
 	 * normal is inverted in an intersecting plane,it can cause issues with shaders and other lighting tasks
 	 * <p>

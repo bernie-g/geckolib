@@ -594,6 +594,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart headPart = baseModel.head;
 
 			RenderUtil.matchModelPartRot(headPart, this.head);
+			RenderUtil.matchModelPartScale(headPart, this.head);
 			this.head.updatePosition(headPart.x, -headPart.y, headPart.z);
 		}
 
@@ -601,6 +602,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart bodyPart = baseModel.body;
 
 			RenderUtil.matchModelPartRot(bodyPart, this.body);
+			RenderUtil.matchModelPartScale(bodyPart, this.body);
 			this.body.updatePosition(bodyPart.x, -bodyPart.y, bodyPart.z);
 		}
 
@@ -608,6 +610,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightArmPart = baseModel.rightArm;
 
 			RenderUtil.matchModelPartRot(rightArmPart, this.rightArm);
+			RenderUtil.matchModelPartScale(rightArmPart, this.rightArm);
 			this.rightArm.updatePosition(rightArmPart.x + 5, 2 - rightArmPart.y, rightArmPart.z);
 		}
 
@@ -615,6 +618,7 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftArmPart = baseModel.leftArm;
 
 			RenderUtil.matchModelPartRot(leftArmPart, this.leftArm);
+			RenderUtil.matchModelPartScale(leftArmPart, this.leftArm);
 			this.leftArm.updatePosition(leftArmPart.x - 5f, 2f - leftArmPart.y, leftArmPart.z);
 		}
 
@@ -622,10 +626,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart rightLegPart = baseModel.rightLeg;
 
 			RenderUtil.matchModelPartRot(rightLegPart, this.rightLeg);
+			RenderUtil.matchModelPartScale(rightLegPart, this.rightLeg);
 			this.rightLeg.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 
 			if (this.rightBoot != null) {
 				RenderUtil.matchModelPartRot(rightLegPart, this.rightBoot);
+				RenderUtil.matchModelPartScale(rightLegPart, this.rightBoot);
 				this.rightBoot.updatePosition(rightLegPart.x + 2, 12 - rightLegPart.y, rightLegPart.z);
 			}
 		}
@@ -634,10 +640,12 @@ public class GeoArmorRenderer<T extends Item & GeoItem> extends HumanoidModel im
 			ModelPart leftLegPart = baseModel.leftLeg;
 
 			RenderUtil.matchModelPartRot(leftLegPart, this.leftLeg);
+			RenderUtil.matchModelPartScale(leftLegPart, this.leftLeg);
 			this.leftLeg.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 
 			if (this.leftBoot != null) {
 				RenderUtil.matchModelPartRot(leftLegPart, this.leftBoot);
+				RenderUtil.matchModelPartScale(leftLegPart, this.leftBoot);
 				this.leftBoot.updatePosition(leftLegPart.x - 2, 12 - leftLegPart.y, leftLegPart.z);
 			}
 		}
