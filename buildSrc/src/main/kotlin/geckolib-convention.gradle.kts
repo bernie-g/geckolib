@@ -55,11 +55,11 @@ repositories {
 
 val libs = project.versionCatalogs.find("libs")
 
-val modId: String by project
-val modDisplayName: String by project
-val modAuthors: String by project
-val modLicense: String by project
-val modDescription: String by project
+val modId = project.property("modId") as String
+val modDisplayName = project.property("modDisplayName") as String
+val modAuthors = project.property("modAuthors") as String
+val modLicense = project.property("modLicense") as String
+val modDescription = project.property("modDescription") as String
 val modVersion = libs.get().findVersion("geckolib").get()
 val mcVersion = libs.get().findVersion("minecraft").get()
 val forgeVersion = libs.get().findVersion("forge").get()

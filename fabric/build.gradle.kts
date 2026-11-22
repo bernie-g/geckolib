@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.loom)
 }
 
-val modId: String by project
+val modId = project.property("modId") as String
 val mcVersion = libs.versions.minecraft.asProvider().get()
 val parchmentMcVersion = libs.versions.parchment.minecraft.get()
 val parchmentVersion = libs.versions.parchment.asProvider().get()
@@ -87,7 +87,7 @@ modrinth {
     token = System.getenv("modrinthKey") ?: "Invalid/No API Token Found"
     
     uploadFile.set(tasks.named<RemapJarTask>("remapJar"))
-    projectId.set(properties["modrinthProjectId"] as String)
+    projectId.set(project.property("modrinthProjectId") as String)
     versionName = "Fabric $mcVersion"
     versionType = "release"
     loaders.set(listOf("fabric"))
@@ -109,7 +109,7 @@ tasks.register<TaskPublishCurseForge>("publishToCurseForge") {
     group = "publishing"
     apiToken = System.getenv("curseforge.apitoken") ?: "Invalid/No API Token Found"
     
-    val mainFile = upload(properties["curseforgeProjectId"], tasks.remapJar)
+    val mainFile = upload(project.property("curseforgeProjectId"), tasks.remapJar)
     mainFile.displayName = "Fabric $mcVersion ${project.version}"
     mainFile.releaseType = "release"
     mainFile.addModLoader("Fabric")
