@@ -93,12 +93,17 @@ public final class RenderUtil {
 
 	public static void prepMatrixForBone(PoseStack poseStack, GeoBone bone) {
 		translateMatrixToBone(poseStack, bone);
+
+		if (bone.getRotX() == 0 && bone.getRotY() == 0 && bone.getRotZ() == 0 &&
+			bone.getScaleX() == 1 && bone.getScaleY() == 1 && bone.getScaleZ() == 1)
+			return;
+
 		translateToPivotPoint(poseStack, bone);
 		rotateMatrixAroundBone(poseStack, bone);
 		scaleMatrixForBone(poseStack, bone);
 		translateAwayFromPivotPoint(poseStack, bone);
 	}
-	
+
 	public static Matrix4f invertAndMultiplyMatrices(Matrix4f baseMatrix, Matrix4f inputMatrix) {
 		inputMatrix = new Matrix4f(inputMatrix);
 		
