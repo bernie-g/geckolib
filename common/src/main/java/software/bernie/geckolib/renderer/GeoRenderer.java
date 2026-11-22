@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.OutlineBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix3f;
@@ -311,9 +312,13 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	default void renderCube(PoseStack poseStack, GeoCube cube, VertexConsumer buffer, int packedLight,
 							int packedOverlay, int colour) {
-		RenderUtil.translateToPivotPoint(poseStack, cube);
-		RenderUtil.rotateMatrixAroundCube(poseStack, cube);
-		RenderUtil.translateAwayFromPivotPoint(poseStack, cube);
+		final Vec3 rotation = cube.rotation();
+
+		if (rotation.x() != 0 || rotation.y() != 0 || rotation.z() != 0) {
+			RenderUtil.translateToPivotPoint(poseStack, cube);
+			RenderUtil.rotateMatrixAroundCube(poseStack, cube);
+			RenderUtil.translateAwayFromPivotPoint(poseStack, cube);
+		}
 
 		Matrix3f normalisedPoseState = poseStack.last().normal();
 		Matrix4f poseState = new Matrix4f(poseStack.last().pose());
