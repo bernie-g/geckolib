@@ -208,22 +208,6 @@ public record Color(int argbInt) {
 	}
 
 	@Override
-	public boolean equals(Object other) {
-		if (this == other)
-			return true;
-
-		if (other == null || getClass() != other.getClass())
-			return false;
-
-		return hashCode() == other.hashCode();
-	}
-
-	@Override
-	public int hashCode() {
-		return this.argbInt;
-	}
-
-	@Override
 	public String toString() {
 		return String.valueOf(this.argbInt);
 	}
