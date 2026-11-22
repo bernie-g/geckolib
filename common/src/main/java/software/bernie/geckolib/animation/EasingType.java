@@ -9,6 +9,7 @@ import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.Keyframe;
 import software.bernie.geckolib.loading.math.MathValue;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -414,7 +415,7 @@ public interface EasingType {
 			if (animationPoint.currentTick() >= animationPoint.transitionLength())
 				return animationPoint.animationEndValue();
 
-			List<? extends MathValue> easingArgs = animationPoint.keyFrame().easingArgs();
+			List<? extends MathValue> easingArgs = animationPoint.keyFrame() == null ? Collections.emptyList() : animationPoint.keyFrame().easingArgs();
 
 			if (easingArgs.size() < 2)
 				return Mth.lerp(buildTransformer(easingValue).apply(lerpValue), animationPoint.animationStartValue(), animationPoint.animationEndValue());
