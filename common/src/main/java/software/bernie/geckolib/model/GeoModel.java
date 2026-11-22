@@ -37,8 +37,6 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 	private final AnimationProcessor<T> processor = new AnimationProcessor<>(this);
 
 	private BakedGeoModel currentModel = null;
-	private double animTime;
-	private double lastGameTickTime;
 	private long lastRenderedInstance = -1;
 
 	/**
@@ -206,22 +204,17 @@ public abstract class GeoModel<T extends GeoAnimatable> {
 		if (isReRender && instanceId == this.lastRenderedInstance)
 			return;
 
-		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused()) {
+		if (!mc.isPaused() || animatable.shouldPlayAnimsWhileGamePaused())
 			animatableManager.updatedAt(currentFrameTime);
 
-			double lastUpdateTime = animatableManager.getLastUpdateTime();
-			this.animTime += lastUpdateTime - this.lastGameTickTime;
-			this.lastGameTickTime = lastUpdateTime;
-		}
-
-		animationState.animationTick = this.animTime;
+		final AnimationProcessor<T> processor = getAnimationProcessor();
+		final double animTick = animationState.animationTick = animatableManager.getLastUpdateTime();
 		this.lastRenderedInstance = instanceId;
-		AnimationProcessor<T> processor = getAnimationProcessor();
 
-		processor.preAnimationSetup(animationState, this.animTime);
+		processor.preAnimationSetup(animationState, animTick);
 
 		if (!processor.getRegisteredBones().isEmpty())
-			processor.tickAnimation(animatable, this, animatableManager, this.animTime, animationState, crashIfBoneMissing());
+			processor.tickAnimation(animatable, this, animatableManager, animTick, animationState, crashIfBoneMissing());
 
 		setCustomAnimations(animatable, instanceId, animationState);
 	}
