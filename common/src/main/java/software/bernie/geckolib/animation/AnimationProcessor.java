@@ -89,6 +89,8 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			state.withController(controller);
 			controller.process(model, state, this.bones, boneSnapshots, animTime, crashWhenCantFindBone);
 
+			final EasingType easingType = controller.overrideEasingTypeFunction.apply(animatable);
+
 			for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
 				GeoBone bone = boneAnimation.bone();
 				BoneSnapshot snapshot = boneSnapshots.get(bone.getName());
@@ -103,7 +105,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 				AnimationPoint scaleXPoint = boneAnimation.scaleXQueue().poll();
 				AnimationPoint scaleYPoint = boneAnimation.scaleYQueue().poll();
 				AnimationPoint scaleZPoint = boneAnimation.scaleZQueue().poll();
-				EasingType easingType = controller.overrideEasingTypeFunction.apply(animatable);
 
 				if (rotXPoint != null && rotYPoint != null && rotZPoint != null) {
 					bone.setRotX((float)EasingType.lerpWithOverride(rotXPoint, easingType) + initialSnapshot.getRotX());
