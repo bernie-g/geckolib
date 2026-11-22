@@ -322,9 +322,11 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 			if (quad == null)
 				continue;
 
-			Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
-			
-			RenderUtil.fixInvertedFlatCube(cube, normal);
+			final Vector3f normal = normalisedPoseState.transform(new Vector3f(quad.normal()));
+
+			if (RenderUtil.isFlatQuad(cube, quad) && !RenderUtil.isFacingCamera(normal, poseState.transformPosition(new Vector3f(quad.vertices()[0].position()))))
+				normal.negate();
+
 			createVerticesOfQuad(quad, poseState, normal, buffer, packedLight, packedOverlay, colour);
 		}
 	}
