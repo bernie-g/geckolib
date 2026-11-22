@@ -126,7 +126,7 @@ public final class RenderUtil {
 	 * This is specifically implemented to act as a translation of an x/y/z coordinate triplet to a render matrix
 	 */
 	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
-		return matrix.add(new Matrix4f().m30(vector.x).m31(vector.y).m32(vector.z));
+		return matrix.translateLocal(vector);
 	}
 	
 	/**
