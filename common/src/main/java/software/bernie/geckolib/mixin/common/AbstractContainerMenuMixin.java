@@ -14,9 +14,9 @@ import software.bernie.geckolib.GeckoLibConstants;
 @Mixin(AbstractContainerMenu.class)
 public class AbstractContainerMenuMixin {
     /**
-     * Remove the GeckoLib stack ID from a stack when copying it with middle-click
+     * Remove the GeckoLib stack ID from a stack when copying it with middle-click or drag-splitting
      */
-    @WrapOperation(method = "doClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copyWithCount(I)Lnet/minecraft/world/item/ItemStack;", ordinal = 1))
+    @WrapOperation(method = "doClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copyWithCount(I)Lnet/minecraft/world/item/ItemStack;"))
     public ItemStack geckolib$removeGeckolibIdOnCopy(ItemStack instance, int count, Operation<ItemStack> original) {
         ItemStack copy = original.call(instance, count);
 
