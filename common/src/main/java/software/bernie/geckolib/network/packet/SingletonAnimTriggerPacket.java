@@ -8,6 +8,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.function.Consumer;
@@ -29,10 +30,19 @@ public record SingletonAnimTriggerPacket(String syncableId, long instanceId, Str
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
+            final GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
 
-            if (animatable != null)
-                animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId).tryTriggerAnimation(this.controllerName, this.animName);
+            if (animatable == null)
+                return;
+
+            final AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
+
+            if (this.controllerName.isEmpty()) {
+                animatableManager.tryTriggerAnimation(this.animName);
+            }
+            else {
+                animatableManager.tryTriggerAnimation(this.controllerName, this.animName);
+            }
         });
     }
 }

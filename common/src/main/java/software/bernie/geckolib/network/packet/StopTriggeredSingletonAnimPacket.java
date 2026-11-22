@@ -30,13 +30,23 @@ public record StopTriggeredSingletonAnimPacket(String syncableId, long instanceI
     @Override
     public void receiveMessage(@Nullable Player sender, Consumer<Runnable> workQueue) {
         workQueue.accept(() -> {
-            GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
+            final GeoAnimatable animatable = GeckoLibUtil.getSyncedAnimatable(this.syncableId);
 
-            if (animatable != null) {
-                AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
+            if (animatable == null)
+                return;
 
-                if (animatableManager != null)
-                    animatableManager.stopTriggeredAnimation(this.controllerName.isEmpty() ? null : this.controllerName, this.animName.isEmpty() ? null : this.animName);
+            final AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
+
+            if (animatableManager == null)
+                return;
+
+            final String animName = this.animName.isEmpty() ? null : this.animName;
+
+            if (this.controllerName.isEmpty()) {
+                animatableManager.stopTriggeredAnimation(animName);
+            }
+            else {
+                animatableManager.stopTriggeredAnimation(this.controllerName, animName);
             }
         });
     }
