@@ -212,7 +212,7 @@ public record Color(int argbInt) {
 		if (this == other)
 			return true;
 
-		if (getClass() != other.getClass())
+		if (other == null || getClass() != other.getClass())
 			return false;
 
 		return hashCode() == other.hashCode();
