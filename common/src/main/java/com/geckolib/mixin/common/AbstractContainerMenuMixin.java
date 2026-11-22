@@ -19,4 +19,15 @@ public class AbstractContainerMenuMixin {
     public boolean geckolib$allowLazyStackIdParity(ItemStack stack, ItemStack other, Operation<Boolean> original) {
         return original.call(stack, other) && stack.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), Integer.MIN_VALUE).equals(other.getOrDefault(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get(), Integer.MIN_VALUE));
     }
+
+    /// Remove the GeckoLib stack ID from a stack when drag-splitting it across slots
+    @WrapOperation(method = "doClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;copyWithCount(I)Lnet/minecraft/world/item/ItemStack;"))
+    public ItemStack geckolib$removeGeckolibIdOnCopy(ItemStack instance, int count, Operation<ItemStack> original) {
+        final ItemStack copy = original.call(instance, count);
+
+        if (copy.has(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get()))
+            copy.remove(GeckoLibConstants.STACK_ANIMATABLE_ID_COMPONENT.get());
+
+        return copy;
+    }
 }

@@ -160,7 +160,7 @@ public final class RenderUtil {
 	///
 	/// This is specifically implemented to act as a translation of an x/y/z coordinate triplet to a render matrix
 	public static Matrix4f translateMatrix(Matrix4f matrix, Vector3f vector) {
-		return matrix.add(new Matrix4f().m30(vector.x).m31(vector.y).m32(vector.z));
+		return matrix.translateLocal(vector);
 	}
 	
 	/// Gets the actual dimensions of a texture resource from a given path
@@ -178,13 +178,13 @@ public final class RenderUtil {
 	///
 	/// This performs a pseudo-ABS function to help resolve some of those issues
 	public static void fixInvertedFlatCube(GeoCube cube, Vector3f normal) {
-		if (normal.x() < 0 && (cube.size().y() == 0 || cube.size().z() == 0))
+		if (normal.x() < 0 && cube.size().x() == 0)
 			normal.mul(-1, 1, 1);
 
-		if (normal.y() < 0 && (cube.size().x() == 0 || cube.size().z() == 0))
+		if (normal.y() < 0 && cube.size().y() == 0)
 			normal.mul(1, -1, 1);
 
-		if (normal.z() < 0 && (cube.size().x() == 0 || cube.size().y() == 0))
+		if (normal.z() < 0 && cube.size().z() == 0)
 			normal.mul(1, 1, -1);
 	}
 
