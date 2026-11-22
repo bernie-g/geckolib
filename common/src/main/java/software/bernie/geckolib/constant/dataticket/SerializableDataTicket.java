@@ -115,7 +115,7 @@ public abstract class SerializableDataTicket<D> extends DataTicket<D> {
 
                     @Override
                     public void encode(RegistryFriendlyByteBuf buf, E data) {
-                        buf.writeUtf(data.toString());
+                        buf.writeUtf(data.name());
                     }
                 };
 			}
