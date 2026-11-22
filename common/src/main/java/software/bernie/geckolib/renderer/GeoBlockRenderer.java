@@ -192,12 +192,13 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 	public void renderRecursively(PoseStack poseStack, T animatable, GeoBone bone, RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
 								  int packedOverlay, int colour) {
 		poseStack.pushPose();
-		RenderUtil.translateMatrixToBone(poseStack, bone);
-		RenderUtil.translateToPivotPoint(poseStack, bone);
-		RenderUtil.rotateMatrixAroundBone(poseStack, bone);
-		RenderUtil.scaleMatrixForBone(poseStack, bone);
-		
+
 		if (bone.isTrackingMatrices()) {
+			RenderUtil.translateMatrixToBone(poseStack, bone);
+			RenderUtil.translateToPivotPoint(poseStack, bone);
+			RenderUtil.rotateMatrixAroundBone(poseStack, bone);
+			RenderUtil.scaleMatrixForBone(poseStack, bone);
+
 			Matrix4f poseState = new Matrix4f(poseStack.last().pose());
 			Matrix4f localMatrix = RenderUtil.invertAndMultiplyMatrices(poseState, this.blockRenderTranslations);
 			Matrix4f worldState = new Matrix4f(localMatrix);
@@ -206,9 +207,12 @@ public class GeoBlockRenderer<T extends BlockEntity & GeoAnimatable> implements 
 			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			bone.setLocalSpaceMatrix(localMatrix);
 			bone.setWorldSpaceMatrix(worldState.translateLocal(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
+
+			RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
 		}
-		
-		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
+		else {
+			RenderUtil.prepMatrixForBone(poseStack, bone);
+		}
 		
 		buffer = checkAndRefreshBuffer(isReRender, buffer, bufferSource, renderType);
 		
