@@ -5,6 +5,8 @@
 
 package software.bernie.geckolib.animation.keyframe;
 
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Animation state record that holds the state of an animation at a given point
  *
@@ -14,7 +16,7 @@ package software.bernie.geckolib.animation.keyframe;
  * @param animationEndValue The end value to provide to the animation handling system
  * @param keyFrame The {@code Nullable} Keyframe
  */
-public record AnimationPoint(Keyframe<?> keyFrame, double currentTick, double transitionLength, double animationStartValue, double animationEndValue) {
+public record AnimationPoint(@Nullable Keyframe<?> keyFrame, double currentTick, double transitionLength, double animationStartValue, double animationEndValue) {
 	@Override
 	public String toString() {
 		return "Tick: " + this.currentTick +
