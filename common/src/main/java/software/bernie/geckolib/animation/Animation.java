@@ -75,8 +75,11 @@ public record Animation(String name, double length, LoopType loopType, BoneAnima
 			if (primitive.isBoolean())
 				return primitive.getAsBoolean() ? LOOP : PLAY_ONCE;
 
-			if (primitive.isString())
-				return fromString(primitive.getAsString());
+			if (primitive.isString()) {
+				final LoopType type = fromString(primitive.getAsString());
+
+				return type == DEFAULT ? PLAY_ONCE : type;
+			}
 
 			return PLAY_ONCE;
 		}
