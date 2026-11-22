@@ -36,10 +36,6 @@ public record StopTriggeredSingletonAnimPacket(String syncableId, long instanceI
                 return;
 
             final AnimatableManager<GeoAnimatable> animatableManager = animatable.getAnimatableInstanceCache().getManagerForId(this.instanceId);
-
-            if (animatableManager == null)
-                return;
-
             final String animName = this.animName.isEmpty() ? null : this.animName;
 
             if (this.controllerName.isEmpty()) {
