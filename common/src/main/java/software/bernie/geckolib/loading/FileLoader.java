@@ -14,7 +14,7 @@ import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Extracts raw information from given files, and other similar functions
@@ -70,7 +70,7 @@ public final class FileLoader {
 	 */
 	public static String getFileContents(ResourceLocation location, ResourceManager manager) {
 		try (InputStream inputStream = manager.getResourceOrThrow(location).open()) {
-			return IOUtils.toString(inputStream, Charset.defaultCharset());
+			return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 		}
 		catch (Exception e) {
 			GeckoLibConstants.LOGGER.error("Couldn't load " + location, e);
