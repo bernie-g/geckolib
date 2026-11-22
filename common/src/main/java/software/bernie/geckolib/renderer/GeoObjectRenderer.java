@@ -122,8 +122,8 @@ public class GeoObjectRenderer<T extends GeoAnimatable> implements GeoRenderer<T
 					   @Nullable VertexConsumer buffer, int packedLight, float partialTick) {
 		this.animatable = animatable;
 
-		if (buffer == null)
-			bufferSource =  Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
+		if (bufferSource == null)
+			bufferSource = Minecraft.getInstance().levelRenderer.renderBuffers.bufferSource();
 
 		defaultRender(poseStack, animatable, bufferSource, renderType, buffer, 0, partialTick, packedLight);
 	}
