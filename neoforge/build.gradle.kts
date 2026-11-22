@@ -77,6 +77,7 @@ modrinth {
     loaders.set(listOf("neoforge"))
     versionNumber.set(project.version.toString())
     gameVersions.set(listOf(mcVersion))
+    environment.set("client_only_server_optional")
     
     if (rootProject.file("changelog.txt").exists())
         changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))

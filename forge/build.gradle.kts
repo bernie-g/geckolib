@@ -1,3 +1,4 @@
+import com.modrinth.minotaur.request.Environment
 import net.minecraftforge.jarjar.gradle.JarJar
 import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
@@ -103,6 +104,7 @@ modrinth {
     loaders.set(listOf("forge"))
     versionNumber.set(project.version.toString())
     gameVersions.set(listOf(mcVersion))
+    environment.set("client_only_server_optional")
     
     if (rootProject.file("changelog.txt").exists())
         changelog.set(rootProject.file("changelog.txt").readText(Charsets.UTF_8))

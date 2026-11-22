@@ -93,6 +93,7 @@ modrinth {
     loaders.set(listOf("fabric"))
     versionNumber.set(project.version.toString())
     gameVersions.set(listOf(mcVersion))
+    environment.set("client_only_server_optional")
     
     dependencies {
         required.project("fabric-api")
