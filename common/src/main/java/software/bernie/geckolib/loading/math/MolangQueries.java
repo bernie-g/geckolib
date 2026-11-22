@@ -127,7 +127,7 @@ public final class MolangQueries {
 	 * Returns whether a variable under the given identifier has already been registered, without creating a new instance
 	 */
 	public static boolean isExistingVariable(String name) {
-		return VARIABLES.containsKey(name.toLowerCase(Locale.ROOT));
+		return VARIABLES.containsKey(expandShorthandPrefix(name.toLowerCase(Locale.ROOT)));
 	}
 
 	/**
@@ -138,7 +138,7 @@ public final class MolangQueries {
 	 * @see MathParser#registerVariable(Variable)
 	 */
 	static void registerVariable(Variable variable) {
-		VARIABLES.put(variable.name().toLowerCase(Locale.ROOT), variable);
+		VARIABLES.put(expandShorthandPrefix(variable.name().toLowerCase(Locale.ROOT)), variable);
 	}
 
 	/**
@@ -147,24 +147,20 @@ public final class MolangQueries {
 	 * @see MathParser#getVariableFor(String)
 	 */
 	static Variable getVariableFor(String name) {
-		return VARIABLES.computeIfAbsent(applyPrefixAliases(name.toLowerCase(Locale.ROOT), "query.", "q."), key -> new Variable(key, 0));
+		return VARIABLES.computeIfAbsent(expandShorthandPrefix(name.toLowerCase(Locale.ROOT)), key -> new Variable(key, 0));
 	}
 
-	/**
-	 * Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
-	 *
-	 * @param text The base text to parse
-	 * @param properName The "correct" prefix to apply
-	 * @param aliases The available prefixes to check and replace
-	 * @return The unaliased string, or the original string if no aliases match
-	 */
-	private static String applyPrefixAliases(String text, String properName, String... aliases) {
-		for (String alias : aliases) {
-			if (text.startsWith(alias))
-				return properName + text.substring(alias.length());
-		}
+	private static String expandShorthandPrefix(String name) {
+		if (name.length() < 2 || name.charAt(1) != '.')
+			return name;
 
-		return text;
+		return switch (name.charAt(0)) {
+			case 'q' -> "query." + name.substring(2);
+			case 'v' -> "variable." + name.substring(2);
+			case 'c' -> "context." + name.substring(2);
+			case 't' -> "temp." + name.substring(2);
+			default -> name;
+		};
 	}
 
 	/**
