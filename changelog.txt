@@ -1,29 +1,34 @@
-v4.9.3
+v4.9.4
 
-- Fixed an issue where the start/end of a catmull-rom (smooth) easing would be ignored (#895)
-- Fixed incorrectly parsed MathFunctions sometimes causing crashes on load
-- Fixed `OR` and `AND` molang operators eagerly resolving the right-hand side of the operation even if the left-hand side precludes it
-- Added `&` and `|` molang operator aliases for `&&` and `||` respectively
-- Fixed lower-level molang operators not having the correct precedence
-- Fixed empty molang sub-statements resulting in an error
-- Improved error messages for molang parsing
-- Fixed negative variable references in molang sometimes failing to parse
-- Fixed negative functions in molang sometimes failing to parse
-- Fixed some numeric values not being parsed as values in Molang
-- Fixed DieRollIntegerFunction calling itself `die_roll`
-- Fixed nested Ternary expressions in Molang cannibalising themselves
-- Fixed LoopType.DEFAULT not being serializable
-- Fix Serverbound packets (of which we have none currently) crashing on forge dedicated servers
-- Fixed Molang query names being case-sensitive
-- Add support for single-entry vector arrays in models
-- Fixed potentially dodgy `RawAnimation` equality comparisons
-- Fixed `easeinquint` only using a quadruple modifier
-- Fixed some loose optional networking on Forge
-- Prevent some rare crashes from `ItemArmorGeoLayer`
-- Prevent some rare crashes when multiple mods load at the same time and add synced singleton animatables
-- Fixed potentially inversely scaled arguments causing problems for randomizing MathFunctions (DieRollInteger, RandomInteger)
-- Fix asin/acos/atan functions wrongfully reducing inputs to radians, and not accounting for out-of-range edge cases
-- Added support for more direction BlockState properties for GeoBlock rendering
-- Fixed `KeyframeData` and its child classes not handling `equals` properly
-- Fixed assignments with ternaries or calculations not evaluating properly
-- Added the `math.min_angle` molang function
+- Fixed query.time_of_day being wrong after the first day
+- Fixed infinite recursion crash if an animation json used "default" as its loop type
+- Fixed GeckoLib rendering the leash multiple times
+- Fixed SingletonGeoAnimatables' trigger packets not working if the instruction is controller-agnostic
+- Fixed ItemArmorGeoLayer scaling incorrectly if targeting a geckolib bone with no cubes
+- Added support for arrays in keyframe data structure in animation jsons
+- Fixed rare crash caused by using catmullrom easings at the edge of animations
+- Fixed DynamicGeoEntityRender and its sister classes _always_ swapping its RenderType, even when no custom texture is present
+- Fixed GeckoLib failing to load a model that is missing the optional pivot property
+- Fixed GeckoLib crashing if a bone is missing the optional uv property on models
+- Fixed GeoObjectRenderer replacing the bufferSource when the buffer is null, instead of the bufferSource
+- Rewrote AnimatableTexture's loading sequence to remove memory leaks and conflicts
+- Rewrote AutoGlowingTexture's loading sequence to remove memory leaks and conflicts
+- Rewrote RenderUtils#getTextureDimensions to prevent a memory leak and fix up logging
+- Fixed DynamicGeoEntityRender and its sister classes repeatedly trying to calculate texture sizes for broken textures
+- Fixed GeckoLib's deduplication on ID'd stacks not applying when drag-splitting a stack
+- Fixed GeckoLib failing to load models/animations if the model or animations used non-english characters
+- Fixed SerializableDataTickets failing if an enum overrode toString
+- Fixed NPE when comparing Color with null
+- Add caching to missing animation error messages to remove log/console spam
+- Fixed GeckoLib failing to load all resources when any resource fails
+- Fixed GeckoLib parsing excluded namespace resources even though they'll never be used
+- Fixed a concurrent resource loading issue
+- Fixed GeckoLib mixing up anim time between animatable instances, particularly when the game is paused
+- Fixed a memory leak caused by rendering GeckoLib armour outside of the world when glowing
+- Fixed `RenderUtil#fixInvertedFlatCube` not being quite correct
+- Fixed 0-thickness cubes not handling lighting correctly
+- Fixed RenderUtil#translateMatrix incorrectly translating
+- Fixed Geckolib blocks, dynamic geoentities, and dynamic geoblocks all giving the wrong bone positions for listeners
+- Add query shorthand support for the non-query query types
+- Made GeckoLib armour scale with the player's model if the player's model has been rescaled
+- Various performance improvements

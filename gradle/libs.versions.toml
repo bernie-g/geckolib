@@ -1,6 +1,6 @@
 [versions]
 # GeckoLib
-    geckolib                        = "4.9.3"
+    geckolib                        = "4.9.4"
 
 # Common
     minecraft-range                 = "[1.21,)"
@@ -31,20 +31,20 @@
 
 # Dependencies
     mixin                           = "0.8.7"
-    mixinextras                     = "0.5.3"
+    mixinextras                     = "0.5.5"
     mixinextras-range               = "[0.4.1,)"
     examplemod                      = "1.0.0"
     iris                            = "oXIoDcGE"
 
 # Plugins
-    plugin-moddevgradle             = "2.0.141"
-    plugin-minotaur                 = "2.9.0"
-    plugin-curseforge-gradle        = "1.3.32"
+    plugin-moddevgradle             = "2.0.148"
+    plugin-minotaur                 = "2.10.0"
+    plugin-curseforge-gradle        = "1.3.33"
     plugin-idea-ext                 = "1.4.1"
-    plugin-forge-gradle             = "[7.0.29,8.0)"
+    plugin-forge-gradle             = "[7.0.40,8.0)"
     plugin-forge-jarjar             = "[0.2.3,)"
     plugin-mixin                    = "0.7.+"
-    plugin-loom                     = "1.17-SNAPSHOT"
+    plugin-loom                     = "1.19-SNAPSHOT"
 
 [libraries]
 # Mixin
