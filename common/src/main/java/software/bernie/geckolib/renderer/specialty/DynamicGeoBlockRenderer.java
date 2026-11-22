@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.*;
 import software.bernie.geckolib.model.GeoModel;
@@ -165,12 +164,14 @@ public abstract class DynamicGeoBlockRenderer<T extends BlockEntity & GeoAnimata
 			return;
 		}
 
+		final Vector3f vertexPos = new Vector3f();
+
 		for (GeoVertex vertex : quad.vertices()) {
-			Vector4f vector4f = poseState.transform(new Vector4f(vertex.position().x(), vertex.position().y(), vertex.position().z(), 1.0f));
+			poseState.transformPosition(vertex.position(), vertexPos);
 			float texU = (vertex.texU() * blockTextureSize.firstInt()) / boneTextureSize.firstInt();
 			float texV = (vertex.texV() * blockTextureSize.secondInt()) / boneTextureSize.secondInt();
 
-			buffer.addVertex(vector4f.x(), vector4f.y(), vector4f.z(), colour, texU, texV,
+			buffer.addVertex(vertexPos.x(), vertexPos.y(), vertexPos.z(), colour, texU, texV,
 					packedOverlay, packedLight, normal.x(), normal.y(), normal.z());
 		}
 	}
