@@ -306,13 +306,6 @@ public class GeoEntityRenderer<T extends Entity & GeoAnimatable> extends EntityR
 	@Override
 	public void renderFinal(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int colour) {
 		super.render(animatable, 0, partialTick, poseStack, bufferSource, packedLight);
-
-		if (animatable instanceof Mob mob) {
-			Entity leashHolder = mob.getLeashHolder();
-
-			if (leashHolder != null)
-				renderLeash(mob, partialTick, poseStack, bufferSource, leashHolder);
-		}
 	}
 
 	/**
