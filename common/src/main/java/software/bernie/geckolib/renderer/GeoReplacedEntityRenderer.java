@@ -299,17 +299,6 @@ public class GeoReplacedEntityRenderer<E extends Entity, T extends GeoAnimatable
 	}
 
 	/**
-	 * Called after rendering the model to buffer. Post-render modifications should be performed here
-	 * <p>
-	 * {@link PoseStack} transformations will be unused and lost once this method ends
-	 */
-	@Override
-	public void postRender(PoseStack poseStack, T animatable, BakedGeoModel model, MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-		if (!isReRender)
-			super.render(this.currentEntity, 0, partialTick, poseStack, bufferSource, packedLight);
-	}
-
-	/**
 	 * Called after all render operations are completed and the render pass is considered functionally complete.
 	 * <p>
 	 * Use this method to clean up any leftover persistent objects stored during rendering or any other post-render maintenance tasks as required
