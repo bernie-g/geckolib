@@ -97,7 +97,7 @@ public abstract class DynamicGeoBlockRenderer<T extends BlockEntity & GeoAnimata
 
 			bone.setModelSpaceMatrix(RenderUtil.invertAndMultiplyMatrices(poseState, this.modelRenderTranslations));
 			bone.setLocalSpaceMatrix(localMatrix);
-			bone.setWorldSpaceMatrix(worldState.translate(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
+			bone.setWorldSpaceMatrix(worldState.translateLocal(new Vector3f(pos.getX(), pos.getY(), pos.getZ())));
 		}
 
 		RenderUtil.translateAwayFromPivotPoint(poseStack, bone);
