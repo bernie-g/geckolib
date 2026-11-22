@@ -226,4 +226,17 @@ public record BoneAnimationQueue(GeoBone bone, AnimationPointQueue rotationXQueu
 		this.rotationYQueue.add(yPoint);
 		this.rotationZQueue.add(zPoint);
 	}
+
+	/// Clears this instance's queues so they can be re-used instead of recreating them
+	public void clear() {
+		this.rotationXQueue.clear();
+		this.rotationYQueue.clear();
+		this.rotationZQueue.clear();
+		this.positionXQueue.clear();
+		this.positionYQueue.clear();
+		this.positionZQueue.clear();
+		this.scaleXQueue.clear();
+		this.scaleYQueue.clear();
+		this.scaleZQueue.clear();
+	}
 }

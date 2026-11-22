@@ -686,11 +686,33 @@ public class AnimationController<T extends GeoAnimatable> {
 	 * @param modelRendererList The bone list from the {@link AnimationProcessor}
 	 */
 	private void createInitialQueues(Collection<GeoBone> modelRendererList) {
+		if (checkExistingBoneQueue(modelRendererList)) {
+			for (BoneAnimationQueue queue : this.boneAnimationQueues.values()) {
+				queue.clear();
+			}
+
+			return;
+		}
+
 		this.boneAnimationQueues.clear();
 
 		for (GeoBone modelRenderer : modelRendererList) {
 			this.boneAnimationQueues.put(modelRenderer.getName(), new BoneAnimationQueue(modelRenderer));
 		}
+	}
+
+	private boolean checkExistingBoneQueue(Collection<GeoBone> bones) {
+		if (this.boneAnimationQueues.size() != bones.size())
+			return false;
+
+		for (GeoBone bone : bones) {
+			final BoneAnimationQueue queue = this.boneAnimationQueues.get(bone.getName());
+
+			if (queue == null || queue.bone() != bone)
+				return false;
+		}
+
+		return true;
 	}
 
 	/**
