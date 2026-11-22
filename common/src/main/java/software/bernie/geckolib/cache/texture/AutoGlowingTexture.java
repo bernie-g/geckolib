@@ -23,6 +23,8 @@ import software.bernie.geckolib.resource.GeoGlowingTextureMeta;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 
@@ -53,6 +55,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 						.setWriteMaskState(WRITE_MASK).createCompositeState(isGlowing));
 	});
 	private static final String APPENDIX = "_glowmask";
+	private static final Map<ResourceLocation, ResourceLocation> EMISSIVE_RESOURCES = new ConcurrentHashMap<>();
 
 	protected final ResourceLocation textureBase;
 	protected final ResourceLocation glowLayer;
@@ -70,7 +73,7 @@ public class AutoGlowingTexture extends GeoAbstractTexture {
 	 * @return The glowlayer resourcepath for the provided input path
 	 */
 	public static ResourceLocation getEmissiveResource(ResourceLocation baseResource) {
-		ResourceLocation path = appendToPath(baseResource, APPENDIX);
+		final ResourceLocation path = EMISSIVE_RESOURCES.computeIfAbsent(baseResource, base -> appendToPath(base, APPENDIX));
 
 		generateTexture(path, textureManager -> textureManager.register(path, new AutoGlowingTexture(baseResource, path)));
 
