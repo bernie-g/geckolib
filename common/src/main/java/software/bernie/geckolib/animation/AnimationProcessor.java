@@ -2,7 +2,6 @@ package software.bernie.geckolib.animation;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.Mth;
-import org.apache.logging.log4j.Level;
 import software.bernie.geckolib.GeckoLibConstants;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animation.keyframe.AnimationPoint;
@@ -13,12 +12,12 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.GeoModel;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class AnimationProcessor<T extends GeoAnimatable> {
+	private static final Set<String> MISSING_ANIMATION_ERRORS = ConcurrentHashMap.newKeySet();
+
 	private final Map<String, GeoBone> bones = new Object2ObjectOpenHashMap<>();
 	private final GeoModel<T> model;
 
@@ -50,10 +49,12 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 					animation = this.model.getAnimation(animatable, stage.animationName());
 				}
 				catch (RuntimeException ex) {
-					GeckoLibConstants.LOGGER.log(Level.ERROR, "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName());
+					final String errorMessage = "Unable to find animation: " + stage.animationName() + " for " + animatable.getClass().getSimpleName();
+
+					if (MISSING_ANIMATION_ERRORS.add(errorMessage))
+						GeckoLibConstants.LOGGER.error(errorMessage, ex);
 
 					error = true;
-					ex.printStackTrace();
 				}
 			}
 
