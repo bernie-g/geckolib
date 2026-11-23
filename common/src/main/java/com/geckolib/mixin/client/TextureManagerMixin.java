@@ -25,9 +25,8 @@ public abstract class TextureManagerMixin {
 			at = @At(value = "NEW", target = "(Lnet/minecraft/resources/Identifier;)Lnet/minecraft/client/renderer/texture/SimpleTexture;"),
 			require = 0)
 	private SimpleTexture geckolib$replaceAnimatableTexture(Identifier location, Operation<SimpleTexture> original) {
-		GeckoLibAnimatedTexture animatableTexture = new GeckoLibAnimatedTexture(location);
-
-		TextureContents contents = loadContentsSafe(location, animatableTexture);
+		final GeckoLibAnimatedTexture animatableTexture = new GeckoLibAnimatedTexture(location);
+		final TextureContents contents = loadContentsSafe(location, animatableTexture);
 
 		if (animatableTexture.isAnimated()) {
 			animatableTexture.apply(contents);
@@ -36,7 +35,7 @@ public abstract class TextureManagerMixin {
 			return animatableTexture;
 		}
 
-		animatableTexture.close();
+		contents.close();
 
 		return original.call(location);
 	}
