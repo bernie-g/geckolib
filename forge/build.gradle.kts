@@ -80,6 +80,7 @@ modrinth {
     versionNumber.set(geckolib.modVersion.version())
     gameVersions.set(listOf(geckolib.mcVersion.version()))
     changelog.set(rootProject.file("changelog.md").readText(Charsets.UTF_8))
+    environment.set("client_only_server_optional")
 
     //https://github.com/modrinth/minotaur#available-properties
 }
