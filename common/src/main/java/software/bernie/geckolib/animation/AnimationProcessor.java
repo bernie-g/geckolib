@@ -18,7 +18,6 @@ import software.bernie.geckolib.animation.state.EasingState;
 import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.cache.animation.BoneAnimation;
 import software.bernie.geckolib.cache.animation.Keyframe;
-import software.bernie.geckolib.cache.model.GeoBone;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathValue;
 import software.bernie.geckolib.loading.math.MolangQueries;
@@ -143,10 +142,9 @@ public class AnimationProcessor {
         float zRot = findAnimationPointValue(snapshot, controllerState, animation, prevAnimation, boneIndex, AnimationPoint.Transform.ROTATION, AnimationPoint.Axis.Z, easingOverride);
 
         if (additive) {
-            GeoBone bone = snapshot.getBone();
-            xRot += snapshot.getRotX() - bone.baseRotX();
-            yRot += snapshot.getRotY() - bone.baseRotY();
-            zRot += snapshot.getRotZ() - bone.baseRotZ();
+            xRot += snapshot.getRotX();
+            yRot += snapshot.getRotY();
+            zRot += snapshot.getRotZ();
         }
 
         snapshot.setRotation(xRot, yRot, zRot);
@@ -230,36 +228,10 @@ public class AnimationProcessor {
                                                             controllerState.additive(), controllerState.easingOverride(), controllerState.renderState(), controllerState.queryValues());
         double delta = Math.min(1, controllerState.transitionTime() / ((double)controllerState.transitionTicks() / 20d));
         double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
-        double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
+        double to = transform.defaultValue;
         EasingState easingState = new EasingState(easingOverride == null ? EasingType.LINEAR : easingOverride, new MathValue[0], delta, from, to);
 
         return (float)EasingType.lerpWithOverride(easingState, controllerState);
-    }
-
-    /**
-     * Get the base snapshot value to return to when resetting from an animation
-     */
-    private static float getSnapshotResetTarget(BoneSnapshot snapshot, AnimationPoint.Transform transform, AnimationPoint.Axis axis, boolean additive) {
-        if (!additive)
-            return transform.defaultValue;
-
-        return switch (transform) {
-            case SCALE -> switch (axis) {
-                case X -> snapshot.getScaleX();
-                case Y -> snapshot.getScaleY();
-                case Z -> snapshot.getScaleZ();
-            };
-            case ROTATION -> switch (axis) {
-                case X -> snapshot.getRotX();
-                case Y -> snapshot.getRotY();
-                case Z -> snapshot.getRotZ();
-            };
-            case TRANSLATION -> switch (axis) {
-                case X -> snapshot.getTranslateX();
-                case Y -> snapshot.getTranslateY();
-                case Z -> snapshot.getTranslateZ();
-            };
-        };
     }
 
     /**

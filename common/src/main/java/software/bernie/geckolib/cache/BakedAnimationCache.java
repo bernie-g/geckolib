@@ -8,6 +8,8 @@ import software.bernie.geckolib.cache.animation.Animation;
 import software.bernie.geckolib.loading.object.BakedAnimations;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Container record for GeckoLib's baked animation cache
@@ -15,6 +17,8 @@ import java.util.Map;
  * @param cache The baked animations map as loaded from the resource files
  */
 public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
+    private static final Set<String> MISSING_ANIMATION_ERRORS = ConcurrentHashMap.newKeySet();
+
     /**
      * Get a baked {@link Animation} from the animation cache by its file id and animation name
      *
@@ -48,10 +52,15 @@ public record BakedAnimationCache(Map<Identifier, BakedAnimations> cache) {
             }
         }
 
-        if (animations == null)
-            throw new IllegalArgumentException("Unable to find animation file '" + animationFile + "'");
+        if (animations == null) {
+            if (MISSING_ANIMATION_ERRORS.add(animationFile.toString()))
+                GeckoLibConstants.LOGGER.error("Unable to find animation file '{}'", animationFile);
 
-        GeckoLibConstants.LOGGER.error("Unable to find animation: '{}' in animation file '{}'", animationName, animationFile);
+            return null;
+        }
+
+        if (MISSING_ANIMATION_ERRORS.add(animationFile + ": " + animationName))
+            GeckoLibConstants.LOGGER.error("Unable to find animation: '{}' in animation file '{}'", animationName, animationFile);
 
         return null;
     }

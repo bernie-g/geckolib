@@ -171,7 +171,7 @@ public class AnimationController<T extends GeoAnimatable> {
      * Used for custom handling if {@link #receiveTriggeredAnimations()} was marked
      */
     public boolean isPlayingTriggeredAnimation() {
-        return this.triggeredAnimTime >= 0 && isAnimatingBones();
+        return this.triggeredAnimTime >= 0 && this.animationPoint != null && this.timeline != null && this.timelineTime >= 0;
     }
 
     /**
@@ -192,7 +192,14 @@ public class AnimationController<T extends GeoAnimatable> {
      * If this method returns false, this controller is performing no actions during the render pass
      */
     public boolean isAnimatingBones() {
-        return this.animationPoint != null && this.timeline != null && this.timelineTime >= 0;
+        if (this.animationPoint == null || this.timeline == null || this.timelineTime < 0)
+            return false;
+
+        if (this.playState == PlayState.STOP && this.timeline.getTransitionLength() == 0)
+            return false;
+
+        return this.animationPoint.animation().boneAnimations().length > 0 ||
+               (this.transitionFromPoint != null && this.transitionFromPoint.animation().boneAnimations().length > 0);
     }
 
     /**
@@ -327,7 +334,8 @@ public class AnimationController<T extends GeoAnimatable> {
             return;
         }
 
-        if (rawAnimation.equals(this.currentRawAnimation))
+        //noinspection DataFlowIssue
+        if (rawAnimation.equals(this.currentRawAnimation) && this.playState != PlayState.STOP)
             return;
 
         this.currentRawAnimation = rawAnimation;
@@ -583,7 +591,7 @@ public class AnimationController<T extends GeoAnimatable> {
         if (prevAnimStage != currentAnimStage || this.timelineTime >= currentAnimStage.endTime()) {
             final double preLoopTimelineTime = this.timelineTime;
 
-            if (!isBacktracking && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
+            if (!isBacktracking && this.playState != PlayState.STOP && this.animationPoint.loopType().shouldKeepPlaying(animatable, this.animationPoint, prevAnimStage, renderState, this)) {
                 this.timeline.triggerKeyframeMarkersBetween(animatable, renderState, prevTimelineTime, prevAnimStage.endTime(), this,
                                                             this.soundKeyframeHandler, this.particleKeyframeHandler, this.customKeyframeHandler);
 

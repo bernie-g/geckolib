@@ -70,7 +70,7 @@ public final class ClientUtil {
         final Minecraft mc = Minecraft.getInstance();
 
         return mc.level != null ?
-               mc.level.getGameTime() + mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) :
+               mc.level.getGameTime() + (double)mc.getDeltaTracker().getGameTimeDeltaPartialTick(false) :
                Blaze3D.getTime() * 20d;
     }
 

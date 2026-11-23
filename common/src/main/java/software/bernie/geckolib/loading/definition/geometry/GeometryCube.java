@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,7 +38,7 @@ public record GeometryCube(@Nullable Vec3 origin, @Nullable Vec3 size, @Nullable
             final Vec3 pivot = JsonUtil.jsonToVec3(GsonHelper.getAsJsonArray(obj, "pivot", null));
             final float inflate = GsonHelper.getAsFloat(obj, "inflate", 0f);
             final boolean mirror = GsonHelper.getAsBoolean(obj, "mirror", false);
-            final GeometryUv uv = GsonHelper.getAsObject(obj, "uv", null, context, GeometryUv.class);
+            final GeometryUv uv = GsonHelper.getAsObject(obj, "uv", new GeometryUv(Either.left(new GeometryUvPair(0, 0))), context, GeometryUv.class);
 
             return new GeometryCube(origin, size, rotation, pivot, inflate, mirror, uv);
         };

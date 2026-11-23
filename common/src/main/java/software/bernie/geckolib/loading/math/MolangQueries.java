@@ -130,7 +130,7 @@ public final class MolangQueries {
 	 * Returns whether a variable under the given identifier has already been registered, without creating a new instance
 	 */
 	public static boolean isExistingVariable(String name) {
-		return VARIABLES.containsKey(name);
+		return VARIABLES.containsKey(expandShorthandPrefix(name));
 	}
 
 	/**
@@ -141,7 +141,7 @@ public final class MolangQueries {
 	 * @see MathParser#registerVariable(Variable)
 	 */
 	static void registerVariable(Variable variable) {
-		VARIABLES.put(variable.name(), variable);
+		VARIABLES.put(expandShorthandPrefix(variable.name()), variable);
 	}
 
 	/**
@@ -150,24 +150,21 @@ public final class MolangQueries {
 	 * @see MathParser#getVariableFor(String)
 	 */
 	static Variable getVariableFor(String name) {
-		return VARIABLES.computeIfAbsent(applyPrefixAliases(name, "query.", "q."), key -> new Variable(key, 0));
+		return VARIABLES.computeIfAbsent(expandShorthandPrefix(name), key -> new Variable(key, 0));
 	}
 
-	/**
-	 * Parse a given string formatted with a prefix, swapping out any potential aliases for the defined proper name
-	 *
-	 * @param text The base text to parse
-	 * @param properName The "correct" prefix to apply
-	 * @param aliases The available prefixes to check and replace
-	 * @return The unaliased string, or the original string if no aliases match
-	 */
-	private static String applyPrefixAliases(String text, String properName, String... aliases) {
-		for (String alias : aliases) {
-			if (text.startsWith(alias))
-				return properName + text.substring(alias.length());
-		}
+	/// Expand a shorthand Molang prefix (`q.`, `v.`, `c.`, or `t.`) to its full name as applicable
+	private static String expandShorthandPrefix(String name) {
+		if (name.length() < 2 || name.charAt(1) != '.')
+			return name;
 
-		return text;
+		return switch (name.charAt(0)) {
+			case 'q' -> "query." + name.substring(2);
+			case 'v' -> "variable." + name.substring(2);
+			case 'c' -> "context." + name.substring(2);
+			case 't' -> "temp." + name.substring(2);
+			default -> name;
+		};
 	}
 
 	/**
@@ -258,7 +255,7 @@ public final class MolangQueries {
 		setVariableValue("E", Math.E);
 
 		setActorVariable(ACTOR_COUNT, actor -> ClientUtil.getVisibleEntityCount());
-		setActorVariable(ANIM_TIME, actor -> actor.controller.getCurrentAnimationTime());
+		setVariableFunction(ANIM_TIME, state -> state.animationPoint().animTime());
 		setActorVariable(CONTROLLER_SPEED, actor -> actor.controller.getAnimationSpeed());
 		setActorVariable(CARDINAL_PLAYER_FACING, actor -> actor.clientPlayer.getDirection().ordinal());
 		setActorVariable(DAY, actor -> actor.level.getGameTime() / 24000d);
@@ -269,7 +266,7 @@ public final class MolangQueries {
 		setActorVariable(MOON_BRIGHTNESS, actor -> DimensionType.MOON_BRIGHTNESS_PER_PHASE[ClientUtil.getClientMoonPhase().index()]);
 		setActorVariable(MOON_PHASE, actor -> ClientUtil.getClientMoonPhase().index());
 		setActorVariable(PLAYER_LEVEL, actor -> actor.clientPlayer.experienceLevel);
-		setActorVariable(TIME_OF_DAY, actor -> actor.level.getDayTime() / 24000d);
+		setActorVariable(TIME_OF_DAY, actor -> (actor.level.getDayTime() % 24000L) / 24000d);
 		setActorVariable(TIME_STAMP, actor -> actor.level.getGameTime());
 
 		setDefaultBlockEntityQueryValues();
