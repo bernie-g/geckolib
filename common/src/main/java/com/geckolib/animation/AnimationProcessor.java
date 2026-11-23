@@ -10,7 +10,6 @@ import com.geckolib.animation.state.EasingState;
 import com.geckolib.cache.animation.Animation;
 import com.geckolib.cache.animation.BoneAnimation;
 import com.geckolib.cache.animation.Keyframe;
-import com.geckolib.cache.model.GeoBone;
 import com.geckolib.constant.DataTickets;
 import com.geckolib.loading.math.MathValue;
 import com.geckolib.loading.math.MolangQueries;
@@ -137,10 +136,9 @@ public class AnimationProcessor {
         float zRot = findAnimationPointValue(snapshot, controllerState, animation, prevAnimation, boneIndex, AnimationPoint.Transform.ROTATION, AnimationPoint.Axis.Z, easingOverride);
 
         if (additive) {
-            GeoBone bone = snapshot.getBone();
-            xRot += snapshot.getRotX() - bone.baseRotX();
-            yRot += snapshot.getRotY() - bone.baseRotY();
-            zRot += snapshot.getRotZ() - bone.baseRotZ();
+            xRot += snapshot.getRotX();
+            yRot += snapshot.getRotY();
+            zRot += snapshot.getRotZ();
         }
 
         snapshot.setRotation(xRot, yRot, zRot);
@@ -225,37 +223,13 @@ public class AnimationProcessor {
                                                             controllerState.additive(), controllerState.easingOverride(), controllerState.renderState(), controllerState.queryValues());
         final double delta = Math.min(1, controllerState.transitionTime() / ((double)controllerState.transitionTicks() / 20d));
         final double from = wrapRotation(findAnimationPointValue(boneSnapshot, previousState, animation, null, boneIndex, transform, axis, easingOverride), transform);
-        final double to = getSnapshotResetTarget(boneSnapshot, transform, axis, controllerState.additive());
+        final double to = transform.defaultValue;
         final EasingType easingType = easingOverride == null ? EasingType.LINEAR : easingOverride;
 
         if (easingType == EasingType.LINEAR)
             return (float)Mth.lerp(delta, from, to);
 
         return (float)new EasingState(easingType, new MathValue[0], delta, from, to).interpolate(controllerState);
-    }
-
-    /// Get the base snapshot value to return to when resetting from an animation
-    private static float getSnapshotResetTarget(BoneSnapshot snapshot, AnimationPoint.Transform transform, AnimationPoint.Axis axis, boolean additive) {
-        if (!additive)
-            return transform.defaultValue;
-
-        return switch (transform) {
-            case SCALE -> switch (axis) {
-                case X -> snapshot.getScaleX();
-                case Y -> snapshot.getScaleY();
-                case Z -> snapshot.getScaleZ();
-            };
-            case ROTATION -> switch (axis) {
-                case X -> snapshot.getRotX();
-                case Y -> snapshot.getRotY();
-                case Z -> snapshot.getRotZ();
-            };
-            case TRANSLATION -> switch (axis) {
-                case X -> snapshot.getTranslateX();
-                case Y -> snapshot.getTranslateY();
-                case Z -> snapshot.getTranslateZ();
-            };
-        };
     }
 
     /// Wraps keyframe values to be the nearest multiple of 360 degrees, so that resetting and transitioning don't result in massive backspins
