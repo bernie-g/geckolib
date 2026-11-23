@@ -9,7 +9,7 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
-val localRuntimeOnly by configurations.creating
+val localRuntimeOnly = configurations.create("localRuntimeOnly")
 
 minecraft {
     accessTransformer.setFrom(project(":common").file("src/main/resources/META-INF/accesstransformer.cfg"))

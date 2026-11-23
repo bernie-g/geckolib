@@ -10,7 +10,7 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
-val localRuntimeOnly by configurations.creating
+val localRuntimeOnly = configurations.create("localRuntimeOnly")
 
 configurations.runtimeClasspath { extendsFrom(localRuntimeOnly) }
 

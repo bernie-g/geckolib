@@ -5,7 +5,7 @@ plugins {
 }
 
 val geckolib = extensions.getByType<GeckoLibBuildPlugin>()
-val localRuntimeOnly by configurations.creating
+val localRuntimeOnly = configurations.create("localRuntimeOnly")
 
 neoForge {
     neoFormVersion = geckolib.neoformVersion.version()
