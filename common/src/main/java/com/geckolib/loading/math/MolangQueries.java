@@ -235,7 +235,7 @@ public final class MolangQueries {
 		setVariableValue("E", Math.E);
 
 		setActorVariable(ACTOR_COUNT, actor -> ClientUtil.getVisibleEntityCount());
-		setActorVariable(ANIM_TIME, actor -> actor.controller.getCurrentAnimationTime());
+		setVariableFunction(ANIM_TIME, state -> state.animationPoint().animTime());
 		setActorVariable(CONTROLLER_SPEED, actor -> actor.controller.getAnimationSpeed());
 		setActorVariable(CARDINAL_PLAYER_FACING, actor -> actor.clientPlayer.getDirection().ordinal());
 		setActorVariable(DAY, actor -> actor.level.getGameTime() / 24000d);
