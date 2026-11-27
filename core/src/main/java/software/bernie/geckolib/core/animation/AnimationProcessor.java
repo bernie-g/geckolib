@@ -147,10 +147,13 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 		double resetTickLength = animatable.getBoneResetTime();
 
 		for (CoreGeoBone bone : getRegisteredBones()) {
-			if (!bone.hasRotationChanged()) {
-				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
-				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
+			if (bone.hasRotationChanged() && bone.hasPositionChanged() && bone.hasScaleChanged())
+				continue;
 
+			BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
+			BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
+
+			if (!bone.hasRotationChanged()) {
 				if (saveSnapshot.isRotAnimInProgress())
 					saveSnapshot.stopRotAnim(animTime);
 
@@ -190,9 +193,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			}
 
 			if (!bone.hasPositionChanged()) {
-				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
-				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
-
 				if (saveSnapshot.isPosAnimInProgress())
 					saveSnapshot.stopPosAnim(animTime);
 
@@ -207,9 +207,6 @@ public class AnimationProcessor<T extends GeoAnimatable> {
 			}
 
 			if (!bone.hasScaleChanged()) {
-				BoneSnapshot initialSnapshot = bone.getInitialSnapshot();
-				BoneSnapshot saveSnapshot = boneSnapshots.get(bone.getName());
-
 				if (saveSnapshot.isScaleAnimInProgress())
 					saveSnapshot.stopScaleAnim(animTime);
 
