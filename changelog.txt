@@ -1,34 +1,3 @@
-v4.9.4
+v4.9.5
 
-- Fixed query.time_of_day being wrong after the first day
-- Fixed infinite recursion crash if an animation json used "default" as its loop type
-- Fixed GeckoLib rendering the leash multiple times
-- Fixed SingletonGeoAnimatables' trigger packets not working if the instruction is controller-agnostic
-- Fixed ItemArmorGeoLayer scaling incorrectly if targeting a geckolib bone with no cubes
-- Added support for arrays in keyframe data structure in animation jsons
-- Fixed rare crash caused by using catmullrom easings at the edge of animations
-- Fixed DynamicGeoEntityRender and its sister classes _always_ swapping its RenderType, even when no custom texture is present
-- Fixed GeckoLib failing to load a model that is missing the optional pivot property
-- Fixed GeckoLib crashing if a bone is missing the optional uv property on models
-- Fixed GeoObjectRenderer replacing the bufferSource when the buffer is null, instead of the bufferSource
-- Rewrote AnimatableTexture's loading sequence to remove memory leaks and conflicts
-- Rewrote AutoGlowingTexture's loading sequence to remove memory leaks and conflicts
-- Rewrote RenderUtils#getTextureDimensions to prevent a memory leak and fix up logging
-- Fixed DynamicGeoEntityRender and its sister classes repeatedly trying to calculate texture sizes for broken textures
-- Fixed GeckoLib's deduplication on ID'd stacks not applying when drag-splitting a stack
-- Fixed GeckoLib failing to load models/animations if the model or animations used non-english characters
-- Fixed SerializableDataTickets failing if an enum overrode toString
-- Fixed NPE when comparing Color with null
-- Add caching to missing animation error messages to remove log/console spam
-- Fixed GeckoLib failing to load all resources when any resource fails
-- Fixed GeckoLib parsing excluded namespace resources even though they'll never be used
-- Fixed a concurrent resource loading issue
-- Fixed GeckoLib mixing up anim time between animatable instances, particularly when the game is paused
-- Fixed a memory leak caused by rendering GeckoLib armour outside of the world when glowing
-- Fixed `RenderUtil#fixInvertedFlatCube` not being quite correct
-- Fixed 0-thickness cubes not handling lighting correctly
-- Fixed RenderUtil#translateMatrix incorrectly translating
-- Fixed Geckolib blocks, dynamic geoentities, and dynamic geoblocks all giving the wrong bone positions for listeners
-- Add query shorthand support for the non-query query types
-- Made GeckoLib armour scale with the player's model if the player's model has been rescaled
-- Various performance improvements
+- Adjust the buffer swap shielding to be both more aggressive and more concise. Hopefully this helps reduce crashes overall
