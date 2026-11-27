@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.animatable.client.RenderProvider;
 
@@ -44,17 +44,18 @@ public abstract class MixinHumanoidArmorLayer<T extends LivingEntity, A extends 
         this.gl_replacedModel = null;
     }
 
-    @ModifyArg(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/HumanoidModel;ZFFFLjava/lang/String;)V"), index = 4)
-    public A injectArmor(A humanoidModel) {
+    @WrapOperation(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/HumanoidArmorLayer;renderModel(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;ILnet/minecraft/world/item/ArmorItem;Lnet/minecraft/client/model/HumanoidModel;ZFFFLjava/lang/String;)V"))
+    public void geckolib$renderArmorModel(HumanoidArmorLayer<?, ?, ?> instance, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, ArmorItem armorItem, A humanoidModel,
+                                          boolean withGlint, float red, float green, float blue, @Nullable String armorSuffix, Operation<Void> original) {
         if (this.gl_replacedModel != null)
-            return this.gl_replacedModel;
+            return;
 
-        this.gl_replacedModel = (A)RenderProvider.of(this.gl_storedItemStack).getGenericArmorModel(this.gl_storedEntity, this.gl_storedItemStack, this.gl_storedSlot, (HumanoidModel<LivingEntity>) humanoidModel);
+        final A armorModel = (A)RenderProvider.of(this.gl_storedItemStack).getGenericArmorModel(this.gl_storedEntity, this.gl_storedItemStack, this.gl_storedSlot, (HumanoidModel<LivingEntity>)humanoidModel);
 
-        if (this.gl_replacedModel == humanoidModel)
-            this.gl_replacedModel = null;
+        if (armorModel != humanoidModel)
+            this.gl_replacedModel = armorModel;
 
-        return this.gl_replacedModel != null ? this.gl_replacedModel : humanoidModel;
+        original.call(instance, poseStack, bufferSource, packedLight, armorItem, armorModel, withGlint, red, green, blue, armorSuffix);
     }
 
     @WrapOperation(method = "renderArmorPiece", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/armortrim/ArmorTrim;getTrim(Lnet/minecraft/core/RegistryAccess;Lnet/minecraft/world/item/ItemStack;)Ljava/util/Optional;"))
