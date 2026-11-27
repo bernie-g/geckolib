@@ -1,6 +1,5 @@
 package software.bernie.geckolib.renderer.specialty;
 
-import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.ints.IntIntImmutablePair;
@@ -100,6 +99,8 @@ public abstract class DynamicGeoItemRenderer<T extends Item & GeoAnimatable> ext
 		else {
 			RenderUtil.prepMatrixForBone(poseStack, bone);
 		}
+
+		buffer = checkAndRefreshBuffer(false, buffer, bufferSource, renderType);
 
 		this.textureOverride = getTextureOverrideForBone(bone, this.animatable, partialTick);
 		ResourceLocation texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;

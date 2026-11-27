@@ -141,8 +141,16 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 
 		if (firePreRenderEvent(poseStack, model, bufferSource, partialTick, packedLight)) {
 			preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+
+			if (buffer != null)
+				buffer = checkAndRefreshBuffer(false, buffer, bufferSource, renderType);
+
 			actuallyRender(poseStack, animatable, model, renderType,
 					bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
+
+			if (buffer != null)
+				buffer = checkAndRefreshBuffer(false, buffer, bufferSource, renderType);
+
 			applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
 			postRender(poseStack, animatable, model, bufferSource, buffer, false, partialTick, packedLight, packedOverlay, renderColor);
 			firePostRenderEvent(poseStack, model, bufferSource, partialTick, packedLight);
@@ -391,17 +399,15 @@ public interface GeoRenderer<T extends GeoAnimatable> {
 	 */
 	@ApiStatus.Internal
 	default VertexConsumer checkAndRefreshBuffer(boolean isReRender, VertexConsumer buffer, MultiBufferSource bufferSource, RenderType renderType) {
-		if (isReRender)
+		if (isReRender || !bufferNeedsRefresh(buffer))
 			return buffer;
 
-		return switch (buffer) {
-			case BufferBuilder builder when !builder.building -> bufferSource.getBuffer(renderType);
-			case OutlineBufferSource.EntityOutlineGenerator outlines when bufferNeedsRefresh(outlines.delegate()) ->
-					new OutlineBufferSource.EntityOutlineGenerator(bufferSource.getBuffer(renderType), outlines.color());
-			case VertexMultiConsumer.Double pair when bufferNeedsRefresh(pair.first) || bufferNeedsRefresh(pair.second) ->
-				new VertexMultiConsumer.Double(bufferNeedsRefresh(pair.first) ? bufferSource.getBuffer(renderType) : pair.first, bufferNeedsRefresh(pair.second) ? bufferSource.getBuffer(renderType) : pair.second);
-			default -> buffer;
-		};
+		final VertexConsumer newBuffer = bufferSource.getBuffer(renderType);
+
+		if (newBuffer instanceof VertexMultiConsumer.Double pair && pair.first instanceof BufferBuilder first && first.building)
+			return new VertexMultiConsumer.Double(first, newBuffer);
+
+		return newBuffer;
 	}
 
 	@Deprecated(forRemoval = true)

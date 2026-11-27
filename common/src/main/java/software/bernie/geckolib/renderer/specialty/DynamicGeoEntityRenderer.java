@@ -103,6 +103,8 @@ public abstract class DynamicGeoEntityRenderer<T extends Entity & GeoAnimatable>
 			RenderUtil.prepMatrixForBone(poseStack, bone);
 		}
 
+		buffer = checkAndRefreshBuffer(false, buffer, bufferSource, renderType);
+
 		this.textureOverride = getTextureOverrideForBone(bone, this.animatable, partialTick);
 		ResourceLocation texture = this.textureOverride == null ? getTextureLocation(this.animatable) : this.textureOverride;
 		RenderType renderTypeOverride = getRenderTypeOverrideForBone(bone, this.animatable, texture, bufferSource, partialTick);
