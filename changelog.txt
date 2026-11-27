@@ -1,43 +1,4 @@
-v4.8.5
+v4.8.6
 
-- Fixed `query.time_of_day` not returning the correct time of day
-- Fixed the `DEFAULT` LoopType crashing if a mod attempts to serialize loop types
-- Fix `query.yaw_speed` returning nonsense values
-- Fixed Forge stateless animation packets running twice (and then erroring)
-- Fix fabric rendering leashes and nametags twice for replaced animatables
-- Fixed trigger/data sync packets not working for GeoReplacedEntities
-- Fix trigger/stop trigger anim packets for singleton geo animatables not working sometimes or crashing
-- Fix fabric's stopTriggeredAnim for GeoEntities not working if given a null animation name
-- Fix ItemArmorGeoLayer crashing if targeting a bone with no cubes
-- Fixed the `easeInQuint` EasingType acting like `easeInQuart`
-- Fixed keyframe markers not supporting list formatted entries, and crashing from an invalid sound keyframe
-- Fixed a potential crash from an improperly used catmullrom easing
-- Fixed DynamicGeoEntityRenderer swapping out the RenderType when it didn't need to
-- Fixed compound expressions not failing to register new queries
-- Fixed a missing `pivot` field inside of a bone in model jsons crashing the game
-- Fixed a missing `uv` field inside of a cube in model jsons crashing the game
-- Fix fabric rendering a ghost overlay of vanilla armour when rendering enchanted geckolib armour
-- Fixed `null` BufferSource provided to GeoObjectRenderer crashing the game
-- Fixed a number of issues with AnimatableTexture's loading sequence
-- Rewrote AutoGlowingTexture's loading sequence to be more efficient and reduce memory leaks
-- Rewrite RenderUtils#getTextureDimensions to fix its memory leaks
-- Fixed DynamicGeoEntityRender repeatedly trying to calculate texture sizes for broken textures
-- Fixed GeckoLib's ItemStack marker deduplication not applying to drag-splitting stacks (Fabric only)
-- Fixed GeoRenderLayer's preRender getting packedLight instead of partialTick
-- Fixed Molang query variables sometimes duplicating/breaking during multithreaded resource loading
-- Fixed animations/models failing to load if using names with non-english characters
-- Fixed SerializableDataTickets breaking for enums that override `toString()`
-- Fixed a rare potential crash caused by trying to compare a null `Color`
-- Fixed animated textures sometimes rendering incorrectly
-- Fixed ContextAwareAnimatableManager not knowing how to handle stopTriggeredAnimation
-- Fix GeckoLib spamming the log when an animation or animation file is missing, and a missing animation file no longer crashes the game
-- Exclude excluded namespaces earlier in the resource loading process
-- Catch resource loading exceptions on an individual basis to prevent a failure breaking all resources
-- Fixed further issues with GeckoLib conflicting animations between animatable instances (when the game is paused in particular)
-- Fixed a memory leak & crash caused by having the glowing effect while wearing geckolib armour in a gui or hud
-- Fixed GeckoLib rendering that uses AutoGlowingGeoLayer not supporting shaders or outline rendering (glowing) properly
-- Fixed 0-thickness Geckolib models having the wrong lighting (normals) applied to them
-- Fixed 0-thickness cubes rendering with the wrong lighting from underneath
-- Fixed RenderUtils#translateMatrix translating wrong
-- Fixed DynamicGeoEntityRenderer and GeoBlockRenderer giving the wrong bone positions when rotated
-- Add support for shorthand query names in Molang (q., etc)
+- Fixed a bug caused by DyeableArmorItem GeckoLib armour crashing the game
+- Various performance improvements
